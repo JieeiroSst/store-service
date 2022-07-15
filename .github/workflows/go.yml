@@ -7,35 +7,36 @@ on:
     branches: [ "master" ]
 
 jobs:
-  job1:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v3
+  authorize_service:
+    name: authorize_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
 
-      - name: Build
-        run: cd authorize_service && go build -v ./...
+    - name: Build
+      run: cd authorize_service && go build -v ./...
 
-      - name: Test
-        run: cd authorize_service && go test -v ./...
-  job2:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v3
+    - name: Test
+      run: cd authorize_service && go test -v ./...
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+  build:
+    name: user_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
 
-      - name: Build
-        run: cd user_service && go build -v ./...
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
 
-      - name: Test
-        run: cd user_service && go test -v ./...
+    - name: Build
+      run: cd user_service && go build -v ./...
+
+    - name: Test
+      run: cd user_service && go test -v ./...
