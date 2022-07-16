@@ -27,10 +27,11 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 // @Description login account
 // @Accept  json
 // @Produce  json
-// @Param username query string false "username in json login"
-// @Param password query string false "password in json login"
-// @Success 200 {array} map[string]interface{}
-// @Router /v1/login [post]
+// @Param user  body model.Login true "user in json"
+// @Success 200 {object} map[string]interface{}
+// @Success 500 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/login [post]
 func (r *Handler) Login(c *gin.Context) {
 	var login model.Login
 	if err := c.ShouldBind(&login); err != nil {
@@ -63,10 +64,11 @@ func (r *Handler) Login(c *gin.Context) {
 // @Description SignUp account
 // @Accept  json
 // @Produce  json
-// @Param username query string false "username in json login"
-// @Param password query string false "password in json login"
-// @Success 200 {array} map[string]interface{}
-// @Router /v1/register [post]
+// @Param user body model.Users false "user in json login"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 500 {object} map[string]interface{}
+// @Router /api/v1/sign-up [post]
 func (r *Handler) SignUp(c *gin.Context) {
 	var user model.Users
 	if err := c.ShouldBind(&user); err != nil {
@@ -114,10 +116,12 @@ func (r *Handler) SignUp(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "User ID"
-// @Param username query string false "username in json login"
-// @Param password query string false "password in json login"
-// @Success 200 {array} map[string]interface{}
-// @Router /v1/update/profile [post]
+// @Param id path int false "id in json login"
+// @Param user body model.Users false "user in json"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 500 {object} map[string]interface{}
+// @Router /api/v1/update/profile [put]
 func (r *Handler) UpdateProfile(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -147,8 +151,8 @@ func (r *Handler) UpdateProfile(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param id path int true "User ID"
-// @Success 200 {array} map[string]interface{}
-// @Router /v1/lock_user [post]
+// @Success 200 {object} map[string]interface{}
+// @Router /api/v1/lock_user [post]
 func (r *Handler) LockAccount(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -164,6 +168,16 @@ func (r *Handler) LockAccount(c *gin.Context) {
 	})
 }
 
+// Authentication godoc
+// @Summary Authentication Account
+// @Description Authentication account
+// @Accept  json
+// @Produce  json
+// @Param token body model.Token true "token"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/authentication [post]
 func (r *Handler) Authentication(c *gin.Context) {
 	var token model.Token
 	if err := c.ShouldBind(&token); err != nil {
