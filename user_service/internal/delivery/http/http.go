@@ -1,9 +1,12 @@
 package http
 
 import (
+	_ "github.com/JIeeiroSst/user-service/docs"
 	v1 "github.com/JIeeiroSst/user-service/internal/delivery/http/v1"
 	"github.com/JIeeiroSst/user-service/internal/usecase"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
@@ -18,6 +21,7 @@ func NewHandler(usecase usecase.Usecase) *Handler {
 
 func (h *Handler) Init(router *gin.Engine) {
 	h.initApi(router)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	h.corsMiddleware(router)
 }
 

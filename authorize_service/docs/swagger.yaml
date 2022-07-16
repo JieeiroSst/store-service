@@ -1,0 +1,308 @@
+definitions:
+  model.CasbinRule:
+    properties:
+      id:
+        type: integer
+      ptype:
+        type: string
+      v0:
+        type: string
+      v1:
+        type: string
+      v2:
+        type: string
+      v3:
+        type: string
+      v4:
+        type: string
+      v5:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/casbin:
+    get:
+      consumes:
+      - application/json
+      description: CasbinRuleAll account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: CasbinRuleAll Account
+  /api/v1/casbin/:
+    post:
+      consumes:
+      - application/json
+      description: CreateCasbinRule account
+      parameters:
+      - description: casbin model
+        in: body
+        name: casbin
+        required: true
+        schema:
+          $ref: '#/definitions/model.CasbinRule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: CreateCasbinRule Account
+  /api/v1/casbin/:id:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteCasbinRule account
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: DeleteCasbinRule Account
+    get:
+      consumes:
+      - application/json
+      description: CasbinRuleById account
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: CasbinRuleById Account
+  /api/v1/casbin/:id/endpoint/:endpoint:
+    put:
+      consumes:
+      - application/json
+      description: UpdateCasbinRuleEndpoint account
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: endpoint
+        in: path
+        name: endpoint
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: UpdateCasbinRuleEndpoint Account
+  /api/v1/casbin/:id/method/:method:
+    put:
+      consumes:
+      - application/json
+      description: UpdateCasbinMethod account
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: method
+        in: path
+        name: method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: UpdateCasbinMethod Account
+  /api/v1/casbin/:id/name/:name:
+    put:
+      consumes:
+      - application/json
+      description: UpdateCasbinRuleName account
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: UpdateCasbinRuleName Account
+  /api/v1/casbin/:id/ptype/:ptype:
+    put:
+      consumes:
+      - application/json
+      description: UpdateCasbinRulePtype account
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ptype
+        in: path
+        name: ptype
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: UpdateCasbinRulePtype Account
+  /api/v1/casbin/authentication:
+    post:
+      consumes:
+      - application/json
+      description: Authorize account
+      parameters:
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Authorize Account
+swagger: "2.0"

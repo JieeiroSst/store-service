@@ -23,6 +23,16 @@ func (h *Handler) initCasbinRoutes(api *gin.RouterGroup) {
 	group.PUT("/:id/method/:method", h.UpdateCasbinMethod)
 }
 
+// Authorize godoc
+// @Summary Authorize Account
+// @Description Authorize account
+// @Accept  json
+// @Produce  json
+// @Param username query string true "username"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/authentication [post]
 func (h *Handler) Authorize(ctx *gin.Context) {
 	username := ctx.Query("username")
 	path := ctx.Request.URL.Path
@@ -56,6 +66,15 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 	})
 }
 
+// CasbinRuleAll godoc
+// @Summary CasbinRuleAll Account
+// @Description CasbinRuleAll account
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin [get]
 func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
 	casbins, err := h.usecase.Casbins.CasbinRuleAll()
 	if errors.Is(err, common.NotFound) {
@@ -75,6 +94,16 @@ func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
 	ctx.JSON(200, casbins)
 }
 
+// CasbinRuleById godoc
+// @Summary CasbinRuleById Account
+// @Description CasbinRuleById account
+// @Accept  json
+// @Produce  json
+// @Param id query int true "id"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/:id [get]
 func (h *Handler) CasbinRuleById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -102,6 +131,16 @@ func (h *Handler) CasbinRuleById(ctx *gin.Context) {
 	ctx.JSON(200, casbin)
 }
 
+// CreateCasbinRule godoc
+// @Summary CreateCasbinRule Account
+// @Description CreateCasbinRule account
+// @Accept  json
+// @Produce  json
+// @Param casbin body model.CasbinRule true "casbin model"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/ [post]
 func (h *Handler) CreateCasbinRule(ctx *gin.Context) {
 	var casbin model.CasbinRule
 	if err := ctx.ShouldBind(&casbin); err != nil {
@@ -132,6 +171,16 @@ func (h *Handler) CreateCasbinRule(ctx *gin.Context) {
 	})
 }
 
+// DeleteCasbinRule godoc
+// @Summary DeleteCasbinRule Account
+// @Description DeleteCasbinRule account
+// @Accept  json
+// @Produce  json
+// @Param id  path int  true "id"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/:id [delete]
 func (h *Handler) DeleteCasbinRule(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -154,6 +203,17 @@ func (h *Handler) DeleteCasbinRule(ctx *gin.Context) {
 	})
 }
 
+// UpdateCasbinRulePtype godoc
+// @Summary UpdateCasbinRulePtype Account
+// @Description UpdateCasbinRulePtype account
+// @Accept  json
+// @Produce  json
+// @Param id  path int  true "id"
+// @Param ptype  path string  true "ptype"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/:id/ptype/:ptype [put]
 func (h *Handler) UpdateCasbinRulePtype(ctx *gin.Context) {
 	ptype := ctx.Param("ptype")
 	id, err := strconv.Atoi(ctx.Param("id"))
@@ -176,6 +236,17 @@ func (h *Handler) UpdateCasbinRulePtype(ctx *gin.Context) {
 	})
 }
 
+// UpdateCasbinRuleName godoc
+// @Summary UpdateCasbinRuleName Account
+// @Description UpdateCasbinRuleName account
+// @Accept  json
+// @Produce  json
+// @Param id  path int  true "id"
+// @Param name  path string  true "name"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/:id/name/:name [put]
 func (h *Handler) UpdateCasbinRuleName(ctx *gin.Context) {
 	name := ctx.Param("name")
 	id, err := strconv.Atoi(ctx.Param("id"))
@@ -198,6 +269,17 @@ func (h *Handler) UpdateCasbinRuleName(ctx *gin.Context) {
 	})
 }
 
+// UpdateCasbinRuleEndpoint godoc
+// @Summary UpdateCasbinRuleEndpoint Account
+// @Description UpdateCasbinRuleEndpoint account
+// @Accept  json
+// @Produce  json
+// @Param id  path int  true "id"
+// @Param endpoint  path string  true "endpoint"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/:id/endpoint/:endpoint [put]
 func (h *Handler) UpdateCasbinRuleEndpoint(ctx *gin.Context) {
 	endpoint := ctx.Param("endpoint")
 	id, err := strconv.Atoi(ctx.Param("id"))
@@ -220,6 +302,17 @@ func (h *Handler) UpdateCasbinRuleEndpoint(ctx *gin.Context) {
 	})
 }
 
+// UpdateCasbinMethod godoc
+// @Summary UpdateCasbinMethod Account
+// @Description UpdateCasbinMethod account
+// @Accept  json
+// @Produce  json
+// @Param id  path int  true "id"
+// @Param method  path string  true "method"
+// @Success 200 {object} map[string]interface{}
+// @Success 400 {object} map[string]interface{}
+// @Success 401 {object} map[string]interface{}
+// @Router /api/v1/casbin/:id/method/:method [put]
 func (h *Handler) UpdateCasbinMethod(ctx *gin.Context) {
 	method := ctx.Param("method")
 	id, err := strconv.Atoi(ctx.Param("id"))

@@ -1,0 +1,193 @@
+definitions:
+  model.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  model.Token:
+    properties:
+      encodeToken:
+        type: string
+    type: object
+  model.Users:
+    properties:
+      address:
+        type: string
+      checked:
+        type: boolean
+      create_time:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      sex:
+        type: string
+      update_time:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/authentication:
+    post:
+      consumes:
+      - application/json
+      description: Authentication account
+      parameters:
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          $ref: '#/definitions/model.Token'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Authentication Account
+  /api/v1/lock_user:
+    post:
+      consumes:
+      - application/json
+      description: LockAccount account
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: LockAccount Account
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: login account
+      parameters:
+      - description: user in json
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login Account
+  /api/v1/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: SignUp account
+      parameters:
+      - description: user in json login
+        in: body
+        name: user
+        schema:
+          $ref: '#/definitions/model.Users'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: SignUp Account
+  /api/v1/update/profile:
+    put:
+      consumes:
+      - application/json
+      description: UpdateProfile account
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: id in json login
+        in: path
+        name: id
+        type: integer
+      - description: user in json
+        in: body
+        name: user
+        schema:
+          $ref: '#/definitions/model.Users'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: UpdateProfile Account
+swagger: "2.0"
