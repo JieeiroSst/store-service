@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/JieeiroSst/authorize-service/config"
 	"github.com/JieeiroSst/authorize-service/internal/delivery/http"
@@ -20,8 +21,9 @@ func NewApp(router *gin.Engine) {
 	fmt.Println("Wellcome Server Authorize")
 	conf, err := config.ReadConf("config.yml")
 	if err != nil {
-
+		log.Println(err)
 	}
+	//"test:test@(localhost:3306)/test"
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
 		conf.Mysql.MysqlUser,
 		conf.Mysql.MysqlPassword,
@@ -31,11 +33,11 @@ func NewApp(router *gin.Engine) {
 	)
 	mysqlOrm, err := mysql.NewMysqlConn(dns)
 	if err != nil {
-
+		log.Println(err)
 	}
 	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
 	if err != nil {
-
+		log.Println(err)
 	}
 
 	var snowflakeData = snowflake.NewSnowflake()
