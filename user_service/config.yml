@@ -1,0 +1,34 @@
+server:
+  PortServer: :1235
+
+secretService:
+  JwtSecretKey: secretkey
+
+mysql:
+  MysqlHost:     localhost
+  MysqlPort:     3306
+  MysqlUser:     root
+  MysqlPassword: 1234
+  MysqlDbname:   user
+  MysqlDriver:   mysql
+
+
+rabbitmq:
+  Host: localhost
+  Port: 5672
+  User: guest
+  Password: guest
+  Exchange: emails-exchange
+  Queue: emails-queue
+  RoutingKey: emails-routing-key
+  ConsumerTag: emails-consumer
+  WorkerPoolSize: 24
+
+redis:
+  dns: "localhost:7002"
+
+email:
+  NameEmail: chmp.7399@gmail.com
+  PasswordEmail: "#############"
+  Port: 587
+  Host: "smtp.gmail.com"

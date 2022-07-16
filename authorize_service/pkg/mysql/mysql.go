@@ -19,7 +19,7 @@ type MysqlConnect struct {
 func NewMysqlConn(dns string) (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	instance = &MysqlConnect{db: db}
 

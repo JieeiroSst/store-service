@@ -33,8 +33,7 @@ func NewCasbinRepo(db *gorm.DB) *CasbinRepo {
 
 func (c *CasbinRepo) CasbinRuleAll() ([]model.CasbinRule, error) {
 	var casbinRules []model.CasbinRule
-
-	query := c.db.Raw(`select * from casbin_rule;`).Scan(&casbinRules)
+	query := c.db.Table("casbin_rule").Find(&casbinRules)
 	if query.Error != nil {
 		return nil, query.Error
 	}
@@ -46,7 +45,7 @@ func (c *CasbinRepo) CasbinRuleAll() ([]model.CasbinRule, error) {
 
 func (c *CasbinRepo) CasbinRuleById(id int) (*model.CasbinRule, error) {
 	var casbinRule model.CasbinRule
-	query := c.db.Raw(`select * from casbin_rule where id = ?;`, id).Scan(&casbinRule)
+	query := c.db.Table("casbin_rule").Where("id = ?", id).Find(&casbinRule)
 	if query.Error != nil {
 		return nil, query.Error
 	}
@@ -59,8 +58,7 @@ func (c *CasbinRepo) CasbinRuleById(id int) (*model.CasbinRule, error) {
 }
 
 func (c *CasbinRepo) CreateCasbinRule(casbin model.CasbinRule) error {
-	stmtString := "INSERT INTO casbin_rule(id,ptype,v0,v1,v2) VALUES (?,?,?,?,?);"
-	query := c.db.Raw(stmtString, casbin.ID, casbin.Ptype, casbin.V0, casbin.V1, casbin.V2)
+	query := c.db.Table("casbin_rule").Save(&casbin)
 	if query.RowsAffected == 0 {
 		return common.NotFound
 	}
@@ -74,54 +72,60 @@ func (c *CasbinRepo) CreateCasbinRule(casbin model.CasbinRule) error {
 
 func (c *CasbinRepo) DeleteCasbinRule(id int) error {
 	stmtString := "DELETE FROM `casbin_rule` where id = ?;"
-	err := c.db.Raw(stmtString, id).Error
-	if err != nil {
-		log.Log().Error(err.Error(), zap.Duration("backoff", time.Second))
-		return err
+	query := c.db.Raw(stmtString, id)
+	if query.Error != nil {
+		return query.Error
+	}
+	if query.RowsAffected == 0 {
+		return common.NotFound
 	}
 
 	return nil
 }
 
 func (c *CasbinRepo) UpdateCasbinRulePtype(id int, ptype string) error {
-	stmtString := "UPDATE `casbin_rule` SET ptype = ?  WHERE id = ?;"
-	err := c.db.Raw(stmtString, ptype, id).Error
-	if err != nil {
-		log.Log().Error(err.Error(), zap.Duration("backoff", time.Second))
-		return err
+	query := c.db.Table("casin_rule").Where("id = ?", id).Update("ptype", ptype)
+	if query.Error != nil {
+		return query.Error
+	}
+	if query.RowsAffected == 0 {
+		return common.NotFound
 	}
 
 	return nil
 }
 
 func (c *CasbinRepo) UpdateCasbinRuleName(id int, name string) error {
-	stmtString := "UPDATE `casbin_rule` SET v0 = ?  WHERE id = ?;"
-	err := c.db.Raw(stmtString, name, id).Error
-	if err != nil {
-		log.Log().Error(err.Error(), zap.Duration("backoff", time.Second))
-		return err
+	query := c.db.Table("casin_rule").Where("id = ?", id).Update("v0", name)
+	if query.Error != nil {
+		return query.Error
+	}
+	if query.RowsAffected == 0 {
+		return common.NotFound
 	}
 
 	return nil
 }
 
 func (c *CasbinRepo) UpdateCasbinRuleEndpoint(id int, endpoint string) error {
-	stmtString := "UPDATE `casbin_rule` SET v1 = ? WHERE id = ?;"
-	err := c.db.Exec(stmtString, endpoint, id).Error
-	if err != nil {
-		log.Log().Error(err.Error(), zap.Duration("backoff", time.Second))
-		return err
+	query := c.db.Table("casin_rule").Where("id = ?", id).Update("v1", endpoint)
+	if query.Error != nil {
+		return query.Error
+	}
+	if query.RowsAffected == 0 {
+		return common.NotFound
 	}
 
 	return nil
 }
 
 func (c *CasbinRepo) UpdateCasbinMethod(id int, method string) error {
-	stmtString := "UPDATE `casbin_rule` SET v2 = ?  WHERE id = ?;"
-	err := c.db.Exec(stmtString, method, id)
-	if err != nil {
-		log.Log().Error(err.Error.Error(), zap.Duration("backoff", time.Second))
-		return err.Error
+	query := c.db.Table("casin_rule").Where("id = ?", id).Update("v2", method)
+	if query.Error != nil {
+		return query.Error
+	}
+	if query.RowsAffected == 0 {
+		return common.NotFound
 	}
 
 	return nil

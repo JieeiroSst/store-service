@@ -58,17 +58,17 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 
 func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
 	casbins, err := h.usecase.Casbins.CasbinRuleAll()
-	if err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
-		return
-	}
 	if errors.Is(err, common.NotFound) {
 		ctx.JSON(404, gin.H{
 			"code":    404,
 			"message": "NOT FOUND",
+		})
+		return
+	}
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"code":    500,
+			"message": "INTERVAL SERVER",
 		})
 		return
 	}
@@ -85,17 +85,17 @@ func (h *Handler) CasbinRuleById(ctx *gin.Context) {
 		return
 	}
 	casbin, err := h.usecase.Casbins.CasbinRuleById(id)
-	if err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
-		return
-	}
 	if errors.Is(err, common.NotFound) {
 		ctx.JSON(404, gin.H{
 			"code":    404,
 			"message": "NOT FOUND",
+		})
+		return
+	}
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"code":    500,
+			"message": "INTERVAL SERVER",
 		})
 		return
 	}
