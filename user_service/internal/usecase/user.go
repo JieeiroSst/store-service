@@ -26,7 +26,7 @@ type Users interface {
 	CheckEmail(email string) error
 	CheckIP(ip string) error
 
-	Authentication(token string) error
+	Authentication(token string, username string) error
 }
 
 type UserUsecase struct {
@@ -150,11 +150,14 @@ func (d *UserUsecase) CheckIP(ip string) error {
 	return nil
 }
 
-func (d *UserUsecase) Authentication(token string) error {
+func (d *UserUsecase) Authentication(token string, username string) error {
 	strArr := strings.Split(token, " ")
-	_, err := d.Token.ParseToken(strArr[1])
+	parseToken, err := d.Token.ParseToken(strArr[1])
 	if err != nil {
 		return err
+	}
+	if strings.Compare(parseToken.Username,username) != 0 {
+		return common.FailedTokenUsername
 	}
 	return nil
 }

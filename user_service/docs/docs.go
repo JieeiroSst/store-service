@@ -35,6 +35,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/model.Token"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "username",
+                        "name": "username",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {

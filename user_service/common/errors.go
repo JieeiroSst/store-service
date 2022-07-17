@@ -9,4 +9,8 @@ var (
 
 	HashPasswordFailed = errors.New("password failed")
 	UserAlready        = errors.New("user already exists")
+
+	FailedToken = errors.New("Missing Authentication Token")
+
+	FailedTokenUsername = errors.New("Missing Authentication Username Token")
 )

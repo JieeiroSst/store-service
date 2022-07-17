@@ -51,6 +51,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/model.Token'
+      - description: username
+        in: query
+        name: username
+        required: true
+        type: string
       produces:
       - application/json
       responses:
