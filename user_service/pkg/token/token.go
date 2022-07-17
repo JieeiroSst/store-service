@@ -52,7 +52,7 @@ func (t *token) ParseToken(tokenStr string) (*model.ParseToken, error) {
 	}
 
 	username := claims["username"].(string)
-		return &model.ParseToken{
-			Username: username,
-		}, nil
+	return &model.ParseToken{
+		Username: username,
+	}, nil
 }
