@@ -174,18 +174,29 @@ func (r *Handler) LockAccount(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param token body model.Token true "token"
+// @Param username query string true "username"
 // @Success 200 {object} map[string]interface{}
 // @Success 400 {object} map[string]interface{}
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/authentication [post]
 func (r *Handler) Authentication(c *gin.Context) {
+	username := c.Query("username")
 	var token model.Token
 	if err := c.ShouldBind(&token); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := r.usecase.Users.Authentication(token.EncodeToken); err != nil {
+	err := r.usecase.Users.Authentication(token.EncodeToken, username)
+	if errors.Is(err, common.FailedTokenUsername) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	if errors.Is(err, common.FailedToken) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}

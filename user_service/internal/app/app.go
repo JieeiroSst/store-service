@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/internal/delivery/http"
@@ -16,9 +17,10 @@ import (
 )
 
 func NewApp(router *gin.Engine) {
-	conf, err := config.ReadConf("config.yml")
+	dir := "config.yml"
+	conf, err := config.ReadConf(dir)
 	if err != nil {
-
+		log.Fatal(err)
 	}
 
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
