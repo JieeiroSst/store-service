@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/JieeiroSst/authorize-service/config"
 	"github.com/JieeiroSst/authorize-service/internal/delivery/http"
@@ -53,5 +54,10 @@ func NewApp(router *gin.Engine) {
 
 	http.Init(router)
 
-	router.Run(conf.Server.ServerPort)
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = conf.Server.ServerPort
+	}
+	router.Run(":" + port)
 }
