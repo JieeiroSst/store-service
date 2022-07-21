@@ -13,6 +13,7 @@ type Config struct {
 	RabbitMQ        RabbitMQ
 	Redis			Redis
 	Email           Email
+	Postgres PostgresConfig
 }
 
 type ServerConfig struct {
@@ -36,6 +37,15 @@ type RabbitMQ struct {
 	WorkerPoolSize int
 }
 
+type PostgresConfig struct {
+	PostgresqlHost     string
+	PostgresqlPort     string
+	PostgresqlUser     string
+	PostgresqlPassword string
+	PostgresqlDbname   string
+	PostgresqlSSLMode  bool
+	PgDriver           string
+}
 
 type MysqlConfig struct {
 	MysqlHost     string

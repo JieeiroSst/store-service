@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/internal/delivery/http"
@@ -10,7 +11,7 @@ import (
 	"github.com/JIeeiroSst/user-service/internal/usecase"
 	"github.com/JIeeiroSst/user-service/model"
 	"github.com/JIeeiroSst/user-service/pkg/hash"
-	"github.com/JIeeiroSst/user-service/pkg/mysql"
+	"github.com/JIeeiroSst/user-service/pkg/postgres"
 	"github.com/JIeeiroSst/user-service/pkg/snowflake"
 	"github.com/JIeeiroSst/user-service/pkg/token"
 	"github.com/gin-gonic/gin"
@@ -23,21 +24,18 @@ func NewApp(router *gin.Engine) {
 		log.Fatal(err)
 	}
 
-	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		conf.Mysql.MysqlUser,
-		conf.Mysql.MysqlPassword,
-		conf.Mysql.MysqlHost,
-		conf.Mysql.MysqlPort,
-		conf.Mysql.MysqlDbname,
-	)
-	mysqlOrm := mysql.NewMysqlConn(dns)
-	mysqlOrm.AutoMigrate(&model.Users{})
+	dsn:=fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		conf.Postgres.PostgresqlHost,conf.Postgres.PostgresqlUser,conf.Postgres.PostgresqlPassword,
+		conf.Postgres.PostgresqlDbname,conf.Postgres.PostgresqlPort)
+
+	postgresConn:= postgres.NewPostgresConn(dsn)
+	postgresConn.AutoMigrate(&model.Users{})
 
 	snowflake := snowflake.NewSnowflake()
 	hash := hash.NewHash()
 	token := token.NewToken(conf)
 
-	repository := repository.NewRepositories(mysqlOrm)
+	repository := repository.NewRepositories(postgresConn)
 
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repos:     repository,
@@ -50,5 +48,10 @@ func NewApp(router *gin.Engine) {
 
 	http.Init(router)
 
-	router.Run(conf.Server.PortServer)
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = conf.Server.PortServer
+	}
+	router.Run(":" + port)
 }

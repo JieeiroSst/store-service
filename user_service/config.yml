@@ -1,14 +1,14 @@
 server:
-  PortServer: :1235
+  PortServer: 1235
 
 secretService:
   JwtSecretKey: secretkey
 
 mysql:
-  MysqlHost:     localhost
+  MysqlHost:     databases-auth.000webhost.com
   MysqlPort:     3306
   MysqlUser:     root
-  MysqlPassword: 1234
+  MysqlPassword: 1T|$aw/fRpJL64E<
   MysqlDbname:   user
   MysqlDriver:   mysql
 
@@ -32,3 +32,11 @@ email:
   PasswordEmail: "#############"
   Port: 587
   Host: "smtp.gmail.com"
+
+postgres:
+  PostgresqlHost: kesavan.db.elephantsql.com
+  PostgresqlPort: 5432
+  PostgresqlUser: kekxrkco
+  PostgresqlPassword: 61zIfY1T1lbg9A_xsJMYxetluLZyvuit
+  PostgresqlDbname: kekxrkco
+  PgDriver: pgx
