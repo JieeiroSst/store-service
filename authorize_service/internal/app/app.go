@@ -10,6 +10,7 @@ import (
 	"github.com/JieeiroSst/authorize-service/internal/repository"
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
 	"github.com/JieeiroSst/authorize-service/pkg/mysql"
+	"github.com/JieeiroSst/authorize-service/pkg/otp"
 	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
@@ -42,12 +43,14 @@ func NewApp(router *gin.Engine) {
 	}
 
 	var snowflakeData = snowflake.NewSnowflake()
+	var otp = otp.NewOtp(conf.Secret.JwtSecretKey)
 
 	repository := repository.NewRepositories(mysqlOrm)
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repos:     repository,
 		Snowflake: snowflakeData,
 		Adapter:   adapter,
+		OTP:       otp,
 	})
 
 	http := http.NewHandler(*usecase, adapter)

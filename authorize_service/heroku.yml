@@ -7,4 +7,4 @@ build:
     web: Dockerfile
 
 run:
-  web: authorize_service
+  web: authorize-service
