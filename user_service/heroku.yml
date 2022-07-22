@@ -4,7 +4,7 @@ build:
   languages:
     - go
   docker:
-    web: Dockerfile
+    web1: Dockerfile
 
 run:
-  web: user_service
+  web1: user_service
