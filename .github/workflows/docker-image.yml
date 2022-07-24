@@ -1,0 +1,36 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  authorize_service:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: cd authorize_service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+  user_service:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: cd user_service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+  
+  post_service:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: cd post_service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
