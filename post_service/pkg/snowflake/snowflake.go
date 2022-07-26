@@ -7,17 +7,17 @@ import (
 type snowflakeData struct {}
 
 type SnowflakeData interface {
-	GearedID() int
+	GearedID() string
 }
 
 func NewSnowflake() SnowflakeData {
 	return &snowflakeData{}
 }
 
-func (s *snowflakeData) GearedID() int {
+func (s *snowflakeData) GearedID() string {
 	n, err := snowflake.NewNode(1)
 	if err != nil {
-		return 0
+		return ""
 	}
-	return int(n.Generate().Int64())
+	return n.Generate().String()
 }
