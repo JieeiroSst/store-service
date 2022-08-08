@@ -1,0 +1,11 @@
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/tokio_rustls-c94e3cb67add8e3a.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/client.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/handshake.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/server.rs
+
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/libtokio_rustls-c94e3cb67add8e3a.rlib: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/client.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/handshake.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/server.rs
+
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/tokio_rustls-c94e3cb67add8e3a.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/client.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/handshake.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/server.rs
+
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/lib.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/client.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/mod.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/common/handshake.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-rustls-0.23.4/src/server.rs:

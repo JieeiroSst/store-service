@@ -1,0 +1,13 @@
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/indexmap-2d4d4ff3478a7ecc.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/macros.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/equivalent.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/mutable_keys.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/util.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map/core.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map/core/raw.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/set.rs
+
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/indexmap-2d4d4ff3478a7ecc.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/macros.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/equivalent.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/mutable_keys.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/util.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map/core.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map/core/raw.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/set.rs
+
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/lib.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/macros.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/equivalent.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/mutable_keys.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/util.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map/core.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/map/core/raw.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/indexmap-1.9.1/src/set.rs:

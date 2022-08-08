@@ -1,0 +1,11 @@
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/futures_task-771e936838d805e1.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/spawn.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/arc_wake.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/waker.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/waker_ref.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/future_obj.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/noop_waker.rs
+
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/futures_task-771e936838d805e1.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/spawn.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/arc_wake.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/waker.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/waker_ref.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/future_obj.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/noop_waker.rs
+
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/lib.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/spawn.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/arc_wake.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/waker.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/waker_ref.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/future_obj.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-task-0.3.21/src/noop_waker.rs:

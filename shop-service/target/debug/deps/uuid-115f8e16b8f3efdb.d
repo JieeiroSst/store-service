@@ -1,0 +1,12 @@
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/uuid-115f8e16b8f3efdb.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/builder/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/builder/error.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/error.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/parser/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/parser/error.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/prelude.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/adapter/mod.rs
+
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/uuid-115f8e16b8f3efdb.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/builder/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/builder/error.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/error.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/parser/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/parser/error.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/prelude.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/adapter/mod.rs
+
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/lib.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/builder/mod.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/builder/error.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/error.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/parser/mod.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/parser/error.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/prelude.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/uuid-0.8.2/src/adapter/mod.rs:
