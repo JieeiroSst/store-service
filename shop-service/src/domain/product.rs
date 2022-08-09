@@ -1,6 +1,10 @@
-use std::convert::TryFrom;
+use async_trait::async_trait;
+use chrono::NaiveDateTime;
+use serde::{Deserialize, Serialize};
 
-#[derive(StructOfArray)]
+use crate::core::{QueryParams, RepoResult, ResultPaging};
+
+#[derive(StructOfArray,Debug, Clone, Serialize, Deserialize)]
 pub struct Product {
     pub id: u16,
     pub name: String,
@@ -12,19 +16,11 @@ pub struct Product {
     pub updated_at: DateTime<Utc>,
 }
 
-pub trait Product {
-    pub fn Create(product: Product) -> Result<Self, Self::Error>;
-    pub fn Update(id: u16, product: Product) -> Result<Self, Self::Error>;
-
+#[async_trait]
+pub trait ProductRepo: Send + Sync {
+    async fn Create(&self, product: Product) ->  RepoResult<()>;
+    async fn Update(&self, id: u16, product: Product) ->  RepoResult<()>;
+    async fn delete(&self, id: &u16) -> RepoResult<()>;
+    async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<Product>>;
+    async fn find(&self, id: &u16) -> RepoResult<Product>;
 }
-
-pub impl Product for Product {
-    type Error = ();
-    fn Create(product: Product) -> Result<Self, Self::Error> {
-        let isCheck: bool;
-        if !isCheck {
-            Error(())
-        }
-        Ok(Self(product))
-    }
-} 

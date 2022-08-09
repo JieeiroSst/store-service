@@ -10,11 +10,21 @@ pub struct CartItem {
     pub cart_id: u16,
     pub product: Product,
     pub total: u16,
+    pub count: u16,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
 
+#[derive(Debug, Clone)]
+pub struct UpdateCartItem {
+    pub product: Product,
+    pub total: u16,
+    pub count: u16,
+}
+
 #[async_trait]
 pub trait CartItemRepo: Send + Sync {
-    
+    async fn create(&self, cart: &CartItem) -> RepoResult<()>;
+    async fn update(&self, cart_id: &u16, update_cartItem: &UpdateCartItem) -> RepoResult<CartItem>;
+    async fn delete(&self, cart_id: &u16) -> RepoResult<()>;
 }
