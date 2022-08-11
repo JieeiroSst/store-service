@@ -43,3 +43,12 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: cd shop-service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+  keikibook:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: cd keikibook && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
