@@ -11,8 +11,8 @@ pub struct CartItem {
     pub product: Product,
     pub total: u16,
     pub count: u16,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Debug, Clone)]
