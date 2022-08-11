@@ -1,26 +1,45 @@
-# Rust as the base image
-FROM rust:1.49
+FROM rust:latest AS builder
 
-# 1. Create a new empty shell project
-RUN USER=root cargo new --bin shop-service
-WORKDIR /shop-service
+RUN rustup target add x86_64-unknown-linux-musl
+RUN apt update && apt install -y musl-tools musl-dev
+RUN update-ca-certificates
 
-# 2. Copy our manifests
-COPY ./Cargo.lock ./Cargo.lock
-COPY ./Cargo.toml ./Cargo.toml
+# Create appuser
+ENV USER=myip
+ENV UID=10001
 
-# 3. Build only the dependencies to cache them
-RUN cargo build --release
-RUN rm src/*.rs
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    "${USER}"
 
-# 4. Now that the dependency is built, copy your source code
-COPY ./src ./src
 
-# 5. Build for release.
-RUN rm ./target/release/deps/shop-service*
-RUN cargo install --path .
+WORKDIR /myip
 
-#Port
+COPY ./ .
+
+RUN cargo build --target x86_64-unknown-linux-musl --release
+
+####################################################################################################
+## Final image
+####################################################################################################
+FROM scratch
+
+# Import from builder.
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /etc/group /etc/group
+
+WORKDIR /myip
+
+# Copy our build
+COPY --from=builder /myip/target/x86_64-unknown-linux-musl/release/myip ./
+
+# Use an unprivileged user.
+USER myip:myip
 EXPOSE 6767
 
-CMD ["shop-service"]
+CMD ["/myip/myip"]
