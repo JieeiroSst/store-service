@@ -9,8 +9,8 @@ pub struct Cart {
     pub id: u16,
     pub total: u16,
     pub user_id: u16,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
     pub destroy: bool
 }
 

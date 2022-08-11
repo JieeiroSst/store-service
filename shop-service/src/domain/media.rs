@@ -1,11 +1,15 @@
-use std::convert::TryFrom;
+use async_trait::async_trait;
+use chrono::NaiveDateTime;
+use serde::{Deserialize, Serialize};
 
-#[derive(StructOfArray)]
+use crate::core::{QueryParams, RepoResult, ResultPaging};
+
+#[derive(StructOfArray,Debug, Clone, Serialize, Deserialize)]
 pub struct Media  {
     pub id: u16,
     pub name: String,
     pub url: String,
     pub description: String,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }

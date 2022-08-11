@@ -12,8 +12,8 @@ pub struct Product {
     pub price: u16,
     pub media_id: u16,
     pub media: Media,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 #[async_trait]
