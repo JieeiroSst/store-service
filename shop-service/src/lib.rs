@@ -1,4 +1,4 @@
-#[macro_use]
+#[warn(unused_imports)]
 extern crate diesel;
 extern crate dotenv;
 

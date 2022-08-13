@@ -11,6 +11,7 @@ pub struct Product {
     pub description: String,
     pub price: u16,
     pub media_id: u16,
+    pub destroy: bool,
     pub media: Media,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,

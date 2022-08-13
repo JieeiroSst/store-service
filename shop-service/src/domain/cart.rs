@@ -18,6 +18,12 @@ pub struct Cart {
 pub struct UpdateCart {
     pub total: u16,
     pub user_id: u16,
+    pub destroy: bool
+}
+
+#[derive(Debug, Clone)]
+pub struct DeleteCart {
+    pub destroy: bool
 }
 
 #[async_trait]
@@ -26,6 +32,7 @@ pub trait CartRepo: Send + Sync {
     async fn find(&self, id: &u16) -> RepoResult<Cart>;
     async fn find_by_user(&self, user_id: &u16) -> RepoResult<Cart>;
     async fn update(&self, id: &u16, update_cart: &UserUpdate) -> RepoResult<Cart>;
-    async fn delete(&self, user_id: &u16) -> RepoResult<()>;
+    async fn delete(&self, user_id: &u16, delete_cart: &DeleteCart) -> RepoResult<()>;
     async fn create(&self, cart: &Cart) -> RepoResult<()>;
+    async fn order(&self, destroy: bool) -> RepoResult<Cart>;
 }

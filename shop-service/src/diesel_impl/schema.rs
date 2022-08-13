@@ -5,6 +5,7 @@ table! {
         user_id -> Integer,
         created_at -> Nullable<Datetime>,
         updated_at -> Nullable<Datetime>,
+        destroy -> Nullable<Bool>,
     }
 }
 
@@ -24,6 +25,7 @@ table! {
         name -> Text,
         url -> Text,
         description -> Text,
+        destroy -> Nullable<Bool>,
         created_at -> Nullable<Datetime>,
         updated_at -> Nullable<Datetime>,
     }
