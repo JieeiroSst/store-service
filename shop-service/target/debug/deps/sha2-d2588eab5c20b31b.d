@@ -1,0 +1,12 @@
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/sha2-d2588eab5c20b31b.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/consts.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256/soft.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512/soft.rs
+
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/libsha2-d2588eab5c20b31b.rlib: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/consts.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256/soft.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512/soft.rs
+
+/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/sha2-d2588eab5c20b31b.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/consts.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256/soft.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512/soft.rs
+
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/lib.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/consts.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha256/soft.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.9.9/src/sha512/soft.rs:
