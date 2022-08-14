@@ -20,7 +20,9 @@ pub struct CartDiesel {
     pub user_id: u16,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
-    pub destroy: bool
+    pub destroy: bool,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
 }
 
 impl Into<Cart> for CartDiesel {
@@ -32,6 +34,8 @@ impl Into<Cart> for CartDiesel {
             created_at: self.created_at,
             updated_at: self.updated_at,
             destroy: self.destroy,
+            created_at: self.created_at,
+            updated_at: self.updated_at,
         }
     }
 }
@@ -45,13 +49,15 @@ impl From<Cart> for CartDiesel {
             created_at: self.created_at,
             updated_at: self.updated_at,
             destroy: self.destroy,
+            created_at: self.created_at,
+            updated_at: self.updated_at,
         }
     }
 }
 
 #[derive(Debug, Clone, AsChangeset)]
 #[table_name = "carts"]
-struct CartUpdateDiesel {
+pub struct CartUpdateDiesel {
     pub total: u16,
     pub user_id: u16,
     pub destroy: bool
