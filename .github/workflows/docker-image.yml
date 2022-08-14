@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd authorize_service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: cd authorize_service && docker build . --file Dockerfile --tag authorize_service:$(date +%s)
 
   user_service:
 
@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd user_service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: cd user_service && docker build . --file Dockerfile --tag user_service:$(date +%s)
   
   post_service:
 
@@ -33,7 +33,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd post_service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: cd post_service && docker build . --file Dockerfile --tag post_service:$(date +%s)
 
   shop_service:
 
@@ -42,7 +42,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd shop-service && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: cd shop-service && docker build . --file Dockerfile --tag shop_service:$(date +%s)
 
   keikibook:
 
@@ -51,4 +51,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd keikibook && docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: cd keikibook && docker build . --file Dockerfile --tag keikibook:$(date +%s)
