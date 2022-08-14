@@ -1,16 +1,26 @@
-name: CI
-on: [push, pull_request]
+name: Typescript
+
+on:
+  push:
+    branches:
+      - develop
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Development Code
+        uses: actions/checkout@v2
+      - name: Use Node.js 17.x
+        uses: actions/setup-node@v1
         with:
-          node-version: "lts/*"
-          cache: npm
-
-      - run: npm run build
-      - run: npm start
+          node-version: 17.x
+      - run: npm install
+      - run: npm run build --if-present
+      # - name: Deploy to Heroku
+      #   uses: akhileshns/heroku-deploy@v3.12.12
+      #   with:
+      #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+      #     heroku_app_name: 'github-actions-heroku-develop'
+      #     heroku_email: 'zafarsaleem3@gmail.com'
