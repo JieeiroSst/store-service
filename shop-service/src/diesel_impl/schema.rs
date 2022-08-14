@@ -14,6 +14,8 @@ table! {
         id -> Unsigned<Bigint>,
         cart_id -> Integer,
         total -> Integer,
+        amount -> Integer,
+        destroy -> Nullable<Bool>,
         created_at -> Nullable<Datetime>,
         updated_at -> Nullable<Datetime>,
     }
