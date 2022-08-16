@@ -1,8 +1,7 @@
 package usecase
 
 import (
-	"fmt"
-
+	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/internal/repository"
 	"github.com/JieeiroSst/authorize-service/model"
 	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
@@ -11,7 +10,7 @@ import (
 )
 
 type Casbins interface {
-	EnforceCasbin(auth model.CasbinAuth) (bool, error)
+	EnforceCasbin(auth model.CasbinAuth) error
 	CasbinRuleAll() ([]model.CasbinRule, error)
 	CasbinRuleById(id int) (*model.CasbinRule, error)
 	CreateCasbinRule(casbin model.CasbinRule) error
@@ -37,17 +36,23 @@ func NewCasbinUsecase(casbinRepo repository.Casbins,
 	}
 }
 
-func (a *CasbinUsecase) EnforceCasbin(auth model.CasbinAuth) (bool, error) {
+func (a *CasbinUsecase) EnforceCasbin(auth model.CasbinAuth) error {
 	enforcer, err := casbin.NewEnforcer("config/conf/rbac_model.conf", a.adapter)
 	if err != nil {
-		return false, fmt.Errorf("failed to create casbin enforcer: %w", err)
+		return common.Failedenforcer
 	}
 	err = enforcer.LoadPolicy()
 	if err != nil {
-		return false, fmt.Errorf("failed to load policy from DB: %w", err)
+		return common.FailedDB
 	}
 	ok, err := enforcer.Enforce(auth.Sub, auth.Obj, auth.Act)
-	return ok, err
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return common.NotAllow
+	}
+	return nil
 }
 
 func (a *CasbinUsecase) CasbinRuleAll() ([]model.CasbinRule, error) {

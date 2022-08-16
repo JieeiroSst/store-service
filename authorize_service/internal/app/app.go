@@ -14,6 +14,7 @@ import (
 	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
+	"github.com/JieeiroSst/authorize-service/pkg/goose"
 )
 
 type App struct {
@@ -37,6 +38,17 @@ func NewApp(router *gin.Engine) {
 	if err != nil {
 		log.Println(err)
 	}
+
+	db, err := mysqlOrm.DB()
+	if err != nil {
+		log.Println(err)
+	}
+
+	migration := goose.NewMigration(db)
+	if err := migration.RunMigration(); err != nil {
+		log.Println(err)
+	}
+
 	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
 	if err != nil {
 		log.Println(err)
