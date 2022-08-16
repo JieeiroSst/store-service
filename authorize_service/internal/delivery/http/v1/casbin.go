@@ -44,16 +44,22 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 		Act: method,
 	}
 
-	isOk, err := h.usecase.Casbins.EnforceCasbin(auth)
-	if err != nil {
+	err := h.usecase.Casbins.EnforceCasbin(auth)
+	if errors.Is(err , common.FailedDB) {
 		ctx.JSON(500, gin.H{
 			"code":    500,
 			"message": "INTERVAL SERVER",
 		})
 		return
 	}
-
-	if !isOk {
+	if errors.Is(err , common.Failedenforcer) {
+		ctx.JSON(500, gin.H{
+			"code":    500,
+			"message": "INTERVAL SERVER",
+		})
+		return
+	}
+	if errors.Is(err, common.NotAllow) {
 		ctx.JSON(401, gin.H{
 			"code":    401,
 			"message": "THE CUSTOMER IS NOT AUTHORIZED FOR THE CONTENT REQUESTED",
