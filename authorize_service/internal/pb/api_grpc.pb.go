@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.5
-// source: api.proto
+// source: internal/proto/api.proto
 
-package pb
+package proto
 
 import (
 	context "context"
@@ -101,5 +101,5 @@ var Authorize_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api.proto",
+	Metadata: "internal/proto/api.proto",
 }
