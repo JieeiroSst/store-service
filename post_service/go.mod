@@ -101,3 +101,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	howett.net/plist v0.0.0-20181124034731-591f970eefbb // indirect
 )
+
+replace google.golang.org/grpc => github.com/grpc/grpc-go v1.48.0
