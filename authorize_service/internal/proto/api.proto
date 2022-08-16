@@ -1,11 +1,24 @@
 syntax = "proto3";
 
-package proto;
+package project_grpc;
 
-option go_package = "./pb/";
+option go_package = "/.;pb";
 
-import "message.proto";
+message CasbinRuleRequest {
+    int32 id  = 1;
+    string ptypr = 2;
+    string v0 = 3;
+    string v1 = 4;
+    string v2 = 5;
+    string v3 = 6;
+    string v4 = 7;
+    string v5 = 8;
+};
 
+message CasbinRuleReponse {
+    string message = 1;
+    bool error = 2;
+};
 service Authorize  {
-    rpc EnforceCasbin(CasbinRule) returns (ResultCasbinRule) {}
+    rpc EnforceCasbin(CasbinRuleRequest) returns (CasbinRuleReponse) {}
 }
