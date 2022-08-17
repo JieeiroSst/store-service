@@ -47,7 +47,6 @@ func (c *authorizeClient) EnforceCasbin(ctx context.Context, in *CasbinRuleReque
 // for forward compatibility
 type AuthorizeServer interface {
 	EnforceCasbin(context.Context, *CasbinRuleRequest) (*CasbinRuleReponse, error)
-	mustEmbedUnimplementedAuthorizeServer()
 }
 
 // UnimplementedAuthorizeServer must be embedded to have forward compatible implementations.
@@ -56,14 +55,6 @@ type UnimplementedAuthorizeServer struct {
 
 func (UnimplementedAuthorizeServer) EnforceCasbin(context.Context, *CasbinRuleRequest) (*CasbinRuleReponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnforceCasbin not implemented")
-}
-func (UnimplementedAuthorizeServer) mustEmbedUnimplementedAuthorizeServer() {}
-
-// UnsafeAuthorizeServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AuthorizeServer will
-// result in compilation errors.
-type UnsafeAuthorizeServer interface {
-	mustEmbedUnimplementedAuthorizeServer()
 }
 
 func RegisterAuthorizeServer(s grpc.ServiceRegistrar, srv AuthorizeServer) {

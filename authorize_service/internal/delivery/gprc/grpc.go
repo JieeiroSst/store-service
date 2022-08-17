@@ -20,9 +20,9 @@ func (s *GRPCServer) NewGRPCServer(usecase usecase.Casbins) {
 
 func (s *GRPCServer) EnforceCasbin(ctx context.Context, req *pb.CasbinRuleRequest) (*pb.CasbinRuleReponse, error) {
 	casbin := model.CasbinAuth{
-		Sub: req.Ptypr,
-		Obj: req.V0,
-		Act: req.V2,
+		Sub: req.Sub,
+		Obj: req.Obj,
+		Act: req.Act,
 	}
 
 	err := s.usecase.EnforceCasbin(casbin)
