@@ -2,17 +2,13 @@ syntax = "proto3";
 
 package project_grpc;
 
-option go_package = "./internal/pb/.;proto";
+option go_package = "./internal/pb/.;pb";
 
 message CasbinRuleRequest {
-    int32 id  = 1;
-    string ptypr = 2;
-    string v0 = 3;
-    string v1 = 4;
-    string v2 = 5;
-    string v3 = 6;
-    string v4 = 7;
-    string v5 = 8;
+    string sub = 1;
+    string obj = 2;
+    string act = 3;
+
 };
 
 message CasbinRuleReponse {

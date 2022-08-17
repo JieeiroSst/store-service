@@ -81,7 +81,7 @@ func NewApp(router *gin.Engine) {
 	router.Run(":" + port)
 }
 
-func (a *App) NewGRPCServer() {
+func NewGRPCServer() {
 	conf, err := config.ReadConf("config.yml")
 	if err != nil {
 		log.Println(err)

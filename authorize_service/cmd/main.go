@@ -8,5 +8,9 @@ import (
 func main() {
 	router := gin.Default()
 
+	go func ()  {
+		app.NewGRPCServer()
+	}()
+
 	app.NewApp(router)
 }
