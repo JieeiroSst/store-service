@@ -16,6 +16,7 @@ type Config struct {
 
 type ServerConfig struct {
 	ServerPort string
+	GRPCServer string
 }
 
 type MysqlConfig struct {
