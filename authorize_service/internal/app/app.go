@@ -3,18 +3,22 @@ package app
 import (
 	"fmt"
 	"log"
+	"net"
 	"os"
 
 	"github.com/JieeiroSst/authorize-service/config"
 	"github.com/JieeiroSst/authorize-service/internal/delivery/http"
+	"github.com/JieeiroSst/authorize-service/internal/pb"
 	"github.com/JieeiroSst/authorize-service/internal/repository"
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
+	"github.com/JieeiroSst/authorize-service/pkg/goose"
 	"github.com/JieeiroSst/authorize-service/pkg/mysql"
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
 	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
-	"github.com/JieeiroSst/authorize-service/pkg/goose"
+	"google.golang.org/grpc"
+	grpcServer "github.com/JieeiroSst/authorize-service/internal/delivery/gprc"
 )
 
 type App struct {
@@ -75,4 +79,49 @@ func NewApp(router *gin.Engine) {
 		port = conf.Server.ServerPort
 	}
 	router.Run(":" + port)
+}
+
+func (a *App) NewGRPCServer() {
+	conf, err := config.ReadConf("config.yml")
+	if err != nil {
+		log.Println(err)
+	}
+	//"test:test@(localhost:3306)/test"
+	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+		conf.Mysql.MysqlUser,
+		conf.Mysql.MysqlPassword,
+		conf.Mysql.MysqlHost,
+		conf.Mysql.MysqlPort,
+		conf.Mysql.MysqlDbname,
+	)
+	mysqlOrm, err := mysql.NewMysqlConn(dns)
+	if err != nil {
+		log.Println(err)
+	}
+	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
+	if err != nil {
+		log.Println(err)
+	}
+
+	var snowflakeData = snowflake.NewSnowflake()
+	var otp = otp.NewOtp(conf.Secret.JwtSecretKey)
+	repository := repository.NewRepositories(mysqlOrm)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos:     repository,
+		Snowflake: snowflakeData,
+		Adapter:   adapter,
+		OTP:       otp,
+	})
+
+	s := grpc.NewServer()
+	srv := &grpcServer.GRPCServer{}
+	srv.NewGRPCServer(usecase)
+	pb.RegisterAuthorizeServer(s, srv)
+	l, err := net.Listen("tcp", conf.Server.GRPCServer)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := s.Serve(l); err != nil {
+		log.Fatal(err)
+	}
 }
