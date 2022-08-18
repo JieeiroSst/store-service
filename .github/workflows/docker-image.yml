@@ -60,4 +60,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: cd payment_service && docker build . --file Dockerfile --tag keikibook:$(date +%s)
+      run: cd payment_service && docker build . --file Dockerfile --tag payment_service:$(date +%s)
+
+  notification_service:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: cd notification_service && docker build . --file Dockerfile --tag keikibook:$(date +%s)
