@@ -28,6 +28,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 17.x
-      - run: npm cd chat_service && install
-      - run: npm cd chat_service && run build --if-present
+      - run: cd chat_service && npm install
+      - run: cd chat_service && npm run build --if-present
 
