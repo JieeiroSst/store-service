@@ -59,7 +59,7 @@ jobs:
       run: cd post_service && go test -v ./...
 
   payment_service:
-    name: post_service
+    name: payment_service
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -76,7 +76,7 @@ jobs:
       run: cd payment_service && go test -v ./...
     
   notification_service:
-    name: post_service
+    name: notification_service
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
