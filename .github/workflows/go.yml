@@ -57,3 +57,20 @@ jobs:
 
     - name: Test
       run: cd post_service && go test -v ./...
+
+  payment_service:
+    name: post_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+
+    - name: Build
+      run: cd payment_service && go build -v ./...
+
+    - name: Test
+      run: cd payment_service && go test -v ./...
