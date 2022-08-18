@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package project_grpc;
+
+option go_package = "./proto/apis";
+
+message CasbinRuleRequest {
+    string sub = 1;
+    string obj = 2;
+    string act = 3;
+};
+
+message CasbinRuleReponse {
+    string message = 1;
+    bool error = 2;
+};
+
+
+service Authorize  {
+    rpc EnforceCasbin(CasbinRuleRequest) returns (CasbinRuleReponse) {}
+}
