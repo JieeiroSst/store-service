@@ -70,3 +70,12 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image
       run: cd notification_service && docker build . --file Dockerfile --tag keikibook:$(date +%s)
+
+  chat_service:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: cd chat_service && docker build . --file Dockerfile --tag keikibook:$(date +%s)
