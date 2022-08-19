@@ -22,21 +22,23 @@ import (
 )
 
 type App struct {
+	config *config.Config
 }
 
-func NewApp(router *gin.Engine) {
-	fmt.Println("Wellcome Server Authorize")
-	conf, err := config.ReadConf("config.yml")
-	if err != nil {
-		log.Println(err)
+func NewApp(config *config.Config) *App {
+	return &App{
+		config: config,
 	}
-	//"test:test@(localhost:3306)/test"
+}
+
+func (a *App) NewServerApp(router *gin.Engine) {
+	fmt.Println("Wellcome Server Authorize")
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		conf.Mysql.MysqlUser,
-		conf.Mysql.MysqlPassword,
-		conf.Mysql.MysqlHost,
-		conf.Mysql.MysqlPort,
-		conf.Mysql.MysqlDbname,
+		a.config.Mysql.MysqlUser,
+		a.config.Mysql.MysqlPassword,
+		a.config.Mysql.MysqlHost,
+		a.config.Mysql.MysqlPort,
+		a.config.Mysql.MysqlDbname,
 	)
 	mysqlOrm := mysql.NewMysqlConn(dns)
 
@@ -56,7 +58,7 @@ func NewApp(router *gin.Engine) {
 	}
 
 	var snowflakeData = snowflake.NewSnowflake()
-	var otp = otp.NewOtp(conf.Secret.JwtSecretKey)
+	var otp = otp.NewOtp(a.config.Secret.JwtSecretKey)
 
 	repository := repository.NewRepositories(mysqlOrm)
 	usecase := usecase.NewUsecase(usecase.Dependency{
@@ -73,23 +75,18 @@ func NewApp(router *gin.Engine) {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		port = conf.Server.ServerPort
+		port = a.config.Server.ServerPort
 	}
 	router.Run(":" + port)
 }
 
-func NewGRPCServer() {
-	conf, err := config.ReadConf("config.yml")
-	if err != nil {
-		log.Println(err)
-	}
-	//"test:test@(localhost:3306)/test"
+func (a *App) NewGRPCServer() {
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		conf.Mysql.MysqlUser,
-		conf.Mysql.MysqlPassword,
-		conf.Mysql.MysqlHost,
-		conf.Mysql.MysqlPort,
-		conf.Mysql.MysqlDbname,
+		a.config.Mysql.MysqlUser,
+		a.config.Mysql.MysqlPassword,
+		a.config.Mysql.MysqlHost,
+		a.config.Mysql.MysqlPort,
+		a.config.Mysql.MysqlDbname,
 	)
 	mysqlOrm := mysql.NewMysqlConn(dns)
 
@@ -99,7 +96,7 @@ func NewGRPCServer() {
 	}
 
 	var snowflakeData = snowflake.NewSnowflake()
-	var otp = otp.NewOtp(conf.Secret.JwtSecretKey)
+	var otp = otp.NewOtp(a.config.Secret.JwtSecretKey)
 	repository := repository.NewRepositories(mysqlOrm)
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repos:     repository,
@@ -112,7 +109,7 @@ func NewGRPCServer() {
 	srv := &grpcServer.GRPCServer{}
 	srv.NewGRPCServer(usecase)
 	pb.RegisterAuthorizeServer(s, srv)
-	l, err := net.Listen("tcp", conf.Server.GRPCServer)
+	l, err := net.Listen("tcp", a.config.Server.GRPCServer)
 	if err != nil {
 		log.Fatal(err)
 	}
