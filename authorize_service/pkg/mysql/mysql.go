@@ -16,12 +16,17 @@ type MysqlConnect struct {
 	db *gorm.DB
 }
 
-func NewMysqlConn(dns string) (*gorm.DB, error) {
-	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
-	instance = &MysqlConnect{db: db}
+func GetMysqlConnInstance(dns string) *MysqlConnect {
+	once.Do(func() {
+		db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
+		if err != nil {
+			panic(err)
+		}
+		instance = &MysqlConnect{db: db}
+	})
+	return instance
+}
 
-	return db, nil
+func NewMysqlConn(dns string) *gorm.DB {
+	return GetMysqlConnInstance(dns).db
 }

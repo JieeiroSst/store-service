@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/JieeiroSst/authorize-service/config"
+	grpcServer "github.com/JieeiroSst/authorize-service/internal/delivery/gprc"
 	"github.com/JieeiroSst/authorize-service/internal/delivery/http"
 	"github.com/JieeiroSst/authorize-service/internal/pb"
 	"github.com/JieeiroSst/authorize-service/internal/repository"
@@ -18,7 +19,6 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
-	grpcServer "github.com/JieeiroSst/authorize-service/internal/delivery/gprc"
 )
 
 type App struct {
@@ -38,10 +38,7 @@ func NewApp(router *gin.Engine) {
 		conf.Mysql.MysqlPort,
 		conf.Mysql.MysqlDbname,
 	)
-	mysqlOrm, err := mysql.NewMysqlConn(dns)
-	if err != nil {
-		log.Println(err)
-	}
+	mysqlOrm := mysql.NewMysqlConn(dns)
 
 	db, err := mysqlOrm.DB()
 	if err != nil {
@@ -94,10 +91,8 @@ func NewGRPCServer() {
 		conf.Mysql.MysqlPort,
 		conf.Mysql.MysqlDbname,
 	)
-	mysqlOrm, err := mysql.NewMysqlConn(dns)
-	if err != nil {
-		log.Println(err)
-	}
+	mysqlOrm := mysql.NewMysqlConn(dns)
+
 	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
 	if err != nil {
 		log.Println(err)

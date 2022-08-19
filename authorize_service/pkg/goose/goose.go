@@ -17,12 +17,9 @@ func NewMigration(db *sql.DB) *Migration {
 }
 
 func (m *Migration) RunMigration() error {
-	if err := goose.SetDialect("mysql"); err != nil {
-		return err 
+	err := goose.Up(m.db, "./script/migrations")
+	if err != nil {
+		return err
 	}
-
-	if err := goose.Up(m.db, "./script/migrations"); err != nil {
-		return err 
-	}
-	return nil 
+	return nil
 }
