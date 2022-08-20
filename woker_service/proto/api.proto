@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package project_grpc;
+
+option go_package = "./pb/.;pb";
