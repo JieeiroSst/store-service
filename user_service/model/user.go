@@ -14,6 +14,7 @@ type Users struct {
 	Checked    bool      `json:"checked"`
 	CreateTime time.Time `json:"create_time"`
 	UpdateTime time.Time `json:"update_time" gorm:"default:null"`
+	Roles      []Role    `gorm:"many2many:user_roles;"`
 }
 
 type Login struct {

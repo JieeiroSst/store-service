@@ -35,5 +35,7 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 	v1 := api.Group("/v1")
 	{
 		h.initUserRoutes(v1)
+		h.initRoleRoutes(v1)
+		h.initRoleItemRoutes(v1)
 	}
 }
