@@ -15,7 +15,7 @@ func NewHandler(usecase *usecase.Usecase) *Handler {
 	}
 }
 
-// @title           Swagger Example API
+// @title           User Service API
 // @version         1.0
 // @description     This is a sample server celler server.
 // @termsOfService  http://swagger.io/terms/
@@ -27,7 +27,7 @@ func NewHandler(usecase *usecase.Usecase) *Handler {
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8080
+// @host      localhost:1235
 // @BasePath  /api/v1
 
 // @securityDefinitions.basic  BasicAuth
