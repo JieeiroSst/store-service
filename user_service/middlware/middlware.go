@@ -25,7 +25,11 @@ func (m *Middlware) AccessControl() gin.HandlerFunc {
 	}
 	client := pb.NewAuthorizeClient(conn)
 	return func(ctx *gin.Context) {
-		req := &pb.CasbinRuleRequest{}
+		req := &pb.CasbinRuleRequest{
+			Sub: "",
+			Obj: ctx.Request.URL.Path,
+			Act: ctx.Request.Method,
+		}
 
 		_, err := client.EnforceCasbin(ctx, req)
 		if err != nil {
