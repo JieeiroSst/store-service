@@ -2,27 +2,29 @@ package config
 
 import (
 	"fmt"
-	"github.com/ghodss/yaml"
 	"io/ioutil"
+
+	"github.com/ghodss/yaml"
 )
 
 type Config struct {
-	Server          ServerConfig
-	Mysql           MysqlConfig
-	Secret 		    SecretService
-	RabbitMQ        RabbitMQ
-	Redis			Redis
-	Email           Email
+	Server   ServerConfig
+	Mysql    MysqlConfig
+	Secret   SecretService
+	RabbitMQ RabbitMQ
+	Redis    Redis
+	Email    Email
 	Postgres PostgresConfig
 }
 
 type ServerConfig struct {
-	PortServer    string
-	PprofPort     string
+	PortServer     string
+	PortClientGrpc string
+	PortServerGrpc string
 }
 
 type Redis struct {
-	Dns           string
+	Dns string
 }
 
 type RabbitMQ struct {
