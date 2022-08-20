@@ -29,7 +29,7 @@ func NewApp(router *gin.Engine) {
 		conf.Postgres.PostgresqlDbname,conf.Postgres.PostgresqlPort)
 
 	postgresConn:= postgres.NewPostgresConn(dsn)
-	postgresConn.AutoMigrate(&model.Users{})
+	postgresConn.AutoMigrate(&model.Users{}, &model.Role{})
 
 	snowflake := snowflake.NewSnowflake()
 	hash := hash.NewHash()

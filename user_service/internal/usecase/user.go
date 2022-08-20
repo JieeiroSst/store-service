@@ -20,7 +20,7 @@ type Users interface {
 	SignUp(user model.Users) error
 	UpdateProfile(id int, user model.Users) error
 	LockAccount(id int) error
-	FindAllUser() (*model.Users, error)
+	FindUser(userId int) (*model.Users, error)
 
 	CheckPassword(password string) error
 	CheckEmail(email string) error
@@ -106,8 +106,8 @@ func (u *UserUsecase) LockAccount(id int) error {
 	return nil
 }
 
-func (u *UserUsecase) FindAllUser() (*model.Users, error) {
-	users, err := u.UserRepo.FindAllUser()
+func (u *UserUsecase) FindUser(userId int) (*model.Users, error) {
+	users, err := u.UserRepo.FindUser(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +156,7 @@ func (d *UserUsecase) Authentication(token string, username string) error {
 	if err != nil {
 		return err
 	}
-	if strings.Compare(parseToken.Username,username) != 0 {
+	if strings.Compare(parseToken.Username, username) != 0 {
 		return common.FailedTokenUsername
 	}
 	return nil

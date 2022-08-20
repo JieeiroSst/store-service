@@ -13,4 +13,12 @@ var (
 	FailedToken = errors.New("Missing Authentication Token")
 
 	FailedTokenUsername = errors.New("Missing Authentication Username Token")
+
+	NotFound = errors.New("Not Found")
+
+	LockAccountFailed = errors.New("lock account failed")
+
+	UserNotExist = errors.New("user does not exist")
+
+	UserExist = errors.New("user does exist")
 )

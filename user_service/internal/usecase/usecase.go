@@ -9,6 +9,8 @@ import (
 
 type Usecase struct {
 	Users
+	Roles
+	UserRoles
 }
 
 type Dependency struct {
@@ -20,6 +22,8 @@ type Dependency struct {
 
 func NewUsecase(deps Dependency) *Usecase {
 	return &Usecase{
-		Users: NewUsercase(deps.Repos.Users, deps.Snowflake, deps.Hash, deps.Token),
+		Users:     NewUsercase(deps.Repos.Users, deps.Snowflake, deps.Hash, deps.Token),
+		Roles:     NewRoleUsecase(deps.Repos.Roles, deps.Snowflake),
+		UserRoles: NewUserRoleUsecase(deps.Repos.UserRoles),
 	}
 }
