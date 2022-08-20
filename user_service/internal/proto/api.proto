@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package project_grpc;
+
+option go_package = "./internal/pb/.;pb";
+
+message AuthenticationRequest {
+    string token = 1;
+    string username = 2;
+}
+
+message AuthenticationReponse {
+    string code = 1;
+    string message = 2;
+}
+
+service Authentication {
+    rpc Authentication(AuthenticationRequest) returns (AuthenticationReponse) {}
+}
