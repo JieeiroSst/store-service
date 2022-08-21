@@ -43,5 +43,5 @@ jobs:
         with:
           node-version: 17.x
       - run: cd keikibook && npm install
-      - run: cd keikibook && npm run build --if-present
+      # - run: cd keikibook && npm run build --if-present
 
