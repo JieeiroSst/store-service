@@ -14,11 +14,11 @@ import (
 )
 
 type News interface {
-	Create(cateID string, new model.New, upload minio.UploadFileArgs) error
+	Create(cateID string, new model.New, upload minio.UploadObjectArgs) error
 	News() ([]model.New, error)
 	NewById(id string) (*model.New, error)
 	Update(id string, new model.New) error
-	uploadFile(ctx context.Context, args *minio.UploadFileArgs) (*minio.UploadObjectResponse,
+	uploadFile(ctx context.Context, args *minio.UploadObjectArgs) (*minio.UploadObjectResponse,
 		error)
 }
 
@@ -40,7 +40,7 @@ func NewNewsUsecase(NewRepo repository.News,
 	}
 }
 
-func (u *NewsUsecase) Create(cateID string, new model.New, upload minio.UploadFileArgs) error {
+func (u *NewsUsecase) Create(cateID string, new model.New, upload minio.UploadObjectArgs) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -109,7 +109,7 @@ func (u *NewsUsecase) Update(id string, new model.New) error {
 	return nil
 }
 
-func (u *NewsUsecase) uploadFile(ctx context.Context, args *minio.UploadFileArgs) (*minio.UploadObjectResponse,
+func (u *NewsUsecase) uploadFile(ctx context.Context, args *minio.UploadObjectArgs) (*minio.UploadObjectResponse,
 	error) {
 	userMetaData := map[string]string{
 		"x-amz-acl": "public-read",
@@ -123,7 +123,6 @@ func (u *NewsUsecase) uploadFile(ctx context.Context, args *minio.UploadFileArgs
 	uuidFileName := fmt.Sprintf("%v.%v", uuid, fileExtension)
 	res, err := u.Minio.UploadFile(ctx, &minio.UploadFileArgs{
 		UserMetaData: userMetaData,
-		File:         args.File,
 		FileHeader:   args.FileHeader,
 		FileName:     uuidFileName,
 	})

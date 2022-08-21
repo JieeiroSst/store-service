@@ -3,7 +3,6 @@ package minio
 import (
 	"context"
 	"fmt"
-	"io"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -71,8 +70,13 @@ func (c *client) UploadFile(ctx context.Context, args *UploadFileArgs) (*UploadO
 		}
 	}
 
+	buffer, err := args.FileHeader.Open()
+	if err != nil {
+		return nil, err
+	}
+
 	// Upload file to CMC Cloud (Minio)
-	_, err := c.minioClient.PutObject(ctx, c.config.BucketName, args.FileName, args.File.(io.Reader), fileSize, minio.PutObjectOptions{
+	_, err = c.minioClient.PutObject(ctx, c.config.BucketName, args.FileName, buffer, fileSize, minio.PutObjectOptions{
 		ContentType:  contentType,
 		UserMetadata: args.UserMetaData,
 	})
