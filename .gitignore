@@ -2,5 +2,3 @@
 /post_service/config.yml
 /user_service/config.yml   
 /payment_service/config.yml
-/keikibook/node_modules
-node_modules
