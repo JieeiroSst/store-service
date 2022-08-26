@@ -101,16 +101,82 @@ impl ProductDieselImpl {
             pool: db,
         }
     }
+
+    async fn total(&self) -> RepoResult(i64) {
+        use super::schema::products::dsl::products;
+        let pool = self.pool.clone();
+        async_pool::run(ove || {
+            let conn = pool.get().unwrap();
+            products.count().get_result(&conn); 
+        })
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())
+        .map(|v: i64| v)
+    }
+
+    async fn fetch(&self, query: &dyn QueryParams) -> RepoResult<Vec<Product>> {
+        use super::schema::products::dsl::products;
+        let pool = self.pool.clone();
+        let builder = products.limit(query.limit()).offset(query.offset());
+        let result = async_pool::run(mode || {
+            let coo = pool.get().unwrap();
+            builder.load::<ProductDiesel>(&conn)
+        })
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())?;
+        OK(result.into_inner().map(|v| -> Product  {v.into()}).collect())
+    }
 }
 
 impl ProductRepo for ProductDieselImpl {
-    async fn Create(&self, product: Product) ->  RepoResult<()> {}
+    async fn Create(&self, product: Product) ->  RepoResult<()> {
+        let u = ProductDiesel::from(product.clone());
+        use super::schema::products::dsl::products;
 
-    async fn Update(&self, id: u16, update_product: UpdateProduct) ->  RepoResult<()> {}
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
+        async_pool::run(move || {
+            diesel::insert_into(products).value(u).execute(&conn).await
+            .map_err(|v| DieselRepoError::from(v).into_inner())?;
+        })
+    }
 
-    async fn delete(&self, id: &u1, delete_product: DeleteProduct) -> RepoResult<()> {}
+    async fn Update(&self, id: u16, update_product: UpdateProduct) ->  RepoResult<()> {
+        let u = ProductDiesel::from(update_product.clone());
+        use super::schema::products::dsl::{id, products};
 
-    async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<Product>> {}
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
 
-    async fn find(&self, id: &u16) -> RepoResult<Product> {}
+        async_pool::run(move || {
+            diesel::update(products).filter(id.eq(id)).set(u).execute(&conn);
+        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
+    }
+
+    async fn delete(&self, id: &u1, delete_product: DeleteProduct) -> RepoResult<()> {
+        let u = DeleteProductDiesel::from(delete_product.clone());
+        use super::schema::products::dsl::{id, products};
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
+
+        async_pool::run(move || {
+            diesel::update(products).filter(id.eq(id)).set(u).execute(&conn)
+        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
+    }
+
+    async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<Product>> {
+        let total = self.total();
+        let carts = self.fetch(params);
+        OK(ResultPaging {
+            total: total.await?,
+            items: carts.await?,
+        })
+    }
+
+    async fn find(&self, id: &u16) -> RepoResult<Product> {
+        use super::schema::products::dsl::{id, products};
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from::into_inner())?;
+
+        async_pool::run(move || products.filter((id.eq(id)).first::<ProductDiesel>(&conn)))
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())
+        .map(|v| -> Product {v.into()})
+    }
 }
