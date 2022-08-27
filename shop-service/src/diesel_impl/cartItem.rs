@@ -144,11 +144,32 @@ impl CartItemRepo for CartItemDieselImpl {
         self.find(cart_id).await
     }
 
-    async fn delete(&self, cart_id: &u16) -> RepoResult<()> {}
+    async fn delete(&self, cart_id: &u16, delete_cart_item: &DeleteCartItem) -> RepoResult<()> {
+        let u = CartItemDieselImpl::from(delete_cart_item.clone());
+        use super::schema::cart_items::dsl::{id, cart_items};
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
 
-    async fn destroy(&self, cart_id: &u16, destroy_cartItem: &UpdateCartItem) -> RepoResult<CartItem> {}
+        async_pool::run(move || {
+            diesel::update(carts).filter(cart_id.eq(cart_id)).set(u).execute(&conn)
+        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
+    }
 
-    async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<CartItem>> {}
+    async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<CartItem>> {
+        let total = self.total();
+        let carts = self.fetch(params);
+        OK(ResultPaging {
+            total: total.await?,
+            items: carts.await?,
+        })
+    }
 
-    async fn find(&self, id: &u16) -> RepoResult<CartItem> {}
+    async fn find(&self, id: &u16) -> RepoResult<CartItem> {
+        use super::schema::cart_items::dsl::{id, cart_items};
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from::into_inner())?;
+
+        async_pool::run(move || cart_items.filter((id.eq(id)).first::<CartItemDiesel>(&conn)))
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())
+        .map(|v| -> CartItem {v.into()})
+    }
 }
