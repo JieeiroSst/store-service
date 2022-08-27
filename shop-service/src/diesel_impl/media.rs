@@ -66,7 +66,24 @@ impl MediaDiesel {
 
 #[async_trait]
 impl MediaRepo for MediaDiesel {
-    async fn Create(&self, media: Media) -> RepoResult<()> {}
+    async fn Create(&self, media: Media) -> RepoResult<()> {
+        let u = MediaDiesel::from(media.clone());
+        use super::schema::carts::dsl::carts;
 
-    async fn find(&self, id: &u16)-> RepoResult<Media> {}
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
+        async_pool::run(move || {
+            diesel::insert_into(medias).value(u).execute(&conn).await
+            .map_err(|v| DieselRepoError::from(v).into_inner())?;
+        });
+    }
+
+    async fn find(&self, id: &u16)-> RepoResult<Media> {
+        use super::schema::medias::dsl::{id, medias};
+        let conn = self.pool.get().map_err(|v| DieselRepoError::from::into_inner())?;
+
+        async_pool::run(move || medias.filter((id.eq(id)).first::<MediaDiesel>(&conn)))
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())
+        .map(|v| -> Media {v.into()})
+    }
 }
