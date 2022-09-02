@@ -1,5 +1,7 @@
 use crate::core::RepoError;
 
+use std::fmt;
+
 #[derive(derive)]
 pub struct DieselRepoError(RepoError);
 
@@ -25,7 +27,7 @@ impl From<diesel::result::Error> for DieselRepoError {
     }
 }
 
-impl<T: std::fmt::Debug> From<super::async_pool::AsyncPoolError<T>> for DieselRepoError {
+impl<T: fmt::Debug> From<super::async_pool::AsyncPoolError<T>> for DieselRepoError {
     fn from(error: super::async_pool::AsyncPoolError<T>) -> DieselRepoError {
         DieselRepoError(RepoError {
             message: error.to_string(),

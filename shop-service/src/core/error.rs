@@ -1,20 +1,22 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize)]
+use std::fmt;
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CommonError {
     pub message: String,
     pub code: u32,
 }
 
-impl std::fmt::Display for CommonError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Error: {}, Code: {}", self.message, self.code)
+impl fmt::Display for CommonError {
+    fn fmt(&self, f: &mut fmt::Foratter<'_>) -> ft::Result {
+        write(f, "Error: {}, Code: {}",self.message, self.code);
     }
 }
 
 #[derive(Debug)]
 pub struct RepoError {
-    pub message: string 
+    pub message: String 
 }
 
 impl Into<CommonError> for RepoError {
