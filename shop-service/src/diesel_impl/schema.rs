@@ -1,53 +1,54 @@
 table! {
-    carts (id) {
-        id -> Unsigned<Bigint>,
-        total -> Integer,
-        user_id -> Integer,
-        created_at -> Nullable<Datetime>,
-        updated_at -> Nullable<Datetime>,
+    cart_items (id) {
+        id -> Int4,
+        cart_id -> Int4,
+        total -> Int4,
+        amount -> Int4,
         destroy -> Nullable<Bool>,
+        created_at -> Nullable<Time>,
+        updated_at -> Nullable<Time>,
     }
 }
 
 table! {
-    cart_items (id) {
-        id -> Unsigned<Bigint>,
-        cart_id -> Integer,
-        total -> Integer,
-        amount -> Integer,
+    carts (id) {
+        id -> Int4,
+        total -> Int4,
+        user_id -> Int4,
         destroy -> Nullable<Bool>,
-        created_at -> Nullable<Datetime>,
-        updated_at -> Nullable<Datetime>,
+        created_at -> Nullable<Time>,
+        updated_at -> Nullable<Time>,
     }
 }
 
 table! {
     medias (id) {
-        id -> Unsigned<Bigint>,
+        id -> Int4,
         name -> Text,
         url -> Text,
         description -> Text,
         destroy -> Nullable<Bool>,
-        created_at -> Nullable<Datetime>,
-        updated_at -> Nullable<Datetime>,
+        created_at -> Nullable<Time>,
+        updated_at -> Nullable<Time>,
     }
 }
 
 table! {
     products (id) {
-        id -> Unsigned<Bigint>,
+        id -> Int4,
         product_name -> Text,
         description -> Text,
-        price -> Integer,
-        media_id -> Integer,
-        created_at -> Nullable<Datetime>,
-        updated_at -> Nullable<Datetime>,
+        price -> Int4,
+        media_id -> Int4,
+        destroy -> Nullable<Bool>,
+        created_at -> Nullable<Time>,
+        updated_at -> Nullable<Time>,
     }
 }
 
 allow_tables_to_appear_in_same_query!(
-    carts,
     cart_items,
+    carts,
     medias,
     products,
 );

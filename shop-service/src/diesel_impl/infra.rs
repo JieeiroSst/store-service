@@ -1,20 +1,19 @@
+extern crate dotenv;
+
+use std::env;
 use diesel;
 use diesel::r2d2::ConnectionManager;
 
 pub type Pool<T> = r2d2::Pool<ConnectionManager<T>>;
-pub type MySQLPool = Pool<diesel::mysql::MysqlConnection>;
-pub type SqlitePool = Pool<diesel::sqlite::SqliteConnection>;
+pub type PGPool = Pool<diesel::pg::PgConnection>;
 
-#[cfg(feature = "mysql")]
-pub type DBConn = MySQLPool;
-
-#[cfg(feature = "sqlite")]
-pub type DBConn = SqlitePool;
+#[cfg(feature = "postgres")]
+pub type DBConn = PGPool;
 
 pub fn db_pool() -> DBConn {
-    let database_url = std::env::var("DATABASE_URL").unwrap_or("/tmp/test_examples.db".to_string());
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     println!("Using Database {}", database_url);
-    let manager = ConnectionManager::<diesel::mysql::MysqlConnection>::new(database_url);
+    let manager = ConnectionManager::<diesel::pg::PgConnection>::new(database_url);
     Pool::builder()
         .build(manager)
         .expect("Failed to create pool")
