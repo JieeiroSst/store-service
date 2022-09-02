@@ -1,0 +1,1 @@
+diesel setup --database-url "postgres://root:postgres@localhost/shop"
