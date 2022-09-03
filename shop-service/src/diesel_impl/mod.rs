@@ -1,5 +1,5 @@
 mod async_pool;
-mod errors;
+mod error;
 mod infra;
 mod schema;
 

@@ -5,7 +5,7 @@ use chrono::NaiveDateTime;
 use diesel::prelude::*;
 
 use super::async_pool;
-use super::errors::DieselRepoError;
+use super::error::DieselRepoError;
 use super::infra;
 use super::schema::*;
 
@@ -34,6 +34,7 @@ impl Into<CartItem> for CartDiesel {
             destroy: self.destroy,
             created_at: self.created_at,
             updated_at: self.updated_at,
+            product: todo!(),
         }
     }
 }
@@ -98,7 +99,7 @@ impl CartDieselImpl {
         let pool = self.pool.clone();
         async_pool::run(move || {
             let conn = pool.get().unwrap;
-            cart_items.count().get_result(&conn);
+            cart_items.count().get_result(&conn)
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())
@@ -128,7 +129,7 @@ impl CartItemRepo for CartItemDieselImpl {
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
         async_pool::run(move || {
             diesel::insert_into(cart_items).value(u).execute(&conn).await
-            .map_err(|v| DieselRepoError::from(v).into_inner())?;
+            .map_err(|v| DieselRepoError::from(v).into_inner())?
         })
     }
 
@@ -139,7 +140,7 @@ impl CartItemRepo for CartItemDieselImpl {
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
 
         async_pool::run(move || {
-            diesel::update(cart_items).filter(cart_id.eq(cart_id)).set(u).execute(&conn);
+            diesel::update(cart_items).filter(cart_id.eq(cart_id)).set(u).execute(&conn)
         }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
         self.find(cart_id).await
     }
@@ -151,7 +152,7 @@ impl CartItemRepo for CartItemDieselImpl {
 
         async_pool::run(move || {
             diesel::update(carts).filter(cart_id.eq(cart_id)).set(u).execute(&conn)
-        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
+        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<CartItem>> {
@@ -167,7 +168,9 @@ impl CartItemRepo for CartItemDieselImpl {
         use super::schema::cart_items::dsl::{id, cart_items};
         let conn = self.pool.get().map_err(|v| DieselRepoError::from::into_inner())?;
 
-        async_pool::run(move || cart_items.filter((id.eq(id)).first::<CartItemDiesel>(&conn)))
+        async_pool::run(move || {
+            OK(cart_items.filter(id.eq(id)).find::<CartItemDiesel>(&conn))
+        })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())
         .map(|v| -> CartItem {v.into()})

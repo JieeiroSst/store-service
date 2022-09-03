@@ -5,7 +5,7 @@ use chrono::NaiveDateTime;
 use diesel::prelude::*;
 
 use super::async_pool;
-use super::errors::DieselRepoError;
+use super::error::DieselRepoError;
 use super::infra;
 use super::schema::*;
 
@@ -36,6 +36,7 @@ impl Into<Product> for ProductDiesel {
             destroy: self.destroy,
             created_at: self.created_at,
             updated_at: self.updated_at,
+            media: todo!(),
         }
     }
 }
@@ -136,7 +137,7 @@ impl ProductRepo for ProductDieselImpl {
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
         async_pool::run(move || {
             diesel::insert_into(products).value(u).execute(&conn).await
-            .map_err(|v| DieselRepoError::from(v).into_inner())?;
+            .map_err(|v| DieselRepoError::from(v).into_inner())?
         })
     }
 
@@ -147,8 +148,8 @@ impl ProductRepo for ProductDieselImpl {
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
 
         async_pool::run(move || {
-            diesel::update(products).filter(id.eq(id)).set(u).execute(&conn);
-        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
+            diesel::update(products).filter(id.eq(id)).set(u).execute(&conn)
+        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn delete(&self, id: &u1, delete_product: DeleteProduct) -> RepoResult<()> {
@@ -158,7 +159,7 @@ impl ProductRepo for ProductDieselImpl {
 
         async_pool::run(move || {
             diesel::update(products).filter(id.eq(id)).set(u).execute(&conn)
-        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
+        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<Product>> {
@@ -174,7 +175,9 @@ impl ProductRepo for ProductDieselImpl {
         use super::schema::products::dsl::{id, products};
         let conn = self.pool.get().map_err(|v| DieselRepoError::from::into_inner())?;
 
-        async_pool::run(move || products.filter((id.eq(id)).first::<ProductDiesel>(&conn)))
+        async_pool::run(move || {
+            Ok(products.filter((id.eq(id)).first::<ProductDiesel>(&conn)))
+        })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())
         .map(|v| -> Product {v.into()})

@@ -13,8 +13,8 @@ impl DieselRepoError {
 
 impl From<r2d2::Error> for DieselRepoError {
     fn from(error: r2d2::Error) -> DieselRepoError {
-        DieselRepoError(DieselRepoError {
-            message: error.to_string(),
+        DieselRepoError(RepoError {
+            message: error.to_string()
         })
     }
 }
