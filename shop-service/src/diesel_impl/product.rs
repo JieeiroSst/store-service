@@ -129,6 +129,7 @@ impl ProductDieselImpl {
     }
 }
 
+#[async_trait]
 impl ProductRepo for ProductDieselImpl {
     async fn Create(&self, product: Product) ->  RepoResult<()> {
         let u = ProductDiesel::from(product.clone());
