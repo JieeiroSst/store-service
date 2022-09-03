@@ -5,7 +5,7 @@ use chrono::NaiveDateTime;
 use diesel::prelude::*;
 
 use super::async_pool;
-use super::errors::DieselRepoError;
+use super::error::DieselRepoError;
 use super::infra;
 use super::schema::*;
 
@@ -103,7 +103,7 @@ impl CartDieselImpl {
         let pool = self.pool.clone();
         async_pool::run(move || {
             let conn = pool.get().unwrap();
-            carts.count().get_result(&conn);
+            carts.count().get_result(&conn)
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())
@@ -139,7 +139,9 @@ impl CartRepo for CartDieselImpl {
         use super::schema::carts::dsl::{id, carts};
         let conn = self.pool.get().map_err(|v| DieselRepoError::from::into_inner())?;
 
-        async_pool::run(move || carts.filter((id.eq(id)).first::<CartDiesel>(&conn)))
+        async_pool::run(move || {
+            carts.filter(id.eq(id)).first::<CartDiesel>(&conn)
+        })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())
         .map(|v| -> Cart {v.into()})
@@ -176,7 +178,7 @@ impl CartRepo for CartDieselImpl {
 
         async_pool::run(move || {
             diesel::update(carts).filter(user_id.eq(user_id)).set(u).execute(&conn)
-        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?;
+        }).await.map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn create(&self, cart: &Cart) -> RepoResult<()> {
@@ -186,8 +188,8 @@ impl CartRepo for CartDieselImpl {
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
         async_pool::run(move || {
             diesel::insert_into(carts).value(u).execute(&conn).await
-            .map_err(|v| DieselRepoError::from(v).into_inner())?;
-        });
+            .map_err(|v| DieselRepoError::from(v).into_inner())?
+        })
     }
 
     async fn order(&self, destroy: bool) -> RepoResult<Cart> {
