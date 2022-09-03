@@ -2,7 +2,7 @@ use crate::core::RepoError;
 
 use std::fmt;
 
-#[derive(derive)]
+#[derive(Debug)]
 pub struct DieselRepoError(RepoError);
 
 impl DieselRepoError {

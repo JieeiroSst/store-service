@@ -2401,7 +2401,7 @@ dependencies = [
  "actix-identity",
  "actix-redis",
  "actix-rt 1.1.1",
- "actix-service 1.0.6",
+ "actix-service 2.0.2",
  "actix-threadpool",
  "actix-web 4.1.0",
  "argon2rs",
@@ -2417,6 +2417,7 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
+ "soa_derive",
  "uuid 0.8.2",
 ]
 
@@ -2443,6 +2444,26 @@ name = "smallvec"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
+
+[[package]]
+name = "soa_derive"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ebaaa769873a165635809ce887fb69700342081f8cd4b097810be53b4754bf3e"
+dependencies = [
+ "soa_derive_internal",
+]
+
+[[package]]
+name = "soa_derive_internal"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "321678e5996cc263cc798220bb332f1c768fb2e5e699e795df0c107141631be9"
+dependencies = [
+ "proc-macro2 1.0.43",
+ "quote 1.0.21",
+ "syn 1.0.99",
+]
 
 [[package]]
 name = "socket2"
