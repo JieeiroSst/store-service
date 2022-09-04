@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::core::{QueryParams, RepoResult, ResultPaging};
 
-#[derive(StructOfArray,Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CartItem {
     pub id:  u16,
     pub cart_id: u16,
