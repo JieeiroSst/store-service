@@ -58,7 +58,8 @@ impl From<Cart> for CartDiesel {
 pub struct CartUpdateDiesel {
     pub total: u16,
     pub user_id: u16,
-    pub destroy: bool
+    pub destroy: bool,
+    pub updated_at: NaiveDateTime,
 }
 
 impl From<UpdateCart> for CartUpdateDiesel {
@@ -67,6 +68,7 @@ impl From<UpdateCart> for CartUpdateDiesel {
             total: u.total,
             user_id: u.user_id,
             destroy: u.destroy,
+            updated_at: u.updated_at,
         }
     }
 }

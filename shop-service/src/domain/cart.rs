@@ -18,7 +18,8 @@ pub struct Cart {
 pub struct UpdateCart {
     pub total: u16,
     pub user_id: u16,
-    pub destroy: bool
+    pub destroy: bool,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Debug, Clone)]

@@ -25,6 +25,7 @@ pub struct UpdateProduct {
     pub price: u16,
     pub media_id: u16,
     pub destroy: bool,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Debug, Clone)]

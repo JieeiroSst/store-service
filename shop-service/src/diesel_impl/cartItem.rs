@@ -59,12 +59,14 @@ impl From<CartItem> for CartItemDiesel {
 #[table_name = "cart_items"]
 pub struct UpdateCartItemDiesel {
     pub total: u16,
+    pub updated_at: NaiveDateTime,
 }
 
 impl From<UpdateCartItem> for UpdateCartItemDiesel {
     fn from(u: UpdateCartItem) -> Self {
         UpdateCartItemDiesel{
             total: u.total,
+            updated_at: u.updated_at,
         }
     }
 }
