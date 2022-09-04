@@ -31,7 +31,7 @@ pub trait CartRepo: Send + Sync {
     async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<Cart>>;
     async fn find(&self, id: &u16) -> RepoResult<Cart>;
     async fn find_by_user(&self, user_id: &u16) -> RepoResult<Cart>;
-    async fn update(&self, id: &u16, update_cart: &UserUpdate) -> RepoResult<Cart>;
+    async fn update(&self, id: &u16, update_cart: &UpdateCart) -> RepoResult<Cart>;
     async fn delete(&self, user_id: &u16, delete_cart: &DeleteCart) -> RepoResult<()>;
     async fn create(&self, cart: &Cart) -> RepoResult<()>;
     async fn order(&self, destroy: bool) -> RepoResult<Cart>;

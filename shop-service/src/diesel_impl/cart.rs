@@ -43,14 +43,14 @@ impl Into<Cart> for CartDiesel {
 impl From<Cart> for CartDiesel {
     fn from(c: Cart) -> Self {
         CartDiesel {
-            id: self.id,
-            total: self.total,
-            user_id: self.user_id,
-            created_at: self.created_at,
-            updated_at: self.updated_at,
-            destroy: self.destroy,
-            created_at: self.created_at,
-            updated_at: self.updated_at,
+            id: c.id,
+            total: c.total,
+            user_id: c.user_id,
+            created_at: c.created_at,
+            updated_at: c.updated_at,
+            destroy: c.destroy,
+            created_at: c.created_at,
+            updated_at: c.updated_at,
         }
     }
 }

@@ -42,13 +42,13 @@ impl Into<CartItem> for CartDiesel {
 impl From<CartItem> for CartItemDiesel {
     fn from(c: CartItem) -> Self {
         CartItemDiesel{
-            id: self.id,
-            cart_id: self.cart_id,
-            total: self.total,
-            amount: self.amount,
-            destroy: self.destroy,
-            created_at: self.created_at,
-            updated_at: self.updated_at,
+            id: c.id,
+            cart_id: c.cart_id,
+            total: c.total,
+            amount: c.amount,
+            destroy: c.destroy,
+            created_at: c.created_at,
+            updated_at: c.updated_at,
         }
     }
 }
