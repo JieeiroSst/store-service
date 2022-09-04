@@ -21,8 +21,6 @@ pub struct CartDiesel {
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub destroy: bool,
-    pub created_at: NaiveDateTime,
-    pub updated_at: NaiveDateTime,
 }
 
 impl Into<Cart> for CartDiesel {
@@ -120,7 +118,7 @@ impl CartDieselImpl {
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())?;
-        Ok(result.into_iter().map(|v| -> User { v.into() }).collect())
+        Ok(result.into_iter().map(|v| -> Cart { v.into() }).collect())
     }
 }
 
@@ -186,11 +184,9 @@ impl CartRepo for CartDieselImpl {
         use super::schema::carts::dsl::carts;
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
-        async_pool::run(move || {
-            diesel::insert_into(carts).value(u).execute(&conn)
-            .await
-            .map_err(|v| DieselRepoError::from(v).into_inner())?
-        })
+        async_pool::run(move || diesel::insert_into(carts).values(u).execute(&conn))
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn order(&self, destroy: bool) -> RepoResult<Cart> {

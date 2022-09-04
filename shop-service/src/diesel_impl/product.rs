@@ -60,7 +60,7 @@ impl From<Product> for ProductDiesel {
 #[derive(Debug, Clone, AsChangeset)]
 #[table_name = "products"]
 pub struct UpdateProductDiesel {
-    pub name: String,
+    pub product_name: String,
     pub description: String,
     pub price: u16,
     pub media_id: u16,
@@ -70,7 +70,7 @@ pub struct UpdateProductDiesel {
 impl From<UpdateProduct> for UpdateProductDiesel {
     fn from(p: UpdateProduct) -> Self {
         UpdateProductDiesel {
-            name: p.name,
+            product_name: p.product_name,
             description: p.description,
             price: p.price,
             media_id: p.media_id,
@@ -137,11 +137,9 @@ impl ProductRepo for ProductDieselImpl {
         use super::schema::products::dsl::products;
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
-        async_pool::run(move || {
-            diesel::insert_into(products).value(u).execute(&conn)
-            .await
-            .map_err(|v| DieselRepoError::from(v).into_inner())?
-        })
+        async_pool::run(move || diesel::insert_into(products).values(u).execute(&conn))
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn Update(&self, id: u16, update_product: UpdateProduct) ->  RepoResult<()> {

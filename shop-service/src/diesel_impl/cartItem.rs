@@ -127,11 +127,9 @@ impl CartItemRepo for CartItemDieselImpl {
         use super::schema::cart_items::dsl::cart_items;
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
-        async_pool::run(move || {
-            diesel::insert_into(cart_items).value(u).execute(&conn)
-            .await
-            .map_err(|v| DieselRepoError::from(v).into_inner())?
-        })
+        async_pool::run(move || diesel::insert_into(cart_items).values(u).execute(&conn))
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn update(&self, cart_id: &u16, update_cartItem: &UpdateCartItem) -> RepoResult<CartItem> {
