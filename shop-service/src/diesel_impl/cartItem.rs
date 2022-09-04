@@ -116,7 +116,7 @@ impl CartItemDieselImpl {
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())?;
-        OK(result.into_iter().map(|v| -> CartItem {v.into()}).collect())
+        Ok(result.into_iter().map(|v| -> CartItem {v.into()}).collect())
     }
 }
 
@@ -161,7 +161,7 @@ impl CartItemRepo for CartItemDieselImpl {
             total: total.await?,
             items: carts.await?,
         };
-        OK(result)
+        Ok(result)
     }
 
     async fn find(&self, id: &u16) -> RepoResult<CartItem> {
@@ -169,7 +169,7 @@ impl CartItemRepo for CartItemDieselImpl {
         let conn = self.pool.get().map_err(|v| DieselRepoError::from::into_inner())?;
 
         async_pool::run(move || {
-            OK(cart_items.filter(id.eq(id)).find::<CartItemDiesel>(&conn))
+            Ok(cart_items.filter(id.eq(id)).find::<CartItemDiesel>(&conn))
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())
