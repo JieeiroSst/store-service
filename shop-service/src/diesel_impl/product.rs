@@ -44,14 +44,14 @@ impl Into<Product> for ProductDiesel {
 impl From<Product> for ProductDiesel {
     fn from(p: Product) -> Self {
         ProductDiesel {
-            id: self.id,
-            name: self.name,
-            description: self.description,
-            price: self.price,
-            media_id: self.media_id,
-            destroy: self.destroy,
-            created_at: self.created_at,
-            updated_at: self.updated_at,
+            id: p.id,
+            name: p.name,
+            description: p.description,
+            price: p.price,
+            media_id: p.media_id,
+            destroy: p.destroy,
+            created_at: p.created_at,
+            updated_at: p.updated_at,
         }
     }
 }

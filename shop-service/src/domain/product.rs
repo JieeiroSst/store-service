@@ -35,7 +35,7 @@ pub struct DeleteProduct {
 pub trait ProductRepo: Send + Sync {
     async fn Create(&self, product: Product) ->  RepoResult<()>;
     async fn Update(&self, id: u16, update_product: UpdateProduct) ->  RepoResult<()>;
-    async fn delete(&self, id: &u1, delete_product: DeleteProduct) -> RepoResult<()>;
+    async fn delete(&self, id: &u16, delete_product: DeleteProduct) -> RepoResult<()>;
     async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<Product>>;
     async fn find(&self, id: &u16) -> RepoResult<Product>;
 }
