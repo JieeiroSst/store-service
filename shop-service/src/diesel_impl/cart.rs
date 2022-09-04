@@ -132,7 +132,7 @@ impl CartRepo for CartDieselImpl {
             total: total.await?,
             items: carts.await?,
         };
-        OK(result)
+        Ok(result)
     }
 
     async fn find(&self, id: &u16) -> RepoResult<Cart> {
