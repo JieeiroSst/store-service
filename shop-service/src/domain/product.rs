@@ -3,6 +3,7 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 use crate::core::{QueryParams, RepoResult, ResultPaging};
+use crate::domain::Media;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Product {
