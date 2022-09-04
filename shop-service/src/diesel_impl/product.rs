@@ -3,6 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
+use tonic::codegen::ok;
 
 use super::async_pool;
 use super::error::DieselRepoError;
@@ -126,7 +127,7 @@ impl ProductDieselImpl {
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())?;
-        OK(result.into_iter().map(|v| -> Product  {v.into()}).collect())
+        Ok(result.into_iter().map(|v| -> Product { v.into() }).collect())
     }
 }
 
@@ -170,7 +171,7 @@ impl ProductRepo for ProductDieselImpl {
             total: total.await?,
             items: carts.await?,
         };
-        OK(result)
+        ok(result)
     }
 
     async fn find(&self, id: &u16) -> RepoResult<Product> {
