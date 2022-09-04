@@ -68,11 +68,12 @@ impl MediaDieselImpl {
 impl MediaRepo for MediaDiesel {
     async fn Create(&self, media: Media) -> RepoResult<()> {
         let u = MediaDiesel::from(media.clone());
-        use super::schema::carts::dsl::carts;
+        use super::schema::medias::dsl::medias;
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
         async_pool::run(move || {
-            diesel::insert_into(medias).value(u).execute(&conn).await
+            diesel::insert_into(medias).value(u).execute(&conn)
+            .await
             .map_err(|v| DieselRepoError::from(v).into_inner())?
         })
     }

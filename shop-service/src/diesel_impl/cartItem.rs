@@ -94,7 +94,7 @@ impl CartDieselImpl {
         }
     }
 
-    async fn total(&self) -> RepoResult(id64) {
+    async fn total(&self) -> RepoResult<id64> {
         use super::schema::cart_items::dsl::cart_items;
         let pool = self.pool.clone();
         async_pool::run(move || {
@@ -128,7 +128,8 @@ impl CartItemRepo for CartItemDieselImpl {
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
         async_pool::run(move || {
-            diesel::insert_into(cart_items).value(u).execute(&conn).await
+            diesel::insert_into(cart_items).value(u).execute(&conn)
+            .await
             .map_err(|v| DieselRepoError::from(v).into_inner())?
         })
     }

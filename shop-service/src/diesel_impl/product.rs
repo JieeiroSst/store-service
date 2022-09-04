@@ -103,7 +103,7 @@ impl ProductDieselImpl {
         }
     }
 
-    async fn total(&self) -> RepoResult(i64) {
+    async fn total(&self) -> RepoResult<i64> {
         use super::schema::products::dsl::products;
         let pool = self.pool.clone();
         async_pool::run(ove || {
@@ -137,7 +137,8 @@ impl ProductRepo for ProductDieselImpl {
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
         async_pool::run(move || {
-            diesel::insert_into(products).value(u).execute(&conn).await
+            diesel::insert_into(products).value(u).execute(&conn)
+            .await
             .map_err(|v| DieselRepoError::from(v).into_inner())?
         })
     }
