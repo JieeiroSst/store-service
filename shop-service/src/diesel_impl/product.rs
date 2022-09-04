@@ -121,7 +121,7 @@ impl ProductDieselImpl {
         let pool = self.pool.clone();
         let builder = products.limit(query.limit()).offset(query.offset());
         let result = async_pool::run(move || {
-            let coo = pool.get().unwrap();
+            let conn = pool.get().unwrap();
             builder.load::<ProductDiesel>(&conn)
         })
         .await
