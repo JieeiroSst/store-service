@@ -21,6 +21,7 @@ pub struct CartItem {
 pub struct UpdateCartItem {
     pub total: u16,
     pub count: u16,
+    pub updated_at: NaiveDateTime,
 }
 
 #[derive(Debug, Clone)]

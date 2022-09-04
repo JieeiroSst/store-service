@@ -66,6 +66,7 @@ pub struct UpdateProductDiesel {
     pub price: u16,
     pub media_id: u16,
     pub destroy: bool,
+    pub updated_at: NaiveDateTime,
 }
 
 impl From<UpdateProduct> for UpdateProductDiesel {
@@ -76,6 +77,7 @@ impl From<UpdateProduct> for UpdateProductDiesel {
             price: p.price,
             media_id: p.media_id,
             destroy: p.media_id,
+            updated_at: p.updated_at,
         }
     }
 }
