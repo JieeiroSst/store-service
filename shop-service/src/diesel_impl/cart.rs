@@ -120,7 +120,7 @@ impl CartDieselImpl {
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())?;
-        OK(result.into_inner().map(|v| -> Cart { v.into()}).collect())
+        Ok(result.into_iter().map(|v| -> User { v.into() }).collect())
     }
 }
 
