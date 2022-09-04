@@ -5,10 +5,7 @@ use diesel;
 use diesel::r2d2::ConnectionManager;
 
 pub type Pool<T> = r2d2::Pool<ConnectionManager<T>>;
-pub type PGPool = Pool<diesel::pg::PgConnection>;
-
-#[cfg(feature = "postgres")]
-pub type DBConn = PGPool;
+pub type DBConn = Pool<diesel::pg::PgConnection>;
 
 pub fn db_pool() -> DBConn {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
