@@ -17,7 +17,7 @@ use crate::domain::Media;
 #[table_name = "products"]
 pub struct ProductDiesel {
     pub id: u16,
-    pub name: String,
+    pub product_name: String,
     pub description: String,
     pub price: u16,
     pub media_id: u16,
@@ -46,7 +46,7 @@ impl From<Product> for ProductDiesel {
     fn from(p: Product) -> Self {
         ProductDiesel {
             id: p.id,
-            name: p.name,
+            product_name: p.product_name,
             description: p.description,
             price: p.price,
             media_id: p.media_id,
@@ -126,7 +126,7 @@ impl ProductDieselImpl {
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())?;
-        OK(result.into_inner().map(|v| -> Product  {v.into()}).collect())
+        OK(result.into_iter().map(|v| -> Product  {v.into()}).collect())
     }
 }
 
@@ -155,7 +155,7 @@ impl ProductRepo for ProductDieselImpl {
         }).await.map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
-    async fn delete(&self, id: &u1, delete_product: DeleteProduct) -> RepoResult<()> {
+    async fn delete(&self, id: &u16, delete_product: DeleteProduct) -> RepoResult<()> {
         let u = DeleteProductDiesel::from(delete_product.clone());
         use super::schema::products::dsl::{id, products};
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;

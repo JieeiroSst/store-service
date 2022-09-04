@@ -59,14 +59,12 @@ impl From<CartItem> for CartItemDiesel {
 #[table_name = "cart_items"]
 pub struct UpdateCartItemDiesel {
     pub total: u16,
-    pub count: u16,
 }
 
 impl From<UpdateCartItem> for UpdateCartItemDiesel {
     fn from(u: UpdateCartItem) -> Self {
         UpdateCartItemDiesel{
             total: u.total,
-            count: u.count,
         }
     }
 }
@@ -96,7 +94,7 @@ impl CartItemDieselImpl {
         }
     }
 
-    async fn total(&self) -> RepoResult<id64> {
+    async fn total(&self) -> RepoResult<i64> {
         use super::schema::cart_items::dsl::cart_items;
         let pool = self.pool.clone();
         async_pool::run(move || {
@@ -118,7 +116,7 @@ impl CartItemDieselImpl {
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())?;
-        OK(result.into_inner().map(|v| -> CartItem {v.into()}).collect())
+        OK(result.into_iter().map(|v| -> CartItem {v.into()}).collect())
     }
 }
 
