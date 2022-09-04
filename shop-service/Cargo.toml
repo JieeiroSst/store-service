@@ -1,5 +1,5 @@
 [package]
-name = "shop-service"
+name = "shopservice"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,6 +11,7 @@ dotenv = "0.9.0"
 serde_derive = "1.0"
 juniper = "0.13.1"
 diesel = { version = "1.0.0", features = ["postgres", "r2d2"] }
+diesel_codegen = { version = "0.13.0", features = ["postgres"] }
 futures = "0.1"
 env_logger = "0.6"
 

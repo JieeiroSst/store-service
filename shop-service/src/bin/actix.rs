@@ -1,4 +1,4 @@
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    rwebapi::apps::actix::server::serve().await
+    shopservice::apps::actix::server::serve().await
 }
