@@ -1,6 +1,6 @@
 #[tokio::main]
 async fn main() {
-    let routes = rwebapi::apps::warp::routes();
+    let routes = shopservice::apps::warp::routes();
     let port = 8000;
     println!("Listenting {}", port);
     warp::serve(routes).run(([0, 0, 0, 0], port)).await;
