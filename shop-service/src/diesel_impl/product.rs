@@ -171,7 +171,7 @@ impl ProductRepo for ProductDieselImpl {
             total: total.await?,
             items: carts.await?,
         };
-        ok(result)
+        Ok(result)
     }
 
     async fn find(&self, id: &u16) -> RepoResult<Product> {
