@@ -71,11 +71,9 @@ impl MediaRepo for MediaDiesel {
         use super::schema::medias::dsl::medias;
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
-        async_pool::run(move || {
-            diesel::insert_into(medias).value(u).execute(&conn)
-            .await
-            .map_err(|v| DieselRepoError::from(v).into_inner())?
-        })
+        async_pool::run(move || diesel::insert_into(medias).values(u).execute(&conn))
+        .await
+        .map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
     async fn find(&self, id: &u16)-> RepoResult<Media> {
