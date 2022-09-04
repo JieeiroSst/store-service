@@ -127,10 +127,12 @@ impl CartRepo for CartDieselImpl {
     async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<Cart>> {
         let total = self.total();
         let carts = self.fetch(params);
-        OK(ResultPaging {
+
+        let result: ResultPaging = ResultPaging {
             total: total.await?,
             items: carts.await?,
-        })
+        };
+        OK(result)
     }
 
     async fn find(&self, id: &u16) -> RepoResult<Cart> {
