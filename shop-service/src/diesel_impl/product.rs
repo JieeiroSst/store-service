@@ -11,6 +11,7 @@ use super::schema::*;
 
 use crate::core::{QueryParams, RepoResult, ResultPaging};
 use crate::domain::product::{Product, UpdateProduct, DeleteProduct, ProductRepo};
+use crate::domain::Media;
 
 #[derive(Queryable, Insertable)]
 #[table_name = "products"]
@@ -106,9 +107,9 @@ impl ProductDieselImpl {
     async fn total(&self) -> RepoResult<i64> {
         use super::schema::products::dsl::products;
         let pool = self.pool.clone();
-        async_pool::run(ove || {
+        async_pool::run(move || {
             let conn = pool.get().unwrap();
-            products.count().get_result(&conn); 
+            products.count().get_result(&conn)
         })
         .await
         .map_err(|v| DieselRepoError::from(v).into_inner())
@@ -119,7 +120,7 @@ impl ProductDieselImpl {
         use super::schema::products::dsl::products;
         let pool = self.pool.clone();
         let builder = products.limit(query.limit()).offset(query.offset());
-        let result = async_pool::run(mode || {
+        let result = async_pool::run(move || {
             let coo = pool.get().unwrap();
             builder.load::<ProductDiesel>(&conn)
         })

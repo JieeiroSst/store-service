@@ -9,6 +9,8 @@ use super::error::DieselRepoError;
 use super::infra;
 use super::schema::*;
 
+use crate::domain::Product;
+
 use crate::core::{QueryParams, RepoResult, ResultPaging};
 use crate::domain::cartItem::{CartItem, UpdateCartItem, DeleteCartItem, CartItemRepo};
 
@@ -24,7 +26,7 @@ pub struct CartItemDiesel {
     pub updated_at: NaiveDateTime,
 }
 
-impl Into<CartItem> for CartDiesel {
+impl Into<CartItem> for CartItemDiesel {
     fn into(self) -> CartItem {
         CartItem {
             id: self.id,
@@ -87,7 +89,7 @@ pub struct CartItemDieselImpl {
     pool: Arc<infra::DBConn>
 }
 
-impl CartDieselImpl {
+impl CartItemDieselImpl {
     pub fn new(db: Arc<infra::DBConn>) -> Self {
         CartItemDieselImpl {
             pool: db,
@@ -110,7 +112,7 @@ impl CartDieselImpl {
         use super::schema::cart_items::dsl::cart_items;
         let pool = self.pool.clone();
         let builder = cart_items.limit(query.limit()).offset(query.offset());
-        let result = async_pool::run(mmove || {
+        let result = async_pool::run(move || {
             let conn = pool.get().unwrap();
             builder.load::<CartItemDiesel>(&conn)
         })
@@ -152,7 +154,7 @@ impl CartItemRepo for CartItemDieselImpl {
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;
 
         async_pool::run(move || {
-            diesel::update(carts).filter(cart_id.eq(cart_id)).set(u).execute(&conn)
+            diesel::update(cart_items).filter(cart_id.eq(cart_id)).set(u).execute(&conn)
         }).await.map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
