@@ -159,7 +159,7 @@ impl CartRepo for CartDieselImpl {
         .map(|v| -> Cart {v.into()})
     }
 
-    async fn update(&self, id: &u16, update_cart: &UserUpdate) -> RepoResult<Cart> {
+    async fn update(&self, id: &u16, update_cart: &UpdateCart) -> RepoResult<Cart> {
         let u = CartUpdateDiesel::from(update_cart.clone());
         use super::schema::carts::dsl::{id, carts};
 
