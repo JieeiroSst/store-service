@@ -4,6 +4,7 @@ import (
 	_ "github.com/JieeiroSst/authorize-service/docs"
 	v1 "github.com/JieeiroSst/authorize-service/internal/delivery/http/v1"
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
+	"github.com/JieeiroSst/authorize-service/middleware"
 	"github.com/casbin/casbin/v2/persist"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -11,12 +12,14 @@ import (
 )
 
 type Handler struct {
-	usecase usecase.Usecase
+	usecase    usecase.Usecase
+	middleware middleware.Middleware
 }
 
-func NewHandler(usecase usecase.Usecase, adapter persist.Adapter) *Handler {
+func NewHandler(usecase usecase.Usecase, middleware middleware.Middleware, adapter persist.Adapter) *Handler {
 	return &Handler{
-		usecase: usecase,
+		usecase:    usecase,
+		middleware: middleware,
 	}
 }
 
@@ -27,7 +30,7 @@ func (h *Handler) Init(router *gin.Engine) {
 }
 
 func (h *Handler) initApi(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(&h.usecase)
+	handlerV1 := v1.NewHandler(&h.usecase, h.middleware)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

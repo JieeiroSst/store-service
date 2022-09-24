@@ -12,6 +12,7 @@ import (
 	"github.com/JieeiroSst/authorize-service/internal/pb"
 	"github.com/JieeiroSst/authorize-service/internal/repository"
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
+	"github.com/JieeiroSst/authorize-service/middleware"
 	"github.com/JieeiroSst/authorize-service/pkg/goose"
 	"github.com/JieeiroSst/authorize-service/pkg/mysql"
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
@@ -57,6 +58,8 @@ func (a *App) NewServerApp(router *gin.Engine) {
 		log.Println(err)
 	}
 
+	middleware := middleware.Newmiddleware(a.config.Secret.AuthorizeKey)
+
 	var snowflakeData = snowflake.NewSnowflake()
 	var otp = otp.NewOtp(a.config.Secret.JwtSecretKey)
 
@@ -68,7 +71,7 @@ func (a *App) NewServerApp(router *gin.Engine) {
 		OTP:       otp,
 	})
 
-	http := http.NewHandler(*usecase, adapter)
+	http := http.NewHandler(*usecase, middleware, adapter)
 
 	http.Init(router)
 

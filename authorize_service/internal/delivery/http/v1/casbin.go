@@ -12,15 +12,15 @@ import (
 func (h *Handler) initCasbinRoutes(api *gin.RouterGroup) {
 	group := api.Group("/casbin")
 
-	group.POST("/authorize", h.Authorize)
-	group.GET("/", h.CasbinRuleAll)
-	group.GET("/:id", h.CasbinRuleById)
-	group.POST("/", h.CreateCasbinRule)
-	group.DELETE("/:id", h.DeleteCasbinRule)
-	group.PUT("/:id/ptype/:ptype", h.UpdateCasbinRulePtype)
-	group.PUT("/:id/name/:name", h.UpdateCasbinRuleName)
-	group.PUT("/:id/endpoint/:endpoint", h.UpdateCasbinRuleEndpoint)
-	group.PUT("/:id/method/:method", h.UpdateCasbinMethod)
+	group.POST("/authorize", h.middleware.AuthorizeControl(), h.Authorize)
+	group.GET("/", h.middleware.AuthorizeControl(), h.CasbinRuleAll)
+	group.GET("/:id", h.middleware.AuthorizeControl(), h.CasbinRuleById)
+	group.POST("/", h.middleware.AuthorizeControl(), h.CreateCasbinRule)
+	group.DELETE("/:id", h.middleware.AuthorizeControl(), h.DeleteCasbinRule)
+	group.PUT("/:id/ptype/:ptype", h.middleware.AuthorizeControl(), h.UpdateCasbinRulePtype)
+	group.PUT("/:id/name/:name", h.middleware.AuthorizeControl(), h.UpdateCasbinRuleName)
+	group.PUT("/:id/endpoint/:endpoint", h.middleware.AuthorizeControl(), h.UpdateCasbinRuleEndpoint)
+	group.PUT("/:id/method/:method", h.middleware.AuthorizeControl(), h.UpdateCasbinMethod)
 }
 
 // Authorize godoc
@@ -45,14 +45,14 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 	}
 
 	err := h.usecase.Casbins.EnforceCasbin(auth)
-	if errors.Is(err , common.FailedDB) {
+	if errors.Is(err, common.FailedDB) {
 		ctx.JSON(500, gin.H{
 			"code":    500,
 			"message": "INTERVAL SERVER",
 		})
 		return
 	}
-	if errors.Is(err , common.Failedenforcer) {
+	if errors.Is(err, common.Failedenforcer) {
 		ctx.JSON(500, gin.H{
 			"code":    500,
 			"message": "INTERVAL SERVER",

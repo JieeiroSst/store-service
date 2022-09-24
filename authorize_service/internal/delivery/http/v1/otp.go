@@ -10,8 +10,8 @@ import (
 func (h *Handler) initOtpRouters(api *gin.RouterGroup) {
 	otpGroup := api.Group("/otp")
 
-	otpGroup.POST("/", h.CreateOtp)
-	otpGroup.POST("/authorize", h.AuthorizeOTP)
+	otpGroup.POST("/", h.middleware.AuthorizeControl(), h.CreateOtp)
+	otpGroup.POST("/authorize", h.middleware.AuthorizeControl(), h.AuthorizeOTP)
 }
 
 func (h *Handler) CreateOtp(ctx *gin.Context) {
