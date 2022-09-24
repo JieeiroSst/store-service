@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Mysql    MysqlConfig
-	Secret   SecretService
+	Secret   SecretConfig
 	Constant Constant
 }
 
@@ -29,8 +29,9 @@ type MysqlConfig struct {
 	MysqlDriver   string
 }
 
-type SecretService struct {
+type SecretConfig struct {
 	JwtSecretKey string
+	AuthorizeKey string 
 }
 
 type Constant struct {

@@ -2,16 +2,19 @@ package v1
 
 import (
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
+	"github.com/JieeiroSst/authorize-service/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	usecase *usecase.Usecase
+	usecase    *usecase.Usecase
+	middleware middleware.Middleware
 }
 
-func NewHandler(usecase *usecase.Usecase) *Handler {
+func NewHandler(usecase *usecase.Usecase, middleware middleware.Middleware) *Handler {
 	return &Handler{
-		usecase: usecase,
+		usecase:    usecase,
+		middleware: middleware,
 	}
 }
 
