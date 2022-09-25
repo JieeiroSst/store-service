@@ -1,52 +1,54 @@
-table! {
+// @generated automatically by Diesel CLI.
+
+diesel::table! {
     cart_items (id) {
-        id -> Int4,
-        cart_id -> Int4,
+        id -> Text,
+        cart_id -> Text,
         total -> Int4,
         amount -> Int4,
         destroy -> Nullable<Bool>,
-        created_at -> Nullable<Time>,
-        updated_at -> Nullable<Time>,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
 
-table! {
+diesel::table! {
     carts (id) {
-        id -> Int4,
+        id -> Text,
         total -> Int4,
-        user_id -> Int4,
+        user_id -> Text,
         destroy -> Nullable<Bool>,
-        created_at -> Nullable<Time>,
-        updated_at -> Nullable<Time>,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
 
-table! {
+diesel::table! {
     medias (id) {
-        id -> Int4,
+        id -> Text,
         name -> Text,
         url -> Text,
         description -> Text,
         destroy -> Nullable<Bool>,
-        created_at -> Nullable<Time>,
-        updated_at -> Nullable<Time>,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
 
-table! {
+diesel::table! {
     products (id) {
-        id -> Int4,
+        id -> Text,
         product_name -> Text,
         description -> Text,
         price -> Int4,
-        media_id -> Int4,
+        media_id -> Text,
         destroy -> Nullable<Bool>,
-        created_at -> Nullable<Time>,
-        updated_at -> Nullable<Time>,
+        created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }
 
-allow_tables_to_appear_in_same_query!(
+diesel::allow_tables_to_appear_in_same_query!(
     cart_items,
     carts,
     medias,
