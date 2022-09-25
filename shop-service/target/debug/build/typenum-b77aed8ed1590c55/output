@@ -1,2 +1,0 @@
-cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/build/typenum-b77aed8ed1590c55/out/consts.rs
-cargo:rustc-env=TYPENUM_BUILD_OP=/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/build/typenum-b77aed8ed1590c55/out/op.rs
