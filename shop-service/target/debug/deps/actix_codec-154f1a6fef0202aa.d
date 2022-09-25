@@ -1,9 +1,0 @@
-/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/actix_codec-154f1a6fef0202aa.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/bcodec.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/framed.rs
-
-/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/libactix_codec-154f1a6fef0202aa.rlib: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/bcodec.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/framed.rs
-
-/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/deps/actix_codec-154f1a6fef0202aa.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/bcodec.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/framed.rs
-
-/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/lib.rs:
-/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/bcodec.rs:
-/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-codec-0.3.0/src/framed.rs:

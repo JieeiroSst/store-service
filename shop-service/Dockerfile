@@ -1,10 +1,8 @@
-FROM rust:1.61.0
- 
-WORKDIR /usr/src/shop_service
-COPY . .
+FROM rustlang/rust:nightly
 
-EXPOSE 6767
- 
-RUN cargo install --path .
- 
-CMD ["shop_service"]
+RUN cargo install cargo-watch
+RUN cargo install diesel_cli --no-default-features --features postgres
+
+WORKDIR /usr/src/app
+
+CMD ["cargo", "watch", "-x", "run"]

@@ -1,1 +1,1 @@
-/Users/alainsst/Desktop/project_go/store/shop-service/target/debug/shop-service: /Users/alainsst/Desktop/project_go/store/shop-service/src/main.rs
+/usr/src/app/target/debug/shop-service: /usr/src/app/src/main.rs
