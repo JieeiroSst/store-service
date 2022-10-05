@@ -1,37 +1,15 @@
-# Python 3.8 Release
-FROM python:3.8.1-alpine as development
+FROM python:3.9.4-slim
 
-# Maintainer Information
-LABEL maintainer="Giovanni Armane <giovanniarmane@gmail.com>"
-LABEL license="MIT"
+# set work directory
+WORKDIR /app
 
-# Set environment variables
-ENV PYTHON_VERSION=3.8.1 \
-  APP_PATH=/home/python/app \
-  POETRY_VIRTUALENVS_CREATE=false \
-  PATH=/home/python/.local/lib/python3.8/site-packages:/usr/local/bin:/home/python:/home/python/app/bin:$PATH
+# set env variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Install and configure dependencies
-RUN apk add --no-cache build-base libressl-dev musl-dev libffi-dev postgresql-dev
-RUN pip install --no-cache-dir poetry
+# install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Configure user, groups and working directory for application
-RUN adduser -u 1000 -D python && \
-  mkdir -p /home/python/app
-
-# Set workdir
-WORKDIR /home/python/app
-
-# Copy project file and pre-install
-COPY pyproject.toml .
-COPY poetry.lock .
-RUN poetry install
-
-# Expose ports
-EXPOSE 5000
-
-# Declare volumes
-VOLUME [ "/home/python/app" ]
-
-# Run the app
-CMD ["ash"]
+# copy project
+COPY . .
