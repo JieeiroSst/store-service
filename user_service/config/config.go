@@ -10,7 +10,7 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Mysql    MysqlConfig
-	Secret   SecretService
+	Secret   SecretConfig
 	RabbitMQ RabbitMQ
 	Redis    Redis
 	Email    Email
@@ -59,7 +59,7 @@ type MysqlConfig struct {
 	MysqlDriver   string
 }
 
-type SecretService struct {
+type SecretConfig struct {
 	JwtSecretKey string
 }
 
