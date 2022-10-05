@@ -4,17 +4,20 @@ import (
 	"net/http"
 
 	"github.com/JIeeiroSst/user-service/pb"
+	"github.com/JIeeiroSst/user-service/utils"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
 
 type Middlware struct {
-	dns string
+	dns    string
+	serect string
 }
 
-func NewMiddlware(dns string) *Middlware {
+func NewMiddlware(dns string,serect string) *Middlware {
 	return &Middlware{
 		dns: dns,
+		serect: serect,
 	}
 }
 
@@ -35,6 +38,19 @@ func (m *Middlware) AccessControl() gin.HandlerFunc {
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"message": err.Error(),
+			})
+			return
+		}
+		ctx.Next()
+	}
+}
+
+func (m *Middlware) AuthorizeControlHeader() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		authorzation := ctx.Request.Header.Get("Authorization")
+		if ok := utils.DecodeBase(authorzation, m.serect); !ok {
+			ctx.AbortWithStatusJSON(403, gin.H{
+				"message": "Unauthorized",
 			})
 			return
 		}
