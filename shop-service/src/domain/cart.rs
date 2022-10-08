@@ -6,9 +6,9 @@ use crate::core::{QueryParams, RepoResult, ResultPaging};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Cart {
-    pub id: u16,
+    pub id: String,
     pub total: u16,
-    pub user_id: u16,
+    pub user_id: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub destroy: bool
@@ -17,7 +17,7 @@ pub struct Cart {
 #[derive(Debug, Clone)]
 pub struct UpdateCart {
     pub total: u16,
-    pub user_id: u16,
+    pub user_id: String,
     pub destroy: bool,
     pub updated_at: NaiveDateTime,
 }

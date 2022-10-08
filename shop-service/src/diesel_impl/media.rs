@@ -15,7 +15,7 @@ use crate::domain::media::{Media, MediaRepo};
 #[derive(Queryable, Insertable)]
 #[table_name = "medias"]
 pub struct MediaDiesel {
-    pub id: u16,
+    pub id: String,
     pub name: String,
     pub url: String,
     pub description: String,

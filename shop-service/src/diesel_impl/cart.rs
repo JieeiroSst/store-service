@@ -15,9 +15,9 @@ use crate::domain::cart::{Cart, UpdateCart, DeleteCart, CartRepo};
 #[derive(Queryable, Insertable)]
 #[table_name= "carts"]
 pub struct CartDiesel {
-    pub id: u16,
+    pub id: String,
     pub total: u16,
-    pub user_id: u16,
+    pub user_id: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub destroy: bool,
@@ -57,7 +57,7 @@ impl From<Cart> for CartDiesel {
 #[table_name = "carts"]
 pub struct CartUpdateDiesel {
     pub total: u16,
-    pub user_id: u16,
+    pub user_id: String,
     pub destroy: bool,
     pub updated_at: NaiveDateTime,
 }

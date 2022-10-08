@@ -17,7 +17,7 @@ use crate::domain::Media;
 #[derive(Queryable, Insertable)]
 #[table_name = "products"]
 pub struct ProductDiesel {
-    pub id: u16,
+    pub id: String,
     pub product_name: String,
     pub description: String,
     pub price: u16,
@@ -64,7 +64,7 @@ pub struct UpdateProductDiesel {
     pub product_name: String,
     pub description: String,
     pub price: u16,
-    pub media_id: u16,
+    pub media_id: String,
     pub destroy: bool,
     pub updated_at: NaiveDateTime,
 }

@@ -6,7 +6,7 @@ use crate::core::{QueryParams, RepoResult, ResultPaging};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Media  {
-    pub id: u16,
+    pub id: String,
     pub name: String,
     pub url: String,
     pub description: String,
