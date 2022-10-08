@@ -17,8 +17,8 @@ use crate::domain::cartItem::{CartItem, UpdateCartItem, DeleteCartItem, CartItem
 #[derive(Queryable, Insertable)]
 #[table_name= "cart_items"]
 pub struct CartItemDiesel {
-    pub id:  u16,
-    pub cart_id: u16,
+    pub id:  String,
+    pub cart_id: String,
     pub total: u16,
     pub amount: u16,
     pub destroy: bool,

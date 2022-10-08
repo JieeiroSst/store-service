@@ -7,11 +7,11 @@ use crate::domain::Media;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Product {
-    pub id: u16,
+    pub id: String,
     pub name: String,
     pub description: String,
     pub price: u16,
-    pub media_id: u16,
+    pub media_id: String,
     pub destroy: bool,
     pub media: Media,
     pub created_at: NaiveDateTime,
@@ -23,7 +23,7 @@ pub struct UpdateProduct {
     pub name: String,
     pub description: String,
     pub price: u16,
-    pub media_id: u16,
+    pub media_id: String,
     pub destroy: bool,
     pub updated_at: NaiveDateTime,
 }

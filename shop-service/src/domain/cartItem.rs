@@ -7,8 +7,8 @@ use crate::domain::Product;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CartItem {
-    pub id:  u16,
-    pub cart_id: u16,
+    pub id:  String,
+    pub cart_id: String,
     pub product: Product,
     pub total: u16,
     pub amount: u16,
