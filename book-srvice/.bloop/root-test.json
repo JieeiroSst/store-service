@@ -39,8 +39,8 @@
             "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-api/3.141.59/selenium-api-3.141.59.jar",
             "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-support/3.141.59/selenium-support-3.141.59.jar",
             "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-firefox-driver/3.141.59/selenium-firefox-driver-3.141.59.jar",
-            "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/4.2.3/guice-4.2.3.jar",
-            "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.2.3/guice-assistedinject-4.2.3.jar",
+            "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/5.1.0/guice-5.1.0.jar",
+            "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/5.1.0/guice-assistedinject-5.1.0.jar",
             "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/play/play-streams_2.13/2.8.17/play-streams_2.13-2.8.17.jar",
             "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/akka/akka-http-core_2.13/10.1.15/akka-http-core_2.13-10.1.15.jar",
             "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/play/play-ahc-ws_2.13/2.8.0/play-ahc-ws_2.13-2.8.0.jar",
@@ -489,34 +489,34 @@
                 {
                     "organization": "com.google.inject",
                     "name": "guice",
-                    "version": "4.2.3",
+                    "version": "5.1.0",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "guice",
-                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/4.2.3/guice-4.2.3.jar"
+                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/5.1.0/guice-5.1.0.jar"
                         },
                         {
                             "name": "guice",
                             "classifier": "sources",
-                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/4.2.3/guice-4.2.3-sources.jar"
+                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/5.1.0/guice-5.1.0-sources.jar"
                         }
                     ]
                 },
                 {
                     "organization": "com.google.inject.extensions",
                     "name": "guice-assistedinject",
-                    "version": "4.2.3",
+                    "version": "5.1.0",
                     "configurations": "default",
                     "artifacts": [
                         {
                             "name": "guice-assistedinject",
-                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.2.3/guice-assistedinject-4.2.3.jar"
+                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/5.1.0/guice-assistedinject-5.1.0.jar"
                         },
                         {
                             "name": "guice-assistedinject",
                             "classifier": "sources",
-                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.2.3/guice-assistedinject-4.2.3-sources.jar"
+                            "path": "/Users/alainsst/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/5.1.0/guice-assistedinject-5.1.0-sources.jar"
                         }
                     ]
                 },
