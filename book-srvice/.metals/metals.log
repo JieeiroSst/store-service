@@ -357,3 +357,147 @@ Please visit http://www.java.com for information on installing Java.
 2022.10.17 21:57:46 INFO  time: indexed workspace in 4.83s[0m
 2022.10.17 21:57:53 INFO  time: code lens generation in 4.08s[0m
 2022.10.17 21:58:08 INFO  compiling root (14 scala sources and 1 java source)[0m
+2022.10.17 21:58:15 WARN  Unexpected javac output: Exception in thread "main" java.lang.IllegalAccessError: class com.sourcegraph.semanticdb_javac.SemanticdbPlugin (in unnamed module @0x5d47c63f) cannot access class com.sun.tools.javac.api.BasicJavacTask (in module jdk.compiler) because module jdk.compiler does not export com.sun.tools.javac.api to unnamed module @0x5d47c63f
+	at com.sourcegraph.semanticdb_javac.SemanticdbPlugin.init(SemanticdbPlugin.java:19)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugin(BasicJavacTask.java:255)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugins(BasicJavacTask.java:229)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:292)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:176)
+	at jdk.compiler/com.sun.tools.javac.Main.compile(Main.java:64)
+	at jdk.compiler/com.sun.tools.javac.Main.main(Main.java:50).[0m
+2022.10.17 21:58:15 WARN  javac exited with exit code 1[0m
+2022.10.17 21:58:15 INFO  time: compiled root in 7.26s[0m
+Oct 17, 2022 10:04:58 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 159
+Oct 17, 2022 10:04:58 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 160
+2022.10.17 22:04:59 INFO  compiling root (14 scala sources and 1 java source)[0m
+2022.10.17 22:05:10 WARN  Unexpected javac output: Exception in thread "main" java.lang.IllegalAccessError: class com.sourcegraph.semanticdb_javac.SemanticdbPlugin (in unnamed module @0x5d47c63f) cannot access class com.sun.tools.javac.api.BasicJavacTask (in module jdk.compiler) because module jdk.compiler does not export com.sun.tools.javac.api to unnamed module @0x5d47c63f
+	at com.sourcegraph.semanticdb_javac.SemanticdbPlugin.init(SemanticdbPlugin.java:19)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugin(BasicJavacTask.java:255)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugins(BasicJavacTask.java:229)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:292)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:176)
+	at jdk.compiler/com.sun.tools.javac.Main.compile(Main.java:64)
+	at jdk.compiler/com.sun.tools.javac.Main.main(Main.java:50).[0m
+2022.10.17 22:05:10 WARN  javac exited with exit code 1[0m
+2022.10.17 22:05:10 INFO  time: compiled root in 11s[0m
+2022.10.17 22:05:20 INFO  compiling root (14 scala sources and 1 java source)[0m
+2022.10.17 22:05:29 WARN  Unexpected javac output: Exception in thread "main" java.lang.IllegalAccessError: class com.sourcegraph.semanticdb_javac.SemanticdbPlugin (in unnamed module @0x5d47c63f) cannot access class com.sun.tools.javac.api.BasicJavacTask (in module jdk.compiler) because module jdk.compiler does not export com.sun.tools.javac.api to unnamed module @0x5d47c63f
+	at com.sourcegraph.semanticdb_javac.SemanticdbPlugin.init(SemanticdbPlugin.java:19)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugin(BasicJavacTask.java:255)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugins(BasicJavacTask.java:229)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:292)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:176)
+	at jdk.compiler/com.sun.tools.javac.Main.compile(Main.java:64)
+	at jdk.compiler/com.sun.tools.javac.Main.main(Main.java:50).[0m
+2022.10.17 22:05:29 WARN  javac exited with exit code 1[0m
+2022.10.17 22:05:29 INFO  time: compiled root in 8.97s[0m
+2022.10.17 22:05:47 INFO  compiling root (14 scala sources and 1 java source)[0m
+2022.10.17 22:05:53 WARN  Unexpected javac output: Exception in thread "main" java.lang.IllegalAccessError: class com.sourcegraph.semanticdb_javac.SemanticdbPlugin (in unnamed module @0x5d47c63f) cannot access class com.sun.tools.javac.api.BasicJavacTask (in module jdk.compiler) because module jdk.compiler does not export com.sun.tools.javac.api to unnamed module @0x5d47c63f
+	at com.sourcegraph.semanticdb_javac.SemanticdbPlugin.init(SemanticdbPlugin.java:19)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugin(BasicJavacTask.java:255)
+	at jdk.compiler/com.sun.tools.javac.api.BasicJavacTask.initPlugins(BasicJavacTask.java:229)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:292)
+	at jdk.compiler/com.sun.tools.javac.main.Main.compile(Main.java:176)
+	at jdk.compiler/com.sun.tools.javac.Main.compile(Main.java:64)
+	at jdk.compiler/com.sun.tools.javac.Main.main(Main.java:50).[0m
+2022.10.17 22:05:53 WARN  javac exited with exit code 1[0m
+2022.10.17 22:05:53 INFO  time: compiled root in 5.34s[0m
+Oct 18, 2022 8:26:19 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+Oct 18, 2022 8:26:43 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+2022.10.18 20:31:52 INFO  time: code lens generation in 2.84s[0m
+2022.10.18 20:31:52 INFO  time: code lens generation in 1.43s[0m
+2022.10.18 20:31:58 WARN  no build target for: /Users/alainsst/Desktop/project_go/store/book-srvice/project/project/project/metals.sbt[0m
+2022.10.21 19:33:08 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/.metals/lsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/lsp.trace.json
+2022.10.21 19:33:08 INFO  logging to file /Users/alainsst/Desktop/project_go/store/book-srvice/.metals/metals.log
+2022.10.21 19:33:08 INFO  Started: Metals version 0.11.9 in workspace '/Users/alainsst/Desktop/project_go/store/book-srvice' for client Visual Studio Code 1.71.2.
+2022.10.21 19:33:13 INFO  time: initialize in 4.75s
+2022.10.21 19:33:15 INFO  Attempting to connect to the build server...
+2022.10.21 19:33:15 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json
+2022.10.21 19:33:15 INFO  skipping build import with status 'Installed'
+2022.10.21 19:33:24 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json
+2022.10.21 19:33:24 INFO  Attempting to connect to the build server...
+2022.10.21 19:33:24 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json
+2022.10.21 19:33:24 INFO  Attempting to connect to the build server...
+2022.10.21 19:33:24 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json
+2022.10.21 19:33:24 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/project/project/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json
+2022.10.21 19:33:25 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/project/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json
+2022.10.21 19:33:25 INFO  time: Connected to build server in 10s
+2022.10.21 19:33:25 INFO  Connected to Build server: Bloop v1.5.4
+2022.10.21 19:33:25 INFO  time: Imported build in 0.58s
+2022.10.21 19:33:34 INFO  time: indexed workspace in 8.88s
+2022.10.23 02:15:29 INFO  compiling root (14 scala sources and 1 java source)
+2022.10.23 02:15:33 INFO  time: code lens generation in 2.5s
+2022.10.23 02:15:40 INFO  shutting down Metals
+2022.10.23 02:15:41 INFO  Shut down connection with build server.
+2022.10.23 02:15:41 INFO  Shut down connection with build server.
+2022.10.23 02:15:41 INFO  Shut down connection with build server.
+Oct 23, 2022 2:15:41 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint notify
+INFO: Failed to send notification message.
+org.eclipse.lsp4j.jsonrpc.JsonRpcException: java.nio.channels.AsynchronousCloseException
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageConsumer.consume(StreamMessageConsumer.java:72)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.notify(RemoteEndpoint.java:126)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.sendCancelNotification(RemoteEndpoint.java:180)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint$1.cancel(RemoteEndpoint.java:150)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$register$2(BuildServerConnection.scala:321)
+	at scala.runtime.java8.JFunction0$mcZ$sp.apply(JFunction0$mcZ$sp.scala:17)
+	at scala.util.Try$.apply(Try.scala:210)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$register$1(BuildServerConnection.scala:321)
+	at scala.meta.internal.metals.Cancelable$$anon$1.cancel(Cancelable.scala:18)
+	at scala.meta.internal.metals.Cancelable$.$anonfun$cancelAll$1(Cancelable.scala:29)
+	at scala.collection.immutable.List.foreach(List.scala:333)
+	at scala.meta.internal.metals.Cancelable$.cancelAll(Cancelable.scala:28)
+	at scala.meta.internal.metals.MutableCancelable.cancel(MutableCancelable.scala:25)
+	at scala.meta.internal.metals.BuildServerConnection.cancel(BuildServerConnection.scala:258)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$shutdown$1(BuildServerConnection.scala:122)
+	at scala.meta.internal.metals.BuildServerConnection.$anonfun$shutdown$1$adapted(BuildServerConnection.scala:115)
+	at scala.concurrent.impl.Promise$Transformation.run(Promise.scala:467)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(AbstractInterruptibleChannel.java:202)
+	at java.base/sun.nio.ch.SinkChannelImpl.endWrite(SinkChannelImpl.java:241)
+	at java.base/sun.nio.ch.SinkChannelImpl.write(SinkChannelImpl.java:259)
+	at java.base/java.nio.channels.Channels.writeFullyImpl(Channels.java:74)
+	at java.base/java.nio.channels.Channels.writeFully(Channels.java:94)
+	at java.base/java.nio.channels.Channels$1.write(Channels.java:172)
+	at java.base/java.io.OutputStream.write(OutputStream.java:122)
+	at java.base/java.nio.channels.Channels$1.write(Channels.java:152)
+	at scala.meta.internal.metals.ClosableOutputStream.write(ClosableOutputStream.scala:26)
+	at java.base/java.io.FilterOutputStream.write(FilterOutputStream.java:137)
+	at java.base/java.io.FilterOutputStream.write(FilterOutputStream.java:108)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageConsumer.consume(StreamMessageConsumer.java:67)
+	... 19 more
+
+2022.10.23 02:15:41 INFO  Cancelling compilation on Bloop server
+2022.10.23 02:16:02 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/.metals/lsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/lsp.trace.json
+2022.10.23 02:16:03 INFO  logging to file /Users/alainsst/Desktop/project_go/store/book-srvice/.metals/metals.log
+2022.10.23 02:16:03 INFO  Started: Metals version 0.11.9 in workspace '/Users/alainsst/Desktop/project_go/store/book-srvice' for client Visual Studio Code 1.72.2.
+2022.10.23 02:16:04 INFO  time: initialize in 1.55s
+2022.10.23 02:16:06 INFO  Attempting to connect to the build server...
+2022.10.23 02:16:06 INFO  skipping build import with status 'Installed'
+2022.10.23 02:16:06 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json
+2022.10.23 02:16:06 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json
+2022.10.23 02:16:06 INFO  Attempting to connect to the build server...
+2022.10.23 02:16:06 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json
+2022.10.23 02:16:06 INFO  Attempting to connect to the build server...
+2022.10.23 02:16:06 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json
+2022.10.23 02:16:07 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/project/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json
+2022.10.23 02:16:07 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/project/project/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json
+2022.10.23 02:16:07 INFO  time: Connected to build server in 1.13s
+2022.10.23 02:16:07 INFO  Connected to Build server: Bloop v1.5.4
+2022.10.23 02:16:10 INFO  no build target found for /Users/alainsst/Desktop/project_go/store/book-srvice/app/controllers/AsyncController.scala. Using presentation compiler with project's scala-library version: 3.2.0
+2022.10.23 02:16:10 INFO  time: code lens generation in 4.05s
+2022.10.23 02:16:11 INFO  time: Imported build in 0.36s
+2022.10.23 02:16:18 INFO  time: indexed workspace in 7.84s
+2022.10.23 02:16:19 INFO  compiling root (14 scala sources and 1 java source)
+2022.10.23 02:16:40 WARN  Error reading API from class file: controllers.routes : java.lang.UnsupportedClassVersionError: controllers/routes has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+2022.10.23 02:16:40 WARN  Error reading API from class file: controllers.routes$javascript : java.lang.UnsupportedClassVersionError: controllers/routes$javascript has been compiled by a more recent version of the Java Runtime (class file version 55.0), this version of the Java Runtime only recognizes class file versions up to 52.0
+2022.10.23 02:16:40 INFO  compiling root-test (3 scala sources)
+2022.10.23 02:16:41 INFO  time: compiled root in 22s
+Oct 23, 2022 2:16:42 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
