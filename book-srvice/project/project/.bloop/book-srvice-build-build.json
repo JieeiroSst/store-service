@@ -199,7 +199,7 @@
         "platform": {
             "name": "jvm",
             "config": {
-                "home": "/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home",
+                "home": "/opt/homebrew/Cellar/openjdk/19/libexec/openjdk.jdk/Contents/Home",
                 "options": [
                     "-Duser.dir=/Users/alainsst/Desktop/project_go/store/book-srvice/project/project"
                 ]
