@@ -112,7 +112,7 @@ func (a *App) NewGRPCServer() {
 	srv := &grpcServer.GRPCServer{}
 	srv.NewGRPCServer(usecase)
 	pb.RegisterAuthorizeServer(s, srv)
-	l, err := net.Listen("tcp", a.config.Server.GRPCServer)
+	l, err := net.Listen("tcp", fmt.Sprintf(":%v", a.config.Server.GRPCServer))
 	if err != nil {
 		log.Fatal(err)
 	}
