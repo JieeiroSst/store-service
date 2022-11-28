@@ -831,3 +831,7 @@ Nov 21, 2022 8:06:47 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notif
 INFO: Unsupported notification method: $/setTrace
 Nov 21, 2022 8:07:46 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTrace
+2022.11.28 21:50:42 INFO  shutting down Metals
+2022.11.28 21:50:47 ERROR timeout: build server 'bloop' during shutdown
+2022.11.28 21:50:47 ERROR timeout: build server 'bloop' during shutdown
+2022.11.28 21:50:47 ERROR timeout: build server 'bloop' during shutdown
