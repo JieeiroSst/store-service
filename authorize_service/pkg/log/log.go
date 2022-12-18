@@ -2,24 +2,24 @@ package log
 
 import (
 	"log/syslog"
-	"os"
+	"runtime"
+	"strconv"
+	"strings"
 
 	"github.com/goccy/go-json"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	logrus_syslog "github.com/sirupsen/logrus/hooks/syslog"
-	easy "github.com/t-tomalak/logrus-easy-formatter"
 	airbrake "gopkg.in/gemnasium/logrus-airbrake-hook.v2" // the package is named "airbrake"
 )
 
-var logger = &logrus.Logger{
-	Out:   os.Stderr,
-	Level: logrus.DebugLevel,
-	Formatter: &easy.Formatter{
-		TimestampFormat: "2006-01-02 15:04:05",
-		LogFormat:       "[%lvl%]: %time% - %msg%",
-	},
-}
+// var logger = &logrus.Logger{
+// 	Out:   os.Stderr,
+// 	Level: logrus.DebugLevel,
+// 	Formatter: &easy.Formatter{
+// 		TimestampFormat: "2006-01-02 15:04:05",
+// 		LogFormat:       "[%lvl%]: %time% - %msg%",
+// 	},
+// }
 
 func init() {
 	log.AddHook(airbrake.NewHook(123, "xyz", "production"))
@@ -36,44 +36,56 @@ func init() {
 	}
 }
 
+func logger() *log.Entry {
+	pc, file, line, ok := runtime.Caller(1)
+	if !ok {
+		panic("Could not get context info for logger!")
+	}
+
+	filename := file[strings.LastIndex(file, "/")+1:] + ":" + strconv.Itoa(line)
+	funcname := runtime.FuncForPC(pc).Name()
+	fn := funcname[strings.LastIndex(funcname, ".")+1:]
+	return log.WithField("file", filename).WithField("function", fn)
+}
+
 func Trace(msg interface{}) {
 	msgJson, _ := json.Marshal(&msg)
 
-	logger.Trace(msgJson)
+	logger().Trace(string(msgJson))
 }
 
 func Debug(msg interface{}) {
 	msgJson, _ := json.Marshal(&msg)
 
-	logger.Debug(msgJson)
+	logger().Debugf("%v \n", string(msgJson))
 }
 
 func Info(msg interface{}) {
 	msgJson, _ := json.Marshal(&msg)
 
-	logger.Info(msgJson)
+	logger().Infof("%v \n", string(msgJson))
 }
 
 func Warn(msg interface{}) {
 	msgJson, _ := json.Marshal(&msg)
 
-	logger.Warn(msgJson)
+	logger().Warnf("%v \n", string(msgJson))
 }
 
 func Error(msg interface{}) {
 	msgJson, _ := json.Marshal(&msg)
 
-	logger.Error(msgJson)
+	logger().Errorf("%v \n", string(msgJson))
 }
 
 func Fatal(msg interface{}) {
 	msgJson, _ := json.Marshal(&msg)
 
-	logger.Fatal(msgJson)
+	logger().Fatalf("%v \n", string(msgJson))
 }
 
 func Panic(msg interface{}) {
 	msgJson, _ := json.Marshal(&msg)
 
-	logger.Panic(msgJson)
+	logger().Panicf("%v \n", string(msgJson))
 }
