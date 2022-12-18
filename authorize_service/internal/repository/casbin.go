@@ -1,12 +1,9 @@
 package repository
 
 import (
-	"time"
-
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/model"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -35,11 +32,14 @@ func (c *CasbinRepo) CasbinRuleAll() ([]model.CasbinRule, error) {
 	var casbinRules []model.CasbinRule
 	query := c.db.Table("casbin_rule").Find(&casbinRules)
 	if query.Error != nil {
+		log.Error(query.Error)
 		return nil, query.Error
 	}
 	if query.RowsAffected == 0 {
+		log.Error(common.NotFound)
 		return nil, common.NotFound
 	}
+	log.Info(casbinRules)
 	return casbinRules, nil
 }
 
@@ -47,23 +47,26 @@ func (c *CasbinRepo) CasbinRuleById(id int) (*model.CasbinRule, error) {
 	var casbinRule model.CasbinRule
 	query := c.db.Table("casbin_rule").Where("id = ?", id).Find(&casbinRule)
 	if query.Error != nil {
+		log.Error(query.Error)
 		return nil, query.Error
 	}
 
 	if query.RowsAffected == 0 {
+		log.Error(common.NotFound)
 		return nil, common.NotFound
 	}
-
+	log.Info(casbinRule)
 	return &casbinRule, nil
 }
 
 func (c *CasbinRepo) CreateCasbinRule(casbin model.CasbinRule) error {
 	query := c.db.Table("casbin_rule").Save(&casbin)
 	if query.RowsAffected == 0 {
+		log.Error(common.NotFound)
 		return common.NotFound
 	}
 	if query.Error != nil {
-		log.Log().Error(query.Error.Error(), zap.Duration("backoff", time.Second))
+		log.Error(query.Error)
 		return query.Error
 	}
 
@@ -86,9 +89,11 @@ func (c *CasbinRepo) DeleteCasbinRule(id int) error {
 func (c *CasbinRepo) UpdateCasbinRulePtype(id int, ptype string) error {
 	query := c.db.Table("casin_rule").Where("id = ?", id).Update("ptype", ptype)
 	if query.Error != nil {
+		log.Error(query.Error)
 		return query.Error
 	}
 	if query.RowsAffected == 0 {
+		log.Error(common.NotFound)
 		return common.NotFound
 	}
 
@@ -98,9 +103,11 @@ func (c *CasbinRepo) UpdateCasbinRulePtype(id int, ptype string) error {
 func (c *CasbinRepo) UpdateCasbinRuleName(id int, name string) error {
 	query := c.db.Table("casin_rule").Where("id = ?", id).Update("v0", name)
 	if query.Error != nil {
+		log.Error(query.Error)
 		return query.Error
 	}
 	if query.RowsAffected == 0 {
+		log.Error(common.NotFound)
 		return common.NotFound
 	}
 
@@ -110,9 +117,11 @@ func (c *CasbinRepo) UpdateCasbinRuleName(id int, name string) error {
 func (c *CasbinRepo) UpdateCasbinRuleEndpoint(id int, endpoint string) error {
 	query := c.db.Table("casin_rule").Where("id = ?", id).Update("v1", endpoint)
 	if query.Error != nil {
+		log.Error(query.Error)
 		return query.Error
 	}
 	if query.RowsAffected == 0 {
+		log.Error(common.NotFound)
 		return common.NotFound
 	}
 
@@ -122,9 +131,11 @@ func (c *CasbinRepo) UpdateCasbinRuleEndpoint(id int, endpoint string) error {
 func (c *CasbinRepo) UpdateCasbinMethod(id int, method string) error {
 	query := c.db.Table("casin_rule").Where("id = ?", id).Update("v2", method)
 	if query.Error != nil {
+		log.Error(query.Error)
 		return query.Error
 	}
 	if query.RowsAffected == 0 {
+		log.Error(common.NotFound)
 		return common.NotFound
 	}
 
