@@ -2,10 +2,12 @@ package v1
 
 import (
 	"errors"
+	"net/http"
 	"strconv"
 
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/model"
+	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,33 +45,21 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 		Obj: path,
 		Act: method,
 	}
-
+	log.Info(auth)
 	err := h.usecase.Casbins.EnforceCasbin(auth)
 	if errors.Is(err, common.FailedDB) {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.FailedDBServer})
 		return
 	}
 	if errors.Is(err, common.Failedenforcer) {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusUnauthorized, Message{Message: common.Unauthorized})
 		return
 	}
 	if errors.Is(err, common.NotAllow) {
-		ctx.JSON(401, gin.H{
-			"code":    401,
-			"message": "THE CUSTOMER IS NOT AUTHORIZED FOR THE CONTENT REQUESTED",
-		})
+		Response(ctx, http.StatusUnauthorized, Message{Message: common.NotAllowServer})
 		return
 	}
-	ctx.JSON(200, gin.H{
-		"code":    200,
-		"message": "THE CUSTOMER IS AUTHORIZED FOR THE CONTENT REQUESTED",
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.Authorized})
 }
 
 // CasbinRuleAll godoc
@@ -84,20 +74,14 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
 	casbins, err := h.usecase.Casbins.CasbinRuleAll()
 	if errors.Is(err, common.NotFound) {
-		ctx.JSON(404, gin.H{
-			"code":    404,
-			"message": "NOT FOUND",
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.NotAllowServer})
 		return
 	}
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-	ctx.JSON(200, casbins)
+	Response(ctx, http.StatusOK, casbins)
 }
 
 // CasbinRuleById godoc
@@ -113,28 +97,19 @@ func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
 func (h *Handler) CasbinRuleById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    400,
-			"message": "BAD REQUEST",
-		})
+		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
 		return
 	}
 	casbin, err := h.usecase.Casbins.CasbinRuleById(id)
 	if errors.Is(err, common.NotFound) {
-		ctx.JSON(404, gin.H{
-			"code":    404,
-			"message": "NOT FOUND",
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.NotFoundServer})
 		return
 	}
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-	ctx.JSON(200, casbin)
+	Response(ctx, http.StatusOK, casbin)
 }
 
 // CreateCasbinRule godoc
@@ -150,31 +125,19 @@ func (h *Handler) CasbinRuleById(ctx *gin.Context) {
 func (h *Handler) CreateCasbinRule(ctx *gin.Context) {
 	var casbin model.CasbinRule
 	if err := ctx.ShouldBind(&casbin); err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    400,
-			"message": "BAD REQUEST",
-		})
+		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
 		return
 	}
 	err := h.usecase.Casbins.CreateCasbinRule(casbin)
 	if errors.Is(err, common.NotFound) {
-		ctx.JSON(404, gin.H{
-			"code":    404,
-			"message": "NOT FOUND",
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.NotFoundServer})
 		return
 	}
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-
-	ctx.JSON(200, gin.H{
-		"message": "CREATE SUCCESS",
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.CreateSuccess})
 }
 
 // DeleteCasbinRule godoc
@@ -190,23 +153,15 @@ func (h *Handler) CreateCasbinRule(ctx *gin.Context) {
 func (h *Handler) DeleteCasbinRule(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    400,
-			"message": "BAD REQUEST",
-		})
+		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
 		return
 	}
 
 	if err := h.usecase.Casbins.DeleteCasbinRule(id); err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-	ctx.JSON(200, gin.H{
-		"message": "UPDATE SUCCESS",
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinRulePtype godoc
@@ -224,22 +179,14 @@ func (h *Handler) UpdateCasbinRulePtype(ctx *gin.Context) {
 	ptype := ctx.Param("ptype")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    400,
-			"message": "BAD REQUEST",
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
 	if err := h.usecase.Casbins.UpdateCasbinRulePtype(id, ptype); err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-	ctx.JSON(200, gin.H{
-		"message": "UPDATE SUCCESS",
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinRuleName godoc
@@ -257,22 +204,14 @@ func (h *Handler) UpdateCasbinRuleName(ctx *gin.Context) {
 	name := ctx.Param("name")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    400,
-			"message": "BAD REQUEST",
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
 	if err := h.usecase.Casbins.UpdateCasbinRuleName(id, name); err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-	ctx.JSON(200, gin.H{
-		"message": "UPDATE SUCCESS",
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinRuleEndpoint godoc
@@ -290,22 +229,14 @@ func (h *Handler) UpdateCasbinRuleEndpoint(ctx *gin.Context) {
 	endpoint := ctx.Param("endpoint")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    400,
-			"message": "BAD REQUEST",
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
 	if err := h.usecase.Casbins.UpdateCasbinRuleEndpoint(id, endpoint); err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-	ctx.JSON(200, gin.H{
-		"message": "UPDATE SUCCESS",
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinMethod godoc
@@ -323,20 +254,12 @@ func (h *Handler) UpdateCasbinMethod(ctx *gin.Context) {
 	method := ctx.Param("method")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"code":    400,
-			"message": "BAD REQUEST",
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
 	if err := h.usecase.Casbins.UpdateCasbinMethod(id, method); err != nil {
-		ctx.JSON(500, gin.H{
-			"code":    500,
-			"message": "INTERVAL SERVER",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
-	ctx.JSON(200, gin.H{
-		"message": "UPDATE SUCCESS",
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
