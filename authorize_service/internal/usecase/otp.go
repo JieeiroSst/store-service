@@ -24,7 +24,7 @@ func NewOTPUsecase(otp otp.OTP) *OTPUsecase {
 func (u *OTPUsecase) CreateOtpByUser(username string) (*model.OTP, error) {
 	otp, err := u.otp.CreateOtpByUser(username)
 	if err != nil {
-		log.Error(err)
+		log.Error(err.Error())
 		return nil, err
 	}
 	return otp, nil
@@ -32,7 +32,7 @@ func (u *OTPUsecase) CreateOtpByUser(username string) (*model.OTP, error) {
 
 func (u *OTPUsecase) Authorize(otp string, username string) error {
 	if err := u.otp.Authorize(otp, username); err != nil {
-		log.Error(err)
+		log.Error(err.Error())
 		return err
 	}
 	return nil

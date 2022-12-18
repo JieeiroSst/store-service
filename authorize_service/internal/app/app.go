@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
 	"github.com/JieeiroSst/authorize-service/middleware"
 	"github.com/JieeiroSst/authorize-service/pkg/goose"
+	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/JieeiroSst/authorize-service/pkg/mysql"
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
 	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
@@ -45,17 +45,17 @@ func (a *App) NewServerApp(router *gin.Engine) {
 
 	db, err := mysqlOrm.DB()
 	if err != nil {
-		log.Println(err)
+		log.Error(err.Error())
 	}
 
 	migration := goose.NewMigration(db)
 	if err := migration.RunMigration(); err != nil {
-		log.Println(err)
+		log.Error(err.Error())
 	}
 
 	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
-	if err != nil {
-		log.Println(err)
+	if err != nil { 
+		log.Error(err.Error())
 	}
 
 	middleware := middleware.Newmiddleware(a.config.Secret.AuthorizeKey)
@@ -95,7 +95,7 @@ func (a *App) NewGRPCServer() {
 
 	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
 	if err != nil {
-		log.Println(err)
+		log.Error(err.Error())
 	}
 
 	var snowflakeData = snowflake.NewSnowflake()
@@ -114,9 +114,9 @@ func (a *App) NewGRPCServer() {
 	pb.RegisterAuthorizeServer(s, srv)
 	l, err := net.Listen("tcp", fmt.Sprintf(":%v", a.config.Server.GRPCServer))
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err.Error())
 	}
 	if err := s.Serve(l); err != nil {
-		log.Fatal(err)
+		log.Error(err.Error())
 	}
 }

@@ -10,7 +10,7 @@ import (
 func DecodeBase(msg, decode string) bool {
 	msgDecode, err := base64.StdEncoding.DecodeString(msg)
 	if err != nil {
-		log.Error(err)
+		log.Error(err.Error())
 		return false
 	}
 	if !strings.EqualFold(string(msgDecode), decode) {

@@ -24,13 +24,13 @@ func (m *Migration) RunMigration() error {
 	goose.SetBaseFS(embedMigrations)
 
 	if err := goose.SetDialect("mysql"); err != nil {
-		log.Error(err)
+		log.Error(err.Error())
 		return err
 	}
 
 	err := goose.Up(m.db, "script/migrations")
 	if err != nil {
-		log.Error(err)
+		log.Error(err.Error())
 		return err
 	}
 	return nil
