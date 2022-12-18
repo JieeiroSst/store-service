@@ -1,12 +1,8 @@
 package repository
 
 import (
-	"time"
-
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/model"
-	"github.com/JieeiroSst/authorize-service/pkg/log"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -63,7 +59,6 @@ func (c *CasbinRepo) CreateCasbinRule(casbin model.CasbinRule) error {
 		return common.NotFound
 	}
 	if query.Error != nil {
-		log.Log().Error(query.Error.Error(), zap.Duration("backoff", time.Second))
 		return query.Error
 	}
 
