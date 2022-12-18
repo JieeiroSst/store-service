@@ -42,7 +42,7 @@ func (o *otp) CreateOtpByUser(username string) (*model.OTP, error) {
 	totp := o.generate(username)
 	token, err := totp.Generate()
 	if err != nil {
-		log.Error(err)
+		log.Error(err.Error())
 		return nil, err
 	}
 	log.Info(token)
@@ -55,7 +55,7 @@ func (o *otp) Authorize(otp string, username string) error {
 	totp := o.generate(username)
 	ok, err := totp.Validate(otp)
 	if err != nil {
-		log.Error(err)
+		log.Error(err.Error())
 		return err
 	}
 	if !ok {

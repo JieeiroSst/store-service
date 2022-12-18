@@ -21,7 +21,7 @@ func GetMysqlConnInstance(dns string) *MysqlConnect {
 	once.Do(func() {
 		db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
 		if err != nil {
-			log.Error(err)
+			log.Error(err.Error())
 			return
 		}
 		instance = &MysqlConnect{db: db}
