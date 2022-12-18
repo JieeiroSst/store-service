@@ -54,7 +54,7 @@ func (a *App) NewServerApp(router *gin.Engine) {
 	}
 
 	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
-	if err != nil {
+	if err != nil { 
 		log.Error(err.Error())
 	}
 
