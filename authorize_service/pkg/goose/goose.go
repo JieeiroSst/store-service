@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"embed"
 
+	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/pressly/goose/v3"
 )
 
@@ -22,12 +23,14 @@ func NewMigration(db *sql.DB) *Migration {
 func (m *Migration) RunMigration() error {
 	goose.SetBaseFS(embedMigrations)
 
-    if err := goose.SetDialect("mysql"); err != nil {
-        panic(err)
-    }
+	if err := goose.SetDialect("mysql"); err != nil {
+		log.Error(err)
+		return err
+	}
 
 	err := goose.Up(m.db, "script/migrations")
 	if err != nil {
+		log.Error(err)
 		return err
 	}
 	return nil

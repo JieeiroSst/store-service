@@ -24,9 +24,9 @@ func NewHandler(usecase usecase.Usecase, middleware middleware.Middleware, adapt
 }
 
 func (h *Handler) Init(router *gin.Engine) {
+	h.corsMiddleware(router)
 	h.initApi(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	h.corsMiddleware(router)
 }
 
 func (h *Handler) initApi(router *gin.Engine) {
