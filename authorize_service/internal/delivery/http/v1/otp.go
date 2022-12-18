@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/gin-gonic/gin"
@@ -19,50 +20,42 @@ func (h *Handler) CreateOtp(ctx *gin.Context) {
 
 	otp, err := h.usecase.Otps.CreateOtpByUser(username)
 	if errors.Is(err, common.OTPFailed) {
-		ctx.JSON(401, gin.H{
-			"message":        err,
-			"quotaRemaining": 0,
-			"otp":            "",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: err.Error()})
 		return
 	}
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"message":        err,
-			"quotaRemaining": 0,
-			"otp":            "",
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: err.Error()})
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"otp":            otp.OTP,
-		"success":        true,
-		"textId":         "1234",
-		"quotaRemaining": 70,
+	Response(ctx, http.StatusOK, Message{
+		OTP:            otp.OTP,
+		Message:        "Success",
+		QuotaRemaining: 70,
+		TextID:         username,
 	})
 }
 
 func (h *Handler) AuthorizeOTP(ctx *gin.Context) {
-	usernname := ctx.Query("username")
+	username := ctx.Query("username")
 	otp := ctx.Query("otp")
 
-	err := h.usecase.Otps.Authorize(otp, usernname)
+	err := h.usecase.Otps.Authorize(otp, username)
 	if errors.Is(err, common.OTPFailed) {
-		ctx.JSON(401, gin.H{
-			"message":        err.Error(),
-			"success":        false,
-			"quotaRemaining": 0,
-			"otp":            "",
+		Response(ctx, http.StatusUnauthorized, Message{
+			OTP:            err.Error(),
+			Message:        "Faield",
+			QuotaRemaining: 0,
+			TextID:         username,
 		})
 		return
 	}
 	if err != nil {
-		ctx.JSON(400, gin.H{
-			"message":        err.Error(),
-			"success":        false,
-			"quotaRemaining": 0,
-			"otp":            "",
+		Response(ctx, http.StatusInternalServerError, Message{
+			OTP:            err.Error(),
+			Message:        "Faield",
+			QuotaRemaining: 0,
+			TextID:         username,
 		})
 		return
 	}
@@ -70,5 +63,10 @@ func (h *Handler) AuthorizeOTP(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
 		"success":    true,
 		"isValidOtp": true,
+	})
+	Response(ctx, http.StatusOK, Message{
+		Message:        "Success",
+		QuotaRemaining: 0,
+		TextID:         username,
 	})
 }

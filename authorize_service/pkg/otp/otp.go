@@ -6,6 +6,7 @@ import (
 
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/model"
+	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/jltorresm/otpgo"
 	"github.com/jltorresm/otpgo/config"
 )
@@ -41,8 +42,10 @@ func (o *otp) CreateOtpByUser(username string) (*model.OTP, error) {
 	totp := o.generate(username)
 	token, err := totp.Generate()
 	if err != nil {
+		log.Error(err)
 		return nil, err
 	}
+	log.Info(token)
 	return &model.OTP{
 		OTP: token,
 	}, nil
@@ -52,10 +55,13 @@ func (o *otp) Authorize(otp string, username string) error {
 	totp := o.generate(username)
 	ok, err := totp.Validate(otp)
 	if err != nil {
+		log.Error(err)
 		return err
 	}
 	if !ok {
+		log.Warn(fmt.Sprintf("Token authorize faild %v", otp))
 		return common.OTPFailed
 	}
+	log.Info("Token authorize success")
 	return nil
 }
