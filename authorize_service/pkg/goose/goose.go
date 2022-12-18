@@ -28,7 +28,7 @@ func (m *Migration) RunMigration() error {
 		return err
 	}
 
-	err := goose.Up(m.db, "script/migrations")
+	err := goose.Up(m.db, "migrations", goose.WithAllowMissing())
 	if err != nil {
 		log.Error(err.Error())
 		return err
