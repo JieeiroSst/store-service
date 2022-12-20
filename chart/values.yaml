@@ -10,3 +10,18 @@ nginx:
   service:
     name: app-nginx-loadbalancer-service
     type: LoadBalancer
+
+authorize:
+  name: authorize-service
+  replicas: 3
+
+  image:
+    name: authorize-service
+    tag: v1
+    port:
+      server_port: 1234
+      grpc_port: 1231
+
+  service:
+    name: authorize-service-clusterip-service
+    type: ClusterIP
