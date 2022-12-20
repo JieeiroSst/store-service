@@ -25,3 +25,13 @@ authorize:
   service:
     name: authorize-service-clusterip-service
     type: ClusterIP
+
+consul:
+  name: consul
+connectInject:
+  enabled: true
+  cni:
+    enabled: true
+    logLevel: info
+    cniBinDir: "/opt/cni/bin"
+    cniNetDir: "/etc/cni/net.d"
