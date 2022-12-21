@@ -1,10 +1,15 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"os"
 
+	"github.com/JieeiroSst/authorize-service/utils"
 	"github.com/ghodss/yaml"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -31,11 +36,22 @@ type MysqlConfig struct {
 
 type SecretConfig struct {
 	JwtSecretKey string
-	AuthorizeKey string 
+	AuthorizeKey string
 }
 
 type Constant struct {
 	Rbac string
+}
+
+type Consul struct {
+	LockIndex int
+	Key       int
+	Flags     int
+	Value     string
+}
+
+type Dir struct {
+	ConsulDir string
 }
 
 func ReadConf(filename string) (*Config, error) {
@@ -51,4 +67,43 @@ func ReadConf(filename string) (*Config, error) {
 
 	}
 	return config, nil
+}
+
+func ReadFileConsul(fileDir string) (*Config, error) {
+	var (
+		config Config
+		consul Consul
+	)
+	resp, err := http.Get(fileDir)
+	if err != nil {
+		return nil, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &consul); err != nil {
+		return nil, err
+	}
+
+	a := utils.DecodeByte(consul.Value)
+
+	if err := json.Unmarshal(a, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
+
+func ReadFileEnv(dir string) (*Dir, error) {
+	err := godotenv.Load("local.env")
+	if err != nil {
+		return nil, err
+	}
+
+	data := &Dir{
+		ConsulDir: os.Getenv("consul"),
+	}
+	return data, nil
 }

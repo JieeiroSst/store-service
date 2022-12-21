@@ -20,3 +20,11 @@ func DecodeBase(msg, decode string) bool {
 	log.Info("DEcode base success")
 	return true
 }
+
+func DecodeByte(msg string) []byte {
+	sDec, err := base64.StdEncoding.DecodeString(msg)
+	if err != nil {
+		return nil
+	}
+	return sDec
+}
