@@ -2,3 +2,4 @@
 /post_service/config.yml
 /user_service/config.yml   
 /payment_service/config.yml
+/authorize_service/.env

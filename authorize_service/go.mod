@@ -11,12 +11,12 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/goccy/go-json v0.9.7
 	github.com/jltorresm/otpgo v0.3.0
+	github.com/joho/godotenv v1.4.0
 	github.com/pressly/goose/v3 v3.6.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe
 	github.com/swaggo/gin-swagger v1.5.1
 	github.com/swaggo/swag v1.8.1
-	github.com/t-tomalak/logrus-easy-formatter v0.0.0-20190827215021-c074f06c5816
 	google.golang.org/grpc v1.36.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2
