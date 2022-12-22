@@ -7,10 +7,8 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 
 # This program built for i386-apple-darwin11.3.0
  
-make: *** No rule to make target `all'.  Stop.
 
-
-# Make data base, printed on Wed Dec 21 20:19:08 2022
+# Make data base, printed on Thu Dec 22 20:48:03 2022
 
 # Variables
 
@@ -48,6 +46,9 @@ VSCODE_CWD = /Users/alainsst/Desktop/project_go/store
 GOPROXY = https://proxy.golang.org,direct
 # environment
 PATH = /usr/local/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Users/alainsst/miniforge3/condabin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin://flutter/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/usr/local/go/bin:/Users/alainsst/go/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/alainsst/Desktop/project_go/store/authorize_service/flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/google-cloud-sdk/bin
+ 
+make: *** No rule to make target `all'.  Stop.
+
 # environment
 ZDOTDIR = /Users/alainsst
 # environment
@@ -137,7 +138,7 @@ MFLAGS = -Rrqp
 # environment
 TERM_PROGRAM_VERSION = 1.74.0
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160.FEBB104F-FA7B-4286-BA4B-96BC38690844
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160.F2E57F29-978E-4899-91F5-625435701A28
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -261,6 +262,6 @@ GNUmakefile:
 # strcache size: total = 0 / max = 0 / min = 4096 / avg = 0
 # strcache free: total = 0 / max = 0 / min = 4096 / avg = 0
 
-# Finished Make data base on Wed Dec 21 20:19:08 2022
+# Finished Make data base on Thu Dec 22 20:48:03 2022
 
  
