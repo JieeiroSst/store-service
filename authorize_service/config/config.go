@@ -97,7 +97,7 @@ func ReadFileConsul(fileDir string) (*Config, error) {
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {
-	err := godotenv.Load("local.env")
+	err := godotenv.Load(dir)
 	if err != nil {
 		return nil, err
 	}
