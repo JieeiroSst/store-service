@@ -28,10 +28,15 @@ authorize:
 
 consul:
   name: consul-service
-connectInject:
-  enabled: true
-  cni:
-    enabled: true
-    logLevel: info
-    cniBinDir: "/opt/cni/bin"
-    cniNetDir: "/etc/cni/net.d"
+  replicas: 1
+
+  image:
+    name: app-nginx
+    tag: v0.6.4 
+    port: 
+      - tcp_port: 8500 
+      - udp_portL: 8600
+
+  service:
+    name: consul-clusterip-service
+    type: LoadBalancer
