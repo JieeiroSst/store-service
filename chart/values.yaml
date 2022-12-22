@@ -40,3 +40,168 @@ consul:
   service:
     name: consul-clusterip-service
     type: LoadBalancer
+
+user:
+  name: user-service
+  replicas: 3
+
+  image:
+    name: user-service
+    tag: v1
+    port:
+      server_port: 1235
+      grpc_port: 1232
+
+  service:
+    name: user-service-clusterip-service
+    type: ClusterIP
+
+shop:
+  name: shop-service
+  replicas: 3
+
+  image:
+    name: shop-service
+    tag: v1
+    port:
+      server_port: 1236
+      grpc_port: 1233
+
+  service:
+    name: user-service-clusterip-service
+    type: ClusterIP
+
+book:
+  name: book-service
+  replicas: 3
+
+  image:
+    name: book-service
+    tag: v1
+    port:
+      server_port: 1235
+      grpc_port: 1232
+
+  service:
+    name: book-service-clusterip-service
+    type: ClusterIP
+
+book-store:
+  name: book-store-service
+  replicas: 3
+
+  image:
+    name: book-store-service
+    tag: v1
+    port:
+      server_port: 1236
+      grpc_port: 1334
+
+  service:
+    name: book-store-service-clusterip-service
+    type: ClusterIP
+
+identified:
+  name: book-store-service
+  replicas: 3
+
+  image:
+    name: identified-service
+    tag: v1
+    port:
+      server_port: 1237
+      grpc_port: 1335
+
+  service:
+    name: identified-service-clusterip-service
+    type: ClusterIP
+  
+notification:
+  name: notification-service
+  replicas: 3
+
+  image:
+    name: notification-service
+    tag: v1
+    port:
+      server_port: 1236
+      grpc_port: 1334
+
+  service:
+    name: notification-service-clusterip-service
+    type: ClusterIP
+
+payment:
+  name: payment-service
+  replicas: 3
+
+  image:
+    name: payment-service
+    tag: v1
+    port:
+      server_port: 1237
+      grpc_port: 1335
+
+  service:
+    name: payment-service-clusterip-service
+    type: ClusterIP
+
+post:
+  name: post-service
+  replicas: 3
+
+  image:
+    name: post-service
+    tag: v1
+    port:
+      server_port: 1238
+      grpc_port: 1336
+
+  service:
+    name: post-service-clusterip-service
+    type: ClusterIP
+
+purchase:
+  name: purchase-service
+  replicas: 3
+
+  image:
+    name: purchase-service
+    tag: v1
+    port:
+      server_port: 1239
+      grpc_port: 1337
+
+  service:
+    name: purchase-service-clusterip-service
+    type: ClusterIP
+
+transaction:
+  name: transation-service
+  replicas: 3
+
+  image:
+    name: transaction-service
+    tag: v1
+    port:
+      server_port: 1240
+      grpc_port: 1338
+
+  service:
+    name: transaction-service-clusterip-service
+    type: ClusterIP
+
+worker:
+  name: worker-service
+  replicas: 3
+
+  image:
+    name: worker-service
+    tag: v1
+    port:
+      server_port: 1241
+      grpc_port: 1339
+
+  service:
+    name: worker-service-clusterip-service
+    type: ClusterIP
