@@ -1,0 +1,11 @@
+/Users/alainsst/Desktop/project_go/store/purchase-service/target/debug/deps/ucd_util-de84b5c1e0a8becd.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/hangul.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/ideograph.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/name.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/property.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/unicode_tables/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/unicode_tables/jamo_short_name.rs
+
+/Users/alainsst/Desktop/project_go/store/purchase-service/target/debug/deps/ucd_util-de84b5c1e0a8becd.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/hangul.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/ideograph.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/name.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/property.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/unicode_tables/mod.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/unicode_tables/jamo_short_name.rs
+
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/lib.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/hangul.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/ideograph.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/name.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/property.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/unicode_tables/mod.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/ucd-util-0.1.9/src/unicode_tables/jamo_short_name.rs:

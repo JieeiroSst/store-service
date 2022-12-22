@@ -3,3 +3,15 @@
 /user_service/config.yml   
 /payment_service/config.yml
 /authorize_service/.env
+/user_service/.env
+/post_service/.env 
+/bookStore_service/.env
+/identified_service/.env
+/keikibook/.env 
+/notification_service/.env 
+/payment_service/.env 
+/purchase-service/.env 
+/transaction_service/.env 
+/transaction_service/config.yml 
+/woker_service/.env 
+/woker_service/config.yml

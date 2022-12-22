@@ -1,0 +1,11 @@
+/Users/alainsst/Desktop/project_go/store/purchase-service/target/debug/deps/tinyvec-6ec15385a9269389.rmeta: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/array.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/array/generated_impl.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/arrayvec.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/arrayvec_drain.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/slicevec.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/tinyvec.rs
+
+/Users/alainsst/Desktop/project_go/store/purchase-service/target/debug/deps/tinyvec-6ec15385a9269389.d: /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/lib.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/array.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/array/generated_impl.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/arrayvec.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/arrayvec_drain.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/slicevec.rs /Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/tinyvec.rs
+
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/lib.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/array.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/array/generated_impl.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/arrayvec.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/arrayvec_drain.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/slicevec.rs:
+/Users/alainsst/.cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.6.0/src/tinyvec.rs:
