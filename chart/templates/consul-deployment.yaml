@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consul-example-deployment
+  name: consul-service-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: consul-example
+      app: consul-service
   template:
     metadata:
       labels:
-        app: consul-example
+        app: consul-service
     spec:
       containers:
-        - name: example
-          image: 'consul:latest'
+        - name: consul-service
+          image: consul:latest
           env:
             - name: NODE_ENV
               value: production
