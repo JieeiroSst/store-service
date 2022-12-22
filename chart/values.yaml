@@ -27,7 +27,7 @@ authorize:
     type: ClusterIP
 
 consul:
-  name: consul
+  name: consul-service
 connectInject:
   enabled: true
   cni:

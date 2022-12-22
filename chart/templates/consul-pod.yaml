@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: consul-example
+  name: consul-service
 spec:
   containers:
     - name: example
