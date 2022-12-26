@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/JIeeiroSst/user-service/pb"
+	"github.com/JIeeiroSst/user-service/pkg/log"
 	"github.com/JIeeiroSst/user-service/utils"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -14,9 +15,9 @@ type Middlware struct {
 	serect string
 }
 
-func NewMiddlware(dns string,serect string) *Middlware {
+func NewMiddlware(dns string, serect string) *Middlware {
 	return &Middlware{
-		dns: dns,
+		dns:    dns,
 		serect: serect,
 	}
 }
@@ -33,6 +34,7 @@ func (m *Middlware) AccessControl() gin.HandlerFunc {
 			Obj: ctx.Request.URL.Path,
 			Act: ctx.Request.Method,
 		}
+		log.Info(req)
 
 		_, err := client.EnforceCasbin(ctx, req)
 		if err != nil {
