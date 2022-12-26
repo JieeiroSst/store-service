@@ -2,5 +2,5 @@ make --dry-run --always-make --keep-going --print-directory
 make: Entering directory `/Users/alainsst/Desktop/project_go/store'
 make: Leaving directory `/Users/alainsst/Desktop/project_go/store'
  
-make: *** No targets specified and no makefile found.  Stop.
+make: *** No targets.  Stop.
 

@@ -6,14 +6,11 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # PARTICULAR PURPOSE.
 
 # This program built for i386-apple-darwin11.3.0
- 
 
-# Make data base, printed on Thu Dec 22 20:48:03 2022
+# Make data base, printed on Mon Dec 26 19:38:39 2022
 
 # Variables
 
-# environment
-VSCODE_GIT_ASKPASS_MAIN = /Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # automatic
@@ -32,29 +29,22 @@ SHELL = /bin/sh
 VSCODE_NLS_CONFIG = {"locale":"en-vn","availableLanguages":{},"_languagePackSupport":true}
 # environment
 _ = /usr/bin/make
-# makefile
-MAKEFILE_LIST := 
-# environment
-VSCODE_INJECTION = 1
+# makefile (from `Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
-VSCODE_CWD = /Users/alainsst/Desktop/project_go/store
+VSCODE_CWD = /
 # environment
 GOPROXY = https://proxy.golang.org,direct
 # environment
-PATH = /usr/local/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Users/alainsst/miniforge3/condabin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin://flutter/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/usr/local/go/bin:/Users/alainsst/go/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/alainsst/Desktop/project_go/store/authorize_service/flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/google-cloud-sdk/bin
- 
-make: *** No rule to make target `all'.  Stop.
-
-# environment
-ZDOTDIR = /Users/alainsst
+PATH = /Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Users/alainsst/miniforge3/condabin:/usr/local/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/usr/local/go/bin:/Users/alainsst/go/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin://flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/google-cloud-sdk/bin
 # environment
 GOPATH = /Users/alainsst/go
 # environment
-LaunchInstanceID = B8880849-A943-413F-B5A1-14F9C1F28F74
+LaunchInstanceID = C091C3FC-2450-4DEF-8DF0-6FD417CE7915
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
@@ -62,7 +52,7 @@ ELECTRON_RUN_AS_NODE = 1
 # environment
 CLOUDSDK_METRICS_ENVIRONMENT = cloudcode.vscode
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.e0Syf5xuX6/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.o5AMmytpOt/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -90,17 +80,13 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # environment
-MAKELEVEL := 0
-# environment
 XPC_FLAGS = 0x0
-# environment
-COLORTERM = truecolor
 # default
 MAKE = $(MAKE_COMMAND)
 # default
 MAKECMDGOALS := all
 # environment
-SHLVL = 2
+SHLVL = 1
 # default
 MAKE_VERSION := 3.81
 # environment
@@ -113,10 +99,6 @@ USER = alainsst
 CONDA_SHLVL = 0
 # default
 MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
-# environment
-VSCODE_GIT_ASKPASS_EXTRA_ARGS = --ms-enable-electron-run-as-node
-# environment
-TERM_PROGRAM = vscode
 # default
 .VARIABLES := 
 # environment
@@ -126,8 +108,6 @@ TMPDIR = /var/folders/3_/8dm2ksqs0sq6vtn6p24t3n6c0000gn/T/
 # environment
 VSCODE_IPC_HOOK = /Users/alainsst/Library/Application Support/Code/1.74.0-main.sock
 # environment
-VSCODE_GIT_ASKPASS_NODE = /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper.app/Contents/MacOS/Code Helper
-# environment
 MallocNanoZone = 0
 # makefile
 MAKEFLAGS = Rrqp
@@ -136,9 +116,7 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-TERM_PROGRAM_VERSION = 1.74.0
-# environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160.F2E57F29-978E-4899-91F5-625435701A28
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -147,20 +125,16 @@ XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160.F2E57F29-9
 __CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
 # environment
 COMMAND_MODE = unix2003
-# environment
-GIT_ASKPASS = /Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh
 # default
 MAKEFILES := 
 # automatic
 <F = $(notdir $<)
 # environment
-USER_ZDOTDIR = /Users/alainsst
-# environment
 LC_ALL = C
 # environment
 CONDA_PYTHON_EXE = /Users/alainsst/miniforge3/bin/python
 # environment
-SECURITYSESSIONID = 1b021
+SECURITYSESSIONID = 186a5
 # automatic
 ^F = $(notdir $^)
 # default
@@ -170,17 +144,15 @@ _CE_M =
 # default
 .INCLUDE_DIRS = /usr/local/include
 # environment
-VSCODE_GIT_IPC_HANDLE = /var/folders/3_/8dm2ksqs0sq6vtn6p24t3n6c0000gn/T/vscode-git-a14f18749f.sock
+MAKELEVEL := 0
 # environment
 LANG = C
 # environment
-TERM = xterm-256color
-# environment
-VSCODE_PID = 17987
+VSCODE_PID = 430
 # environment
 _CE_CONDA = 
 # variable set hash-table stats:
-# Load=82/1024=8%, Rehash=0, Collisions=4/103=4%
+# Load=70/1024=7%, Rehash=0, Collisions=2/93=2%
 
 # Pattern-specific Variable Values
 
@@ -188,9 +160,9 @@ _CE_CONDA =
 
 # Directories
 
-# . (device 16777232, inode 1149272): 26 files, no impossibilities.
+# . (device 16777234, inode 1149272): 27 files, no impossibilities.
 
-# 26 files, no impossibilities in 1 directories.
+# 27 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -215,21 +187,10 @@ all:
 
 # Not a target:
 Makefile:
-#  A default, MAKEFILES, or -include/sinclude makefile.
 #  Implicit rule search has been done.
-#  File does not exist.
+#  Last modified 2022-12-24 22:17:34
 #  File has been updated.
-#  Failed to be updated.
-# variable set hash-table stats:
-# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
-
-# Not a target:
-makefile:
-#  A default, MAKEFILES, or -include/sinclude makefile.
-#  Implicit rule search has been done.
-#  File does not exist.
-#  File has been updated.
-#  Failed to be updated.
+#  Successfully updated.
 # variable set hash-table stats:
 # Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
@@ -239,29 +200,21 @@ makefile:
 #  Modification time never checked.
 #  File has not been updated.
 
-# Not a target:
-GNUmakefile:
-#  A default, MAKEFILES, or -include/sinclude makefile.
-#  Implicit rule search has been done.
-#  File does not exist.
-#  File has been updated.
-#  Failed to be updated.
-# variable set hash-table stats:
-# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
-
 # files hash-table stats:
-# Load=6/1024=1%, Rehash=0, Collisions=0/17=0%
+# Load=4/1024=0%, Rehash=0, Collisions=0/16=0%
 # VPATH Search Paths
 
 # No `vpath' search paths.
 
 # No general (`VPATH' variable) search path.
 
-# # of strings in strcache: 0
-# # of strcache buffers: 0
-# strcache size: total = 0 / max = 0 / min = 4096 / avg = 0
-# strcache free: total = 0 / max = 0 / min = 4096 / avg = 0
+# # of strings in strcache: 1
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Thu Dec 22 20:48:03 2022
+# Finished Make data base on Mon Dec 26 19:38:39 2022
 
  
+make: *** No rule to make target `all'.  Stop.
+
