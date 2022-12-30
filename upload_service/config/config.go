@@ -7,7 +7,9 @@ import (
 )
 
 type ServerConfig struct {
-	Port string
+	Port       string
+	TokenImgBB string
+	ImgBBApi   string
 }
 
 func Config() (*ServerConfig, error) {
@@ -16,6 +18,8 @@ func Config() (*ServerConfig, error) {
 		return nil, err
 	}
 	return &ServerConfig{
-		Port: os.Getenv("PORT"),
+		Port:       os.Getenv("PORT"),
+		TokenImgBB: os.Getenv("TOKEN_IMGBB"),
+		ImgBBApi:   os.Getenv("IMGBB_API"),
 	}, nil
 }
