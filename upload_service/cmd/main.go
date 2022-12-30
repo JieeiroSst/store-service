@@ -28,12 +28,12 @@ func main() {
 
 	nodeEnv := os.Getenv("production")
 	if !strings.EqualFold(nodeEnv, "") {
-		cfg, err = config.Config()
+		cfg, err = config.ConfigConsul()
 		if err != nil {
 			log.Error(err.Error())
 		}
 	} else {
-		cfg, err = config.Config()
+		cfg, err = config.ConfigLocal()
 		if err != nil {
 			log.Error(err.Error())
 		}
