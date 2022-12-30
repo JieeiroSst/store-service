@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/JIeeiroSst/upload-service/pkg/log"
 )
 
 type MongoDB struct {
@@ -20,6 +21,11 @@ func Connect(dns string) (*MongoDB, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			log.Error(err.Error())
+		}
+	}()
 
 	return &MongoDB{
 		mongo: client,
