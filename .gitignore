@@ -15,3 +15,4 @@
 /transaction_service/config.yml 
 /woker_service/.env 
 /woker_service/config.yml
+/upload_service/.env
