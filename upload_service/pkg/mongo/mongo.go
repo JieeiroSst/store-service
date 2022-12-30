@@ -19,6 +19,7 @@ func ConnectMongoDB(dns string) (*MongoDB, error) {
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(dns))
 	if err != nil {
+		log.Error(err.Error())
 		return nil, err
 	}
 	defer func() {
