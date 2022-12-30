@@ -1,13 +1,43 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"os"
+	"strings"
+
+	"github.com/JIeeiroSst/upload-service/config"
+	"github.com/JIeeiroSst/upload-service/pkg/log"
+	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
+)
+
+var (
+	cfg *config.ServerConfig
+)
 
 func main() {
-    app := fiber.New()
+	app := fiber.New()
 
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, World 👋!")
-    })
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-    app.Listen(":3000")
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World 👋!")
+	})
+
+	nodeEnv := os.Getenv("production")
+	if !strings.EqualFold(nodeEnv, "") {
+		cfg, err = config.Config()
+		if err != nil {
+			log.Error(err.Error())
+		}
+	} else {
+		cfg, err = config.Config()
+		if err != nil {
+			log.Error(err.Error())
+		}
+	}
+
+	app.Listen(cfg.Port)
 }
