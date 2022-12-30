@@ -12,7 +12,19 @@ type ServerConfig struct {
 	ImgBBApi   string
 }
 
-func Config() (*ServerConfig, error) {
+func ConfigLocal() (*ServerConfig, error) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		return nil, err
+	}
+	return &ServerConfig{
+		Port:       os.Getenv("PORT"),
+		TokenImgBB: os.Getenv("TOKEN_IMGBB"),
+		ImgBBApi:   os.Getenv("IMGBB_API"),
+	}, nil
+}
+
+func ConfigConsul() (*ServerConfig, error) {
 	err := godotenv.Load(".env")
 	if err != nil {
 		return nil, err
