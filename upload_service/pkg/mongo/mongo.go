@@ -10,7 +10,7 @@ import (
 )
 
 type MongoDB struct {
-	mongo *mongo.Client
+	Client *mongo.Client
 }
 
 // mongodb://localhost:27017
@@ -29,6 +29,6 @@ func ConnectMongoDB(dns string) (*MongoDB, error) {
 	}()
 
 	return &MongoDB{
-		mongo: client,
+		Client: client,
 	}, nil
 }
