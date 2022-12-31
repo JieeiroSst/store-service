@@ -11,7 +11,7 @@ import (
 
 type Uploads interface {
 	Create(ctx context.Context, upload model.CreateMedia) error
-	Update(ctx context.Context, upload model.UpdateMedia) error
+	Update(ctx context.Context, id string, upload model.UpdateMedia) error
 	GetAll(ctx context.Context) ([]model.Media, error)
 	GetById(ctx context.Context, id string) (*model.Media, error)
 	Delete(ctx context.Context, id string) error
@@ -28,22 +28,48 @@ func NewUploadRepo(Collection *mongo.Collection) *UploadRepo {
 }
 
 func (r *UploadRepo) Create(ctx context.Context, upload model.CreateMedia) error {
+	_, err := r.collection.InsertOne(ctx, upload)
+	if err != nil {
+		log.Error(err.Error())
+		return err
+	}
 
 	return nil
 }
 
-func (r *UploadRepo) Update(ctx context.Context, upload model.UpdateMedia) error {
-
+func (r *UploadRepo) Update(ctx context.Context, id string, upload model.UpdateMedia) error {
+	filter := bson.D{{Key: "_id", Value: id}}
+	_, err := r.collection.UpdateOne(context.TODO(), filter, upload)
+	if err != nil {
+		log.Error(err.Error())
+		return err
+	}
 	return nil
 }
 
 func (r *UploadRepo) GetAll(ctx context.Context) ([]model.Media, error) {
-	return nil, nil
+	var result []model.Media
+	cur, err := r.collection.Find(ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(ctx)
+	for cur.Next(ctx) {
+		if err := cur.Decode(&result); err != nil {
+			log.Error(err.Error())
+			return nil, err
+		}
+	}
+	if err := cur.Err(); err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
+	return result, nil
 }
 
 func (r *UploadRepo) GetById(ctx context.Context, id string) (*model.Media, error) {
 	var result *model.Media
-	filter := bson.D{{Key: "id", Value: id}}
+	filter := bson.D{{Key: "_id", Value: id}}
 	err := r.collection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		log.Error(err.Error())
@@ -54,5 +80,11 @@ func (r *UploadRepo) GetById(ctx context.Context, id string) (*model.Media, erro
 }
 
 func (r *UploadRepo) Delete(ctx context.Context, id string) error {
+	filter := bson.D{{Key: "_id", Value: id}}
+	_, err := r.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Error(err.Error())
+		return err
+	}
 	return nil
 }
