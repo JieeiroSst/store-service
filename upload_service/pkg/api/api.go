@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
-	"strings"
 
 	"github.com/JIeeiroSst/upload-service/common"
 	"github.com/JIeeiroSst/upload-service/pkg/log"
@@ -20,7 +19,7 @@ type UploadApi struct {
 
 type UploadData struct {
 	Status  string
-	Success string
+	Success int
 	Data
 }
 
@@ -93,14 +92,14 @@ func (u *UploadApi) UploadFile(b bytes.Buffer, w *multipart.Writer) (*UploadData
 	}
 	defer response.Body.Close()
 
-	if strings.EqualFold(response.Status, common.Success) {
-		log.Error(common.ApiFailed.Error())
-		return nil, common.ApiFailed
-	}
 	body, _ := ioutil.ReadAll(response.Body)
 	if err := json.Unmarshal(body, &data); err != nil {
 		log.Error(err.Error())
 		return nil, err
+	}
+	if data.Success == common.Success {
+		log.Error(common.ApiFailed.Error())
+		return nil, common.ApiFailed
 	}
 	return &data, nil
 }
