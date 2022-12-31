@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-func (h *Handler) corsMiddleware(router fiber.App) {
+func (h *Handler) corsMiddleware(router *fiber.App) {
 	router.Use(cors.New(cors.Config{
 		Next:             nil,
 		AllowOrigins:     "*",
