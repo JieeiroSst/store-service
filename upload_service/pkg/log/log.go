@@ -2,9 +2,8 @@ package log
 
 import (
 	"log/syslog"
+	"os"
 	"runtime"
-	"strconv"
-	"strings"
 
 	"github.com/goccy/go-json"
 	log "github.com/sirupsen/logrus"
@@ -23,6 +22,9 @@ import (
 
 func init() {
 	log.AddHook(airbrake.NewHook(123, "xyz", "production"))
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.WarnLevel)
 
 	log.SetFormatter(&log.TextFormatter{
 		DisableColors: true,
@@ -37,15 +39,12 @@ func init() {
 }
 
 func logger() *log.Entry {
-	pc, file, line, ok := runtime.Caller(1)
-	if !ok {
-		panic("Could not get context info for logger!")
+	var logger *log.Entry
+	if pc, file, line, ok := runtime.Caller(1); ok {
+		fName := runtime.FuncForPC(pc).Name()
+		return logger.WithField("file", file).WithField("line", line).WithField("func", fName)
 	}
-
-	filename := file[strings.LastIndex(file, "/")+1:] + ":" + strconv.Itoa(line)
-	funcname := runtime.FuncForPC(pc).Name()
-	fn := funcname[strings.LastIndex(funcname, ".")+1:]
-	return log.WithField("file", filename).WithField("function", fn)
+	return logger
 }
 
 func Trace(msg interface{}) {

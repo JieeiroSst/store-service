@@ -1,9 +1,13 @@
 package repository
 
-type Repositories struct { 
+import "go.mongodb.org/mongo-driver/mongo"
 
+type Repositories struct {
+	Uploads
 }
 
-func NewRepositories() *Repositories {
-	return &Repositories{}
+func NewRepositories(collection *mongo.Collection) *Repositories {
+	return &Repositories{
+		Uploads: NewUploadRepo(collection),
+	}
 }
