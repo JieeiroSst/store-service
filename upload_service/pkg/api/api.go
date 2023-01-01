@@ -82,7 +82,6 @@ func (u *UploadApi) UploadFile(b bytes.Buffer, w *multipart.Writer) (*UploadData
 
 	params := req.URL.Query()
 	params.Add("key", u.Token)
-	params.Add("name", u.Name)
 
 	client := &http.Client{}
 	response, err := client.Do(req)
@@ -92,7 +91,11 @@ func (u *UploadApi) UploadFile(b bytes.Buffer, w *multipart.Writer) (*UploadData
 	}
 	defer response.Body.Close()
 
-	body, _ := ioutil.ReadAll(response.Body)
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Error(err.Error())
+		return nil, err
+	}
 	if err := json.Unmarshal(body, &data); err != nil {
 		log.Error(err.Error())
 		return nil, err
