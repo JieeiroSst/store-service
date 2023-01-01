@@ -6,6 +6,7 @@ type Media struct {
 	Id         string    `json:"id" bson:"_id,omitempty"`
 	FileName   string    `json:"file_name" bson:"file_name,omitempty"`
 	URL        string    `json:"url" bson:"url,omitempty"`
+	ReceiverId string    `json:"receiver_id" bson:"receiver_id,omitempty"`
 	CreateDate time.Time `json:"create_date" bson:"create_date,omitempty"`
 	UpdateDate time.Time `json:"update_date" bson:"update_date"`
 }
@@ -20,5 +21,6 @@ type CreateMedia struct {
 	Id         string    `json:"id" bson:"_id,omitempty"`
 	FileName   string    `json:"file_name" bson:"file_name,omitempty"`
 	URL        string    `json:"url" bson:"url,omitempty"`
+	ReceiverId string    `json:"receiver_id" bson:"receiver_id,omitempty"`
 	CreateDate time.Time `json:"create_date" bson:"create_date,omitempty"`
 }

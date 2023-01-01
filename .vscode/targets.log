@@ -7,7 +7,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 
 # This program built for i386-apple-darwin11.3.0
 
-# Make data base, printed on Mon Dec 26 19:38:39 2022
+# Make data base, printed on Sun Jan  1 15:54:04 2023
 
 # Variables
 
@@ -44,7 +44,7 @@ PATH = /Users/alainsst/Library/Application Support/cloud-code/installer/google-c
 # environment
 GOPATH = /Users/alainsst/go
 # environment
-LaunchInstanceID = C091C3FC-2450-4DEF-8DF0-6FD417CE7915
+LaunchInstanceID = 1AC193BD-B03C-4EA4-894D-B7738004D927
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
@@ -52,7 +52,7 @@ ELECTRON_RUN_AS_NODE = 1
 # environment
 CLOUDSDK_METRICS_ENVIRONMENT = cloudcode.vscode
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.o5AMmytpOt/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.GXLfzD5sLL/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -148,7 +148,7 @@ MAKELEVEL := 0
 # environment
 LANG = C
 # environment
-VSCODE_PID = 430
+VSCODE_PID = 378
 # environment
 _CE_CONDA = 
 # variable set hash-table stats:
@@ -160,9 +160,9 @@ _CE_CONDA =
 
 # Directories
 
-# . (device 16777234, inode 1149272): 27 files, no impossibilities.
+# . (device 16777232, inode 1149272): 28 files, no impossibilities.
 
-# 27 files, no impossibilities in 1 directories.
+# 28 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -213,7 +213,7 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Mon Dec 26 19:38:39 2022
+# Finished Make data base on Sun Jan  1 15:54:04 2023
 
  
 make: *** No rule to make target `all'.  Stop.
