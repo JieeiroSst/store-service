@@ -1,16 +1,20 @@
 package usecase
 
 import (
+	"bytes"
 	"context"
+	"mime/multipart"
+	"time"
 
 	"github.com/JIeeiroSst/upload-service/internal/repository"
 	"github.com/JIeeiroSst/upload-service/model"
+	uploadAPI "github.com/JIeeiroSst/upload-service/pkg/api"
 	"github.com/JIeeiroSst/upload-service/pkg/snowflake"
 )
 
 type Uploads interface {
-	Create(ctx context.Context, upload model.CreateMedia) error
-	Update(ctx context.Context, id string, upload model.UpdateMedia) error
+	Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer) error
+	Update(ctx context.Context, id string, b bytes.Buffer, w *multipart.Writer) error
 	GetAll(ctx context.Context) ([]model.Media, error)
 	GetById(ctx context.Context, id string) (*model.Media, error)
 	Delete(ctx context.Context, id string) error
@@ -19,24 +23,45 @@ type Uploads interface {
 type UploadUsecase struct {
 	uploadRepo repository.Uploads
 	snowflake  snowflake.SnowflakeData
+	uploadApi  uploadAPI.UploadApi
 }
 
 func NewUploadUsecase(uploadRepo repository.Uploads,
-	snowflake snowflake.SnowflakeData) *UploadUsecase {
+	snowflake snowflake.SnowflakeData, uploadApi uploadAPI.UploadApi) *UploadUsecase {
 	return &UploadUsecase{
 		uploadRepo: uploadRepo,
 		snowflake:  snowflake,
+		uploadApi:  uploadApi,
 	}
 }
 
-func (u *UploadUsecase) Create(ctx context.Context, upload model.CreateMedia) error {
+func (u *UploadUsecase) Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer) error {
+	response, err := u.uploadApi.UploadFile(b, w)
+	if err != nil {
+		return err
+	}
+	upload := model.CreateMedia{
+		Id:         u.snowflake.GearedID(),
+		FileName:   response.Data.Title,
+		URL:        response.Data.DisplayUrl,
+		CreateDate: time.Now(),
+	}
 	if err := u.uploadRepo.Create(ctx, upload); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *UploadUsecase) Update(ctx context.Context, id string, upload model.UpdateMedia) error {
+func (u *UploadUsecase) Update(ctx context.Context, id string, b bytes.Buffer, w *multipart.Writer) error {
+	response, err := u.uploadApi.UploadFile(b, w)
+	if err != nil {
+		return err
+	}
+	upload := model.UpdateMedia{
+		FileName:   response.Data.Title,
+		URL:        response.Data.DisplayUrl,
+		UpdateDate: time.Now(),
+	}
 	if err := u.uploadRepo.Update(ctx, id, upload); err != nil {
 		return err
 	}
