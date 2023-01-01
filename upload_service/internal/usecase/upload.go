@@ -13,7 +13,7 @@ import (
 )
 
 type Uploads interface {
-	Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer) error
+	Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer, ReceiverId string) error
 	Update(ctx context.Context, id string, b bytes.Buffer, w *multipart.Writer) error
 	GetAll(ctx context.Context) ([]model.Media, error)
 	GetById(ctx context.Context, id string) (*model.Media, error)
@@ -35,7 +35,7 @@ func NewUploadUsecase(uploadRepo repository.Uploads,
 	}
 }
 
-func (u *UploadUsecase) Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer) error {
+func (u *UploadUsecase) Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer, ReceiverId string) error {
 	response, err := u.uploadApi.UploadFile(b, w)
 	if err != nil {
 		return err
@@ -44,6 +44,7 @@ func (u *UploadUsecase) Create(ctx context.Context, b bytes.Buffer, w *multipart
 		Id:         u.snowflake.GearedID(),
 		FileName:   response.Data.Title,
 		URL:        response.Data.DisplayUrl,
+		ReceiverId: ReceiverId,
 		CreateDate: time.Now(),
 	}
 	if err := u.uploadRepo.Create(ctx, upload); err != nil {
