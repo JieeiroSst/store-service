@@ -6,3 +6,7 @@ func (h *Handler) initUploadRoutes(api fiber.Router) {
 
 }
 
+func (h *Handler) UploadFile() error {
+
+	return nil
+}
