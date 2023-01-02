@@ -93,6 +93,8 @@ func (u *UploadApi) UploadFile(f multipart.File, h *multipart.FileHeader) (*Uplo
 	req, _ := http.NewRequest("POST", u.URL, buf)
 
 	req.Header.Add("Content-Type", writer.FormDataContentType())
+	params := req.URL.Query()
+	params.Add("key", u.Token)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
