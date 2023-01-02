@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"bytes"
 	"context"
 	"mime/multipart"
 	"time"
@@ -13,8 +12,8 @@ import (
 )
 
 type Uploads interface {
-	Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer, ReceiverId string) error
-	Update(ctx context.Context, id string, b bytes.Buffer, w *multipart.Writer) error
+	Create(ctx context.Context, f multipart.File, h *multipart.FileHeader, ReceiverId string) error
+	Update(ctx context.Context, id string, f multipart.File, h *multipart.FileHeader) error
 	GetAll(ctx context.Context) ([]model.Media, error)
 	GetById(ctx context.Context, id string) (*model.Media, error)
 	Delete(ctx context.Context, id string) error
@@ -35,8 +34,8 @@ func NewUploadUsecase(uploadRepo repository.Uploads,
 	}
 }
 
-func (u *UploadUsecase) Create(ctx context.Context, b bytes.Buffer, w *multipart.Writer, ReceiverId string) error {
-	response, err := u.uploadApi.UploadFile(b, w)
+func (u *UploadUsecase) Create(ctx context.Context, f multipart.File, h *multipart.FileHeader, ReceiverId string) error {
+	response, err := u.uploadApi.UploadFile(f, h)
 	if err != nil {
 		return err
 	}
@@ -53,8 +52,8 @@ func (u *UploadUsecase) Create(ctx context.Context, b bytes.Buffer, w *multipart
 	return nil
 }
 
-func (u *UploadUsecase) Update(ctx context.Context, id string, b bytes.Buffer, w *multipart.Writer) error {
-	response, err := u.uploadApi.UploadFile(b, w)
+func (u *UploadUsecase) Update(ctx context.Context, id string, f multipart.File, h *multipart.FileHeader) error {
+	response, err := u.uploadApi.UploadFile(f, h)
 	if err != nil {
 		return err
 	}

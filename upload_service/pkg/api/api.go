@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
@@ -70,33 +71,40 @@ func NewUploadFile(u *UploadApi) *UploadApi {
 	}
 }
 
-func (u *UploadApi) UploadFile(b bytes.Buffer, w *multipart.Writer) (*UploadData, error) {
+func (u *UploadApi) UploadFile(f multipart.File, h *multipart.FileHeader) (*UploadData, error) {
 	var data UploadData
-	req, err := http.NewRequest("POST", u.URL, &b)
+	buf := new(bytes.Buffer)
+	writer := multipart.NewWriter(buf)
+
+	part, err := writer.CreateFormFile("image", h.Filename)
 	if err != nil {
-		log.Error(err.Error())
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", w.FormDataContentType())
+	b, err := ioutil.ReadAll(f)
 
-	params := req.URL.Query()
-	params.Add("key", u.Token)
+	if err != nil {
+		return nil, err
+	}
 
+	part.Write(b)
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", u.URL, buf)
+
+	req.Header.Add("Content-Type", writer.FormDataContentType())
 	client := &http.Client{}
-	response, err := client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
-		log.Error(err.Error())
 		return nil, err
 	}
-	defer response.Body.Close()
+	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Error(err.Error())
-		return nil, err
+	b, _ = ioutil.ReadAll(resp.Body)
+	if resp.StatusCode >= 400 {
+		return nil, errors.New(string(b))
 	}
-	if err := json.Unmarshal(body, &data); err != nil {
+	if err := json.Unmarshal(b, &data); err != nil {
 		log.Error(err.Error())
 		return nil, err
 	}
