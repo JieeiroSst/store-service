@@ -18,5 +18,7 @@ pub struct MediaServiceImpl {
 
 #[async_trait]
 impl MediaService for MediaServiceImpl {
-
+    async fn Create(&self, media: Media) -> RepoResult<()> {}
+    
+    async fn find(&self, id: &u16)-> RepoResult<Media> {}
 }
