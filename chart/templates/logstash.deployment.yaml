@@ -29,6 +29,9 @@ spec:
           items:
           - key: logstash.conf
             path: logstash.conf
+      env:
+            - name: NODE_ENV
+              value: production
 ---
 kind: Service
 apiVersion: v1

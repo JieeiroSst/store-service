@@ -17,27 +17,30 @@ spec:
         app: alertmanager
     spec:
       containers:
-      - name: alertmanager
-        image: prom/alertmanager:v0.12.0
-        args:
-          - '-config.file=/etc/alertmanager/alert.template'
-          - '-storage.path=/alertmanager'
-        ports:
         - name: alertmanager
-          containerPort: 9093
-        volumeMounts:
+          image: prom/alertmanager:v0.12.0
+          args:
+            - '-config.file=/etc/alertmanager/alert.template'
+            - '-storage.path=/alertmanager'
+          ports:
+          - name: alertmanager
+            containerPort: 9093
+          volumeMounts:
+          - name: config-volume
+            mountPath: /etc/alertmanager
+          - name: templates-volume
+            mountPath: /etc/alertmanager-templates
+          - name: alertmanager
+            mountPath: /alertmanager
+        volumes:
         - name: config-volume
-          mountPath: /etc/alertmanager
+          configMap:
+            name: alertmanager
         - name: templates-volume
-          mountPath: /etc/alertmanager-templates
+          configMap:
+            name: alertmanager-templates
         - name: alertmanager
-          mountPath: /alertmanager
-      volumes:
-      - name: config-volume
-        configMap:
-          name: alertmanager
-      - name: templates-volume
-        configMap:
-          name: alertmanager-templates
-      - name: alertmanager
-        emptyDir: {}
+          emptyDir: {}
+        env:
+            - name: NODE_ENV
+              value: production
