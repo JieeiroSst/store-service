@@ -5,6 +5,10 @@ import (
 )
 
 func (h *Handler) initUploadRoutes(api fiber.Router) {
+	group := api.Group("/upload")
+	{
+		group.Post("/", h.UploadFile)
+	}
 
 }
 
