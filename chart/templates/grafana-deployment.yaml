@@ -34,6 +34,8 @@ spec:
             value: "true"
           - name: GF_AUTH_ANONYMOUS_ORG_ROLE
             value: Admin
+          - name: NODE_ENV
+              value: production
         # volumeMounts:
         # - name: grafana-persistent-storage
         #   mountPath: /var
