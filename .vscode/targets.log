@@ -7,10 +7,12 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 
 # This program built for i386-apple-darwin11.3.0
 
-# Make data base, printed on Sun Jan  1 15:54:04 2023
+# Make data base, printed on Mon Jan  9 19:57:43 2023
 
 # Variables
 
+# environment
+VSCODE_GIT_ASKPASS_MAIN = /Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # automatic
@@ -32,19 +34,23 @@ _ = /usr/bin/make
 # makefile (from `Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # environment
+VSCODE_INJECTION = 1
+# environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
-VSCODE_CWD = /
+VSCODE_CWD = /Users/alainsst/Desktop/project_go/store
 # environment
 GOPROXY = https://proxy.golang.org,direct
 # environment
-PATH = /Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Users/alainsst/miniforge3/condabin:/usr/local/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/usr/local/go/bin:/Users/alainsst/go/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin://flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/google-cloud-sdk/bin
+PATH = /usr/local/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Users/alainsst/miniforge3/condabin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin://flutter/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/usr/local/go/bin:/Users/alainsst/go/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/alainsst/Desktop/project_go/store/upload_service/flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/google-cloud-sdk/bin
+# environment
+ZDOTDIR = /Users/alainsst
 # environment
 GOPATH = /Users/alainsst/go
 # environment
-LaunchInstanceID = 1AC193BD-B03C-4EA4-894D-B7738004D927
+LaunchInstanceID = A8C4D389-0809-4775-9723-E61B990967F0
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
@@ -52,7 +58,7 @@ ELECTRON_RUN_AS_NODE = 1
 # environment
 CLOUDSDK_METRICS_ENVIRONMENT = cloudcode.vscode
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.GXLfzD5sLL/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.Ckzwk7fPfT/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -80,13 +86,17 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # environment
+MAKELEVEL := 0
+# environment
 XPC_FLAGS = 0x0
+# environment
+COLORTERM = truecolor
 # default
 MAKE = $(MAKE_COMMAND)
 # default
 MAKECMDGOALS := all
 # environment
-SHLVL = 1
+SHLVL = 2
 # default
 MAKE_VERSION := 3.81
 # environment
@@ -99,6 +109,10 @@ USER = alainsst
 CONDA_SHLVL = 0
 # default
 MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# environment
+VSCODE_GIT_ASKPASS_EXTRA_ARGS = --ms-enable-electron-run-as-node
+# environment
+TERM_PROGRAM = vscode
 # default
 .VARIABLES := 
 # environment
@@ -108,6 +122,8 @@ TMPDIR = /var/folders/3_/8dm2ksqs0sq6vtn6p24t3n6c0000gn/T/
 # environment
 VSCODE_IPC_HOOK = /Users/alainsst/Library/Application Support/Code/1.74.0-main.sock
 # environment
+VSCODE_GIT_ASKPASS_NODE = /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper.app/Contents/MacOS/Code Helper
+# environment
 MallocNanoZone = 0
 # makefile
 MAKEFLAGS = Rrqp
@@ -116,7 +132,9 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160
+TERM_PROGRAM_VERSION = 1.74.0
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160.6E4AE9F8-F5C4-4972-AC7E-C9A35BB6581B
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -125,10 +143,14 @@ XPC_SERVICE_NAME = application.com.microsoft.VSCode.15072154.15072160
 __CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
 # environment
 COMMAND_MODE = unix2003
+# environment
+GIT_ASKPASS = /Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh
 # default
 MAKEFILES := 
 # automatic
 <F = $(notdir $<)
+# environment
+USER_ZDOTDIR = /Users/alainsst
 # environment
 LC_ALL = C
 # environment
@@ -144,15 +166,17 @@ _CE_M =
 # default
 .INCLUDE_DIRS = /usr/local/include
 # environment
-MAKELEVEL := 0
+VSCODE_GIT_IPC_HANDLE = /var/folders/3_/8dm2ksqs0sq6vtn6p24t3n6c0000gn/T/vscode-git-92e222b54b.sock
 # environment
 LANG = C
 # environment
-VSCODE_PID = 378
+TERM = xterm-256color
+# environment
+VSCODE_PID = 389
 # environment
 _CE_CONDA = 
 # variable set hash-table stats:
-# Load=70/1024=7%, Rehash=0, Collisions=2/93=2%
+# Load=82/1024=8%, Rehash=0, Collisions=4/105=4%
 
 # Pattern-specific Variable Values
 
@@ -160,7 +184,7 @@ _CE_CONDA =
 
 # Directories
 
-# . (device 16777232, inode 1149272): 28 files, no impossibilities.
+# . (device 16777231, inode 1149272): 28 files, no impossibilities.
 
 # 28 files, no impossibilities in 1 directories.
 
@@ -213,7 +237,7 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Jan  1 15:54:04 2023
+# Finished Make data base on Mon Jan  9 19:57:43 2023
 
  
 make: *** No rule to make target `all'.  Stop.
