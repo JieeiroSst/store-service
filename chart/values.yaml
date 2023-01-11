@@ -1,0 +1,14 @@
+global:
+  name: consul
+connectInject:
+  enabled: true
+  default: true
+  namespaceSelector: |
+    matchLabels:
+      connect-inject : enabled
+  cni:
+    enabled: true
+    logLevel: info
+    cniBinDir: "/opt/cni/bin"
+    cniNetDir: "/etc/cni/net.d"
+
