@@ -18,7 +18,7 @@ type App struct {
 	config *config.ServerConfig
 }
 
-func NewConfig(config *config.ServerConfig) *App {
+func NewServer(config *config.ServerConfig) *App {
 	return &App{
 		config: config,
 	}
