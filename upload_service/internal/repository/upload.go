@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/JIeeiroSst/upload-service/common"
 	"github.com/JIeeiroSst/upload-service/model"
 	"github.com/JIeeiroSst/upload-service/pkg/log"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,17 +19,18 @@ type Uploads interface {
 }
 
 type UploadRepo struct {
-	collection *mongo.Collection
+	client *mongo.Client
 }
 
-func NewUploadRepo(Collection *mongo.Collection) *UploadRepo {
+func NewUploadRepo(client *mongo.Client) *UploadRepo {
 	return &UploadRepo{
-		collection: Collection,
+		client: client,
 	}
 }
 
 func (r *UploadRepo) Create(ctx context.Context, upload model.CreateMedia) error {
-	_, err := r.collection.InsertOne(ctx, upload)
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
+	_, err := collection.InsertOne(ctx, upload)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -38,8 +40,9 @@ func (r *UploadRepo) Create(ctx context.Context, upload model.CreateMedia) error
 }
 
 func (r *UploadRepo) Update(ctx context.Context, id string, upload model.UpdateMedia) error {
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	filter := bson.D{{Key: "_id", Value: id}}
-	_, err := r.collection.UpdateOne(context.TODO(), filter, upload)
+	_, err := collection.UpdateOne(context.TODO(), filter, upload)
 	if err != nil {
 		log.Error(err.Error())
 		return err
@@ -48,8 +51,9 @@ func (r *UploadRepo) Update(ctx context.Context, id string, upload model.UpdateM
 }
 
 func (r *UploadRepo) GetAll(ctx context.Context) ([]model.Media, error) {
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	var result []model.Media
-	cur, err := r.collection.Find(ctx, bson.D{})
+	cur, err := collection.Find(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +73,9 @@ func (r *UploadRepo) GetAll(ctx context.Context) ([]model.Media, error) {
 
 func (r *UploadRepo) GetById(ctx context.Context, id string) (*model.Media, error) {
 	var result *model.Media
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	filter := bson.D{{Key: "_id", Value: id}}
-	err := r.collection.FindOne(ctx, filter).Decode(&result)
+	err := collection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		log.Error(err.Error())
 		return nil, err
@@ -81,7 +86,8 @@ func (r *UploadRepo) GetById(ctx context.Context, id string) (*model.Media, erro
 
 func (r *UploadRepo) Delete(ctx context.Context, id string) error {
 	filter := bson.D{{Key: "_id", Value: id}}
-	_, err := r.collection.DeleteOne(ctx, filter)
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
+	_, err := collection.DeleteOne(ctx, filter)
 	if err != nil {
 		log.Error(err.Error())
 		return err
