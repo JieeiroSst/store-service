@@ -4,7 +4,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/JIeeiroSst/upload-service/common"
 	"github.com/JIeeiroSst/upload-service/config"
+	appServer "github.com/JIeeiroSst/upload-service/internal/app"
 	"github.com/JIeeiroSst/upload-service/pkg/log"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -22,11 +24,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World 👋!")
-	})
-
-	nodeEnv := os.Getenv("production")
+	nodeEnv := os.Getenv(common.Production)
 	if !strings.EqualFold(nodeEnv, "") {
 		cfg, err = config.ConfigConsul()
 		if err != nil {
@@ -39,5 +37,7 @@ func main() {
 		}
 	}
 
-	app.Listen(cfg.Port)
+	appServer := appServer.NewServer(cfg)
+
+	appServer.NewServerApp(app)
 }
