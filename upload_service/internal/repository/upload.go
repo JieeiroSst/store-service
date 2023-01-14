@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/JIeeiroSst/upload-service/common"
 	"github.com/JIeeiroSst/upload-service/model"
 	"github.com/JIeeiroSst/upload-service/pkg/log"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,7 +29,7 @@ func NewUploadRepo(client *mongo.Client) *UploadRepo {
 }
 
 func (r *UploadRepo) Create(ctx context.Context, upload model.CreateMedia) error {
-	collection := r.client.Database("").Collection("items")
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	_, err := collection.InsertOne(ctx, upload)
 	if err != nil {
 		log.Error(err.Error())
@@ -39,7 +40,7 @@ func (r *UploadRepo) Create(ctx context.Context, upload model.CreateMedia) error
 }
 
 func (r *UploadRepo) Update(ctx context.Context, id string, upload model.UpdateMedia) error {
-	collection := r.client.Database("").Collection("items")
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	filter := bson.D{{Key: "_id", Value: id}}
 	_, err := collection.UpdateOne(context.TODO(), filter, upload)
 	if err != nil {
@@ -50,7 +51,7 @@ func (r *UploadRepo) Update(ctx context.Context, id string, upload model.UpdateM
 }
 
 func (r *UploadRepo) GetAll(ctx context.Context) ([]model.Media, error) {
-	collection := r.client.Database("").Collection("items")
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	var result []model.Media
 	cur, err := collection.Find(ctx, bson.D{})
 	if err != nil {
@@ -72,7 +73,7 @@ func (r *UploadRepo) GetAll(ctx context.Context) ([]model.Media, error) {
 
 func (r *UploadRepo) GetById(ctx context.Context, id string) (*model.Media, error) {
 	var result *model.Media
-	collection := r.client.Database("").Collection("items")
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	filter := bson.D{{Key: "_id", Value: id}}
 	err := collection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
@@ -85,7 +86,7 @@ func (r *UploadRepo) GetById(ctx context.Context, id string) (*model.Media, erro
 
 func (r *UploadRepo) Delete(ctx context.Context, id string) error {
 	filter := bson.D{{Key: "_id", Value: id}}
-	collection := r.client.Database("").Collection("items")
+	collection := r.client.Database(common.Database).Collection(common.TableUpload)
 	_, err := collection.DeleteOne(ctx, filter)
 	if err != nil {
 		log.Error(err.Error())
