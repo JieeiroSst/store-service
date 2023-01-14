@@ -6,8 +6,8 @@ type Repositories struct {
 	Uploads
 }
 
-func NewRepositories(collection *mongo.Collection) *Repositories {
+func NewRepositories(client *mongo.Client) *Repositories {
 	return &Repositories{
-		Uploads: NewUploadRepo(collection),
+		Uploads: NewUploadRepo(client),
 	}
 }
