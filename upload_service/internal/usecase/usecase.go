@@ -11,13 +11,13 @@ type Usecase struct {
 }
 
 type Dependency struct {
-	uploadRepo repository.Uploads
-	snowflake  snowflake.SnowflakeData
-	uploadApi  uploadAPI.UploadApi
+	Repo      repository.Repositories
+	Snowflake snowflake.SnowflakeData
+	UploadApi uploadAPI.UploadApi
 }
 
 func NewUsecase(deps Dependency) *Usecase {
-	uploadUsecase := NewUploadUsecase(deps.uploadRepo, deps.snowflake, deps.uploadApi)
+	uploadUsecase := NewUploadUsecase(deps.Repo.Uploads, deps.Snowflake, deps.UploadApi)
 	return &Usecase{
 		Uploads: uploadUsecase,
 	}
