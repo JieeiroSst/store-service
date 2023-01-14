@@ -8,3 +8,7 @@ var (
 	Database = "upload"
 	TableUpload = "uploads"
 )
+
+var (
+	Production = "production"
+)
