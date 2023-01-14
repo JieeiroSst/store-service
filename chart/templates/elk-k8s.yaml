@@ -42,7 +42,7 @@ spec:
       labels:
         app: elasticsearch
         release: elk
-    spec:
+    spec:1
       volumes:
       - name: "elasticsearch-config"
         configMap:
