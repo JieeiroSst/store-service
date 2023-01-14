@@ -7,6 +7,7 @@ import (
 )
 
 type ServerConfig struct {
+	MongoDns   string
 	Port       string
 	TokenImgBB string
 	ImgBBApi   string
