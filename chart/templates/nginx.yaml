@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      server: app-nginx
+  template:
+    metadata:
+      labels:
+        server: app-nginx
+    spec:
+      containers:
+        - name: app-nginx
+          image: nginx:alpine
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-nginx-loadbalancer-server
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    server: app-nginx
