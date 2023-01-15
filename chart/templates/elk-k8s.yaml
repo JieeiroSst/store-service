@@ -42,7 +42,7 @@ spec:
       labels:
         app: elasticsearch
         release: elk
-    spec:1
+    spec:
       volumes:
       - name: "elasticsearch-config"
         configMap:
@@ -126,7 +126,6 @@ spec:
           - name: "kibana-config"
             mountPath: /usr/share/kibana/config/kibana.yml
             subPath: kibana.yml
----
 ---
 apiVersion: v1
 kind: Service

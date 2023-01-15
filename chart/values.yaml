@@ -12,3 +12,6 @@ connectInject:
     cniBinDir: "/opt/cni/bin"
     cniNetDir: "/etc/cni/net.d"
 
+postgres:
+  name: postgres 
+  
