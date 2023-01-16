@@ -22,6 +22,7 @@ func ConfigLocal() (*ServerConfig, error) {
 		Port:       os.Getenv("PORT"),
 		TokenImgBB: os.Getenv("TOKEN_IMGBB"),
 		ImgBBApi:   os.Getenv("IMGBB_API"),
+		MongoDns:   os.Getenv("MONGO_DB"),
 	}, nil
 }
 
