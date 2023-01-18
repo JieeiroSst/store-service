@@ -1,0 +1,287 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: elk
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elasticsearch-cm
+  namespace: elk
+  labels:
+    environment: production
+    app: elasticsearch
+    release: elk
+data:
+  elasticsearch.yml: |
+    http.port: 9200
+    path.data: /usr/share/elasticsearch/data
+    path.logs: /usr/share/elasticsearch/logs
+    network.host: 0.0.0.0
+    transport.host: localhost
+    transport.tcp.port: 9300
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  namespace: elk
+  labels:
+    environment: production
+    app: elasticsearch
+    release: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+      release: elk
+  template:
+    metadata:
+      name: elasticsearch
+      labels:
+        app: elasticsearch
+        release: elk
+    spec:
+      volumes:
+      - name: "elasticsearch-config"
+        configMap:
+          name: elasticsearch-cm
+      containers:
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+        ports:
+          - containerPort: 9200
+          - containerPort: 9300
+        volumeMounts:
+          - name: "elasticsearch-config"
+            mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+            subPath: elasticsearch.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-svc
+  namespace: elk
+  labels:
+    environment: production
+    app: elasticsearch
+    release: elk
+spec:
+  selector:
+    app: elasticsearch
+    release: elk
+  type: ClusterIP
+  ports:
+    - name: port-defaults
+      port: 9200
+      targetPort: 9200
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kibana-cm
+  namespace: elk
+  labels:
+    environment: production
+    app: kibana
+    release: elk
+data:
+  kibana.yml: |
+    server.host: 0.0.0.0
+    elasticsearch.hosts: "http://elasticsearch-svc.elk.svc.cluster.local:9200"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: elk
+  labels:
+    environment: production
+    app: kibana
+    release: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+      release: elk
+  template:
+    metadata:
+      name: kibana
+      labels:
+        app: kibana
+        release: elk
+    spec:
+      volumes:
+      - name: "kibana-config"
+        configMap:
+          name: kibana-cm
+      containers:
+      - name: kibana
+        image: docker.elastic.co/kibana/kibana:7.10.1
+        ports:
+          - containerPort: 5601
+        volumeMounts:
+          - name: "kibana-config"
+            mountPath: /usr/share/kibana/config/kibana.yml
+            subPath: kibana.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-svc
+  namespace: elk
+  labels:
+    environment: production
+    app: kibana
+    release: elk
+spec:
+  selector:
+    app: kibana
+    release: elk
+  type: NodePort
+  ports:
+    - name: port-defaults
+      port: 5601
+      targetPort: 5601
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-cm
+  namespace: elk
+  labels:
+    environment: production
+    app: logstash
+    release: elk
+data:
+  logstash.yml: |
+    #http.host: "0.0.0.0"
+    #xpack.monitoring.elasticsearch.hosts: [ "http://elasticsearch-svc.elk.svc.cluster.local:9200" ]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-pipeline-cm
+  namespace: elk
+  labels:
+    environment: production
+    app: logstash
+    release: elk
+data:
+  logstash.conf: |
+    input {
+      beats {
+        host => "0.0.0.0"
+        port => 5044
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => ["elasticsearch-svc.elk.svc.cluster.local:9200"]
+        manage_template => false
+        index => "%{[@metadata][beat]}-%{[@metadata][version]}-%{+YYYY.MM.dd}"
+      }
+    }
+    filter {
+      if [fileset][module] == "system" {
+        if [fileset][name] == "auth" {
+          grok {
+            match => { "message" => ["%{SYSLOGTIMESTAMP:[system][auth][timestamp]} %{SYSLOGHOST:[system][auth][hostname]} sshd(?:\[%{POSINT:[system][auth][pid]}\])?: %{DATA:[system][auth][ssh][event]} %{DATA:[system][auth][ssh][method]} for (invalid user )?%{DATA:[system][auth][user]} from %{IPORHOST:[system][auth][ssh][ip]} port %{NUMBER:[system][auth][ssh][port]} ssh2(: %{GREEDYDATA:[system][auth][ssh][signature]})?",
+                      "%{SYSLOGTIMESTAMP:[system][auth][timestamp]} %{SYSLOGHOST:[system][auth][hostname]} sshd(?:\[%{POSINT:[system][auth][pid]}\])?: %{DATA:[system][auth][ssh][event]} user %{DATA:[system][auth][user]} from %{IPORHOST:[system][auth][ssh][ip]}",
+                      "%{SYSLOGTIMESTAMP:[system][auth][timestamp]} %{SYSLOGHOST:[system][auth][hostname]} sshd(?:\[%{POSINT:[system][auth][pid]}\])?: Did not receive identification string from %{IPORHOST:[system][auth][ssh][dropped_ip]}",
+                      "%{SYSLOGTIMESTAMP:[system][auth][timestamp]} %{SYSLOGHOST:[system][auth][hostname]} sudo(?:\[%{POSINT:[system][auth][pid]}\])?: \s*%{DATA:[system][auth][user]} :( %{DATA:[system][auth][sudo][error]} ;)? TTY=%{DATA:[system][auth][sudo][tty]} ; PWD=%{DATA:[system][auth][sudo][pwd]} ; USER=%{DATA:[system][auth][sudo][user]} ; COMMAND=%{GREEDYDATA:[system][auth][sudo][command]}",
+                      "%{SYSLOGTIMESTAMP:[system][auth][timestamp]} %{SYSLOGHOST:[system][auth][hostname]} groupadd(?:\[%{POSINT:[system][auth][pid]}\])?: new group: name=%{DATA:system.auth.groupadd.name}, GID=%{NUMBER:system.auth.groupadd.gid}",
+                      "%{SYSLOGTIMESTAMP:[system][auth][timestamp]} %{SYSLOGHOST:[system][auth][hostname]} useradd(?:\[%{POSINT:[system][auth][pid]}\])?: new user: name=%{DATA:[system][auth][user][add][name]}, UID=%{NUMBER:[system][auth][user][add][uid]}, GID=%{NUMBER:[system][auth][user][add][gid]}, home=%{DATA:[system][auth][user][add][home]}, shell=%{DATA:[system][auth][user][add][shell]}$",
+                      "%{SYSLOGTIMESTAMP:[system][auth][timestamp]} %{SYSLOGHOST:[system][auth][hostname]} %{DATA:[system][auth][program]}(?:\[%{POSINT:[system][auth][pid]}\])?: %{GREEDYMULTILINE:[system][auth][message]}"] }
+            pattern_definitions => {
+              "GREEDYMULTILINE"=> "(.|\n)*"
+            }
+            remove_field => "message"
+          }
+          date {
+            match => [ "[system][auth][timestamp]", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+          }
+          geoip {
+            source => "[system][auth][ssh][ip]"
+            target => "[system][auth][ssh][geoip]"
+          }
+        }
+        else if [fileset][name] == "syslog" {
+          grok {
+            match => { "message" => ["%{SYSLOGTIMESTAMP:[system][syslog][timestamp]} %{SYSLOGHOST:[system][syslog][hostname]} %{DATA:[system][syslog][program]}(?:\[%{POSINT:[system][syslog][pid]}\])?: %{GREEDYMULTILINE:[system][syslog][message]}"] }
+            pattern_definitions => { "GREEDYMULTILINE" => "(.|\n)*" }
+            remove_field => "message"
+          }
+          date {
+            match => [ "[system][syslog][timestamp]", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+          }
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: elk
+  labels:
+    environment: production
+    app: logstash
+    release: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+      release: elk
+  template:
+    metadata:
+      name: logstash
+      labels:
+        app: logstash
+        release: elk
+    spec:
+      volumes:
+      - name: "logstash-config"
+        configMap:
+          name: logstash-cm
+      - name: "logstash-cf-pipeline"
+        configMap:
+          name: logstash-pipeline-cm
+      containers:
+      - name: logstash
+        image: docker.elastic.co/logstash/logstash:7.10.1
+        ports:
+          - containerPort: 5044
+          - containerPort: 9600
+        volumeMounts:
+          - name: "logstash-config"
+            mountPath: /usr/share/logstash/config/logstash.yml
+            subPath: logstash.yml
+          - name: "logstash-cf-pipeline"
+            mountPath: /usr/share/logstash/pipeline/logstash.conf
+            subPath: logstash.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash-svc
+  namespace: elk
+  labels:
+    environment: production
+    app: logstash
+    release: elk
+spec:
+  selector:
+    app: logstash
+    release: elk
+  type: NodePort
+  ports:
+    - name: port-get-logs
+      port: 5044
+      targetPort: 5044
+    - name: port-logstash-api
+      port: 9600
+      targetPort: 9600
