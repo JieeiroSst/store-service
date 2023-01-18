@@ -1,0 +1,29 @@
+global:
+  name: consul
+connectInject:
+  enabled: true
+  default: true
+  namespaceSelector: |
+    matchLabels:
+      connect-inject : enabled
+  cni:
+    enabled: true
+    logLevel: info
+    cniBinDir: "/opt/cni/bin"
+    cniNetDir: "/etc/cni/net.d"
+
+nginx:
+  name: app-nginx
+  replicas: 1
+
+  image:
+    name: app-nginx
+    tag: v1
+    port: 80
+
+  service:
+    name: app-nginx-loadbalancer-service
+    type: LoadBalancer
+
+postgres:
+  name: postgres 
