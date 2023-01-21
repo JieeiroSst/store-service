@@ -8,6 +8,10 @@ func (h *Handler) initUploadRoutes(api fiber.Router) {
 	group := api.Group("/upload")
 	{
 		group.Post("/", h.UploadFile)
+		group.Put("/:id", h.Update)
+		group.Get("/:id", h.GetByIdFile)
+		group.Get("/", h.GetAll)
+		group.Delete("/:id", h.Delete)
 	}
 
 }
@@ -62,7 +66,7 @@ func (h *Handler) Update(ctx *fiber.Ctx) error {
 		})
 	}
 
-	id := ctx.Query("id")
+	id := ctx.Params("id")
 
 	if err := h.usecase.Update(ctx.Context(), id, fileMutipart, file); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -77,7 +81,7 @@ func (h *Handler) Update(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) GetByIdFile(ctx *fiber.Ctx) error {
-	id := ctx.Query("id")
+	id := ctx.Params("id")
 	upload, err := h.usecase.GetById(ctx.Context(), id)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -108,8 +112,8 @@ func (h *Handler) GetAll(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) Delete(ctx *fiber.Ctx) error {
-	id := ctx.Query("id")
-	if err := h.usecase.Delete(ctx.Context(),id); err != nil {
+	id := ctx.Params("id")
+	if err := h.usecase.Delete(ctx.Context(), id); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": false,
 			"msg":   err.Error(),
