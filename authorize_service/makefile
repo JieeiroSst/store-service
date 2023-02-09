@@ -16,4 +16,11 @@ gen:
 run:
 	go run cmd/main.go
 
+mod:
+	go mod vendor
+	go mod tidy
+
+mockey-gen:
+	mockgen -destination=mocks/mock_repository.go -package=mocks github.com/JieeiroSst/authorize-service/internal/repository Casbins
+	
 .PHONY: migrate-status migrate-up migrate-down gen run
