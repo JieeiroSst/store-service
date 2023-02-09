@@ -21,6 +21,8 @@ mod:
 	go mod tidy
 
 mockey-gen:
-	mockgen -destination=mocks/mock_repository.go -package=mocks github.com/JieeiroSst/authorize-service/internal/repository Casbins
-	
+	mockgen -source=./internal/repository/casbin.go
+	mockgen -source=./internal/usecase/casbin.go
+	mockgen -source=./internal/usecase/otp.go
+
 .PHONY: migrate-status migrate-up migrate-down gen run
