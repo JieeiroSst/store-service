@@ -16,7 +16,8 @@ type Config struct {
 	Server   ServerConfig
 	Mysql    MysqlConfig
 	Secret   SecretConfig
-	Constant Constant
+	Constant ConstantConfig
+	Cache    CacheConfig
 }
 
 type ServerConfig struct {
@@ -39,7 +40,7 @@ type SecretConfig struct {
 	AuthorizeKey string
 }
 
-type Constant struct {
+type ConstantConfig struct {
 	Rbac string
 }
 
@@ -52,6 +53,10 @@ type Consul struct {
 
 type Dir struct {
 	ConsulDir string
+}
+
+type CacheConfig struct {
+	Host string
 }
 
 func ReadConf(filename string) (*Config, error) {
