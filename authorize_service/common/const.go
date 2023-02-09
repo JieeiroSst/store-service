@@ -15,3 +15,16 @@ const (
 	UpdateSuccess = "UPDATE SUCCESS"
 
 )
+
+const (
+	RBAC_MODEL = "config/conf/rbac_model.conf"
+)
+
+const (
+
+)
+
+const (
+	ListCasbinKeyCache = "as:list_casbin"
+	CasbinByIDKeyCache = "as:casbin_by_id:%v"
+)
