@@ -1,4 +1,4 @@
-k8s-generate-name_prev:
+k8s_generate_name_prev:
 	helm install ./chart --dry-run --generate-name
 k8s-generate-name:
 	helm install ./chart --generate-name
