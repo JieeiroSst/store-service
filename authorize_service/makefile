@@ -25,6 +25,9 @@ mockey-gen:
 	mockgen -source=./internal/usecase/casbin.go
 	mockgen -source=./internal/usecase/otp.go
 
+<<<<<<< HEAD
 	mockgen -destination=mocks/mock_repository.go -package=mocks github.com/JieeiroSst/authorize-service/internal/repository Casbins
 	
+=======
+>>>>>>> 035c5e087 (.)
 .PHONY: migrate-status migrate-up migrate-down gen run
