@@ -12,6 +12,7 @@ import (
 	"github.com/JieeiroSst/authorize-service/internal/repository"
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
 	"github.com/JieeiroSst/authorize-service/middleware"
+	"github.com/JieeiroSst/authorize-service/pkg/cache"
 	"github.com/JieeiroSst/authorize-service/pkg/goose"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/JieeiroSst/authorize-service/pkg/mysql"
@@ -54,7 +55,7 @@ func (a *App) NewServerApp(router *gin.Engine) {
 	}
 
 	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
-	if err != nil { 
+	if err != nil {
 		log.Error(err.Error())
 	}
 
@@ -62,13 +63,15 @@ func (a *App) NewServerApp(router *gin.Engine) {
 
 	var snowflakeData = snowflake.NewSnowflake()
 	var otp = otp.NewOtp(a.config.Secret.JwtSecretKey)
+	var cache = cache.NewCacheHelper(a.config.Cache.Host)
 
 	repository := repository.NewRepositories(mysqlOrm)
 	usecase := usecase.NewUsecase(usecase.Dependency{
-		Repos:     repository,
-		Snowflake: snowflakeData,
-		Adapter:   adapter,
-		OTP:       otp,
+		Repos:       repository,
+		Snowflake:   snowflakeData,
+		Adapter:     adapter,
+		OTP:         otp,
+		CacheHelper: cache,
 	})
 
 	http := http.NewHandler(*usecase, middleware, adapter)
@@ -100,12 +103,14 @@ func (a *App) NewGRPCServer() {
 
 	var snowflakeData = snowflake.NewSnowflake()
 	var otp = otp.NewOtp(a.config.Secret.JwtSecretKey)
+	var cache = cache.NewCacheHelper(a.config.Cache.Host)
 	repository := repository.NewRepositories(mysqlOrm)
 	usecase := usecase.NewUsecase(usecase.Dependency{
-		Repos:     repository,
-		Snowflake: snowflakeData,
-		Adapter:   adapter,
-		OTP:       otp,
+		Repos:       repository,
+		Snowflake:   snowflakeData,
+		Adapter:     adapter,
+		OTP:         otp,
+		CacheHelper: cache,
 	})
 
 	s := grpc.NewServer()

@@ -16,3 +16,6 @@ mysql:
 
 constant:
   Rbac: "config/conf/rbac_model.conf"
+
+cache:
+  host: "localhost:6379"
