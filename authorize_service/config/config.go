@@ -58,6 +58,10 @@ type CacheConfig struct {
 	Host string
 }
 
+type CacheConfig struct {
+	Host string
+}
+
 func ReadConf(filename string) (*Config, error) {
 	buffer, err := ioutil.ReadFile(filename)
 	if err != nil {
