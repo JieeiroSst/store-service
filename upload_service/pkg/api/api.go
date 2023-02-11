@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 
@@ -81,7 +81,7 @@ func (u *UploadApi) UploadFile(f multipart.File, h *multipart.FileHeader) (*Uplo
 		return nil, err
 	}
 
-	b, err := ioutil.ReadAll(f)
+	b, err := io.ReadAll(f)
 
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (u *UploadApi) UploadFile(f multipart.File, h *multipart.FileHeader) (*Uplo
 	}
 	defer resp.Body.Close()
 
-	b, _ = ioutil.ReadAll(resp.Body)
+	b, _ = io.ReadAll(resp.Body)
 	if resp.StatusCode >= 400 {
 		return nil, errors.New(string(b))
 	}

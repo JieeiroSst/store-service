@@ -7,10 +7,11 @@ import (
 )
 
 type ServerConfig struct {
-	MongoDns   string
-	Port       string
-	TokenImgBB string
-	ImgBBApi   string
+	MongoDns     string
+	Port         string
+	TokenImgBB   string
+	ImgBBApi     string
+	HostCacheDNS string
 }
 
 func ConfigLocal() (*ServerConfig, error) {

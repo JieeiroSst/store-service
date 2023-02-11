@@ -8,6 +8,7 @@ import (
 	"github.com/JIeeiroSst/upload-service/internal/repository"
 	"github.com/JIeeiroSst/upload-service/internal/usecase"
 	uploadAPI "github.com/JIeeiroSst/upload-service/pkg/api"
+	"github.com/JIeeiroSst/upload-service/pkg/cache"
 	"github.com/JIeeiroSst/upload-service/pkg/log"
 	"github.com/JIeeiroSst/upload-service/pkg/mongo"
 	"github.com/JIeeiroSst/upload-service/pkg/snowflake"
@@ -37,10 +38,12 @@ func (a *App) NewServerApp(router *fiber.App) {
 	})
 
 	repository := repository.NewRepositories(mongo.Client)
+	cache := cache.NewCacheHelper(a.config.HostCacheDNS)
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repo:      *repository,
 		Snowflake: snowflake,
 		UploadApi: *uploadApi,
+		Cache:     cache,
 	})
 
 	http := http.NewHandler(*usecase)
