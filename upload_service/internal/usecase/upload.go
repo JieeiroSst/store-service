@@ -8,6 +8,7 @@ import (
 	"github.com/JIeeiroSst/upload-service/internal/repository"
 	"github.com/JIeeiroSst/upload-service/model"
 	uploadAPI "github.com/JIeeiroSst/upload-service/pkg/api"
+	"github.com/JIeeiroSst/upload-service/pkg/cache"
 	"github.com/JIeeiroSst/upload-service/pkg/snowflake"
 )
 
@@ -23,14 +24,17 @@ type UploadUsecase struct {
 	uploadRepo repository.Uploads
 	snowflake  snowflake.SnowflakeData
 	uploadApi  uploadAPI.UploadApi
+	cache      cache.CacheHelper
 }
 
 func NewUploadUsecase(uploadRepo repository.Uploads,
-	snowflake snowflake.SnowflakeData, uploadApi uploadAPI.UploadApi) *UploadUsecase {
+	snowflake snowflake.SnowflakeData, uploadApi uploadAPI.UploadApi,
+	cache cache.CacheHelper) *UploadUsecase {
 	return &UploadUsecase{
 		uploadRepo: uploadRepo,
 		snowflake:  snowflake,
 		uploadApi:  uploadApi,
+		cache:      cache,
 	}
 }
 
