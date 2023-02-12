@@ -2,13 +2,17 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 	"time"
 
+	"github.com/JIeeiroSst/upload-service/common"
 	"github.com/JIeeiroSst/upload-service/internal/repository"
 	"github.com/JIeeiroSst/upload-service/model"
 	uploadAPI "github.com/JIeeiroSst/upload-service/pkg/api"
+	"github.com/JIeeiroSst/upload-service/pkg/cache"
 	"github.com/JIeeiroSst/upload-service/pkg/snowflake"
+	"github.com/redis/go-redis/v9"
 )
 
 type Uploads interface {
@@ -23,14 +27,17 @@ type UploadUsecase struct {
 	uploadRepo repository.Uploads
 	snowflake  snowflake.SnowflakeData
 	uploadApi  uploadAPI.UploadApi
+	cache      cache.CacheHelper
 }
 
 func NewUploadUsecase(uploadRepo repository.Uploads,
-	snowflake snowflake.SnowflakeData, uploadApi uploadAPI.UploadApi) *UploadUsecase {
+	snowflake snowflake.SnowflakeData, uploadApi uploadAPI.UploadApi,
+	cache cache.CacheHelper) *UploadUsecase {
 	return &UploadUsecase{
 		uploadRepo: uploadRepo,
 		snowflake:  snowflake,
 		uploadApi:  uploadApi,
+		cache:      cache,
 	}
 }
 
@@ -69,17 +76,42 @@ func (u *UploadUsecase) Update(ctx context.Context, id string, f multipart.File,
 }
 
 func (u *UploadUsecase) GetAll(ctx context.Context) ([]model.Media, error) {
-	uploads, err := u.uploadRepo.GetAll(ctx)
+	var (
+		uploads []model.Media
+		errDB   error
+	)
+	valueInterface, err := u.cache.GetInterface(ctx, common.GetImagesKeyCache, uploads)
 	if err != nil {
-		return nil, err
+		uploads, errDB = u.uploadRepo.GetAll(ctx)
+		if errDB != nil {
+			return nil, err
+		}
+		if err == redis.Nil {
+			_ = u.cache.Set(ctx, common.GetImagesKeyCache, uploads, time.Second*60)
+		}
+	} else {
+		_ = valueInterface.([]model.Media)
 	}
 	return uploads, nil
 }
 
 func (u *UploadUsecase) GetById(ctx context.Context, id string) (*model.Media, error) {
-	upload, err := u.uploadRepo.GetById(ctx, id)
+	var (
+		upload *model.Media
+		errDB  error
+	)
+	valueInterface, err := u.cache.GetInterface(ctx, fmt.Sprintf(common.GetImageByIdKeyCache, id), upload)
 	if err != nil {
-		return nil, err
+		upload, errDB = u.uploadRepo.GetById(ctx, id)
+		if errDB != nil {
+			return nil, errDB
+		}
+		if err == redis.Nil {
+			_ = u.cache.Set(ctx, fmt.Sprintf(common.GetImageByIdKeyCache, id), upload, time.Second*60)
+		}
+
+	} else {
+		upload = valueInterface.(*model.Media)
 	}
 	return upload, nil
 }
