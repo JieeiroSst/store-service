@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    expose:
+      - <ZOOKEEPER_PORT>
+
+  kafka:
+      image: wurstmeister/kafka:latest
+      container_name: kafka
+      depends_on:
+        - zookeeper
+      ports:
+        - "<KAFKA_PORT>:<KAFKA_PORT>"
+      environment:
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:<KAFKA_PORT>
+        KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:<KAFKA_PORT>
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:<ZOOKEEPER_PORT>
+        KAFKA_CREATE_TOPICS: "test-topic:1:1"
