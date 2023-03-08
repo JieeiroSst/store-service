@@ -25,7 +25,4 @@ nginx:
     name: app-nginx-loadbalancer-service
     type: LoadBalancer
 
-postgres:
-  name: postgres 
-
 
