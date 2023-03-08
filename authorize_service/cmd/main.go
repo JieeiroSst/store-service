@@ -6,14 +6,15 @@ import (
 
 	"github.com/JieeiroSst/authorize-service/config"
 	"github.com/JieeiroSst/authorize-service/internal/app"
+	"github.com/JieeiroSst/authorize-service/pkg/consul"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	conf *config.Config
+	conf   *config.Config
 	dirEnv *config.Dir
-	err  error
+	err    error
 )
 
 func main() {
@@ -26,7 +27,8 @@ func main() {
 	}
 
 	if !strings.EqualFold(nodeEnv, "") {
-		conf, err = config.ReadFileConsul(dirEnv.ConsulDir)
+		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+		conf, err = consul.ConnectConfigConsul()
 		if err != nil {
 			log.Error(err.Error())
 		}
