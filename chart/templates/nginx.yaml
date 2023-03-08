@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-nginx-deployment
+  name: {{.Values.nginx.name}}-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      server: app-nginx
+      server: {{ .Values.nginx.name }}
   template:
     metadata:
       labels:
-        server: app-nginx
+        server: {{ .Values.nginx.name }}
     spec:
       containers:
-        - name: app-nginx
-          image: nginx:alpine
+        - name: {{ .Values.nginx.name }}
+          image: {{ .Values.nginx.image.name }}:{{ .Values.nginx.image.tag }}
           imagePullPolicy: Never
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.nginx.image.port }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-nginx-loadbalancer-server
+  name: {{ .Values.nginx.service.name }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.nginx.service.type }}
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: {{ .Values.nginx.image.port }}
   selector:
-    server: app-nginx
+    server: {{ .Values.nginx.name }}
