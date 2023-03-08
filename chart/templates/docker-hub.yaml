@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "collabnix-test-connection"
+  labels:
+    helm.sh/chart: collabnix-0.1.0
+    app.kubernetes.io/name: collabnix
+    app.kubernetes.io/instance: collabnix
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['collabnix:80']
+  restartPolicy: Never
+MANIFEST:
+---
+# Source: collabnix/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: collabnix
+  labels:
+    helm.sh/chart: collabnix-0.1.0
+    app.kubernetes.io/name: collabnix
+    app.kubernetes.io/instance: collabnix
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: collabnix/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: collabnix
+  labels:
+    helm.sh/chart: collabnix-0.1.0
+    app.kubernetes.io/name: collabnix
+    app.kubernetes.io/instance: collabnix
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: collabnix
+    app.kubernetes.io/instance: collabnix
+---
+# Source: collabnix/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collabnix
+  labels:
+    helm.sh/chart: collabnix-0.1.0
+    app.kubernetes.io/name: collabnix
+    app.kubernetes.io/instance: collabnix
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: collabnix
+      app.kubernetes.io/instance: collabnix
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: collabnix
+        app.kubernetes.io/instance: collabnix
+    spec:
+      serviceAccountName: collabnix
+      securityContext:
+        {}
+      containers:
+        - name: collabnix
+          securityContext:
+            {}
+          image: "nginx:1.16.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
