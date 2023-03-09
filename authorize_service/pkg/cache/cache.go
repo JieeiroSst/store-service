@@ -11,26 +11,21 @@ import (
 )
 
 type cacheHelper struct {
-	resdis *redis.Client
+	resdis redis.Client
 }
 
 type CacheHelper interface {
-	GetInterface(ctx context.Context, key string, value interface{}) (interface{}, error)
+	GetInterfac(ctx context.Context, key string, value interface{}) (interface{}, error)
 	Set(ctx context.Context, key string, value interface{}, exppiration time.Duration) error
 }
 
-func NewCacheHelper(dns string) CacheHelper {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     dns,
-		Password: "",
-		DB:       0,
-	})
+func NewCacheHelper(redis redis.Client) CacheHelper {
 	return &cacheHelper{
-		resdis: rdb,
+		resdis: redis,
 	}
 }
 
-func (h *cacheHelper) GetInterface(ctx context.Context, key string, value interface{}) (interface{}, error) {
+func (h *cacheHelper) GetInterfac(ctx context.Context, key string, value interface{}) (interface{}, error) {
 	data, err := h.resdis.Get(ctx, key).Result()
 	if err != nil {
 		return nil, err
