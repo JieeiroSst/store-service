@@ -39,5 +39,6 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 	{
 		h.initCasbinRoutes(v1)
 		h.initOtpRouters(v1)
+		h.initSocketRouters(v1)
 	}
 }
