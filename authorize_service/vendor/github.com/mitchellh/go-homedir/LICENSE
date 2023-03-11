@@ -1,10 +1,6 @@
 The MIT License (MIT)
 
-<<<<<<<< HEAD:authorize_service/vendor/github.com/mitchellh/go-homedir/LICENSE
 Copyright (c) 2013 Mitchell Hashimoto
-========
-Copyright (c) 2017-2020 Damian Gryski <damian@gryski.com>
->>>>>>>> 18d155220 (.):authorize_service/vendor/github.com/dgryski/go-rendezvous/LICENSE
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
