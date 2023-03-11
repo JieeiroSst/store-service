@@ -3,13 +3,18 @@ module github.com/JIeeiroSst/nofitifaction-service
 go 1.18
 
 require (
+<<<<<<< HEAD
 	github.com/Shopify/sarama v1.38.1
 	github.com/hashicorp/consul/api v1.19.1
 	go.uber.org/zap v1.24.0
+=======
+	github.com/segmentio/kafka-go v0.4.38
+>>>>>>> 1e75cc418 (.)
 	gopkg.in/mail.v2 v2.3.1
 )
 
 require (
+<<<<<<< HEAD
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/eapache/go-resiliency v1.3.0 // indirect
@@ -44,5 +49,9 @@ require (
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
+=======
+	github.com/klauspost/compress v1.15.9 // indirect
+	github.com/pierrec/lz4/v4 v4.1.15 // indirect
+>>>>>>> 1e75cc418 (.)
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 )
