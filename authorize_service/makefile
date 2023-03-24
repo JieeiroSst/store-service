@@ -25,9 +25,20 @@ mockey-gen:
 	mockgen -source=./internal/usecase/casbin.go
 	mockgen -source=./internal/usecase/otp.go
 
-<<<<<<< HEAD
 	mockgen -destination=mocks/mock_repository.go -package=mocks github.com/JieeiroSst/authorize-service/internal/repository Casbins
+
+generate: ## Generate proto
+	@third_party/protoc/bin/protoc \
+		-I proto/ \
+		-I $(GOPATH)/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.16.0/third_party/googleapis/ \
+		-I $(GOPATH)/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.16.0/ \
+		-I $(GOPATH)/pkg/mod/github.com/gogo/protobuf@v1.3.1/protoc-gen-gogo/grpc \
+		-I $(GOPATH)/pkg/mod/github.com/gogo/protobuf@v1.3.1 \
+		-I $(GOPATH)/pkg/mod/github.com/mwitkow/go-proto-validators@v0.3.2/ \
+		--gogo_out=plugins=grpc:pb \
+		--govalidators_out=gogoimport=true:pb \
+		--grpc-gateway_out=pb \
+		--swagger_out=docs \
+		proto/*.proto
 	
-=======
->>>>>>> 035c5e087 (.)
 .PHONY: migrate-status migrate-up migrate-down gen run
