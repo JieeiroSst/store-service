@@ -8,8 +8,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/JIeeiroSst/filter-service/graph/generated"
-	"github.com/JIeeiroSst/filter-service/graph/model"
+	"github.com/JIeeiroSst/filter-service/internal/graph/generated"
+	"github.com/JIeeiroSst/filter-service/internal/graph/model"
 )
 
 // CreateTodo is the resolver for the createTodo field.
