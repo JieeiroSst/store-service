@@ -1,16 +1,3 @@
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: elastic-sc
-provisioner: kubernetes.io/gce-pd
-volumeBindingMode: Immediate
-allowVolumeExpansion: true
-reclaimPolicy: Delete
-parameters:
-  type: pd-standard
-  fstype: ext4
-  replication-type: none
----
 kind: Service
 apiVersion: v1
 metadata:
@@ -76,33 +63,3 @@ spec:
             value: "-Xms512m -Xmx512m"
           - name: network.host
             value: "_site_"
-      initContainers:
-      - name: fix-permissions
-        image: busybox
-        command: ["sh", "-c", "chown -R 1000:1000 /usr/share/elasticsearch/data"]
-        securityContext:
-          privileged: true
-        volumeMounts:
-        - name: data
-          mountPath: /usr/share/elasticsearch/data
-      - name: increase-vm-max-map
-        image: busybox
-        command: ["sysctl", "-w", "vm.max_map_count=262144"]
-        securityContext:
-          privileged: true
-      - name: increase-fd-ulimit
-        image: busybox
-        command: ["sh", "-c", "ulimit -n 65536"]
-        securityContext:
-          privileged: true
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-      labels:
-        app: elasticsearch
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: elastic-sc
-      resources:
-        requests:
-          storage: 100Gi
