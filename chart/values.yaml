@@ -28,10 +28,13 @@ nginx:
 consul:
   name: consul-example
   image: 'consul:latest'
+  containers: example
+  command: |
+    - '/bin/sh'
+    - '-ec'
+    - |
+      export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
   pod:
-    command: |
-      - '/bin/sh'
-      - '-ec'
-      - |
-        export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
     name: example
+  deployment:
+    name: consul-example-deployment
