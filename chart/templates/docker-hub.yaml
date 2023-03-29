@@ -18,19 +18,6 @@ spec:
       args: ['collabnix:80']
   restartPolicy: Never
 MANIFEST:
----
-# Source: collabnix/templates/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: {{ .Values.hub.name }}
-  labels:
-    helm.sh/chart: {{ .Values.hub.name }}-0.1.0
-    app.kubernetes.io/name: {{ .Values.hub.name }}
-    app.kubernetes.io/instance: {{ .Values.hub.name }}
-    app.kubernetes.io/version: {{ .Values.hub.version }}
-    app.kubernetes.io/managed-by: {{ .Values.hub.managed }}
----
 # Source: collabnix/templates/service.yaml
 apiVersion: v1
 kind: Service
