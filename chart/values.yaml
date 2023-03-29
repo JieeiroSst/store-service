@@ -38,3 +38,11 @@ consul:
     name: example
   deployment:
     name: consul-example-deployment
+
+hub:
+  name: collabnix
+  instance: collabnix
+  version: "1.16.0"
+  managed: Helm
+  image: "nginx:1.16.0"
+
