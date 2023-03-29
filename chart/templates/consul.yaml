@@ -1,48 +1,47 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: consul-example
+  name: {{ .Values.consul.name }}
 spec:
   containers:
-    - name: example
-      image: 'consul:latest'
+    - name: {{ .Values.consul.containers }}
+      image: {{ .Values.consul.image }}
       env:
         - name: HOST_IP
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-      command:
-        - '/bin/sh'
-        - '-ec'
-        - |
-          export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
+      command: 
+            - '/bin/sh'
+            - '-ec'
+            - |
+              export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
   restartPolicy: Never
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consul-example-deployment
+  name: {{ .Values.consul.deployment.name }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: consul-example
+      app: {{ .Values.consul.name }}
   template:
     metadata:
       labels:
-        app: consul-example
+        app: {{ .Values.consul.name }}
     spec:
       containers:
-        - name: example
-          image: 'consul:latest'
+        - name: {{ .Values.consul.containers }}
+          image: {{ .Values.consul.image }}
           env:
             - name: HOST_IP
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-          command:
+          command: 
             - '/bin/sh'
             - '-ec'
             - |
-              export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
-
+              export CONSUL_HTTP_ADDR="${HOST_IP}:8500"          
