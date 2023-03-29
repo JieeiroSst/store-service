@@ -13,34 +13,11 @@ spec:
         app: mongodb        
     spec:
       containers:     
-      - image: mongo:4.0.9-xenial
+      - image: mongo
         name: mongodb       
         ports:
         - containerPort: 27017      
         imagePullPolicy: Always
-        volumeMounts:
-        - mountPath: /data/db
-          name: general-disk
-          subPath: mongodb/data
-        env:
-        - name: MONGO_INITDB_ROOT_USERNAME
-          value: "admin"
-        - name: MONGO_INITDB_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mongo
-              key: mongo.txt
-        resources:
-          limits:
-            memory: "520Mi"
-            cpu: "0.3"
-          requests:
-            cpu: "0"
-            memory: "0"
-      volumes:
-      - name: general-disk
-        persistentVolumeClaim:
-          claimName: general-disk
 ---
 apiVersion: v1
 kind: Service
