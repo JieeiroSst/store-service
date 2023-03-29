@@ -12,6 +12,7 @@ import (
 
 type GRPCServer struct {
 	usecase usecase.Casbins
+	pb.UnimplementedAuthorizeServer
 }
 
 func (s *GRPCServer) NewGRPCServer(usecase usecase.Casbins) {

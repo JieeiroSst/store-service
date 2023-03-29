@@ -12,7 +12,7 @@ migrate-down:
 	$(MIGRATE) down 
 
 gen:
-	protoc --go_out=. --go-grpc_out=. ./internal/proto/api.proto
+	protoc --go_out=. --go-grpc_opt=requireUnimplementedServers=false:. ./internal/proto/api.proto
 run:
 	go run cmd/main.go
 
