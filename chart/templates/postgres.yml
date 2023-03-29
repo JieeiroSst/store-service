@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-config
+  name: {{ .Values.postgres.name }}-config
   labels:
-    app: postgres
+    app: {{ .Values.postgres.name }}
 data:
   POSTGRES_DB: postgresdb
   POSTGRES_USER: admin
@@ -12,10 +12,10 @@ data:
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: postgres-pv-volume  # Sets PV's name
+  name: {{ .Values.postgres.name }}-pv-volume  # Sets PV's name
   labels:
     type: local  # Sets PV's type to local
-    app: postgres
+    app: {{ .Values.postgres.name }}
 spec:
   storageClassName: manual
   capacity:
@@ -28,9 +28,9 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: postgres-pv-claim  # Sets name of PVC
+  name: {{ .Values.postgres.name }}-pv-claim  # Sets name of PVC
   labels:
-    app: postgres
+    app: {{ .Values.postgres.name }}
 spec:
   storageClassName: manual
   accessModes:
@@ -41,26 +41,26 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres  # Sets Deployment name
+  name: {{ .Values.postgres.name }}  # Sets Deployment name
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: {{ .Values.postgres.name }}
   template:
     metadata:
       labels:
-        app: postgres
+        app: {{ .Values.postgres.name }}
     spec:
       containers:
-        - name: postgres
-          image: postgres:10.1 # Sets Image
+        - name: {{ .Values.postgres.name }}
+          image: {{ .Values.postgres.image }} # Sets Image
           imagePullPolicy: "IfNotPresent"
           ports:
-            - containerPort: 5432  # Exposes container port
+            - containerPort: {{ .Values.postgres.port }}  # Exposes container port
           envFrom:
             - configMapRef:
-                name: postgres-config
+                name: {{ .Values.postgres.name }}-config
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgredb
@@ -72,12 +72,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres # Sets service name
+  name: {{ .Values.postgres.name }} # Sets service name
   labels:
-    app: postgres # Labels and Selectors
+    app: {{ .Values.postgres.name }} # Labels and Selectors
 spec:
   type: NodePort # Sets service type
   ports:
-    - port: 5432 # Sets port to run the postgres application
+    - port: {{ .Values.postgres.port }}
+     # Sets port to run the postgres application
   selector:
-    app: postgres
+    app: {{ .Values.postgres.name }}
