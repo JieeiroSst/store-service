@@ -16,7 +16,6 @@ spec:
         - '-ec'
         - |
           export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
-          consul kv put hello world
   restartPolicy: Never
 ---
 apiVersion: apps/v1
@@ -46,5 +45,4 @@ spec:
             - '-ec'
             - |
               export CONSUL_HTTP_ADDR="${HOST_IP}:8500"
-              consul kv put hello world
 
