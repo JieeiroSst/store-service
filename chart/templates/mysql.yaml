@@ -1,51 +1,51 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: {{ .Values.mysql.name }}
 spec:
   ports:
-  - port: 3306
+  - port: {{ .Values.mysql.port }}
   selector:
-    app: mysql
+    app: {{ .Values.mysql.name }}
   clusterIP: None
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: {{ .Values.mysql.name }}
 spec:
   selector:
     matchLabels:
-      app: mysql
+      app: {{ .Values.mysql.name }}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: mysql
+        app: {{ .Values.mysql.name }}
     spec:
       containers:
-      - image: mysql:5.6
-        name: mysql
+      - image: {{ .Values.mysql.image }}
+        name: {{ .Values.mysql.name }}
         env:
           # Use secret in real usage
         - name: MYSQL_ROOT_PASSWORD
-          value: password
+          value: {{ .Values.mysql.password }}
         ports:
-        - containerPort: 3306
-          name: mysql
+        - containerPort: {{ .Values.mysql.port }}
+          name: {{ .Values.mysql.name }}
         volumeMounts:
-        - name: mysql-persistent-storage
+        - name: {{ .Values.mysql.name }}-persistent-storage
           mountPath: /var/lib/mysql
       volumes:
-      - name: mysql-persistent-storage
+      - name: {{ .Values.mysql.name }}-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pv-claim
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysql-pv-volume
+  name: {{ .Values.mysql.name }}-pv-volume
   labels:
     type: local
 spec:
@@ -60,7 +60,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-pv-claim
+  name: {{ .Values.mysql.name }}-pv-claim
 spec:
   storageClassName: manual
   accessModes:
