@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "collabnix-test-connection"
+  name: {{ .Values.hub.name }}-test-connection
   labels:
-    helm.sh/chart: collabnix-0.1.0
-    app.kubernetes.io/name: collabnix
-    app.kubernetes.io/instance: collabnix
-    app.kubernetes.io/version: "1.16.0"
-    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: {{ .Values.hub.name }}-0.1.0
+    app.kubernetes.io/name: {{ .Values.hub.name }}
+    app.kubernetes.io/instance: {{ .Values.hub.name }}
+    app.kubernetes.io/version: {{ .Values.hub.version }}
+    app.kubernetes.io/managed-by: {{ .Values.hub.managed }}
   annotations:
     "helm.sh/hook": test
 spec:
@@ -23,25 +23,25 @@ MANIFEST:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: collabnix
+  name: {{ .Values.hub.name }}
   labels:
-    helm.sh/chart: collabnix-0.1.0
-    app.kubernetes.io/name: collabnix
-    app.kubernetes.io/instance: collabnix
-    app.kubernetes.io/version: "1.16.0"
-    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: {{ .Values.hub.name }}-0.1.0
+    app.kubernetes.io/name: {{ .Values.hub.name }}
+    app.kubernetes.io/instance: {{ .Values.hub.name }}
+    app.kubernetes.io/version: {{ .Values.hub.version }}
+    app.kubernetes.io/managed-by: {{ .Values.hub.managed }}
 ---
 # Source: collabnix/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: collabnix
+  name: {{ .Values.hub.name }}
   labels:
-    helm.sh/chart: collabnix-0.1.0
-    app.kubernetes.io/name: collabnix
-    app.kubernetes.io/instance: collabnix
-    app.kubernetes.io/version: "1.16.0"
-    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: {{ .Values.hub.name }}-0.1.0
+    app.kubernetes.io/name: {{ .Values.hub.name }}
+    app.kubernetes.io/instance: {{ .Values.hub.name }}
+    app.kubernetes.io/version: {{ .Values.hub.version }}
+    app.kubernetes.io/managed-by: {{ .Values.hub.managed }}
 spec:
   type: ClusterIP
   ports:
@@ -50,40 +50,40 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: collabnix
-    app.kubernetes.io/instance: collabnix
+    app.kubernetes.io/name: {{ .Values.hub.name }}
+    app.kubernetes.io/instance: {{ .Values.hub.name }}
 ---
 # Source: collabnix/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: collabnix
+  name: {{ .Values.hub.name }}
   labels:
-    helm.sh/chart: collabnix-0.1.0
-    app.kubernetes.io/name: collabnix
-    app.kubernetes.io/instance: collabnix
-    app.kubernetes.io/version: "1.16.0"
-    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: {{ .Values.hub.name }}-0.1.0
+    app.kubernetes.io/name: {{ .Values.hub.name }}
+    app.kubernetes.io/instance: {{ .Values.hub.name }}
+    app.kubernetes.io/version: {{ .Values.hub.version }}
+    app.kubernetes.io/managed-by: {{ .Values.hub.managed }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: collabnix
-      app.kubernetes.io/instance: collabnix
+      app.kubernetes.io/name: {{ .Values.hub.name }}
+      app.kubernetes.io/instance: {{ .Values.hub.name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: collabnix
-        app.kubernetes.io/instance: collabnix
+        app.kubernetes.io/name: {{ .Values.hub.name }}
+        app.kubernetes.io/instance: {{ .Values.hub.name }}
     spec:
-      serviceAccountName: collabnix
+      serviceAccountName: {{ .Values.hub.name }}
       securityContext:
         {}
       containers:
-        - name: collabnix
+        - name: {{ .Values.hub.name }}
           securityContext:
             {}
-          image: "nginx:1.16.0"
+          image: {{ .Values.hub.image }}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
