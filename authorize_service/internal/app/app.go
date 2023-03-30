@@ -83,6 +83,7 @@ func (a *App) NewServerApp(router *gin.Engine) {
 	if port == "" {
 		port = a.config.Server.ServerPort
 	}
+	log.Info("server starting" + a.config.Server.ServerPort)
 	router.Run(":" + port)
 }
 
@@ -117,6 +118,7 @@ func (a *App) NewGRPCServer() {
 	srv := &grpcServer.GRPCServer{}
 	srv.NewGRPCServer(usecase)
 	pb.RegisterAuthorizeServer(s, srv)
+	log.Info("getway starting" + a.config.Server.GRPCServer)
 	l, err := net.Listen("tcp", fmt.Sprintf(":%v", a.config.Server.GRPCServer))
 	if err != nil {
 		log.Error(err.Error())

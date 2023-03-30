@@ -40,5 +40,8 @@ generate: ## Generate proto
 		--grpc-gateway_out=pb \
 		--swagger_out=docs \
 		proto/*.proto
+
+image:
+	docker build --no-cache -t authorize_service .
 	
 .PHONY: migrate-status migrate-up migrate-down gen run
