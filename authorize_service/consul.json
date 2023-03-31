@@ -1,0 +1,24 @@
+{
+	"server": {
+		"ServerPort": "1234",
+		"GRPCServer": "1231"
+	},
+	"secret": {
+		"JwtSecretKey": "secretkey",
+		"AuthorizeKey": "cao_hoang_mai_phuong"
+	},
+	"mysql": {
+		"MysqlHost": "localhost",
+		"MysqlPort": "3306",
+		"MysqlUser": "root",
+		"MysqlPassword": "1234",
+		"MysqlDbname": "db",
+		"MysqlDriver": "mysql"
+	},
+	"constant": {
+		"Rbac": "config/conf/rbac_model.conf"
+	},
+	"cache": {
+		"host": "localhost:6379"
+	}
+}
