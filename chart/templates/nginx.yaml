@@ -16,18 +16,17 @@ spec:
       - name: nginx-deployment
         image: nginx
         ports:
-        - containerPort: 8080
+        - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx-svc
 spec:
+  type: LoadBalancer
   ports:
   - port: 80
-    targetPort: 8080
-    protocol: TCP
-    name: http
+    targetPort: 80
   selector:
     app: nginx-deployment
-  type: ClusterIP
+
