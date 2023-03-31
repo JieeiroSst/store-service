@@ -1,16 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb
+  name: mongo-deployment
 spec:
   selector:
     matchLabels:
-      app: mongodb
-  replicas: 1
+      app: mongo-deployment
   template:  
     metadata:
       labels:
-        app: mongodb        
+        app: mongo-deployment   
     spec:
       containers:     
       - image: mongo
@@ -22,12 +21,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb
-  labels:
-    app: mongodb
+  name: mongo-svc
 spec:
   ports:
-    - port: 27017
-  type: LoadBalancer  
+    - port: 80
+      targetPort: 27017
   selector:
-    app: mongodb      
+    app: mongo-deployment    
