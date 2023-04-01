@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.27
 	github.com/graph-gophers/dataloader v5.0.0+incompatible
 	github.com/hashicorp/consul/api v1.20.0
+	github.com/joho/godotenv v1.5.1
 	github.com/vektah/gqlparser/v2 v2.5.1
 	google.golang.org/grpc v1.54.0
 	google.golang.org/protobuf v1.28.1
