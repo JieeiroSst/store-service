@@ -1,13 +1,10 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 
-	"github.com/JIeeiroSst/user-service/utils"
 	"github.com/ghodss/yaml"
 	"github.com/joho/godotenv"
 )
@@ -87,7 +84,9 @@ type Consul struct {
 }
 
 type Dir struct {
-	ConsulDir string
+	HostConsul    string
+	KeyConsul     string
+	ServiceConsul string
 }
 
 func ReadConf(filename string) (*Config, error) {
@@ -105,33 +104,6 @@ func ReadConf(filename string) (*Config, error) {
 	return config, nil
 }
 
-func ReadFileConsul(fileDir string) (*Config, error) {
-	var (
-		config Config
-		consul Consul
-	)
-	resp, err := http.Get(fileDir)
-	if err != nil {
-		return nil, err
-	}
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.Unmarshal(body, &consul); err != nil {
-		return nil, err
-	}
-
-	a := utils.DecodeByte(consul.Value)
-
-	if err := json.Unmarshal(a, &config); err != nil {
-		return nil, err
-	}
-
-	return &config, nil
-}
-
 func ReadFileEnv(dir string) (*Dir, error) {
 	err := godotenv.Load(dir)
 	if err != nil {
@@ -139,7 +111,9 @@ func ReadFileEnv(dir string) (*Dir, error) {
 	}
 
 	data := &Dir{
-		ConsulDir: os.Getenv("consul"),
+		HostConsul:    os.Getenv("HostConsul"),
+		KeyConsul:     os.Getenv("KeyConsul"),
+		ServiceConsul: os.Getenv("ServiceConsul"),
 	}
 	return data, nil
 }
