@@ -9,6 +9,7 @@ import (
 
 type GRPCServer struct {
 	usecase usecase.Usecase
+	pb.UnimplementedAuthenticationServer
 }
 
 func (s *GRPCServer) NewGRPCServer(usecase usecase.Usecase) {
