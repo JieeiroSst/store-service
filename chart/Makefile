@@ -6,3 +6,5 @@ k8s_list:
 	helm list
 k8s_remove:
 	helm delete chart-*
+k8s_upgrade:
+	helm upgrade 
