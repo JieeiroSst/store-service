@@ -6,6 +6,7 @@ import (
 
 	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/internal/app"
+	"github.com/JIeeiroSst/user-service/pkg/consul"
 	"github.com/JIeeiroSst/user-service/pkg/log"
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +27,8 @@ func main() {
 		log.Error(err.Error())
 	}
 	if !strings.EqualFold(nodeEnv, "") {
-		conf, err = config.ReadFileConsul(dirEnv.ConsulDir)
+		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+		conf, err = consul.ConnectConfigConsul()
 		if err != nil {
 			log.Error(err.Error())
 		}
