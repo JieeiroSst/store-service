@@ -2,57 +2,37 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
+	"strings"
 
-	consulapi "github.com/hashicorp/consul/api"
+	"github.com/JIeeiroSst/nofitifaction-service/config"
+	"github.com/JIeeiroSst/nofitifaction-service/pkg/consul"
 )
 
-func getEnv(key, fallback string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		value = fallback
-	}
-	return value
-}
-
-func getConsul(address string) (*consulapi.Client, error) {
-	config := consulapi.DefaultConfig()
-	config.Address = address
-	consul, err := consulapi.NewClient(config)
-	return consul, err
-
-}
-
-func getKvPair(client *consulapi.Client, key string) (*consulapi.KVPair, error) {
-	kv := client.KV()
-	keyPair, _, err := kv.Get(key, nil)
-	return keyPair, err
-}
+var (
+	conf   *config.Config
+	dirEnv *config.Dir
+	err    error
+)
 
 func main() {
-	consulAddress := "localhost:8500"
-	if consulAddress == "" {
-		log.Fatalf("CONSUL_HTTP_ADDRESS environment variable not set")
-	}
+	nodeEnv := os.Getenv("production")
 
-	consul, err := getConsul(consulAddress)
+	dirEnv, err = config.ReadFileEnv(".env")
 	if err != nil {
-		log.Fatalf("Error connecting to Consul: %s", err)
+		log.Println(err)
 	}
 
-	cat := consul.Catalog()
-	svc, _, err := cat.Service("consul", "", nil)
-	log.Printf("Service address and port: %s:%d\n", svc[0].ServiceAddress, svc[0].ServicePort)
-
-	redisPattern, err := getKvPair(consul, "notification_service")
-	if err != nil || redisPattern == nil {
-		log.Fatalf("Could not get REDISPATTERN: %s", err)
+	if !strings.EqualFold(nodeEnv, "") {
+		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+		conf, err = consul.ConnectConfigConsul()
+		if err != nil {
+			log.Println(err)
+		}
+	} else {
+		conf, err = config.ReadConf("config.yml")
+		if err != nil {
+			log.Println(err)
+		}
 	}
-	log.Printf("KV: %v %s\n", redisPattern.Key, redisPattern.Value)
-
-	mux := http.NewServeMux()
-
-	http.ListenAndServe(":8080", mux)
-
 }
