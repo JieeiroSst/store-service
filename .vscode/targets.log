@@ -7,7 +7,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 
 # This program built for i386-apple-darwin11.3.0
 
-# Make data base, printed on Sun Mar 26 20:09:02 2023
+# Make data base, printed on Sun Apr  2 13:42:26 2023
 
 # Variables
 
@@ -46,7 +46,7 @@ VSCODE_CWD = /Users/alainsst/Desktop/project_go/store
 # environment
 GOPROXY = https://proxy.golang.org,direct
 # environment
-PATH = /opt/homebrew/opt/llvm/bin:/usr/local/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Users/alainsst/miniforge3/condabin:/opt/homebrew/opt/llvm/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin://flutter/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/usr/local/go/bin:/Users/alainsst/go/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/alainsst/Desktop/project_go/store/filter_service/flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/google-cloud-sdk/bin
+PATH = /opt/homebrew/opt/llvm/bin:/usr/local/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/alainsst/Library/Application Support/cloud-code/installer/google-cloud-sdk/bin:/opt/homebrew/opt/llvm/bin:/usr/local/sbin:/Users/alainsst/.cargo/bin:/opt/homebrew/Caskroom/redis-stack-server/6.2.7/bin:/opt/homebrew/bin:/Users/alainsst/go/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/alainsst/miniforge3/condabin:/Users/alainsst/Library/Application Support/Coursier/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin://flutter/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/Desktop/project_go/store/filter_service/flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/usr/local/go/bin:/Users/alainsst/go/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/Users/alainsst/Desktop/project_go/store/notification_service/flutter/bin:/Users/alainsst/Library/Application Support/Coursier/bin:/Users/{your-name}/.cargo/bin:/Users/alainsst/google-cloud-sdk/bin
 # environment
 ZDOTDIR = /Users/alainsst
 # environment
@@ -98,7 +98,7 @@ MAKE = $(MAKE_COMMAND)
 # default
 MAKECMDGOALS := all
 # environment
-SHLVL = 2
+SHLVL = 3
 # environment
 VSCODE_CRASH_REPORTER_SANDBOXED_HINT = 1
 # default
@@ -138,7 +138,7 @@ MFLAGS = -Rrqp
 # environment
 TERM_PROGRAM_VERSION = 1.76.2
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.21183981.21183987.FCC4FAD2-C855-474C-8FC8-62A8ABAC1C56
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.21183981.21183987.25BEA75A-DB93-416F-9DB6-D874A5017FF1
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # environment
@@ -160,6 +160,8 @@ USER_ZDOTDIR = /Users/alainsst
 # environment
 LC_ALL = C
 # environment
+production = 123
+# environment
 CONDA_PYTHON_EXE = /Users/alainsst/miniforge3/bin/python
 # environment
 SECURITYSESSIONID = 186a5
@@ -170,7 +172,7 @@ SUFFIXES :=
 # default
 .INCLUDE_DIRS = /usr/local/include
 # environment
-VSCODE_GIT_IPC_HANDLE = /var/folders/3_/8dm2ksqs0sq6vtn6p24t3n6c0000gn/T/vscode-git-1b7bfa9a7b.sock
+VSCODE_GIT_IPC_HANDLE = /var/folders/3_/8dm2ksqs0sq6vtn6p24t3n6c0000gn/T/vscode-git-41a5953c2c.sock
 # environment
 LANG = C
 # environment
@@ -178,7 +180,7 @@ TERM = xterm-256color
 # environment
 VSCODE_PID = 396
 # variable set hash-table stats:
-# Load=83/1024=8%, Rehash=0, Collisions=4/106=4%
+# Load=84/1024=8%, Rehash=0, Collisions=4/107=4%
 
 # Pattern-specific Variable Values
 
@@ -239,7 +241,7 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Mar 26 20:09:02 2023
+# Finished Make data base on Sun Apr  2 13:42:26 2023
 
  
 make: *** No rule to make target `all'.  Stop.
