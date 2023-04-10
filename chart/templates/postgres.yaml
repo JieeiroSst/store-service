@@ -62,6 +62,9 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgres/data
               name: db-data
+          env:
+            - name: NODE_ENV
+              value: production
       volumes:
         - name: db-data
           persistentVolumeClaim:
