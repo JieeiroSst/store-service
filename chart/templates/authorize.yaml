@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: consul-deployment
-        image: authorize_service
+        image: authorize_service:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 1234
         env:
