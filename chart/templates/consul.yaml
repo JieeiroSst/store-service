@@ -17,6 +17,9 @@ spec:
         image: hashicorp/consul:1.11.2
         ports:
         - containerPort: 8500
+        env:
+            - name: NODE_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service

@@ -1,33 +1,33 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: authorize-deployment
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: authorize-deployment
-#   template:
-#     metadata:
-#       labels:
-#         app: authorize-deployment
-#     spec:
-#       containers:
-#       - name: consul-deployment
-#         image: authorize_service
-#         ports:
-#         - containerPort: 1234
-#         - containerPort: 1231
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: authorize-svc
-# spec:
-#   ports:
-#   - port: 80
-#     targetPort: 1234
-#   - port: 80
-#     targetPort: 1231
-#   selector:
-#     app: authorize-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authorize-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authorize-deployment
+  template:
+    metadata:
+      labels:
+        app: authorize-deployment
+    spec:
+      containers:
+      - name: consul-deployment
+        image: authorize_service
+        ports:
+        - containerPort: 1234
+        env:
+            - name: NODE_ENV
+              value: production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authorize-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 1234
+  selector:
+    app: authorize-deployment
