@@ -17,6 +17,9 @@ spec:
         image: authorize_service
         ports:
         - containerPort: 1234
+        env:
+            - name: NODE_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service
