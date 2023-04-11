@@ -8,3 +8,5 @@ k8s_remove:
 	helm delete chart-*
 k8s_upgrade:
 	helm upgrade 
+log:
+	kubectl logs authorize-api-deployment-c98c67f7c-pqwwp --all-containers
