@@ -10,3 +10,5 @@ k8s_upgrade:
 	helm upgrade 
 log:
 	kubectl logs ${pod} --all-containers
+upgrade:
+	helm upgrade $(version) ../chart
