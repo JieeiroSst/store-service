@@ -19,7 +19,7 @@ var (
 
 func main() {
 	router := gin.Default()
-	nodeEnv := os.Getenv("production")
+	nodeEnv := os.Getenv("NODE_ENV")
 
 	dirEnv, err = config.ReadFileEnv(".env")
 	if err != nil {
