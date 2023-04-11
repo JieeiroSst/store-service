@@ -44,10 +44,10 @@ generate: ## Generate proto
 image:
 	docker build --no-cache -t authorize_service:v1 .
 
-image-grpc:
-	docker build -t authorize_service_grpc:$(date +%s) -f Dockerfile.gcd .
+image_grpc:
+	docker build -t authorize_service_grpc:v2 -f Dockerfile.gcd .
 
-image-api:
-	docker build -t authorize_service_api:$(date +%s) -f Dockerfile.api .
+image_api:
+	docker build -t authorize_service_api:v2 -f Dockerfile.api .
 	
 .PHONY: migrate-status migrate-up migrate-down gen run
