@@ -42,6 +42,6 @@ generate: ## Generate proto
 		proto/*.proto
 
 image:
-	docker build --no-cache -t authorize_service .
+	docker build --no-cache -t authorize_service:v1 .
 	
 .PHONY: migrate-status migrate-up migrate-down gen run
