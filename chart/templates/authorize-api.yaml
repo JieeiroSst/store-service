@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: authorize-deployment
+  name: authorize-api-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: authorize-deployment
+      app: authorize-api-deployment
   template:
     metadata:
       labels:
-        app: authorize-deployment
+        app: authorize-api-deployment
     spec:
       containers:
-      - name: consul-deployment
-        image: 1760151/authorize_service:v2
+      - name: authorize-api-deployment
+        image: 1760151/authorize_service_api:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 1234
@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: authorize-svc
+  name: authorize-api-svc
 spec:
   ports:
   - port: 80
