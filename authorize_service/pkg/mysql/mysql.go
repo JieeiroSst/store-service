@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/JieeiroSst/authorize-service/pkg/log"
@@ -24,6 +25,11 @@ func GetMysqlConnInstance(dns string) *MysqlConnect {
 			log.Error(err.Error())
 			return
 		}
+		stmt := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %v;", "db")
+		if rs := db.Exec(stmt); rs.Error != nil {
+			return
+		}
+
 		instance = &MysqlConnect{db: db}
 	})
 	return instance

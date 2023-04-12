@@ -42,6 +42,20 @@ generate: ## Generate proto
 		proto/*.proto
 
 image:
-	docker build --no-cache -t authorize_service .
+	docker build --no-cache -t authorize_service:${version} .
+
+image_grpc:
+	docker build -t authorize_service_grpc:${version} -f Dockerfile.gcd .
+image_grpc_tag:
+	docker tag authorize_service_grpc:${version}  1760151/authorize_service_grpc:${version} 
+image_grpc_push:
+	docker push 1760151/authorize_service_grpc:${version}
+
+image_api:
+	docker build -t  authorize_service_api:${version} -f Dockerfile.api .
+image_api_tag:
+	docker tag authorize_service_api:${version}  1760151/authorize_service_api:${version} 
+image_api_push:
+	docker push 1760151/authorize_service_api:${version}
 	
 .PHONY: migrate-status migrate-up migrate-down gen run

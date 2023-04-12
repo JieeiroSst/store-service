@@ -17,6 +17,9 @@ spec:
         image: redis
         ports:
         - containerPort: 6379
+        env:
+            - name: NODE_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service
