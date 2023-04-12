@@ -6,7 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type ServerConfig struct {
+type Config struct {
 	MongoDns     string
 	Port         string
 	TokenImgBB   string
@@ -14,12 +14,18 @@ type ServerConfig struct {
 	HostCacheDNS string
 }
 
-func ConfigLocal() (*ServerConfig, error) {
-	err := godotenv.Load(".env")
+type Dir struct {
+	HostConsul    string
+	KeyConsul     string
+	ServiceConsul string
+}
+
+func ConfigLocal(dir string) (*Config, error) {
+	err := godotenv.Load(dir)
 	if err != nil {
 		return nil, err
 	}
-	return &ServerConfig{
+	return &Config{
 		Port:       os.Getenv("PORT"),
 		TokenImgBB: os.Getenv("TOKEN_IMGBB"),
 		ImgBBApi:   os.Getenv("IMGBB_API"),
@@ -27,14 +33,18 @@ func ConfigLocal() (*ServerConfig, error) {
 	}, nil
 }
 
-func ConfigConsul() (*ServerConfig, error) {
-	err := godotenv.Load(".env")
+
+
+func ReadFileEnv(dir string) (*Dir, error) {
+	err := godotenv.Load(dir)
 	if err != nil {
 		return nil, err
 	}
-	return &ServerConfig{
-		Port:       os.Getenv("PORT"),
-		TokenImgBB: os.Getenv("TOKEN_IMGBB"),
-		ImgBBApi:   os.Getenv("IMGBB_API"),
-	}, nil
+
+	data := &Dir{
+		HostConsul:    os.Getenv("HostConsul"),
+		KeyConsul:     os.Getenv("KeyConsul"),
+		ServiceConsul: os.Getenv("ServiceConsul"),
+	}
+	return data, nil
 }
