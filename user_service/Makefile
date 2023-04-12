@@ -9,3 +9,17 @@ swag:
 mode:
 	go mod tidy 
 	go mod vendor
+
+image_grpc:
+	docker build -t user_service_grpc:${version} -f Dockerfile.grpc .
+image_grpc_tag:
+	docker tag user_service_grpc:${version}  1760151/user_service_grpc:${version} 
+image_grpc_push:
+	docker push 1760151/user_service_grpc:${version}
+
+image_api:
+	docker build -t  user_service_api:${version} -f Dockerfile.api .
+image_api_tag:
+	docker tag user_service_api:${version}  1760151/user_service_api:${version} 
+image_api_push:
+	docker push 1760151/user_service_api:${version}

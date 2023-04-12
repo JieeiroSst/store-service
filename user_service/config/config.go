@@ -21,7 +21,6 @@ type Config struct {
 
 type ServerConfig struct {
 	PortServer     string
-	PortClientGrpc string
 	PortServerGrpc string
 }
 
