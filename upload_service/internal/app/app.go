@@ -16,10 +16,10 @@ import (
 )
 
 type App struct {
-	config *config.ServerConfig
+	config *config.Config
 }
 
-func NewServer(config *config.ServerConfig) *App {
+func NewServer(config *config.Config) *App {
 	return &App{
 		config: config,
 	}
