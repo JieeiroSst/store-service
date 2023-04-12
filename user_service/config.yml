@@ -1,7 +1,6 @@
 server:
   PortServer: 1235
-  PortClientGrpc: 
-  PortServerGrpc: 
+  PortServerGrpc: 1236
 
 secret:
   JwtSecretKey: secretkey
