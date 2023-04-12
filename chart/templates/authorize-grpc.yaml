@@ -14,13 +14,13 @@ spec:
     spec:
       containers:
       - name: authorize-grpc-deployment
-        image: 1760151/authorize_service_grpc:v3
+        image: 1760151/authorize_service_grpc:v4
         imagePullPolicy: Always
         ports:
         - containerPort: 1231
         env:
-            - name: NODE_ENV
-              value: production
+          - name: NODE_ENV
+            value: production
 ---
 apiVersion: v1
 kind: Service

@@ -21,6 +21,8 @@ func main() {
 	router := gin.Default()
 	nodeEnv := os.Getenv("NODE_ENV")
 
+	log.Info("nodeEnv is " + nodeEnv)
+
 	dirEnv, err = config.ReadFileEnv(".env")
 	if err != nil {
 		log.Error(err.Error())
