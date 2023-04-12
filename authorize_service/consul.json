@@ -8,10 +8,10 @@
 		"AuthorizeKey": "cao_hoang_mai_phuong"
 	},
 	"mysql": {
-		"MysqlHost": "localhost",
+		"MysqlHost": "mysql",
 		"MysqlPort": "3306",
 		"MysqlUser": "root",
-		"MysqlPassword": "1234",
+		"MysqlPassword": "password",
 		"MysqlDbname": "db",
 		"MysqlDriver": "mysql"
 	},
@@ -19,6 +19,6 @@
 		"Rbac": "config/conf/rbac_model.conf"
 	},
 	"cache": {
-		"host": "localhost:6379"
+		"host": "redis-svc:6379"
 	}
 }

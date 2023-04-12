@@ -17,6 +17,9 @@ spec:
         ports:
         - containerPort: 27017      
         imagePullPolicy: Always
+        env:
+            - name: NODE_ENV
+              value: production
 ---
 apiVersion: v1
 kind: Service
