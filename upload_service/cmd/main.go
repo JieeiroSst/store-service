@@ -4,40 +4,43 @@ import (
 	"os"
 	"strings"
 
-	"github.com/JIeeiroSst/upload-service/common"
 	"github.com/JIeeiroSst/upload-service/config"
 	appServer "github.com/JIeeiroSst/upload-service/internal/app"
+	"github.com/JIeeiroSst/upload-service/pkg/consul"
 	"github.com/JIeeiroSst/upload-service/pkg/log"
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 )
 
 var (
-	cfg *config.ServerConfig
+	conf   *config.Config
+	dirEnv *config.Dir
+	err    error
 )
 
 func main() {
 	app := fiber.New()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	nodeEnv := os.Getenv("NODE_ENV")
 
-	nodeEnv := os.Getenv(common.Production)
+	dirEnv, err = config.ReadFileEnv(".env")
+	if err != nil {
+		log.Error(err.Error())
+	}
 	if !strings.EqualFold(nodeEnv, "") {
-		cfg, err = config.ConfigConsul()
+		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+		conf, err = consul.ConnectConfigConsul()
 		if err != nil {
 			log.Error(err.Error())
 		}
 	} else {
-		cfg, err = config.ConfigLocal()
+		dir := ".env"
+		conf, err = config.ConfigLocal(dir)
 		if err != nil {
 			log.Error(err.Error())
 		}
 	}
 
-	appServer := appServer.NewServer(cfg)
+	appServer := appServer.NewServer(conf)
 
 	appServer.NewServerApp(app)
 }
