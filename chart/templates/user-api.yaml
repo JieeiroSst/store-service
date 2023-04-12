@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-api-deployment
+  template:
+    metadata:
+      labels:
+        app: user-api-deployment
+    spec:
+      containers:
+      - name: user-api-deployment
+        image: 1760151/user_service_api:v3
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 1235
+        env:
+          - name: NODE_ENV
+            value: production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-api-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 1235
+  selector:
+    app: user-deployment

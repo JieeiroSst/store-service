@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-grpc-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-grpc-deployment
+  template:
+    metadata:
+      labels:
+        app: user-grpc-deployment
+    spec:
+      containers:
+      - name: user-grpc-deployment
+        image: 1760151/user_service_grpc:v4
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 1236
+        env:
+          - name: NODE_ENV
+            value: production
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-grpc-svc
+spec:
+  ports:
+  - port: 80
+    targetPort: 1236
+  selector:
+    app: user-grpc-deployment
