@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: authorize-grpc-deployment
+  name: upload-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: authorize-grpc-deployment
+      app: upload-deployment
   template:
     metadata:
       labels:
-        app: authorize-grpc-deployment
+        app: upload-deployment
     spec:
       containers:
-      - name: authorize-grpc-deployment
-        image: 1760151/authorize_service_grpc:v1
+      - name: upload-deployment
+        image: 1760151/user_service_grpc:v1
         imagePullPolicy: Always
         ports:
-        - containerPort: 1231
+        - containerPort: 1985
         env:
           - name: NODE_ENV
             value: production
@@ -25,10 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: authorize-grpc-svc
+  name: upload-svc
 spec:
   ports:
   - port: 80
-    targetPort: 1231
+    targetPort: 1985
   selector:
-    app: authorize-grpc-deployment
+    app: upload-deployment
