@@ -12,3 +12,6 @@ log:
 	kubectl logs ${pod} --all-containers
 upgrade:
 	helm upgrade $(version) ../chart
+
+dashboard:
+	minikube dashboard
