@@ -876,3 +876,57 @@ WARNING: Unmatched cancel notification for request id 9
 Apr 15, 2023 1:40:24 AM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
 WARNING: Unmatched cancel notification for request id 17
 2023.04.15 01:40:27 INFO  compiling root (14 scala sources and 1 java source)[0m
+Apr 15, 2023 2:15:19 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 44
+Apr 15, 2023 2:15:20 PM scala.meta.internal.pc.CompilerAccess handleError
+SEVERE: null
+java.lang.NullPointerException
+	at java.base/java.util.Arrays.sort(Arrays.java:1441)
+	at scala.tools.nsc.classpath.JFileDirectoryLookup.listChildren(DirectoryClassPath.scala:118)
+	at scala.tools.nsc.classpath.JFileDirectoryLookup.listChildren$(DirectoryClassPath.scala:102)
+	at scala.tools.nsc.classpath.DirectoryClassPath.listChildren(DirectoryClassPath.scala:293)
+	at scala.tools.nsc.classpath.DirectoryClassPath.listChildren(DirectoryClassPath.scala:293)
+	at scala.tools.nsc.classpath.DirectoryLookup.list(DirectoryClassPath.scala:83)
+	at scala.tools.nsc.classpath.DirectoryLookup.list$(DirectoryClassPath.scala:78)
+	at scala.tools.nsc.classpath.DirectoryClassPath.list(DirectoryClassPath.scala:293)
+	at scala.tools.nsc.classpath.AggregateClassPath.$anonfun$list$3(AggregateClassPath.scala:106)
+	at scala.collection.immutable.Vector.foreach(Vector.scala:1895)
+	at scala.tools.nsc.classpath.AggregateClassPath.list(AggregateClassPath.scala:102)
+	at scala.tools.nsc.util.ClassPath.list(ClassPath.scala:35)
+	at scala.tools.nsc.util.ClassPath.list$(ClassPath.scala:35)
+	at scala.tools.nsc.classpath.AggregateClassPath.list(AggregateClassPath.scala:31)
+	at scala.tools.nsc.symtab.SymbolLoaders$PackageLoader.doComplete(SymbolLoaders.scala:297)
+	at scala.tools.nsc.symtab.SymbolLoaders$SymbolLoader.$anonfun$complete$2(SymbolLoaders.scala:249)
+	at scala.tools.nsc.symtab.SymbolLoaders$SymbolLoader.complete(SymbolLoaders.scala:247)
+	at scala.reflect.internal.Symbols$Symbol.completeInfo(Symbols.scala:1563)
+	at scala.reflect.internal.Symbols$Symbol.info(Symbols.scala:1535)
+	at scala.reflect.internal.Types$TypeRef.decls(Types.scala:2606)
+	at scala.tools.nsc.typechecker.Namers$Namer.enterPackage(Namers.scala:763)
+	at scala.tools.nsc.typechecker.Namers$Namer.dispatch$1(Namers.scala:296)
+	at scala.tools.nsc.typechecker.Namers$Namer.standardEnterSym(Namers.scala:309)
+	at scala.tools.nsc.typechecker.AnalyzerPlugins.pluginsEnterSym(AnalyzerPlugins.scala:495)
+	at scala.tools.nsc.typechecker.AnalyzerPlugins.pluginsEnterSym$(AnalyzerPlugins.scala:494)
+	at scala.meta.internal.pc.MetalsGlobal$MetalsInteractiveAnalyzer.pluginsEnterSym(MetalsGlobal.scala:66)
+	at scala.tools.nsc.typechecker.Namers$Namer.enterSym(Namers.scala:287)
+	at scala.tools.nsc.typechecker.Analyzer$namerFactory$$anon$1.apply(Analyzer.scala:48)
+	at scala.tools.nsc.Global$GlobalPhase.applyPhase(Global.scala:467)
+	at scala.tools.nsc.Global$Run.$anonfun$compileLate$2(Global.scala:1669)
+	at scala.tools.nsc.Global$Run.$anonfun$compileLate$2$adapted(Global.scala:1668)
+	at scala.collection.IterableOnceOps.foreach(IterableOnce.scala:575)
+	at scala.collection.IterableOnceOps.foreach$(IterableOnce.scala:573)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1300)
+	at scala.tools.nsc.Global$Run.compileLate(Global.scala:1668)
+	at scala.tools.nsc.interactive.Global.parseAndEnter(Global.scala:668)
+	at scala.tools.nsc.interactive.Global.typeCheck(Global.scala:678)
+	at scala.meta.internal.pc.PcCollector.<init>(PcCollector.scala:27)
+	at scala.meta.internal.pc.PcDocumentHighlightProvider.<init>(PcDocumentHighlightProvider.scala:11)
+
+2023.04.15 14:15:35 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json[0m
+2023.04.15 14:15:36 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json[0m
+2023.04.15 14:15:36 INFO  Connected to Build server: Bloop v1.5.6[0m
+2023.04.15 14:15:36 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json[0m
+2023.04.15 14:15:37 INFO  Bloop uses /Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home defined at /Users/alainsst/.bloop/bloop.json[0m
+2023.04.15 14:15:36 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/project/project/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json[0m
+2023.04.15 14:15:37 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/alainsst/Desktop/project_go/store/book-srvice/project/.metals/bsp.trace.json or /Users/alainsst/Library/Caches/org.scalameta.metals/bsp.trace.json[0m
+Apr 15, 2023 2:16:29 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+WARNING: Unmatched cancel notification for request id 189
