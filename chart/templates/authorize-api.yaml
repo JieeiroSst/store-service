@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: authorize-api-deployment
-        image: 1760151/authorize_service_api:v3
+        image: 1760151/authorize_service_api:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 1234

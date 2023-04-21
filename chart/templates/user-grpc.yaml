@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: user-grpc-deployment
-        image: 1760151/user_service_grpc:v4
+        image: 1760151/user_service_grpc:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 1236
