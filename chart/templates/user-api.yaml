@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: user-api-deployment
-        image: 1760151/user_service_api:v3
+        image: 1760151/user_service_api:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 1235
