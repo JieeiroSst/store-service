@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nginx-deployment
-        image: 1760151/app-nginx:v1.1.5
+        image: 1760151/app-nginx:v1.1.6
         ports:
         - containerPort: 80
 ---
