@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo-deployment
+  name: {{.Values.mongo.name}}-deployment   
 spec:
   selector:
     matchLabels:
-      app: mongo-deployment
+      app: {{.Values.mongo.name}}-deployment   
   template:  
     metadata:
       labels:
-        app: mongo-deployment   
+        app: {{.Values.mongo.name}}-deployment   
     spec:
       containers:     
-      - image: mongo
-        name: mongodb       
+      - image: {{.Values.mongo.image.name}}
+        name: mongodb
         ports:
-        - containerPort: 27017      
+        - containerPort: {{.Values.mongo.image.port}}      
         imagePullPolicy: Always
         env:
-            - name: NODE_ENV
-              value: production
+          - name: NODE_ENV
+            value: production
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongo-svc
+  name: {{.Values.mongo.service.name}}
 spec:
   ports:
     - port: 80
-      targetPort: 27017
+      targetPort: {{.Values.mongo.image.port}}
   selector:
-    app: mongo-deployment    
+    app: {{.Values.mongo.name}}-deployment   
