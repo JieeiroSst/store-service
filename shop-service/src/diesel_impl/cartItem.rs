@@ -134,8 +134,8 @@ impl CartItemRepo for CartItemDieselImpl {
         .map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
-    async fn update(&self, cart_id: &u16, update_cartItem: &UpdateCartItem) -> RepoResult<CartItem> {
-        let u = CartItemDiesel::from(update_cartItem.clone());
+    async fn update(&self, cart_id: &u16, update_cart_item: &UpdateCartItem) -> RepoResult<CartItem> {
+        let u = CartItemDiesel::from(update_cart_item.clone());
         use super::schema::cart_items::dsl::{cart_id, cart_items};
 
         let conn = self.pool.get().map_err(|v| DieselRepoError::from(v).into_inner())?;

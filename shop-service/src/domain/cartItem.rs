@@ -32,7 +32,7 @@ pub struct DeleteCartItem {
 #[async_trait]
 pub trait CartItemRepo: Send + Sync {
     async fn create(&self, cart: &CartItem) -> RepoResult<()>;
-    async fn update(&self, cart_id: &u16, update_cartItem: &UpdateCartItem) -> RepoResult<CartItem>;
+    async fn update(&self, cart_id: &u16, update_cart_item: &UpdateCartItem) -> RepoResult<CartItem>;
     async fn delete(&self, cart_id: &u16) -> RepoResult<()>;
     async fn get_all(&self, params: &dyn QueryParams) -> RepoResult<ResultPaging<CartItem>>;
     async fn find(&self, id: &u16) -> RepoResult<CartItem>;
