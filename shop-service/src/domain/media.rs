@@ -17,6 +17,6 @@ pub struct Media  {
 
 #[async_trait]
 pub trait MediaRepo: Send + Sync {
-    async fn Create(&self, media: Media) -> RepoResult<()>;
+    async fn create(&self, media: Media) -> RepoResult<()>;
     async fn find(&self, id: &u16)-> RepoResult<Media>;
 }

@@ -7,7 +7,7 @@ use crate::domain::{Media, MediaRepo};
 
 #[async_trait]
 pub trait MediaService: Send + Sync {
-    async fn Create(&self, media: Media) -> RepoResult<()>;
+    async fn create(&self, media: Media) -> RepoResult<()>;
     async fn find(&self, id: &u16)-> RepoResult<Media>;
 }
 
@@ -18,7 +18,9 @@ pub struct MediaServiceImpl {
 
 #[async_trait]
 impl MediaService for MediaServiceImpl {
-    async fn Create(&self, media: Media) -> RepoResult<()> {}
+    async fn create(&self, media: Media) -> RepoResult<()> {
+        // self.media_repo.
+    }
     
     async fn find(&self, id: &u16)-> RepoResult<Media> {}
 }
