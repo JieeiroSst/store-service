@@ -66,7 +66,7 @@ impl MediaDieselImpl {
 
 #[async_trait]
 impl MediaRepo for MediaDiesel {
-    async fn Create(&self, media: Media) -> RepoResult<()> {
+    async fn create(&self, media: Media) -> RepoResult<()> {
         let u = MediaDiesel::from(media.clone());
         use super::schema::medias::dsl::medias;
 

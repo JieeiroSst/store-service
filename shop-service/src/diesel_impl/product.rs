@@ -135,7 +135,7 @@ impl ProductDieselImpl {
 
 #[async_trait]
 impl ProductRepo for ProductDieselImpl {
-    async fn Create(&self, product: Product) ->  RepoResult<()> {
+    async fn create(&self, product: Product) ->  RepoResult<()> {
         let u = ProductDiesel::from(product.clone());
         use super::schema::products::dsl::products;
 
@@ -145,7 +145,7 @@ impl ProductRepo for ProductDieselImpl {
         .map_err(|v| DieselRepoError::from(v).into_inner())?
     }
 
-    async fn Update(&self, id: u16, update_product: UpdateProduct) ->  RepoResult<()> {
+    async fn update(&self, id: u16, update_product: UpdateProduct) ->  RepoResult<()> {
         let u = ProductDiesel::from(update_product.clone());
         use super::schema::products::dsl::{id, products};
 
