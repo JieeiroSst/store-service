@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-grpc-deployment
+  name: {{.Values.userGrpc.name}}-deployment
 spec:
-  replicas: 1
+  replicas: {{.Values.userGrpc.replicas}}
   selector:
     matchLabels:
-      app: user-grpc-deployment
+      app: {{.Values.userGrpc.name}}-deployment
   template:
     metadata:
       labels:
-        app: user-grpc-deployment
+        app: {{.Values.userGrpc.name}}-deployment
     spec:
       containers:
-      - name: user-grpc-deployment
-        image: 1760151/user_service_grpc:v1
+      - name: {{.Values.userGrpc.name}}-deployment
+        image: {{.Values.userGrpc.image.name}}:{{.Values.userGrpc.image.tag}}
         imagePullPolicy: Always
         ports:
-        - containerPort: 1236
+        - containerPort: {{.Values.userGrpc.image.port}}
         env:
           - name: NODE_ENV
             value: production
@@ -25,10 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-grpc-svc
+  name: {{.Values.userGrpc.service.name}}
 spec:
   ports:
   - port: 80
-    targetPort: 1236
+    targetPort: {{.Values.userGrpc.image.port}}
   selector:
-    app: user-grpc-deployment
+    app: {{.Values.userGrpc.name}}-deployment
