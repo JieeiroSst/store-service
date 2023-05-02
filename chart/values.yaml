@@ -10,3 +10,16 @@ nginx:
   service:
     name: nginx-svc
     type: LoadBalancer
+
+authorizeApi:
+  name: authorize-api
+  replicas: 1
+
+  image:
+    name: 1760151/authorize_service_api
+    tag: v1
+    port: 1234
+
+  service:
+    name: authorize-api-svc
+    type: LoadBalancer

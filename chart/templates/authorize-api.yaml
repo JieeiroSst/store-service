@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: authorize-api-deployment
+  name: {{.Values.authorizeApi.name}}-deployment
 spec:
-  replicas: 1
+  replicas: {{.Values.authorizeApi.replicas}}
   selector:
     matchLabels:
-      app: authorize-api-deployment
+      app: {{.Values.authorizeApi.name}}-deployment
   template:
     metadata:
       labels:
-        app: authorize-api-deployment
+        app: {{.Values.authorizeApi.name}}-deployment
     spec:
       containers:
-      - name: authorize-api-deployment
-        image: 1760151/authorize_service_api:v1
+      - name: {{.Values.authorizeApi.name}}-deployment
+        image: {{ .Values.authorizeApi.image.name }}:{{ .Values.authorizeApi.image.tag }}
         imagePullPolicy: Always
         ports:
-        - containerPort: 1234
+        - containerPort: {{ .Values.authorizeApi.image.port }}
         env:
           - name: NODE_ENV
             value: production
@@ -25,10 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: authorize-api-svc
+  name: {{ .Values.authorizeApi.service.name }}
 spec:
   ports:
   - port: 80
-    targetPort: 1234
+    targetPort: {{ .Values.authorizeApi.image.port }}
   selector:
-    app: authorize-deployment
+    app: {{.Values.authorizeApi.name}}-deployment
