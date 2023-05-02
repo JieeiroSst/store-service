@@ -32,8 +32,6 @@ impl Into<Cart> for CartDiesel {
             created_at: self.created_at,
             updated_at: self.updated_at,
             destroy: self.destroy,
-            created_at: self.created_at,
-            updated_at: self.updated_at,
         }
     }
 }
@@ -47,8 +45,6 @@ impl From<Cart> for CartDiesel {
             created_at: c.created_at,
             updated_at: c.updated_at,
             destroy: c.destroy,
-            created_at: c.created_at,
-            updated_at: c.updated_at,
         }
     }
 }
