@@ -23,3 +23,16 @@ authorizeApi:
   service:
     name: authorize-api-svc
     type: LoadBalancer
+
+authorizeGrpc:
+  name: authorize-grpc
+  replicas: 1
+
+  image:
+    name: 1760151/authorize_service_grpc
+    tag: v1
+    port: 1231
+
+  service:
+    name: authorize-grpc-svc
+    type: LoadBalancer
