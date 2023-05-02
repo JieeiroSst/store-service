@@ -36,3 +36,16 @@ authorizeGrpc:
   service:
     name: authorize-grpc-svc
     type: LoadBalancer
+
+userApi:
+  name: user-api
+  replicas: 1
+
+  image:
+    name: 1760151/user_service_api
+    tag: v1
+    port: 1235
+
+  service:
+    name: user-api-svc
+    type: LoadBalancer

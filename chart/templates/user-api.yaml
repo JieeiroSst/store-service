@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-api-deployment
+  name: {{.Values.userApi.name}}-deployment
 spec:
-  replicas: 1
+  replicas: {{.Values.userApi.replicas}}
   selector:
     matchLabels:
-      app: user-api-deployment
+      app: {{.Values.userApi.name}}-deployment
   template:
     metadata:
       labels:
-        app: user-api-deployment
+        app: {{.Values.userApi.name}}-deployment
     spec:
       containers:
-      - name: user-api-deployment
-        image: 1760151/user_service_api:v1
+      - name: {{.Values.userApi.name}}-deployment
+        image: {{.Values.userApi.image.name}}:{{.Values.userApi.image.tag}}
         imagePullPolicy: Always
         ports:
-        - containerPort: 1235
+        - containerPort: {{.Values.userApi.image.port}}
         env:
           - name: NODE_ENV
             value: production
@@ -25,10 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-api-svc
+  name: {{.Values.userApi.service.name}}
 spec:
   ports:
   - port: 80
-    targetPort: 1235
+    targetPort: {{.Values.userApi.image.port}}
   selector:
-    app: user-deployment
+    app: {{.Values.userApi.name}}-deployment
