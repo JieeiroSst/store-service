@@ -75,3 +75,16 @@ redis:
   service:
     name: redis-svc
     type: LoadBalancer
+
+consul:
+  name: consul
+  replicas: 1
+
+  image:
+    name: hashicorp/consul
+    tag: 1.11.2
+    port: 8500
+
+  service:
+    name: consul-svc
+    type: LoadBalancer
