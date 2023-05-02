@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis-deployment
+  name: {{.Values.redis.name}}-deployment
 spec:
-  replicas: 1
+  replicas: {{.Values.redis.replicas}}
   selector:
     matchLabels:
-      app: redis-deployment
+      app: {{.Values.redis.name}}-deployment
   template:
     metadata:
       labels:
-        app: redis-deployment
+        app: {{.Values.redis.name}}-deployment
     spec:
       containers:
-      - name: redis-deployment
-        image: redis
+      - name: {{.Values.redis.name}}-deployment
+        image: {{.Values.redis.image.name}}
         ports:
-        - containerPort: 6379
+        - containerPort: {{.Values.redis.image.port}}
         env:
             - name: NODE_ENV
               value: production
@@ -24,10 +24,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-svc
+  name: {{.Values.redis.service.name}}
 spec:
   ports:
   - port: 80
-    targetPort: 6379
+    targetPort: {{.Values.redis.image.port}}
   selector:
-    app: redis-deployment
+    app: {{.Values.redis.name}}-deployment

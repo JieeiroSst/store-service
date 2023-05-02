@@ -62,3 +62,16 @@ userGrpc:
   service:
     name: user-grpc-svc
     type: LoadBalancer
+
+redis:
+  name: redis
+  replicas: 1
+
+  image:
+    name: redis
+    tag: v1
+    port: 6379
+
+  service:
+    name: redis-svc
+    type: LoadBalancer
