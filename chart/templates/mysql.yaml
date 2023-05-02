@@ -1,37 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: {{.Values.mysql.name}}
 spec:
   selector:
     matchLabels:
-      app: mysql
+      app: {{.Values.mysql.name}}
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: mysql
+        app: {{.Values.mysql.name}}
     spec:
       containers:
-        - image: mysql:8.0
-          name: mysql
+        - image: {{.Values.mysql.image.name}}:{{.Values.mysql.image.tag}}
+          name: {{.Values.mysql.name}}
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: password
+              value: {{.Values.mysql.env.password}}
             - name: NODE_ENV
               value: production
           ports:
-            - containerPort: 3306
+            - containerPort: {{.Values.mysql.image.port}}
               name: mysql          
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: {{.Values.mysql.service.name}}
 spec:
   ports:
     - port: 80
-      targetPort: 3306
+      targetPort: {{.Values.mysql.image.port}}
   selector:
-    app: mysql
+    app: {{.Values.mysql.name}}
