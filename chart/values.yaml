@@ -1,12 +1,12 @@
 nginx:
-  name: app-nginx
+  name: nginx
   replicas: 1
 
   image:
-    name: app-nginx
-    tag: v1
+    name: 1760151/app-nginx
+    tag: v1.1.6
     port: 80
 
   service:
-    name: app-nginx-loadbalancer-service
+    name: nginx-svc
     type: LoadBalancer
