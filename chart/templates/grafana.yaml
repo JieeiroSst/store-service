@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grafana
+  name: {{.Values.grafana.name}}
   labels:
-    app: grafana
+    app: {{.Values.grafana.name}}
 spec:
-  revisionHistoryLimit: 1
-  replicas: 1
+  revisionHistoryLimit: {{.Values.grafana.revisionHistoryLimit}}
+  replicas: {{.Values.grafana.replicas}}
   selector:
     matchLabels:
-        app: grafana
+        app: {{.Values.grafana.name}}
   template:
     metadata:
       labels:
-        app: grafana
+        app: {{.Values.grafana.name}}
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -21,8 +21,8 @@ spec:
         runAsGroup: 65534
         runAsUser: 65534
       containers:
-      - name: grafana
-        image: docker.io/grafana/grafana:9.3.2
+      - name: {{.Values.grafana.name}}
+        image: {{.Values.grafana.image.name}}:{{.Values.grafana.image.tag}}
         imagePullPolicy: IfNotPresent
         env:
         - name: GF_EXPLORE_ENABLED
@@ -30,7 +30,7 @@ spec:
         - name: LOKI_ADDR
           value: "http://loki:3100"
         ports:
-        - containerPort: 3000
+        - containerPort: {{.Values.grafana.image.port}}
           name: http
         resources:
           requests:
@@ -70,7 +70,7 @@ kind: ConfigMap
 metadata:
     name: grafana-datasource
     labels:
-      app: grafana
+      app: {{.Values.grafana.name}}
       grafana_datasource: '1'
 data:
     datasource.yaml: |-
@@ -92,16 +92,16 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: grafana
+  name: {{.Values.grafana.name}}
   labels:
-    app: grafana
+    app: {{.Values.grafana.name}}
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "3000"
 spec:
   ports:
-  - name: grafana
+  - name: {{.Values.grafana.name}}
     port: 80
-    targetPort: 3000
+    targetPort: {{.Values.grafana.image.port}}
   selector:
-    app: grafana
+    app: {{.Values.grafana.name}}
