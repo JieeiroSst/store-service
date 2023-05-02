@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: authorize-grpc-deployment
+  name: {{.Values.authorizeGrpc.name}}-deployment
 spec:
-  replicas: 1
+  replicas: {{.Values.authorizeGrpc.replicas}}
   selector:
     matchLabels:
-      app: authorize-grpc-deployment
+      app: {{.Values.authorizeGrpc.name}}-deployment
   template:
     metadata:
       labels:
-        app: authorize-grpc-deployment
+        app: {{.Values.authorizeGrpc.name}}-deployment
     spec:
       containers:
-      - name: authorize-grpc-deployment
-        image: 1760151/authorize_service_grpc:v1
+      - name: {{.Values.authorizeGrpc.name}}-deployment
+        image: {{.Values.authorizeGrpc.image.name}}:{{.Values.authorizeGrpc.image.tag}}
         imagePullPolicy: Always
         ports:
-        - containerPort: 1231
+        - containerPort: {{.Values.authorizeGrpc.image.port}}
         env:
           - name: NODE_ENV
             value: production
@@ -25,10 +25,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: authorize-grpc-svc
+  name: {{.Values.authorizeGrpc.service.name}}
 spec:
   ports:
   - port: 80
-    targetPort: 1231
+    targetPort: {{.Values.authorizeGrpc.image.port}}
   selector:
-    app: authorize-grpc-deployment
+    app: {{.Values.authorizeGrpc.name}}-deployment
