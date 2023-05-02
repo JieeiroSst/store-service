@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consul-deployment
+  name: {{.Values.consul.name}}-deployment
 spec:
-  replicas: 1
+  replicas: {{.Values.consul.replicas}}
   selector:
     matchLabels:
-      app: consul-deployment
+      app: {{.Values.consul.name}}-deployment
   template:
     metadata:
       labels:
-        app: consul-deployment
+        app: {{.Values.consul.name}}-deployment
     spec:
       containers:
-      - name: consul-deployment
-        image: hashicorp/consul:1.11.2
+      - name: {{.Values.consul.name}}-deployment
+        image: {{.Values.consul.image.name}}:{{.Values.consul.image.tag}}
         ports:
-        - containerPort: 8500
+        - containerPort: {{.Values.consul.image.port}}
         env:
             - name: NODE_ENV
               value: production
@@ -24,10 +24,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: consul-svc
+  name: {{.Values.consul.service.name}}
 spec:
   ports:
   - port: 80
-    targetPort: 8500
+    targetPort: {{.Values.consul.image.port}}
   selector:
-    app: consul-deployment
+    app: {{.Values.consul.name}}-deployment
