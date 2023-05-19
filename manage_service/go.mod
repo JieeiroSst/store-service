@@ -3,9 +3,11 @@ module github.com/JIeeiroSst/manage-service
 go 1.20
 
 require (
+	github.com/Nerzal/gocloak/v13 v13.5.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-gonic/gin v1.9.0
+	github.com/goccy/go-json v0.10.0
 	github.com/hashicorp/consul/api v1.20.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.11.2
@@ -15,7 +17,6 @@ require (
 )
 
 require (
-	github.com/Nerzal/gocloak/v13 v13.5.0 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/bytedance/sonic v1.8.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
@@ -26,7 +27,6 @@ require (
 	github.com/go-playground/validator/v10 v10.11.2 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
-	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-hclog v0.12.0 // indirect
