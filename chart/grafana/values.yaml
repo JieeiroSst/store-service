@@ -1,0 +1,13 @@
+grafana:
+  name: grafana
+  replicas: 1
+  revisionHistoryLimit: 1
+
+  image:
+    name: docker.io/grafana/grafana
+    tag: 9.3.2
+    port: 3000
+
+  service:
+    name: grafana-svc
+    type: LoadBalancer 
