@@ -1,0 +1,24 @@
+dependencies:
+- name: authorize
+  repository: file://authorize
+  version: 0.1.0
+- name: user
+  repository: file://user
+  version: 0.1.0
+- name: consul
+  repository: file://consul
+  version: 0.1.0
+- name: grafana
+  repository: file://grafana
+  version: 0.1.0
+- name: eks
+  repository: file://eks
+  version: 0.1.0
+- name: db
+  repository: file://db
+  version: 0.1.0
+- name: nginx
+  repository: file://nginx
+  version: 0.1.0
+digest: sha256:9afe0b7d28a17cce1774a8250bc80ab8f08a3ebac0d1d69a0f73318e7ac5c0a2
+generated: "2023-05-21T00:04:45.680031+07:00"
