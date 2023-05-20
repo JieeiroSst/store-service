@@ -1,0 +1,25 @@
+userApi:
+  name: user-api
+  replicas: 1
+
+  image:
+    name: 1760151/user_service_api
+    tag: v1
+    port: 1235
+
+  service:
+    name: user-api-svc
+    type: LoadBalancer
+
+userGrpc:
+  name: user-grpc
+  replicas: 1
+
+  image:
+    name: 1760151/user_service_grpc
+    tag: v1
+    port: 1236
+
+  service:
+    name: user-grpc-svc
+    type: LoadBalancer
