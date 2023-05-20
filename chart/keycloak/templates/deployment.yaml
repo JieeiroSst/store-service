@@ -2,26 +2,18 @@ apiVersion: "apps/v1"
 kind: "Deployment"
 metadata: 
   name: "keycloak-development"
-  namespace: "development"
 spec: 
+  replicas: 1
   selector: 
     matchLabels: 
       app: "keycloak-development"
-    replicas: 1
-    strategy: 
-      type: "RollingUpdate"
-      rollingUpdate: 
-        maxSurge: 1
-        maxUnavailable: 1
-    minReadySeconds: 5
-    template: 
-      metadata: 
-        labels: 
-          app: "keycloak-development"
-      spec: 
+  template:
+    metadata:
+      labels:
+        app: "keycloak-development"
+    spec: 
         containers: 
-          - 
-            name: "keycloak-development"
+          - name: "keycloak-development"
             image: "quay.io/keycloak/keycloak:8.0.2"
             imagePullPolicy: "Always"
             env: 
