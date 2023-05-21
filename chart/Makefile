@@ -16,5 +16,5 @@ log:
 	kubectl logs ${pod} --all-containers
 upgrade:
 	helm upgrade $(version) ../chart
-port-forward:
-    kubectl port-forward service/${service} ${pod}
+# port-forward:
+#     kubectl port-forward service/${service} ${pod}
