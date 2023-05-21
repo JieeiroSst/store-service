@@ -18,5 +18,3 @@ upgrade:
 	helm upgrade $(version) ../chart
 port-forward:
     kubectl port-forward service/${service} ${pod}
-
-	kubectl get services -l component=controller,app=consul-svc -o jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}"
