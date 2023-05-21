@@ -15,7 +15,7 @@ func main() {
 		Copy:   true, // do not transcode
 		Audio:  true, // retain audio stream
 		Time:   10,   // 10 seconds
-	}
+}
 
 	encode := ffmpeg.Get(c)
 	cmd, out, err := encode.SaveVideo(securitypsy, output, "SecuritySpyVideoTitle")
@@ -50,7 +50,7 @@ func main() {
 
 	if err != nil {
 		log.Fatalln(err)
-	}
+}
 
 	log.Println("Saved file from", dahua, "to", output)
 }
