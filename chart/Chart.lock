@@ -20,8 +20,8 @@ dependencies:
 - name: nginx
   repository: file://nginx
   version: 0.1.0
-- name: nginx
+- name: keycloak
   repository: file://keycloak
   version: 0.1.0
-digest: sha256:86e6bce52c7fe4e44127b0261a5303dd28f2bf9b19a23df2a8f31113e8032a1e
-generated: "2023-05-21T21:37:20.733323+07:00"
+digest: sha256:2b3f669a6c87d65bdcbe566d695e93973b8fed107210b913e70fba68aa3036a2
+generated: "2023-05-22T01:46:32.14999+07:00"
