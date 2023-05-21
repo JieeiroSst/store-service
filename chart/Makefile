@@ -1,7 +1,11 @@
 k8s_generate_name_prev:
 	helm install ../chart --dry-run --generate-name
 k8s_generate_name:
-	helm dependency build   
+	helm install ../chart --generate-name
+k8s_build:
+	helm dependency build  
+k8s_update:
+	helm dependency update 
 k8s_list:
 	helm list
 k8s_remove:
@@ -12,3 +16,7 @@ log:
 	kubectl logs ${pod} --all-containers
 upgrade:
 	helm upgrade $(version) ../chart
+port-forward:
+    kubectl port-forward service/${service} ${pod}
+
+	kubectl get services -l component=controller,app=consul-svc -o jsonpath="{.items[0].status.loadBalancer.ingress[0].ip}"
