@@ -32,5 +32,8 @@ dependencies:
 - name: grafana
   repository: file://grafana
   version: 0.1.0
-digest: sha256:2c3bb2dd801f4c218704d33d5bfbcf3acea440bb5d7887b9914c4da5ea715d05
-generated: "2023-05-22T21:29:41.537789+07:00"
+- name: keycloak
+  repository: file://keycloak
+  version: 0.1.0
+digest: sha256:d67b1bd87651ec2acdaf883506ff5889340f93e719b71b48473a06faee92153f
+generated: "2023-05-22T21:33:30.302724+07:00"
