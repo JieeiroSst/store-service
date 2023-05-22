@@ -5,5 +5,8 @@ dependencies:
 - name: nginx
   repository: file://nginx
   version: 0.1.0
-digest: sha256:2708a6bca82fd4ad86d5d2e1e4d08de94afdb54498329780f9c766e63c785287
-generated: "2023-05-22T20:40:50.003444+07:00"
+- name: mysql
+  repository: file://mysql
+  version: 0.1.0
+digest: sha256:6afdc74193e5b6ada26e84705a20cc7609899bbd514d78a64328b8f5a2c8d8c4
+generated: "2023-05-22T21:06:44.181244+07:00"
