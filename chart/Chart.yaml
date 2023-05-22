@@ -7,35 +7,11 @@ version: 0.1.0
 appVersion: "1.16.0"
 
 dependencies:
-  - alias: authorize
-    name: authorize
-    version: "0.1.0"
-    repository: file://authorize
-  - alias: user
-    name: user
-    version: "0.1.0"
-    repository: file://user
   - alias: consul
     name: consul
     version: "0.1.0"
     repository: file://consul
-  - alias: grafana
-    name: grafana
-    version: "0.1.0"
-    repository: file://grafana
-  - alias: eks
-    name: eks
-    version: "0.1.0"
-    repository: file://eks
-  - alias: db
-    name: db
-    version: "0.1.0"
-    repository: file://db
   - alias: nginx
     name: nginx
     version: "0.1.0"
     repository: file://nginx
-  - alias: keycloak
-    name: keycloak
-    version: "0.1.0"
-    repository: file://keycloak

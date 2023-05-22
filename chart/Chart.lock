@@ -1,27 +1,9 @@
 dependencies:
-- name: authorize
-  repository: file://authorize
-  version: 0.1.0
-- name: user
-  repository: file://user
-  version: 0.1.0
 - name: consul
   repository: file://consul
-  version: 0.1.0
-- name: grafana
-  repository: file://grafana
-  version: 0.1.0
-- name: eks
-  repository: file://eks
-  version: 0.1.0
-- name: db
-  repository: file://db
   version: 0.1.0
 - name: nginx
   repository: file://nginx
   version: 0.1.0
-- name: keycloak
-  repository: file://keycloak
-  version: 0.1.0
-digest: sha256:2b3f669a6c87d65bdcbe566d695e93973b8fed107210b913e70fba68aa3036a2
-generated: "2023-05-22T01:46:32.14999+07:00"
+digest: sha256:2708a6bca82fd4ad86d5d2e1e4d08de94afdb54498329780f9c766e63c785287
+generated: "2023-05-22T20:40:50.003444+07:00"
