@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.redis.name}}-deployment
+spec:
+  replicas: {{.Values.redis.replicas}}
+  selector:
+    matchLabels:
+      app: {{.Values.redis.name}}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{.Values.redis.name}}-deployment
+    spec:
+      containers:
+      - name: {{.Values.redis.name}}-deployment
+        image: {{.Values.redis.image.name}}
+        ports:
+        - containerPort: {{.Values.redis.image.port}}
+        env:
+            - name: NODE_ENV
+              value: production

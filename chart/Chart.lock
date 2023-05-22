@@ -1,27 +1,39 @@
 dependencies:
-- name: authorize
-  repository: file://authorize
-  version: 0.1.0
-- name: user
-  repository: file://user
-  version: 0.1.0
 - name: consul
   repository: file://consul
-  version: 0.1.0
-- name: grafana
-  repository: file://grafana
-  version: 0.1.0
-- name: eks
-  repository: file://eks
-  version: 0.1.0
-- name: db
-  repository: file://db
   version: 0.1.0
 - name: nginx
   repository: file://nginx
   version: 0.1.0
+- name: mysql
+  repository: file://mysql
+  version: 0.1.0
+- name: redis
+  repository: file://redis
+  version: 0.1.0
+- name: mongo
+  repository: file://mongo
+  version: 0.1.0
+- name: postgres
+  repository: file://postgres
+  version: 0.1.0
+- name: loki
+  repository: file://loki
+  version: 0.1.0
+- name: prometheus
+  repository: file://prometheus
+  version: 0.1.0
+- name: kibana
+  repository: file://kibana
+  version: 0.1.0
+- name: elasticsearch
+  repository: file://elasticsearch
+  version: 0.1.0
+- name: grafana
+  repository: file://grafana
+  version: 0.1.0
 - name: keycloak
   repository: file://keycloak
   version: 0.1.0
-digest: sha256:2b3f669a6c87d65bdcbe566d695e93973b8fed107210b913e70fba68aa3036a2
-generated: "2023-05-22T01:46:32.14999+07:00"
+digest: sha256:d67b1bd87651ec2acdaf883506ff5889340f93e719b71b48473a06faee92153f
+generated: "2023-05-22T21:33:30.302724+07:00"
