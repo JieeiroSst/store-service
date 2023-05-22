@@ -31,3 +31,16 @@ spec:
     targetPort: {{.Values.consul.image.port}}
   selector:
     app: {{.Values.consul.name}}-deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-nodeport
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 8500
+    nodePort: 30009
+  selector:
+    app: consul-deployment
