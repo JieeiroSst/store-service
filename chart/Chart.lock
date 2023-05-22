@@ -17,5 +17,20 @@ dependencies:
 - name: postgres
   repository: file://postgres
   version: 0.1.0
-digest: sha256:2678c4b9486e56379d5430b6b76883b5be096758236e9259848e9f5dcc2a8b36
-generated: "2023-05-22T21:16:08.464087+07:00"
+- name: loki
+  repository: file://loki
+  version: 0.1.0
+- name: prometheus
+  repository: file://prometheus
+  version: 0.1.0
+- name: kibana
+  repository: file://kibana
+  version: 0.1.0
+- name: elasticsearch
+  repository: file://elasticsearch
+  version: 0.1.0
+- name: grafana
+  repository: file://grafana
+  version: 0.1.0
+digest: sha256:2c3bb2dd801f4c218704d33d5bfbcf3acea440bb5d7887b9914c4da5ea715d05
+generated: "2023-05-22T21:29:41.537789+07:00"
