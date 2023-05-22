@@ -51,3 +51,7 @@ dependencies:
     name: grafana
     version: "0.1.0"
     repository: file://grafana
+  - alias: keycloak
+    name: keycloak
+    version: "0.1.0"
+    repository: file://keycloak
