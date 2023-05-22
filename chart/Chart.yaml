@@ -31,3 +31,23 @@ dependencies:
     name: postgres
     version: "0.1.0"
     repository: file://postgres
+  - alias: loki
+    name: loki
+    version: "0.1.0"
+    repository: file://loki
+  - alias: prometheus
+    name: prometheus
+    version: "0.1.0"
+    repository: file://prometheus
+  - alias: kibana
+    name: kibana
+    version: "0.1.0"
+    repository: file://kibana
+  - alias: elasticsearch
+    name: elasticsearch
+    version: "0.1.0"
+    repository: file://elasticsearch
+  - alias: grafana
+    name: grafana
+    version: "0.1.0"
+    repository: file://grafana

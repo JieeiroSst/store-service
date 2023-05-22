@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.grafana.name}}-deployment
+  labels:
+    app: {{.Values.grafana.name}}-deployment
+spec:
+  revisionHistoryLimit: {{.Values.grafana.revisionHistoryLimit}}
+  replicas: {{.Values.grafana.replicas}}
+  selector:
+    matchLabels:
+        app: {{.Values.grafana.name}}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{.Values.grafana.name}}-deployment
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsGroup: 65534
+        runAsUser: 65534
+      containers:
+      - name: {{.Values.grafana.name}}
+        image: {{.Values.grafana.image.name}}:{{.Values.grafana.image.tag}}
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GF_EXPLORE_ENABLED
+          value: "true"
+        - name: LOKI_ADDR
+          value: "http://loki:3100"
+        ports:
+        - containerPort: {{.Values.grafana.image.port}}
+          name: http
+        resources:
+          requests:
+            cpu: 100m
+            memory: "512Mi"
+          limits:
+            cpu: 200m
+            memory: "1Gi"
+        volumeMounts:
+          - name: grafana-storage
+            mountPath: /var/lib/grafana
+          - name: grafana-datastore
+            mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
+            subPath: datasource.yaml
+            readOnly: false
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - NET_BIND_SERVICE
+      volumes:
+        - name: grafana-datastore
+          configMap:
+            name: grafana-datasource
+        - name: grafana-storage
+          emptyDir:
+            sizeLimit: "1Gi"
