@@ -14,5 +14,8 @@ dependencies:
 - name: mongo
   repository: file://mongo
   version: 0.1.0
-digest: sha256:d8d65b3d1cfc6856f86a29de1af112c83baadeb536a08ba598e3436592d41d6b
-generated: "2023-05-22T21:11:42.306938+07:00"
+- name: postgres
+  repository: file://postgres
+  version: 0.1.0
+digest: sha256:2678c4b9486e56379d5430b6b76883b5be096758236e9259848e9f5dcc2a8b36
+generated: "2023-05-22T21:16:08.464087+07:00"

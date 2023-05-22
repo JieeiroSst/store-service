@@ -27,3 +27,7 @@ dependencies:
     name: mongo
     version: "0.1.0"
     repository: file://mongo
+  - alias: postgres
+    name: postgres
+    version: "0.1.0"
+    repository: file://postgres
