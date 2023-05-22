@@ -15,3 +15,7 @@ dependencies:
     name: nginx
     version: "0.1.0"
     repository: file://nginx
+  - alias: mysql
+    name: mysql
+    version: "0.1.0"
+    repository: file://mysql
