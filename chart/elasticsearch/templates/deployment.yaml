@@ -17,11 +17,6 @@ spec:
       containers:
       - name: elasticsearch
         image: elasticsearch:7.9.0
-        resources:
-          requests:
-            memory: 4Gi
-          limits:
-            memory: 5Gi
         ports:
         - containerPort: 9200
         - containerPort: 9300
