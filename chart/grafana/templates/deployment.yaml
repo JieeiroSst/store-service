@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{.Values.grafana.name}}
+  name: {{.Values.grafana.name}}-deployment
   labels:
-    app: {{.Values.grafana.name}}
+    app: {{.Values.grafana.name}}-deployment
 spec:
   revisionHistoryLimit: {{.Values.grafana.revisionHistoryLimit}}
   replicas: {{.Values.grafana.replicas}}
   selector:
     matchLabels:
-        app: {{.Values.grafana.name}}
+        app: {{.Values.grafana.name}}-deployment
   template:
     metadata:
       labels:
-        app: {{.Values.grafana.name}}
+        app: {{.Values.grafana.name}}-deployment
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -64,44 +64,4 @@ spec:
         - name: grafana-storage
           emptyDir:
             sizeLimit: "1Gi"
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-    name: grafana-datasource
-    labels:
-      app: {{.Values.grafana.name}}
-      grafana_datasource: '1'
-data:
-    datasource.yaml: |-
-      apiVersion: 1
-      datasources:
-      - name: Prometheus
-        type: prometheus
-        access: proxy
-        orgId: 1
-        url: http://prometheus:9090
-  
-      - name: Loki
-        type: loki
-        access: proxy
-        url: http://loki:3100
-        jsonData:
-          maxLines: 1000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{.Values.grafana.name}}
-  labels:
-    app: {{.Values.grafana.name}}
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "3000"
-spec:
-  ports:
-  - name: {{.Values.grafana.name}}
-    port: 80
-    targetPort: {{.Values.grafana.image.port}}
-  selector:
-    app: {{.Values.grafana.name}}
+            
