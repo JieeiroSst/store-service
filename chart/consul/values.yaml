@@ -10,3 +10,4 @@ consul:
   service:
     name: consul-svc
     type: LoadBalancer
+    nodeport: 30009
