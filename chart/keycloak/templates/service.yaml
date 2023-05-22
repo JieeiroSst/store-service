@@ -8,15 +8,15 @@ spec:
         targetPort: 8080
     selector: 
       app: "keycloak-development"
----
-apiVersion: "v1"
-kind: "Service"
-metadata: 
-    name: "keycloak-nodeport"
-spec: 
-    ports: 
-      - port: 8080
-        targetPort: 8080
-        nodePort: 30001
-    selector: 
-      app: "keycloak-development"
+# ---
+# apiVersion: "v1"
+# kind: "Service"
+# metadata: 
+#     name: "keycloak-nodeport"
+# spec: 
+#     ports: 
+#       - port: 8080
+#         targetPort: 8080
+#         nodePort: 30001
+#     selector: 
+#       app: "keycloak-development"

@@ -64,4 +64,3 @@ spec:
         - name: grafana-storage
           emptyDir:
             sizeLimit: "1Gi"
-            

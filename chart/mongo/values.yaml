@@ -1,0 +1,12 @@
+mongo:
+  name: mongo
+  replicas: 1
+
+  image:
+    name: mongo
+    tag: v1
+    port: 27017
+
+  service:
+    name: mongo-svc
+    type: LoadBalancer
