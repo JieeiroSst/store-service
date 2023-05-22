@@ -1,13 +1,22 @@
 apiVersion: "v1"
 kind: "Service"
 metadata: 
-    name: "keycloak-development-service"
-    labels: 
-      app: "keycloak-service"
+    name: "keycloak-service"
 spec: 
     ports: 
-      - 
-        port: 53582
+      - port: 8080
         targetPort: 8080
+    selector: 
+      app: "keycloak-development"
+---
+apiVersion: "v1"
+kind: "Service"
+metadata: 
+    name: "keycloak-nodeport"
+spec: 
+    ports: 
+      - port: 8080
+        targetPort: 8080
+        nodePort: 30001
     selector: 
       app: "keycloak-development"
