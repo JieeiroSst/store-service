@@ -16,4 +16,4 @@ spec:
           service:
             name: "keycloak-development"
             port:
-              number: 53582
+              number: 8080
