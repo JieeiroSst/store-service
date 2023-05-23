@@ -63,3 +63,11 @@ dependencies:
     name: zookeeper
     version: "0.1.0"
     repository: file://zookeeper
+  - alias: kafka-ui
+    name: kafka-ui
+    version: "0.1.0"
+    repository: file://kafka-ui
+  - alias: rabbitmq
+    name: rabbitmq
+    version: "0.1.0"
+    repository: file://rabbitmq
