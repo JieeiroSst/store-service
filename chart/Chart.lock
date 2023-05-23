@@ -41,5 +41,8 @@ dependencies:
 - name: zookeeper
   repository: file://zookeeper
   version: 0.1.0
-digest: sha256:d8831b052ca030022ed1b3fdf43aed5a0502122ec7557caf860d9df7ddf46d9b
-generated: "2023-05-23T20:26:14.464414+07:00"
+- name: kafka-ui
+  repository: file://kafka-ui
+  version: 0.1.0
+digest: sha256:9122d153482dda69a5ac1f2b24262ff60e21f7fc64a5eb04e13c963475352704
+generated: "2023-05-23T20:38:25.986351+07:00"
