@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui-deployment
+  labels:
+    app: kafka-ui-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui-deployment
+  template:
+    metadata:
+      labels:
+        app: kafka-ui-deployment
+    spec:
+      containers:
+      - name: kafka-ui-deployment
+        image: provectuslabs/kafka-ui:latest
+        env:
+        - name: KAFKA_CLUSTERS_0_NAME
+          value: "K8 Kafka Cluster"
+        - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+          value: kafka-kafka-bootstrap.kafka-service:9092 # <- service-name.namespace:9092
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        ports:
+        - containerPort: 8080 # <- Rectify the port
+          protocol: TCP
