@@ -17,6 +17,7 @@ type cacheHelper struct {
 type CacheHelper interface {
 	GetInterface(ctx context.Context, key string, value interface{}) (interface{}, error)
 	Set(ctx context.Context, key string, value interface{}, exppiration time.Duration) error
+	Delete(ctx context.Context, key string) error
 }
 
 func NewCacheHelper(dns string) CacheHelper {
@@ -71,5 +72,13 @@ func (h *cacheHelper) Set(ctx context.Context, key string, value interface{}, ex
 		return err
 	}
 	_ = h.resdis.Set(ctx, key, data, exppiration)
+	return nil
+}
+
+func (h *cacheHelper) Delete(ctx context.Context, key string) error {
+	value := h.resdis.Del(ctx, key)
+	if value.Err() != nil {
+		return value.Err()
+	}
 	return nil
 }
