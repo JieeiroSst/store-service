@@ -10,7 +10,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Fri May 26 19:46:00 2023
+# Make data base, printed on Fri May 26 20:10:35 2023
 
 # Variables
 
@@ -137,7 +137,7 @@ MFLAGS = -Rrqp
 # environment
 TERM_PROGRAM_VERSION = 1.78.2
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.2333859.2333865.188DCCAE-33BE-4AE3-9F0F-24F8498843AF
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.2333859.2333865.3B4E6E68-FFE0-4C79-A59A-B0CB6686503C
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -232,6 +232,6 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Fri May 26 19:46:00 2023
+# Finished Make data base on Fri May 26 20:10:35 2023
 
  
