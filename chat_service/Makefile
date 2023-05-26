@@ -3,3 +3,6 @@ gen:
 
 install-grpc:
 	npm_config_target_arch=x64 npm i grpc-tools 
+
+run:
+	go run cmd/main.go
