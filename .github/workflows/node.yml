@@ -16,20 +16,20 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  chat_service:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+  # chat_service:
+  #   # The type of runner that the job will run on
+  #   runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - name: Development Code
-        uses: actions/checkout@v2
-      - name: Use Node.js 17.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: 17.x
-      - run: cd chat_service && npm install
-      - run: cd chat_service && npm run build --if-present
+  #   # Steps represent a sequence of tasks that will be executed as part of the job
+  #   steps:
+  #     - name: Development Code
+  #       uses: actions/checkout@v2
+  #     - name: Use Node.js 17.x
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 17.x
+  #     - run: cd chat_service && npm install
+  #     - run: cd chat_service && npm run build --if-present
 
   keikibook:
 
