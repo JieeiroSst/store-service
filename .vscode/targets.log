@@ -10,7 +10,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Fri May 19 18:30:31 2023
+# Make data base, printed on Fri May 26 19:46:00 2023
 
 # Variables
 
@@ -51,19 +51,19 @@ VSCODE_CWD = /Users/chmp/Desktop/store-service
 # environment
 GOPROXY = https://proxy.golang.org,direct
 # environment
-PATH = /opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/Users/chmp/.cargo/bin:/usr/local/go/bin:/bin
+PATH = /opt/homebrew/opt/openjdk/bin:/opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/opt/homebrew/opt/openjdk/bin:/opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/Users/chmp/.cargo/bin:/usr/local/go/bin:/bin
 # environment
 ZDOTDIR = /Users/chmp
 # environment
 GOPATH = /Users/chmp/go
 # environment
-LaunchInstanceID = 16C1FF65-F2EC-468E-A187-88BD34EEF3FB
+LaunchInstanceID = C0383426-61E4-4DB1-92D5-5F009FC49F74
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.MKrFuiUTrP/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.u5jpRGdymV/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -79,7 +79,7 @@ MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /De
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/chmp/Library/Application Support/Code/CachedData/252e5463d60e63238250799aef7375787f68b4ee
+VSCODE_CODE_CACHE_PATH = /Users/chmp/Library/Application Support/Code/CachedData/b3e4e68a0bc097f0ae7907b217c1119af9e03435
 # environment
 LOGNAME = chmp
 # environment
@@ -101,7 +101,7 @@ MAKE = $(MAKE_COMMAND)
 # default
 MAKECMDGOALS := all
 # environment
-SHLVL = 3
+SHLVL = 7
 # default
 MAKE_VERSION := 3.81
 # environment
@@ -135,9 +135,9 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-TERM_PROGRAM_VERSION = 1.78.0
+TERM_PROGRAM_VERSION = 1.78.2
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.1565657.1565663.3A767C5E-8754-40F5-A9C9-A4A01D2B4923
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.2333859.2333865.188DCCAE-33BE-4AE3-9F0F-24F8498843AF
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -151,7 +151,6 @@ GIT_ASKPASS = /Applications/Visual Studio Code.app/Contents/Resources/app/extens
 # default
 MAKEFILES := 
 # automatic
- 
 <F = $(notdir $<)
 # environment
 USER_ZDOTDIR = /Users/chmp
@@ -164,7 +163,7 @@ SECURITYSESSIONID = 186a5
 # default
 SUFFIXES := 
 # environment
-VSCODE_GIT_IPC_HANDLE = /var/folders/82/tp42cmtd23b4y56dwhvvtt780000gn/T/vscode-git-5f43a3e0ed.sock
+VSCODE_GIT_IPC_HANDLE = /var/folders/82/tp42cmtd23b4y56dwhvvtt780000gn/T/vscode-git-69eb8b4572.sock
 # environment
 LANG = C
 # environment
@@ -180,9 +179,9 @@ VSCODE_PID = 429
 
 # Directories
 
-# . (device 16777230, inode 224827): 28 files, no impossibilities.
+# . (device 16777229, inode 224827): 29 files, no impossibilities.
 
-# 28 files, no impossibilities in 1 directories.
+# 29 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -233,6 +232,6 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Fri May 19 18:30:31 2023
+# Finished Make data base on Fri May 26 19:46:00 2023
 
  
