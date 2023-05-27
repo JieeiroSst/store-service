@@ -2,11 +2,16 @@ package usecase
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	"github.com/JIeeiroSst/chat-service/common"
 	"github.com/JIeeiroSst/chat-service/dto"
 	"github.com/JIeeiroSst/chat-service/internal/repository"
+	"github.com/JIeeiroSst/chat-service/model"
 	"github.com/JIeeiroSst/chat-service/pkg/cache"
 	"github.com/JIeeiroSst/chat-service/pkg/snowflake"
+	"github.com/redis/go-redis/v9"
 )
 
 type Messages interface {
@@ -33,11 +38,47 @@ func NewMessageUsecase(MessageRepo repository.MessageRepo, cacheHelper cache.Cac
 }
 
 func (u *Messagesecase) SaveMessage(ctx context.Context, message dto.Messages) error {
+	messageType, err := model.ParseMessageType(message.MessageType)
+	if err != nil {
+		return err
+	}
+	mesageModel := model.Messages{
+		ID:          u.Snowflake.GearedID(),
+		SenderId:    message.SenderId,
+		MessageType: messageType,
+		CreatedAt:   time.Now(),
+	}
+	if err := u.MessageRepo.SaveMessage(ctx, mesageModel); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (u *Messagesecase) GetMessageById(ctx context.Context, id int) (*dto.Messages, error) {
-	return nil, nil
+	var (
+		message *model.Messages
+		errDB   error
+	)
+	valueIntrface, err := u.CacheHelper.GetInterface(context.Background(), fmt.Sprintf(common.ListMessageBySenderID, id), message)
+	if err != nil {
+		message, errDB = u.MessageRepo.GetMessageById(ctx, id)
+		if errDB != nil {
+			return nil, err
+		}
+		if err == redis.Nil {
+			_ = u.CacheHelper.Set(context.Background(), fmt.Sprintf(common.ListMessageBySenderID, id), message, time.Second*60)
+		}
+	} else {
+		message = valueIntrface.(*model.Messages)
+	}
+
+	return &dto.Messages{
+		ID:          message.ID,
+		SenderId:    message.SenderId,
+		MessageType: message.MessageType.String(),
+		CreatedAt:   message.CreatedAt,
+		DeletedAt:   message.DeletedAt,
+	}, nil
 }
 
 func (u *Messagesecase) CreateReport(ctx context.Context, report dto.Reports) error {

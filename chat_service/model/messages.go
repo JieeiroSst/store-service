@@ -16,7 +16,6 @@ const (
 
 type Messages struct {
 	ID          int         `json:"_id,omitempty" bson:"_id,omitempty"`
-	Guid        string      `json:"guid,omitempty" bson:"guid,omitempty"`
 	SenderId    int         `json:"sender_id,omitempty" bson:"sender_id,omitempty"`
 	MessageType MESSAGETYPE `json:"message_type,omitempty" bson:"message_type,omitempty"`
 	CreatedAt   time.Time   `json:"created_at,omitempty" bson:"created_at,omitempty"`
