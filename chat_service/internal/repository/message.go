@@ -10,7 +10,7 @@ import (
 
 type Messages interface {
 	SaveMessage(ctx context.Context, message model.Messages) error
-	GetMessageById(ctx context.Context, id int) (*model.Messages, error)
+	GetMessageById(ctx context.Context, senderId int) (*model.Messages, error)
 	CreateReport(ctx context.Context, report model.Reports) error
 	GetReportByUser(ctx context.Context, userId int) ([]model.Reports, error)
 	DeleteMessage(ctx context.Context, messageId, userId int) error
@@ -34,9 +34,9 @@ func (r *MessageRepo) SaveMessage(ctx context.Context, message model.Messages) e
 	return nil
 }
 
-func (r *MessageRepo) GetMessageById(ctx context.Context, id int) (*model.Messages, error) {
+func (r *MessageRepo) GetMessageById(ctx context.Context, senderId int) (*model.Messages, error) {
 	var message model.Messages
-	err := r.db.Database(common.Database).Collection(common.Collection).FindOne(ctx, model.Messages{ID: id}).Decode(&message)
+	err := r.db.Database(common.Database).Collection(common.Collection).FindOne(ctx, model.Messages{SenderId: senderId}).Decode(&message)
 	if err != nil {
 		return nil, err
 	}
