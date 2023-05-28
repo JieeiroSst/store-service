@@ -1,11 +1,28 @@
 package websocket
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/JIeeiroSst/chat-service/dto"
+	"github.com/JIeeiroSst/chat-service/internal/usecase"
 	"github.com/gorilla/websocket"
 )
+
+type WebSocket struct {
+	Usecase usecase.Usecase
+}
+
+func NewWebSocket(Usecase usecase.Usecase) *WebSocket {
+	return &WebSocket{
+		Usecase: Usecase,
+	}
+}
+
+func (u *WebSocket) SetupRoutes() {
+	http.HandleFunc("/save-message", u.WebSocketSaveMessage)
+}
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -13,34 +30,38 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-func reader(conn *websocket.Conn) {
+func (u *WebSocket) reader(conn *websocket.Conn) {
+	var (
+		message dto.Messages
+	)
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		log.Println("========>", string(p))
+		
+		if err := json.Unmarshal(p, &message); err != nil {
+			return
+		}
 
 		if err := conn.WriteMessage(messageType, p); err != nil {
-			log.Println(err)
 			return
 		}
 
 	}
-} 
+}
 
-func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
+func (u *WebSocket) WebSocketSaveMessage(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 	}
 
-	log.Println("Client Connected")
-	err = ws.WriteMessage(1, []byte("Hi Client!"))
+	err = ws.WriteMessage(1, []byte("Save Message"))
 	if err != nil {
 		log.Println(err)
 	}
 
-	reader(ws)
+	u.reader(ws)
 }
