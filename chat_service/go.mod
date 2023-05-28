@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/gorilla/websocket v1.5.0
 	github.com/redis/go-redis/v9 v9.0.4
 	go.mongodb.org/mongo-driver v1.11.6
