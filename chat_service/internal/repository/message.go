@@ -13,7 +13,7 @@ type Messages interface {
 	GetMessageById(ctx context.Context, senderId int) (*model.Messages, error)
 	CreateReport(ctx context.Context, report model.Reports) error
 	GetReportByUser(ctx context.Context, userId int) ([]model.Reports, error)
-	DeleteMessage(ctx context.Context, messageId, userId int) error
+	DeleteMessage(ctx context.Context, message model.DeletedMessages) error
 }
 
 type MessageRepo struct {
@@ -70,11 +70,7 @@ func (r *MessageRepo) GetReportByUser(ctx context.Context, userId int) ([]model.
 	return reports, nil
 }
 
-func (r *MessageRepo) DeleteMessage(ctx context.Context, messageId, userId int) error {
-	message := model.DeletedMessages{
-		MessagesId: messageId,
-		UserId:     userId,
-	}
+func (r *MessageRepo) DeleteMessage(ctx context.Context, message model.DeletedMessages) error {
 	_, err := r.db.Database(common.Database).Collection(common.Collection).InsertOne(ctx, message)
 	if err != nil {
 		return err
