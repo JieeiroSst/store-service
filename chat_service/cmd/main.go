@@ -1,63 +1,96 @@
 package main
- 
+
 import (
+	"context"
 	"fmt"
-	"log"
 	"net/http"
- 
-	"github.com/gorilla/websocket"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
+
+	"github.com/JIeeiroSst/chat-service/config"
+	httpServer "github.com/JIeeiroSst/chat-service/internal/delivery/http"
+	"github.com/JIeeiroSst/chat-service/internal/repository"
+	"github.com/JIeeiroSst/chat-service/internal/usecase"
+	"github.com/JIeeiroSst/chat-service/pkg/cache"
+	"github.com/JIeeiroSst/chat-service/pkg/consul"
+	"github.com/JIeeiroSst/chat-service/pkg/log"
+	"github.com/JIeeiroSst/chat-service/pkg/mongo"
+	"github.com/JIeeiroSst/chat-service/pkg/snowflake"
+	"github.com/go-chi/chi/v5"
+	"github.com/JIeeiroSst/chat-service/internal/delivery/websocket"
 )
- 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true },
-}
- 
- 
-func reader(conn *websocket.Conn) {
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		log.Println("========>",string(p))
- 
-		if err := conn.WriteMessage(messageType, p); err != nil {
-			log.Println(err)
-			return
-		}
- 
-	}
-}
- 
-func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Home Page")
-}
- 
-func wsEndpoint(w http.ResponseWriter, r *http.Request) {
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-	}
- 
-	log.Println("Client Connected")
-	err = ws.WriteMessage(1, []byte("Hi Client!"))
-	if err != nil {
-		log.Println(err)
-	}
- 
-	reader(ws)
-}
- 
-func setupRoutes() {
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/ws", wsEndpoint)
-}
- 
+
+var (
+	conf   *config.Config
+	dirEnv *config.Dir
+	err    error
+)
+
 func main() {
-	fmt.Println("Hello World")
-	setupRoutes()
-	log.Fatal(http.ListenAndServe(":6060", nil))
+	router := chi.NewRouter()
+	nodeEnv := os.Getenv("NODE_ENV")
+
+	dirEnv, err = config.ReadFileEnv(".env")
+	if err != nil {
+		log.Error(err)
+	}
+
+	if !strings.EqualFold(nodeEnv, "") {
+		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+		conf, err = consul.ConnectConfigConsul()
+		if err != nil {
+			log.Error(err)
+		}
+	} else {
+		conf, err = config.ReadConf("config.yml")
+		if err != nil {
+			log.Error(err)
+		}
+	}
+
+	var cache = cache.NewCacheHelper(conf.Cache.Host)
+	var snowflakeData = snowflake.NewSnowflake()
+
+	client := mongo.NewMongo(conf.Mongo.Host)
+	repository := repository.NewRepositories(client.Client)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repo:        *repository,
+		CacheHelper: cache,
+		Snowflake:   snowflakeData,
+	})
+
+	httpServer := httpServer.NewHttp(*usecase)
+	httpServer.Init(router)
+
+	websocket:= websocket.NewWebSocket(*usecase)
+	websocket.SetupRoutes()
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%v", conf.Server.ServerPort),
+		Handler: router,
+	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Info(fmt.Sprintf("listen: %s\n", err))
+		}
+	}()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Info("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Error(fmt.Sprintf("Server Shutdown: %v", err))
+	}
+	select {
+	case <-ctx.Done():
+		log.Info("timeout of 5 seconds.")
+	}
+	log.Info("Server exiting")
 }

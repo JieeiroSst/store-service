@@ -10,7 +10,7 @@ import (
 )
 
 type Mongo struct {
-	client *mongo.Client
+	Client *mongo.Client
 }
 
 func NewMongo(host string) *Mongo {
@@ -20,6 +20,6 @@ func NewMongo(host string) *Mongo {
 	clientOptions := options.Client().ApplyURI(dns)
 	client, _ := mongo.Connect(ctx, clientOptions)
 	return &Mongo{
-		client: client,
+		Client: client,
 	}
 }
