@@ -57,7 +57,7 @@ func main() {
 	client := mongo.NewMongo(conf.Mongo.Host)
 	repository := repository.NewRepositories(client.Client)
 	usecase := usecase.NewUsecase(usecase.Dependency{
-		Repo:        *repository,
+		Repo:        repository,
 		CacheHelper: cache,
 		Snowflake:   snowflakeData,
 	})
@@ -65,7 +65,7 @@ func main() {
 	httpServer := httpServer.NewHttp(*usecase)
 	httpServer.Init(router)
 
-	websocket:= websocket.NewWebSocket(*usecase)
+	websocket:= websocket.NewWebSocket(usecase)
 	websocket.SetupRoutes()
 
 	srv := &http.Server{

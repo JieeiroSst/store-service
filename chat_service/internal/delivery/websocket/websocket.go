@@ -11,10 +11,10 @@ import (
 )
 
 type WebSocket struct {
-	Usecase usecase.Usecase
+	Usecase *usecase.Usecase
 }
 
-func NewWebSocket(Usecase usecase.Usecase) *WebSocket {
+func NewWebSocket(Usecase *usecase.Usecase) *WebSocket {
 	return &WebSocket{
 		Usecase: Usecase,
 	}
@@ -40,7 +40,7 @@ func (u *WebSocket) reader(conn *websocket.Conn) {
 			log.Println(err)
 			return
 		}
-		
+
 		if err := json.Unmarshal(p, &message); err != nil {
 			return
 		}
