@@ -28,7 +28,7 @@ func reader(conn *websocket.Conn) {
 		}
 
 	}
-}
+} 
 
 func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)

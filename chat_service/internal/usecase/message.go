@@ -82,13 +82,64 @@ func (u *Messagesecase) GetMessageById(ctx context.Context, id int) (*dto.Messag
 }
 
 func (u *Messagesecase) CreateReport(ctx context.Context, report dto.Reports) error {
+	status, err := model.ParseStatus(report.Status)
+	if err != nil {
+		return err
+	}
+	reportModel := model.Reports{
+		ID:        u.Snowflake.GearedID(),
+		UserId:    report.UserId,
+		Notes:     report.Notes,
+		Status:    status,
+		CreatedAt: time.Now(),
+	}
+	if err := u.MessageRepo.CreateReport(ctx, reportModel); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (u *Messagesecase) GetReportByUser(ctx context.Context, userId int) ([]dto.Reports, error) {
-	return nil, nil
+	var (
+		reportsModel []model.Reports
+		reports      []dto.Reports
+		errDB        error
+	)
+	valueInterface, err := u.CacheHelper.GetInterface(context.Background(), fmt.Sprintf(common.ListReportByUser, userId), reportsModel)
+	if err != nil {
+		reportsModel, errDB = u.MessageRepo.GetReportByUser(ctx, userId)
+		if errDB != nil {
+			return nil, err
+		}
+		if err == redis.Nil {
+			_ = u.CacheHelper.Set(context.Background(), fmt.Sprintf(common.ListReportByUser, userId), reportsModel, time.Second*60)
+		}
+	} else {
+		reportsModel = valueInterface.([]model.Reports)
+	}
+	for _, value := range reportsModel {
+		reports = append(reports, dto.Reports{
+			ID:         value.ID,
+			UserId:     value.UserId,
+			ReportType: value.ReportType,
+			Notes:      value.Notes,
+			Status:     value.Status.String(),
+			CreatedAt:  value.CreatedAt,
+		})
+	}
+	return reports, nil
 }
 
 func (u *Messagesecase) DeleteMessage(ctx context.Context, messageId, userId int) error {
+	message := model.DeletedMessages{
+		ID:         u.Snowflake.GearedID(),
+		MessagesId: messageId,
+		UserId:     userId,
+		CreatedAt:  time.Now(),
+		DeletedAt:  time.Now(),
+	}
+	if err := u.MessageRepo.DeleteMessage(ctx, message); err != nil {
+		return err
+	}
 	return nil
 }
