@@ -12,12 +12,13 @@ type Usecase struct {
 
 type Dependency struct {
 	CacheHelper cache.CacheHelper
-	MessageRepo repository.MessageRepo
+	Repo        repository.Repositories
 	Snowflake   snowflake.SnowflakeData
 }
 
 func NewUsecase(deps Dependency) *Usecase {
+	messageRepo :=  NewMessageUsecase(deps.Repo, deps.CacheHelper, deps.Snowflake) 
 	return &Usecase{
-		Messages: NewMessageUsecase(deps.MessageRepo, deps.CacheHelper, deps.Snowflake),
+		Messages: messageRepo,
 	}
 }

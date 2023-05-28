@@ -23,12 +23,12 @@ type Messages interface {
 }
 
 type Messagesecase struct {
-	MessageRepo repository.MessageRepo
+	MessageRepo repository.Messages
 	CacheHelper cache.CacheHelper
 	Snowflake   snowflake.SnowflakeData
 }
 
-func NewMessageUsecase(MessageRepo repository.MessageRepo, cacheHelper cache.CacheHelper,
+func NewMessageUsecase(MessageRepo repository.Messages, cacheHelper cache.CacheHelper,
 	snowflake snowflake.SnowflakeData) *Messagesecase {
 	return &Messagesecase{
 		MessageRepo: MessageRepo,
