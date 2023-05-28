@@ -82,13 +82,13 @@ func main() {
 
 	httpServer.Init(router)
 
-	srv := &http.Server{
+	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", conf.Server.PortServer),
 		Handler: router,
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Info(fmt.Sprintf("listen: %s\n", err))
 		}
 	}()
@@ -113,7 +113,7 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := httpSrv.Shutdown(ctx); err != nil {
 		log.Error(fmt.Sprintf("Server Shutdown: %v", err))
 	}
 	select {
