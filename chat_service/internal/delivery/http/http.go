@@ -1,16 +1,18 @@
 package http
 
 import (
+	"github.com/JIeeiroSst/chat-service/config"
+	v1 "github.com/JIeeiroSst/chat-service/internal/delivery/http/v1"
 	"github.com/JIeeiroSst/chat-service/internal/usecase"
 	"github.com/go-chi/chi/v5"
-	"github.com/JIeeiroSst/chat-service/internal/delivery/http/v1"
 )
 
 type Http struct {
-	Usecase usecase.Usecase
+	Usecase *usecase.Usecase
+	Config  *config.Config
 }
 
-func NewHttp(Usecase usecase.Usecase) *Http {
+func NewHttp(Usecase *usecase.Usecase, Config *config.Config) *Http {
 	return &Http{
 		Usecase: Usecase,
 	}

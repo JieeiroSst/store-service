@@ -7,6 +7,7 @@ import (
 
 	"github.com/JIeeiroSst/chat-service/dto"
 	"github.com/JIeeiroSst/chat-service/internal/usecase"
+	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
 )
 
@@ -20,8 +21,8 @@ func NewWebSocket(Usecase *usecase.Usecase) *WebSocket {
 	}
 }
 
-func (u *WebSocket) SetupRoutes() {
-	http.HandleFunc("/save-message", u.WebSocketSaveMessage)
+func (u *WebSocket) SetupRoutes(router chi.Router) {
+	router.HandleFunc("/save-message", u.WebSocketSaveMessage)
 }
 
 var upgrader = websocket.Upgrader{
