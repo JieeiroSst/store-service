@@ -12,7 +12,7 @@ type Usecase struct {
 
 type Dependency struct {
 	CacheHelper cache.CacheHelper
-	Repo        repository.Repositories
+	Repo        *repository.Repositories
 	Snowflake   snowflake.SnowflakeData
 }
 
