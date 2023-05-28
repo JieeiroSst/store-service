@@ -12,10 +12,10 @@ import (
 )
 
 type Http struct {
-	Usecase usecase.Usecase
+	Usecase *usecase.Usecase
 }
 
-func NewHttpV1(Usecase usecase.Usecase) *Http {
+func NewHttpV1(Usecase *usecase.Usecase) *Http {
 	return &Http{
 		Usecase: Usecase,
 	}

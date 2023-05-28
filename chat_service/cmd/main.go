@@ -12,6 +12,7 @@ import (
 
 	"github.com/JIeeiroSst/chat-service/config"
 	httpServer "github.com/JIeeiroSst/chat-service/internal/delivery/http"
+	"github.com/JIeeiroSst/chat-service/internal/delivery/websocket"
 	"github.com/JIeeiroSst/chat-service/internal/repository"
 	"github.com/JIeeiroSst/chat-service/internal/usecase"
 	"github.com/JIeeiroSst/chat-service/pkg/cache"
@@ -20,7 +21,6 @@ import (
 	"github.com/JIeeiroSst/chat-service/pkg/mongo"
 	"github.com/JIeeiroSst/chat-service/pkg/snowflake"
 	"github.com/go-chi/chi/v5"
-	"github.com/JIeeiroSst/chat-service/internal/delivery/websocket"
 )
 
 var (
@@ -62,11 +62,11 @@ func main() {
 		Snowflake:   snowflakeData,
 	})
 
-	httpServer := httpServer.NewHttp(*usecase)
+	httpServer := httpServer.NewHttp(usecase, conf)
 	httpServer.Init(router)
 
-	websocket:= websocket.NewWebSocket(usecase)
-	websocket.SetupRoutes()
+	websocket := websocket.NewWebSocket(usecase)
+	websocket.SetupRoutes(router)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", conf.Server.ServerPort),
