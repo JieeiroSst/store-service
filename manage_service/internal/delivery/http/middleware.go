@@ -1,13 +1,18 @@
 package http
 
 import (
-	"context"
+	"log"
 	"net/http"
 )
 
-func MyMiddleware(next http.Handler) http.Handler {
+func middlewareTwo(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "user", "123")
-		next.ServeHTTP(w, r.WithContext(ctx))
+		log.Print("Executing middlewareTwo")
+		if r.URL.Path == "/foo" {
+			return
+		}
+
+		next.ServeHTTP(w, r)
+		log.Print("Executing middlewareTwo again")
 	})
 }
