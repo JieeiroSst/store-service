@@ -7,6 +7,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-gonic/gin v1.9.0
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/goccy/go-json v0.10.0
 	github.com/hashicorp/consul/api v1.20.0
 	github.com/joho/godotenv v1.5.1
