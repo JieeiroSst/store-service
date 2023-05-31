@@ -67,7 +67,7 @@ type UserKeycloak interface {
 	GetUserByID(ctx context.Context, accessToken, realm, userID string) (*keycloak.User, error)
 	GetUserCount(ctx context.Context, accessToken, realm string, params keycloak.GetUsersParams) (int, error)
 	GetUsers(ctx context.Context, accessToken, realm string, params keycloak.GetUsersParams) ([]*keycloak.User, error)
-	GetUserGroups(ctx context.Context, accessToken, realm, userID string, params keycloak.GetGroupsParams) ([]*keycloak.UserGroup, error)
+	GetUserGroups(ctx context.Context, accessToken, realm, userID string, params keycloak.GetGroupsParams) ([]*keycloak.Group, error)
 	AddUserToGroup(ctx context.Context, token, realm, userID, groupID string) error
 	DeleteUserFromGroup(ctx context.Context, token, realm, userID, groupID string) error
 	GetComponents(ctx context.Context, accessToken, realm string) ([]*keycloak.Component, error)
@@ -645,35 +645,121 @@ func (r *UserKeycloakRepo) GetUserCount(ctx context.Context, accessToken, realm 
 	return count, nil
 }
 
-func (r *UserKeycloakRepo) GetUsers(ctx context.Context, accessToken, realm string, params keycloak.GetUsersParams) ([]*keycloak.User, error)
+func (r *UserKeycloakRepo) GetUsers(ctx context.Context, accessToken, realm string, params keycloak.GetUsersParams) ([]*keycloak.User, error) {
+	user, err := r.client.GetUsers(ctx, accessToken, realm, params)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
 
-func (r *UserKeycloakRepo) GetUserGroups(ctx context.Context, accessToken, realm, userID string, params keycloak.GetGroupsParams) ([]*keycloak.UserGroup, error)
+func (r *UserKeycloakRepo) GetUserGroups(ctx context.Context, accessToken, realm, userID string, params keycloak.GetGroupsParams) ([]*keycloak.Group, error) {
+	userGroup, err := r.client.GetUserGroups(ctx, accessToken, realm, userID, params)
+	if err != nil {
+		return nil, err
+	}
+	return userGroup, nil
+}
 
-func (r *UserKeycloakRepo) AddUserToGroup(ctx context.Context, token, realm, userID, groupID string) error
+func (r *UserKeycloakRepo) AddUserToGroup(ctx context.Context, token, realm, userID, groupID string) error {
+	if err := r.client.AddUserToGroup(ctx, token, realm, userID, groupID); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) DeleteUserFromGroup(ctx context.Context, token, realm, userID, groupID string) error
+func (r *UserKeycloakRepo) DeleteUserFromGroup(ctx context.Context, token, realm, userID, groupID string) error {
+	if err := r.client.DeleteUserFromGroup(ctx, token, realm, userID, groupID); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetComponents(ctx context.Context, accessToken, realm string) ([]*keycloak.Component, error)
+func (r *UserKeycloakRepo) GetComponents(ctx context.Context, accessToken, realm string) ([]*keycloak.Component, error) {
+	component, err := r.client.GetComponents(ctx, accessToken, realm)
+	if err != nil {
+		return nil, err
+	}
+	return component, nil
+}
 
-func (r *UserKeycloakRepo) GetGroups(ctx context.Context, accessToken, realm string, params keycloak.GetGroupsParams) ([]*keycloak.Group, error)
+func (r *UserKeycloakRepo) GetGroups(ctx context.Context, accessToken, realm string, params keycloak.GetGroupsParams) ([]*keycloak.Group, error) {
+	group, err := r.client.GetGroups(ctx, accessToken, realm, params)
+	if err != nil {
+		return nil, err
+	}
+	return group, nil
+}
 
-func (r *UserKeycloakRepo) GetGroupsCount(ctx context.Context, token, realm string, params keycloak.GetGroupsParams) (int, error)
+func (r *UserKeycloakRepo) GetGroupsCount(ctx context.Context, token, realm string, params keycloak.GetGroupsParams) (int, error) {
+	count, err := r.client.GetGroupsCount(ctx, token, realm, params)
+	if err != nil {
+		return 0, nil
+	}
+	return count, nil
+}
 
-func (r *UserKeycloakRepo) GetGroup(ctx context.Context, accessToken, realm, groupID string) (*keycloak.Group, error)
+func (r *UserKeycloakRepo) GetGroup(ctx context.Context, accessToken, realm, groupID string) (*keycloak.Group, error) {
+	group, err := r.client.GetGroup(ctx, accessToken, realm, groupID)
+	if err != nil {
+		return nil, err
+	}
+	return group, nil
+}
 
-func (r *UserKeycloakRepo) GetDefaultGroups(ctx context.Context, accessToken, realm string) ([]*keycloak.Group, error)
+func (r *UserKeycloakRepo) GetDefaultGroups(ctx context.Context, accessToken, realm string) ([]*keycloak.Group, error) {
+	group, err := r.client.GetDefaultGroups(ctx, accessToken, realm)
+	if err != nil {
+		return nil, err
+	}
+	return group, nil
+}
 
-func (r *UserKeycloakRepo) AddDefaultGroup(ctx context.Context, accessToken, realm, groupID string) error
+func (r *UserKeycloakRepo) AddDefaultGroup(ctx context.Context, accessToken, realm, groupID string) error {
+	if err := r.client.AddDefaultGroup(ctx, accessToken, realm, groupID); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) RemoveDefaultGroup(ctx context.Context, accessToken, realm, groupID string) error
+func (r *UserKeycloakRepo) RemoveDefaultGroup(ctx context.Context, accessToken, realm, groupID string) error {
+	if err := r.client.RemoveDefaultGroup(ctx, accessToken, realm, groupID); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetGroupMembers(ctx context.Context, accessToken, realm, groupID string, params keycloak.GetGroupsParams) ([]*keycloak.User, error)
+func (r *UserKeycloakRepo) GetGroupMembers(ctx context.Context, accessToken, realm, groupID string, params keycloak.GetGroupsParams) ([]*keycloak.User, error) {
+	user, err := r.client.GetGroupMembers(ctx, accessToken, realm, groupID, params)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
 
-func (r *UserKeycloakRepo) GetRoleMappingByGroupID(ctx context.Context, accessToken, realm, groupID string) (*keycloak.MappingsRepresentation, error)
+func (r *UserKeycloakRepo) GetRoleMappingByGroupID(ctx context.Context, accessToken, realm, groupID string) (*keycloak.MappingsRepresentation, error) {
+	mappingsRepresentation, err := r.client.GetRoleMappingByGroupID(ctx, accessToken, realm, groupID)
+	if err != nil {
+		return nil, err
+	}
+	return mappingsRepresentation, nil
+}
 
-func (r *UserKeycloakRepo) GetRoleMappingByUserID(ctx context.Context, accessToken, realm, userID string) (*keycloak.MappingsRepresentation, error)
+func (r *UserKeycloakRepo) GetRoleMappingByUserID(ctx context.Context, accessToken, realm, userID string) (*keycloak.MappingsRepresentation, error) {
+	mappingsRepresentation, err := r.client.GetRoleMappingByUserID(ctx, accessToken, realm, userID)
+	if err != nil {
+		return nil, err
+	}
+	return mappingsRepresentation, nil
+}
 
-func (r *UserKeycloakRepo) GetClientRoles(ctx context.Context, accessToken, realm, idOfClient string, params keycloak.GetRoleParams) ([]*keycloak.Role, error)
+func (r *UserKeycloakRepo) GetClientRoles(ctx context.Context, accessToken, realm, idOfClient string, params keycloak.GetRoleParams) ([]*keycloak.Role, error) {
+	role, err := r.client.GetClientRoles(ctx, accessToken, realm, idOfClient, params)
+	if err != nil {
+		return nil, err
+	}
+	return role, nil
+}
 
 func (r *UserKeycloakRepo) GetClientRole(ctx context.Context, token, realm, idOfClient, roleName string) (*keycloak.Role, error)
 
