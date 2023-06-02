@@ -1109,24 +1109,101 @@ func (r *UserKeycloakRepo) DeleteResourcePolicy(ctx context.Context, token, real
 }
 
 func (r *UserKeycloakRepo) GetPermission(ctx context.Context, token, realm, idOfClient, permissionID string) (*keycloak.PermissionRepresentation, error)
+
 func (r *UserKeycloakRepo) GetPermissions(ctx context.Context, token, realm, idOfClient string, params keycloak.GetPermissionParams) ([]*keycloak.PermissionRepresentation, error)
+
 func (r *UserKeycloakRepo) GetPermissionResources(ctx context.Context, token, realm, idOfClient, permissionID string) ([]*keycloak.PermissionResource, error)
+
 func (r *UserKeycloakRepo) GetPermissionScopes(ctx context.Context, token, realm, idOfClient, permissionID string) ([]*keycloak.PermissionScope, error)
+
 func (r *UserKeycloakRepo) GetDependentPermissions(ctx context.Context, token, realm, idOfClient, policyID string) ([]*keycloak.PermissionRepresentation, error)
+
 func (r *UserKeycloakRepo) CreatePermission(ctx context.Context, token, realm, idOfClient string, permission keycloak.PermissionRepresentation) (*keycloak.PermissionRepresentation, error)
-func (r *UserKeycloakRepo) UpdatePermission(ctx context.Context, token, realm, idOfClient string, permission keycloak.PermissionRepresentation) error
-func (r *UserKeycloakRepo) DeletePermission(ctx context.Context, token, realm, idOfClient, permissionID string) error
 
-func (r *UserKeycloakRepo) CreatePermissionTicket(ctx context.Context, token, realm string, permissions []keycloak.CreatePermissionTicketParams) (*keycloak.PermissionTicketResponseRepresentation, error)
-func (r *UserKeycloakRepo) GrantUserPermission(ctx context.Context, token, realm string, permission keycloak.PermissionGrantParams) (*keycloak.PermissionGrantResponseRepresentation, error)
-func (r *UserKeycloakRepo) UpdateUserPermission(ctx context.Context, token, realm string, permission keycloak.PermissionGrantParams) (*keycloak.PermissionGrantResponseRepresentation, error)
-func (r *UserKeycloakRepo) GetUserPermissions(ctx context.Context, token, realm string, params keycloak.GetUserPermissionParams) ([]*keycloak.PermissionGrantResponseRepresentation, error)
-func (r *UserKeycloakRepo) DeleteUserPermission(ctx context.Context, token, realm, ticketID string) error
+func (r *UserKeycloakRepo) UpdatePermission(ctx context.Context, token, realm, idOfClient string, permission keycloak.PermissionRepresentation) error {
+	if err := r.client.UpdatePermission(ctx, token, realm, idOfClient, permission); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetCredentialRegistrators(ctx context.Context, token, realm string) ([]string, error)
-func (r *UserKeycloakRepo) GetConfiguredUserStorageCredentialTypes(ctx context.Context, token, realm, userID string) ([]string, error)
-func (r *UserKeycloakRepo) GetCredentials(ctx context.Context, token, realm, UserID string) ([]*keycloak.CredentialRepresentation, error)
-func (r *UserKeycloakRepo) DeleteCredentials(ctx context.Context, token, realm, UserID, CredentialID string) error
+func (r *UserKeycloakRepo) DeletePermission(ctx context.Context, token, realm, idOfClient, permissionID string) error {
+	if err := r.client.DeletePermission(ctx, token, realm, idOfClient, permissionID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) CreatePermissionTicket(ctx context.Context, token, realm string, permissions []keycloak.CreatePermissionTicketParams) (*keycloak.PermissionTicketResponseRepresentation, error) {
+	permissionTicketResponseRepresentation, err := r.client.CreatePermissionTicket(ctx, token, realm, permissions)
+	if err != nil {
+		return nil, err
+	}
+	return permissionTicketResponseRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) GrantUserPermission(ctx context.Context, token, realm string, permission keycloak.PermissionGrantParams) (*keycloak.PermissionGrantResponseRepresentation, error) {
+	permissionGrantResponseRepresentation, err := r.client.GrantUserPermission(ctx, token, realm, permission)
+	if err != nil {
+		return nil, err
+	}
+	return permissionGrantResponseRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) UpdateUserPermission(ctx context.Context, token, realm string, permission keycloak.PermissionGrantParams) (*keycloak.PermissionGrantResponseRepresentation, error) {
+	permissionGrantResponseRepresentation, err := r.client.UpdateUserPermission(ctx, token, realm, permission)
+	if err != nil {
+		return nil, err
+	}
+	return permissionGrantResponseRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) GetUserPermissions(ctx context.Context, token, realm string, params keycloak.GetUserPermissionParams) ([]*keycloak.PermissionGrantResponseRepresentation, error) {
+	permissionGrantResponseRepresentation, err := r.client.GetUserPermissions(ctx, token, realm, params)
+	if err != nil {
+		return nil, err
+	}
+	return permissionGrantResponseRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) DeleteUserPermission(ctx context.Context, token, realm, ticketID string) error {
+	if err := r.client.DeleteUserPermission(ctx, token, realm, ticketID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) GetCredentialRegistrators(ctx context.Context, token, realm string) ([]string, error) {
+	msgs, err := r.client.GetCredentialRegistrators(ctx, token, realm)
+	if err != nil {
+		return nil, err
+	}
+	return msgs, nil
+}
+
+func (r *UserKeycloakRepo) GetConfiguredUserStorageCredentialTypes(ctx context.Context, token, realm, userID string) ([]string, error) {
+	msgs, err := r.client.GetConfiguredUserStorageCredentialTypes(ctx, token, realm, userID)
+	if err != nil {
+		return nil, err
+	}
+	return msgs, nil
+}
+
+func (r *UserKeycloakRepo) GetCredentials(ctx context.Context, token, realm, UserID string) ([]*keycloak.CredentialRepresentation, error) {
+	credentialRepresentation, err := r.client.GetCredentials(ctx, token, realm, UserID)
+	if err != nil {
+		return nil, err
+	}
+	return credentialRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) DeleteCredentials(ctx context.Context, token, realm, UserID, CredentialID string) error {
+	if err := r.client.DeleteCredentials(ctx, token, realm, UserID, CredentialID); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *UserKeycloakRepo) UpdateCredentialUserLabel(ctx context.Context, token, realm, userID, credentialID, userLabel string) error {
 	if err := r.client.UpdateCredentialUserLabel(ctx, token, realm, userID, credentialID, userLabel); err != nil {
 		return err
