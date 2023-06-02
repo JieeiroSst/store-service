@@ -1108,17 +1108,53 @@ func (r *UserKeycloakRepo) DeleteResourcePolicy(ctx context.Context, token, real
 	return nil
 }
 
-func (r *UserKeycloakRepo) GetPermission(ctx context.Context, token, realm, idOfClient, permissionID string) (*keycloak.PermissionRepresentation, error)
+func (r *UserKeycloakRepo) GetPermission(ctx context.Context, token, realm, idOfClient, permissionID string) (*keycloak.PermissionRepresentation, error) {
+	permissionRepresentation, err := r.client.GetPermission(ctx, token, realm, idOfClient, permissionID)
+	if err != nil {
+		return nil, err
+	}
+	return permissionRepresentation, nil
+}
 
-func (r *UserKeycloakRepo) GetPermissions(ctx context.Context, token, realm, idOfClient string, params keycloak.GetPermissionParams) ([]*keycloak.PermissionRepresentation, error)
+func (r *UserKeycloakRepo) GetPermissions(ctx context.Context, token, realm, idOfClient string, params keycloak.GetPermissionParams) ([]*keycloak.PermissionRepresentation, error) {
+	permissionRepresentation, err := r.client.GetPermissions(ctx, token, realm, idOfClient, params)
+	if err != nil {
+		return nil, err
+	}
+	return permissionRepresentation, nil
+}
 
-func (r *UserKeycloakRepo) GetPermissionResources(ctx context.Context, token, realm, idOfClient, permissionID string) ([]*keycloak.PermissionResource, error)
+func (r *UserKeycloakRepo) GetPermissionResources(ctx context.Context, token, realm, idOfClient, permissionID string) ([]*keycloak.PermissionResource, error) {
+	permissionResource, err := r.client.GetPermissionResources(ctx, token, realm, idOfClient, permissionID)
+	if err != nil {
+		return nil, err
+	}
+	return permissionResource, nil
+}
 
-func (r *UserKeycloakRepo) GetPermissionScopes(ctx context.Context, token, realm, idOfClient, permissionID string) ([]*keycloak.PermissionScope, error)
+func (r *UserKeycloakRepo) GetPermissionScopes(ctx context.Context, token, realm, idOfClient, permissionID string) ([]*keycloak.PermissionScope, error) {
+	permissionScope, err := r.client.GetPermissionScopes(ctx, token, realm, idOfClient, permissionID)
+	if err != nil {
+		return nil, err
+	}
+	return permissionScope, nil
+}
 
-func (r *UserKeycloakRepo) GetDependentPermissions(ctx context.Context, token, realm, idOfClient, policyID string) ([]*keycloak.PermissionRepresentation, error)
+func (r *UserKeycloakRepo) GetDependentPermissions(ctx context.Context, token, realm, idOfClient, policyID string) ([]*keycloak.PermissionRepresentation, error) {
+	permissionRepresentation, err := r.client.GetDependentPermissions(ctx, token, realm, idOfClient, policyID)
+	if err != nil {
+		return nil, err
+	}
+	return permissionRepresentation, nil
+}
 
-func (r *UserKeycloakRepo) CreatePermission(ctx context.Context, token, realm, idOfClient string, permission keycloak.PermissionRepresentation) (*keycloak.PermissionRepresentation, error)
+func (r *UserKeycloakRepo) CreatePermission(ctx context.Context, token, realm, idOfClient string, permission keycloak.PermissionRepresentation) (*keycloak.PermissionRepresentation, error) {
+	permissionRepresentation, err := r.client.CreatePermission(ctx, token, realm, idOfClient, permission)
+	if err != nil {
+		return nil, err
+	}
+	return permissionRepresentation, nil
+}
 
 func (r *UserKeycloakRepo) UpdatePermission(ctx context.Context, token, realm, idOfClient string, permission keycloak.PermissionRepresentation) error {
 	if err := r.client.UpdatePermission(ctx, token, realm, idOfClient, permission); err != nil {
