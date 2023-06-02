@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -43,6 +44,10 @@ func (u *WebSocket) reader(conn *websocket.Conn) {
 		}
 
 		if err := json.Unmarshal(p, &message); err != nil {
+			return
+		}
+
+		if err := u.Usecase.Messages.SaveMessage(context.Background(), message); err != nil {
 			return
 		}
 
