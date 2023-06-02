@@ -85,7 +85,7 @@ type UserKeycloak interface {
 	GetClientRoleByID(ctx context.Context, accessToken, realm, roleID string) (*keycloak.Role, error)
 	AddClientRoleComposite(ctx context.Context, token, realm, roleID string, roles []keycloak.Role) error
 	DeleteClientRoleComposite(ctx context.Context, token, realm, roleID string, roles []keycloak.Role) error
-	GetUsersByRoleName(ctx context.Context, token, realm, roleName string) ([]*keycloak.User, error)
+	GetUsersByRoleName(ctx context.Context, token, realm, roleName string, roles keycloak.GetUsersByRoleParams) ([]*keycloak.User, error)
 	GetUsersByClientRoleName(ctx context.Context, token, realm, idOfClient, roleName string, params keycloak.GetUsersByRoleParams) ([]*keycloak.User, error)
 	CreateClientProtocolMapper(ctx context.Context, token, realm, idOfClient string, mapper keycloak.ProtocolMapperRepresentation) (string, error)
 	UpdateClientProtocolMapper(ctx context.Context, token, realm, idOfClient, mapperID string, mapper keycloak.ProtocolMapperRepresentation) error
@@ -761,58 +761,248 @@ func (r *UserKeycloakRepo) GetClientRoles(ctx context.Context, accessToken, real
 	return role, nil
 }
 
-func (r *UserKeycloakRepo) GetClientRole(ctx context.Context, token, realm, idOfClient, roleName string) (*keycloak.Role, error)
+func (r *UserKeycloakRepo) GetClientRole(ctx context.Context, token, realm, idOfClient, roleName string) (*keycloak.Role, error) {
+	role, err := r.client.GetClientRole(ctx, token, realm, idOfClient, roleName)
+	if err != nil {
+		return nil, err
+	}
+	return role, nil
+}
 
-func (r *UserKeycloakRepo) GetClientRoleByID(ctx context.Context, accessToken, realm, roleID string) (*keycloak.Role, error)
+func (r *UserKeycloakRepo) GetClientRoleByID(ctx context.Context, accessToken, realm, roleID string) (*keycloak.Role, error) {
+	role, err := r.client.GetClientRoleByID(ctx, accessToken, realm, roleID)
+	if err != nil {
+		return nil, err
+	}
+	return role, nil
+}
 
-func (r *UserKeycloakRepo) AddClientRoleComposite(ctx context.Context, token, realm, roleID string, roles []keycloak.Role) error
+func (r *UserKeycloakRepo) AddClientRoleComposite(ctx context.Context, token, realm, roleID string, roles []keycloak.Role) error {
+	if err := r.client.AddClientRoleComposite(ctx, token, realm, roleID, roles); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) DeleteClientRoleComposite(ctx context.Context, token, realm, roleID string, roles []keycloak.Role) error
+func (r *UserKeycloakRepo) DeleteClientRoleComposite(ctx context.Context, token, realm, roleID string, roles []keycloak.Role) error {
+	if err := r.client.DeleteClientRoleComposite(ctx, token, realm, roleID, roles); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetUsersByRoleName(ctx context.Context, token, realm, roleName string) ([]*keycloak.User, error)
+func (r *UserKeycloakRepo) GetUsersByRoleName(ctx context.Context, token, realm, roleName string, roles keycloak.GetUsersByRoleParams) ([]*keycloak.User, error) {
+	user, err := r.client.GetUsersByRoleName(ctx, token, realm, roleName, roles)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
 
-func (r *UserKeycloakRepo) GetUsersByClientRoleName(ctx context.Context, token, realm, idOfClient, roleName string, params keycloak.GetUsersByRoleParams) ([]*keycloak.User, error)
+func (r *UserKeycloakRepo) GetUsersByClientRoleName(ctx context.Context, token, realm, idOfClient, roleName string, params keycloak.GetUsersByRoleParams) ([]*keycloak.User, error) {
+	user, err := r.client.GetUsersByClientRoleName(ctx, token, realm, idOfClient, roleName, params)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
 
-func (r *UserKeycloakRepo) CreateClientProtocolMapper(ctx context.Context, token, realm, idOfClient string, mapper keycloak.ProtocolMapperRepresentation) (string, error)
+func (r *UserKeycloakRepo) CreateClientProtocolMapper(ctx context.Context, token, realm, idOfClient string, mapper keycloak.ProtocolMapperRepresentation) (string, error) {
+	proto, err := r.client.CreateClientProtocolMapper(ctx, token, realm, idOfClient, mapper)
+	if err != nil {
+		return "", err
+	}
+	return proto, nil
+}
 
-func (r *UserKeycloakRepo) UpdateClientProtocolMapper(ctx context.Context, token, realm, idOfClient, mapperID string, mapper keycloak.ProtocolMapperRepresentation) error
+func (r *UserKeycloakRepo) UpdateClientProtocolMapper(ctx context.Context, token, realm, idOfClient, mapperID string, mapper keycloak.ProtocolMapperRepresentation) error {
+	if err := r.client.UpdateClientProtocolMapper(ctx, token, realm, idOfClient, mapperID, mapper); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) DeleteClientProtocolMapper(ctx context.Context, token, realm, idOfClient, mapperID string) error
+func (r *UserKeycloakRepo) DeleteClientProtocolMapper(ctx context.Context, token, realm, idOfClient, mapperID string) error {
+	if err := r.client.DeleteClientProtocolMapper(ctx, token, realm, idOfClient, mapperID); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetRealm(ctx context.Context, token, realm string) (*keycloak.RealmRepresentation, error)
+func (r *UserKeycloakRepo) GetRealm(ctx context.Context, token, realm string) (*keycloak.RealmRepresentation, error) {
+	representation, err := r.client.GetRealm(ctx, token, realm)
+	if err != nil {
+		return nil, err
+	}
+	return representation, nil
+}
 
-func (r *UserKeycloakRepo) GetRealms(ctx context.Context, token string) ([]*keycloak.RealmRepresentation, error)
+func (r *UserKeycloakRepo) GetRealms(ctx context.Context, token string) ([]*keycloak.RealmRepresentation, error) {
+	representation, err := r.client.GetRealms(ctx, token)
+	if err != nil {
+		return nil, err
+	}
+	return representation, err
+}
 
-func (r *UserKeycloakRepo) CreateRealm(ctx context.Context, token string, realm keycloak.RealmRepresentation) (string, error)
+func (r *UserKeycloakRepo) CreateRealm(ctx context.Context, token string, realm keycloak.RealmRepresentation) (string, error) {
+	// realm , err := r.client.CreateRealm(ctx,token, realm)
+	// if err != nil {
 
-func (r *UserKeycloakRepo) UpdateRealm(ctx context.Context, token string, realm keycloak.RealmRepresentation) error
+	// }
+	return "", nil
+}
 
-func (r *UserKeycloakRepo) DeleteRealm(ctx context.Context, token, realm string) error
+func (r *UserKeycloakRepo) UpdateRealm(ctx context.Context, token string, realm keycloak.RealmRepresentation) error {
+	if err := r.client.UpdateRealm(ctx, token, realm); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) ClearRealmCache(ctx context.Context, token, realm string) error
+func (r *UserKeycloakRepo) DeleteRealm(ctx context.Context, token, realm string) error {
+	if err := r.client.DeleteRealm(ctx, token, realm); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) ClearUserCache(ctx context.Context, token, realm string) error
+func (r *UserKeycloakRepo) ClearRealmCache(ctx context.Context, token, realm string) error {
+	if err := r.client.ClearRealmCache(ctx, token, realm); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) ClearKeysCache(ctx context.Context, token, realm string) error
+func (r *UserKeycloakRepo) ClearUserCache(ctx context.Context, token, realm string) error {
+	if err := r.client.ClearUserCache(ctx, token, realm); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetClientUserSessions(ctx context.Context, token, realm, idOfClient string) ([]*keycloak.UserSessionRepresentation, error)
-func (r *UserKeycloakRepo) GetClientOfflineSessions(ctx context.Context, token, realm, idOfClient string) ([]*keycloak.UserSessionRepresentation, error)
-func (r *UserKeycloakRepo) GetUserSessions(ctx context.Context, token, realm, userID string) ([]*keycloak.UserSessionRepresentation, error)
-func (r *UserKeycloakRepo) GetUserOfflineSessionsForClient(ctx context.Context, token, realm, userID, idOfClient string) ([]*keycloak.UserSessionRepresentation, error)
+func (r *UserKeycloakRepo) ClearKeysCache(ctx context.Context, token, realm string) error {
+	if err := r.client.ClearKeysCache(ctx, token, realm); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetResource(ctx context.Context, token, realm, idOfClient, resourceID string) (*keycloak.ResourceRepresentation, error)
-func (r *UserKeycloakRepo) GetResources(ctx context.Context, token, realm, idOfClient string, params keycloak.GetResourceParams) ([]*keycloak.ResourceRepresentation, error)
-func (r *UserKeycloakRepo) CreateResource(ctx context.Context, token, realm, idOfClient string, resource keycloak.ResourceRepresentation) (*keycloak.ResourceRepresentation, error)
-func (r *UserKeycloakRepo) UpdateResource(ctx context.Context, token, realm, idOfClient string, resource keycloak.ResourceRepresentation) error
-func (r *UserKeycloakRepo) DeleteResource(ctx context.Context, token, realm, idOfClient, resourceID string) error
+func (r *UserKeycloakRepo) GetClientUserSessions(ctx context.Context, token, realm, idOfClient string) ([]*keycloak.UserSessionRepresentation, error) {
+	userSessionRepresentation, err := r.client.GetClientUserSessions(ctx, token, realm, idOfClient)
+	if err != nil {
+		return nil, err
+	}
+	return userSessionRepresentation, nil
+}
+func (r *UserKeycloakRepo) GetClientOfflineSessions(ctx context.Context, token, realm, idOfClient string) ([]*keycloak.UserSessionRepresentation, error) {
+	userSessionRepresentation, err := r.client.GetClientOfflineSessions(ctx, token, realm, idOfClient)
+	if err != nil {
+		return nil, err
+	}
+	return userSessionRepresentation, nil
+}
 
-func (r *UserKeycloakRepo) GetResourceClient(ctx context.Context, token, realm, resourceID string) (*keycloak.ResourceRepresentation, error)
-func (r *UserKeycloakRepo) GetResourcesClient(ctx context.Context, token, realm string, params keycloak.GetResourceParams) ([]*keycloak.ResourceRepresentation, error)
-func (r *UserKeycloakRepo) CreateResourceClient(ctx context.Context, token, realm string, resource keycloak.ResourceRepresentation) (*keycloak.ResourceRepresentation, error)
-func (r *UserKeycloakRepo) UpdateResourceClient(ctx context.Context, token, realm string, resource keycloak.ResourceRepresentation) error
-func (r *UserKeycloakRepo) DeleteResourceClient(ctx context.Context, token, realm, resourceID string) error
+func (r *UserKeycloakRepo) GetUserSessions(ctx context.Context, token, realm, userID string) ([]*keycloak.UserSessionRepresentation, error) {
+	userSessionRepresentation, err := r.client.GetUserSessions(ctx, token, realm, userID)
+	if err != nil {
+		return nil, err
+	}
+	return userSessionRepresentation, nil
+}
 
-func (r *UserKeycloakRepo) GetScope(ctx context.Context, token, realm, idOfClient, scopeID string) (*keycloak.ScopeRepresentation, error)
+func (r *UserKeycloakRepo) GetUserOfflineSessionsForClient(ctx context.Context, token, realm, userID, idOfClient string) ([]*keycloak.UserSessionRepresentation, error) {
+	userSessionRepresentation, err := r.client.GetUserOfflineSessionsForClient(ctx, token, realm, userID, idOfClient)
+	if err != nil {
+		return nil, err
+	}
+	return userSessionRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) GetResource(ctx context.Context, token, realm, idOfClient, resourceID string) (*keycloak.ResourceRepresentation, error) {
+	resourceRepresentation, err := r.client.GetResource(ctx, token, realm, idOfClient, resourceID)
+	if err != nil {
+		return nil, err
+	}
+	return resourceRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) GetResources(ctx context.Context, token, realm, idOfClient string, params keycloak.GetResourceParams) ([]*keycloak.ResourceRepresentation, error) {
+	resourceRepresentation, err := r.client.GetResources(ctx, token, realm, idOfClient, params)
+	if err != nil {
+		return nil, err
+	}
+	return resourceRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) CreateResource(ctx context.Context, token, realm, idOfClient string, resource keycloak.ResourceRepresentation) (*keycloak.ResourceRepresentation, error) {
+	resourceRepresentation, err := r.client.CreateResource(ctx, token, realm, idOfClient, resource)
+	if err != nil {
+		return nil, err
+	}
+	return resourceRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) UpdateResource(ctx context.Context, token, realm, idOfClient string, resource keycloak.ResourceRepresentation) error {
+	if err := r.client.UpdateResource(ctx, token, realm, idOfClient, resource); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) DeleteResource(ctx context.Context, token, realm, idOfClient, resourceID string) error {
+	if err := r.client.DeleteResource(ctx, token, realm, idOfClient, resourceID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) GetResourceClient(ctx context.Context, token, realm, resourceID string) (*keycloak.ResourceRepresentation, error) {
+	resourceRepresentation, err := r.client.GetResourceClient(ctx, token, realm, resourceID)
+	if err != nil {
+		return nil, err
+	}
+	return resourceRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) GetResourcesClient(ctx context.Context, token, realm string, params keycloak.GetResourceParams) ([]*keycloak.ResourceRepresentation, error) {
+	resourceRepresentation, err := r.client.GetResourcesClient(ctx, token, realm, params)
+	if err != nil {
+		return nil, err
+	}
+	return resourceRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) CreateResourceClient(ctx context.Context, token, realm string, resource keycloak.ResourceRepresentation) (*keycloak.ResourceRepresentation, error) {
+	resourceRepresentation, err := r.client.CreateResourceClient(ctx, token, realm, resource)
+	if err != nil {
+		return nil, err
+	}
+	return resourceRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) UpdateResourceClient(ctx context.Context, token, realm string, resource keycloak.ResourceRepresentation) error {
+	if err := r.client.UpdateResourceClient(ctx, token, realm, resource); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) DeleteResourceClient(ctx context.Context, token, realm, resourceID string) error {
+	if err := r.client.DeleteResourceClient(ctx, token, realm, resourceID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) GetScope(ctx context.Context, token, realm, idOfClient, scopeID string) (*keycloak.ScopeRepresentation, error) {
+	scopeRepresentation, err := r.client.GetScope(ctx, token, realm, idOfClient, scopeID)
+	if err != nil {
+		return nil, err
+	}
+	return scopeRepresentation, nil
+}
+
 func (r *UserKeycloakRepo) GetScopes(ctx context.Context, token, realm, idOfClient string, params keycloak.GetScopeParams) ([]*keycloak.ScopeRepresentation, error)
 func (r *UserKeycloakRepo) CreateScope(ctx context.Context, token, realm, idOfClient string, scope keycloak.ScopeRepresentation) (*keycloak.ScopeRepresentation, error)
 func (r *UserKeycloakRepo) UpdateScope(ctx context.Context, token, realm, idOfClient string, resource keycloak.ScopeRepresentation) error
@@ -862,14 +1052,65 @@ func (r *UserKeycloakRepo) DeleteAuthenticationFlow(ctx context.Context, token, 
 
 func (r *UserKeycloakRepo) CreateIdentityProvider(ctx context.Context, token, realm string, providerRep keycloak.IdentityProviderRepresentation) (string, error)
 func (r *UserKeycloakRepo) GetIdentityProvider(ctx context.Context, token, realm, alias string) (*keycloak.IdentityProviderRepresentation, error)
+
 func (r *UserKeycloakRepo) GetIdentityProviders(ctx context.Context, token, realm string) ([]*keycloak.IdentityProviderRepresentation, error)
-func (r *UserKeycloakRepo) UpdateIdentityProvider(ctx context.Context, token, realm, alias string, providerRep keycloak.IdentityProviderRepresentation) error
-func (r *UserKeycloakRepo) DeleteIdentityProvider(ctx context.Context, token, realm, alias string) error
 
-func (r *UserKeycloakRepo) CreateIdentityProviderMapper(ctx context.Context, token, realm, alias string, mapper keycloak.IdentityProviderMapper) (string, error)
-func (r *UserKeycloakRepo) GetIdentityProviderMapper(ctx context.Context, token string, realm string, alias string, mapperID string) (*keycloak.IdentityProviderMapper, error)
-func (r *UserKeycloakRepo) CreateUserFederatedIdentity(ctx context.Context, token, realm, userID, providerID string, federatedIdentityRep keycloak.FederatedIdentityRepresentation) error
-func (r *UserKeycloakRepo) GetUserFederatedIdentities(ctx context.Context, token, realm, userID string) ([]*keycloak.FederatedIdentityRepresentation, error)
-func (r *UserKeycloakRepo) DeleteUserFederatedIdentity(ctx context.Context, token, realm, userID, providerID string) error
+func (r *UserKeycloakRepo) UpdateIdentityProvider(ctx context.Context, token, realm, alias string, providerRep keycloak.IdentityProviderRepresentation) error {
+	if err := r.client.UpdateIdentityProvider(ctx, token, realm, alias, providerRep); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetEvents(ctx context.Context, token string, realm string, params keycloak.GetEventsParams) ([]*keycloak.EventRepresentation, error)
+func (r *UserKeycloakRepo) DeleteIdentityProvider(ctx context.Context, token, realm, alias string) error {
+	if err := r.client.DeleteIdentityProvider(ctx, token, realm, alias); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) CreateIdentityProviderMapper(ctx context.Context, token, realm, alias string, mapper keycloak.IdentityProviderMapper) (string, error) {
+	msg, err := r.client.CreateIdentityProviderMapper(ctx, token, realm, alias, mapper)
+	if err != nil {
+		return "", nil
+	}
+	return msg, nil
+}
+
+func (r *UserKeycloakRepo) GetIdentityProviderMapper(ctx context.Context, token string, realm string, alias string, mapperID string) (*keycloak.IdentityProviderMapper, error) {
+	identityProviderMapper, err := r.client.GetIdentityProviderMapper(ctx, token, realm, alias, mapperID)
+	if err != nil {
+		return nil, err
+	}
+	return identityProviderMapper, nil
+}
+
+func (r *UserKeycloakRepo) CreateUserFederatedIdentity(ctx context.Context, token, realm, userID, providerID string, federatedIdentityRep keycloak.FederatedIdentityRepresentation) error {
+	if err := r.client.CreateUserFederatedIdentity(ctx, token, realm, userID, providerID, federatedIdentityRep); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) GetUserFederatedIdentities(ctx context.Context, token, realm, userID string) ([]*keycloak.FederatedIdentityRepresentation, error) {
+	federatedIdentityRepresentation, err := r.client.GetUserFederatedIdentities(ctx, token, realm, userID)
+	if err != nil {
+		return nil, err
+	}
+	return federatedIdentityRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) DeleteUserFederatedIdentity(ctx context.Context, token, realm, userID, providerID string) error {
+	if err := r.client.DeleteUserFederatedIdentity(ctx, token, realm, userID, providerID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) GetEvents(ctx context.Context, token string, realm string, params keycloak.GetEventsParams) ([]*keycloak.EventRepresentation, error) {
+	eventRepresentation, err := r.client.GetEvents(ctx, token, realm, params)
+	if err != nil {
+		return nil, err
+	}
+	return eventRepresentation, nil
+}
