@@ -1127,16 +1127,71 @@ func (r *UserKeycloakRepo) GetCredentialRegistrators(ctx context.Context, token,
 func (r *UserKeycloakRepo) GetConfiguredUserStorageCredentialTypes(ctx context.Context, token, realm, userID string) ([]string, error)
 func (r *UserKeycloakRepo) GetCredentials(ctx context.Context, token, realm, UserID string) ([]*keycloak.CredentialRepresentation, error)
 func (r *UserKeycloakRepo) DeleteCredentials(ctx context.Context, token, realm, UserID, CredentialID string) error
-func (r *UserKeycloakRepo) UpdateCredentialUserLabel(ctx context.Context, token, realm, userID, credentialID, userLabel string) error
-func (r *UserKeycloakRepo) DisableAllCredentialsByType(ctx context.Context, token, realm, userID string, types []string) error
-func (r *UserKeycloakRepo) MoveCredentialBehind(ctx context.Context, token, realm, userID, credentialID, newPreviousCredentialID string) error
-func (r *UserKeycloakRepo) MoveCredentialToFirst(ctx context.Context, token, realm, userID, credentialID string) error
+func (r *UserKeycloakRepo) UpdateCredentialUserLabel(ctx context.Context, token, realm, userID, credentialID, userLabel string) error {
+	if err := r.client.UpdateCredentialUserLabel(ctx, token, realm, userID, credentialID, userLabel); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (r *UserKeycloakRepo) GetAuthenticationFlows(ctx context.Context, token, realm string) ([]*keycloak.AuthenticationFlowRepresentation, error)
-func (r *UserKeycloakRepo) GetAuthenticationFlow(ctx context.Context, token, realm string, authenticationFlowID string) (*keycloak.AuthenticationFlowRepresentation, error)
-func (r *UserKeycloakRepo) CreateAuthenticationFlow(ctx context.Context, token, realm string, flow keycloak.AuthenticationFlowRepresentation) error
-func (r *UserKeycloakRepo) UpdateAuthenticationFlow(ctx context.Context, token, realm string, flow keycloak.AuthenticationFlowRepresentation, authenticationFlowID string) (*keycloak.AuthenticationFlowRepresentation, error)
-func (r *UserKeycloakRepo) DeleteAuthenticationFlow(ctx context.Context, token, realm, flowID string) error
+func (r *UserKeycloakRepo) DisableAllCredentialsByType(ctx context.Context, token, realm, userID string, types []string) error {
+	if err := r.client.DisableAllCredentialsByType(ctx, token, realm, userID, types); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) MoveCredentialBehind(ctx context.Context, token, realm, userID, credentialID, newPreviousCredentialID string) error {
+	if err := r.client.MoveCredentialBehind(ctx, token, realm, userID, credentialID, newPreviousCredentialID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) MoveCredentialToFirst(ctx context.Context, token, realm, userID, credentialID string) error {
+	if err := r.client.MoveCredentialToFirst(ctx, token, realm, userID, credentialID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) GetAuthenticationFlows(ctx context.Context, token, realm string) ([]*keycloak.AuthenticationFlowRepresentation, error) {
+	authenticationFlowRepresentation, err := r.client.GetAuthenticationFlows(ctx, token, realm)
+	if err != nil {
+		return nil, err
+	}
+	return authenticationFlowRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) GetAuthenticationFlow(ctx context.Context, token, realm string, authenticationFlowID string) (*keycloak.AuthenticationFlowRepresentation, error) {
+	authenticationFlowRepresentation, err := r.client.GetAuthenticationFlow(ctx, token, realm, authenticationFlowID)
+	if err != nil {
+		return nil, err
+	}
+	return authenticationFlowRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) CreateAuthenticationFlow(ctx context.Context, token, realm string, flow keycloak.AuthenticationFlowRepresentation) error {
+	if err := r.client.CreateAuthenticationFlow(ctx, token, realm, flow); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *UserKeycloakRepo) UpdateAuthenticationFlow(ctx context.Context, token, realm string, flow keycloak.AuthenticationFlowRepresentation, authenticationFlowID string) (*keycloak.AuthenticationFlowRepresentation, error) {
+	authenticationFlowRepresentation, err := r.client.UpdateAuthenticationFlow(ctx, token, realm, flow, authenticationFlowID)
+	if err != nil {
+		return nil, err
+	}
+	return authenticationFlowRepresentation, nil
+}
+
+func (r *UserKeycloakRepo) DeleteAuthenticationFlow(ctx context.Context, token, realm, flowID string) error {
+	if err := r.client.DeleteAuthenticationFlow(ctx, token, realm, flowID); err != nil {
+		return err
+	}
+	return nil
+}
 
 func (r *UserKeycloakRepo) CreateIdentityProvider(ctx context.Context, token, realm string, providerRep keycloak.IdentityProviderRepresentation) (string, error) {
 	msg, err := r.client.CreateIdentityProvider(ctx, token, realm, providerRep)
