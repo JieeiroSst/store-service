@@ -13,9 +13,8 @@ type UserKeyclock interface {
 	LoginAdmin(ctx context.Context, user dto.Login) (*dto.Token, error)
 	GetTokenUser(ctx context.Context, realm string) (*dto.TokenInfo, error)
 	CreateUser(ctx context.Context, user dto.CreateUser) error
-
 	IntrospectToken(ctx context.Context, token model.IntrospectToken) (*[]keycloak.ResourcePermission, error)
-	GetClients(ctx context.Context, user model.Client) ([]*keycloak.Client, error)
+	GetClients(ctx context.Context, user dto.Client) ([]*keycloak.Client, error)
 	Login(ctx context.Context, clientID, clientSecret, realm, username, password string) (*keycloak.JWT, error)
 	LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*keycloak.JWT, error)
 	Logout(ctx context.Context, clientID, clientSecret, realm, refreshToken string) error
@@ -77,16 +76,27 @@ func (u *UserKeycloakUsecase) CreateUser(ctx context.Context, user dto.CreateUse
 	return nil
 }
 
-func (u *UserKeycloakUsecase) IntrospectToken(ctx context.Context, token model.IntrospectToken) (*[]keycloak.ResourcePermission, error) {
-	resourcePermission, err := u.UserKeycloakRepo.IntrospectToken(ctx, token)
+func (u *UserKeycloakUsecase) IntrospectToken(ctx context.Context, token dto.IntrospectToken) (*[]keycloak.ResourcePermission, error) {
+	tokenModel := model.IntrospectToken{
+		Token:        token.Token,
+		Realm:        token.Realm,
+		ClientID:     token.ClientID,
+		ClientSecret: token.ClientSecret,
+	}
+	resourcePermission, err := u.UserKeycloakRepo.IntrospectToken(ctx, tokenModel)
 	if err != nil {
 		return nil, err
 	}
 	return resourcePermission, nil
 }
 
-func (u *UserKeycloakUsecase) GetClients(ctx context.Context, user model.Client) ([]*keycloak.Client, error) {
-	client, err := u.UserKeycloakRepo.GetClients(ctx, user)
+func (u *UserKeycloakUsecase) GetClients(ctx context.Context, user dto.Client) ([]*keycloak.Client, error) {
+	userModel := model.Client{
+		Token:      user.Token,
+		ClientName: user.ClientName,
+		Realm:      user.Realm,
+	}
+	client, err := u.UserKeycloakRepo.GetClients(ctx, userModel)
 	if err != nil {
 		return nil, err
 	}
