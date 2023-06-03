@@ -13,7 +13,7 @@ type UserKeyclock interface {
 	LoginAdmin(ctx context.Context, user dto.Login) (*dto.Token, error)
 	GetTokenUser(ctx context.Context, realm string) (*dto.TokenInfo, error)
 	CreateUser(ctx context.Context, user dto.CreateUser) error
-	IntrospectToken(ctx context.Context, token model.IntrospectToken) (*[]keycloak.ResourcePermission, error)
+	IntrospectToken(ctx context.Context, token dto.IntrospectToken) (*[]keycloak.ResourcePermission, error)
 	GetClients(ctx context.Context, user dto.Client) ([]*keycloak.Client, error)
 	Login(ctx context.Context, clientID, clientSecret, realm, username, password string) (*keycloak.JWT, error)
 	LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*keycloak.JWT, error)
