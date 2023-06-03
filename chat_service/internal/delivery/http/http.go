@@ -15,6 +15,7 @@ type Http struct {
 func NewHttp(Usecase *usecase.Usecase, Config *config.Config) *Http {
 	return &Http{
 		Usecase: Usecase,
+		Config: Config,
 	}
 }
 
