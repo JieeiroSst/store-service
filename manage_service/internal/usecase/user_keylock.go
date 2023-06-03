@@ -231,15 +231,75 @@ func (u *UserKeycloakUsecase) CreateUser(ctx context.Context, user dto.CreateUse
 	return nil
 }
 
-func (u *UserKeycloakUsecase) IntrospectToken(ctx context.Context, token model.IntrospectToken) (*[]keycloak.ResourcePermission, error)
-func (u *UserKeycloakUsecase) GetClients(ctx context.Context, user model.Client) ([]*keycloak.Client, error)
-func (u *UserKeycloakUsecase) Login(ctx context.Context, clientID, clientSecret, realm, username, password string) (*keycloak.JWT, error)
-func (u *UserKeycloakUsecase) LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*keycloak.JWT, error)
-func (u *UserKeycloakUsecase) Logout(ctx context.Context, clientID, clientSecret, realm, refreshToken string) error
-func (u *UserKeycloakUsecase) LoginClient(ctx context.Context, clientID, clientSecret, realm string) (*keycloak.JWT, error)
-func (u *UserKeycloakUsecase) RefreshToken(ctx context.Context, refreshToken, clientID, clientSecret, realm string) (*keycloak.JWT, error)
-func (u *UserKeycloakUsecase) GetUserInfo(ctx context.Context, accessToken, realm string) (*keycloak.UserInfo, error)
-func (u *UserKeycloakUsecase) SetPassword(ctx context.Context, token, userID, realm, password string, temporary bool) error
+func (u *UserKeycloakUsecase) IntrospectToken(ctx context.Context, token model.IntrospectToken) (*[]keycloak.ResourcePermission, error) {
+	resourcePermission, err := u.UserKeycloakRepo.IntrospectToken(ctx, token)
+	if err != nil {
+		return nil, err
+	}
+	return resourcePermission, nil
+}
+
+func (u *UserKeycloakUsecase) GetClients(ctx context.Context, user model.Client) ([]*keycloak.Client, error) {
+	client, err := u.UserKeycloakRepo.GetClients(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	return client, nil
+}
+
+func (u *UserKeycloakUsecase) Login(ctx context.Context, clientID, clientSecret, realm, username, password string) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.Login(ctx, clientID, clientSecret, realm, username, password)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+func (u *UserKeycloakUsecase) LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.LoginOtp(ctx, clientID, clientSecret, realm, username, password, totp)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func (u *UserKeycloakUsecase) Logout(ctx context.Context, clientID, clientSecret, realm, refreshToken string) error {
+	if err := u.UserKeycloakRepo.Logout(ctx, clientID, clientSecret, realm, refreshToken); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *UserKeycloakUsecase) LoginClient(ctx context.Context, clientID, clientSecret, realm string) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.LoginClient(ctx, clientID, clientSecret, realm)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func (u *UserKeycloakUsecase) RefreshToken(ctx context.Context, refreshToken, clientID, clientSecret, realm string) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.RefreshToken(ctx, refreshToken, clientID, clientSecret, realm)
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
+func (u *UserKeycloakUsecase) GetUserInfo(ctx context.Context, accessToken, realm string) (*keycloak.UserInfo, error) {
+	userInfo, err := u.UserKeycloakRepo.GetUserInfo(ctx, accessToken, realm)
+	if err != nil {
+		return nil, err
+	}
+	return userInfo, nil
+}
+
+func (u *UserKeycloakUsecase) SetPassword(ctx context.Context, token, userID, realm, password string, temporary bool) error {
+	if err := u.UserKeycloakRepo.SetPassword(ctx, token, userID, realm, password, temporary); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (u *UserKeycloakUsecase) CreateGroup(ctx context.Context, accessToken, realm string, group keycloak.Group) (string, error)
 func (u *UserKeycloakUsecase) UpdateUser(ctx context.Context, accessToken, realm string, user keycloak.User) error
 func (u *UserKeycloakUsecase) UpdateGroup(ctx context.Context, accessToken, realm string, updatedGroup keycloak.Group) error
