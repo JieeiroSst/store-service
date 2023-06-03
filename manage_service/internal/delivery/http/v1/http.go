@@ -25,7 +25,7 @@ func (u *Http) SetupRoutes(router chi.Router) {
 
 func (u *Http) LoginAdmin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
-	var user dto.Login
+	var user dto.LoginAdmin
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -68,16 +68,46 @@ func (u *Http) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *Http) IntrospectToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
 	var token dto.IntrospectToken
 	if err := json.NewDecoder(r.Body).Decode(&token); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	resourcePermission, err := u.Usecase.UserKeyclock.IntrospectToken(r.Context(), token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(resourcePermission)
 }
 
-func (u *Http) GetClients(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) GetClients(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	var user dto.Client
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	client, err := u.Usecase.UserKeyclock.GetClients(r.Context(), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(client)
+}
 
-func (u *Http) Login(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) Login(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	// var login Login
+	// if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+	// token, err := u.Usecase.UserKeyclock.Login(r.Context(),)
+}
 
 func (u *Http) LoginOtp(w http.ResponseWriter, r *http.Request) {}
 

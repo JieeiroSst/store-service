@@ -10,18 +10,18 @@ import (
 )
 
 type UserKeyclock interface {
-	LoginAdmin(ctx context.Context, user dto.Login) (*dto.Token, error)
+	LoginAdmin(ctx context.Context, user dto.LoginAdmin) (*dto.Token, error)
 	GetTokenUser(ctx context.Context, realm string) (*dto.TokenInfo, error)
 	CreateUser(ctx context.Context, user dto.CreateUser) error
 	IntrospectToken(ctx context.Context, token dto.IntrospectToken) (*[]keycloak.ResourcePermission, error)
 	GetClients(ctx context.Context, user dto.Client) ([]*keycloak.Client, error)
-	Login(ctx context.Context, clientID, clientSecret, realm, username, password string) (*keycloak.JWT, error)
-	LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*keycloak.JWT, error)
-	Logout(ctx context.Context, clientID, clientSecret, realm, refreshToken string) error
-	LoginClient(ctx context.Context, clientID, clientSecret, realm string) (*keycloak.JWT, error)
-	RefreshToken(ctx context.Context, refreshToken, clientID, clientSecret, realm string) (*keycloak.JWT, error)
-	GetUserInfo(ctx context.Context, accessToken, realm string) (*keycloak.UserInfo, error)
-	SetPassword(ctx context.Context, token, userID, realm, password string, temporary bool) error
+	Login(ctx context.Context, user dto.Login) (*keycloak.JWT, error)
+	LoginOtp(ctx context.Context, user dto.LoginOTP) (*keycloak.JWT, error)
+	Logout(ctx context.Context, user dto.Logout) error
+	LoginClient(ctx context.Context, user dto.LoginClient) (*keycloak.JWT, error)
+	RefreshToken(ctx context.Context, user dto.RefreshToken) (*keycloak.JWT, error)
+	GetUserInfo(ctx context.Context, user dto.UserInfo) (*keycloak.UserInfo, error)
+	SetPassword(ctx context.Context, user dto.SetPassword) error
 }
 
 type UserKeycloakUsecase struct {
@@ -34,7 +34,7 @@ func NewUserKeycloakUsecase(UserKeycloakRepo repository.UserKeycloak) *UserKeycl
 	}
 }
 
-func (u *UserKeycloakUsecase) LoginAdmin(ctx context.Context, user dto.Login) (*dto.Token, error) {
+func (u *UserKeycloakUsecase) LoginAdmin(ctx context.Context, user dto.LoginAdmin) (*dto.Token, error) {
 	userModel := model.Login{}
 	token, err := u.UserKeycloakRepo.LoginAdmin(ctx, userModel)
 	if err != nil {
@@ -103,54 +103,54 @@ func (u *UserKeycloakUsecase) GetClients(ctx context.Context, user dto.Client) (
 	return client, nil
 }
 
-func (u *UserKeycloakUsecase) Login(ctx context.Context, clientID, clientSecret, realm, username, password string) (*keycloak.JWT, error) {
-	token, err := u.UserKeycloakRepo.Login(ctx, clientID, clientSecret, realm, username, password)
+func (u *UserKeycloakUsecase) Login(ctx context.Context, user dto.Login) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.Login(ctx, user.ClientID, user.ClientSecret, user.Realm, user.Username, user.Password)
 	if err != nil {
 		return nil, err
 	}
 	return token, nil
 }
-func (u *UserKeycloakUsecase) LoginOtp(ctx context.Context, clientID, clientSecret, realm, username, password, totp string) (*keycloak.JWT, error) {
-	token, err := u.UserKeycloakRepo.LoginOtp(ctx, clientID, clientSecret, realm, username, password, totp)
+func (u *UserKeycloakUsecase) LoginOtp(ctx context.Context, user dto.LoginOTP) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.LoginOtp(ctx, user.ClientID, user.ClientSecret, user.Realm, user.Username, user.Password, user.OTP)
 	if err != nil {
 		return nil, err
 	}
 	return token, nil
 }
 
-func (u *UserKeycloakUsecase) Logout(ctx context.Context, clientID, clientSecret, realm, refreshToken string) error {
-	if err := u.UserKeycloakRepo.Logout(ctx, clientID, clientSecret, realm, refreshToken); err != nil {
+func (u *UserKeycloakUsecase) Logout(ctx context.Context, user dto.Logout) error {
+	if err := u.UserKeycloakRepo.Logout(ctx, user.ClientID, user.ClientSecret, user.Realm, user.RefreshToken); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *UserKeycloakUsecase) LoginClient(ctx context.Context, clientID, clientSecret, realm string) (*keycloak.JWT, error) {
-	token, err := u.UserKeycloakRepo.LoginClient(ctx, clientID, clientSecret, realm)
+func (u *UserKeycloakUsecase) LoginClient(ctx context.Context, user dto.LoginClient) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.LoginClient(ctx, user.ClientID, user.ClientSecret, user.Realm)
 	if err != nil {
 		return nil, err
 	}
 	return token, nil
 }
 
-func (u *UserKeycloakUsecase) RefreshToken(ctx context.Context, refreshToken, clientID, clientSecret, realm string) (*keycloak.JWT, error) {
-	token, err := u.UserKeycloakRepo.RefreshToken(ctx, refreshToken, clientID, clientSecret, realm)
+func (u *UserKeycloakUsecase) RefreshToken(ctx context.Context, user dto.RefreshToken) (*keycloak.JWT, error) {
+	token, err := u.UserKeycloakRepo.RefreshToken(ctx, user.RefreshToken, user.ClientID, user.ClientSecret, user.Realm)
 	if err != nil {
 		return nil, err
 	}
 	return token, nil
 }
 
-func (u *UserKeycloakUsecase) GetUserInfo(ctx context.Context, accessToken, realm string) (*keycloak.UserInfo, error) {
-	userInfo, err := u.UserKeycloakRepo.GetUserInfo(ctx, accessToken, realm)
+func (u *UserKeycloakUsecase) GetUserInfo(ctx context.Context, user dto.UserInfo) (*keycloak.UserInfo, error) {
+	userInfo, err := u.UserKeycloakRepo.GetUserInfo(ctx, user.AccessToken, user.Realm)
 	if err != nil {
 		return nil, err
 	}
 	return userInfo, nil
 }
 
-func (u *UserKeycloakUsecase) SetPassword(ctx context.Context, token, userID, realm, password string, temporary bool) error {
-	if err := u.UserKeycloakRepo.SetPassword(ctx, token, userID, realm, password, temporary); err != nil {
+func (u *UserKeycloakUsecase) SetPassword(ctx context.Context, user dto.SetPassword) error {
+	if err := u.UserKeycloakRepo.SetPassword(ctx, user.Token, user.UserID, user.Realm, user.Password, user.Temporary); err != nil {
 		return err
 	}
 	return nil
