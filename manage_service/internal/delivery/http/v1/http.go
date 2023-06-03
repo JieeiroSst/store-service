@@ -101,22 +101,111 @@ func (u *Http) GetClients(w http.ResponseWriter, r *http.Request) {
 
 func (u *Http) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
-	// var login Login
-	// if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return
-	// }
-	// token, err := u.Usecase.UserKeyclock.Login(r.Context(),)
+	var user dto.Login
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	token, err := u.Usecase.UserKeyclock.Login(r.Context(), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(token)
+
 }
 
-func (u *Http) LoginOtp(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) LoginOtp(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	var user dto.LoginOTP
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	token, err := u.Usecase.UserKeyclock.LoginOtp(r.Context(), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(token)
+}
 
-func (u *Http) Logout(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) Logout(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	var user dto.Logout
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err := u.Usecase.UserKeyclock.Logout(r.Context(), user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode("Logout user success")
+}
 
-func (u *Http) LoginClient(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) LoginClient(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	var user dto.LoginClient
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	token, err := u.Usecase.UserKeyclock.LoginClient(r.Context(), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(token)
+}
 
-func (u *Http) RefreshToken(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) RefreshToken(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	var user dto.RefreshToken
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	token, err := u.Usecase.UserKeyclock.RefreshToken(r.Context(), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(token)
+}
 
-func (u *Http) GetUserInfo(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) GetUserInfo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	var user dto.UserInfo
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	userInfo, err := u.Usecase.UserKeyclock.GetUserInfo(r.Context(), user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(userInfo)
+}
 
-func (u *Http) SetPassword(w http.ResponseWriter, r *http.Request) {}
+func (u *Http) SetPassword(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	var user dto.SetPassword
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err := u.Usecase.UserKeyclock.SetPassword(r.Context(), user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode("Set password user success")
+}
