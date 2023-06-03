@@ -14,6 +14,7 @@ type UserKeycloak interface {
 	LoginAdmin(ctx context.Context, user model.Login) (*model.Token, error)
 	GetTokenUser(ctx context.Context, realm string) (*model.TokenInfo, error)
 	CreateUser(ctx context.Context, user model.CreateUser) error
+	
 	IntrospectToken(ctx context.Context, token model.IntrospectToken) (*[]keycloak.ResourcePermission, error)
 	GetClients(ctx context.Context, user model.Client) ([]*keycloak.Client, error)
 	Login(ctx context.Context, clientID, clientSecret, realm, username, password string) (*keycloak.JWT, error)
