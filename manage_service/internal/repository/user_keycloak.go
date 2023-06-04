@@ -181,10 +181,10 @@ type UserKeycloak interface {
 }
 
 type UserKeycloakRepo struct {
-	client keycloak.GoCloak
+	client *keycloak.GoCloak
 }
 
-func NewUserKeycloakRepo(client keycloak.GoCloak) UserKeycloak {
+func NewUserKeycloakRepo(client *keycloak.GoCloak) UserKeycloak {
 	return &UserKeycloakRepo{
 		client: client,
 	}
