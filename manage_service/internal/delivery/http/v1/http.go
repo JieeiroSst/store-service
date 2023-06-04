@@ -20,7 +20,18 @@ func NewHttpV1(Usecase *usecase.Usecase) *Http {
 }
 
 func (u *Http) SetupRoutes(router chi.Router) {
-
+	router.Post("/login-admin", u.LoginAdmin)
+	router.Get("/token-user", u.GetTokenUser)
+	router.Post("/user", u.CreateUser)
+	router.Get("/token", u.IntrospectToken)
+	router.Get("/client", u.GetClients)
+	router.Post("/login", u.Login)
+	router.Post("/login-otp", u.LoginOtp)
+	router.Post("/logout", u.Logout)
+	router.Post("/login-client", u.LoginClient)
+	router.Post("/refresh-token", u.RefreshToken)
+	router.Post("/user-info", u.GetUserInfo)
+	router.Post("set-password", u.SetPassword)
 }
 
 func (u *Http) LoginAdmin(w http.ResponseWriter, r *http.Request) {
