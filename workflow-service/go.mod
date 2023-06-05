@@ -3,16 +3,20 @@ module github.com/JIeeiroSst/workflow-service
 go 1.20
 
 require (
+	github.com/bojanz/httpx v0.0.0-20201111190843-d1cf01c49b2e
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/gorilla/handlers v1.5.1
+	github.com/gorilla/mux v1.8.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rs/zerolog v1.29.1
 	go.temporal.io/sdk v1.23.0
-	gorm.io/gorm v1.25.1
 )
 
 require (
+	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
+	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/gogo/googleapis v1.4.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/gogo/status v1.1.1 // indirect
