@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
-	"github.com/JIeeiroSst/workflow-service/pkg/log"
+	"github.com/JIeeiroSst/workflow-service/config"
 	"github.com/JIeeiroSst/workflow-service/internal/activities"
+	"github.com/JIeeiroSst/workflow-service/pkg/consul"
+	"github.com/JIeeiroSst/workflow-service/pkg/log"
 	"github.com/bojanz/httpx"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -33,6 +36,9 @@ type (
 var (
 	HTTPPort = os.Getenv("PORT")
 	temporal client.Client
+	conf     *config.Config
+	dirEnv   *config.Dir
+	err      error
 )
 
 func main() {
@@ -40,6 +46,27 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	nodeEnv := os.Getenv("NODE_ENV")
+
+	dirEnv, err = config.ReadFileEnv(".env")
+	if err != nil {
+		log.Error("", err)
+	}
+
+	if !strings.EqualFold(nodeEnv, "") {
+		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+		conf, err = consul.ConnectConfigConsul()
+		if err != nil {
+			log.Error("", err)
+		}
+	} else {
+		conf, err = config.ReadConf("config.yml")
+		if err != nil {
+			log.Error("", err)
+		}
+	}
+
 	temporal, err = client.NewClient(client.Options{})
 	if err != nil {
 		log.Error("unable to create Temporal client", err)
@@ -67,7 +94,7 @@ func main() {
 
 	err = server.Start()
 	if err != nil {
-		log.Error("",err)
+		log.Error("", err)
 	}
 }
 

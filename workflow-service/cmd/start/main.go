@@ -3,17 +3,47 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
+	"github.com/JIeeiroSst/workflow-service/config"
 	"github.com/JIeeiroSst/workflow-service/internal/activities"
+	"github.com/JIeeiroSst/workflow-service/pkg/consul"
 	"github.com/JIeeiroSst/workflow-service/pkg/log"
 	"go.temporal.io/sdk/client"
+)
+
+var (
+	conf   *config.Config
+	dirEnv *config.Dir
+	err    error
 )
 
 func main() {
 	err := log.Init("info", "stdout")
 	if err != nil {
 		panic(err)
+	}
+
+	nodeEnv := os.Getenv("NODE_ENV")
+
+	dirEnv, err = config.ReadFileEnv(".env")
+	if err != nil {
+		log.Error("", err)
+	}
+
+	if !strings.EqualFold(nodeEnv, "") {
+		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+		conf, err = consul.ConnectConfigConsul()
+		if err != nil {
+			log.Error("", err)
+		}
+	} else {
+		conf, err = config.ReadConf("config.yml")
+		if err != nil {
+			log.Error("", err)
+		}
 	}
 
 	c, err := client.NewClient(client.Options{})
