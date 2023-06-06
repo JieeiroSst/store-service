@@ -23,6 +23,12 @@ type CardUsecase struct {
 	Temporal client.Client
 }
 
+func NewCardUsecase(Temporal client.Client) *CardUsecase {
+	return &CardUsecase{
+		Temporal: Temporal,
+	}
+}
+
 func (u *CardUsecase) GetProducts() ([]dto.Product, error) {
 
 	return nil, nil
