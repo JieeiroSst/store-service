@@ -11,9 +11,12 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/workflow-service/config"
+	httpServer "github.com/JIeeiroSst/workflow-service/internal/delivery/http"
+	"github.com/JIeeiroSst/workflow-service/internal/usecase"
 	"github.com/JIeeiroSst/workflow-service/pkg/consul"
 	"github.com/JIeeiroSst/workflow-service/pkg/log"
-	"github.com/go-chi/chi"
+	"github.com/JIeeiroSst/workflow-service/pkg/temporal"
+	"github.com/go-chi/chi/v5"
 )
 
 var (
@@ -23,7 +26,6 @@ var (
 )
 
 func main() {
-
 	router := chi.NewRouter()
 
 	nodeEnv := os.Getenv("NODE_ENV")
@@ -47,6 +49,14 @@ func main() {
 			log.Error("", err)
 		}
 	}
+
+	temporal := temporal.NewWorkflow("")
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Temporal: temporal,
+	})
+
+	httpServer := httpServer.NewHttp(usecase, conf)
+	httpServer.Init(router)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", conf.Server.ServerPort),
