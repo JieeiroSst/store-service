@@ -1,67 +1,38 @@
 package v1
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"time"
 
+	"github.com/JIeeiroSst/workflow-service/dto"
 	"github.com/JIeeiroSst/workflow-service/internal/activities"
-	"github.com/gorilla/mux"
-	"go.temporal.io/sdk/client"
+	"github.com/go-chi/chi/v5"
 )
 
-type (
-	UpdateEmailRequest struct {
-		Email string
-	}
+func (h *Http) GetProductsHandler(w http.ResponseWriter, r *http.Request) {
+	// res := make(map[string]interface{})
+	// res["products"] = activities.Products
 
-	CheckoutRequest struct {
-		Email string
-	}
-)
-
-func GetProductsHandler(w http.ResponseWriter, r *http.Request) {
-	res := make(map[string]interface{})
-	res["products"] = activities.Products
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(res)
+	// w.WriteHeader(http.StatusOK)
+	// json.NewEncoder(w).Encode(res)
 }
 
-func CreateCartHandler(w http.ResponseWriter, r *http.Request) {
-	workflowID := "CART-" + fmt.Sprintf("%d", time.Now().Unix())
-
-	options := client.StartWorkflowOptions{
-		ID:        workflowID,
-		TaskQueue: "CART_TASK_QUEUE",
-	}
-
-	cart := activities.CartState{Items: make([]activities.CartItem, 0)}
-	we, err := temporal.ExecuteWorkflow(context.Background(), options, activities.CartWorkflow, cart)
+func (h *Http) CreateCartHandler(w http.ResponseWriter, r *http.Request) {
+	res, err := h.Usecase.CreateCard()
 	if err != nil {
 		WriteError(w, err)
 		return
 	}
-
-	res := make(map[string]interface{})
-	res["cart"] = cart
-	res["workflowID"] = we.GetID()
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(res)
 }
 
-func GetCartHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	response, err := temporal.QueryWorkflow(context.Background(), vars["workflowID"], "", "getCart")
+func (h *Http) GetCartHandler(w http.ResponseWriter, r *http.Request) {
+	workflowID := chi.URLParam(r, "workflowID")
+
+	res, err := h.Usecase.Cards.GetCard(workflowID)
 	if err != nil {
-		WriteError(w, err)
-		return
-	}
-	var res interface{}
-	if err := response.Get(&res); err != nil {
 		WriteError(w, err)
 		return
 	}
@@ -70,8 +41,28 @@ func GetCartHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func AddToCartHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func (h *Http) AddToCartHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-type", "application/json")
+	workflowID := chi.URLParam(r, "workflowID")
+	var item activities.CartItem
+	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
+		WriteError(w, err)
+		return
+	}
+
+	if err := h.Usecase.Cards.AddToCard(workflowID, item); err != nil {
+		WriteError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	res := make(map[string]interface{})
+	res["ok"] = 1
+	json.NewEncoder(w).Encode(res)
+}
+
+func (h *Http) RemoveFromCartHandler(w http.ResponseWriter, r *http.Request) {
+	workflowID := chi.URLParam(r, "workflowID")
 	var item activities.CartItem
 	err := json.NewDecoder(r.Body).Decode(&item)
 	if err != nil {
@@ -79,10 +70,7 @@ func AddToCartHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	update := activities.AddToCartSignal{Route: activities.RouteTypes.ADD_TO_CART, Item: item}
-
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", activities.SignalChannels.ADD_TO_CART_CHANNEL, update)
-	if err != nil {
+	if err := h.Usecase.Cards.RemoveFromCard(workflowID, item); err != nil {
 		WriteError(w, err)
 		return
 	}
@@ -93,43 +81,17 @@ func AddToCartHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func RemoveFromCartHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	var item activities.CartItem
-	err := json.NewDecoder(r.Body).Decode(&item)
-	if err != nil {
-		WriteError(w, err)
-		return
-	}
+func (h *Http) UpdateEmailHandler(w http.ResponseWriter, r *http.Request) {
+	workflowID := chi.URLParam(r, "workflowID")
 
-	update := activities.RemoveFromCartSignal{Route: activities.RouteTypes.REMOVE_FROM_CART, Item: item}
-
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", activities.SignalChannels.REMOVE_FROM_CART_CHANNEL, update)
-	if err != nil {
-		WriteError(w, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	res := make(map[string]interface{})
-	res["ok"] = 1
-	json.NewEncoder(w).Encode(res)
-}
-
-func UpdateEmailHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	var body UpdateEmailRequest
+	var body dto.UpdateEmailRequest
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		WriteError(w, err)
 		return
 	}
 
-	updateEmail := activities.UpdateEmailSignal{Route: activities.RouteTypes.UPDATE_EMAIL, Email: body.Email}
-
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", activities.SignalChannels.UPDATE_EMAIL_CHANNEL, updateEmail)
-	if err != nil {
+	if err := h.Usecase.Cards.UpdateEmailToCard(workflowID, body); err != nil {
 		WriteError(w, err)
 		return
 	}
@@ -140,20 +102,16 @@ func UpdateEmailHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func CheckoutHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-
-	var body CheckoutRequest
+func (h *Http) CheckoutHandler(w http.ResponseWriter, r *http.Request) {
+	workflowID := chi.URLParam(r, "workflowID")
+	var body dto.CheckoutRequest
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		WriteError(w, err)
 		return
 	}
 
-	checkout := activities.CheckoutSignal{Route: activities.RouteTypes.CHECKOUT, Email: body.Email}
-
-	err = temporal.SignalWorkflow(context.Background(), vars["workflowID"], "", activities.SignalChannels.CHECKOUT_CHANNEL, checkout)
-	if err != nil {
+	if err := h.Usecase.Cards.CheckoutCard(workflowID, body); err != nil {
 		WriteError(w, err)
 		return
 	}
