@@ -11,11 +11,16 @@ import (
 
 type Config struct {
 	Server ServerConfig
+	Secret SecretConfig
 }
 
 type ServerConfig struct {
 	ServerPort string
 	GRPCServer string
+}
+type SecretConfig struct {
+	JwtSecretKey string
+	AuthorizeKey string
 }
 
 type Consul struct {

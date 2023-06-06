@@ -5,6 +5,8 @@ go 1.20
 require (
 	github.com/bojanz/httpx v0.0.0-20201111190843-d1cf01c49b2e
 	github.com/bwmarrin/snowflake v0.3.0
+	github.com/go-chi/chi v1.5.4
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/consul/api v1.21.0
