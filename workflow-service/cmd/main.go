@@ -50,7 +50,7 @@ func main() {
 		}
 	}
 
-	temporal := temporal.NewWorkflow("")
+	temporal := temporal.NewWorkflow(conf.Temporal.Host)
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Temporal: temporal,
 	})

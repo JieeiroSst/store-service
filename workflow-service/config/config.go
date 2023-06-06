@@ -10,8 +10,9 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig
-	Secret SecretConfig
+	Server   ServerConfig
+	Secret   SecretConfig
+	Temporal TemporalConfig
 }
 
 type ServerConfig struct {
@@ -21,6 +22,10 @@ type ServerConfig struct {
 type SecretConfig struct {
 	JwtSecretKey string
 	AuthorizeKey string
+}
+
+type TemporalConfig struct {
+	Host string
 }
 
 type Consul struct {
