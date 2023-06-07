@@ -5,5 +5,8 @@
 	},
 	"secret": {
 		"AuthorizeKey": "cao_hoang_mai_phuong"
+	},
+	"temporal": {
+		"Host":"localhost:8088"
 	}
 }
