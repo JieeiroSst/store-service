@@ -1,9 +1,9 @@
 package dto
 
-import "github.com/JIeeiroSst/workflow-service/internal/activities"
+import "github.com/JIeeiroSst/workflow-service/internal/activities/card"
 
 type CreateCard struct {
-	Cart       activities.CartState
+	Cart       card.CartState
 	WorkflowID string
 }
 

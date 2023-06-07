@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/workflow-service/dto"
-	"github.com/JIeeiroSst/workflow-service/internal/activities"
+	cardWorkflow"github.com/JIeeiroSst/workflow-service/internal/activities/card"
 	"go.temporal.io/sdk/client"
 )
 
 type Cards interface {
 	CreateCard() (*dto.CreateCard, error)
-	AddToCard(workflowID string, item activities.CartItem) error
-	RemoveFromCard(workflowID string, item activities.CartItem) error
+	AddToCard(workflowID string, item cardWorkflow.CartItem) error
+	RemoveFromCard(workflowID string, item cardWorkflow.CartItem) error
 	UpdateEmailToCard(workflowID string, body dto.UpdateEmailRequest) error
 	CheckoutCard(workflowID string, body dto.CheckoutRequest) error
 	GetCard(workflowID string) (*dto.Product, error)
@@ -42,8 +42,8 @@ func (u *CardUsecase) CreateCard() (*dto.CreateCard, error) {
 		TaskQueue: "CART_TASK_QUEUE",
 	}
 
-	cart := activities.CartState{Items: make([]activities.CartItem, 0)}
-	we, err := u.Temporal.ExecuteWorkflow(context.Background(), options, activities.CartWorkflow, cart)
+	cart := cardWorkflow.CartState{Items: make([]cardWorkflow.CartItem, 0)}
+	we, err := u.Temporal.ExecuteWorkflow(context.Background(), options, cardWorkflow.CartWorkflow, cart)
 	if err != nil {
 		return nil, err
 	}
@@ -65,23 +65,23 @@ func (u *CardUsecase) GetCard(workflowID string) (*dto.Product, error) {
 	return res, nil
 }
 
-func (u *CardUsecase) AddToCard(workflowID string, item activities.CartItem) error {
-	update := activities.AddToCartSignal{Route: activities.RouteTypes.ADD_TO_CART, Item: item}
+func (u *CardUsecase) AddToCard(workflowID string, item cardWorkflow.CartItem) error {
+	update := cardWorkflow.AddToCartSignal{Route: cardWorkflow.RouteTypes.ADD_TO_CART, Item: item}
 
-	err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", activities.SignalChannels.ADD_TO_CART_CHANNEL, update)
+	err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", cardWorkflow.SignalChannels.ADD_TO_CART_CHANNEL, update)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *CardUsecase) RemoveFromCard(workflowID string, item activities.CartItem) error {
-	update := activities.RemoveFromCartSignal{
-		Route: activities.RouteTypes.REMOVE_FROM_CART,
+func (u *CardUsecase) RemoveFromCard(workflowID string, item cardWorkflow.CartItem) error {
+	update := cardWorkflow.RemoveFromCartSignal{
+		Route: cardWorkflow.RouteTypes.REMOVE_FROM_CART,
 		Item:  item,
 	}
 
-	if err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", activities.SignalChannels.REMOVE_FROM_CART_CHANNEL, update); err != nil {
+	if err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", cardWorkflow.SignalChannels.REMOVE_FROM_CART_CHANNEL, update); err != nil {
 		return err
 	}
 
@@ -89,9 +89,9 @@ func (u *CardUsecase) RemoveFromCard(workflowID string, item activities.CartItem
 }
 
 func (u *CardUsecase) UpdateEmailToCard(workflowID string, body dto.UpdateEmailRequest) error {
-	updateEmail := activities.UpdateEmailSignal{Route: activities.RouteTypes.UPDATE_EMAIL, Email: body.Email}
+	updateEmail := cardWorkflow.UpdateEmailSignal{Route: cardWorkflow.RouteTypes.UPDATE_EMAIL, Email: body.Email}
 
-	err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", activities.SignalChannels.UPDATE_EMAIL_CHANNEL, updateEmail)
+	err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", cardWorkflow.SignalChannels.UPDATE_EMAIL_CHANNEL, updateEmail)
 	if err != nil {
 		return err
 	}
@@ -99,9 +99,9 @@ func (u *CardUsecase) UpdateEmailToCard(workflowID string, body dto.UpdateEmailR
 }
 
 func (u *CardUsecase) CheckoutCard(workflowID string, body dto.CheckoutRequest) error {
-	checkout := activities.CheckoutSignal{Route: activities.RouteTypes.CHECKOUT, Email: body.Email}
+	checkout := cardWorkflow.CheckoutSignal{Route: cardWorkflow.RouteTypes.CHECKOUT, Email: body.Email}
 
-	err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", activities.SignalChannels.CHECKOUT_CHANNEL, checkout)
+	err := u.Temporal.SignalWorkflow(context.Background(), workflowID, "", cardWorkflow.SignalChannels.CHECKOUT_CHANNEL, checkout)
 	if err != nil {
 		return err
 	}

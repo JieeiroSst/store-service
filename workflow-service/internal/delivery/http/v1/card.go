@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/JIeeiroSst/workflow-service/dto"
-	"github.com/JIeeiroSst/workflow-service/internal/activities"
+	"github.com/JIeeiroSst/workflow-service/internal/activities/card"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -44,7 +44,7 @@ func (h *Http) GetCartHandler(w http.ResponseWriter, r *http.Request) {
 func (h *Http) AddToCartHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	workflowID := chi.URLParam(r, "workflowID")
-	var item activities.CartItem
+	var item card.CartItem
 	if err := json.NewDecoder(r.Body).Decode(&item); err != nil {
 		WriteError(w, err)
 		return
@@ -63,7 +63,7 @@ func (h *Http) AddToCartHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Http) RemoveFromCartHandler(w http.ResponseWriter, r *http.Request) {
 	workflowID := chi.URLParam(r, "workflowID")
-	var item activities.CartItem
+	var item card.CartItem
 	err := json.NewDecoder(r.Body).Decode(&item)
 	if err != nil {
 		WriteError(w, err)
