@@ -8,5 +8,8 @@
 	},
 	"temporal": {
 		"Host":"localhost:8088"
+	},
+	"excel": {
+		"Dir":"client_secret.json"
 	}
 }
