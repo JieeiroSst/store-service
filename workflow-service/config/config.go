@@ -13,6 +13,7 @@ type Config struct {
 	Server   ServerConfig
 	Secret   SecretConfig
 	Temporal TemporalConfig
+	Excel    ExcelConfig
 }
 
 type ServerConfig struct {
@@ -26,6 +27,10 @@ type SecretConfig struct {
 
 type TemporalConfig struct {
 	Host string
+}
+
+type ExcelConfig struct {
+	Dir string
 }
 
 type Consul struct {
