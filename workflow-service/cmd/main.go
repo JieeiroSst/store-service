@@ -12,9 +12,11 @@ import (
 
 	"github.com/JIeeiroSst/workflow-service/config"
 	httpServer "github.com/JIeeiroSst/workflow-service/internal/delivery/http"
+	"github.com/JIeeiroSst/workflow-service/internal/repository"
 	"github.com/JIeeiroSst/workflow-service/internal/usecase"
 	"github.com/JIeeiroSst/workflow-service/pkg/consul"
 	"github.com/JIeeiroSst/workflow-service/pkg/log"
+	"github.com/JIeeiroSst/workflow-service/pkg/postgres"
 	"github.com/JIeeiroSst/workflow-service/pkg/temporal"
 	"github.com/go-chi/chi/v5"
 )
@@ -50,9 +52,15 @@ func main() {
 		}
 	}
 
+	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", conf.Postgres.PostgresqlHost,
+		conf.Postgres.PostgresqlPort, conf.Postgres.PostgresqlUser, conf.Postgres.PostgresqlPassword, conf.Postgres.PostgresqlDbname)
+
+	database := postgres.NewDatabase(psqlconn)
+	repository := repository.NewRepositories(database.DB)
 	temporal := temporal.NewWorkflow(conf.Temporal.Host)
 	usecase := usecase.NewUsecase(usecase.Dependency{
-		Temporal: temporal,
+		Temporal:   temporal,
+		Repository: repository,
 	})
 
 	httpServer := httpServer.NewHttp(usecase, conf)
