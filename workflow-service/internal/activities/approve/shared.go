@@ -23,3 +23,17 @@ var RouteTypes = struct {
 type RouteSignal struct {
 	Route string
 }
+
+type UploadChannelSignal struct {
+	Route string
+}
+
+type ProcessChannelSignal struct {
+	Route   string
+	Process ProcessTable
+}
+
+type ApproveChannelSignal struct {
+	Route     string
+	IsAprrove bool
+}
