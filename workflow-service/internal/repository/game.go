@@ -16,7 +16,7 @@ type GameRepo struct {
 	DB *sql.DB
 }
 
-func NewRepository(db *sql.DB) *GameRepo {
+func NewGameRepo(db *sql.DB) *GameRepo {
 	return &GameRepo{
 		DB: db,
 	}
