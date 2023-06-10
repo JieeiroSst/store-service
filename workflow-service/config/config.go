@@ -14,6 +14,7 @@ type Config struct {
 	Secret   SecretConfig
 	Temporal TemporalConfig
 	Excel    ExcelConfig
+	Postgres PostgresConfig
 }
 
 type ServerConfig struct {
@@ -27,6 +28,16 @@ type SecretConfig struct {
 
 type TemporalConfig struct {
 	Host string
+}
+
+type PostgresConfig struct {
+	PostgresqlHost     string
+	PostgresqlPort     string
+	PostgresqlUser     string
+	PostgresqlPassword string
+	PostgresqlDbname   string
+	PostgresqlSSLMode  bool
+	PgDriver           string
 }
 
 type ExcelConfig struct {

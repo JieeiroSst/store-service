@@ -8,10 +8,11 @@ require (
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/hashicorp/consul/api v1.21.0
 	github.com/joho/godotenv v1.5.1
+	github.com/lib/pq v1.10.9
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rs/zerolog v1.29.1
 	go.temporal.io/sdk v1.23.0
-	golang.org/x/net v0.10.0
+	golang.org/x/oauth2 v0.6.0
 	google.golang.org/api v0.114.0
 	gopkg.in/yaml.v2 v2.2.3
 )
@@ -50,7 +51,7 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.temporal.io/api v1.21.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
-	golang.org/x/oauth2 v0.6.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
