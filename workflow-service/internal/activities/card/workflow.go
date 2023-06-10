@@ -7,7 +7,17 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func CartWorkflow(ctx workflow.Context, state CartState) error {
+type CardWorkflow interface {
+	CartWorkflow(ctx workflow.Context, state CartState) error
+}
+type cardWorkflow struct {
+}
+
+func NewCardWorkflow() CardWorkflow {
+	return &cardWorkflow{}
+}
+
+func (c *cardWorkflow) CartWorkflow(ctx workflow.Context, state CartState) error {
 	err := workflow.SetQueryHandler(ctx, "getCart", func(input []byte) (CartState, error) {
 		return state, nil
 	})

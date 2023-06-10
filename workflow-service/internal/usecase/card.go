@@ -6,7 +6,8 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/workflow-service/dto"
-	cardWorkflow"github.com/JIeeiroSst/workflow-service/internal/activities/card"
+	"github.com/JIeeiroSst/workflow-service/internal/activities/card"
+	cardWorkflow "github.com/JIeeiroSst/workflow-service/internal/activities/card"
 	"go.temporal.io/sdk/client"
 )
 
@@ -21,11 +22,13 @@ type Cards interface {
 
 type CardUsecase struct {
 	Temporal client.Client
+	Card     card.CardWorkflow
 }
 
-func NewCardUsecase(Temporal client.Client) *CardUsecase {
+func NewCardUsecase(Temporal client.Client, Card card.CardWorkflow) *CardUsecase {
 	return &CardUsecase{
 		Temporal: Temporal,
+		Card:     Card,
 	}
 }
 
@@ -43,7 +46,7 @@ func (u *CardUsecase) CreateCard() (*dto.CreateCard, error) {
 	}
 
 	cart := cardWorkflow.CartState{Items: make([]cardWorkflow.CartItem, 0)}
-	we, err := u.Temporal.ExecuteWorkflow(context.Background(), options, cardWorkflow.CartWorkflow, cart)
+	we, err := u.Temporal.ExecuteWorkflow(context.Background(), options, u.Card.CartWorkflow, cart)
 	if err != nil {
 		return nil, err
 	}
