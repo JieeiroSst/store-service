@@ -14,11 +14,14 @@ type Dependency struct {
 
 type Usecase struct {
 	Cards
+	SeattleWeather
 }
 
 func NewUsecase(deps Dependency) *Usecase {
 	cardUsecase := NewCardUsecase(deps.Temporal, deps.Card)
+	seattleWeatherUsecase := NewSeattleWeatherUsecase(deps.Repository)
 	return &Usecase{
-		Cards: cardUsecase,
+		Cards:          cardUsecase,
+		SeattleWeather: seattleWeatherUsecase,
 	}
 }
