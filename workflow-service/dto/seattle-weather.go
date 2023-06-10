@@ -1,6 +1,6 @@
 package dto
 
-type SeattleWeather struct {
+type SeattleWeatherRequestDTO struct {
 	Date          string
 	Precipitation string
 	TempMax       string
