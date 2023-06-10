@@ -1,6 +1,6 @@
 package dto
 
-type Game struct {
+type GameRequestDTO struct {
 	ID            string
 	Rated         string
 	CreatedAt     int
