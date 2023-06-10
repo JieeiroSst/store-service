@@ -16,14 +16,19 @@ const (
 
 type (
 	ProcessTable struct {
-		ID         string
-		Key        string
-		Value      string
-		UserAction string
-		Status     Status
-		CreateAt   time.Time
-		UpdateAt   time.Time
-		DeleteAt   time.Time
+		ID          string
+		Key         string
+		Value       string
+		UserPeding  string
+		UserApprove string
+		UserReject  string
+		Status      Status
+		CreateAt    time.Time
+		UpdateAt    time.Time
+		DeleteAt    time.Time
+	}
+
+	ProcessState struct {
 	}
 )
 
