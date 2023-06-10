@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/workflow-service/config"
+	"github.com/JIeeiroSst/workflow-service/internal/activities/card"
 	httpServer "github.com/JIeeiroSst/workflow-service/internal/delivery/http"
 	"github.com/JIeeiroSst/workflow-service/internal/repository"
 	"github.com/JIeeiroSst/workflow-service/internal/usecase"
@@ -58,9 +59,11 @@ func main() {
 	database := postgres.NewDatabase(psqlconn)
 	repository := repository.NewRepositories(database.DB)
 	temporal := temporal.NewWorkflow(conf.Temporal.Host)
+	card := card.NewCardWorkflow()
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Temporal:   temporal,
 		Repository: repository,
+		Card:       card,
 	})
 
 	httpServer := httpServer.NewHttp(usecase, conf)
