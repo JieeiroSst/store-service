@@ -23,6 +23,7 @@ func NewSeattleWeatherUsecase(repository *repository.Repositories) *SeattleWeath
 }
 
 func (u *SeattleWeatherUsecase) upsertBigQuerySeattleWeather(weathers []dto.SeattleWeatherRequestDTO) {
+	
 }
 
 func (u *SeattleWeatherUsecase) processSeattleWeather(weathers <-chan dto.SeattleWeatherRequestDTO, batchSize int) {

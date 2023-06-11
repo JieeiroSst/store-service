@@ -18,10 +18,10 @@ type Game interface {
 }
 
 type GameFace struct {
-	repository repository.Repositories
+	repository *repository.Repositories
 }
 
-func NewGameFacade(repository repository.Repositories) *GameFace {
+func NewGameFacade(repository *repository.Repositories) *GameFace {
 	return &GameFace{
 		repository: repository,
 	}
