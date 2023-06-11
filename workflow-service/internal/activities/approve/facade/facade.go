@@ -16,7 +16,7 @@ type Facade struct {
 }
 
 func NewFacde(deps Dependency) *Facade {
-	seattleWeatherFacade := NewSeattleWeatherUsecase(deps.Repository)
+	seattleWeatherFacade := NewSeattleWeatherFacade(deps.Repository)
 	gameFace := NewGameFacade(deps.Repository)
 	return &Facade{
 		SeattleWeather: seattleWeatherFacade,

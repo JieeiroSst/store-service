@@ -1,6 +1,6 @@
 package dto
 
-type BestSellingPlayStation struct {
+type BestSellingPlayStationRequestDTO struct {
 	Game        string
 	CopiesSold  string
 	ReleaseDate string

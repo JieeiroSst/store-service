@@ -12,24 +12,24 @@ type SeattleWeather interface {
 	InsertSeattleWeather(weathers []dto.SeattleWeatherRequestDTO)
 }
 
-type SeattleWeatherUsecase struct {
+type SeattleWeatherFacade struct {
 	repository *repository.Repositories
 }
 
-func NewSeattleWeatherUsecase(repository *repository.Repositories) *SeattleWeatherUsecase {
-	return &SeattleWeatherUsecase{
+func NewSeattleWeatherFacade(repository *repository.Repositories) *SeattleWeatherFacade {
+	return &SeattleWeatherFacade{
 		repository: repository,
 	}
 }
 
-func (u *SeattleWeatherUsecase) upsertBigQuerySeattleWeather(weathers []dto.SeattleWeatherRequestDTO) {
-	
+func (u *SeattleWeatherFacade) upsertBigQuerySeattleWeather(weathers []dto.SeattleWeatherRequestDTO) {
+
 }
 
-func (u *SeattleWeatherUsecase) processSeattleWeather(weathers <-chan dto.SeattleWeatherRequestDTO, batchSize int) {
+func (u *SeattleWeatherFacade) processSeattleWeather(weathers <-chan dto.SeattleWeatherRequestDTO, batchSize int) {
 }
 
-func (u *SeattleWeatherUsecase) produceSeattleWeather(weathers []dto.SeattleWeatherRequestDTO, to chan dto.SeattleWeatherRequestDTO) {
+func (u *SeattleWeatherFacade) produceSeattleWeather(weathers []dto.SeattleWeatherRequestDTO, to chan dto.SeattleWeatherRequestDTO) {
 }
 
-func (u *SeattleWeatherUsecase) InsertSeattleWeather(weathers []dto.SeattleWeatherRequestDTO) {}
+func (u *SeattleWeatherFacade) InsertSeattleWeather(weathers []dto.SeattleWeatherRequestDTO) {}
