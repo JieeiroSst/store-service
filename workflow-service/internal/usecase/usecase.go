@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"github.com/JIeeiroSst/workflow-service/internal/activities/approve"
 	"github.com/JIeeiroSst/workflow-service/internal/activities/card"
 	"go.temporal.io/sdk/client"
 )
@@ -8,6 +9,7 @@ import (
 type Dependency struct {
 	Temporal client.Client
 	Card     card.CardWorkflow
+	Approve  approve.ApproveWorkflow
 }
 
 type Usecase struct {
