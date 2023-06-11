@@ -1,15 +1,27 @@
 package approve
 
-import "go.temporal.io/sdk/workflow"
+import (
+	"github.com/JIeeiroSst/workflow-service/internal/activities/approve/facade"
+	"go.temporal.io/sdk/workflow"
+)
 
-func ApproveWorkflow(ctx workflow.Context, state ProcessState) error {
+type ApproveWorkflow struct {
+	facade facade.Facade
+}
+
+func NewApproveWorkflow(facade facade.Facade) *ApproveWorkflow {
+	return &ApproveWorkflow{
+		facade: facade,
+	}
+}
+
+func (a *ApproveWorkflow) ApproveWorkflow(ctx workflow.Context, state ProcessState) error {
 	err := workflow.SetQueryHandler(ctx, "getApprove", func(input []byte) (ProcessState, error) {
 		return state, nil
 	})
 	if err != nil {
 		return err
 	}
-
 	uploadChannel := workflow.GetSignalChannel(ctx, SignalChannels.UPLOAD_CHANNEL)
 	processChannel := workflow.GetSignalChannel(ctx, SignalChannels.PROCESS_CHANNEL)
 	approveChannel := workflow.GetSignalChannel(ctx, SignalChannels.APPROVE_CHANNEL)

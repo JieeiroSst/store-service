@@ -1,0 +1,22 @@
+package facade
+
+import (
+	"github.com/JIeeiroSst/workflow-service/internal/repository"
+	"go.temporal.io/sdk/client"
+)
+
+type Dependency struct {
+	Temporal   client.Client
+	Repository *repository.Repositories
+}
+
+type Facade struct {
+	SeattleWeather
+}
+
+func NewFacde(deps Dependency) *Facade {
+	seattleWeatherFacade := NewSeattleWeatherUsecase(deps.Repository)
+	return &Facade{
+		SeattleWeather: seattleWeatherFacade,
+	}
+}
