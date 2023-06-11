@@ -12,11 +12,14 @@ type Dependency struct {
 
 type Facade struct {
 	SeattleWeather
+	Game
 }
 
 func NewFacde(deps Dependency) *Facade {
 	seattleWeatherFacade := NewSeattleWeatherUsecase(deps.Repository)
+	gameFace := NewGameFacade(deps.Repository)
 	return &Facade{
 		SeattleWeather: seattleWeatherFacade,
+		Game:           gameFace,
 	}
 }
