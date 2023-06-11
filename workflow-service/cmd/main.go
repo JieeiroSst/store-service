@@ -59,11 +59,10 @@ func main() {
 	database := postgres.NewDatabase(psqlconn)
 	repository := repository.NewRepositories(database.DB)
 	temporal := temporal.NewWorkflow(conf.Temporal.Host)
-	card := card.NewCardWorkflow()
+	card := card.NewCardWorkflow(repository)
 	usecase := usecase.NewUsecase(usecase.Dependency{
-		Temporal:   temporal,
-		Repository: repository,
-		Card:       card,
+		Temporal: temporal,
+		Card:     card,
 	})
 
 	httpServer := httpServer.NewHttp(usecase, conf)

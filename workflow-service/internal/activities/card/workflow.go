@@ -3,6 +3,7 @@ package card
 import (
 	"time"
 
+	"github.com/JIeeiroSst/workflow-service/internal/repository"
 	"github.com/mitchellh/mapstructure"
 	"go.temporal.io/sdk/workflow"
 )
@@ -11,10 +12,13 @@ type CardWorkflow interface {
 	CartWorkflow(ctx workflow.Context, state CartState) error
 }
 type cardWorkflow struct {
+	Repository *repository.Repositories
 }
 
-func NewCardWorkflow() CardWorkflow {
-	return &cardWorkflow{}
+func NewCardWorkflow(Repository *repository.Repositories) CardWorkflow {
+	return &cardWorkflow{
+		Repository: Repository,
+	}
 }
 
 func (c *cardWorkflow) CartWorkflow(ctx workflow.Context, state CartState) error {
