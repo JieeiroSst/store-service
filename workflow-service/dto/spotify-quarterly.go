@@ -1,6 +1,6 @@
 package dto
 
-type SpotifyQuarterly struct {
+type SpotifyQuarterlyRequestDTO struct {
 	Date                       string
 	TotalRevenue               int
 	CostOfRevenue              int
