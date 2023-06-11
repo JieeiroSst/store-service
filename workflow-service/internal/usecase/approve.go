@@ -4,15 +4,15 @@ import (
 	"github.com/JIeeiroSst/workflow-service/internal/activities/approve"
 )
 
-type Game interface {
+type Approve interface {
 }
 
-type GameUsecase struct {
+type ApproveUsecase struct {
 	approve approve.ApproveWorkflow
 }
 
-func NewGameFacade(approve approve.ApproveWorkflow) *GameUsecase {
-	return &GameUsecase{
+func NewApproveUsecase(approve approve.ApproveWorkflow) *ApproveUsecase {
+	return &ApproveUsecase{
 		approve: approve,
 	}
 }

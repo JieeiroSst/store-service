@@ -14,11 +14,14 @@ type Dependency struct {
 
 type Usecase struct {
 	Cards
+	Approve
 }
 
 func NewUsecase(deps Dependency) *Usecase {
 	cardUsecase := NewCardUsecase(deps.Temporal, deps.Card)
+	approveUsecase := NewApproveUsecase(deps.Approve)
 	return &Usecase{
-		Cards: cardUsecase,
+		Cards:   cardUsecase,
+		Approve: approveUsecase,
 	}
 }
