@@ -11,23 +11,23 @@ type ProcessState struct {
 }
 
 type Upload struct {
-	Type         string
-	File         string
-	ProcessTable ProcessState
+	Type       string
+	File       string
+	ActiveUser ActiveUser
 }
 
 type Process struct {
-	Type         string
-	ProcessState ProcessState
-	Email        string
-	IsApprove    bool
+	Type       string
+	Email      string
+	IsApprove  bool
+	ActiveUser ActiveUser
 }
 
 type Approve struct {
-	Type         string
-	ProcessState ProcessState
-	Email        string
-	IsApprove    bool
+	Type       string
+	Email      string
+	IsApprove  bool
+	ActiveUser ActiveUser
 }
 
 func (p *ProcessState) UploadApprove(upload Upload) {
