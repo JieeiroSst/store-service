@@ -38,3 +38,4 @@ func NewFacde(deps Dependency, types TYPE) (resp interface{}) {
 	}
 	return
 }
+

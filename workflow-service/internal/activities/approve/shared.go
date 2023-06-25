@@ -20,20 +20,17 @@ var RouteTypes = struct {
 	APPROVE: "APPROVE",
 }
 
-type RouteSignal struct {
-	Route string
-}
-
 type UploadChannelSignal struct {
-	Route string
+	Route  string
+	Upload Upload
 }
 
 type ProcessChannelSignal struct {
 	Route   string
-	Process ProcessTable
+	Process Process
 }
 
 type ApproveChannelSignal struct {
-	Route     string
-	IsAprrove bool
+	Route   string
+	Approve Approve
 }

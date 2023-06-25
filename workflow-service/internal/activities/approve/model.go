@@ -14,23 +14,18 @@ const (
 	REJECT  Status = "REJECT"
 )
 
-type (
-	ProcessTable struct {
-		ID          string
-		Key         string
-		Value       string
-		UserPeding  string
-		UserApprove string
-		UserReject  string
-		Status      Status
-		CreateAt    time.Time
-		UpdateAt    time.Time
-		DeleteAt    time.Time
-	}
-
-	ProcessState struct {
-	}
-)
+type ProcessTable struct {
+	ID          string
+	Key         string
+	Value       string
+	UserPeding  string
+	UserApprove string
+	UserReject  string
+	Status      Status
+	CreateAt    time.Time
+	UpdateAt    time.Time
+	DeleteAt    time.Time
+}
 
 func (m Status) String() string {
 	switch m {
