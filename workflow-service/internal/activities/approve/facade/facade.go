@@ -38,14 +38,11 @@ func (f *Facade) Factory(types TYPE) (resp interface{}) {
 	case SeattleWeatherType:
 		resp = f.SeattleWeather
 	case GameType:
-		gameFace := f.Game
-		resp = gameFace
+		resp = f.Game
 	case SpotifyQuarterlyType:
-		spotifyQuarterly := f.SpotifyQuarterly
-		resp = spotifyQuarterly
+		resp = f.SpotifyQuarterly
 	case SellingPlayStationType:
-		sellingPlayStation := f.SellingPlayStation
-		resp = sellingPlayStation
+		resp = f.SellingPlayStation
 	default:
 		fmt.Printf("%v\n", types)
 	}
