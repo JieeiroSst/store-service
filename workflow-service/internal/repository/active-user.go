@@ -20,6 +20,6 @@ func NewActiveUsersRepo(db *sql.DB) *ActiveUsersRepo {
 	}
 }
 
-func (r *ActiveUsersRepo) InsertActiveUser(user []model.ActiveUser) error {
+func (r *ActiveUsersRepo) InsertActiveUser(user model.ActiveUser) error {
 	return nil
 }
