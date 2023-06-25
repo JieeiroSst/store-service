@@ -17,21 +17,34 @@ type Facade struct {
 	Game
 	SpotifyQuarterly
 	SellingPlayStation
+	ActiveUser
 }
 
-func NewFacde(deps Dependency, types TYPE) (resp interface{}) {
+func NewFacde(deps Dependency) *Facade {
+	seattleWeatherFacade := NewSeattleWeatherFacade(deps.Repository)
+	gameFace := NewGameFacade(deps.Repository)
+	spotifyQuarterly := NewSpotifyQuarterlyFacade(deps.Repository)
+	sellingPlayStation := NewSellingPlayStationFacade(deps.Repository)
+	return &Facade{
+		SeattleWeather:     seattleWeatherFacade,
+		Game:               gameFace,
+		SpotifyQuarterly:   spotifyQuarterly,
+		SellingPlayStation: sellingPlayStation,
+	}
+}
+
+func (f *Facade) Factory(types TYPE) (resp interface{}) {
 	switch types {
 	case SeattleWeatherType:
-		seattleWeatherFacade := NewSeattleWeatherFacade(deps.Repository)
-		resp = seattleWeatherFacade
+		resp = f.SeattleWeather
 	case GameType:
-		gameFace := NewGameFacade(deps.Repository)
+		gameFace := f.Game
 		resp = gameFace
 	case SpotifyQuarterlyType:
-		spotifyQuarterly := NewSpotifyQuarterlyFacade(deps.Repository)
+		spotifyQuarterly := f.SpotifyQuarterly
 		resp = spotifyQuarterly
 	case SellingPlayStationType:
-		sellingPlayStation := NewSellingPlayStationFacade(deps.Repository)
+		sellingPlayStation := f.SellingPlayStation
 		resp = sellingPlayStation
 	default:
 		fmt.Printf("%v\n", types)
@@ -39,3 +52,10 @@ func NewFacde(deps Dependency, types TYPE) (resp interface{}) {
 	return
 }
 
+// func convert(object interface{}) {
+// 	user, ok := object.(SeattleWeatherFacade)
+
+// 	if ok {
+// 		fmt.Printf("Hello %s!\n", user)
+// 	}
+// }
