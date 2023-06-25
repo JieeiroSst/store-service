@@ -7,6 +7,7 @@ type Repositories struct {
 	Games
 	BestSellingPlayStations
 	SeattleWeathers
+	ActiveUsers
 }
 
 func NewRepositories(db *sql.DB) *Repositories {
@@ -15,5 +16,6 @@ func NewRepositories(db *sql.DB) *Repositories {
 		Games:                   NewGameRepo(db),
 		BestSellingPlayStations: NewBestSellingPlayStationRepo(db),
 		SeattleWeathers:         NewSeattleWeatherRepo(db),
+		ActiveUsers:             NewActiveUsersRepo(db),
 	}
 }
