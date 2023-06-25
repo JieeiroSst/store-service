@@ -14,7 +14,7 @@ const (
 	REJECT  Status = "REJECT"
 )
 
-type ProcessTable struct {
+type ActiveUser struct {
 	ID          string
 	Key         string
 	Value       string
@@ -54,7 +54,7 @@ func ParseStatus(s string) (c Status, err error) {
 	return cap, nil
 }
 
-func AccessTable(processTables []ProcessTable) (statusMaps []map[string]interface{}) {
+func AccessTable(processTables []ActiveUser) (statusMaps []map[string]interface{}) {
 	for _, value := range processTables {
 		b, err := json.Marshal(&value)
 		if err != nil {
