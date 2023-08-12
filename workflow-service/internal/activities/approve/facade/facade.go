@@ -50,7 +50,7 @@ func (f *Facade) Factory(types TYPE) (resp interface{}) {
 }
 
 // func convert(object interface{}) {
-// 	user, ok := object.(SeattleWeatherFacade)
+// 	user, ok := object.(SeattleWeather)
 
 // 	if ok {
 // 		fmt.Printf("Hello %s!\n", user)
