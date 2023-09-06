@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package grpc_gateway_demo;
+
+option go_package = "/.;proto";
+
+import "google/api/annotations.proto";
+
+message StringMessage {
+    string value = 1;
+}
+
+message SumRequest {
+    int32 num1 = 1;
+    int32 num2 = 2;
+}
+
+message SumResponse {
+    int32 result = 1;
+}
+
+service MyService {
+    rpc Echo(StringMessage) returns (StringMessage) {
+        option (google.api.http) = {
+            post: "/v1/echo"
+            body: "*"
+        };
+    };
+    rpc Sum(SumRequest) returns (SumResponse) {
+        option (google.api.http) = {
+            get: "/v1/sum"
+        };
+    }
+}
