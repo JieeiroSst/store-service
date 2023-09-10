@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createNewRoom } from "../api";
+import { createNewRoom } from "../../api";
 
 const WelcomeScreenContainer = ({ setAppData }) => {
   const [meetingId, setMeetingId] = useState("");
