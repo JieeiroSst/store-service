@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken';
+
 const API_KEY = "";
 const SECRET = "";
 
