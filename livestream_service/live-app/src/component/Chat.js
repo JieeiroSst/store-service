@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { w3cwebsocket as WebSocket } from "websocket";
 
-const client = new WebSocket("ws://localhost:8080/stream");
+import { genId } from "../utils/genId";
+
+const uniqueId = genId();
+
+const client = new WebSocket(`ws://localhost:8080/stream?name=${uniqueId}`);
 
 function Chat() {
     const [messages, setMessages] = useState([]);
