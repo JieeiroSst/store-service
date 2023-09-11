@@ -18,7 +18,7 @@ function User(params) {
                         <form class="mt-6"  action="" onSubmit={submitThis}>
                             <div class="flex-1">
                                 <label class="block mb-2 text-sm text-gray-600 dark:text-gray-200">Email</label>
-                                <input type="text" placeholder="John Doe"  action="" onSubmit={submitThis} class="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                <input type="text" placeholder="JohnDoe@gmail.com" name="email"  action="" onSubmit={submitThis} class="block w-full px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
                             </div>
 
                             <div class="flex-1 mt-6">
