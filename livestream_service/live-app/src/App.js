@@ -7,6 +7,7 @@ import Navbar from "./component/Navbar";
 import Services from "./component/Services";
 import Team from "./component/Team";
 import Chat from "./component/Chat";
+import User from "./component/User";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Route path="/services" element={ <Services /> } />
       <Route path="/contact" element={ <Contact /> } />
       <Route path="/chat" element={ <Chat /> } />
+      <Route path="/user" element={ <User /> } />
     </Routes>
     </>
   );

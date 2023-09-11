@@ -57,6 +57,13 @@ function Navbar() {
                 </a>
             </li>
             </NavLink>
+            <NavLink to={"/user"}>
+            <li>
+                <a href="#" class="flex md:inline-flex p-4 items-center hover:bg-gray-50">
+                    <span>User US</span>
+                </a>
+            </li>
+            </NavLink>
         </ul>
         <div class="ml-auto md:hidden text-gray-500 cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"/></svg>
