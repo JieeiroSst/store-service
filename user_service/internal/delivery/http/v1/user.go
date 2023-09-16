@@ -18,6 +18,8 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 	group.POST("/sign-up", h.SignUp)
 	group.PUT("/:id", h.UpdateProfile)
 	group.PUT("/lock/:id", h.LockAccount)
+	group.POST("/refresh", h.Refresh)
+	group.POST("/logout", h.Logout)
 
 	group.POST("/authentication", h.Authentication)
 }
@@ -208,4 +210,47 @@ func (r *Handler) Authentication(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"mesage": "user authorized success",
 	})
+}
+
+func (r *Handler) Refresh(c *gin.Context) {
+	cookie, err := c.Cookie("session_token")
+	if err != nil {
+		var login model.Login
+		if err := c.ShouldBind(&login); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		user := model.Users{
+			Username: login.Username,
+			Password: login.Password,
+		}
+		id, token, err := r.usecase.Login(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		if len(token) == 0 {
+			c.JSON(http.StatusUnauthorized, gin.H{"token": "couldn't find the token just created "})
+			return
+		}
+
+		expiresAt := time.Now().Add(120 * time.Second)
+
+		c.SetCookie("session_token", token, int(expiresAt.Unix()), "/", "localhost", false, true)
+
+		c.JSON(http.StatusOK, gin.H{
+			"id":      id,
+			"token":   token,
+			"message": "login success",
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"cookie":  cookie,
+		"message": "login success",
+	})
+}
+
+func (r *Handler) Logout(c *gin.Context) {
+	c.SetCookie("session_token", "", -1, "/", "localhost", false, true)
+	c.String(http.StatusOK, "Cookie has been deleted")
 }
