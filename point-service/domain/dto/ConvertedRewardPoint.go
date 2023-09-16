@@ -1,0 +1,37 @@
+package dto
+
+import "github.com/JIeeiroSst/point-service/domain/entity"
+
+type ConvertedRewardPointDTO struct {
+	RewConvertId          int `json:"rew_convert_id"`
+	RewConvertOrdDetailId int `json:"rew_convert_ord_detail_id"` //FK
+	RewConvertDiscountId  int `json:"rew_convert_discount_id"`   //FK
+	RewConvertPoints      int `json:"rew_convert_points"`
+	RewConvertDate        int `json:"rew_convert_date"`
+}
+
+func (g *ConvertedRewardPointDTO) TransformListEntityToDto(f []entity.ConvertedRewardPoint) []ConvertedRewardPointDTO {
+	var result []ConvertedRewardPointDTO
+	for _, fd := range f {
+		result = append(result, ConvertedRewardPointDTO{
+			RewConvertId:          fd.RewConvertId,
+			RewConvertOrdDetailId: fd.RewConvertOrdDetailId,
+			RewConvertDiscountId:  fd.RewConvertDiscountId,
+			RewConvertPoints:      fd.RewConvertPoints,
+			RewConvertDate:        fd.RewConvertDate,
+		})
+	}
+	return result
+}
+
+func (g *ConvertedRewardPointDTO) TransformEntityToDto(fd entity.ConvertedRewardPoint) ConvertedRewardPointDTO {
+	var result ConvertedRewardPointDTO
+	result = ConvertedRewardPointDTO{
+		RewConvertId:          fd.RewConvertId,
+		RewConvertOrdDetailId: fd.RewConvertOrdDetailId,
+		RewConvertDiscountId:  fd.RewConvertDiscountId,
+		RewConvertPoints:      fd.RewConvertPoints,
+		RewConvertDate:        fd.RewConvertDate,
+	}
+	return result
+}
