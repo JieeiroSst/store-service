@@ -1,6 +1,6 @@
 package entity
 
-type RewardPoints struct {
+type RewardPoint struct {
 	RewardPointsId  int `gorm:"TYPE:BIGINT;PRIMARY_KEY;NOT NULL;COLUMN:reward_points_id" json:"reward_points_id"`
 	TotalPoints     int `gorm:"NOT NULL;COLUMN:total_points" json:"total_points"`
 	PointsPending   int `gorm:"NOT NULL;COLUMN:points_pending" json:"points_pending"`
@@ -10,4 +10,8 @@ type RewardPoints struct {
 	PointsCancelled int `gorm:"NOT NULL;COLUMN:points_cancelled" json:"points_cancelled"`
 	ActivateDate    int `gorm:"NOT NULL;COLUMN:activate_date" json:"activate_date"`
 	ExpireDate      int `gorm:"NOT NULL;COLUMN:expire_date" json:"expire_date"`
+}
+
+func (RewardPoint) TableName() string {
+	return "reward_points"
 }
