@@ -52,6 +52,10 @@ func (r *Handler) Login(c *gin.Context) {
 		return
 	}
 
+	expiresAt := time.Now().Add(120 * time.Second)
+
+	c.SetCookie("session_token", token, int(expiresAt.Unix()), "/", "localhost", false, true)
+
 	c.JSON(http.StatusOK, gin.H{
 		"id":      id,
 		"token":   token,
