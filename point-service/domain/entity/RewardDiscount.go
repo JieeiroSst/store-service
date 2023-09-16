@@ -11,3 +11,7 @@ type RewardDiscount struct {
 	ActivateDate     int `gorm:"NOT NULL;COLUMN:activate_date" json:"activate_date"`
 	ExpireDate       int `gorm:"NOT NULL;COLUMN:expire_date" json:"expire_date"`
 }
+
+func (RewardDiscount) TableName() string {
+	return "reward_discounts"
+}
