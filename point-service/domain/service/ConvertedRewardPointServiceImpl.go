@@ -18,10 +18,38 @@ func InitConvertedRewardPointServiceImpl(convertedRewardPointRepository reposito
 	}
 }
 
-func (s *ConvertedRewardPointServiceImpl) Create(ctx context.Context, data dto.ConvertedRewardPointDTO) error 
+func (s *ConvertedRewardPointServiceImpl) Create(ctx context.Context, data dto.ConvertedRewardPointDTO) error {
+	entity := data.TransformDTOtoEntity()
 
-func (s *ConvertedRewardPointServiceImpl) Update(ctx context.Context, data dto.ConvertedRewardPointDTO) error
+	if err := s.convertedRewardPointRepository.Create(ctx, entity); err != nil {
+		return err
+	}
+	return nil
+}
 
-func (s *ConvertedRewardPointServiceImpl) GetAll(ctx context.Context, perPage int, sortOrder, cursor string) (*dto.ResponseDTO, error)
+func (s *ConvertedRewardPointServiceImpl) Update(ctx context.Context, data dto.ConvertedRewardPointDTO) error {
+	entity := data.TransformDTOtoEntity()
 
-func (s *ConvertedRewardPointServiceImpl) GetByID(ctx context.Context, id string) (*dto.ConvertedRewardPointDTO, error)
+	if err := s.convertedRewardPointRepository.Update(ctx, entity); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *ConvertedRewardPointServiceImpl) GetAll(ctx context.Context, perPage int, sortOrder, cursor string) (*dto.ResponseDTO, error) {
+	var responseDTO *dto.ResponseDTO
+	resp, err := s.convertedRewardPointRepository.GetAll(ctx, perPage, sortOrder, cursor)
+	if err != nil {
+		return nil, err
+	}
+	return responseDTO.TransformEntityToDto(*resp), nil
+}
+
+func (s *ConvertedRewardPointServiceImpl) GetByID(ctx context.Context, id string) (*dto.ConvertedRewardPointDTO, error) {
+	var convertedRewardPointDTO *dto.ConvertedRewardPointDTO
+	resp, err := s.convertedRewardPointRepository.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return convertedRewardPointDTO.TransformEntityToDto(*resp), nil
+}
