@@ -2,6 +2,8 @@ package persistence
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/JIeeiroSst/point-service/domain/entity"
 	"github.com/JIeeiroSst/point-service/helpers"
@@ -12,10 +14,81 @@ type RewardPointRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (r *RewardPointRepositoryImpl) Create(ctx context.Context, data entity.RewardPoint) error
-func (r *RewardPointRepositoryImpl) Update(ctx context.Context, data entity.RewardPoint) error
-func (r *RewardPointRepositoryImpl) GetAll(ctx context.Context, perPage int, sortOrder, cursor string) (*entity.ResponseEntity, error)
-func (r *RewardPointRepositoryImpl) GetByID(ctx context.Context, id string) (*entity.RewardPoint, error)
+func (r *RewardPointRepositoryImpl) Create(ctx context.Context, data entity.RewardPoint) error {
+	if err := r.db.Create(&data).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *RewardPointRepositoryImpl) Update(ctx context.Context, data entity.RewardPoint) error {
+	if err := r.db.Model(entity.ConvertedRewardPoint{}).Where("reward_points_id", data.RewardPointsId).Updates(data).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *RewardPointRepositoryImpl) GetAll(ctx context.Context, perPage, sortOrder, cursor string) (*entity.ResponseEntity, error) {
+	rewardPoints := []entity.RewardPoint{}
+	limit, err := strconv.ParseInt(perPage, 10, 64)
+	if limit < 1 || limit > 100 {
+		limit = 10
+	}
+	if err != nil {
+		return nil, err
+	}
+	isFirstPage := cursor == ""
+	pointsNext := false
+
+	query := r.db
+
+	if cursor != "" {
+		decodedCursor, err := helpers.DecodeCursor(cursor)
+		if err != nil {
+			return nil, err
+		}
+		pointsNext = decodedCursor["points_next"] == true
+
+		operator, order := r.getPaginationOperator(pointsNext, sortOrder)
+		whereStr := fmt.Sprintf("(created_at %s ? OR (created_at = ? AND id %s ?))", operator, operator)
+		query = query.Where(whereStr, decodedCursor["created_at"], decodedCursor["created_at"], decodedCursor["id"])
+		if order != "" {
+			sortOrder = order
+		}
+	}
+
+	query.Order("created_at " + sortOrder).Limit(int(limit) + 1).Find(&rewardPoints)
+	hasPagination := len(rewardPoints) > int(limit)
+
+	if hasPagination {
+		rewardPoints = rewardPoints[:limit]
+	}
+
+	if !isFirstPage && !pointsNext {
+		rewardPoints = r.reverse(rewardPoints)
+	}
+
+	pageInfo := r.calculatePagination(isFirstPage, hasPagination, int(limit), rewardPoints, pointsNext)
+
+	response := entity.ResponseEntity{
+		Success:    true,
+		Data:       rewardPoints,
+		Pagination: pageInfo,
+	}
+
+	return &response, nil
+}
+
+func (r *RewardPointRepositoryImpl) GetByID(ctx context.Context, id string) (*entity.RewardPoint, error) {
+	var resp entity.RewardPoint
+
+	tx := r.db.Model(entity.RewardPoint{RewardPointsId: id}).First(&resp)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return &resp, nil
+}
 
 func (r *RewardPointRepositoryImpl) getPaginationOperator(pointsNext bool, sortOrder string) (string, string) {
 	if pointsNext && sortOrder == "asc" {
@@ -63,7 +136,7 @@ func (r *RewardPointRepositoryImpl) calculatePagination(isFirstPage bool, hasPag
 	return pagination
 }
 
-func (r *RewardPointRepositoryImpl) Reverse(s []entity.RewardPoint) []entity.RewardPoint {
+func (r *RewardPointRepositoryImpl) reverse(s []entity.RewardPoint) []entity.RewardPoint {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
