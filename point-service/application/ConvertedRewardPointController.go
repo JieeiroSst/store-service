@@ -9,16 +9,16 @@ type ConvertedRewardPointContrller struct {
 	convertedRewardPointService service.ConvertedRewardPointService
 }
 
-func InitConvertedRewardPointRouter(router *gin.Engine) {
+func InitConvertedRewardPointRouter(router *gin.Engine, dsn string) {
 
 	convertedRewardPointContrller := ConvertedRewardPointContrller{
-		convertedRewardPointService: service.InitConvertedRewardPointServiceImpl(""),
+		convertedRewardPointService: service.InitConvertedRewardPointServiceImpl(dsn),
 	}
 
 	router.GET("/", convertedRewardPointContrller.GetConvertedRewardPointHandler)
-	router.GET("/", convertedRewardPointContrller.GetConvertedRewardPointByIdHandler)
-	router.GET("/", convertedRewardPointContrller.CreateConvertedRewardPointHandler)
-	router.GET("/", convertedRewardPointContrller.UpdateConvertedRewardPointHandler)
+	router.GET("/:id", convertedRewardPointContrller.GetConvertedRewardPointByIdHandler)
+	router.POST("/", convertedRewardPointContrller.CreateConvertedRewardPointHandler)
+	router.PUT("/", convertedRewardPointContrller.UpdateConvertedRewardPointHandler)
 }
 
 func (r *ConvertedRewardPointContrller) GetConvertedRewardPointHandler(c *gin.Context) {

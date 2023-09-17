@@ -9,14 +9,14 @@ type RewardDiscountController struct {
 	rewardDiscountService service.RewardDiscountService
 }
 
-func InitRewardDiscountRouter(router *gin.Engine) {
+func InitRewardDiscountRouter(router *gin.Engine, dsn string) {
 	rewardDiscountController := RewardDiscountController{
-		rewardDiscountService: service.InitRewardDiscountServiceImpl(""),
+		rewardDiscountService: service.InitRewardDiscountServiceImpl(dsn),
 	}
 	router.GET("/", rewardDiscountController.GetRewardDiscountHandler)
-	router.GET("/", rewardDiscountController.GetRewardDiscountByIdHandler)
-	router.GET("/", rewardDiscountController.CreateRewardDiscountHandler)
-	router.GET("/", rewardDiscountController.UpdateRewardDiscountHandler)
+	router.GET("/:id", rewardDiscountController.GetRewardDiscountByIdHandler)
+	router.POST("/", rewardDiscountController.CreateRewardDiscountHandler)
+	router.PUT("/", rewardDiscountController.UpdateRewardDiscountHandler)
 }
 
 func (r *RewardDiscountController) GetRewardDiscountHandler(c *gin.Context) {
