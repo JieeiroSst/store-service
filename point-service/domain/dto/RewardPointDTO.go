@@ -34,7 +34,7 @@ func (g *RewardPointDTO) TransformListEntityToDto(f []entity.RewardPoint) []Rewa
 	return result
 }
 
-func (g *RewardPointDTO) TransformEntityToDto(fd entity.RewardPoint) RewardPointDTO {
+func (g *RewardPointDTO) TransformEntityToDto(fd entity.RewardPoint) *RewardPointDTO {
 	var result RewardPointDTO
 	result = RewardPointDTO{
 		RewardPointsId:  fd.RewardPointsId,
@@ -48,7 +48,7 @@ func (g *RewardPointDTO) TransformEntityToDto(fd entity.RewardPoint) RewardPoint
 		ExpireDate:      fd.ExpireDate,
 	}
 
-	return result
+	return &result
 }
 
 func (g *RewardPointDTO) TransformDTOtoEntity() entity.RewardPoint {
