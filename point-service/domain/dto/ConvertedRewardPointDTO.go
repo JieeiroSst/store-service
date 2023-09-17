@@ -37,3 +37,15 @@ func (g *ConvertedRewardPointDTO) TransformEntityToDto(fd entity.ConvertedReward
 	}
 	return result
 }
+
+func (g *ConvertedRewardPointDTO) TransformDTOtoEntity(fd ConvertedRewardPointDTO) entity.ConvertedRewardPoint {
+	var result entity.ConvertedRewardPoint
+	result = entity.ConvertedRewardPoint{
+		RewConvertId:          fd.RewConvertId,
+		RewConvertOrdDetailId: fd.RewConvertOrdDetailId,
+		RewConvertDiscountId:  fd.RewConvertDiscountId,
+		RewConvertPoints:      fd.RewConvertPoints,
+		RewConvertDate:        fd.RewConvertDate,
+	}
+	return result
+}
