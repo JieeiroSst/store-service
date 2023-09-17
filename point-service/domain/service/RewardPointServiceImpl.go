@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"log"
 
 	"github.com/JIeeiroSst/point-service/domain/dto"
+	"github.com/JIeeiroSst/point-service/infrastructure/persistence"
 	"github.com/JIeeiroSst/point-service/infrastructure/repository"
 )
 
@@ -11,9 +13,13 @@ type RewardPointServiceImpl struct {
 	rewardPointRepository repository.RewardPointRepository
 }
 
-func InitRewardPointServiceImpl(rewardPointRepository repository.RewardPointRepository) *RewardPointServiceImpl {
+func InitRewardPointServiceImpl(dns string) *RewardPointServiceImpl {
+	dbHelper, err := persistence.InitDbHelper(dns)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 	return &RewardPointServiceImpl{
-		rewardPointRepository: rewardPointRepository,
+		rewardPointRepository: dbHelper.RewardPointRepository,
 	}
 }
 
