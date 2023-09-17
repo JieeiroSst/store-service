@@ -22,7 +22,11 @@ func InitServer() Server {
 	router.Use(middleware.CORSMiddleware())
 	swaggerDocs()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	
 	application.InitRewardDiscountRouter(router)
+	application.InitConvertedRewardPointRouter(router)
+	application.InitRewardPointRouter(router)
+
 	serverImpl.router = router
 	return serverImpl
 }
