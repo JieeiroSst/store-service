@@ -1,4 +1,4 @@
-package dto
+package entity
 
 import "github.com/JIeeiroSst/point-service/helpers"
 

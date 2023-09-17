@@ -10,5 +10,5 @@ type RewardDiscountRepository interface {
 	Create(ctx context.Context, data entity.RewardPoint) error
 	Update(ctx context.Context, data entity.RewardPoint) error
 	GetAll(ctx context.Context, perPage int, sortOrder, cursor string) ([]entity.RewardPoint, error)
-	GetByID(ctx context.Context, id int) (entity.RewardPoint, error)
+	GetByID(ctx context.Context, id string) (*entity.RewardPoint, error)
 }
