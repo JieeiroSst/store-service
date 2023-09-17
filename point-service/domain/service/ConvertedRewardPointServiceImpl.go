@@ -36,7 +36,7 @@ func (s *ConvertedRewardPointServiceImpl) Update(ctx context.Context, data dto.C
 	return nil
 }
 
-func (s *ConvertedRewardPointServiceImpl) GetAll(ctx context.Context, perPage int, sortOrder, cursor string) (*dto.ResponseDTO, error) {
+func (s *ConvertedRewardPointServiceImpl) GetAll(ctx context.Context, perPage, sortOrder, cursor string) (*dto.ResponseDTO, error) {
 	var responseDTO *dto.ResponseDTO
 	resp, err := s.convertedRewardPointRepository.GetAll(ctx, perPage, sortOrder, cursor)
 	if err != nil {
