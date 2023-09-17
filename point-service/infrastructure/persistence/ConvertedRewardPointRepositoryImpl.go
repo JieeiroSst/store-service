@@ -28,7 +28,7 @@ func (t *ConvertedRewardPointRepositoryImpl) Update(ctx context.Context, data en
 	return nil
 }
 
-func (t *ConvertedRewardPointRepositoryImpl) GetAll(ctx context.Context, perPage, sortOrder, cursor string) (*entity.ResponseDTO, error) {
+func (t *ConvertedRewardPointRepositoryImpl) GetAll(ctx context.Context, perPage, sortOrder, cursor string) (*entity.ResponseEntity, error) {
 	convertedRewardPoints := []entity.ConvertedRewardPoint{}
 	limit, err := strconv.ParseInt(perPage, 10, 64)
 	if limit < 1 || limit > 100 {
@@ -70,7 +70,7 @@ func (t *ConvertedRewardPointRepositoryImpl) GetAll(ctx context.Context, perPage
 
 	pageInfo := calculatePagination(isFirstPage, hasPagination, int(limit), convertedRewardPoints, pointsNext)
 
-	response := entity.ResponseDTO{
+	response := entity.ResponseEntity{
 		Success:    true,
 		Data:       convertedRewardPoints,
 		Pagination: pageInfo,
