@@ -14,6 +14,12 @@ type RewardPointRepositoryImpl struct {
 	db *gorm.DB
 }
 
+func NewRewardPointRepositoryImpl(db *gorm.DB) *RewardPointRepositoryImpl {
+	return &RewardPointRepositoryImpl{
+		db: db,
+	}
+}
+
 func (r *RewardPointRepositoryImpl) Create(ctx context.Context, data entity.RewardPoint) error {
 	if err := r.db.Create(&data).Error; err != nil {
 		return err
