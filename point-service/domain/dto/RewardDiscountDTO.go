@@ -50,3 +50,20 @@ func (g *RewardDiscountDTO) TransformEntityToDto(fd entity.RewardDiscount) Rewar
 
 	return result
 }
+
+func (g *RewardDiscountDTO) TransformDTOtoEntity(fd RewardDiscountDTO) entity.RewardDiscount {
+	var result entity.RewardDiscount
+	result = entity.RewardDiscount{
+		RewardDiscountID: fd.RewardDiscountID,
+		TotalPoints:      fd.TotalPoints,
+		PointsPending:    fd.PointsPending,
+		PointsActive:     fd.PointsActive,
+		PointsExpired:    fd.PointsExpired,
+		PointsConverted:  fd.PointsConverted,
+		PointsCancelled:  fd.PointsCancelled,
+		ActivateDate:     fd.ActivateDate,
+		ExpireDate:       fd.ExpireDate,
+	}
+
+	return result
+}

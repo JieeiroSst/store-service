@@ -3,7 +3,7 @@ package dto
 import "github.com/JIeeiroSst/point-service/domain/entity"
 
 type RewardPointDTO struct {
-	RewardPointsId  string    `json:"reward_points_id"`
+	RewardPointsId  string `json:"reward_points_id"`
 	TotalPoints     int    `json:"total_points"`
 	PointsPending   int    `json:"points_pending"`
 	PointsActive    int    `json:"points_active"`
@@ -37,6 +37,23 @@ func (g *RewardPointDTO) TransformListEntityToDto(f []entity.RewardPoint) []Rewa
 func (g *RewardPointDTO) TransformEntityToDto(fd entity.RewardPoint) RewardPointDTO {
 	var result RewardPointDTO
 	result = RewardPointDTO{
+		RewardPointsId:  fd.RewardPointsId,
+		TotalPoints:     fd.TotalPoints,
+		PointsPending:   fd.PointsPending,
+		PointsActive:    fd.PointsActive,
+		PointsExpired:   fd.PointsExpired,
+		PointsConverted: fd.PointsConverted,
+		PointsCancelled: fd.PointsCancelled,
+		ActivateDate:    fd.ActivateDate,
+		ExpireDate:      fd.ExpireDate,
+	}
+
+	return result
+}
+
+func (g *RewardPointDTO) TransformDTOtoEntity(fd RewardPointDTO) entity.RewardPoint {
+	var result entity.RewardPoint
+	result = entity.RewardPoint{
 		RewardPointsId:  fd.RewardPointsId,
 		TotalPoints:     fd.TotalPoints,
 		PointsPending:   fd.PointsPending,
