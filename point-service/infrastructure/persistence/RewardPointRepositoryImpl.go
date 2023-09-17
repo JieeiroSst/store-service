@@ -12,10 +12,10 @@ type RewardPointRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (r *RewardPointRepositoryImpl) Create(ctx context.Context, data entity.RewardDiscount) error
-func (r *RewardPointRepositoryImpl) Update(ctx context.Context, data entity.RewardDiscount) error
-func (r *RewardPointRepositoryImpl) GetAll(ctx context.Context, perPage int, sortOrder, cursor string) ([]entity.ResponseEntity, error)
-func (r *RewardPointRepositoryImpl) GetByID(ctx context.Context, id string) (*entity.RewardDiscount, error)
+func (r *RewardPointRepositoryImpl) Create(ctx context.Context, data entity.RewardPoint) error
+func (r *RewardPointRepositoryImpl) Update(ctx context.Context, data entity.RewardPoint) error
+func (r *RewardPointRepositoryImpl) GetAll(ctx context.Context, perPage int, sortOrder, cursor string) (*entity.ResponseEntity, error)
+func (r *RewardPointRepositoryImpl) GetByID(ctx context.Context, id string) (*entity.RewardPoint, error)
 
 func (r *RewardPointRepositoryImpl) getPaginationOperator(pointsNext bool, sortOrder string) (string, string) {
 	if pointsNext && sortOrder == "asc" {
