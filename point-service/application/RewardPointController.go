@@ -6,16 +6,18 @@ import (
 )
 
 type RewardPointController struct {
-	convertedRewardPointService service.ConvertedRewardPointService
-}
-
-func InitRewardPointController(convertedRewardPointService service.ConvertedRewardPointService) *RewardPointController {
-	return &RewardPointController{
-		convertedRewardPointService: convertedRewardPointService,
-	}
+	convertedRewardPointService service.RewardPointService
 }
 
 func InitRewardPointRouter(router *gin.Engine) {
+	rewardPointController := RewardPointController{
+		convertedRewardPointService: service.InitRewardPointServiceImpl(""),
+	}
+
+	router.GET("/", rewardPointController.GetRewardPointHandler)
+	router.GET("/", rewardPointController.GetRewardPointByIDHandler)
+	router.GET("/", rewardPointController.CreateRewardPointHandler)
+	router.GET("/", rewardPointController.UpdateRewardPointHandler)
 }
 
 func (r *RewardPointController) GetRewardPointHandler(c *gin.Context) {
