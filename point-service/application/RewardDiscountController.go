@@ -18,3 +18,19 @@ func InitRewardDiscountController(rewardDiscountService service.RewardDiscountSe
 func InitRewardDiscountRouter(router *gin.Engine) {
 
 }
+
+func (r *RewardPointController) GetRewardDiscountHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) GetRewardDiscountByIdHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) CreateRewardDiscountHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) UpdateRewardDiscountHandler(c *gin.Context) {
+
+}

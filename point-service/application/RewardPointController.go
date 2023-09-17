@@ -21,3 +21,15 @@ func InitRewardPointRouter(router *gin.Engine) {
 func (r *RewardPointController) GetRewardPointHandler(c *gin.Context) {
 
 }
+
+func (r *RewardPointController) GetRewardPointByIDHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) CreateRewardPointHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) UpdateRewardPointHandler(c *gin.Context) {
+
+}
