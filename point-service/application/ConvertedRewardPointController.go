@@ -18,3 +18,19 @@ func InitConvertedRewardPointContrller(convertedRewardPointService service.Conve
 func InitConvertedRewardPointRouter(router *gin.Engine) {
 
 }
+
+func (r *RewardPointController) GetConvertedRewardPointHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) GetConvertedRewardPointByIdHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) CreateConvertedRewardPointHandler(c *gin.Context) {
+
+}
+
+func (r *RewardPointController) UpdateConvertedRewardPointHandler(c *gin.Context) {
+
+}
