@@ -34,7 +34,7 @@ func (g *RewardDiscountDTO) TransformListEntityToDto(f []entity.RewardDiscount) 
 	return result
 }
 
-func (g *RewardDiscountDTO) TransformEntityToDto(fd entity.RewardDiscount) RewardDiscountDTO {
+func (g *RewardDiscountDTO) TransformEntityToDto(fd entity.RewardDiscount) *RewardDiscountDTO {
 	var result RewardDiscountDTO
 	result = RewardDiscountDTO{
 		RewardDiscountID: fd.RewardDiscountID,
@@ -48,7 +48,7 @@ func (g *RewardDiscountDTO) TransformEntityToDto(fd entity.RewardDiscount) Rewar
 		ExpireDate:       fd.ExpireDate,
 	}
 
-	return result
+	return &result
 }
 
 func (g *RewardDiscountDTO) TransformDTOtoEntity() entity.RewardDiscount {
