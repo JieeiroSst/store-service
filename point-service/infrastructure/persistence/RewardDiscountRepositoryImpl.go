@@ -14,6 +14,12 @@ type RewardDiscountRepositoryImpl struct {
 	db *gorm.DB
 }
 
+func NewRewardDiscountRepositoryImpl(db *gorm.DB) *RewardDiscountRepositoryImpl {
+	return &RewardDiscountRepositoryImpl{
+		db: db,
+	}
+}
+
 func (r *RewardDiscountRepositoryImpl) Create(ctx context.Context, data entity.RewardDiscount) error {
 	if err := r.db.Create(&data).Error; err != nil {
 		return err
