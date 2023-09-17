@@ -2,8 +2,8 @@ package dto
 
 import "github.com/JIeeiroSst/point-service/domain/entity"
 
-type RewardDiscountDRO struct {
-	RewardDiscountID string    `json:"reward_discount_id"`
+type RewardDiscountDTO struct {
+	RewardDiscountID string `json:"reward_discount_id"`
 	TotalPoints      int    `json:"total_points"`
 	PointsPending    int    `json:"points_pending"`
 	PointsActive     int    `json:"points_active"`
@@ -16,10 +16,10 @@ type RewardDiscountDRO struct {
 	UpdatedAt        string `json:"updated_at"`
 }
 
-func (g *RewardDiscountDRO) TransformListEntityToDto(f []entity.RewardDiscount) []RewardDiscountDRO {
-	var result []RewardDiscountDRO
+func (g *RewardDiscountDTO) TransformListEntityToDto(f []entity.RewardDiscount) []RewardDiscountDTO {
+	var result []RewardDiscountDTO
 	for _, fd := range f {
-		result = append(result, RewardDiscountDRO{
+		result = append(result, RewardDiscountDTO{
 			RewardDiscountID: fd.RewardDiscountID,
 			TotalPoints:      fd.TotalPoints,
 			PointsPending:    fd.PointsPending,
@@ -34,9 +34,9 @@ func (g *RewardDiscountDRO) TransformListEntityToDto(f []entity.RewardDiscount) 
 	return result
 }
 
-func (g *RewardDiscountDRO) TransformEntityToDto(fd entity.RewardDiscount) RewardDiscountDRO {
-	var result RewardDiscountDRO
-	result = RewardDiscountDRO{
+func (g *RewardDiscountDTO) TransformEntityToDto(fd entity.RewardDiscount) RewardDiscountDTO {
+	var result RewardDiscountDTO
+	result = RewardDiscountDTO{
 		RewardDiscountID: fd.RewardDiscountID,
 		TotalPoints:      fd.TotalPoints,
 		PointsPending:    fd.PointsPending,
