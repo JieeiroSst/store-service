@@ -49,7 +49,7 @@ func (t *ConvertedRewardPointRepositoryImpl) GetAll(ctx context.Context, perPage
 		}
 		pointsNext = decodedCursor["points_next"] == true
 
-		operator, order := getPaginationOperator(pointsNext, sortOrder)
+		operator, order := t.getPaginationOperator(pointsNext, sortOrder)
 		whereStr := fmt.Sprintf("(created_at %s ? OR (created_at = ? AND id %s ?))", operator, operator)
 		query = query.Where(whereStr, decodedCursor["created_at"], decodedCursor["created_at"], decodedCursor["id"])
 		if order != "" {
@@ -65,10 +65,10 @@ func (t *ConvertedRewardPointRepositoryImpl) GetAll(ctx context.Context, perPage
 	}
 
 	if !isFirstPage && !pointsNext {
-		convertedRewardPoints = Reverse(convertedRewardPoints)
+		convertedRewardPoints = t.reverse(convertedRewardPoints)
 	}
 
-	pageInfo := calculatePagination(isFirstPage, hasPagination, int(limit), convertedRewardPoints, pointsNext)
+	pageInfo := t.calculatePagination(isFirstPage, hasPagination, int(limit), convertedRewardPoints, pointsNext)
 
 	response := entity.ResponseEntity{
 		Success:    true,
@@ -90,7 +90,7 @@ func (t *ConvertedRewardPointRepositoryImpl) GetByID(ctx context.Context, id str
 	return &resp, nil
 }
 
-func getPaginationOperator(pointsNext bool, sortOrder string) (string, string) {
+func (t *ConvertedRewardPointRepositoryImpl) getPaginationOperator(pointsNext bool, sortOrder string) (string, string) {
 	if pointsNext && sortOrder == "asc" {
 		return ">", ""
 	}
@@ -107,7 +107,7 @@ func getPaginationOperator(pointsNext bool, sortOrder string) (string, string) {
 	return "", ""
 }
 
-func calculatePagination(isFirstPage bool, hasPagination bool, limit int, convertedRewardPoints []entity.ConvertedRewardPoint, pointsNext bool) helpers.PaginationInfo {
+func (t *ConvertedRewardPointRepositoryImpl) calculatePagination(isFirstPage bool, hasPagination bool, limit int, convertedRewardPoints []entity.ConvertedRewardPoint, pointsNext bool) helpers.PaginationInfo {
 	pagination := helpers.PaginationInfo{}
 	nextCur := helpers.Cursor{}
 	prevCur := helpers.Cursor{}
@@ -136,7 +136,7 @@ func calculatePagination(isFirstPage bool, hasPagination bool, limit int, conver
 	return pagination
 }
 
-func Reverse(s []entity.ConvertedRewardPoint) []entity.ConvertedRewardPoint {
+func (t *ConvertedRewardPointRepositoryImpl) reverse(s []entity.ConvertedRewardPoint) []entity.ConvertedRewardPoint {
 	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		s[i], s[j] = s[j], s[i]
 	}
