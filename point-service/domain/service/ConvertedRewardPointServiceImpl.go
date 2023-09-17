@@ -18,7 +18,7 @@ func InitConvertedRewardPointServiceImpl(convertedRewardPointRepository reposito
 	}
 }
 
-func (s *ConvertedRewardPointServiceImpl) Create(ctx context.Context, data dto.ConvertedRewardPointDTO) error
+func (s *ConvertedRewardPointServiceImpl) Create(ctx context.Context, data dto.ConvertedRewardPointDTO) error 
 
 func (s *ConvertedRewardPointServiceImpl) Update(ctx context.Context, data dto.ConvertedRewardPointDTO) error
 
