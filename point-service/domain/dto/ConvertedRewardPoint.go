@@ -3,9 +3,9 @@ package dto
 import "github.com/JIeeiroSst/point-service/domain/entity"
 
 type ConvertedRewardPointDTO struct {
-	RewConvertId          int    `json:"rew_convert_id"`
-	RewConvertOrdDetailId int    `json:"rew_convert_ord_detail_id"` //FK
-	RewConvertDiscountId  int    `json:"rew_convert_discount_id"`   //FK
+	RewConvertId          string `json:"rew_convert_id"`
+	RewConvertOrdDetailId string `json:"rew_convert_ord_detail_id"` //FK
+	RewConvertDiscountId  string `json:"rew_convert_discount_id"`   //FK
 	RewConvertPoints      int    `json:"rew_convert_points"`
 	RewConvertDate        int    `json:"rew_convert_date"`
 	CreatedAt             string `json:"created_at"`

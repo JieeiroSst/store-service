@@ -3,7 +3,7 @@ package dto
 import "github.com/JIeeiroSst/point-service/domain/entity"
 
 type RewardPointDTO struct {
-	RewardPointsId  int    `json:"reward_points_id"`
+	RewardPointsId  string    `json:"reward_points_id"`
 	TotalPoints     int    `json:"total_points"`
 	PointsPending   int    `json:"points_pending"`
 	PointsActive    int    `json:"points_active"`
