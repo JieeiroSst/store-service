@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"github.com/JIeeiroSst/point-service/domain/entity"
 	"github.com/JIeeiroSst/point-service/infrastructure/repository"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ func InitDbHelper(dsn string) (*DbHelper, error) {
 	if err != nil {
 		return nil, err
 	}
-	db.AutoMigrate()
+	db.AutoMigrate(&entity.ConvertedRewardPoint{}, &entity.RewardDiscount{}, &entity.RewardPoint{})
 	return &DbHelper{
 		ConvertedRewardPointRepository: &ConvertedRewardPointRepositoryImpl{db},
 		RewardDiscountRepository:       &RewardDiscountRepositoryImpl{db},
