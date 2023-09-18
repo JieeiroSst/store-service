@@ -30,6 +30,7 @@ func (r *ConvertedRewardPointContrller) GetConvertedRewardPointHandler(c *gin.Co
 	response, err := r.convertedRewardPointService.GetAll(c, perPage, sortOrder, cursor)
 	if err != nil {
 		c.JSON(500, err.Error())
+		return
 	}
 	c.JSON(200, response)
 }
@@ -39,6 +40,7 @@ func (r *ConvertedRewardPointContrller) GetConvertedRewardPointByIdHandler(c *gi
 	response, err := r.convertedRewardPointService.GetByID(c, id)
 	if err != nil {
 		c.JSON(500, err.Error())
+		return
 	}
 	c.JSON(200, response)
 }
@@ -47,10 +49,12 @@ func (r *ConvertedRewardPointContrller) CreateConvertedRewardPointHandler(c *gin
 	var data dto.ConvertedRewardPointDTO
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(400, err.Error())
+		return
 	}
 
 	if err := r.convertedRewardPointService.Create(c, data); err != nil {
 		c.JSON(500, err.Error())
+		return
 	}
 	c.JSON(200, "create success")
 }
@@ -59,10 +63,12 @@ func (r *ConvertedRewardPointContrller) UpdateConvertedRewardPointHandler(c *gin
 	var data dto.ConvertedRewardPointDTO
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(400, err.Error())
+		return
 	}
 
 	if err := r.convertedRewardPointService.Update(c, data); err != nil {
 		c.JSON(500, err.Error())
+		return
 	}
 	c.JSON(200, "update success")
 }
