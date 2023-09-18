@@ -21,15 +21,20 @@ func InitRewardPointRouter(router *gin.Engine, dsn string) {
 }
 
 func (r *RewardPointController) GetRewardPointHandler(c *gin.Context) {
-	// perPage := c.Query("per_page")
-	// sortOrder := c.Query("sort_order")
-	// cursor := c.Query("cursor")
+	perPage := c.Query("per_page")
+	sortOrder := c.Query("sort_order")
+	cursor := c.Query("cursor")
 
-	// response, err := r.
+	resp, err := r.RewardPointController.GetAll(c, perPage, sortOrder, sortOrder)
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+	c.JSON(200, resp)
 }
 
 func (r *RewardPointController) GetRewardPointByIDHandler(c *gin.Context) {
-	
+
 }
 
 func (r *RewardPointController) CreateRewardPointHandler(c *gin.Context) {
