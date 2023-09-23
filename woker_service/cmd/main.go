@@ -2,85 +2,28 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
+	"time"
 
-	"github.com/gocraft/work"
-	"github.com/gomodule/redigo/redis"
+	"gopkg.in/robfig/cron.v2"
 )
 
-// Make a redis pool
-var redisPool = &redis.Pool{
-	MaxActive: 5,
-	MaxIdle:   5,
-	Wait:      true,
-	Dial: func() (redis.Conn, error) {
-		return redis.Dial("tcp", ":6379")
-	},
-}
-
-type Context struct {
-	customerID int64
-}
-
 func main() {
-	pool := work.NewWorkerPool(Context{}, 10, "worker-service", redisPool)
 
-	// Add middleware that will be executed for each job
-	pool.Middleware((*Context).Log)
-	pool.Middleware((*Context).FindCustomer)
+	c := cron.New()
+	c.AddFunc("0 30 * * * *", func() { fmt.Println("Every hour on the half hour") })
+	c.AddFunc("TZ=Asia/Bangkok 30 04 * * * *", func() { fmt.Println("Runs at 04:30 Bangkok time every day") })
+	c.AddFunc("@hourly", func() { fmt.Println("Every hour") })
+	c.AddFunc("@every 0h0m1s", func() { fmt.Println("Every second") })
+	c.Start()
 
-	// Map the name of jobs to handler functions
-	pool.Job("send_email", (*Context).SendEmail)
+	// Funcs are invoked in their own goroutine, asynchronously.
 
-	// Customize options:
-	pool.JobWithOptions("export", work.JobOptions{Priority: 10, MaxFails: 1}, (*Context).Export)
+	// Funcs may also be added to a running Cron
+	c.AddFunc("@daily", func() { fmt.Println("Every day") })
 
-	// Start processing jobs
-	pool.Start()
+	// Added time to see output
+	time.Sleep(10 * time.Second)
 
-	// Wait for a signal to quit:
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt, os.Kill)
-	<-signalChan
+	c.Stop() // Stop the scheduler (does not stop any jobs already running).
 
-	// Stop the pool
-	pool.Stop()
-}
-
-func (c *Context) Log(job *work.Job, next work.NextMiddlewareFunc) error {
-	fmt.Println("Starting job: ", job.Name)
-	return next()
-}
-
-func (c *Context) FindCustomer(job *work.Job, next work.NextMiddlewareFunc) error {
-	// If there's a customer_id param, set it in the context for future middleware and handlers to use.
-	if _, ok := job.Args["customer_id"]; ok {
-		c.customerID = job.ArgInt64("customer_id")
-		if err := job.ArgError(); err != nil {
-			return err
-		}
-	}
-
-	return next()
-}
-
-func (c *Context) SendEmail(job *work.Job) error {
-	// Extract arguments:
-	addr := job.ArgString("address")
-	subject := job.ArgString("subject")
-	if err := job.ArgError(); err != nil {
-		return err
-	}
-
-	fmt.Println(addr, subject)
-
-	// Go ahead and send the email...
-	// sendEmailTo(addr, subject)
-
-	return nil
-}
-
-func (c *Context) Export(job *work.Job) error {
-	return nil
 }
