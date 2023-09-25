@@ -1,0 +1,12 @@
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/libasync_trait-77574efbdd371eed.dylib: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/args.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/bound.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/expand.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/lifetime.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/parse.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/receiver.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/verbatim.rs
+
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/async_trait-77574efbdd371eed.d: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/args.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/bound.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/expand.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/lifetime.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/parse.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/receiver.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/verbatim.rs
+
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/lib.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/args.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/bound.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/expand.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/lifetime.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/parse.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/receiver.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/async-trait-0.1.73/src/verbatim.rs:

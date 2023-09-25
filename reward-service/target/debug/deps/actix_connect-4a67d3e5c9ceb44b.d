@@ -1,0 +1,12 @@
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/actix_connect-4a67d3e5c9ceb44b.rmeta: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/connect.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/connector.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/error.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/resolve.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/service.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/ssl/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/uri.rs
+
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/actix_connect-4a67d3e5c9ceb44b.d: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/connect.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/connector.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/error.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/resolve.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/service.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/ssl/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/uri.rs
+
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/lib.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/connect.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/connector.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/error.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/resolve.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/service.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/ssl/mod.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/actix-connect-2.0.0/src/uri.rs:

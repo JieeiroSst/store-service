@@ -1,0 +1,12 @@
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/tempfile-d27bbdc21027188a.rmeta: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/dir.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/error.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/imp/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/spooled.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/util.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/imp/unix.rs
+
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/tempfile-d27bbdc21027188a.d: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/dir.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/error.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/imp/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/spooled.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/util.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/imp/unix.rs
+
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/lib.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/dir.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/error.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/mod.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/imp/mod.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/spooled.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/util.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/tempfile-3.8.0/src/file/imp/unix.rs:

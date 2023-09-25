@@ -1,0 +1,10 @@
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/finl_unicode-62ddb384d02ea982.rmeta: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/categories.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/grapheme_clusters.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/characters.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/grapheme_property.rs
+
+/Users/chmp/Desktop/store-service/reward-service/target/debug/deps/finl_unicode-62ddb384d02ea982.d: /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/lib.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/categories.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/grapheme_clusters.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/mod.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/characters.rs /Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/grapheme_property.rs
+
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/lib.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/categories.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/grapheme_clusters.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/mod.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/characters.rs:
+/Users/chmp/.cargo/registry/src/github.com-1ecc6299db9ec823/finl_unicode-1.2.0/src/data/grapheme_property.rs:
