@@ -7,7 +7,14 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="62548c7d-5e8c-483a-952c-8a185e3793b0" name="Changes" comment="" />
+    <list default="true" id="62548c7d-5e8c-483a-952c-8a185e3793b0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/.rustc_info.json" beforeDir="false" afterPath="$PROJECT_DIR$/target/.rustc_info.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-0253313590cae42b/output-bin-reward-service" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/dep-test-bin-reward-service" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/dep-test-bin-reward-service" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/output-test-bin-reward-service" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/test-bin-reward-service" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/test-bin-reward-service" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,22 +29,27 @@
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2VtWaWrIpuEWkDtTaa6fmKdAX5t" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/Users/chmp/Desktop/store-service/reward-service",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "settings.editor.selected.configurable": "language.rust.cargo.check"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/chmp/Desktop/store-service/reward-service&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;
   }
-}]]></component>
+}</component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="version" value="2" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -47,8 +59,14 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1695655920811</updated>
+      <workItem from="1695820178629" duration="1319000" />
+      <workItem from="1696093481109" duration="4429000" />
+      <workItem from="1696509733283" duration="599000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
