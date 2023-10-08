@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/golang/protobuf v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
 )
 
