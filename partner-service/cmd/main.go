@@ -1,24 +1,24 @@
 package main
 
 import (
-	"log"
-
 	"github.com/JIeeiroSst/partner-service/internal/config"
 	"github.com/JIeeiroSst/partner-service/internal/consul"
+	"github.com/JIeeiroSst/partner-service/internal/logger"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	logger.SetupLogger()
 	dirEnv, err := config.ReadFileEnv(".env")
 	if err != nil {
-		log.Fatalf("Error starting server: %v", err)
+		logger.Log.Error(err)
 	}
 
 	consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
 	conf, err := consul.ConnectConfigConsul()
 	if err != nil {
-		log.Fatalf("Error starting server: %v", err)
+		logger.Log.Error(err)
 	}
 
 	InitRoutes(conf)
@@ -31,6 +31,6 @@ func InitRoutes(conf *config.Config) {
 
 	err := router.Run(conf.Server.ServerPort)
 	if err != nil {
-		log.Fatalf("Error starting server: %v", err)
+		logger.Log.Error(err)
 	}
 }
