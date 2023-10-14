@@ -11,6 +11,11 @@ type PartnershipRepository interface {
 }
 
 type PartnershipService interface {
+	CreatePartnership(userID string, Partnership domain.Partnership) error
+	ReadPartnership(id string) (*domain.Partnership, error)
+	ReadPartnerships() ([]*domain.Partnership, error)
+	UpdatePartnership(id string, Partnership domain.Partnership) error
+	DeletePartnership(id string) error
 }
 
 type PartnershipsPartnerRepository interface {
@@ -22,6 +27,11 @@ type PartnershipsPartnerRepository interface {
 }
 
 type PartnershipsPartnerService interface {
+	CreatePartnershipsPartner(userID string, PartnershipsPartner domain.PartnershipsPartner) error
+	ReadPartnershipsPartner(id string) (*domain.PartnershipsPartner, error)
+	ReadPartnershipsPartners() ([]*domain.PartnershipsPartner, error)
+	UpdatePartnershipsPartner(id string, PartnershipsPartner domain.PartnershipsPartner) error
+	DeletePartnershipsPartner(id string) error
 }
 
 type PartnerRepository interface {
@@ -33,6 +43,11 @@ type PartnerRepository interface {
 }
 
 type PartnerService interface {
+	CreatePartner(userID string, Partner domain.Partner) error
+	ReadPartner(id string) (*domain.Partner, error)
+	ReadPartners() ([]*domain.Partner, error)
+	UpdatePartner(id string, Partner domain.Partner) error
+	DeletePartner(id string) error
 }
 
 type ProjectRepository interface {
@@ -44,4 +59,9 @@ type ProjectRepository interface {
 }
 
 type ProjectService interface {
+	CreateProject(userID string, Project domain.Project) error
+	ReadProject(id string) (*domain.Project, error)
+	ReadProjects() ([]*domain.Project, error)
+	UpdateProject(id string, Project domain.Project) error
+	DeleteProject(id string) error
 }
