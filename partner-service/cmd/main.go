@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/JIeeiroSst/partner-service/internal/adapters/cache"
+	"github.com/JIeeiroSst/partner-service/internal/adapters/handler"
 	"github.com/JIeeiroSst/partner-service/internal/adapters/repository"
 	"github.com/JIeeiroSst/partner-service/internal/config"
 	"github.com/JIeeiroSst/partner-service/internal/consul"
@@ -61,7 +62,49 @@ func main() {
 func InitRoutes(conf *config.Config) {
 	router := gin.Default()
 
+	v1 := router.Group("/v1")
+
 	pprof.Register(router)
+
+	partnerHandler := handler.NewPartnerHandler(*partnerService)
+	partnerGroup := v1.Group("/partner")
+	{
+		partnerGroup.GET("/", partnerHandler.ReadPartners)
+		partnerGroup.GET("/:id", partnerHandler.ReadPartner)
+		partnerGroup.POST("/", partnerHandler.CreatePartner)
+		partnerGroup.PUT("/", partnerHandler.UpdatePartner)
+		partnerGroup.DELETE("/", partnerHandler.DeletePartner)
+	}
+
+	partnershipHandler := handler.NewPartnershipHandler(*partnershipService)
+	partnershipGroup := v1.Group("/partnership")
+	{
+		partnershipGroup.POST("/", partnershipHandler.CreatePartnership)
+		partnershipGroup.GET("/:id", partnershipHandler.ReadPartnership)
+		partnershipGroup.GET("/", partnershipHandler.ReadPartnerships)
+		partnershipGroup.PUT("/", partnershipHandler.UpdatePartnership)
+		partnershipGroup.DELETE("/", partnershipHandler.DeletePartnership)
+	}
+
+	partnershipsPartnerHandler := handler.NewPartnershipsPartnerHandler(*partnershipsPartnerService)
+	partnershipsPartnerGroup := v1.Group("/partnerships-partner")
+	{
+		partnershipsPartnerGroup.POST("/", partnershipsPartnerHandler.CreatePartnershipsPartner)
+		partnershipsPartnerGroup.GET("/:id", partnershipsPartnerHandler.ReadPartnershipsPartner)
+		partnershipsPartnerGroup.GET("/", partnershipsPartnerHandler.ReadPartnershipsPartners)
+		partnershipsPartnerGroup.PUT("/", partnershipsPartnerHandler.UpdatePartnershipsPartner)
+		partnershipsPartnerGroup.DELETE("/", partnershipsPartnerHandler.DeletePartnershipsPartner)
+	}
+
+	projectHandler := handler.NewProjectHandler(*projectService)
+	projectGroup := v1.Group("/project")
+	{
+		projectGroup.POST("/", projectHandler.CreateProject)
+		projectGroup.GET("/:id", projectHandler.ReadProject)
+		projectGroup.GET("/", projectHandler.ReadProjects)
+		projectGroup.PUT("/", projectHandler.UpdateProject)
+		projectGroup.DELETE("/", projectHandler.DeleteProject)
+	}
 
 	err := router.Run(conf.Server.ServerPort)
 	if err != nil {
