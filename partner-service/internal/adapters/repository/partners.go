@@ -2,7 +2,10 @@ package repository
 
 import "github.com/JIeeiroSst/partner-service/internal/core/domain"
 
-func (m *DB) CreatePartner(userID string, Partner domain.Partner) error
+func (m *DB) CreatePartner(userID string, Partner domain.Partner) error {
+
+	return nil
+}
 
 func (m *DB) ReadPartner(id string) (*domain.Partner, error)
 
@@ -15,6 +18,10 @@ func (m *DB) ReadPartners(pagination domain.Pagination) (*domain.Pagination, err
 	return &pagination, nil
 }
 
-func (m *DB) UpdatePartner(id string, Partner domain.Partner) error
+func (m *DB) UpdatePartner(id string, Partner domain.Partner) error {
+	return nil
+}
 
-func (m *DB) DeletePartner(id string) error
+func (m *DB) DeletePartner(id string) error {
+	return nil
+}
