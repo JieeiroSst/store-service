@@ -32,7 +32,7 @@ func (m *DB) ReadPartner(id string) (*domain.Partner, error) {
 func (m *DB) ReadPartners(pagination domain.Pagination) (*domain.Pagination, error) {
 	var partners []*domain.Partner
 
-	m.db.Scopes(paginate(partners, &pagination, m.db)).Find(&partners)
+	m.db.Scopes(paginate(partners, "", &pagination, m.db)).Find(&partners)
 	pagination.Rows = partners
 
 	return &pagination, nil

@@ -13,7 +13,7 @@ func (m *DB) ReadProject(id string) (*domain.Project, error) {
 func (m *DB) ReadProjects(pagination domain.Pagination) (*domain.Pagination, error) {
 	var project []*domain.Project
 
-	m.db.Scopes(paginate(project, &pagination, m.db)).Find(&project)
+	m.db.Scopes(paginate(project, "", &pagination, m.db)).Find(&project)
 	pagination.Rows = project
 
 	return &pagination, nil
