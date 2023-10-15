@@ -3,6 +3,7 @@ module github.com/JIeeiroSst/partner-service
 go 1.17
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang/protobuf v1.5.2
