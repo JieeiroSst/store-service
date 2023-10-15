@@ -19,7 +19,7 @@ func (u *PartnershipsPartnerService) CreatePartnershipsPartner(userID string, Pa
 
 func (u *PartnershipsPartnerService) ReadPartnershipsPartner(id string) (*domain.PartnershipsPartner, error)
 
-func (u *PartnershipsPartnerService) ReadPartnershipsPartners() ([]*domain.PartnershipsPartner, error)
+func (u *PartnershipsPartnerService) ReadPartnershipsPartners(pagination domain.Pagination) (*domain.Pagination, error)
 
 func (u *PartnershipsPartnerService) UpdatePartnershipsPartner(id string, PartnershipsPartner domain.PartnershipsPartner) error
 

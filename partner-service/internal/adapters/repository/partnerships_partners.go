@@ -6,7 +6,7 @@ func (m *DB) CreatePartnershipsPartner(userID string, PartnershipsPartner domain
 
 func (m *DB) ReadPartnershipsPartner(id string) (*domain.PartnershipsPartner, error)
 
-func (m *DB) ReadPartnershipsPartners() ([]*domain.PartnershipsPartner, error)
+func (m *DB) ReadPartnershipsPartners(pagination domain.Pagination) (*domain.Pagination, error)
 
 func (m *DB) UpdatePartnershipsPartner(id string, PartnershipsPartner domain.PartnershipsPartner) error
 
