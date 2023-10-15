@@ -5,22 +5,32 @@ import (
 	"github.com/JIeeiroSst/partner-service/internal/core/ports"
 )
 
-type PartnershipService struct {
+type PartnerService struct {
 	repo ports.PartnerRepository
 }
 
-func NewPartnershipService(repo ports.PartnerRepository) *PartnershipService {
-	return &PartnershipService{
+func NewPartnerService(repo ports.PartnerRepository) *PartnerService {
+	return &PartnerService{
 		repo: repo,
 	}
 }
 
-func (u *PartnershipService) CreatePartnership(userID string, Partnership domain.Partnership) error
+func (u *PartnerService) CreatePartner(userID string, Partner domain.Partner) error {
+	return u.repo.CreatePartner(userID, Partner)
+}
 
-func (u *PartnershipService) ReadPartnership(id string) (*domain.Partnership, error)
+func (u *PartnerService) ReadPartner(id string) (*domain.Partner, error) {
+	return u.repo.ReadPartner(id)
+}
 
-func (u *PartnershipService) ReadPartnerships(pagination domain.Pagination) (*domain.Pagination, error)
+func (u *PartnerService) ReadPartners(pagination domain.Pagination) (*domain.Pagination, error) {
+	return u.repo.ReadPartners(pagination)
+}
 
-func (u *PartnershipService) UpdatePartnership(id string, Partnership domain.Partnership) error
+func (u *PartnerService) UpdatePartner(id string, Partner domain.Partner) error {
+	return u.repo.UpdatePartner(id, Partner)
+}
 
-func (u *PartnershipService) DeletePartnership(id string) error
+func (u *PartnerService) DeletePartner(id string) error {
+	return u.repo.DeletePartner(id)
+}
