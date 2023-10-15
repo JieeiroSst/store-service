@@ -7,7 +7,9 @@ func (m *DB) CreatePartner(userID string, Partner domain.Partner) error {
 	return nil
 }
 
-func (m *DB) ReadPartner(id string) (*domain.Partner, error)
+func (m *DB) ReadPartner(id string) (*domain.Partner, error) {
+	return nil, nil
+}
 
 func (m *DB) ReadPartners(pagination domain.Pagination) (*domain.Pagination, error) {
 	var partners []*domain.Partner

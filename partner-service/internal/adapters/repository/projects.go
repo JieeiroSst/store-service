@@ -6,7 +6,9 @@ func (m *DB) CreateProject(userID string, Project domain.Project) error {
 	return nil
 }
 
-func (m *DB) ReadProject(id string) (*domain.Project, error)
+func (m *DB) ReadProject(id string) (*domain.Project, error) {
+	return nil, nil
+}
 
 func (m *DB) ReadProjects(pagination domain.Pagination) (*domain.Pagination, error) {
 	var project []*domain.Project
