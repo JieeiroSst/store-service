@@ -37,7 +37,7 @@ type PartnershipsPartnerService interface {
 type PartnerRepository interface {
 	CreatePartner(userID string, Partner domain.Partner) error
 	ReadPartner(id string) (*domain.Partner, error)
-	ReadPartners(pagination domain.Pagination) ([]*domain.Partner, error)
+	ReadPartners(pagination domain.Pagination) (*domain.Pagination, error)
 	UpdatePartner(id string, Partner domain.Partner) error
 	DeletePartner(id string) error
 }
