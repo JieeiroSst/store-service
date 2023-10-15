@@ -7,6 +7,7 @@ type Partnership struct {
 	StartedOn   int       `json:"started_on" db:"started_on"`
 	ExpiresOn   int       `json:"expires_on" db:"expires_on"`
 	Projects    []Project `json:"projects"`
+	UserID      string    `json:"user_id" db:"user_id"`
 }
 
 type PartnershipsPartner struct {
@@ -18,14 +19,17 @@ type PartnershipsPartner struct {
 	LeftOn         int           `json:"left_on" db:"left_on"`
 	Partners       []Partner     `json:"partners"`
 	Partnerships   []Partnership `json:"partnerships"`
+	UserID         string        `json:"user_id" db:"user_id"`
 }
 
 type Partner struct {
-	ID   string `json:"id" db:"id"`
-	Type string `json:"type" db:"type"`
+	ID     string `json:"id" db:"id"`
+	Type   string `json:"type" db:"type"`
+	UserID string `json:"user_id" db:"user_id"`
 }
 
 type Project struct {
 	ID   string `json:"id" db:"id"`
 	Name string `json:"name" db:"name"`
+	UserID string `json:"user_id" db:"user_id"`
 }
