@@ -10,6 +10,7 @@ type PartnershipsPartner struct {
 	Partners      []Partner     `json:"partners" gorm:"foreignKey:ID;references:PartnerId"`
 	Partnerships  []Partnership `json:"partnerships" gorm:"foreignKey:ID;references:PartnershipId"`
 	UserID        string        `json:"user_id" db:"user_id"`
+	CreatedAt     int           `json:"created_at" db:"created_at"`
 }
 type Partnership struct {
 	ID          string    `json:"id" db:"id"`
@@ -19,16 +20,19 @@ type Partnership struct {
 	ExpiresOn   int       `json:"expires_on" db:"expires_on"`
 	Projects    []Project `json:"projects" gorm:"foreignKey:ID;references:ProjectId"`
 	UserID      string    `json:"user_id" db:"user_id"`
+	CreatedAt   int       `json:"created_at" db:"created_at"`
 }
 
 type Partner struct {
-	ID     string `json:"id" db:"id"`
-	Type   string `json:"type" db:"type"`
-	UserID string `json:"user_id" db:"user_id"`
+	ID        string `json:"id" db:"id"`
+	Type      string `json:"type" db:"type"`
+	UserID    string `json:"user_id" db:"user_id"`
+	CreatedAt int    `json:"created_at" db:"created_at"`
 }
 
 type Project struct {
-	ID     string `json:"id" db:"id"`
-	Name   string `json:"name" db:"name"`
-	UserID string `json:"user_id" db:"user_id"`
+	ID        string `json:"id" db:"id"`
+	Name      string `json:"name" db:"name"`
+	UserID    string `json:"user_id" db:"user_id"`
+	CreatedAt int    `json:"created_at" db:"created_at"`
 }

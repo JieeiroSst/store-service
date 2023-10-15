@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/JIeeiroSst/partner-service/internal/core/domain"
 )
@@ -10,6 +11,7 @@ import (
 func (m *DB) CreatePartnershipsPartner(userID string, partnershipsPartner domain.PartnershipsPartner) error {
 	partnershipsPartner.ID = snowflakeID()
 	partnershipsPartner.UserID = userID
+	partnershipsPartner.CreatedAt = int(time.Now().Unix())
 	req := m.db.Create(&partnershipsPartner)
 	if req.RowsAffected == 0 {
 		return fmt.Errorf("partnershipsPartner not saved: %v", req.Error)
@@ -36,6 +38,7 @@ func (m *DB) ReadPartnershipsPartners(pagination domain.Pagination) (*domain.Pag
 }
 
 func (m *DB) UpdatePartnershipsPartner(id string, partnershipsPartner domain.PartnershipsPartner) error {
+	partnershipsPartner.CreatedAt = int(time.Now().Unix())
 	req := m.db.Model(&partnershipsPartner).Where("id = ?", id).Updates(partnershipsPartner)
 	if req.RowsAffected == 0 {
 		return errors.New("partnershipsPartner not found")
