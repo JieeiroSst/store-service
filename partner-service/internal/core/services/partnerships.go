@@ -19,7 +19,7 @@ func (u *PartnerService) CreatePartner(userID string, Partner domain.Partner) er
 
 func (u *PartnerService) ReadPartner(id string) (*domain.Partner, error)
 
-func (u *PartnerService) ReadPartners() ([]*domain.Partner, error)
+func (u *PartnerService) ReadPartners(pagination domain.Pagination) (*domain.Pagination, error)
 
 func (u *PartnerService) UpdatePartner(id string, Partner domain.Partner) error
 

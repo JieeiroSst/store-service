@@ -19,7 +19,7 @@ func (u *ProjectService) CreateProject(userID string, Project domain.Project) er
 
 func (u *ProjectService) ReadProject(id string) (*domain.Project, error)
 
-func (u *ProjectService) ReadProjects() ([]*domain.Project, error)
+func (u *ProjectService) ReadProjects(pagination domain.Pagination) (*domain.Pagination, error)
 
 func (u *ProjectService) UpdateProject(id string, Project domain.Project) error
 
