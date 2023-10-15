@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/JIeeiroSst/partner-service/internal/core/domain"
 )
@@ -10,6 +11,7 @@ import (
 func (m *DB) CreateProject(userID string, project domain.Project) error {
 	project.ID = snowflakeID()
 	project.UserID = userID
+	project.CreatedAt = int(time.Now().Unix())
 
 	req := m.db.Create(&project)
 	if req.RowsAffected == 0 {
@@ -38,6 +40,7 @@ func (m *DB) ReadProjects(pagination domain.Pagination) (*domain.Pagination, err
 }
 
 func (m *DB) UpdateProject(id string, project domain.Project) error {
+	project.CreatedAt = int(time.Now().Unix())
 	req := m.db.Model(&project).Where("id = ?", id).Updates(project)
 	if req.RowsAffected == 0 {
 		return errors.New("project not found")

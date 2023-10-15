@@ -3,15 +3,17 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/JIeeiroSst/partner-service/internal/core/domain"
 )
 
 func (m *DB) CreatePartner(userID string, partner domain.Partner) error {
 	partner = domain.Partner{
-		ID:     snowflakeID(),
-		Type:   partner.Type,
-		UserID: userID,
+		ID:        snowflakeID(),
+		Type:      partner.Type,
+		UserID:    userID,
+		CreatedAt: int(time.Now().Unix()),
 	}
 	req := m.db.Create(&partner)
 	if req.RowsAffected == 0 {
@@ -39,6 +41,7 @@ func (m *DB) ReadPartners(pagination domain.Pagination) (*domain.Pagination, err
 }
 
 func (m *DB) UpdatePartner(id string, partner domain.Partner) error {
+	partner.CreatedAt = int(time.Now().Unix())
 	req := m.db.Model(&partner).Where("id = ?", id).Updates(partner)
 	if req.RowsAffected == 0 {
 		return errors.New("partner not found")
