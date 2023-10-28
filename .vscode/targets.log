@@ -10,12 +10,10 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Fri May 26 20:10:35 2023
+# Make data base, printed on Sun Oct 29 00:13:00 2023
 
 # Variables
 
-# environment
-VSCODE_GIT_ASKPASS_MAIN = /Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # automatic
@@ -24,6 +22,8 @@ VSCODE_GIT_ASKPASS_MAIN = /Applications/Visual Studio Code.app/Contents/Resource
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
 VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
+# environment
+LC_CTYPE = UTF-8
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # automatic
@@ -41,29 +41,19 @@ _ = /usr/bin/make
 # makefile (from `Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # environment
-VSCODE_INJECTION = 1
-# environment
-VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
-# environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
 VSCODE_CWD = /Users/chmp/Desktop/store-service
 # environment
-GOPROXY = https://proxy.golang.org,direct
+PATH = /Users/chmp/.bun/bin:/opt/homebrew/opt/openjdk/bin:/opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/chmp/.cargo/bin:/usr/local/go/bin:/bin:/Users/chmp/.dapr/bin
 # environment
-PATH = /opt/homebrew/opt/openjdk/bin:/opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/opt/homebrew/opt/openjdk/bin:/opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/Users/chmp/.cargo/bin:/usr/local/go/bin:/bin
-# environment
-ZDOTDIR = /Users/chmp
-# environment
-GOPATH = /Users/chmp/go
-# environment
-LaunchInstanceID = C0383426-61E4-4DB1-92D5-5F009FC49F74
+GOROOT = /usr/local/go
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.u5jpRGdymV/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.ZU32b9d5dU/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -71,7 +61,7 @@ PWD = /Users/chmp/Desktop/store-service
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = undefined
 # environment
-GOMODCACHE = /Users/chmp/go/pkg/mod
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
 HOME = /Users/chmp
 # default
@@ -79,7 +69,7 @@ MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /De
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/chmp/Library/Application Support/Code/CachedData/b3e4e68a0bc097f0ae7907b217c1119af9e03435
+VSCODE_CODE_CACHE_PATH = /Users/chmp/Library/Application Support/Code/CachedData/f1b07bd25dfad64b0167beb15359ae573aecd2cc
 # environment
 LOGNAME = chmp
 # environment
@@ -91,31 +81,27 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # environment
-MAKELEVEL := 0
-# environment
 XPC_FLAGS = 0x0
-# environment
-COLORTERM = truecolor
 # default
 MAKE = $(MAKE_COMMAND)
 # default
 MAKECMDGOALS := all
 # environment
-SHLVL = 7
+SHLVL = 3
 # default
 MAKE_VERSION := 3.81
 # environment
 USER = chmp
 # makefile
 .DEFAULT_GOAL := 
+# environment
+TERM_SESSION_ID = 7B265A4E-FE9B-43BF-A4D5-B0EF9EB3DA03
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # default
 MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
 # environment
-VSCODE_GIT_ASKPASS_EXTRA_ARGS = --ms-enable-electron-run-as-node
-# environment
-TERM_PROGRAM = vscode
+TERM_PROGRAM = Apple_Terminal
 # default
 .VARIABLES := 
 # environment
@@ -123,11 +109,11 @@ TMPDIR = /var/folders/82/tp42cmtd23b4y56dwhvvtt780000gn/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/chmp/Library/Application Support/Code/1.78-main.sock
-# environment
-VSCODE_GIT_ASKPASS_NODE = /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin)
+VSCODE_IPC_HOOK = /Users/chmp/Library/Application Support/Code/1.83-main.sock
 # environment
 MallocNanoZone = 0
+# environment
+BUN_INSTALL = /Users/chmp/.bun
 # makefile
 MAKEFLAGS = Rrqp
 # environment
@@ -135,9 +121,9 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-TERM_PROGRAM_VERSION = 1.78.2
+TERM_PROGRAM_VERSION = 445
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.2333859.2333865.3B4E6E68-FFE0-4C79-A59A-B0CB6686503C
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.23214717.23214723.44BA37D2-6A03-42E1-A463-DCDCE81D5FE3
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # automatic
@@ -146,32 +132,26 @@ XPC_SERVICE_NAME = application.com.microsoft.VSCode.2333859.2333865.3B4E6E68-FFE
 __CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
 # environment
 COMMAND_MODE = unix2003
-# environment
-GIT_ASKPASS = /Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh
 # default
 MAKEFILES := 
 # automatic
 <F = $(notdir $<)
 # environment
-USER_ZDOTDIR = /Users/chmp
-# environment
 LC_ALL = C
-# environment
-SECURITYSESSIONID = 186a5
 # automatic
 ^F = $(notdir $^)
 # default
 SUFFIXES := 
 # environment
-VSCODE_GIT_IPC_HANDLE = /var/folders/82/tp42cmtd23b4y56dwhvvtt780000gn/T/vscode-git-69eb8b4572.sock
+MAKELEVEL := 0
 # environment
 LANG = C
 # environment
 TERM = xterm-256color
 # environment
-VSCODE_PID = 429
+VSCODE_PID = 3713
 # variable set hash-table stats:
-# Load=78/1024=8%, Rehash=0, Collisions=4/100=4%
+# Load=68/1024=7%, Rehash=0, Collisions=2/90=2%
 
 # Pattern-specific Variable Values
 
@@ -179,9 +159,9 @@ VSCODE_PID = 429
 
 # Directories
 
-# . (device 16777229, inode 224827): 29 files, no impossibilities.
+# . (device 16777229, inode 224827): 45 files, no impossibilities.
 
-# 29 files, no impossibilities in 1 directories.
+# 45 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -226,12 +206,13 @@ Makefile:
 # No `vpath' search paths.
 
 # No general (`VPATH' variable) search path.
+ 
 
 # # of strings in strcache: 1
 # # of strcache buffers: 1
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Fri May 26 20:10:35 2023
+# Finished Make data base on Sun Oct 29 00:13:00 2023
 
  
