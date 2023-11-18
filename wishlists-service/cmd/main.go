@@ -11,6 +11,13 @@ func main() {
 	// initialise gofr object
 	app := gofr.New()
 
+    app.GET("/greet", func(ctx *gofr.Context) (interface{}, error) {
+		// Get the value using the redis instance
+		value, err := ctx.Redis.Get(ctx.Context, "greeting").Result()
+
+        return value, err
+    })
+
 	app.GET("/greet", func(ctx *gofr.Context) (interface{}, error) {
 		// Get the value using the redis instance
 		value, err := ctx.Redis.Get(ctx.Context, "greeting").Result()
