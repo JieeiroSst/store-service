@@ -3,3 +3,15 @@
 - docker run --name gofr-mysql -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=test_db -p 3306:3306 -d mysql:8.0.30
 
 - docker run --name gofr-redis -p 6379:6379 -d redis
+
+# Apply Migrations
+# To run all the UP migrations which ran not yet, run the following command
+
+- gofr migrate -method=UP -database=gorm
+
+# Rollback Migrations
+# To run all the Down migrations which ran not yet, run the following command
+- gofr migrate -method=DOWN -database=gorm
+
+# To run some specific Down migrations which ran not yet, run the following command
+- gofr migrate -method=DOWN -database=gorm -tag=20200301123212,20200403231214
