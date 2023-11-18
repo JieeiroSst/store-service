@@ -1,6 +1,10 @@
 package main
 
-import "gofr.dev/pkg/gofr"
+import (
+	"gofr.dev/pkg/gofr"
+	"net/http"
+)
+
 
 type Customer struct {
 	ID   int    `json:"id"`
@@ -10,6 +14,9 @@ type Customer struct {
 func main() {
 	// initialise gofr object
 	app := gofr.New()
+
+    // register custom-middlware
+	app.Server.UseMiddleware(customMiddleware())
 
     app.GET("/greet", func(ctx *gofr.Context) (interface{}, error) {
 		// Get the value using the redis instance
@@ -59,4 +66,15 @@ func main() {
 	// Starts the server, it will listen on the default port 8000.
 	// it can be over-ridden through configs
 	app.Start()
+}
+
+func customMiddleware() func(handler http.Handler) http.Handler {
+	return func(inner http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+			// your logic here
+
+			// sends the request to the next middleware/request-handler
+			inner.ServeHTTP(w, r)
+		})
+	}
 }
