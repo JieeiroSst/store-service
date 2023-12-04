@@ -1,18 +1,18 @@
-import { starton } from './index'
+import { starton } from './fetch'
 
 export interface MintNftProps {
-  network: string
-  smartContractAddress: string
-  cid: string
-  signerWallet: string
+    network: string
+    smartContractAddress: string
+    cid: string
+    signerWallet: string
 }
 
-export async function mintNft ({ network, cid, smartContractAddress, signerWallet }: MintNftProps) {
-  return await starton.post(`/smart-contract/${network}/${smartContractAddress}/call`,
-    {
-      functionName: 'mint(address,string)',
-      params: [smartContractAddress, cid],
-      signerWallet,
-      speed: 'average'
-    })
+export async function mintNft({ network, cid, smartContractAddress, signerWallet }: MintNftProps) {
+    return await starton.post(`/smart-contract/${network}/${smartContractAddress}/call`,
+        {
+            functionName: 'mint(address,string)',
+            params: [smartContractAddress, cid],
+            signerWallet,
+            speed: 'average'
+        })
 }
