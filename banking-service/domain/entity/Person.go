@@ -10,3 +10,7 @@ type Person struct {
 	Address       string `json:"address" gorm:"column:address"`
 	TaxIdentifier string `json:"tax_identifier" gorm:"column:tax_identifier"`
 }
+
+func (Person) TableName() string {
+	return "persons"
+}

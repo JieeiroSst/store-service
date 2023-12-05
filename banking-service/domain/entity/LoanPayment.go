@@ -9,3 +9,7 @@ type LoanPayment struct {
 	PaidAmount           uint `json:"paid_amount" gorm:"column:paid_amount"`
 	PaidDate             int  `json:"paid_date" gorm:"column:paid_date"`
 }
+
+func (LoanPayment) TableName() string {
+	return "loan_payments"
+}

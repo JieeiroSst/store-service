@@ -9,3 +9,7 @@ type Account struct {
 	DateClosed     int    `json:"date_closed" gorm:"column:date_closed"`
 	AccountStatus  string `json:"account_status" gorm:"column:account_status"`
 }
+
+func (Account) TableName() string {
+	return "accounts"
+}
