@@ -6,3 +6,7 @@ type Transaction struct {
 	Amount          uint   `json:"amount" gorm:"column:amount"`
 	TransactionDate int    `json:"transaction_date" gorm:"column:transaction_date"`
 }
+
+func (Transaction) TableName() string {
+	return "transactions"
+}

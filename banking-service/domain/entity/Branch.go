@@ -7,3 +7,7 @@ type Branch struct {
 	Address     string `json:"address" gorm:"column:address"`
 	PhoneNumber string `json:"phone_number" gorm:"column:phone_number"`
 }
+
+func (Branch) TableName() string {
+	return "branchs"
+}

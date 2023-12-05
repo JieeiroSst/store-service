@@ -10,3 +10,7 @@ type Loan struct {
 	EndDate     int    `json:"end_date" gorm:"column:end_date"`
 	LoanStatus  string `json:"loan_status" gorm:"column:loan_status"`
 }
+
+func (Loan) TableName() string {
+	return "loans"
+}
