@@ -32,11 +32,10 @@ func (p *QueueKakfa) Producer(remoteAddr, topic string, body []byte, ctx context
 	}
 }
 
-func (p *QueueKakfa) Consume(ctx context.Context, group, topic, remoteAddr string) (kafka.Message, error) {
+func (p *QueueKakfa) Consume(ctx context.Context, topic, remoteAddr string) (kafka.Message, error) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{remoteAddr},
 		Topic:    topic,
-		GroupID:  group,
 		MinBytes: 10e3,
 		MaxBytes: 10e6,
 	})
