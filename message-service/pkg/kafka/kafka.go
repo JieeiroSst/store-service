@@ -16,10 +16,8 @@ func NetKafkaWriter(kafkaURL, topic string) *kafka.Writer {
 	}
 }
 
-func (p *QueueKakfa) Producer(kafkaWriter *kafka.Writer, remoteAddr string, ctx context.Context) {
-	var body string
+func (p *QueueKakfa) Producer(kafkaWriter *kafka.Writer, remoteAddr string,body []byte,  ctx context.Context) {
 	for {
-		fmt.Scanf("%v", &body)
 		msg := kafka.Message{
 			Key:   []byte(fmt.Sprintf("address-%s", remoteAddr)),
 			Value: []byte(body),
