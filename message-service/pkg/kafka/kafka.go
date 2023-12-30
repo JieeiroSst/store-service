@@ -16,7 +16,7 @@ func NetKafkaWriter(kafkaURL, topic string) *kafka.Writer {
 	}
 }
 
-func (p *QueueKakfa) Producer(kafkaWriter *kafka.Writer, remoteAddr string,body []byte,  ctx context.Context) {
+func (p *QueueKakfa) Producer(kafkaWriter *kafka.Writer, remoteAddr string, body []byte, ctx context.Context) {
 	for {
 		msg := kafka.Message{
 			Key:   []byte(fmt.Sprintf("address-%s", remoteAddr)),
@@ -31,9 +31,11 @@ func (p *QueueKakfa) Producer(kafkaWriter *kafka.Writer, remoteAddr string,body 
 
 func (p *QueueKakfa) Consume(ctx context.Context, group, topic, remoteAddr string) {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{remoteAddr},
-		Topic:   topic,
-		GroupID: group,
+		Brokers:  []string{remoteAddr},
+		Topic:    topic,
+		GroupID:  group,
+		MinBytes: 10e3,
+		MaxBytes: 10e6,
 	})
 
 	for {
