@@ -8,15 +8,18 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func NetKafkaWriter(kafkaURL, topic string) *kafka.Writer {
-	return &kafka.Writer{
-		Addr:     kafka.TCP(kafkaURL),
-		Topic:    topic,
-		Balancer: &kafka.LeastBytes{},
+func NetKafkaWriter(kafkaURL string) *QueueKakfa {
+	return &QueueKakfa{
+		KafkaURL: kafkaURL,
 	}
 }
 
-func (p *QueueKakfa) Producer(kafkaWriter *kafka.Writer, remoteAddr string, body []byte, ctx context.Context) {
+func (p *QueueKakfa) Producer(remoteAddr, topic string, body []byte, ctx context.Context) {
+	kafkaWriter := kafka.Writer{
+		Addr:     kafka.TCP(p.KafkaURL),
+		Topic:    topic,
+		Balancer: &kafka.LeastBytes{},
+	}
 	for {
 		msg := kafka.Message{
 			Key:   []byte(fmt.Sprintf("address-%s", remoteAddr)),
@@ -29,7 +32,7 @@ func (p *QueueKakfa) Producer(kafkaWriter *kafka.Writer, remoteAddr string, body
 	}
 }
 
-func (p *QueueKakfa) Consume(ctx context.Context, group, topic, remoteAddr string) {
+func (p *QueueKakfa) Consume(ctx context.Context, group, topic, remoteAddr string) (kafka.Message, error) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{remoteAddr},
 		Topic:    topic,
@@ -38,12 +41,13 @@ func (p *QueueKakfa) Consume(ctx context.Context, group, topic, remoteAddr strin
 		MaxBytes: 10e6,
 	})
 
-	for {
-		msg, err := r.ReadMessage(ctx)
-		if err != nil {
-			panic("could not read message " + err.Error())
-		}
-		fmt.Printf("%v received: %v", group, string(msg.Value))
-		fmt.Println()
-	}
+	// for {
+	// 	msg, err := r.ReadMessage(ctx)
+	// 	if err != nil {
+	// 		panic("could not read message " + err.Error())
+	// 	}
+	// 	fmt.Printf("%v received: %v", group, string(msg.Value))
+	// 	fmt.Println()
+	// }
+	return r.ReadMessage(ctx)
 }
