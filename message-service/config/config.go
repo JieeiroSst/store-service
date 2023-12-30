@@ -29,6 +29,10 @@ type Dir struct {
 	ServiceConsul string
 }
 
+type Kafka struct {
+	Server string
+}
+
 type CacheConfig struct {
 	Host string
 }
