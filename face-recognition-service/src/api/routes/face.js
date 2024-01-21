@@ -1,8 +1,6 @@
-const Koa = require('koa');
 const Router = require('@koa/router');
 const multer = require('@koa/multer');
 
-const app = new Koa();
 const router = new Router();
 const upload = multer(); 
 
@@ -37,7 +35,4 @@ router.post(
   }
 );
 
-app.use(router.routes());
-app.use(router.allowedMethods());
-
-app.listen(3000);
+module.exports = router;
