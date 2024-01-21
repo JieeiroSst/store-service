@@ -1,11 +1,8 @@
 const axios = require('axios');
 
-const FeatchApi = async (url, token,headers) => {
-    const headers = {
-        "token": token,
-    };
+const FeatchApi = async (url, method,headers) => {
     const options = {
-        method: "POST",
+        method: method,
         url: url,
         headers: headers,
         data: form
@@ -14,6 +11,7 @@ const FeatchApi = async (url, token,headers) => {
     return data;
 }
 
+
 module.exports = {
-    FeatchApi
+    FeatchApi,
 }
