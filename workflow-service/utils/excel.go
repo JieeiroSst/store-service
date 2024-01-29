@@ -2,7 +2,6 @@ package utils
 
 import (
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"os"
 
@@ -10,7 +9,7 @@ import (
 )
 
 func ReadFileExcel(f *multipart.FileHeader) (*xlsx.File, error) {
-	tempFile, err := ioutil.TempFile("", "excel-*.xlsx")
+	tempFile, err := os.CreateTemp("", "excel-*.xlsx")
 	if err != nil {
 		return nil, err
 	}
