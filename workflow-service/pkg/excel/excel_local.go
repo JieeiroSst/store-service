@@ -8,7 +8,11 @@ import (
 	"github.com/tealeg/xlsx"
 )
 
-func ReadFileExcel(f *multipart.FileHeader) (*xlsx.File, error) {
+type SheetLocal struct {
+
+}
+
+func  ReadFileExcel(f *multipart.FileHeader) (*xlsx.File, error) {
 	tempFile, err := os.CreateTemp("", "excel-*.xlsx")
 	if err != nil {
 		return nil, err
