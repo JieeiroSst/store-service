@@ -34,6 +34,7 @@ type Process struct {
 	ActiveUser ActiveUser
 	RecordId   int
 	Status     Status
+	BatchID    string
 }
 
 type Approve struct {
@@ -43,6 +44,7 @@ type Approve struct {
 	ActiveUser ActiveUser
 	RecordId   int
 	Status     Status
+	BatchID    string
 }
 
 func (p *ProcessState) UploadApprove(upload Upload) {
@@ -110,11 +112,14 @@ func (p *ProcessState) UploadApprove(upload Upload) {
 }
 
 func (p *ProcessState) ProcessApprove(process Process) {
-
+	process.ActiveUser.Status = PROCESS
+	activeUser := FormatActiveUser(process.ActiveUser)
+	if err := p.Facade.ActiveUser.UpdateActiveUser(process.BatchID, activeUser); err != nil {
+		return
+	}
 }
 
 func (a *ProcessState) ApproveProcess(_ context.Context, process ProcessState) error {
-
 	return nil
 }
 
