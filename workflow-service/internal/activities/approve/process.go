@@ -119,6 +119,17 @@ func (p *ProcessState) ProcessApprove(process Process) {
 	}
 }
 
+func (p *ProcessState) Approve(approve Approve) {
+	approve.ActiveUser.Status = APPROVE
+	if !approve.IsApprove {
+		approve.ActiveUser.Status = REJECT
+	}
+	activeUser := FormatActiveUser(approve.ActiveUser)
+	if err := p.Facade.ActiveUser.UpdateActiveUser(approve.BatchID, activeUser); err != nil {
+		return
+	}
+}
+
 func (a *ProcessState) ApproveProcess(_ context.Context, process ProcessState) error {
 	return nil
 }
