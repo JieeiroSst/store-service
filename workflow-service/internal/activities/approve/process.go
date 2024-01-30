@@ -101,7 +101,7 @@ func (p *ProcessState) UploadApprove(upload Upload) {
 			p.Facade.SpotifyQuarterly.InsertSpotifyQuarterly(spotifyQuarterlies, id)
 		}
 	}
-
+	upload.ActiveUser.Status = PENDING
 	activeUser := FormatActiveUser(upload.ActiveUser)
 	if err := p.Facade.ActiveUser.InsertActiveUser(activeUser); err != nil {
 		return
