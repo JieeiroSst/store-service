@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	modelRepo "github.com/JIeeiroSst/workflow-service/model"
 )
 
 type Status string
@@ -15,16 +17,14 @@ const (
 )
 
 type ActiveUser struct {
-	ID          string
-	Key         string
-	Value       string
-	UserPeding  string
-	UserApprove string
-	UserReject  string
-	Status      Status
-	CreateAt    time.Time
-	UpdateAt    time.Time
-	DeleteAt    time.Time
+	ID       string
+	Key      string
+	Value    string
+	User     string
+	Status   Status
+	CreateAt time.Time
+	UpdateAt time.Time
+	DeleteAt time.Time
 }
 
 func (m Status) String() string {
@@ -67,4 +67,19 @@ func AccessTable(processTables []ActiveUser) (statusMaps []map[string]interface{
 		statusMaps = append(statusMaps, statusMap)
 	}
 	return statusMaps
+}
+
+func FormatActiveUser(user ActiveUser) modelRepo.ActiveUser {
+	return modelRepo.ActiveUser{
+		ID:          user.ID,
+		Key:         user.Key,
+		Value:       user.Value,
+		UserPeding:  user.User,
+		UserApprove: user.User,
+		UserReject:  user.User,
+		Status:      string(user.Status),
+		CreateAt:    user.CreateAt,
+		UpdateAt:    user.UpdateAt,
+		DeleteAt:    user.DeleteAt,
+	}
 }
