@@ -104,7 +104,7 @@ func (p *ProcessState) UploadApprove(upload Upload) {
 	}
 	upload.ActiveUser.Status = PENDING
 	activeUser := FormatActiveUser(upload.ActiveUser)
-	if err := p.Facade.ActiveUser.InsertActiveUser(activeUser); err != nil {
+	if err := p.Facade.ActiveUser.InsertActiveUser(activeUser, id); err != nil {
 		return
 	}
 }
