@@ -101,6 +101,11 @@ func (p *ProcessState) UploadApprove(upload Upload) {
 			p.Facade.SpotifyQuarterly.InsertSpotifyQuarterly(spotifyQuarterlies)
 		}
 	}
+
+	activeUser := FormatActiveUser(upload.ActiveUser)
+	if err := p.Facade.ActiveUser.InsertActiveUser(activeUser); err != nil {
+		return
+	}
 }
 
 func (p *ProcessState) ProcessApprove(process Process) {

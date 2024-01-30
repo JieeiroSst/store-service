@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	modelRepo "github.com/JIeeiroSst/workflow-service/model"
+	"github.com/JIeeiroSst/workflow-service/dto"
 )
 
 type Status string
@@ -69,17 +69,15 @@ func AccessTable(processTables []ActiveUser) (statusMaps []map[string]interface{
 	return statusMaps
 }
 
-func FormatActiveUser(user ActiveUser) modelRepo.ActiveUser {
-	return modelRepo.ActiveUser{
-		ID:          user.ID,
-		Key:         user.Key,
-		Value:       user.Value,
-		UserPeding:  user.User,
-		UserApprove: user.User,
-		UserReject:  user.User,
-		Status:      string(user.Status),
-		CreateAt:    user.CreateAt,
-		UpdateAt:    user.UpdateAt,
-		DeleteAt:    user.DeleteAt,
+func FormatActiveUser(user ActiveUser) dto.ActiveUser {
+	return dto.ActiveUser{
+		ID:       user.ID,
+		Key:      user.Key,
+		Value:    user.Value,
+		User:     user.User,
+		Status:   string(user.Status),
+		CreateAt: user.CreateAt,
+		UpdateAt: user.UpdateAt,
+		DeleteAt: user.DeleteAt,
 	}
 }

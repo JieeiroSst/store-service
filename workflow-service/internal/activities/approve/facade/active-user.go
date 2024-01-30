@@ -1,9 +1,12 @@
 package facade
 
-import "github.com/JIeeiroSst/workflow-service/internal/repository"
+import (
+	"github.com/JIeeiroSst/workflow-service/dto"
+	"github.com/JIeeiroSst/workflow-service/internal/repository"
+)
 
 type ActiveUser interface {
-	InsertActiveUser(user ActiveUser) error
+	InsertActiveUser(user dto.ActiveUser) error
 }
 
 type ActiveUserFace struct {
@@ -16,6 +19,12 @@ func NewActiveUserFace(repository *repository.Repositories) *ActiveUserFace {
 	}
 }
 
-func (u *ActiveUserFace) InsertActiveUser(user ActiveUser) error {
+func (u *ActiveUserFace) InsertActiveUser(user dto.ActiveUser) error {
+	userModel := dto.FormatActiveUser(user)
+
+	if err := u.repository.ActiveUsers.InsertActiveUser(userModel); err != nil {
+		return err
+	}
+
 	return nil
 }
