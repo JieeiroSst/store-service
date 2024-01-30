@@ -9,10 +9,9 @@ import (
 )
 
 type SheetLocal struct {
-
 }
 
-func  ReadFileExcel(f *multipart.FileHeader) (*xlsx.File, error) {
+func ReadFileExcel(f *multipart.FileHeader) (*xlsx.File, error) {
 	tempFile, err := os.CreateTemp("", "excel-*.xlsx")
 	if err != nil {
 		return nil, err
@@ -37,7 +36,7 @@ func  ReadFileExcel(f *multipart.FileHeader) (*xlsx.File, error) {
 	return xlsxFile, nil
 }
 
-func GetRowValues(sheet *xlsx.Sheet, row int) []map[string]interface{} {
+func GetRowValues(sheet *xlsx.Sheet) []map[string]interface{} {
 	rows := sheet.MaxRow
 	cols := sheet.MaxCol
 
