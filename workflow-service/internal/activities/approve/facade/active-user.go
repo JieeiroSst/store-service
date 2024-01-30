@@ -6,7 +6,7 @@ import (
 )
 
 type ActiveUser interface {
-	InsertActiveUser(user dto.ActiveUser) error
+	InsertActiveUser(user dto.ActiveUser, id string) error
 }
 
 type ActiveUserFace struct {
@@ -19,10 +19,10 @@ func NewActiveUserFace(repository *repository.Repositories) *ActiveUserFace {
 	}
 }
 
-func (u *ActiveUserFace) InsertActiveUser(user dto.ActiveUser) error {
+func (u *ActiveUserFace) InsertActiveUser(user dto.ActiveUser, id string) error {
 	userModel := dto.FormatActiveUser(user)
 
-	if err := u.repository.ActiveUsers.InsertActiveUser(userModel); err != nil {
+	if err := u.repository.ActiveUsers.InsertActiveUser(userModel, id); err != nil {
 		return err
 	}
 

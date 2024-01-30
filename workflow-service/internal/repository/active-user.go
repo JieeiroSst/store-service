@@ -7,7 +7,7 @@ import (
 )
 
 type ActiveUsers interface {
-	InsertActiveUser(user model.ActiveUser) error
+	InsertActiveUser(user model.ActiveUser, id string) error
 	UpdateActiveUser(id string, user model.ActiveUser) error
 }
 
@@ -21,11 +21,11 @@ func NewActiveUsersRepo(db *sql.DB) *ActiveUsersRepo {
 	}
 }
 
-func (r *ActiveUsersRepo) InsertActiveUser(user model.ActiveUser) error {
+func (r *ActiveUsersRepo) InsertActiveUser(user model.ActiveUser, id string) error {
 	sqlStatement := `
 		INSERT INTO active_users (id, key, value,user_peding,user_approve,user_reject,status,create_at,update_at,delete_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $8, $9,$10)`
-	_, err := r.DB.Exec(sqlStatement, user.ID, user.Key, user.Value, user.UserPeding, user.UserApprove, user.UserReject, user.Status, user.CreateAt, user.UpdateAt, user.DeleteAt)
+	_, err := r.DB.Exec(sqlStatement, id, user.Key, user.Value, user.UserPeding, user.UserApprove, user.UserReject, user.Status, user.CreateAt, user.UpdateAt, user.DeleteAt)
 	if err != nil {
 		return err
 	}
