@@ -2,6 +2,7 @@ package approve
 
 import (
 	"context"
+	"mime/multipart"
 
 	"github.com/JIeeiroSst/workflow-service/dto"
 	"github.com/JIeeiroSst/workflow-service/internal/activities/approve/facade"
@@ -11,6 +12,7 @@ import (
 type ProcessState struct {
 	Facade      facade.Facade
 	GoogleSheet excel.GoogleSheet
+	FileHeader  *multipart.FileHeader
 }
 
 type Upload struct {
