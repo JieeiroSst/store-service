@@ -9,7 +9,7 @@ import (
 )
 
 type SpotifyQuarterlys interface {
-	InsertBatchSpotifyQuarterlys(spotifyQuarterlys []model.SpotifyQuarterly) error
+	InsertBatchSpotifyQuarterlys(spotifyQuarterlys []model.SpotifyQuarterly, batchID string) error
 }
 
 type SpotifyQuarterlyRepo struct {
@@ -22,7 +22,7 @@ func NewSpotifyQuarterlyRepo(db *sql.DB) *SpotifyQuarterlyRepo {
 	}
 }
 
-func (r *SpotifyQuarterlyRepo) InsertBatchSpotifyQuarterlys(spotifyQuarterlys []model.SpotifyQuarterly) error {
+func (r *SpotifyQuarterlyRepo) InsertBatchSpotifyQuarterlys(spotifyQuarterlys []model.SpotifyQuarterly, batchID string) error {
 	valueStrings := []string{}
 	valueArgs := []interface{}{}
 
@@ -46,13 +46,14 @@ func (r *SpotifyQuarterlyRepo) InsertBatchSpotifyQuarterlys(spotifyQuarterlys []
 		valueArgs = append(valueArgs, spotifyQuarterly.SalesAndMarketingCost)
 		valueArgs = append(valueArgs, spotifyQuarterly.ResearchAndDevelopmentCost)
 		valueArgs = append(valueArgs, spotifyQuarterly.GenrealAndAdminstraiveCost)
+		valueArgs = append(valueArgs, batchID)
 	}
 
 	smt := `INSERT INTO spotify_quarterlies(date,total_revenue,cost_of_revenue,gross_profit,
 		premium_revenue,premium_cost_revenue,premium_gross_profit,ad_revenue,
 		ad_cost_of_revenue,ad_gross_profit,maus,premium_maus,ad_maus,	
 		premium_arpu,sales_and_marketing_cost,research_and_development_cost,
-		genreal_and_adminstraive_cost) VALUES %s`
+		genreal_and_adminstraive_cost,batch_id) VALUES %s`
 
 	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
 	tx, _ := r.DB.Begin()

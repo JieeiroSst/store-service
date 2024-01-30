@@ -11,10 +11,10 @@ import (
 )
 
 type SpotifyQuarterly interface {
-	upsertBigQuerySpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO)
-	processSpotifyQuarterly(spotifyQuarterlies <-chan dto.SpotifyQuarterlyRequestDTO, batchSize int)
-	produceSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, to chan dto.SpotifyQuarterlyRequestDTO)
-	InsertSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO)
+	upsertBigQuerySpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, batchID string)
+	processSpotifyQuarterly(spotifyQuarterlies <-chan dto.SpotifyQuarterlyRequestDTO, batchSize int, batchID string)
+	produceSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, to chan dto.SpotifyQuarterlyRequestDTO, batchID string)
+	InsertSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, batchID string)
 }
 
 type SpotifyQuarterlyFacade struct {
@@ -27,33 +27,33 @@ func NewSpotifyQuarterlyFacade(repository *repository.Repositories) *SellingPlay
 	}
 }
 
-func (u *SellingPlayStationFacade) upsertBigQuerySpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO) {
+func (u *SellingPlayStationFacade) upsertBigQuerySpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, batchID string) {
 	fmt.Printf("Processing batch of %d\n", len(spotifyQuarterlies))
 	var spotifyQuarterlyModels []model.SpotifyQuarterly
 	for _, spotifyQuarterly := range spotifyQuarterlies {
 		spotifyQuarterlyModel := u.mappingSpotifyQuarterly(spotifyQuarterly)
 		spotifyQuarterlyModels = append(spotifyQuarterlyModels, spotifyQuarterlyModel)
 	}
-	if err := u.repository.SpotifyQuarterlys.InsertBatchSpotifyQuarterlys(spotifyQuarterlyModels); err != nil {
+	if err := u.repository.SpotifyQuarterlys.InsertBatchSpotifyQuarterlys(spotifyQuarterlyModels, batchID); err != nil {
 		log.Println(err)
 	}
 }
 
-func (u *SellingPlayStationFacade) processSpotifyQuarterly(spotifyQuarterlies <-chan dto.SpotifyQuarterlyRequestDTO, batchSize int) {
+func (u *SellingPlayStationFacade) processSpotifyQuarterly(spotifyQuarterlies <-chan dto.SpotifyQuarterlyRequestDTO, batchSize int, batchID string) {
 	var batch []dto.SpotifyQuarterlyRequestDTO
 	for spotifyQuarterlie := range spotifyQuarterlies {
 		batch = append(batch, spotifyQuarterlie)
 		if len(batch) == batchSize {
-			u.upsertBigQuerySpotifyQuarterly(batch)
+			u.upsertBigQuerySpotifyQuarterly(batch, batchID)
 			batch = []dto.SpotifyQuarterlyRequestDTO{}
 		}
 	}
 	if len(batch) > 0 {
-		u.upsertBigQuerySpotifyQuarterly(batch)
+		u.upsertBigQuerySpotifyQuarterly(batch, batchID)
 	}
 }
 
-func (u *SellingPlayStationFacade) produceSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, to chan dto.SpotifyQuarterlyRequestDTO) {
+func (u *SellingPlayStationFacade) produceSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, to chan dto.SpotifyQuarterlyRequestDTO, batchID string) {
 	for _, spotifyQuarterly := range spotifyQuarterlies {
 		to <- dto.SpotifyQuarterlyRequestDTO{
 			Date:                       spotifyQuarterly.Date,
@@ -72,22 +72,23 @@ func (u *SellingPlayStationFacade) produceSpotifyQuarterly(spotifyQuarterlies []
 			SalesAndMarketingCost:      spotifyQuarterly.SalesAndMarketingCost,
 			ResearchAndDevelopmentCost: spotifyQuarterly.ResearchAndDevelopmentCost,
 			GenrealAndAdminstraiveCost: spotifyQuarterly.GenrealAndAdminstraiveCost,
+			BatchID:                    batchID,
 		}
 	}
 }
 
-func (u *SellingPlayStationFacade) InsertSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO) {
+func (u *SellingPlayStationFacade) InsertSpotifyQuarterly(spotifyQuarterlies []dto.SpotifyQuarterlyRequestDTO, batchID string) {
 	var wg sync.WaitGroup
 	audits := make(chan dto.SpotifyQuarterlyRequestDTO)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		u.processSpotifyQuarterly(audits, batchSize)
+		u.processSpotifyQuarterly(audits, batchSize, batchID)
 	}()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		u.produceSpotifyQuarterly(spotifyQuarterlies, audits)
+		u.produceSpotifyQuarterly(spotifyQuarterlies, audits, batchID)
 		close(audits)
 	}()
 	wg.Wait()

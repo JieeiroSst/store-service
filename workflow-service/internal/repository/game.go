@@ -9,7 +9,7 @@ import (
 )
 
 type Games interface {
-	InsertBatchGame(games []model.Game) error
+	InsertBatchGame(games []model.Game, batchID string) error
 }
 
 type GameRepo struct {
@@ -22,7 +22,7 @@ func NewGameRepo(db *sql.DB) *GameRepo {
 	}
 }
 
-func (r *GameRepo) InsertBatchGame(games []model.Game) error {
+func (r *GameRepo) InsertBatchGame(games []model.Game, batchID string) error {
 	valueStrings := []string{}
 	valueArgs := []interface{}{}
 	for _, game := range games {
@@ -44,11 +44,12 @@ func (r *GameRepo) InsertBatchGame(games []model.Game) error {
 		valueArgs = append(valueArgs, game.OpeningEco)
 		valueArgs = append(valueArgs, game.OpeningName)
 		valueArgs = append(valueArgs, game.OpeningPly)
+		valueArgs = append(valueArgs, batchID)
 	}
 
 	smt := `INSERT INTO games(id,rated,created_at,last_move_at,turns,victory_status,winner,
 		increment_code,white_id,white_rating,black_i,black_rating,moves,opening_eco,
-		opening_name,opening_ply) VALUES %s`
+		opening_name,opening_ply,batch_id) VALUES %s`
 
 	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
 	tx, _ := r.DB.Begin()
