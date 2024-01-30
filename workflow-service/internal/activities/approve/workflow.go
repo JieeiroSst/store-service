@@ -73,6 +73,8 @@ func (a *ApproveWorkflow) ApproveWorkflow(ctx workflow.Context, state ProcessSta
 				StartToCloseTimeout: time.Minute,
 			}
 
+			state.Approve(message.Approve)
+
 			ctx := workflow.WithActivityOptions(ctx, ao)
 			err = workflow.ExecuteActivity(ctx, state.ApproveProcess, state).Get(ctx, nil)
 			if err != nil {
