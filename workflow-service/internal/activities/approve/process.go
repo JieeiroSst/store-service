@@ -47,6 +47,11 @@ type Approve struct {
 	BatchID    string
 }
 
+type NotiSlack struct {
+	IsApprove bool
+	Message   string
+}
+
 func (p *ProcessState) UploadApprove(upload Upload) {
 	id := snowflake.GearedID()
 	switch upload.Type {
@@ -134,7 +139,7 @@ func (a *ProcessState) ApproveProcess(_ context.Context, process ProcessState) e
 	return nil
 }
 
-func (a *ProcessState) SendAbandonedProcess(_ context.Context, isApprove bool) error {
+func (a *ProcessState) SendAbandonedProcess(_ context.Context, noti NotiSlack) error {
 
 	return nil
 }
