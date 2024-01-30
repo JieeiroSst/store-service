@@ -10,10 +10,10 @@ import (
 )
 
 type SeattleWeather interface {
-	upsertBigQuerySeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO)
-	processSeattleWeather(seattleWeathers <-chan dto.SeattleWeatherRequestDTO, batchSize int)
-	produceSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, to chan dto.SeattleWeatherRequestDTO)
-	InsertSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO)
+	upsertBigQuerySeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, batchID string)
+	processSeattleWeather(seattleWeathers <-chan dto.SeattleWeatherRequestDTO, batchSize int, batchID string)
+	produceSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, to chan dto.SeattleWeatherRequestDTO, batchID string)
+	InsertSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, batchID string)
 }
 
 type SeattleWeatherFacade struct {
@@ -26,33 +26,33 @@ func NewSeattleWeatherFacade(repository *repository.Repositories) *SeattleWeathe
 	}
 }
 
-func (u *SeattleWeatherFacade) upsertBigQuerySeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO) {
+func (u *SeattleWeatherFacade) upsertBigQuerySeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, batchID string) {
 	fmt.Printf("Processing batch of %d\n", len(seattleWeathers))
 	var seattleWeathersModels []model.SeattleWeather
 	for _, game := range seattleWeathers {
 		seattleWeathersModel := u.mappingSeattleWeather(game)
 		seattleWeathersModels = append(seattleWeathersModels, seattleWeathersModel)
 	}
-	if err := u.repository.SeattleWeathers.InsertBatchSeattleWeathers(seattleWeathersModels); err != nil {
+	if err := u.repository.SeattleWeathers.InsertBatchSeattleWeathers(seattleWeathersModels, batchID); err != nil {
 		log.Println(err)
 	}
 }
 
-func (u *SeattleWeatherFacade) processSeattleWeather(seattleWeathers <-chan dto.SeattleWeatherRequestDTO, batchSize int) {
+func (u *SeattleWeatherFacade) processSeattleWeather(seattleWeathers <-chan dto.SeattleWeatherRequestDTO, batchSize int, batchID string) {
 	var batch []dto.SeattleWeatherRequestDTO
 	for seattleWeather := range seattleWeathers {
 		batch = append(batch, seattleWeather)
 		if len(batch) == batchSize {
-			u.upsertBigQuerySeattleWeather(batch)
+			u.upsertBigQuerySeattleWeather(batch, batchID)
 			batch = []dto.SeattleWeatherRequestDTO{}
 		}
 	}
 	if len(batch) > 0 {
-		u.upsertBigQuerySeattleWeather(batch)
+		u.upsertBigQuerySeattleWeather(batch, batchID)
 	}
 }
 
-func (u *SeattleWeatherFacade) produceSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, to chan dto.SeattleWeatherRequestDTO) {
+func (u *SeattleWeatherFacade) produceSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, to chan dto.SeattleWeatherRequestDTO, batchID string) {
 	for _, seattleWeather := range seattleWeathers {
 		to <- dto.SeattleWeatherRequestDTO{
 			Date:          seattleWeather.Date,
@@ -61,21 +61,22 @@ func (u *SeattleWeatherFacade) produceSeattleWeather(seattleWeathers []dto.Seatt
 			TempMin:       seattleWeather.TempMin,
 			Wind:          seattleWeather.Wind,
 			Weather:       seattleWeather.Weather,
+			BatchID:       batchID,
 		}
 	}
 }
 
-func (u *SeattleWeatherFacade) InsertSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO) {
+func (u *SeattleWeatherFacade) InsertSeattleWeather(seattleWeathers []dto.SeattleWeatherRequestDTO, batchID string) {
 	var batch []dto.SeattleWeatherRequestDTO
 	for _, seattleWeather := range seattleWeathers {
 		batch = append(batch, seattleWeather)
 		if len(batch) == batchSize {
-			u.upsertBigQuerySeattleWeather(batch)
+			u.upsertBigQuerySeattleWeather(batch, batchID)
 			batch = []dto.SeattleWeatherRequestDTO{}
 		}
 	}
 	if len(batch) > 0 {
-		u.upsertBigQuerySeattleWeather(batch)
+		u.upsertBigQuerySeattleWeather(batch, batchID)
 	}
 }
 

@@ -9,7 +9,7 @@ import (
 )
 
 type SeattleWeathers interface {
-	InsertBatchSeattleWeathers(seattleWeathers []model.SeattleWeather) error
+	InsertBatchSeattleWeathers(seattleWeathers []model.SeattleWeather, batchID string) error
 }
 
 type SeattleWeatherRepo struct {
@@ -22,7 +22,7 @@ func NewSeattleWeatherRepo(db *sql.DB) *SeattleWeatherRepo {
 	}
 }
 
-func (r *SeattleWeatherRepo) InsertBatchSeattleWeathers(seattleWeathers []model.SeattleWeather) error {
+func (r *SeattleWeatherRepo) InsertBatchSeattleWeathers(seattleWeathers []model.SeattleWeather, batchID string) error {
 	valueStrings := []string{}
 	valueArgs := []interface{}{}
 
@@ -35,9 +35,10 @@ func (r *SeattleWeatherRepo) InsertBatchSeattleWeathers(seattleWeathers []model.
 		valueArgs = append(valueArgs, seattleWeather.TempMin)
 		valueArgs = append(valueArgs, seattleWeather.Wind)
 		valueArgs = append(valueArgs, seattleWeather.Weather)
+		valueArgs = append(valueArgs, batchID)
 	}
 
-	smt := `INSERT INTO seattle_weather(date,precipitation,temp_max,temp_min,wind,weather) VALUES %s`
+	smt := `INSERT INTO seattle_weather(date,precipitation,temp_max,temp_min,wind,weather,batch_id) VALUES %s`
 
 	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
 	tx, _ := r.DB.Begin()
