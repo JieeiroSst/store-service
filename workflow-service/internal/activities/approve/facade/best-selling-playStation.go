@@ -11,10 +11,10 @@ import (
 )
 
 type SellingPlayStation interface {
-	upsertBigQuerySellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO)
-	processSellingPlayStation(playStations <-chan dto.BestSellingPlayStationRequestDTO, batchSize int)
-	produceSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, to chan dto.BestSellingPlayStationRequestDTO)
-	InsertSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO)
+	upsertBigQuerySellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, batchID string)
+	processSellingPlayStation(playStations <-chan dto.BestSellingPlayStationRequestDTO, batchSize int, batchID string)
+	produceSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, to chan dto.BestSellingPlayStationRequestDTO, batchID string)
+	InsertSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, batchID string)
 }
 
 type SellingPlayStationFacade struct {
@@ -27,34 +27,34 @@ func NewSellingPlayStationFacade(repository *repository.Repositories) *SellingPl
 	}
 }
 
-func (u *SellingPlayStationFacade) upsertBigQuerySellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO) {
+func (u *SellingPlayStationFacade) upsertBigQuerySellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, batchID string) {
 	fmt.Printf("Processing batch of %d\n", len(playStations))
 	var playStationsModels []model.BestSellingPlayStation
 	for _, playStation := range playStations {
 		playStationsModel := u.mappingWeather(playStation)
 		playStationsModels = append(playStationsModels, playStationsModel)
 	}
-	if err := u.repository.BestSellingPlayStations.InsertBatchBestSellingPlayStation(playStationsModels); err != nil {
+	if err := u.repository.BestSellingPlayStations.InsertBatchBestSellingPlayStation(playStationsModels, batchID); err != nil {
 		log.Println(err)
 	}
 
 }
 
-func (u *SellingPlayStationFacade) processSellingPlayStation(weathers <-chan dto.BestSellingPlayStationRequestDTO, batchSize int) {
+func (u *SellingPlayStationFacade) processSellingPlayStation(weathers <-chan dto.BestSellingPlayStationRequestDTO, batchSize int, batchID string) {
 	var batch []dto.BestSellingPlayStationRequestDTO
 	for weather := range weathers {
 		batch = append(batch, weather)
 		if len(batch) == batchSize {
-			u.upsertBigQuerySellingPlayStation(batch)
+			u.upsertBigQuerySellingPlayStation(batch, batchID)
 			batch = []dto.BestSellingPlayStationRequestDTO{}
 		}
 	}
 	if len(batch) > 0 {
-		u.upsertBigQuerySellingPlayStation(batch)
+		u.upsertBigQuerySellingPlayStation(batch, batchID)
 	}
 }
 
-func (u *SellingPlayStationFacade) produceSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, to chan dto.BestSellingPlayStationRequestDTO) {
+func (u *SellingPlayStationFacade) produceSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, to chan dto.BestSellingPlayStationRequestDTO, batchID string) {
 	for _, value := range playStations {
 		to <- dto.BestSellingPlayStationRequestDTO{
 			Game:        value.Game,
@@ -63,22 +63,23 @@ func (u *SellingPlayStationFacade) produceSellingPlayStation(playStations []dto.
 			Genre:       value.Genre,
 			Developer:   value.Developer,
 			Publisher:   value.Publisher,
+			BatchID:     batchID,
 		}
 	}
 }
 
-func (u *SellingPlayStationFacade) InsertSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO) {
+func (u *SellingPlayStationFacade) InsertSellingPlayStation(playStations []dto.BestSellingPlayStationRequestDTO, batchID string) {
 	var wg sync.WaitGroup
 	audits := make(chan dto.BestSellingPlayStationRequestDTO)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		u.processSellingPlayStation(audits, batchSize)
+		u.processSellingPlayStation(audits, batchSize, batchID)
 	}()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		u.produceSellingPlayStation(playStations, audits)
+		u.produceSellingPlayStation(playStations, audits, batchID)
 		close(audits)
 	}()
 	wg.Wait()

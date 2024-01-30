@@ -9,7 +9,7 @@ import (
 )
 
 type BestSellingPlayStations interface {
-	InsertBatchBestSellingPlayStation(sellingPlayStations []model.BestSellingPlayStation) error
+	InsertBatchBestSellingPlayStation(sellingPlayStations []model.BestSellingPlayStation, batchID string) error
 }
 
 type BestSellingPlayStationRepo struct {
@@ -22,7 +22,7 @@ func NewBestSellingPlayStationRepo(db *sql.DB) *BestSellingPlayStationRepo {
 	}
 }
 
-func (r *BestSellingPlayStationRepo) InsertBatchBestSellingPlayStation(sellingPlayStations []model.BestSellingPlayStation) error {
+func (r *BestSellingPlayStationRepo) InsertBatchBestSellingPlayStation(sellingPlayStations []model.BestSellingPlayStation, batchID string) error {
 	valueStrings := []string{}
 	valueArgs := []interface{}{}
 	for _, sellingPlayStation := range sellingPlayStations {
@@ -34,9 +34,10 @@ func (r *BestSellingPlayStationRepo) InsertBatchBestSellingPlayStation(sellingPl
 		valueArgs = append(valueArgs, sellingPlayStation.Genre)
 		valueArgs = append(valueArgs, sellingPlayStation.Developer)
 		valueArgs = append(valueArgs, sellingPlayStation.Publisher)
+		valueArgs = append(valueArgs, batchID)
 	}
 
-	smt := `INSERT INTO best_selling_playStations(game,copies_sold,release_date,genre,developer,publisher) VALUES %s`
+	smt := `INSERT INTO best_selling_playStations(game,copies_sold,release_date,genre,developer,publisher, batch_id) VALUES %s`
 
 	smt = fmt.Sprintf(smt, strings.Join(valueStrings, ","))
 	tx, _ := r.DB.Begin()
