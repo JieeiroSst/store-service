@@ -14,6 +14,7 @@ const (
 	PENDING Status = "PENDING"
 	APPROVE Status = "APPROVE"
 	REJECT  Status = "REJECT"
+	PROCESS Status = "PROCESS"
 )
 
 type ActiveUser struct {
@@ -35,6 +36,8 @@ func (m Status) String() string {
 		return "APPROVE"
 	case REJECT:
 		return "REJECT"
+	case PROCESS:
+		return "PROCESS"
 	default:
 		return fmt.Sprintf("%v", string(m))
 	}
@@ -45,6 +48,7 @@ func ParseStatus(s string) (c Status, err error) {
 		PENDING: {},
 		APPROVE: {},
 		REJECT:  {},
+		PROCESS: {},
 	}
 	cap := Status(s)
 	_, ok := status[cap]
