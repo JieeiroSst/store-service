@@ -10,13 +10,11 @@ type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
 	Secret   SecretConfig
-	Constant ConstantConfig
 	Cache    CacheConfig
 }
 
 type ServerConfig struct {
 	ServerPort string
-	GRPCServer string
 }
 
 type PostgresConfig struct {
@@ -31,10 +29,6 @@ type PostgresConfig struct {
 
 type SecretConfig struct {
 	AuthorizeKey string
-}
-
-type ConstantConfig struct {
-	Rbac string
 }
 
 type Dir struct {
