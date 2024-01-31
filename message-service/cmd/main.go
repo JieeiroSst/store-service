@@ -23,9 +23,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Tạo topic
-	topic := "my-topic"
-
 	// Tạo router
 	router := gin.New()
 
@@ -37,6 +34,8 @@ func main() {
 			c.String(http.StatusBadRequest, "Error reading request body")
 			return
 		}
+
+		topic := c.Query("topic")
 
 		// Publish message
 		deliveryChannel := make(chan kafka.Event)
@@ -72,7 +71,8 @@ func main() {
 	})
 
 	// Tạo endpoint để consume message
-	router.GET("/consume", func(c *gin.Context) {
+	router.POST("/consume", func(c *gin.Context) {
+		topic := c.Query("topic")
 		// Tạo consumer
 		consumer, err := kafka.NewConsumer(&config)
 		if err != nil {
