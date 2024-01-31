@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
@@ -49,10 +50,10 @@ func main() {
 		} else {
 			select {
 			case event := <-deliveryChannel:
-				if event != kafka.ErrNoError { // Check for error code
-					log.Println("Error delivering message:", event)
+				if strings.Contains(event.String(), "Message delivery failed") {
+					log.Println("Error delivering message:", event.String())
 				} else {
-					log.Println("Message delivered successfully")
+					log.Println("Message delivered successfully:", event.String())
 				}
 			case <-time.After(time.Second):
 				log.Println("Timed out waiting for delivery event")
