@@ -3,6 +3,7 @@ module github.com/JIeeiroSst/bookStore-service
 go 1.18
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
