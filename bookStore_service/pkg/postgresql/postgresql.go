@@ -13,7 +13,7 @@ type Postgresql struct {
 
 func NewPostgresql(dns string) *pgx.Conn {
 	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, "postgresql://admin:quest@localhost:8812/qdb")
+	conn, err := pgx.Connect(ctx, dns)
 	if err != nil {
 		fmt.Println("error error")
 	}
