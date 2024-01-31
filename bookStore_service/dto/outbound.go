@@ -3,8 +3,8 @@ package dto
 import "time"
 
 type Outbound struct {
-	ID       int `gorm:"primary_key"`
-	Date     time.Time
-	BookID   int
-	Quantity int
+	ID       int       `json:"id"`
+	Date     time.Time `json:"date"`
+	BookID   int       `json:"book_id"`
+	Quantity int       `json:"quantity"`
 }
