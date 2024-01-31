@@ -11,6 +11,7 @@ require (
 	github.com/hashicorp/consul/api v1.20.0
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/joho/godotenv v1.5.1
+	github.com/robfig/cron/v3 v3.0.1
 	go.uber.org/zap v1.13.0
 )
 
