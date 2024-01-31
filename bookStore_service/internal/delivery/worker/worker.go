@@ -15,12 +15,16 @@ func RunJob(c *cron.Cron, schedule string, handler func()) {
 type Worker struct {
 }
 
-func NewWorker() *Worker{
+func NewWorker() *Worker {
 	return &Worker{}
 }
 
 func (w *Worker) RunWorker() {
 	RunJob(cron.New(), "*/5 * * * *", func() {
-		fmt.Println("Chạy job")
+		fmt.Println("Chạy job 1")
 	})
+	RunJob(cron.New(), "*/10 * * * *", func() {
+		fmt.Println("Chạy job 2")
+	})
+	
 }
