@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -31,18 +32,22 @@ func main() {
 	// Tạo endpoint để publish message
 	router.POST("/publish", func(c *gin.Context) {
 		// Lấy message từ request
-		messageString := c.PostForm("message")
+		data, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			c.String(http.StatusBadRequest, "Error reading request body")
+			return
+		}
 
 		// Publish message
 		deliveryChannel := make(chan kafka.Event)
 
 		message := &kafka.Message{
 			TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-			Value:          []byte(messageString),
+			Value:          data,
 		}
 
 		// Publish the message
-		err := producer.Produce(message, deliveryChannel)
+		err = producer.Produce(message, deliveryChannel)
 
 		// Use the deliveryChannel or handle potential errors
 		if err != nil {
