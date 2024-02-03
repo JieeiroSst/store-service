@@ -11,3 +11,4 @@ purchase_log = {path = "../purchase_log"}
 purchase_cache = {path = "../purchase_cache"}
 purchase_consul = {path = "../purchase_consul"}
 fake = {version="2", features=['derive']}
+actix-web = "4"
