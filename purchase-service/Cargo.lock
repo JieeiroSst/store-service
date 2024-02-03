@@ -7,6 +7,10 @@ name = "purchase_api"
 version = "0.1.0"
 
 [[package]]
+name = "purchase_cache"
+version = "0.1.0"
+
+[[package]]
 name = "purchase_db"
 version = "0.1.0"
 
