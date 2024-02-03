@@ -1,0 +1,11 @@
+/Users/chmp/Desktop/store-service/purchase-service/target/debug/deps/libpostgres_types-a5f8479ce5f90a9d.rmeta: /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/lib.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/pg_lsn.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/private.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/special.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/type_gen.rs
+
+/Users/chmp/Desktop/store-service/purchase-service/target/debug/deps/libpostgres_types-a5f8479ce5f90a9d.rlib: /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/lib.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/pg_lsn.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/private.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/special.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/type_gen.rs
+
+/Users/chmp/Desktop/store-service/purchase-service/target/debug/deps/postgres_types-a5f8479ce5f90a9d.d: /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/lib.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/pg_lsn.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/private.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/special.rs /Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/type_gen.rs
+
+/Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/lib.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/pg_lsn.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/private.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/special.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-6f17d22bba15001f/postgres-types-0.2.6/src/type_gen.rs:

@@ -1,0 +1,131 @@
+cargo:rerun-if-env-changed=LIBZ_SYS_STATIC
+cargo:rerun-if-changed=build.rs
+cargo:rerun-if-env-changed=ZLIB_NO_PKG_CONFIG
+cargo:rerun-if-env-changed=PKG_CONFIG_aarch64-apple-darwin
+cargo:rerun-if-env-changed=PKG_CONFIG_aarch64_apple_darwin
+cargo:rerun-if-env-changed=HOST_PKG_CONFIG
+cargo:rerun-if-env-changed=PKG_CONFIG
+cargo:rerun-if-env-changed=ZLIB_STATIC
+cargo:rerun-if-env-changed=ZLIB_DYNAMIC
+cargo:rerun-if-env-changed=PKG_CONFIG_ALL_STATIC
+cargo:rerun-if-env-changed=PKG_CONFIG_ALL_DYNAMIC
+cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64-apple-darwin
+cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64_apple_darwin
+cargo:rerun-if-env-changed=HOST_PKG_CONFIG_PATH
+cargo:rerun-if-env-changed=PKG_CONFIG_PATH
+cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64-apple-darwin
+cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64_apple_darwin
+cargo:rerun-if-env-changed=HOST_PKG_CONFIG_LIBDIR
+cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR
+cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64-apple-darwin
+cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64_apple_darwin
+cargo:rerun-if-env-changed=HOST_PKG_CONFIG_SYSROOT_DIR
+cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR
+cargo:rerun-if-env-changed=ZLIB_STATIC
+cargo:rerun-if-env-changed=ZLIB_DYNAMIC
+cargo:rerun-if-env-changed=PKG_CONFIG_ALL_STATIC
+cargo:rerun-if-env-changed=PKG_CONFIG_ALL_DYNAMIC
+cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64-apple-darwin
+cargo:rerun-if-env-changed=PKG_CONFIG_PATH_aarch64_apple_darwin
+cargo:rerun-if-env-changed=HOST_PKG_CONFIG_PATH
+cargo:rerun-if-env-changed=PKG_CONFIG_PATH
+cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64-apple-darwin
+cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR_aarch64_apple_darwin
+cargo:rerun-if-env-changed=HOST_PKG_CONFIG_LIBDIR
+cargo:rerun-if-env-changed=PKG_CONFIG_LIBDIR
+cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64-apple-darwin
+cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR_aarch64_apple_darwin
+cargo:rerun-if-env-changed=HOST_PKG_CONFIG_SYSROOT_DIR
+cargo:rerun-if-env-changed=PKG_CONFIG_SYSROOT_DIR
+cargo-warning=Could not run `PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1 pkg-config --libs --cflags zlib`
+The pkg-config command could not be found.
+
+Most likely, you need to install a pkg-config package for your OS.
+Try `brew install pkg-config` if you have Homebrew.
+
+If you've already installed it, ensure the pkg-config command is one of the
+directories in the PATH environment variable.
+
+If you did not expect this build to link to a pre-installed system library,
+then check documentation of the libz-sys crate for an option to
+build the library from source, or disable features or dependencies
+that require pkg-config.
+OPT_LEVEL = Some("0")
+TARGET = Some("aarch64-apple-darwin")
+HOST = Some("aarch64-apple-darwin")
+cargo:rerun-if-env-changed=CC_aarch64-apple-darwin
+CC_aarch64-apple-darwin = None
+cargo:rerun-if-env-changed=CC_aarch64_apple_darwin
+CC_aarch64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_CC
+HOST_CC = None
+cargo:rerun-if-env-changed=CC
+CC = None
+cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+CRATE_CC_NO_DEFAULTS = None
+DEBUG = Some("true")
+CARGO_CFG_TARGET_FEATURE = Some("aes,crc,dit,dotprod,dpb,dpb2,fcma,fhm,flagm,fp16,frintts,jsconv,lor,lse,neon,paca,pacg,pan,pmuv3,ras,rcpc,rcpc2,rdm,sb,sha2,sha3,ssbs,vh")
+cargo:rerun-if-env-changed=CFLAGS_aarch64-apple-darwin
+CFLAGS_aarch64-apple-darwin = None
+cargo:rerun-if-env-changed=CFLAGS_aarch64_apple_darwin
+CFLAGS_aarch64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_CFLAGS
+HOST_CFLAGS = None
+cargo:rerun-if-env-changed=CFLAGS
+CFLAGS = None
+running "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-Wall" "-Wextra" "src/smoke.c" "-o" "/dev/null" "-lz"
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/adler32.o" "-c" "src/zlib/adler32.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/compress.o" "-c" "src/zlib/compress.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/crc32.o" "-c" "src/zlib/crc32.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/deflate.o" "-c" "src/zlib/deflate.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/infback.o" "-c" "src/zlib/infback.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/inffast.o" "-c" "src/zlib/inffast.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/inflate.o" "-c" "src/zlib/inflate.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/inftrees.o" "-c" "src/zlib/inftrees.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/trees.o" "-c" "src/zlib/trees.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/uncompr.o" "-c" "src/zlib/uncompr.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/zutil.o" "-c" "src/zlib/zutil.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzclose.o" "-c" "src/zlib/gzclose.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzlib.o" "-c" "src/zlib/gzlib.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzread.o" "-c" "src/zlib/gzread.c"
+exit status: 0
+running: env -u IPHONEOS_DEPLOYMENT_TARGET "cc" "-O0" "-ffunction-sections" "-fdata-sections" "-fPIC" "-gdwarf-2" "-fno-omit-frame-pointer" "-arch" "arm64" "-I" "src/zlib" "-fvisibility=hidden" "-DSTDC" "-D_LARGEFILE64_SOURCE" "-D_POSIX_SOURCE" "-D_C99_SOURCE" "-o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzwrite.o" "-c" "src/zlib/gzwrite.c"
+exit status: 0
+cargo:rerun-if-env-changed=AR_aarch64-apple-darwin
+AR_aarch64-apple-darwin = None
+cargo:rerun-if-env-changed=AR_aarch64_apple_darwin
+AR_aarch64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_AR
+HOST_AR = None
+cargo:rerun-if-env-changed=AR
+AR = None
+cargo:rerun-if-env-changed=ARFLAGS_aarch64-apple-darwin
+ARFLAGS_aarch64-apple-darwin = None
+cargo:rerun-if-env-changed=ARFLAGS_aarch64_apple_darwin
+ARFLAGS_aarch64_apple_darwin = None
+cargo:rerun-if-env-changed=HOST_ARFLAGS
+HOST_ARFLAGS = None
+cargo:rerun-if-env-changed=ARFLAGS
+ARFLAGS = None
+running: ZERO_AR_DATE="1" "ar" "cq" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/libz.a" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/adler32.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/compress.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/crc32.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/deflate.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/infback.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/inffast.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/inflate.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/inftrees.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/trees.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/uncompr.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/zutil.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzclose.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzlib.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzread.o" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/src/zlib/gzwrite.o"
+exit status: 0
+running: "ar" "s" "/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib/libz.a"
+exit status: 0
+cargo:rustc-link-lib=static=z
+cargo:rustc-link-search=native=/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib
+cargo:root=/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out
+cargo:rustc-link-search=native=/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/lib
+cargo:include=/Users/chmp/Desktop/store-service/purchase-service/target/debug/build/libz-sys-786c0c3cdae79d78/out/include
