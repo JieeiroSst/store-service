@@ -11,7 +11,7 @@ pub trait CustomerRepository {
 }
 
 #[automock]
-pub trait OrdertemRepository {
+pub trait OrderItemRepository {
     fn by_id(&self, id: &str) -> Result<Ordertem, String>;
     fn save(&self, Ordertem: ordertem);
     fn next_identity(&self) -> String;
