@@ -64,7 +64,7 @@ pub struct PosterDto {
     pub poster_id: String,
     pub title: String,
     pub description: String,
-    pub price: u64,
+    pub price: String,
     pub image_url: String,
 }
 
