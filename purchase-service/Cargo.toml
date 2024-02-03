@@ -5,5 +5,6 @@ members = [
     "purchase_db",
     "purchase_api",
     "purchase_log",
-    "purchase_cache"
+    "purchase_cache",
+    "purchase_consul"
 ]

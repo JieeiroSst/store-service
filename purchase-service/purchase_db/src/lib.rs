@@ -1,14 +1,20 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+use postgres::{Client, NoTls};
+
+#[allow(unused_imports)]
+pub struct DB {
+    pub database_url: String,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl DB {
+    pub fn new(database_url: String) -> DB{
+        DB { 
+            database_url: database_url,
+        }
+    }
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    pub fn connect_to_database(&self) -> Result<Client, postgres::Error> {
+        let client = Client::connect(self.database_url.as_str(), NoTls)?;
+    
+        Ok(client)
     }
 }
