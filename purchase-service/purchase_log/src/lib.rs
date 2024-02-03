@@ -1,14 +1,17 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use std::io::Write;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// write_log("Đây là một thông báo log", "INFO").unwrap();
+// write_log("Đây là một lỗi", "ERROR").unwrap();
+fn write_log(message: &str, level: &str) -> Result<(), std::io::Error> {
+    let mut log_file = std::fs::OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open("log.txt")?;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+    let timestamp = chrono::Utc::now().format("%Y-%m-%d %H:%M:%S");
+    let log_entry = format!("{} {} {}\n", timestamp, level, message);
+
+    log_file.write_all(log_entry.as_bytes())?;
+
+    Ok(())
 }
