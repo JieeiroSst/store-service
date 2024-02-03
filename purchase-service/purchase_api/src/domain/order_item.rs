@@ -2,14 +2,14 @@ use fake::{Dummy, Fake};
 
 #[derive(Clone, Dummy, PartialEq, Eq)]
 #[readonly::make]
-pub struct Order_Item {
+pub struct Ordertem {
     pub order_item_id: String,
     pub order_id: String,
     pub poster_id: String,
     pub quantity: String,
 }
 
-impl Order_Item {
+impl OrderItem {
     pub fn new(order_item_id: &str, order_id: &str, poster_id: &str, quantity: &str) -> Self {
         Self {
             order_item_id: order_item_id.to_string(),
