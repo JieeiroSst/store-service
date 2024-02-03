@@ -1,14 +1,8 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use sonyflake::Sonyflake;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub fn generator_id() -> String {
+    let sf = Sonyflake::new().unwrap();
+    let next_id = sf.next_id().unwrap();
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+    next_id.to_string()
 }
