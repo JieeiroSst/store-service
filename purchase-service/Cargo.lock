@@ -623,6 +623,10 @@ name = "purchase_api"
 version = "0.1.0"
 dependencies = [
  "fake",
+ "purchase_cache",
+ "purchase_consul",
+ "purchase_db",
+ "purchase_log",
 ]
 
 [[package]]
