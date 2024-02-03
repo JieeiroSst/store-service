@@ -1,4 +1,4 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware, post, web, App, HttpResponse, HttpServer, Responder};
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -18,6 +18,7 @@ async fn manual_hello() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
+            .wrap(middleware::DefaultHeaders::new().add(("X-Version", "0.2")))
             .service(hello)
             .service(echo)
             .route("/hey", web::get().to(manual_hello))
