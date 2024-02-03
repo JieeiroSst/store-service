@@ -1,1 +1,2 @@
-use fake::{Dummy, Fake};
+pub mod customer;
+pub mod poster;
