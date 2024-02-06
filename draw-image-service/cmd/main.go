@@ -15,9 +15,6 @@ func main() {
 	router := gin.Default()
 	router.MaxMultipartMemory = 8 << 20 // 8 MiB
 	router.POST("/upload", func(c *gin.Context) {
-		name := c.PostForm("name")
-		email := c.PostForm("email")
-
 		// Multipart form
 		form, err := c.MultipartForm()
 		if err != nil {
@@ -76,7 +73,7 @@ func main() {
 			panic(err)
 		}
 
-		c.String(http.StatusOK, "Uploaded successfully %d files with fields name=%s and email=%s.", len(files), name, email)
+		c.String(http.StatusOK, "Uploaded successfully %d files.", len(files))
 	})
 	router.Run(":8080")
 }
