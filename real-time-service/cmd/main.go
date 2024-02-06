@@ -13,7 +13,8 @@ import (
 )
 
 func main() {
-	dirEnv, err := config.ReadFileEnv(".env")
+	nameEnv := ".env"
+	dirEnv, err := config.ReadFileEnv(nameEnv)
 	if err != nil {
 		logger.Logger().Error(err.Error())
 	}
