@@ -21,7 +21,7 @@ func NewHttpDelivery(config *config.Config) *HttpDelivery {
 }
 
 func (ww *HttpDelivery) WsCall(w http.ResponseWriter, r *http.Request) {
-	req, err := http.NewRequest("GET", "http://localhost:8081/ws", nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://localhost:%v/ws", ww.config.Server.ServerPort), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func (ww *HttpDelivery) WsCall(w http.ResponseWriter, r *http.Request) {
 	defer resp.Body.Close()
 
 	// create ws conn
-	u := url.URL{Scheme: "ws", Host: "localhost:8081", Path: "/ws"}
+	u := url.URL{Scheme: "ws", Host: fmt.Sprintf("http://localhost:%v", ww.config.Server.ServerPort), Path: "/ws"}
 	u.RequestURI()
 	fmt.Printf("ws url: %s", u.String())
 	log.Printf("connecting to %s", u.String())

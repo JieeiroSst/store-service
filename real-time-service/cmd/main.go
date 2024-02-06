@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/JIeeiroSst/real-time-service/config"
-	"github.com/JIeeiroSst/real-time-service/internal/delivery"
 	httpCall "github.com/JIeeiroSst/real-time-service/internal/delivery/http"
 	"github.com/JIeeiroSst/real-time-service/internal/delivery/ws"
+	"github.com/JIeeiroSst/real-time-service/internal/router"
 	"github.com/JIeeiroSst/real-time-service/pkg/consul"
 	"github.com/JIeeiroSst/real-time-service/pkg/logger"
 )
@@ -28,14 +29,8 @@ func main() {
 	wsDelivery := ws.NewWsDelivery(conf)
 	httpDelivery := httpCall.NewHttpDelivery(conf)
 
-	http.Handle("/ws", delivery.Middleware(
-		http.HandlerFunc(wsDelivery.WsHandler),
-		delivery.AuthMiddleware,
-	))
+	router := router.NewRouter(wsDelivery, httpDelivery)
+	router.HandlerRouter()
 
-	http.Handle("/call", delivery.Middleware(
-		http.HandlerFunc(httpDelivery.WsCall),
-		delivery.AuthMiddleware,
-	))
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", conf.Server.ServerPort), nil))
 }
