@@ -31,7 +31,7 @@ func (ww *HttpDelivery) WsCall(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	req.Header.Set("X-Api-Key", "test_api_key")
+	req.Header.Set("X-Api-Key", ww.config.Serect.Key)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil || resp.StatusCode != http.StatusOK {
