@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 
+	"github.com/JIeeiroSst/real-time-service/constant"
 	"github.com/joho/godotenv"
 )
 
@@ -39,9 +40,9 @@ func ReadFileEnv(dir string) (*Dir, error) {
 	}
 
 	data := &Dir{
-		HostConsul:    os.Getenv("HostConsul"),
-		KeyConsul:     os.Getenv("KeyConsul"),
-		ServiceConsul: os.Getenv("ServiceConsul"),
+		HostConsul:    os.Getenv(constant.HostConsul),
+		KeyConsul:     os.Getenv(constant.KeyConsul),
+		ServiceConsul: os.Getenv(constant.ServiceConsul),
 	}
 	return data, nil
 }
