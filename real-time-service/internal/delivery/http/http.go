@@ -30,12 +30,16 @@ func (ww *HttpDelivery) WsCall(w http.ResponseWriter, r *http.Request) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("http://localhost:%v/ws", ww.config.Server.ServerPort), nil)
 	if err != nil {
 		log.Fatal(err)
+		w.WriteHeader(http.StatusForbidden)
+		return
 	}
 	req.Header.Set("X-Api-Key", ww.config.Serect.Key)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		log.Fatalf("auth err: %v", err)
+		w.WriteHeader(http.StatusForbidden)
+		return
 	}
 	defer resp.Body.Close()
 
