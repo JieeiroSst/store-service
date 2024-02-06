@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/JIeeiroSst/real-time-service/config"
@@ -34,5 +33,6 @@ func main() {
 	router := router.NewRouter(wsDelivery, httpDelivery, middleware)
 	router.HandlerRouter()
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", conf.Server.ServerPort), nil))
+	http.ListenAndServe(fmt.Sprintf(":%v", conf.Server.ServerPort), nil)
+	logger.Logger().Sugar().Infof("Server started at port %v", conf.Server.ServerPort)
 }
