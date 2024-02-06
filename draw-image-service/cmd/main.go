@@ -23,7 +23,7 @@ func main() {
 		}
 		images := form.File["files"]
 
-		files := []string{}
+		files := make([]string, 0)
 
 		for _, image := range images {
 			filename := filepath.Base(image.Filename)
