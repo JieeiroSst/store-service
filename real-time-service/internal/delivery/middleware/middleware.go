@@ -1,15 +1,26 @@
-package delivery
+package middleware
 
 import (
 	"log"
 	"net/http"
+
+	"github.com/JIeeiroSst/real-time-service/config"
 )
 
-func AuthMiddleware(next http.Handler) http.Handler {
-	TestApiKey := "test_api_key"
+type MiddlewareDelivery struct {
+	config *config.Config
+}
+
+func NewMiddlewareDelivery(config *config.Config) *MiddlewareDelivery {
+	return &MiddlewareDelivery{
+		config: config,
+	}
+}
+
+func (m *MiddlewareDelivery) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		var apiKey string
-		if apiKey = req.Header.Get("X-Api-Key"); apiKey != TestApiKey {
+		if apiKey = req.Header.Get("X-Api-Key"); apiKey != m.config.Serect.Key {
 			log.Printf("bad auth api key: %s", apiKey)
 			rw.WriteHeader(http.StatusForbidden)
 			return

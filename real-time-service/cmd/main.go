@@ -7,6 +7,7 @@ import (
 
 	"github.com/JIeeiroSst/real-time-service/config"
 	httpCall "github.com/JIeeiroSst/real-time-service/internal/delivery/http"
+	"github.com/JIeeiroSst/real-time-service/internal/delivery/middleware"
 	"github.com/JIeeiroSst/real-time-service/internal/delivery/ws"
 	"github.com/JIeeiroSst/real-time-service/internal/router"
 	"github.com/JIeeiroSst/real-time-service/pkg/consul"
@@ -28,8 +29,9 @@ func main() {
 
 	wsDelivery := ws.NewWsDelivery(conf)
 	httpDelivery := httpCall.NewHttpDelivery(conf)
+	middleware := middleware.NewMiddlewareDelivery(conf)
 
-	router := router.NewRouter(wsDelivery, httpDelivery)
+	router := router.NewRouter(wsDelivery, httpDelivery, middleware)
 	router.HandlerRouter()
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", conf.Server.ServerPort), nil))
