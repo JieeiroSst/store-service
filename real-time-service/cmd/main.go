@@ -20,7 +20,8 @@ func main() {
 		logger.Logger().Error(err.Error())
 	}
 
-	consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+	consul := consul.NewConfigConsul(dirEnv.HostConsul, 
+		dirEnv.KeyConsul, dirEnv.ServiceConsul)
 	conf, err := consul.ConnectConfigConsul()
 	if err != nil {
 		logger.Logger().Error(err.Error())
