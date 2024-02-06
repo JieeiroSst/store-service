@@ -2,7 +2,7 @@ package http
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -22,7 +22,7 @@ func NewHttpDelivery(config *config.Config) *HttpDelivery {
 }
 
 func (ww *HttpDelivery) WsCall(w http.ResponseWriter, r *http.Request) {
-	reqBody, err := ioutil.ReadAll(r.Body)
+	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		return
