@@ -8,10 +8,15 @@ import (
 
 type Config struct {
 	Server ServerConfig
+	Serect SerectConfig
 }
 
 type ServerConfig struct {
 	ServerPort string
+}
+
+type SerectConfig struct {
+	Key string
 }
 
 type Consul struct {
