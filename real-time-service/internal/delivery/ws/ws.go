@@ -1,11 +1,10 @@
 package ws
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/JIeeiroSst/real-time-service/config"
+	"github.com/JIeeiroSst/real-time-service/pkg/logger"
 	"github.com/gorilla/websocket"
 )
 
@@ -30,7 +29,7 @@ var upgrader = websocket.Upgrader{
 func (ww *WsDelivery) WsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		logger.Logger().Error(err.Error())
 		return
 	}
 	defer conn.Close()
@@ -41,10 +40,11 @@ func (ww *WsDelivery) WsHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Println("Received message:", string(message))
+		logger.Logger().Sugar().Infof("Received message:", string(message))
 
 		err = conn.WriteMessage(messageType, message)
 		if err != nil {
+			logger.Logger().Error(err.Error())
 			return
 		}
 	}
