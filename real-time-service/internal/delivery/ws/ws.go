@@ -5,8 +5,19 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/JIeeiroSst/real-time-service/config"
 	"github.com/gorilla/websocket"
 )
+
+type WsDelivery struct {
+	config *config.Config
+}
+
+func NewWsDelivery(config *config.Config) *WsDelivery {
+	return &WsDelivery{
+		config: config,
+	}
+}
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -16,7 +27,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func WsHandler(w http.ResponseWriter, r *http.Request) {
+func (ww *WsDelivery) WsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
