@@ -9,29 +9,29 @@ import (
 )
 
 type Router struct {
-	wsDelivery         *ws.WsDelivery
-	httpDelivery       *httpCall.HttpDelivery
-	middlewareDelivery *middleware.MiddlewareDelivery
+	wsDelivery   *ws.WsDelivery
+	httpDelivery *httpCall.HttpDelivery
+	middleware   *middleware.MiddlewareDelivery
 }
 
 func NewRouter(wsDelivery *ws.WsDelivery,
 	httpDelivery *httpCall.HttpDelivery,
-	middlewareDelivery *middleware.MiddlewareDelivery) *Router {
+	middleware *middleware.MiddlewareDelivery) *Router {
 	return &Router{
-		wsDelivery:         wsDelivery,
-		httpDelivery:       httpDelivery,
-		middlewareDelivery: middlewareDelivery,
+		wsDelivery:   wsDelivery,
+		httpDelivery: httpDelivery,
+		middleware:   middleware,
 	}
 }
 
 func (r *Router) HandlerRouter() {
 	http.Handle("/ws", middleware.Middleware(
 		http.HandlerFunc(r.wsDelivery.WsHandler),
-		r.middlewareDelivery.AuthMiddleware,
+		r.middleware.AuthMiddleware,
 	))
 
 	http.Handle("/call", middleware.Middleware(
 		http.HandlerFunc(r.httpDelivery.WsCall),
-		r.middlewareDelivery.AuthMiddleware,
+		r.middleware.AuthMiddleware,
 	))
 }
