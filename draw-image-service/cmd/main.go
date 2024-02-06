@@ -4,11 +4,15 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"net/http"
+	"path/filepath"
 
 	"github.com/disintegration/imaging"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	router := gin.Default()
 	// input files
 	files := []string{"01.jpeg", "02.jpeg", "03.jpeg", "04.jpeg"}
 
@@ -38,7 +42,7 @@ func main() {
 	}
 	thumbLen := len(thumbnails)
 	columns := 2
-	
+
 	rows := int(math.Ceil(float64(thumbLen) / float64(columns)))
 
 	dst = imaging.New(sideWidth*columns, sideHeight*rows, color.NRGBA{0, 0, 0, 0})
@@ -51,4 +55,29 @@ func main() {
 	if err := imaging.Save(dst, "dst2.jpg", imaging.JPEGQuality(95)); err != nil {
 		panic(err)
 	}
+
+	router.MaxMultipartMemory = 8 << 20 // 8 MiB
+	router.POST("/upload", func(c *gin.Context) {
+		name := c.PostForm("name")
+		email := c.PostForm("email")
+
+		// Multipart form
+		form, err := c.MultipartForm()
+		if err != nil {
+			c.String(http.StatusBadRequest, "get form err: %s", err.Error())
+			return
+		}
+		files := form.File["files"]
+
+		for _, file := range files {
+			filename := filepath.Base(file.Filename)
+			if err := c.SaveUploadedFile(file, filename); err != nil {
+				c.String(http.StatusBadRequest, "upload file err: %s", err.Error())
+				return
+			}
+		}
+
+		c.String(http.StatusOK, "Uploaded successfully %d files with fields name=%s and email=%s.", len(files), name, email)
+	})
+	router.Run(":8080")
 }
