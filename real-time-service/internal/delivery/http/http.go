@@ -6,10 +6,21 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/JIeeiroSst/real-time-service/config"
 	"github.com/gorilla/websocket"
 )
 
-func WsCall(w http.ResponseWriter, r *http.Request) {
+type HttpDelivery struct {
+	config *config.Config
+}
+
+func NewHttpDelivery(config *config.Config) *HttpDelivery {
+	return &HttpDelivery{
+		config: config,
+	}
+}
+
+func (ww *HttpDelivery) WsCall(w http.ResponseWriter, r *http.Request) {
 	req, err := http.NewRequest("GET", "http://localhost:8081/ws", nil)
 	if err != nil {
 		log.Fatal(err)
