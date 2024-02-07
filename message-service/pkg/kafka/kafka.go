@@ -9,21 +9,26 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
-type QueueKakfa struct {
+type QueueKakfa interface {
+	Producer(ctx context.Context, topic string, data []byte)
+	Consume(ctx context.Context, topic string) (*kafka.Message, error)
+}
+
+type queueKakfa struct {
 	configMap map[string]kafka.ConfigValue
 }
 
-func NetKafkaWriter(kafkaURL string) *QueueKakfa {
+func NetKafkaWriter(kafkaURL string) QueueKakfa {
 	config := kafka.ConfigMap{
 		"bootstrap.servers": kafkaURL,
 	}
 
-	return &QueueKakfa{
+	return &queueKakfa{
 		configMap: config,
 	}
 }
 
-func (p *QueueKakfa) Producer(ctx context.Context, topic string, data []byte) {
+func (p *queueKakfa) Producer(ctx context.Context, topic string, data []byte) {
 	// Tạo producer
 	producer, err := kafka.NewProducer((*kafka.ConfigMap)(&p.configMap))
 	if err != nil {
@@ -55,7 +60,7 @@ func (p *QueueKakfa) Producer(ctx context.Context, topic string, data []byte) {
 	}
 }
 
-func (p *QueueKakfa) Consume(ctx context.Context, topic string) (*kafka.Message, error) {
+func (p *queueKakfa) Consume(ctx context.Context, topic string) (*kafka.Message, error) {
 	consumer, err := kafka.NewConsumer((*kafka.ConfigMap)(&p.configMap))
 	if err != nil {
 		log.Fatal(err)
