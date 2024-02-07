@@ -2,51 +2,64 @@ package kafka
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"strings"
+	"time"
 
-	"github.com/segmentio/kafka-go"
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
+type QueueKakfa struct {
+	configMap map[string]kafka.ConfigValue
+}
+
 func NetKafkaWriter(kafkaURL string) *QueueKakfa {
+	config := kafka.ConfigMap{
+		"bootstrap.servers": kafkaURL,
+	}
+
 	return &QueueKakfa{
-		KafkaURL: kafkaURL,
+		configMap: config,
 	}
 }
 
-func (p *QueueKakfa) Producer(remoteAddr, topic string, body []byte, ctx context.Context) {
-	kafkaWriter := kafka.Writer{
-		Addr:     kafka.TCP(p.KafkaURL),
-		Topic:    topic,
-		Balancer: &kafka.LeastBytes{},
+func (p *QueueKakfa) Producer(ctx context.Context, topic string, data []byte) {
+	// Tạo producer
+	producer, err := kafka.NewProducer((*kafka.ConfigMap)(&p.configMap))
+	if err != nil {
+		log.Fatal(err)
 	}
-	for {
-		msg := kafka.Message{
-			Key:   []byte(fmt.Sprintf("address-%s", remoteAddr)),
-			Value: []byte(body),
-		}
-		err := kafkaWriter.WriteMessages(ctx, msg)
-		if err != nil {
-			log.Fatalln(err)
+	deliveryChannel := make(chan kafka.Event)
+
+	message := &kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          data,
+	}
+
+	err = producer.Produce(message, deliveryChannel)
+
+	// Use the deliveryChannel or handle potential errors
+	if err != nil {
+		log.Println("Error publishing message:", err)
+	} else {
+		select {
+		case event := <-deliveryChannel:
+			if strings.Contains(event.String(), "Message delivery failed") {
+				log.Println("Error delivering message:", event.String())
+			} else {
+				log.Println("Message delivered successfully:", event.String())
+			}
+		case <-time.After(time.Second):
+			log.Println("Timed out waiting for delivery event")
 		}
 	}
 }
 
-func (p *QueueKakfa) Consume(ctx context.Context, topic, remoteAddr string) (kafka.Message, error) {
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{remoteAddr},
-		Topic:    topic,
-		MinBytes: 10e3,
-		MaxBytes: 10e6,
-	})
+func (p *QueueKakfa) Consume(ctx context.Context, topic string) (*kafka.Message, error) {
+	consumer, err := kafka.NewConsumer((*kafka.ConfigMap)(&p.configMap))
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// for {
-	// 	msg, err := r.ReadMessage(ctx)
-	// 	if err != nil {
-	// 		panic("could not read message " + err.Error())
-	// 	}
-	// 	fmt.Printf("%v received: %v", group, string(msg.Value))
-	// 	fmt.Println()
-	// }
-	return r.ReadMessage(ctx)
+	return consumer.ReadMessage(time.Minute)
 }
