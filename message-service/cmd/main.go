@@ -1,101 +1,79 @@
 package main
 
 import (
-	"io"
-	"log"
+	"context"
+	"fmt"
 	"net/http"
-	"strings"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/JIeeiroSst/message-service/config"
+	httpDelivery "github.com/JIeeiroSst/message-service/internal/delivery/http"
+	"github.com/JIeeiroSst/message-service/internal/repository"
+	"github.com/JIeeiroSst/message-service/internal/usecase"
+	"github.com/JIeeiroSst/message-service/middleware"
+	"github.com/JIeeiroSst/message-service/pkg/consul"
+	"github.com/JIeeiroSst/message-service/pkg/kafka"
+	"github.com/JIeeiroSst/message-service/pkg/logger"
+	"github.com/JIeeiroSst/message-service/pkg/mysql"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Khởi tạo cấu hình Kafka
-	config := kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
-	}
+	router := gin.Default()
 
-	// Tạo producer
-	producer, err := kafka.NewProducer(&config)
+	dirEnv, err := config.ReadFileEnv(".env")
 	if err != nil {
-		log.Fatal(err)
+		logger.Logger().Error(err.Error())
+	}
+	consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+	conf, err := consul.ConnectConfigConsul()
+	if err != nil {
+		logger.Logger().Error(err.Error())
 	}
 
-	// Tạo router
-	router := gin.New()
+	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+		conf.Mysql.MysqlUser,
+		conf.Mysql.MysqlPassword,
+		conf.Mysql.MysqlHost,
+		conf.Mysql.MysqlPort,
+		conf.Mysql.MysqlDbname,
+	)
+	mysqlOrm := mysql.NewMysqlConn(dns)
+	queueKakfa := kafka.NetKafkaWriter(conf.Kafka.KafkaURL)
 
-	// Tạo endpoint để publish message
-	router.POST("/publish", func(c *gin.Context) {
-		// Lấy message từ request
-		data, err := io.ReadAll(c.Request.Body)
-		if err != nil {
-			c.String(http.StatusBadRequest, "Error reading request body")
-			return
-		}
-
-		topic := c.Query("topic")
-
-		// Publish message
-		deliveryChannel := make(chan kafka.Event)
-
-		message := &kafka.Message{
-			TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-			Value:          data,
-		}
-
-		// Publish the message
-		err = producer.Produce(message, deliveryChannel)
-
-		// Use the deliveryChannel or handle potential errors
-		if err != nil {
-			log.Println("Error publishing message:", err)
-		} else {
-			select {
-			case event := <-deliveryChannel:
-				if strings.Contains(event.String(), "Message delivery failed") {
-					log.Println("Error delivering message:", event.String())
-				} else {
-					log.Println("Message delivered successfully:", event.String())
-				}
-			case <-time.After(time.Second):
-				log.Println("Timed out waiting for delivery event")
-			}
-		}
-
-		// Trả về phản hồi
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Message published successfully",
-		})
+	repository := repository.NewRepositories(mysqlOrm)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos:      repository,
+		QueueKakfa: queueKakfa,
 	})
 
-	// Tạo endpoint để consume message
-	router.POST("/consume", func(c *gin.Context) {
-		topic := c.Query("topic")
-		// Tạo consumer
-		consumer, err := kafka.NewConsumer(&config)
-		if err != nil {
-			log.Fatal(err)
-		}
+	middleware := middleware.Newmiddleware(conf.Secret.AuthorizeKey)
 
-		// Subscribe topic
-		consumer.Subscribe(topic, nil)
+	httpServer := httpDelivery.NewHandler(middleware, *usecase)
 
-		// Consume message
-		for {
-			message, err := consumer.ReadMessage(time.Minute)
-			if err != nil {
-				log.Fatal(err)
-			}
+	httpServer.Init(router)
 
-			// Trả về phản hồi
-			c.JSON(http.StatusOK, gin.H{
-				"message": string(message.Value),
-			})
-		}
-	})
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%v", conf.Server.ServerPort),
+		Handler: router,
+	}
 
-	// Khởi động server
-	http.ListenAndServe(":8080", router)
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logger.Logger().Info("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		logger.Logger().Error("Server Shutdown:")
+	}
+	select {
+	case <-ctx.Done():
+		logger.Logger().Info("timeout of 5 seconds.")
+	}
+	logger.Logger().Info("Server exiting")
 }

@@ -11,7 +11,7 @@ import (
 )
 
 type PubSub interface {
-	Producer(ctx context.Context, topic string, data []byte)
+	Producer(ctx context.Context, topic string, data []byte) error
 	Consume(ctx context.Context, topic string) ([]byte, error)
 }
 
@@ -28,7 +28,7 @@ func NewPubSubUsecase(queueKakfa kafkaPkg.QueueKakfa,
 	}
 }
 
-func (u *PubSubUsecase) Producer(ctx context.Context, topic string, data []byte) {
+func (u *PubSubUsecase) Producer(ctx context.Context, topic string, data []byte) error {
 	var wg sync.WaitGroup
 
 	wg.Add(2)
@@ -47,6 +47,8 @@ func (u *PubSubUsecase) Producer(ctx context.Context, topic string, data []byte)
 	}()
 
 	wg.Wait()
+
+	return nil
 }
 func (u *PubSubUsecase) Consume(ctx context.Context, topic string) ([]byte, error) {
 	message, err := u.queueKakfa.Consume(ctx, topic)

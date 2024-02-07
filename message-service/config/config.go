@@ -9,6 +9,9 @@ import (
 type Config struct {
 	Server ServerConfig
 	Cache  CacheConfig
+	Mysql  MysqlConfig
+	Secret SecretConfig
+	Kafka  KafkaConfig
 }
 
 type ServerConfig struct {
@@ -35,6 +38,25 @@ type Kafka struct {
 
 type CacheConfig struct {
 	Host string
+}
+
+type KafkaConfig struct {
+	KafkaURL string
+}
+
+type MysqlConfig struct {
+	MysqlHost     string
+	MysqlPort     string
+	MysqlUser     string
+	MysqlPassword string
+	MysqlDbname   string
+	MysqlSSLMode  bool
+	MysqlDriver   string
+}
+
+type SecretConfig struct {
+	JwtSecretKey string
+	AuthorizeKey string
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {
