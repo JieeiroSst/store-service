@@ -3,7 +3,7 @@
 		"ServerPort": "6060"
 	},
 	"secret": {
-		"AuthorizeKey": "cao_hoang_mai_phuong"
+		"AuthorizeKey": "no_name"
 	},
 	"mongo": {
 		"Host": "mongo-svc:27017"
