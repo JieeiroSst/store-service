@@ -214,18 +214,4 @@ Although there are some other MySQL rivers for Elasticsearch, like [elasticsearc
 
 + MySQL 8
 + ES 6
-+ Statistic.
 
-## Donate
-
-If you like the project and want to buy me a cola, you can through: 
-
-|PayPal|微信|
-|------|---|
-|[![](https://www.paypalobjects.com/webstatic/paypalme/images/pp_logo_small.png)](https://paypal.me/siddontang)|[![](https://github.com/siddontang/blog/blob/master/donate/weixin.png)|
-
-## Feedback
-
-go-mysql-elasticsearch is still in development, and we will try to use it in production later. Any feedback is very welcome.
-
-Email: siddontang@gmail.com
