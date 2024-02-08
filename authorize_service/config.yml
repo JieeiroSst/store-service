@@ -4,7 +4,7 @@ server:
 
 secret:
   JwtSecretKey: secretkey
-  AuthorizeKey: cao_hoang_mai_phuong
+  AuthorizeKey: no_name
 
 mysql:
   MysqlHost:     localhost
