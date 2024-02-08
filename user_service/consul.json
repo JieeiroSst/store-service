@@ -5,7 +5,7 @@
     },
     "secret": {
         "JwtSecretKey": "secretkey",
-        "AuthorizeKey": "cao_hoang_mai_phuong"
+        "AuthorizeKey": "no_name"
     },
     "mysql": {
         "MysqlHost": "localhost",
@@ -30,7 +30,7 @@
         "dns": "localhost:7002"
     },
     "email": {
-        "NameEmail": "chmp.7399@gmail.com",
+        "NameEmail": "luumanhquan7@gmail.com",
         "PasswordEmail": "#############",
         "Port": 587,
         "Host": "smtp.gmail.com"
