@@ -2,7 +2,7 @@ package service
 
 import "github.com/JIeeiroSst/search-service/internal/repository"
 
-type Usecase struct {
+type Service struct {
 	Tasks
 }
 
@@ -10,10 +10,10 @@ type Dependency struct {
 	Repos *repository.Repositories
 }
 
-func NewUsecase(deps Dependency) *Usecase {
+func NewUsecase(deps Dependency) *Service {
 	taskService := NewTask(deps.Repos.TaskRepository)
 
-	return &Usecase{
+	return &Service{
 		Tasks: taskService,
 	}
 }
