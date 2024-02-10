@@ -12,9 +12,10 @@ type Handler struct {
 	service    service.Service
 }
 
-func NewHandler(middleware middleware.Middleware) *Handler {
+func NewHandler(middleware middleware.Middleware, service service.Service) *Handler {
 	return &Handler{
 		middleware: middleware,
+		service:    service,
 	}
 }
 
