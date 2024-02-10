@@ -10,7 +10,12 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/search-service/config"
+	httpDelivery "github.com/JIeeiroSst/search-service/internal/delivery/http"
+	"github.com/JIeeiroSst/search-service/internal/repository"
+	"github.com/JIeeiroSst/search-service/internal/service"
+	"github.com/JIeeiroSst/search-service/middleware"
 	"github.com/JIeeiroSst/search-service/pkg/consul"
+	"github.com/JIeeiroSst/search-service/pkg/elasticsearch"
 	"github.com/JIeeiroSst/search-service/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +33,19 @@ func main() {
 	if err != nil {
 		logger.Logger().Error(err.Error())
 	}
+
+	esv7Client, err := elasticsearch.NewElasticSearch(conf.Elasticsearch.DNS)
+	if err != nil {
+		logger.Logger().Error(err.Error())
+	}
+	middleware := middleware.Newmiddleware(conf.Secret.AuthorizeKey)
+	repository := repository.NewRepositories(esv7Client)
+	service := service.NewUsecase(service.Dependency{
+		Repos: repository,
+	})
+
+	httpServer := httpDelivery.NewHandler(middleware, *service)
+	httpServer.Init(router)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", conf.Server.ServerPort),
