@@ -4,23 +4,24 @@ import (
 	"context"
 
 	"github.com/JIeeiroSst/search-service/internal"
+	"github.com/JIeeiroSst/search-service/internal/repository"
 )
 
-type TaskSearchRepository interface {
-	Search(ctx context.Context, args internal.SearchParams) (internal.SearchResults, error)
+type TaskService struct {
+	search repository.TaskRepository
 }
 
-type Task struct {
-	search TaskSearchRepository
+type Tasks interface {
+	Search(ctx context.Context, args internal.SearchParams) (_ internal.SearchResults, err error)
 }
 
-func NewTask(search TaskSearchRepository) *Task {
-	return &Task{
+func NewTask(search repository.TaskRepository) *TaskService {
+	return &TaskService{
 		search: search,
 	}
 }
 
-func (t *Task) By(ctx context.Context, args internal.SearchParams) (_ internal.SearchResults, err error) {
+func (t *TaskService) Search(ctx context.Context, args internal.SearchParams) (_ internal.SearchResults, err error) {
 	res, err := t.search.Search(ctx, args)
 	if err != nil {
 		return internal.SearchResults{}, internal.WrapErrorf(err, internal.ErrorCodeUnknown, "search")
