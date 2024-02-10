@@ -1,17 +1,19 @@
 package v1
 
 import (
+	"github.com/JIeeiroSst/search-service/internal/service"
 	"github.com/JIeeiroSst/search-service/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
 	middleware middleware.Middleware
+	service    service.Service
 }
 
-func NewHandler(middleware middleware.Middleware) *Handler {
+func NewHandler(service service.Service, middleware middleware.Middleware) *Handler {
 	return &Handler{
-
+		service:    service,
 		middleware: middleware,
 	}
 }
