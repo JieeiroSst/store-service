@@ -1,4 +1,4 @@
-package elasticsearch
+package repository
 
 import (
 	"bytes"
@@ -17,16 +17,12 @@ type Task struct {
 	index  string
 }
 
-type indexedTask struct {
-	ID          string            `json:"id"`
-	Description string            `json:"description"`
-	Priority    internal.Priority `json:"priority"`
-	IsDone      bool              `json:"is_done"`
-	DateStart   int64             `json:"date_start"`
-	DateDue     int64             `json:"date_due"`
+type TaskRepository interface {
+	Index(ctx context.Context, task internal.Task) error
+	Delete(ctx context.Context, id string) error
+	Search(ctx context.Context, args internal.SearchParams) (internal.SearchResults, error)
 }
 
-// NewTask instantiates the Task repository.
 func NewTask(client *esv7.Client) *Task {
 	return &Task{
 		client: client,
