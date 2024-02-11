@@ -3,7 +3,7 @@ all: build
 build: build-elasticsearch
 
 build-elasticsearch:
-	GO111MODULE=on go build -o bin/go-mysql-elasticsearch ./cmd/go-mysql-elasticsearch
+	GO111MODULE=on go build -o bin/go-mysql-elasticsearch ./cmd/main.go
 
 test:
 	GO111MODULE=on go test -timeout 1m --race ./...
