@@ -2,15 +2,14 @@ package river
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 	"sync"
 
-	"github.com/juju/errors"
-	"github.com/siddontang/go-log/log"
-	"github.com/siddontang/go-mysql-elasticsearch/elastic"
-	"github.com/siddontang/go-mysql/canal"
+	"github.com/JIeeiroSst/sync-mysql-elasticsearch/elastic"
+	"github.com/go-mysql-org/go-mysql/canal"
 )
 
 // ErrRuleNotExist is the error if rule is not defined.
@@ -38,7 +37,6 @@ type River struct {
 	syncCh chan interface{}
 }
 
-// NewRiver creates the River from config
 func NewRiver(c *Config) (*River, error) {
 	r := new(River)
 
@@ -49,26 +47,25 @@ func NewRiver(c *Config) (*River, error) {
 
 	var err error
 	if r.master, err = loadMasterInfo(c.DataDir); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 
 	if err = r.newCanal(); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 
 	if err = r.prepareRule(); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 
 	if err = r.prepareCanal(); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
 
 	// We must use binlog full row image
 	if err = r.canal.CheckBinlogRowImage("FULL"); err != nil {
-		return nil, errors.Trace(err)
+		return nil, err
 	}
-
 	cfg := new(elastic.ClientConfig)
 	cfg.Addr = r.c.ESAddr
 	cfg.User = r.c.ESUser
@@ -102,7 +99,7 @@ func (r *River) newCanal() error {
 
 	var err error
 	r.canal, err = canal.NewCanal(cfg)
-	return errors.Trace(err)
+	return err
 }
 
 func (r *River) prepareCanal() error {
@@ -137,7 +134,8 @@ func (r *River) newRule(schema, table string) error {
 	key := ruleKey(schema, table)
 
 	if _, ok := r.rules[key]; ok {
-		return errors.Errorf("duplicate source %s, %s defined in config", schema, table)
+		return errors.New(fmt.Sprintf("duplicate source %s, %s defined in config", schema, table))
+
 	}
 
 	r.rules[key] = newDefaultRule(schema, table)
@@ -152,7 +150,7 @@ func (r *River) updateRule(schema, table string) error {
 
 	tableInfo, err := r.canal.GetTable(schema, table)
 	if err != nil {
-		return errors.Trace(err)
+		return err
 	}
 
 	rule.TableInfo = tableInfo
@@ -166,17 +164,17 @@ func (r *River) parseSource() (map[string][]string, error) {
 	// first, check sources
 	for _, s := range r.c.Sources {
 		if !isValidTables(s.Tables) {
-			return nil, errors.Errorf("wildcard * is not allowed for multiple tables")
+			return nil, errors.New("wildcard * is not allowed for multiple tables")
 		}
 
 		for _, table := range s.Tables {
 			if len(s.Schema) == 0 {
-				return nil, errors.Errorf("empty schema not allowed for source")
+				return nil, errors.New("empty schema not allowed for source")
 			}
 
 			if regexp.QuoteMeta(table) != table {
 				if _, ok := wildTables[ruleKey(s.Schema, table)]; ok {
-					return nil, errors.Errorf("duplicate wildcard table defined for %s.%s", s.Schema, table)
+					return nil, errors.New(fmt.Sprintf("duplicate wildcard table defined for %s.%s", s.Schema, table))
 				}
 
 				tables := []string{}
@@ -186,16 +184,15 @@ func (r *River) parseSource() (map[string][]string, error) {
 
 				res, err := r.canal.Execute(sql)
 				if err != nil {
-					return nil, errors.Trace(err)
+					return nil, err
 				}
 
 				for i := 0; i < res.Resultset.RowNumber(); i++ {
 					f, _ := res.GetString(i, 0)
 					err := r.newRule(s.Schema, f)
 					if err != nil {
-						return nil, errors.Trace(err)
+						return nil, err
 					}
-
 					tables = append(tables, f)
 				}
 
@@ -203,14 +200,14 @@ func (r *River) parseSource() (map[string][]string, error) {
 			} else {
 				err := r.newRule(s.Schema, table)
 				if err != nil {
-					return nil, errors.Trace(err)
+					return nil, err
 				}
 			}
 		}
 	}
 
 	if len(r.rules) == 0 {
-		return nil, errors.Errorf("no source data defined")
+		return nil, errors.New("no source data defined")
 	}
 
 	return wildTables, nil
@@ -219,25 +216,25 @@ func (r *River) parseSource() (map[string][]string, error) {
 func (r *River) prepareRule() error {
 	wildtables, err := r.parseSource()
 	if err != nil {
-		return errors.Trace(err)
+		return err
 	}
 
 	if r.c.Rules != nil {
 		// then, set custom mapping rule
 		for _, rule := range r.c.Rules {
 			if len(rule.Schema) == 0 {
-				return errors.Errorf("empty schema not allowed for rule")
+				return errors.New("empty schema not allowed for rule")
 			}
 
 			if regexp.QuoteMeta(rule.Table) != rule.Table {
 				//wildcard table
 				tables, ok := wildtables[ruleKey(rule.Schema, rule.Table)]
 				if !ok {
-					return errors.Errorf("wildcard table for %s.%s is not defined in source", rule.Schema, rule.Table)
+					return errors.New(fmt.Sprintf("wildcard table for %s.%s is not defined in source", rule.Schema, rule.Table))
 				}
 
 				if len(rule.Index) == 0 {
-					return errors.Errorf("wildcard table rule %s.%s must have a index, can not empty", rule.Schema, rule.Table)
+					return errors.New(fmt.Sprintf("wildcard table rule %s.%s must have a index, can not empty", rule.Schema, rule.Table))
 				}
 
 				rule.prepare()
@@ -253,7 +250,7 @@ func (r *River) prepareRule() error {
 			} else {
 				key := ruleKey(rule.Schema, rule.Table)
 				if _, ok := r.rules[key]; !ok {
-					return errors.Errorf("rule %s, %s not defined in source", rule.Schema, rule.Table)
+					return errors.New(fmt.Sprintf("rule %s, %s not defined in source", rule.Schema, rule.Table))
 				}
 				rule.prepare()
 				r.rules[key] = rule
@@ -264,15 +261,13 @@ func (r *River) prepareRule() error {
 	rules := make(map[string]*Rule)
 	for key, rule := range r.rules {
 		if rule.TableInfo, err = r.canal.GetTable(rule.Schema, rule.Table); err != nil {
-			return errors.Trace(err)
+			return err
 		}
 
 		if len(rule.TableInfo.PKColumns) == 0 {
 			if !r.c.SkipNoPkTable {
-				return errors.Errorf("%s.%s must have a PK for a column", rule.Schema, rule.Table)
+				return errors.New(fmt.Sprintf("%s.%s must have a PK for a column", rule.Schema, rule.Table))
 			}
-
-			log.Errorf("ignored table without a primary key: %s\n", rule.TableInfo.Name)
 		} else {
 			rules[key] = rule
 		}
@@ -294,9 +289,8 @@ func (r *River) Run() error {
 
 	pos := r.master.Position()
 	if err := r.canal.RunFrom(pos); err != nil {
-		log.Errorf("start canal err %v", err)
 		canalSyncState.Set(0)
-		return errors.Trace(err)
+		return err
 	}
 
 	return nil
@@ -307,10 +301,7 @@ func (r *River) Ctx() context.Context {
 	return r.ctx
 }
 
-// Close closes the River
 func (r *River) Close() {
-	log.Infof("closing river")
-
 	r.cancel()
 
 	r.canal.Close()
