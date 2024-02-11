@@ -3,13 +3,9 @@ package river
 import (
 	"strings"
 
-	"github.com/siddontang/go-mysql/schema"
+	"github.com/go-mysql-org/go-mysql/schema"
 )
 
-// Rule is the rule for how to sync data from MySQL to ES.
-// If you want to sync MySQL data into elasticsearch, you must set a rule to let use know how to do it.
-// The mapping rule may thi: schema + table <-> index + document type.
-// schema and table is for MySQL, index and document type is for Elasticsearch.
 type Rule struct {
 	Schema string   `toml:"schema"`
 	Table  string   `toml:"table"`

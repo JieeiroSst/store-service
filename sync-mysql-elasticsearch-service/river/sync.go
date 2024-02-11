@@ -8,13 +8,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/JIeeiroSst/sync-mysql-elasticsearch/elastic"
+	"github.com/go-mysql-org/go-mysql/canal"
+	"github.com/go-mysql-org/go-mysql/mysql"
+	"github.com/go-mysql-org/go-mysql/replication"
+	"github.com/go-mysql-org/go-mysql/schema"
 	"github.com/juju/errors"
-	"github.com/siddontang/go-log/log"
-	"github.com/siddontang/go-mysql-elasticsearch/elastic"
-	"github.com/siddontang/go-mysql/canal"
-	"github.com/siddontang/go-mysql/mysql"
-	"github.com/siddontang/go-mysql/replication"
-	"github.com/siddontang/go-mysql/schema"
 )
 
 const (
@@ -153,7 +152,6 @@ func (r *River) syncLoop() {
 		if needFlush {
 			// TODO: retry some times?
 			if err := r.doBulk(reqs); err != nil {
-				log.Errorf("do ES bulk err %v, close sync", err)
 				r.cancel()
 				return
 			}
@@ -162,7 +160,6 @@ func (r *River) syncLoop() {
 
 		if needSavePos {
 			if err := r.master.Save(pos); err != nil {
-				log.Errorf("save sync position %s err %v, close sync", pos, err)
 				r.cancel()
 				return
 			}
@@ -170,7 +167,6 @@ func (r *River) syncLoop() {
 	}
 }
 
-// for insert and delete
 func (r *River) makeRequest(rule *Rule, action string, rows [][]interface{}) ([]*elastic.BulkRequest, error) {
 	reqs := make([]*elastic.BulkRequest, 0, len(rows))
 
@@ -239,7 +235,6 @@ func (r *River) makeUpdateRequest(rule *Rule, rows [][]interface{}) ([]*elastic.
 				return nil, errors.Trace(err)
 			}
 		}
-
 		req := &elastic.BulkRequest{Index: rule.Index, Type: rule.Type, ID: beforeID, Parent: beforeParentID}
 
 		if beforeID != afterID || beforeParentID != afterParentID {
@@ -279,7 +274,6 @@ func (r *River) makeReqColumnData(col *schema.TableColumn, value interface{}) in
 			eNum := value - 1
 			if eNum < 0 || eNum >= int64(len(col.EnumValues)) {
 				// we insert invalid enum value before, so return empty
-				log.Warnf("invalid binlog enum index %d, for enum %v", eNum, col.EnumValues)
 				return ""
 			}
 
@@ -418,8 +412,6 @@ func (r *River) makeUpdateReqData(req *elastic.BulkRequest, rule *Rule,
 	}
 }
 
-// If id in toml file is none, get primary keys in one row and format them into a string, and PK must not be nil
-// Else get the ID's column in one row and format them into a string
 func (r *River) getDocID(rule *Rule, row []interface{}) (string, error) {
 	var (
 		ids []interface{}
@@ -471,13 +463,12 @@ func (r *River) doBulk(reqs []*elastic.BulkRequest) error {
 	}
 
 	if resp, err := r.es.Bulk(reqs); err != nil {
-		log.Errorf("sync docs err %v after binlog %s", err, r.canal.SyncedPosition())
 		return errors.Trace(err)
 	} else if resp.Code/100 == 2 || resp.Errors {
 		for i := 0; i < len(resp.Items); i++ {
 			for action, item := range resp.Items[i] {
 				if len(item.Error) > 0 {
-					log.Errorf("%s index: %s, type: %s, id: %s, status: %d, error: %s",
+					fmt.Printf("%s index: %s, type: %s, id: %s, status: %d, error: %s",
 						action, item.Index, item.Type, item.ID, item.Status, item.Error)
 				}
 			}
@@ -487,7 +478,6 @@ func (r *River) doBulk(reqs []*elastic.BulkRequest) error {
 	return nil
 }
 
-// get mysql field value and convert it to specific value to es
 func (r *River) getFieldValue(col *schema.TableColumn, fieldType string, value interface{}) interface{} {
 	var fieldValue interface{}
 	switch fieldType {
