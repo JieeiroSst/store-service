@@ -141,7 +141,15 @@ func (t *Task) Search(ctx context.Context, args internal.SearchParams) (internal
 		map[string]interface{}{"id": "asc"},
 	}
 
-	query["from"] = args.From
+	if args.From <= 0 {
+		args.From = 0
+	}
+
+	if args.Size <= 0 {
+		args.Size = 20
+	}
+
+	query["from"] = args.From * args.Size
 	query["size"] = args.Size
 
 	var buf bytes.Buffer
