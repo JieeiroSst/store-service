@@ -34,18 +34,18 @@ type eventHandler struct {
 	r *River
 }
 
-func (h *eventHandler) OnRotate(e *replication.RotateEvent) error {
+func (e *eventHandler) OnRotate(header *replication.EventHeader, event *replication.RotateEvent) error {
 	pos := mysql.Position{
-		Name: string(e.NextLogName),
-		Pos:  uint32(e.Position),
+		Name: string(event.NextLogName),
+		Pos:  uint32(event.Position),
 	}
 
-	h.r.syncCh <- posSaver{pos, true}
+	e.r.syncCh <- posSaver{pos, true}
 
-	return h.r.ctx.Err()
+	return e.r.ctx.Err()
 }
 
-func (h *eventHandler) OnTableChanged(schema, table string) error {
+func (h *eventHandler) OnTableChanged(header *replication.EventHeader, schema string, table string) error {
 	err := h.r.updateRule(schema, table)
 	if err != nil && err != ErrRuleNotExist {
 		return errors.Trace(err)
@@ -53,12 +53,12 @@ func (h *eventHandler) OnTableChanged(schema, table string) error {
 	return nil
 }
 
-func (h *eventHandler) OnDDL(nextPos mysql.Position, _ *replication.QueryEvent) error {
+func (h *eventHandler) OnDDL(header *replication.EventHeader, nextPos mysql.Position, event *replication.QueryEvent) error {
 	h.r.syncCh <- posSaver{nextPos, true}
 	return h.r.ctx.Err()
 }
 
-func (h *eventHandler) OnXID(nextPos mysql.Position) error {
+func (h *eventHandler) OnXID(header *replication.EventHeader, nextPos mysql.Position) error {
 	h.r.syncCh <- posSaver{nextPos, false}
 	return h.r.ctx.Err()
 }
@@ -92,11 +92,11 @@ func (h *eventHandler) OnRow(e *canal.RowsEvent) error {
 	return h.r.ctx.Err()
 }
 
-func (h *eventHandler) OnGTID(gtid mysql.GTIDSet) error {
+func (h *eventHandler) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
 	return nil
 }
 
-func (h *eventHandler) OnPosSynced(pos mysql.Position, set mysql.GTIDSet, force bool) error {
+func (h *eventHandler) OnPosSynced(header *replication.EventHeader, position mysql.Position, gtid mysql.GTIDSet, force bool) error {
 	return nil
 }
 
