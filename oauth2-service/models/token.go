@@ -3,6 +3,7 @@ package models
 import (
 	"time"
 
+	"github.com/JIeeiroSst/oauth2-service/config"
 	"github.com/JIeeiroSst/oauth2-service/pkg/token"
 )
 
@@ -96,11 +97,11 @@ func (t *Token) SetCodeChallenge(code string) {
 	t.CodeChallenge = code
 }
 
-func (t *Token) GetCodeChallengeMethod() token.CodeChallengeMethod {
-	return token.CodeChallengeMethod(t.CodeChallengeMethod)
+func (t *Token) GetCodeChallengeMethod() config.CodeChallengeMethod {
+	return config.CodeChallengeMethod(t.CodeChallengeMethod)
 }
 
-func (t *Token) SetCodeChallengeMethod(method token.CodeChallengeMethod) {
+func (t *Token) SetCodeChallengeMethod(method config.CodeChallengeMethod) {
 	t.CodeChallengeMethod = string(method)
 }
 
