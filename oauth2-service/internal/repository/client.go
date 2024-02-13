@@ -12,15 +12,15 @@ type ClientStores interface {
 	GetByID(ctx context.Context, id string) (token.ClientInfo, error)
 }
 
+type ClientStore struct {
+	sync.RWMutex
+	data map[string]token.ClientInfo
+}
+
 func NewClientStore() *ClientStore {
 	return &ClientStore{
 		data: make(map[string]token.ClientInfo),
 	}
-}
-
-type ClientStore struct {
-	sync.RWMutex
-	data map[string]token.ClientInfo
 }
 
 func (cs *ClientStore) GetByID(ctx context.Context, id string) (token.ClientInfo, error) {
