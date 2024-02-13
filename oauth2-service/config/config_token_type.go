@@ -14,7 +14,7 @@ type ConfigTokenType struct {
 	ForcePKCE                   bool
 }
 
-func NewConfig() *ConfigTokenType {
+func NewConfigTokenType() *ConfigTokenType {
 	return &ConfigTokenType{
 		TokenType:            "Bearer",
 		AllowedResponseTypes: []ResponseType{Code, Token},

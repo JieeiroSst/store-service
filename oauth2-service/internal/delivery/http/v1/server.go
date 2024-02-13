@@ -32,6 +32,28 @@ type Server struct {
 	ResponseTokenHandler         ResponseTokenHandler
 }
 
+func NewDefaultServer(manager token.Manager) *Server {
+	return NewServer(config.NewConfigTokenType(), manager)
+}
+
+func NewServer(cfg *config.ConfigTokenType, manager token.Manager) *Server {
+	srv := &Server{
+		Config:  cfg,
+		Manager: manager,
+	}
+
+	srv.ClientInfoHandler = ClientBasicHandler
+
+	srv.UserAuthorizationHandler = func(w http.ResponseWriter, r *http.Request) (string, error) {
+		return "", config.ErrAccessDenied
+	}
+
+	srv.PasswordAuthorizationHandler = func(ctx context.Context, clientID, username, password string) (string, error) {
+		return "", config.ErrAccessDenied
+	}
+	return srv
+}
+
 func (s *Server) handleError(w http.ResponseWriter, req *config.AuthorizeRequest, err error) error {
 	if fn := s.PreRedirectErrorHandler; fn != nil {
 		return fn(w, req, err)
