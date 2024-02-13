@@ -24,7 +24,6 @@ func NewJWTAccessGenerate(kid string, key []byte, method jwt.SigningMethod) *JWT
 	}
 }
 
-// JWTAccessGenerate generate the jwt access token
 type JWTAccessGenerate struct {
 	SignedKeyID  string
 	SignedKey    []byte
