@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 	"time"
+
+	"github.com/JIeeiroSst/oauth2-service/config"
 )
 
 type TokenGenerateRequest struct {
@@ -14,7 +16,7 @@ type TokenGenerateRequest struct {
 	Scope               string
 	Code                string
 	CodeChallenge       string
-	CodeChallengeMethod CodeChallengeMethod
+	CodeChallengeMethod config.CodeChallengeMethod
 	Refresh             string
 	CodeVerifier        string
 	AccessTokenExp      time.Duration
@@ -24,9 +26,9 @@ type TokenGenerateRequest struct {
 type Manager interface {
 	GetClient(ctx context.Context, clientID string) (cli ClientInfo, err error)
 
-	GenerateAuthToken(ctx context.Context, rt ResponseType, tgr *TokenGenerateRequest) (authToken TokenInfo, err error)
+	GenerateAuthToken(ctx context.Context, rt config.ResponseType, tgr *TokenGenerateRequest) (authToken TokenInfo, err error)
 
-	GenerateAccessToken(ctx context.Context, gt GrantType, tgr *TokenGenerateRequest) (accessToken TokenInfo, err error)
+	GenerateAccessToken(ctx context.Context, gt config.GrantType, tgr *TokenGenerateRequest) (accessToken TokenInfo, err error)
 
 	RefreshAccessToken(ctx context.Context, tgr *TokenGenerateRequest) (accessToken TokenInfo, err error)
 

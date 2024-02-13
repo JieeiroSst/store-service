@@ -2,6 +2,8 @@ package token
 
 import (
 	"time"
+
+	"github.com/JIeeiroSst/oauth2-service/config"
 )
 
 type (
@@ -40,8 +42,8 @@ type (
 		SetCodeExpiresIn(time.Duration)
 		GetCodeChallenge() string
 		SetCodeChallenge(string)
-		GetCodeChallengeMethod() CodeChallengeMethod
-		SetCodeChallengeMethod(CodeChallengeMethod)
+		GetCodeChallengeMethod() config.CodeChallengeMethod
+		SetCodeChallengeMethod(config.CodeChallengeMethod)
 
 		GetAccess() string
 		SetAccess(string)
