@@ -8,7 +8,7 @@ import (
 	"github.com/JIeeiroSst/oauth2-service/pkg/token"
 )
 
-type ClientStores interface {
+type IClientStore interface {
 	GetByID(ctx context.Context, id string) (token.ClientInfo, error)
 }
 
