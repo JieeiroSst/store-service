@@ -18,8 +18,4 @@ type (
 	AuthorizeGenerate interface {
 		Token(ctx context.Context, data *GenerateBasic) (code string, err error)
 	}
-
-	AccessGenerate interface {
-		Token(ctx context.Context, data *GenerateBasic, isGenRefresh bool) (access, refresh string, err error)
-	}
 )
