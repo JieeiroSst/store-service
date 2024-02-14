@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/JIeeiroSst/oauth2-service/pkg/token"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -24,11 +25,12 @@ type ITokensStore interface {
 }
 
 type TokenStore struct {
-	db *gorm.DB
+	db     *gorm.DB
+	resdis *redis.Client
 }
 
-func NewMemoryTokenStore(db *gorm.DB) (*TokenStore, error) {
-	return &TokenStore{db: db}, nil
+func NewMemoryTokenStore(db *gorm.DB, resdis *redis.Client) (ITokensStore, error) {
+	return &TokenStore{db: db, resdis: resdis}, nil
 }
 
 func (ts *TokenStore) Create(ctx context.Context, info token.TokenInfo) error {
