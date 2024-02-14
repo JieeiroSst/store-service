@@ -28,7 +28,9 @@ type MysqlConfig struct {
 }
 
 type SecretConfig struct {
-	AuthorizeKey string
+	Secretvar string
+	Idvar     string
+	Domainvar string
 }
 
 type Dir struct {
