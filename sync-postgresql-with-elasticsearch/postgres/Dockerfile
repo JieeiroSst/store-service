@@ -1,4 +1,4 @@
-FROM debezium/postgres:11
+FROM debezium/postgres
 
 COPY ./setup.sql /home/setup.sql
 COPY ./fake.sql /home/fake.sql
