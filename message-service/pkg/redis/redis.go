@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -26,7 +27,11 @@ func NewPubSub(dns string) (*redis.Client, error) {
 }
 
 func (r *PubSub) PublishMessage(ctx context.Context, channel string, message interface{}) error {
-	err := r.client.Publish(context.Background(), channel, message).Err()
+	payload, err := json.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+	err = r.client.Publish(ctx, channel, payload).Err()
 	return err
 }
 
