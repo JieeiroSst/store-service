@@ -25,20 +25,20 @@ func NewPubSub(dns string) (*redis.Client, error) {
 	return client, nil
 }
 
-func (r *PubSub) PublishMessage(ctx context.Context, channel string, message []byte) error {
+func (r *PubSub) PublishMessage(ctx context.Context, channel string, message interface{}) error {
 	err := r.client.Publish(context.Background(), channel, message).Err()
 	return err
 }
 
-// for {
-// 	msg, err := subscriber.ReceiveMessage(ctx)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	if err := json.Unmarshal([]byte(msg.Payload), &user); err != nil {
-// 		panic(err)
-// 	}
-// }
+//	for {
+//		msg, err := subscriber.ReceiveMessage(ctx)
+//		if err != nil {
+//			panic(err)
+//		}
+//		if err := json.Unmarshal([]byte(msg.Payload), &user); err != nil {
+//			panic(err)
+//		}
+//	}
 func (r *PubSub) Subscribe(ctx context.Context, channel string) (*redis.Message, error) {
 	subscriber := r.client.Subscribe(ctx, channel)
 	defer subscriber.Close()
