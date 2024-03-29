@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.store.foodservice.model.Food;
+import com.store.foodservice.model.Ingredient;
 
-public interface food {
+public interface IngredientRepository  extends JpaRepository<Ingredient, Long>{
 
 }
