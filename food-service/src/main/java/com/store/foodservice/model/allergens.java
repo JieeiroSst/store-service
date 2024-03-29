@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "allergens")
-public class allergens {
+public class Allergens {
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

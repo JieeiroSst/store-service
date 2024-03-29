@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "foods")
-public class food {
+public class Food {
     @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;

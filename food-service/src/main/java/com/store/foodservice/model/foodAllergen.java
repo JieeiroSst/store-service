@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "food_allergens")
-public class foodAllergen {
+public class FoodAllergen {
     @Id
     @Column(name = "food_id")
     private Long foodId;
