@@ -18,6 +18,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-public class FoodController {
+import com.store.foodservice.repository.FoodRepository;
+import com.store.foodservice.model.Food;
 
+@CrossOrigin(origins = "http://localhost:8080")
+@RestController
+@RequestMapping("/api/food")
+public class FoodController {
+    @Autowired
+    FoodRepository foodRepository;
+
+   @SuppressWarnings("null")
+   @PostMapping("")
+   public ResponseEntity<Food> createFood(@RequestBody Food food) {
+    try {
+        Food _food = foodRepository.save(food);
+        return new ResponseEntity<>(_food, HttpStatus.CREATED);
+    } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+   }
 }
