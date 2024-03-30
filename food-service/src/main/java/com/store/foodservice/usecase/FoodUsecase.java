@@ -16,6 +16,39 @@ public class FoodUsecase {
     @Autowired
     FoodRepository foodRepository;
 
+    @Cacheable("foods")
+    public List<Food> findAll() {
+        doLongRunningTask();
+
+        return foodRepository.findAll();
+    }
+
+    public Food save(Food req) {
+        return foodRepository.save(req);
+    }
+
+    @CacheEvict(value = "food", key = "#food.id")
+    public Food update(Food req) {
+        return foodRepository.save(req);
+    }
+
+    @CacheEvict(value = "food", key = "#id")
+    public void deleteById(long id) {
+        foodRepository.deleteById(id);
+    }
+
+    @Cacheable("food")
+    public Optional<Food> findById(long id) {
+        doLongRunningTask();
+
+        return foodRepository.findById(id);
+    }
+
+    @CacheEvict(value = { "food", "foods" }, allEntries = true)
+    public void deleteAll() {
+        foodRepository.deleteAll();
+    }
+
     private void doLongRunningTask() {
         try {
             Thread.sleep(3000);

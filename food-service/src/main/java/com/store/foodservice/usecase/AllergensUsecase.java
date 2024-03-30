@@ -18,6 +18,39 @@ public class AllergensUsecase {
     @Autowired
     AllergensRepository allergensRepository;
 
+    @Cacheable("allergens")
+    public List<Allergens> findAll() {
+        doLongRunningTask();
+
+        return allergensRepository.findAll();
+    }
+
+    public Allergens save(Allergens req) {
+        return allergensRepository.save(req);
+    }
+
+    @CacheEvict(value = "allergen", key = "#allergen.id")
+    public Allergens update(Allergens req) {
+        return allergensRepository.save(req);
+    }
+
+    @CacheEvict(value = "allergen", key = "#id")
+    public void deleteById(long id) {
+        allergensRepository.deleteById(id);
+    }
+
+    @Cacheable("allergen")
+    public Optional<Allergens> findById(long id) {
+        doLongRunningTask();
+
+        return allergensRepository.findById(id);
+    }
+
+    @CacheEvict(value = { "allergen", "allergens" }, allEntries = true)
+    public void deleteAll() {
+        allergensRepository.deleteAll();
+    }
+
     private void doLongRunningTask() {
         try {
             Thread.sleep(3000);
