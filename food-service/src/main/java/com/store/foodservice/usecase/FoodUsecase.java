@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.store.foodservice.repository.FoodRepository;
 import com.store.foodservice.model.Food;
 
+@Service
+@EnableCaching
 public class FoodUsecase {
     @Autowired
     FoodRepository foodRepository;
