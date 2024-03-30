@@ -50,6 +50,10 @@ public class RedisConfig {
                 .cacheDefaults(cacheConfig)
                 .withCacheConfiguration("ingredients", myDefaultCacheConfig(Duration.ofMinutes(5)))
                 .withCacheConfiguration("ingredient", myDefaultCacheConfig(Duration.ofMinutes(1)))
+                .withCacheConfiguration("food", myDefaultCacheConfig(Duration.ofMinutes(5)))
+                .withCacheConfiguration("foods", myDefaultCacheConfig(Duration.ofMinutes(1)))
+                .withCacheConfiguration("allergen", myDefaultCacheConfig(Duration.ofMinutes(5)))
+                .withCacheConfiguration("allergens", myDefaultCacheConfig(Duration.ofMinutes(1)))
                 .build();
     }
 
