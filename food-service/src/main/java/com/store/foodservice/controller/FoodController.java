@@ -100,4 +100,21 @@ public class FoodController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Food>> getByNameFood(@RequestParam(required = true) String name) {
+      try {
+        List<Food> Foods = new ArrayList<Food>();
+
+        foodUsecase.findByNameContaining(name).forEach(Foods::add);
+  
+        if (Foods.isEmpty()) {
+          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+  
+        return new ResponseEntity<>(Foods, HttpStatus.OK);
+      } catch (Exception e) {
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
 }

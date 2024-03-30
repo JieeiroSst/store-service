@@ -6,20 +6,27 @@ import jakarta.persistence.*;
 @Table(name = "foods")
 public class Food {
     @Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     @Column(name = "name")
-	private String name;
+    private String name;
 
     @Column(name = "description")
-	private String description;
+    private String description;
 
     @Column(name = "price")
-	private long price;
+    private long price;
 
     @Column(name = "category")
-	private String category;
+    private String category;
+
+    public Food(String name, String description, long price, String category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.category = category;
+    }
 
     public String getCategory() {
         return category;
