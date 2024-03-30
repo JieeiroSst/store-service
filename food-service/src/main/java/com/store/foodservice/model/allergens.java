@@ -12,6 +12,10 @@ public class Allergens {
     @Column(name = "name")
 	private String name;
 
+    public Allergens(String name) {
+        this.name = name;
+    }
+
     public long getId() {
         return id;
     }

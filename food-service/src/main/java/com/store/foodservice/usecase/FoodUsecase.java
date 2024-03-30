@@ -51,6 +51,13 @@ public class FoodUsecase {
         foodRepository.deleteAll();
     }
 
+    @Cacheable("name_foods")
+    public List<Food> findByNameContaining(String name) {
+        doLongRunningTask();
+
+        return foodRepository.findByNameContaining(name);
+    }
+
     private void doLongRunningTask() {
         try {
             Thread.sleep(3000);

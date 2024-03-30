@@ -15,6 +15,11 @@ public class Ingredient {
     @Column(name = "unit")
 	private String unit;
 
+    public Ingredient(String name, String uint) {
+        this.name = name; 
+        this.unit = uint;
+    }
+
     public long getId() {
         return id;
     }
