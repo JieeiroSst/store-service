@@ -8,3 +8,8 @@ type Program struct {
 	EndDate     string     `json:"end_date" db:"end_date"`
 	Discounts   []Discount `json:"discounts"`
 }
+
+type ProgramPage struct {
+	Programs []Program `json:"programs"`
+	HasNext  bool      `json:"has_next"`
+}
