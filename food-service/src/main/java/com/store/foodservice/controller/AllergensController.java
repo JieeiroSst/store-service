@@ -19,20 +19,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.store.foodservice.model.Allergens;
-import com.store.foodservice.repository.AllergensRepository;
+import com.store.foodservice.usecase.AllergensUsecase;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/api/allergens")
 public class AllergensController {
     @Autowired
-    AllergensRepository allergensRepository;
+    AllergensUsecase allergensUsecase;
 
     @SuppressWarnings("null")
     @PostMapping("")
     public ResponseEntity<Allergens> createAllergens(@RequestBody Allergens req){
         try {
-            Allergens _allergens = allergensRepository.save(req);
+            Allergens _allergens = allergensUsecase.save(req);
             return new ResponseEntity<>(_allergens, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
