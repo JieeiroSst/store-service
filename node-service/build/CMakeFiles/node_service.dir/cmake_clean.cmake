@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/node_service.dir/main.cpp.o"
-  "CMakeFiles/node_service.dir/main.cpp.o.d"
+  "CMakeFiles/node_service.dir/src/main.cpp.o"
+  "CMakeFiles/node_service.dir/src/main.cpp.o.d"
   "node_service"
   "node_service.pdb"
 )

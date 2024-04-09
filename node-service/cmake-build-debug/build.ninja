@@ -49,11 +49,11 @@ cmake_ninja_workdir = /Users/chmp/Desktop/store-service/node-service/cmake-build
 
 build cmake_object_order_depends_target_node_service: phony || CMakeFiles/node_service.dir
 
-build CMakeFiles/node_service.dir/main.cpp.o: CXX_COMPILER__node_service_unscanned_Debug /Users/chmp/Desktop/store-service/node-service/main.cpp || cmake_object_order_depends_target_node_service
-  DEP_FILE = CMakeFiles/node_service.dir/main.cpp.o.d
+build CMakeFiles/node_service.dir/src/main.cpp.o: CXX_COMPILER__node_service_unscanned_Debug /Users/chmp/Desktop/store-service/node-service/src/main.cpp || cmake_object_order_depends_target_node_service
+  DEP_FILE = CMakeFiles/node_service.dir/src/main.cpp.o.d
   FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=13.6 -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/node_service.dir
-  OBJECT_FILE_DIR = CMakeFiles/node_service.dir
+  OBJECT_FILE_DIR = CMakeFiles/node_service.dir/src
 
 
 # =============================================================================
@@ -63,7 +63,7 @@ build CMakeFiles/node_service.dir/main.cpp.o: CXX_COMPILER__node_service_unscann
 #############################################
 # Link the executable node_service
 
-build node_service: CXX_EXECUTABLE_LINKER__node_service_Debug CMakeFiles/node_service.dir/main.cpp.o
+build node_service: CXX_EXECUTABLE_LINKER__node_service_Debug CMakeFiles/node_service.dir/src/main.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=13.6
   OBJECT_DIR = CMakeFiles/node_service.dir
   POST_BUILD = :
