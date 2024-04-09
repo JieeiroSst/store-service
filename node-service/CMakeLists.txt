@@ -3,5 +3,7 @@ project(node_service)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(node_service main.cpp)
+file(GLOB SOURCES "src/*.cpp")
+
+add_executable(node_service src/main.cpp)
 

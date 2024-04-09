@@ -1152,6 +1152,18 @@
 			],
 			"type" : "STATIC",
 			"value" : "/Users/chmp/Desktop/store-service/node-service"
+		},
+		{
+			"name" : "oatpp_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for oatpp."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/usr/local/lib/cmake/oatpp-1.3.0"
 		}
 	],
 	"kind" : "cache",
