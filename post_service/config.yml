@@ -28,7 +28,7 @@ redis:
   dns: "localhost:7002"
 
 email:
-  NameEmail: chmp.7399@gmail.com
+  NameEmail: .7399@gmail.com
   PasswordEmail: "#############"
   Port: 587
   Host: "smtp.gmail.com"

@@ -31,8 +31,6 @@ LC_CTYPE = UTF-8
 # automatic
 @F = $(notdir $@)
 # makefile
-CURDIR := /Users/chmp/Desktop/store-service
-# makefile
 SHELL = /bin/sh
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","osLocale":"en-vn","availableLanguages":{},"_languagePackSupport":true}
@@ -43,9 +41,7 @@ MAKEFILE_LIST :=  Makefile
 # environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
-VSCODE_CWD = /Users/chmp/Desktop/store-service
 # environment
-PATH = /Users/chmp/.bun/bin:/opt/homebrew/opt/openjdk/bin:/opt/homebrew/bin:/opt/local/bin:/Users/chmp/.poetry/bin:/Users/chmp/Downloads/apache-maven-3.9.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/chmp/.cargo/bin:/usr/local/go/bin:/bin:/Users/chmp/.dapr/bin
 # environment
 GOROOT = /usr/local/go
 # environment
@@ -57,25 +53,20 @@ SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.ZU32b9d5dU/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
-PWD = /Users/chmp/Desktop/store-service
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = undefined
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
-HOME = /Users/chmp
 # default
 MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/chmp/Library/Application Support/Code/CachedData/f1b07bd25dfad64b0167beb15359ae573aecd2cc
 # environment
-LOGNAME = chmp
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
-M2_HOME = /Users/chmp/Downloads/apache-maven-3.9.1
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -91,7 +82,6 @@ SHLVL = 3
 # default
 MAKE_VERSION := 3.81
 # environment
-USER = chmp
 # makefile
 .DEFAULT_GOAL := 
 # environment
@@ -109,11 +99,9 @@ TMPDIR = /var/folders/82/tp42cmtd23b4y56dwhvvtt780000gn/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/chmp/Library/Application Support/Code/1.83-main.sock
 # environment
 MallocNanoZone = 0
 # environment
-BUN_INSTALL = /Users/chmp/.bun
 # makefile
 MAKEFLAGS = Rrqp
 # environment

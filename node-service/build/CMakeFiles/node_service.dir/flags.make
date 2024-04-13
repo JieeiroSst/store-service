@@ -4,7 +4,7 @@
 # compile CXX with /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/chmp/Desktop/store-service/node-service/. -I/opt/homebrew/Cellar/sdl2/2.30.2/include -I/opt/homebrew/Cellar/sdl2/2.30.2/include/SDL2
+CXX_INCLUDES = -I/Users//Desktop/store-service/node-service/. -I/opt/homebrew/Cellar/sdl2/2.30.2/include -I/opt/homebrew/Cellar/sdl2/2.30.2/include/SDL2
 
 CXX_FLAGSarm64 = -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.2.sdk -mmacosx-version-min=13.6
 

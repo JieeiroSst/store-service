@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/Users/chmp/Desktop/store-service/node-service/bin/Darwin64/Debug/node_service"
+			"path" : "/Users//Desktop/store-service/node-service/bin/Darwin64/Debug/node_service"
 		}
 	],
 	"backtrace" : 1,
@@ -55,7 +55,7 @@
 			[
 				{
 					"backtrace" : 2,
-					"path" : "/Users/chmp/Desktop/store-service/node-service/."
+					"path" : "/Users//Desktop/store-service/node-service/."
 				},
 				{
 					"backtrace" : 3,
