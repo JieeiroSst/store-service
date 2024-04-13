@@ -5,7 +5,7 @@ function App() {
     <div id="bg_container">
       <iframe
         id="bg"
-        src="link api video"
+        src="https://embed.api.video/live/li2OORqyhS7VGOQeR7gqeagi"
         frameborder="0"
       ></iframe>
     </div>

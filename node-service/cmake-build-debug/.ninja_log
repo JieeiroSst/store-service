@@ -1,5 +1,5 @@
 # ninja log v5
-7	349	1712430659177192244	CMakeFiles/node_service.dir/src/main.cpp.o	8c5d6b32feb572a4
-349	378	1712430659206985281	node_service	ca0e352b412d19dc
+7	376	1712843809548370893	CMakeFiles/node_service.dir/src/main.cpp.o	8c5d6b32feb572a4
+376	494	1712843809667813495	node_service	ca0e352b412d19dc
 6	489	1712424877236272942	CMakeFiles/node_service.dir/main.cpp.o	766f3b8c1516cb99
-0	50	1712473162223311879	build.ninja	3d4e7b9db18442dd
+0	50	1712980521537480499	build.ninja	3d4e7b9db18442dd

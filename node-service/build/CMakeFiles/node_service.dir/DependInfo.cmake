@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/Users/chmp/Desktop/store-service/node-service/src/console.cpp" "CMakeFiles/node_service.dir/src/console.cpp.o" "gcc" "CMakeFiles/node_service.dir/src/console.cpp.o.d"
   "/Users/chmp/Desktop/store-service/node-service/src/main.cpp" "CMakeFiles/node_service.dir/src/main.cpp.o" "gcc" "CMakeFiles/node_service.dir/src/main.cpp.o.d"
   )
 

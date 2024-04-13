@@ -129,6 +129,30 @@ node_service/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/node_service.dir/build.make CMakeFiles/node_service.dir/build
 .PHONY : node_service/fast
 
+src/console.o: src/console.cpp.o
+.PHONY : src/console.o
+
+# target to build an object file
+src/console.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/node_service.dir/build.make CMakeFiles/node_service.dir/src/console.cpp.o
+.PHONY : src/console.cpp.o
+
+src/console.i: src/console.cpp.i
+.PHONY : src/console.i
+
+# target to preprocess a source file
+src/console.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/node_service.dir/build.make CMakeFiles/node_service.dir/src/console.cpp.i
+.PHONY : src/console.cpp.i
+
+src/console.s: src/console.cpp.s
+.PHONY : src/console.s
+
+# target to generate assembly for a file
+src/console.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/node_service.dir/build.make CMakeFiles/node_service.dir/src/console.cpp.s
+.PHONY : src/console.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -162,6 +186,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... node_service"
+	@echo "... src/console.o"
+	@echo "... src/console.i"
+	@echo "... src/console.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
