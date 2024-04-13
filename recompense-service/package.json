@@ -7,5 +7,12 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/pg": "^8.11.5",
+    "pg": "^8.11.5",
+    "postgres": "^3.4.4",
+    "redis": "^4.6.13",
+    "snowflake-uuid": "^1.0.0"
   }
 }
