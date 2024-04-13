@@ -53,10 +53,10 @@ RM = /opt/homebrew/Cellar/cmake/3.29.1/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/chmp/Desktop/store-service/node-service
+CMAKE_SOURCE_DIR = /Users//Desktop/store-service/node-service
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/chmp/Desktop/store-service/node-service/build
+CMAKE_BINARY_DIR = /Users//Desktop/store-service/node-service/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/node_service.dir/depend.make
@@ -70,32 +70,32 @@ include CMakeFiles/node_service.dir/progress.make
 include CMakeFiles/node_service.dir/flags.make
 
 CMakeFiles/node_service.dir/src/main.cpp.o: CMakeFiles/node_service.dir/flags.make
-CMakeFiles/node_service.dir/src/main.cpp.o: /Users/chmp/Desktop/store-service/node-service/src/main.cpp
+CMakeFiles/node_service.dir/src/main.cpp.o: /Users//Desktop/store-service/node-service/src/main.cpp
 CMakeFiles/node_service.dir/src/main.cpp.o: CMakeFiles/node_service.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/chmp/Desktop/store-service/node-service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/node_service.dir/src/main.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/node_service.dir/src/main.cpp.o -MF CMakeFiles/node_service.dir/src/main.cpp.o.d -o CMakeFiles/node_service.dir/src/main.cpp.o -c /Users/chmp/Desktop/store-service/node-service/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users//Desktop/store-service/node-service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/node_service.dir/src/main.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/node_service.dir/src/main.cpp.o -MF CMakeFiles/node_service.dir/src/main.cpp.o.d -o CMakeFiles/node_service.dir/src/main.cpp.o -c /Users//Desktop/store-service/node-service/src/main.cpp
 
 CMakeFiles/node_service.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/node_service.dir/src/main.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/chmp/Desktop/store-service/node-service/src/main.cpp > CMakeFiles/node_service.dir/src/main.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users//Desktop/store-service/node-service/src/main.cpp > CMakeFiles/node_service.dir/src/main.cpp.i
 
 CMakeFiles/node_service.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/node_service.dir/src/main.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/chmp/Desktop/store-service/node-service/src/main.cpp -o CMakeFiles/node_service.dir/src/main.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users//Desktop/store-service/node-service/src/main.cpp -o CMakeFiles/node_service.dir/src/main.cpp.s
 
 CMakeFiles/node_service.dir/src/console.cpp.o: CMakeFiles/node_service.dir/flags.make
-CMakeFiles/node_service.dir/src/console.cpp.o: /Users/chmp/Desktop/store-service/node-service/src/console.cpp
+CMakeFiles/node_service.dir/src/console.cpp.o: /Users//Desktop/store-service/node-service/src/console.cpp
 CMakeFiles/node_service.dir/src/console.cpp.o: CMakeFiles/node_service.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/chmp/Desktop/store-service/node-service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/node_service.dir/src/console.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/node_service.dir/src/console.cpp.o -MF CMakeFiles/node_service.dir/src/console.cpp.o.d -o CMakeFiles/node_service.dir/src/console.cpp.o -c /Users/chmp/Desktop/store-service/node-service/src/console.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users//Desktop/store-service/node-service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/node_service.dir/src/console.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/node_service.dir/src/console.cpp.o -MF CMakeFiles/node_service.dir/src/console.cpp.o.d -o CMakeFiles/node_service.dir/src/console.cpp.o -c /Users//Desktop/store-service/node-service/src/console.cpp
 
 CMakeFiles/node_service.dir/src/console.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/node_service.dir/src/console.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/chmp/Desktop/store-service/node-service/src/console.cpp > CMakeFiles/node_service.dir/src/console.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users//Desktop/store-service/node-service/src/console.cpp > CMakeFiles/node_service.dir/src/console.cpp.i
 
 CMakeFiles/node_service.dir/src/console.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/node_service.dir/src/console.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/chmp/Desktop/store-service/node-service/src/console.cpp -o CMakeFiles/node_service.dir/src/console.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users//Desktop/store-service/node-service/src/console.cpp -o CMakeFiles/node_service.dir/src/console.cpp.s
 
 # Object files for target node_service
 node_service_OBJECTS = \
@@ -105,15 +105,15 @@ node_service_OBJECTS = \
 # External object files for target node_service
 node_service_EXTERNAL_OBJECTS =
 
-/Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/src/main.cpp.o
-/Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/src/console.cpp.o
-/Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/build.make
-/Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/chmp/Desktop/store-service/node-service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable /Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service"
+/Users//Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/src/main.cpp.o
+/Users//Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/src/console.cpp.o
+/Users//Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/build.make
+/Users//Desktop/store-service/node-service/bin/Darwin64/node_service: CMakeFiles/node_service.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users//Desktop/store-service/node-service/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable /Users//Desktop/store-service/node-service/bin/Darwin64/node_service"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/node_service.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-CMakeFiles/node_service.dir/build: /Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service
+CMakeFiles/node_service.dir/build: /Users//Desktop/store-service/node-service/bin/Darwin64/node_service
 .PHONY : CMakeFiles/node_service.dir/build
 
 CMakeFiles/node_service.dir/clean:
@@ -121,6 +121,6 @@ CMakeFiles/node_service.dir/clean:
 .PHONY : CMakeFiles/node_service.dir/clean
 
 CMakeFiles/node_service.dir/depend:
-	cd /Users/chmp/Desktop/store-service/node-service/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/chmp/Desktop/store-service/node-service /Users/chmp/Desktop/store-service/node-service /Users/chmp/Desktop/store-service/node-service/build /Users/chmp/Desktop/store-service/node-service/build /Users/chmp/Desktop/store-service/node-service/build/CMakeFiles/node_service.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /Users//Desktop/store-service/node-service/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users//Desktop/store-service/node-service /Users//Desktop/store-service/node-service /Users//Desktop/store-service/node-service/build /Users//Desktop/store-service/node-service/build /Users//Desktop/store-service/node-service/build/CMakeFiles/node_service.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/node_service.dir/depend
 

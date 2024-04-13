@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service"
-  "/Users/chmp/Desktop/store-service/node-service/bin/Darwin64/node_service.pdb"
+  "/Users//Desktop/store-service/node-service/bin/Darwin64/node_service"
+  "/Users//Desktop/store-service/node-service/bin/Darwin64/node_service.pdb"
   "CMakeFiles/node_service.dir/src/console.cpp.o"
   "CMakeFiles/node_service.dir/src/console.cpp.o.d"
   "CMakeFiles/node_service.dir/src/main.cpp.o"

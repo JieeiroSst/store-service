@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/chmp/Desktop/store-service/node-service/cmake-build-debug",
-		"source" : "/Users/chmp/Desktop/store-service/node-service"
+		"build" : "/Users//Desktop/store-service/node-service/cmake-build-debug",
+		"source" : "/Users//Desktop/store-service/node-service"
 	},
 	"version" : 
 	{

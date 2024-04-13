@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/chmp/Desktop/store-service/node-service/cmake-build-debug"
+			"value" : "/Users//Desktop/store-service/node-service/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/chmp/Desktop/store-service/node-service/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users//Desktop/store-service/node-service/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -539,7 +539,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/chmp/Desktop/store-service/node-service"
+			"value" : "/Users//Desktop/store-service/node-service"
 		},
 		{
 			"name" : "CMAKE_INSTALL_NAME_TOOL",
@@ -1139,7 +1139,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/chmp/Desktop/store-service/node-service/cmake-build-debug"
+			"value" : "/Users//Desktop/store-service/node-service/cmake-build-debug"
 		},
 		{
 			"name" : "node_service_IS_TOP_LEVEL",
@@ -1163,7 +1163,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/chmp/Desktop/store-service/node-service"
+			"value" : "/Users//Desktop/store-service/node-service"
 		},
 		{
 			"name" : "oatpp_DIR",
