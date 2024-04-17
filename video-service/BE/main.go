@@ -164,7 +164,7 @@ func main() {
 		ctx.JSON(200, res)
 	})
 
-	r.POST("/", func(ctx *gin.Context) {
+	r.POST("/thumbnail", func(ctx *gin.Context) {
 		client := apivideosdk.ClientBuilder(secretKey).Build()
 		image, _ := ctx.FormFile("file")
 		liveStreamId := ctx.Query("live-stream-id")
