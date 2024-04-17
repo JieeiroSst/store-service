@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -156,6 +157,27 @@ func main() {
 		}
 
 		res, err := client.LiveStreams.List(req)
+		if err != nil {
+			ctx.JSON(500, err)
+			return
+		}
+		ctx.JSON(200, res)
+	})
+
+	r.POST("/", func(ctx *gin.Context) {
+		client := apivideosdk.ClientBuilder(secretKey).Build()
+		image, _ := ctx.FormFile("file")
+		liveStreamId := ctx.Query("live-stream-id")
+
+		file, err := image.Open()
+		if err != nil {
+			ctx.JSON(500, err)
+			return
+		}
+		var osFile *os.File
+		io.Copy(osFile, file)
+
+		res, err := client.LiveStreams.UploadThumbnailFile(liveStreamId, osFile)
 		if err != nil {
 			ctx.JSON(500, err)
 			return
