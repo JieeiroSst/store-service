@@ -21,6 +21,15 @@ type CreateVideo struct {
 	NameStream string `json:"name_stream"`
 }
 
+type PaginationVideo struct {
+	StreamKey   string `json:"stream_key" form:"stream_key"`
+	Name        string `json:"name" form:"name"`
+	SortBy      string `json:"sort_by" form:"sort_by"`
+	SortOrder   string `json:"sort_order" form:"sort_order"`
+	CurrentPage int    `json:"current_page" form:"current_page"`
+	PageSize    int    `json:"page_size" form:"page_size"`
+}
+
 func CreateLiveStream(apiKeys, nameStream string) (string, string, string) {
 	client := apivideosdk.ClientBuilder(apiKeys).Build()
 
@@ -67,6 +76,7 @@ func main() {
 		var createVideo CreateVideo
 		if err := c.ShouldBindJSON(&createVideo); err != nil {
 			c.JSON(400, "")
+			return
 		}
 		streamKey, playerId, liveStreamId := CreateLiveStream(secretKey, createVideo.NameStream)
 		video := Video{
@@ -85,8 +95,71 @@ func main() {
 		res, err := client.LiveStreams.Get(liveStreamId)
 		if err != nil {
 			ctx.JSON(500, "")
+			return
 		}
 
+		ctx.JSON(200, res)
+	})
+
+	r.DELETE("/video", func(ctx *gin.Context) {
+		client := apivideosdk.ClientBuilder(secretKey).Build()
+
+		liveStreamId := ctx.Query("live-stream-id")
+
+		err := client.LiveStreams.Delete(liveStreamId)
+
+		if err != nil {
+			ctx.JSON(500, err)
+			return
+		}
+
+		ctx.JSON(200, "done")
+	})
+
+	r.GET("/pagination", func(ctx *gin.Context) {
+		client := apivideosdk.ClientBuilder(secretKey).Build()
+
+		var reqAPi PaginationVideo
+		if err := ctx.ShouldBindQuery(&reqAPi); err != nil {
+			ctx.JSON(400, err)
+			return
+		}
+
+		req := apivideosdk.LiveStreamsApiListRequest{}
+
+		if len(reqAPi.StreamKey) > 0 {
+			req.StreamKey(reqAPi.StreamKey)
+		}
+
+		if len(reqAPi.Name) > 0 {
+			req.Name(reqAPi.Name)
+		}
+
+		if len(reqAPi.SortBy) > 0 {
+			req.SortBy("createdAt")
+		}
+
+		if len(reqAPi.SortOrder) > 0 {
+			req.SortOrder("desc")
+		}
+
+		if reqAPi.CurrentPage > 0 {
+			req.CurrentPage(int32(reqAPi.CurrentPage))
+		} else {
+			req.CurrentPage(int32(0))
+		}
+
+		if reqAPi.PageSize > 0 {
+			req.PageSize(int32(reqAPi.PageSize))
+		} else {
+			req.PageSize(int32(30))
+		}
+
+		res, err := client.LiveStreams.List(req)
+		if err != nil {
+			ctx.JSON(500, err)
+			return
+		}
 		ctx.JSON(200, res)
 	})
 
