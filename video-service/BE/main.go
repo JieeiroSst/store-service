@@ -166,7 +166,7 @@ func main() {
 
 	r.POST("/thumbnail", func(ctx *gin.Context) {
 		client := apivideosdk.ClientBuilder(secretKey).Build()
-		image, _ := ctx.FormFile("file")
+		image, _ := ctx.FormFile("thumbnail")
 		liveStreamId := ctx.Query("live-stream-id")
 
 		file, err := image.Open()
