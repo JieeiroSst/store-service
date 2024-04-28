@@ -13,6 +13,7 @@ type Author struct {
 	Name   string
 	Gender string
 	Age    int
+	Status string
 }
 
 func main() {
@@ -25,8 +26,9 @@ func main() {
 	xlsx.SetCellValue(sheet1Name, "A1", "Name")
 	xlsx.SetCellValue(sheet1Name, "B1", "Gender")
 	xlsx.SetCellValue(sheet1Name, "C1", "Age")
+	xlsx.SetCellValue(sheet1Name, "D1", "Status")
 
-	err := xlsx.AutoFilter(sheet1Name, "A1", "C1", "")
+	err := xlsx.AutoFilter(sheet1Name, "A1", "D1", "")
 	if err != nil {
 		log.Fatal("ERROR", err.Error())
 	}
@@ -36,16 +38,19 @@ func main() {
 			Name:   "Noval",
 			Gender: "male",
 			Age:    18,
+			Status: "Thành Công",
 		},
 		{
 			Name:   "Noval",
 			Gender: "female",
 			Age:    18,
+			Status: "Thành Công",
 		},
 		{
 			Name:   "Noval",
 			Gender: "female",
 			Age:    19,
+			Status: "Huỷ",
 		},
 	}
 
@@ -58,8 +63,9 @@ func main() {
 		xlsx.SetCellValue(sheet1Name, fmt.Sprintf("A%d", i+2), each["Name"])
 		xlsx.SetCellValue(sheet1Name, fmt.Sprintf("B%d", i+2), each["Gender"])
 		xlsx.SetCellValue(sheet1Name, fmt.Sprintf("C%d", i+2), each["Age"])
+		xlsx.SetCellValue(sheet1Name, fmt.Sprintf("D%d", i+2), each["Status"])
 	}
-	r.GET("/ping", func(c *gin.Context) {
+	r.GET("/", func(c *gin.Context) {
 		buffer, _ := xlsx.WriteToBuffer()
 		c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 		c.Header("Content-Disposition", "attachment; filename=data.xlsx")
