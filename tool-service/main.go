@@ -10,10 +10,10 @@ import (
 )
 
 type Author struct {
-	Name   string
-	Gender string
-	Age    int
-	Status string
+	Name   string `xlsx:"Name"`
+	Gender string `xlsx:"Gender"`
+	Age    int    `xlsx:"Age"`
+	Status string `xlsx:"Status"`
 }
 
 func main() {
