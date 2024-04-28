@@ -17,22 +17,6 @@ type Author struct {
 }
 
 func main() {
-	r := gin.Default()
-	xlsx := excelize.NewFile()
-
-	sheet1Name := "Sheet One"
-	xlsx.SetSheetName(xlsx.GetSheetName(1), sheet1Name)
-
-	xlsx.SetCellValue(sheet1Name, "A1", "Name")
-	xlsx.SetCellValue(sheet1Name, "B1", "Gender")
-	xlsx.SetCellValue(sheet1Name, "C1", "Age")
-	xlsx.SetCellValue(sheet1Name, "D1", "Status")
-
-	err := xlsx.AutoFilter(sheet1Name, "A1", "D1", "")
-	if err != nil {
-		log.Fatal("ERROR", err.Error())
-	}
-
 	structArray := []Author{
 		{
 			Name:   "Noval",
@@ -54,6 +38,34 @@ func main() {
 		},
 	}
 
+	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		xlsx := export(structArray)
+		buffer, _ := xlsx.WriteToBuffer()
+		c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+		c.Header("Content-Disposition", "attachment; filename=data.xlsx")
+		c.Writer.Write(buffer.Bytes())
+	})
+	r.Run()
+}
+
+func export(structArray []Author) *excelize.File {
+	xlsx := excelize.NewFile()
+
+	sheet1Name := "Sheet One"
+	xlsx.SetSheetName(xlsx.GetSheetName(1), sheet1Name)
+
+	xlsx.SetCellValue(sheet1Name, "A1", "Name")
+	xlsx.SetCellValue(sheet1Name, "B1", "Gender")
+	xlsx.SetCellValue(sheet1Name, "C1", "Age")
+	xlsx.SetCellValue(sheet1Name, "D1", "Status")
+
+	err := xlsx.AutoFilter(sheet1Name, "A1", "D1", "")
+	if err != nil {
+		log.Fatal("ERROR", err.Error())
+	}
+
 	var data []map[string]interface{}
 	for _, s := range structArray {
 		data = append(data, structToMap(s))
@@ -65,13 +77,7 @@ func main() {
 		xlsx.SetCellValue(sheet1Name, fmt.Sprintf("C%d", i+2), each["Age"])
 		xlsx.SetCellValue(sheet1Name, fmt.Sprintf("D%d", i+2), each["Status"])
 	}
-	r.GET("/", func(c *gin.Context) {
-		buffer, _ := xlsx.WriteToBuffer()
-		c.Header("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-		c.Header("Content-Disposition", "attachment; filename=data.xlsx")
-		c.Writer.Write(buffer.Bytes())
-	})
-	r.Run()
+	return xlsx
 }
 
 func structToMap(s interface{}) map[string]interface{} {
