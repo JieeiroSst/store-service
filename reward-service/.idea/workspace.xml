@@ -8,6 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62548c7d-5e8c-483a-952c-8a185e3793b0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,8 +40,16 @@
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "master",
     "last_opened_file_path": "/Users/alainliu/Desktop/store-service/reward-service",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.disableDetachedFileInspection/Users/alainliu/Desktop/store-service/reward-service/src/amqp/dto.rs": "true",
+    "org.rust.disableDetachedFileInspection/Users/alainliu/Desktop/store-service/reward-service/src/api/tests/mod.rs": "true",
+    "org.rust.disableDetachedFileInspection/Users/alainliu/Desktop/store-service/reward-service/src/api/tests/utils.rs": "true",
+    "org.rust.hideToolchainNotifications": "true",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
@@ -61,7 +70,7 @@
       <workItem from="1696093481109" duration="4429000" />
       <workItem from="1696509733283" duration="599000" />
       <workItem from="1714298390625" duration="153000" />
-      <workItem from="1714298634554" duration="102000" />
+      <workItem from="1714298634554" duration="2920000" />
     </task>
     <servers />
   </component>
