@@ -21,7 +21,7 @@ require (
 	github.com/elazarl/goproxy v0.0.0-20231117061959-7cc037d33fb5 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-hclog v0.12.0 // indirect
@@ -48,12 +48,13 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/smartystreets/goconvey v1.8.1 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/stretchr/testify v1.8.4 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/crypto v0.22.0 // indirect
+	golang.org/x/net v0.24.0 // indirect
+	golang.org/x/sync v0.6.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
