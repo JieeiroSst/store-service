@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
+    <option name="autoReloadType" value="ALL" />
   </component>
   <component name="CargoProjects">
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
@@ -9,11 +9,6 @@
   <component name="ChangeListManager">
     <list default="true" id="62548c7d-5e8c-483a-952c-8a185e3793b0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/.rustc_info.json" beforeDir="false" afterPath="$PROJECT_DIR$/target/.rustc_info.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-0253313590cae42b/output-bin-reward-service" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/dep-test-bin-reward-service" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/dep-test-bin-reward-service" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/output-test-bin-reward-service" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/test-bin-reward-service" beforeDir="false" afterPath="$PROJECT_DIR$/target/debug/.fingerprint/reward-service-ec8cbcdf1e79d3de/test-bin-reward-service" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,16 +32,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/Desktop/store-service/reward-service&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;language.rust.cargo.check&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/alainliu/Desktop/store-service/reward-service",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
     <option name="version" value="2" />
@@ -62,6 +60,8 @@
       <workItem from="1695820178629" duration="1319000" />
       <workItem from="1696093481109" duration="4429000" />
       <workItem from="1696509733283" duration="599000" />
+      <workItem from="1714298390625" duration="153000" />
+      <workItem from="1714298634554" duration="102000" />
     </task>
     <servers />
   </component>
