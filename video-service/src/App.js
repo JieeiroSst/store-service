@@ -5,10 +5,11 @@ function App() {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const id =""
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/video?live-stream-id=li6bCcEXlJkf9kHpxXfUgdUG');
+      const response = await fetch(`http://localhost:8080/video?live-stream-id=${id}`);
       if (!response.ok) {
         throw new Error(`API request failed with status ${response.status}`);
       }
