@@ -6,14 +6,14 @@ pub struct RewardModel {
     pub id: Uuid,
     pub name: String,
     pub description: String,
-    pub points: i128,
+    pub points: i64,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
 
 #[cfg(test)]
 impl RewardModel {
-    pub fn new(name: String, description: String, points: i128) -> Self {
+    pub fn new(name: String, description: String, points: i64) -> Self {
         Self {
             id: Uuid::new_v4(),
             name: name,
@@ -30,13 +30,13 @@ pub struct RewardCreateModel {
     pub id: Uuid,
     pub name: String,
     pub description: String,
-    pub points: i128,
+    pub points: i64,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
 
 impl RewardCreateModel {
-    pub fn new(name: String, description: String, points: i128) -> Self {
+    pub fn new(name: String, description: String, points: i64) -> Self {
         Self {
             id: Uuid::new_v4(),
             name: name,
@@ -52,11 +52,11 @@ impl RewardCreateModel {
 pub struct RewardUpdateModel {
     pub name: String,
     pub description: String,
-    pub points: i128,
+    pub points: i64,
 }
 
 impl RewardUpdateModel {
-    pub fn new(name: String, description: String, points: i128) -> Self {
+    pub fn new(name: String, description: String, points: i64) -> Self {
         Self {
             name: name,
             description: description,
