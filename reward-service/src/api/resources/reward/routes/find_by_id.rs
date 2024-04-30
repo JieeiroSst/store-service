@@ -30,7 +30,7 @@ async fn handler(
     state: Data<AppState>,
     param: web::Path<Uuid>,
 ) -> Result<HttpResponse, DomainError> {
-    let result = reward::resources::find_by_id::execute(
+    let result = reward::resources::find_id::execute(
         state.reward_repository.clone(),
         param.to_owned(),
     )

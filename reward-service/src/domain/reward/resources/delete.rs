@@ -13,7 +13,7 @@ pub async fn execute(
         return Err(DomainError::NotFound(String::from("reward id not found")));
     }
 
-    reward_repository.delete_by_id(&category_id).await?;
+    reward_repository.delete_by_id(&id).await?;
 
     Ok(())
 }

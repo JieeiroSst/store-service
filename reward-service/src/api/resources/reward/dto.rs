@@ -16,8 +16,7 @@ pub struct RequestCreateReward {
     pub name: String,
     #[validate(length(max = 512))]
     pub description: String,
-    #[validate(length(max = 512))]
-    pub points: uint,
+    pub points: i128,
 }
 impl From<RequestCreateReward> for RewardCreateModel {
     fn from(value: RequestCreateReward) -> Self {
@@ -32,8 +31,7 @@ pub struct RequestUpdateReward {
     pub name: String,
     #[validate(length(max = 512))]
     pub description: String,
-    #[validate(length(max = 512))]
-    pub points: uint,
+    pub points: i128,
 }
 impl From<RequestUpdateReward> for RewardUpdateModel {
     fn from(value: RequestUpdateReward) -> Self {
@@ -56,7 +54,7 @@ pub struct ResponseReward {
     pub id: Uuid,
     pub name: String,
     pub description: String,
-    pub points: uint,
+    pub points: i128,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }

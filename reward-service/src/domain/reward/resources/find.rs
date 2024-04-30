@@ -13,7 +13,7 @@ pub async fn execute(
 ) -> Result<Option<(Vec<RewardModel>, u32)>, DomainError> {
     let rewards = reward_repository.find(&name, &page, &page_size).await?;
 
-    if reward.is_some() {
+    if rewards.is_some() {
         return Ok(rewards);
     }
 

@@ -5,13 +5,13 @@ use uuid::Uuid;
 use crate::domain::{
     reward::{
         model::{RewardModel, RewardUpdateModel},
-        repository::CategoryRepository,
+        repository::RewardRepository,
     },
     error::DomainError,
 };
 
 pub async fn execute(
-    reward_repository: Arc<dyn CategoryRepository>,
+    reward_repository: Arc<dyn RewardRepository>,
     id: Uuid,
     reward_update_model: RewardUpdateModel,
 ) -> Result<RewardModel, DomainError> {

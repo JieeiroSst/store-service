@@ -30,7 +30,7 @@ async fn handler(
     state: Data<AppState>,
     param: web::Path<Uuid>,
 ) -> Result<HttpResponse, DomainError> {
-    reward::resources::delete_by_id::execute(
+    reward::resources::delete::execute(
         state.reward_repository.clone(),
         param.to_owned(),
     )
