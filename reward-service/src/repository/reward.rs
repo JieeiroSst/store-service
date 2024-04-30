@@ -7,11 +7,12 @@ use tokio_postgres::{types::ToSql, Row};
 use uuid::Uuid;
 
 use crate::domain::{
+    error::DomainError,
     reward::{
+        self,
         model::{RewardCreateModel, RewardModel, RewardUpdateModel},
         repository::RewardRepository,
     },
-    error::DomainError,
 };
 
 const QUERY_FIND_REWARD: &str = "
@@ -114,13 +115,11 @@ impl RewardRepository for PgRewardRepository {
         let stmt = client.prepare(&query).await?;
         let result = client.query(&stmt, &params[..]).await?;
 
-        if !result.is_empty() {
-            let count: u32 = result.first().unwrap().get("count");
+        let count: u32 = result.first().unwrap().get("count");
 
-            let categories: Vec<RewardModel> = result.iter().map(|row| row.into()).collect();
-
-            return Ok(Some((categories, count)));
-        }
+        let reward: Vec<RewardModel> = result.iter().map(|row| row.into()).collect();
+        
+        return Ok(Some((reward, count)));
     }
 
     async fn find_by_id(&self, id: &Uuid) -> Result<Option<RewardModel>, DomainError> {
@@ -175,7 +174,7 @@ impl RewardRepository for PgRewardRepository {
             .await?;
 
         Ok(result.into())
-    }    
+    }
 
     async fn delete_by_id(&self, id: &Uuid) -> Result<(), DomainError> {
         let client = self.pool.get().await?;
