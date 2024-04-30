@@ -68,7 +68,6 @@ pub struct RewardUpdateModel {
     pub name: String,
     pub description: String,
     pub points: uint,
-    pub updated_at: DateTime<Utc>,
 }
 
 impl RewardUpdateModel {
@@ -77,7 +76,6 @@ impl RewardUpdateModel {
             name: name,
             description: description,
             points: points,
-            updated_at: time::now(),
         }
     }
 }
@@ -89,7 +87,6 @@ impl RewardUpdateModel {
             name: "Burgers".to_string(),
             description: Some("The Big Burgers".to_string()),
             points: 10,
-            updated_at: time::now(),
         }
     }
 }
