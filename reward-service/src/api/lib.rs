@@ -74,7 +74,7 @@ pub async fn run(pg_pool: Arc<Pool>, redis_client: Arc<Client>) -> Result<(), Bo
             .app_data(query_config.to_owned())
             .app_data(path_config.to_owned())
             .app_data(repositories.to_owned())
-            .configure(swagger::routes::init_routes)
+            // .configure(swagger::routes::init_routes)
             .configure(health::routes::init_routes)
             .configure(reward::routes::init_routes)
     })

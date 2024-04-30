@@ -6,7 +6,7 @@ use crate::domain::reward::model::RewardCreateModel;
 pub struct RewardMessage {
     pub name: String,
     pub description: String,
-    pub points: uint,
+    pub points: i128,
 }
 
 impl From<RewardMessage> for RewardCreateModel {

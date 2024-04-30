@@ -38,7 +38,7 @@ async fn handler(
 ) -> Result<HttpResponse, DomainError> {
     body.validate()?;
 
-    let reward = reward::resources::update_by_id::execute(
+    let reward = reward::resources::update::execute(
         state.reward_repository.clone(),
         param.to_owned(),
         body.0.into(),

@@ -9,10 +9,10 @@ use validator::Validate;
 use crate::{
     api::{
         lib::AppState,
-        resources::categories::dto::{self, ResponseReward},
+        resources::reward::dto::{self, ResponseReward},
         utils::response::ApiResponse,
     },
-    domain::{categories, error::DomainError},
+    domain::{reward, error::DomainError},
 };
 
 #[utoipa::path(
