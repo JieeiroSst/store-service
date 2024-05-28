@@ -1,6 +1,7 @@
 package rabbitmq
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -48,4 +49,67 @@ func (r *QueueRabbitMQ) Subscribe(q string) (<-chan amqp.Delivery, error) {
 	defer ch.Close()
 
 	return ch.Consume(q, "", false, false, false, false, nil)
+}
+
+func (r *QueueRabbitMQ) CreateQueueFanout(ctx context.Context, queues []string) error {
+	ch, err := r.conn.Channel()
+	if err != nil {
+		return nil
+	}
+	for _, v := range queues {
+		if err := ch.ExchangeDeclare(
+			v,        // name
+			"fanout", // type
+			true,     // durable
+			false,    // auto-deleted
+			false,    // internal
+			false,    // no-wait
+			nil,      // arguments
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *QueueRabbitMQ) CreateQueueDirect(ctx context.Context, queues []string) error {
+	ch, err := r.conn.Channel()
+	if err != nil {
+		return nil
+	}
+	for _, v := range queues {
+		if err := ch.ExchangeDeclare(
+			v,        // name
+			"direct", // type
+			true,     // durable
+			false,    // auto-deleted
+			false,    // internal
+			false,    // no-wait
+			nil,      // arguments
+		); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (r *QueueRabbitMQ) CreateQueueTopic(ctx context.Context, queues []string) error {
+	ch, err := r.conn.Channel()
+	if err != nil {
+		return nil
+	}
+	for _, v := range queues {
+		if err := ch.ExchangeDeclare(
+			v,        // name
+			"topic", // type
+			true,     // durable
+			false,    // auto-deleted
+			false,    // internal
+			false,    // no-wait
+			nil,      // arguments
+		); err != nil {
+			return err
+		}
+	}
+	return nil
 }
