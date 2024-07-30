@@ -11,7 +11,7 @@ impl Config {
     pub async fn setup_config() -> Self{
         let client = ConsulClient::new(
             ConsulClientSettingsBuilder::default()
-                .address("https://127.0.0.1:8200")
+                .address("https://127.0.0.1:8500")
                 .build()
                 .unwrap()
         ).unwrap();

@@ -1,0 +1,11 @@
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/libtime-42399c94cf5848c1.rmeta: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/lib.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/display.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/duration.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/parse.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/sys.rs
+
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/libtime-42399c94cf5848c1.rlib: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/lib.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/display.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/duration.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/parse.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/sys.rs
+
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/time-42399c94cf5848c1.d: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/lib.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/display.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/duration.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/parse.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/sys.rs
+
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/lib.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/display.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/duration.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/parse.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/time-0.1.45/src/sys.rs:

@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/build/mime_guess-4a99a833ccf027d8/out/mime_types_generated.rs

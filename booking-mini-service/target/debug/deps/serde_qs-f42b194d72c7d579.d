@@ -1,0 +1,11 @@
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/libserde_qs-f42b194d72c7d579.rmeta: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/lib.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/mod.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/parse.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/error.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/ser.rs
+
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/libserde_qs-f42b194d72c7d579.rlib: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/lib.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/mod.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/parse.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/error.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/ser.rs
+
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/serde_qs-f42b194d72c7d579.d: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/lib.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/mod.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/parse.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/error.rs /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/ser.rs
+
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/lib.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/mod.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/de/parse.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/error.rs:
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/serde_qs-0.8.5/src/ser.rs:
