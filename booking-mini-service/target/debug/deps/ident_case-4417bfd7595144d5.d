@@ -1,0 +1,7 @@
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/libident_case-4417bfd7595144d5.rmeta: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ident_case-1.0.1/src/lib.rs
+
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/libident_case-4417bfd7595144d5.rlib: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ident_case-1.0.1/src/lib.rs
+
+/Users/alainliu/Desktop/store-service/booking-mini-service/target/debug/deps/ident_case-4417bfd7595144d5.d: /Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ident_case-1.0.1/src/lib.rs
+
+/Users/alainliu/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ident_case-1.0.1/src/lib.rs:
