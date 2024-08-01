@@ -1,7 +1,6 @@
 [workspace]
 
 members = [
-    "booking_service",
-    "constant_shared",
-    "consul_shared",
+    "blog_api",
+    "blog_shared",
 ]
