@@ -1,2 +1,2 @@
 run:
-	cargo run --bin booking_service
+	cargo run --bin blog_api

@@ -1,5 +1,8 @@
-cargo new --vcs none --lib constant_shared
+```
+cargo new --vcs none blog_api 
 
-cargo new --vcs none --lib consul_shared
+cargo new --vcs none --lib blog_shared
 
-cargo new --vcs none booking_service
+
+cargo run --bin blog_api
+```
