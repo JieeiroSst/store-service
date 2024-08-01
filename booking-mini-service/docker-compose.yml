@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+
+  mongodb:
+    image: mongo:latest
+
+    ports:
+      - "27017:27017"
