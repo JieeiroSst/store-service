@@ -1,14 +1,36 @@
 package main
 
-import "gofr.dev/pkg/gofr"
+import (
+	"fmt"
+
+	"github.com/JIeeiroSst/address-country-service/config"
+	"github.com/JIeeiroSst/address-country-service/pkg/consul"
+	"github.com/JIeeiroSst/address-country-service/pkg/mysql"
+	"gofr.dev/pkg/gofr"
+)
 
 func main() {
-    app := gofr.New()
+	app := gofr.New()
 
-    app.GET("/greet", func(ctx *gofr.Context) (interface{}, error) {
+	dirEnv, err := config.ReadFileEnv(".env")
+	if err != nil {
 
-        return "Hello World!", nil
-    })
+	}
 
-   app.Run() // listen and serve on localhost:8000 
+	consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+	conf, err := consul.ConnectConfigConsul()
+	if err != nil {
+
+	}
+
+	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+		conf.Mysql.MysqlUser,
+		conf.Mysql.MysqlPassword,
+		conf.Mysql.MysqlHost,
+		conf.Mysql.MysqlPort,
+		conf.Mysql.MysqlDbname,
+	)
+	_ = mysql.NewMysqlConn(dns)
+
+	app.Run()
 }
