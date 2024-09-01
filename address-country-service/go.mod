@@ -13,6 +13,7 @@ require (
 	github.com/samber/go-amqp-pubsub v1.11.0
 	github.com/samber/mo v1.11.0
 	github.com/sirupsen/logrus v1.4.2
+	github.com/sony/gobreaker v1.0.0
 	gofr.dev v1.18.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.11
