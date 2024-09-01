@@ -1,4 +1,4 @@
-package model
+package dto
 
 type OrderBillingaddress struct {
 	ID         int    `json:"id,omitempty"`

@@ -8,6 +8,11 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/hashicorp/consul/api v1.29.4
 	github.com/joho/godotenv v1.5.1
+	github.com/rabbitmq/amqp091-go v1.9.0
+	github.com/redis/go-redis/v9 v9.6.1
+	github.com/samber/go-amqp-pubsub v1.11.0
+	github.com/samber/mo v1.11.0
+	github.com/sirupsen/logrus v1.4.2
 	gofr.dev v1.18.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.11
@@ -58,6 +63,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/konsorten/go-windows-terminal-sequences v1.0.1 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -74,8 +80,8 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/redis/go-redis/extra/rediscmd/v9 v9.0.5 // indirect
 	github.com/redis/go-redis/extra/redisotel/v9 v9.0.5 // indirect
-	github.com/redis/go-redis/v9 v9.6.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/samber/lo v1.39.0 // indirect
 	github.com/segmentio/kafka-go v0.4.47 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.49.0 // indirect
