@@ -1,6 +1,6 @@
 package model
 
-type OrderBillingaddress struct {
+type Partneraddress struct {
 	ID         int    `json:"id,omitempty"`
 	Title      string `json:"title,omitempty"`
 	FirstName  string `json:"first_name,omitempty"`
@@ -13,4 +13,5 @@ type OrderBillingaddress struct {
 	Postcode   string `json:"postcode,omitempty"`
 	SearchText string `json:"search_text,omitempty"`
 	CountryID  string `json:"country_id,omitempty"`
+	PartnerID  int    `json:"partner_id,omitempty"`
 }
