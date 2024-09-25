@@ -2,10 +2,10 @@ package consul
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 
 	"github.com/JieeiroSst/authorize-service/config"
+	"github.com/JieeiroSst/logger"
 	consulapi "github.com/hashicorp/consul/api"
 )
 
@@ -55,7 +55,7 @@ func (c *configConsul) getKvPair(client *consulapi.Client, key string) (*consula
 func (c *configConsul) ConnectConfigConsul() (config *config.Config, err error) {
 	consul, err := c.getConsul(c.Host)
 	if err != nil {
-		log.Fatalf("Error connecting to Consul: %s", err)
+		logger.ConfigZap().Errorf("Error connecting to Consul: %s", err)
 	}
 
 	cat := consul.Catalog()
@@ -66,9 +66,9 @@ func (c *configConsul) ConnectConfigConsul() (config *config.Config, err error) 
 
 	redisPattern, err := c.getKvPair(consul, c.Key)
 	if err != nil || redisPattern == nil {
-		log.Fatalf("Could not get REDISPATTERN: %s", err)
+		logger.ConfigZap().Errorf("Could not get REDISPATTERN: %s", err)
 	}
-	log.Printf("KV: %v %s\n", redisPattern.Key, redisPattern.Value)
+	logger.ConfigZap().Infof("KV: %v %s\n", redisPattern.Key, redisPattern.Value)
 
 	if err := json.Unmarshal(redisPattern.Value, &config); err != nil {
 		return nil, err
