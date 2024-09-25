@@ -3,7 +3,7 @@ module github.com/JieeiroSst/authorize-service
 go 1.22.2
 
 require (
-	github.com/JieeiroSst/logger v1.1.3
+	github.com/JieeiroSst/logger v1.1.4
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.51.0
 	github.com/casbin/gorm-adapter/v3 v3.7.3
@@ -26,7 +26,7 @@ require (
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2
 	gorm.io/driver/mysql v1.3.5
-	gorm.io/gorm v1.23.8
+	gorm.io/gorm v1.25.12
 )
 
 require (
