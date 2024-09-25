@@ -3,7 +3,7 @@ module github.com/JieeiroSst/authorize-service
 go 1.22.2
 
 require (
-	github.com/JieeiroSst/logger v1.1.2
+	github.com/JieeiroSst/logger v1.1.3
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.51.0
 	github.com/casbin/gorm-adapter/v3 v3.7.3
