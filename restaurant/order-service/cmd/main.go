@@ -11,6 +11,11 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/order-service/config"
+	httpServer "github.com/JIeeiroSst/order-service/internal/delivery/http"
+	"github.com/JIeeiroSst/order-service/internal/model"
+	"github.com/JIeeiroSst/order-service/internal/repository"
+	"github.com/JIeeiroSst/order-service/internal/usecase"
+	"github.com/JIeeiroSst/order-service/pkg/postgres"
 	"github.com/JieeiroSst/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +37,21 @@ func main() {
 		logger.ConfigZap().Error(err.Error())
 	}
 
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		config.Postgres.PostgresqlHost, config.Postgres.PostgresqlUser, config.Postgres.PostgresqlPassword,
+		config.Postgres.PostgresqlDbname, config.Postgres.PostgresqlPort)
+
+	postgresConn := postgres.NewPostgresConn(dsn)
+	postgresConn.AutoMigrate(&model.Order{})
+	repository := repository.NewRepositories(postgresConn)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos: repository,
+	})
+
+	httpServer := httpServer.NewHandler(*usecase)
+
+	httpServer.Init(router)
+	
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
 		Handler: router,
