@@ -20,6 +20,7 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 	group.PUT("/lock/:id", h.LockAccount)
 	group.POST("/refresh", h.Refresh)
 	group.POST("/logout", h.Logout)
+	group.GET("", h.FindUser)
 
 	group.POST("/authentication", h.Authentication)
 }
@@ -253,4 +254,22 @@ func (r *Handler) Refresh(c *gin.Context) {
 func (r *Handler) Logout(c *gin.Context) {
 	c.SetCookie("session_token", "", -1, "/", "localhost", false, true)
 	c.String(http.StatusOK, "Cookie has been deleted")
+}
+
+func (r *Handler) FindUser(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Query("user_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user, err := r.usecase.Users.FindUser(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": user,
+	})
 }
