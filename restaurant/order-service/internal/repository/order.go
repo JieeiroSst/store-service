@@ -19,7 +19,7 @@ type orderRepository struct {
 	db *gorm.DB
 }
 
-func NewOrderRepository(db *gorm.DB) Orders {
+func NewOrderRepository(db *gorm.DB) *orderRepository {
 	return &orderRepository{
 		db: db,
 	}
