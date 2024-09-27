@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type OrderRepository interface {
+type Orders interface {
 	Create(ctx context.Context, order model.Order) error
 	Update(ctx context.Context, id int, order model.Order) error
 	FindByID(ctx context.Context, id int) (*model.Order, error)
@@ -19,7 +19,7 @@ type orderRepository struct {
 	db *gorm.DB
 }
 
-func NewOrderRepository(db *gorm.DB) OrderRepository {
+func NewOrderRepository(db *gorm.DB) Orders {
 	return &orderRepository{
 		db: db,
 	}
