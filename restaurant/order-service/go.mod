@@ -3,7 +3,7 @@ module github.com/JIeeiroSst/order-service
 go 1.22.2
 
 require (
-	github.com/JieeiroSst/logger v1.1.5
+	github.com/JieeiroSst/logger v1.1.6
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
 )
@@ -56,6 +56,7 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/sony/gobreaker v1.0.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	go.opentelemetry.io/otel v1.30.0 // indirect
