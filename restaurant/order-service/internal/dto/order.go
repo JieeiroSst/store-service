@@ -1,4 +1,4 @@
-package model
+package dto
 
 type Order struct {
 	ID        int    `json:"id"`
