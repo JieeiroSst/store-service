@@ -9,10 +9,10 @@ import (
 )
 
 type Order struct {
-	ID        int      `json:"id"`
-	TableName string   `json:"table_name"`
-	Status    string   `json:"status"`
-	MenuIDs   []string `json:"menu_id"`
+	ID        int      `json:"id" form:"id"`
+	TableName string   `json:"table_name" form:"table_name"`
+	Status    string   `json:"status" form:"status"`
+	MenuIDs   []string `json:"menu_id" form:"menu_id"`
 }
 
 func (order Order) CreateOrder() model.Order {
