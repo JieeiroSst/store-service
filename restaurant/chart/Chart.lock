@@ -5,5 +5,8 @@ dependencies:
 - name: nats
   repository: file://nats
   version: 0.1.0
-digest: sha256:a553ea4bd3e12112abb46200586e31a96ed70ed948c0ae48317cf58b433ac371
-generated: "2024-09-28T14:12:42.338934+07:00"
+- name: postgres
+  repository: file://postgres
+  version: 0.1.0
+digest: sha256:997656276452aafba9ae586b191458cd36175777a31320536e2a704fcf8a11b0
+generated: "2024-09-28T15:13:09.579876+07:00"
