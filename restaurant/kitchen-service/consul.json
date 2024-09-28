@@ -1,0 +1,19 @@
+{
+    "server": {
+        "PortServer": "1235"
+    },
+    "secret": {
+        "AuthorizeKey": "no_name"
+    },
+    "postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "5432",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "kitchen",
+        "PgDriver": "pgx"
+    },
+    "nats": {
+        "Dns": "http://localhost:30002"
+    }
+}
