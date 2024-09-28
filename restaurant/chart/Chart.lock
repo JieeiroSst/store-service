@@ -2,5 +2,8 @@ dependencies:
 - name: consul
   repository: file://consul
   version: 0.1.0
-digest: sha256:8e2d40d81007aef2793a8a21c037d3a53995c70695ca59d98e23e6d93ab3c926
-generated: "2024-09-28T13:27:11.505084+07:00"
+- name: nats
+  repository: file://nats
+  version: 0.1.0
+digest: sha256:a553ea4bd3e12112abb46200586e31a96ed70ed948c0ae48317cf58b433ac371
+generated: "2024-09-28T14:12:42.338934+07:00"
