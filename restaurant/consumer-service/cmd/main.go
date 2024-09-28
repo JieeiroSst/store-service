@@ -11,6 +11,12 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/consumer-service/config"
+	"github.com/JIeeiroSst/consumer-service/internal/delivery/consumer"
+	httpServer "github.com/JIeeiroSst/consumer-service/internal/delivery/http"
+	"github.com/JIeeiroSst/consumer-service/internal/model"
+	"github.com/JIeeiroSst/consumer-service/internal/repository"
+	"github.com/JIeeiroSst/consumer-service/internal/usecase"
+	"github.com/JIeeiroSst/consumer-service/pkg/postgres"
 	"github.com/JieeiroSst/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -32,6 +38,24 @@ func main() {
 		logger.ConfigZap().Error(err.Error())
 	}
 
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		config.Postgres.PostgresqlHost, config.Postgres.PostgresqlUser, config.Postgres.PostgresqlPassword,
+		config.Postgres.PostgresqlDbname, config.Postgres.PostgresqlPort)
+
+	postgresConn := postgres.NewPostgresConn(dsn)
+	postgresConn.AutoMigrate(&model.Consumer{})
+
+	repository := repository.NewRepository(postgresConn)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos: repository,
+	})
+	nats := logger.ConnectNats(config.Nats.Dns)
+	httpServer := httpServer.NewHandler(nats, *usecase)
+	consumer := consumer.NewConsumer(*usecase, nats)
+
+	httpServer.Init(router)
+	consumer.Start(context.Background())
+
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
 		Handler: router,
@@ -43,7 +67,7 @@ func main() {
 		}
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	logger.ConfigZap().Info("Shutdown Server ...")

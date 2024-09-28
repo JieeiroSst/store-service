@@ -134,27 +134,30 @@ func (k Kitchen) Build() Order {
 }
 
 type Customer struct {
-	TableName string     `json:"table_name" form:"table_name"`
+	Name      string     `json:"table_name" form:"table_name"`
 	KitchenID int        `json:"kitchen_id"`
-	Menu      []MenuFood `json:"menu" form:"menu_id"`
+	Menu      []MenuFood `json:"menu" form:"menu"`
 }
 
 type MenuFood struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	CategoryID int    `json:"category_id"`
+	ID       int      `json:"id"`
+	Name     string   `json:"name"`
+	Category Category `json:"category"`
 }
 
 func (k Customer) Build() Kitchen {
 	foods := make([]Food, 0)
 	for _, v := range k.Menu {
 		foods = append(foods, Food{
-			Name:       v.Name,
-			CategoryID: v.CategoryID,
+			Name: v.Name,
+			Category: Category{
+				ID:   v.Category.ID,
+				Name: v.Category.Name,
+			},
 		})
 	}
 	return Kitchen{
-		Name:  k.TableName,
+		Name:  k.Name,
 		Foods: foods,
 	}
 }

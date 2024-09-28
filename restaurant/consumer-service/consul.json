@@ -14,7 +14,7 @@
         "PgDriver": "pgx"
     },
     "nats": {
-        "Dns": "http://localhost:30002"
+        "dns": "http://localhost:30002"
     },
     "redis": {
         "dns": "localhost:31001"

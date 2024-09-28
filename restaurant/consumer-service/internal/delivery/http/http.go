@@ -1,8 +1,8 @@
 package http
 
 import (
-	v1 "github.com/JIeeiroSst/kitchen-service/internal/delivery/http/v1"
-	"github.com/JIeeiroSst/kitchen-service/internal/usecase"
+	v1 "github.com/JIeeiroSst/consumer-service/internal/delivery/http/v1"
+	"github.com/JIeeiroSst/consumer-service/internal/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 	swaggerFiles "github.com/swaggo/files"
@@ -14,10 +14,10 @@ type Handler struct {
 	nats    *nats.Conn
 }
 
-func NewHandler(usecase usecase.Usecase, nats *nats.Conn) *Handler {
+func NewHandler(nats *nats.Conn, usecase usecase.Usecase) *Handler {
 	return &Handler{
-		usecase: usecase,
 		nats:    nats,
+		usecase: usecase,
 	}
 }
 
