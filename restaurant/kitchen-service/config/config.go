@@ -9,12 +9,13 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Secret   SecretConfig
-	Redis    Redis
+	Redis    RedisConfig
 	Postgres PostgresConfig
+	Nats     NatsConfig
 }
 
 type ServerConfig struct {
-	PortServer     string
+	PortServer string
 }
 
 type PostgresConfig struct {
@@ -31,7 +32,11 @@ type SecretConfig struct {
 	JwtSecretKey string
 }
 
-type Redis struct {
+type RedisConfig struct {
+	Dns string
+}
+
+type NatsConfig struct {
 	Dns string
 }
 
