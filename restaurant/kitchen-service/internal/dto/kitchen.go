@@ -49,3 +49,35 @@ func BuildKitchen(d Kitchen) model.Kitchen {
 		Foods: BuildFoods(d.Foods),
 	}
 }
+
+func BuildModelFood(d model.Food) Food {
+	return Food{
+		ID:         d.ID,
+		Name:       d.Name,
+		CategoryID: d.CategoryID,
+		Category:   BuildDtoCategory(d.Category),
+	}
+}
+
+func BuildModelFoods(d []model.Food) []Food {
+	var foods []Food
+	for _, d := range d {
+		foods = append(foods, BuildModelFood(d))
+	}
+	return foods
+}
+
+func BuildDtoCategory(d model.Category) Category {
+	return Category{
+		ID:   d.ID,
+		Name: d.Name,
+	}
+}
+
+func BuildDtoCategories(d []model.Category) []Category {
+	categories := make([]Category, 0)
+	for _, v := range d {
+		categories = append(categories, BuildDtoCategory(v))
+	}
+	return categories
+}
