@@ -1,0 +1,11 @@
+{
+    "server": {
+        "PortServer": "1238"
+    },
+    "secret": {
+        "AuthorizeKey": "no_name"
+    },
+    "nats": {
+        "dns": "http://localhost:30002"
+    }
+}
