@@ -15,3 +15,7 @@ dependencies:
     name: nats
     version: "0.1.0"
     repository: file://nats
+  - alias: postgres
+    name: postgres
+    version: "0.1.0"
+    repository: file://postgres
