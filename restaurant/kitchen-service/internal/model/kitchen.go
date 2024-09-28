@@ -9,6 +9,7 @@ type Food struct {
 	ID         int      `json:"id"`
 	Name       string   `json:"name"`
 	CategoryID int      `json:"category_id"`
+	Status     int      `json:"status"`
 	Category   Category `gorm:"foreignKey:ID;references:CategoryID" json:"category"`
 }
 
