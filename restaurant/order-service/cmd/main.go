@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/order-service/config"
+	"github.com/JIeeiroSst/order-service/internal/delivery/consumer"
 	httpServer "github.com/JIeeiroSst/order-service/internal/delivery/http"
 	"github.com/JIeeiroSst/order-service/internal/model"
 	"github.com/JIeeiroSst/order-service/internal/repository"
@@ -49,9 +50,11 @@ func main() {
 	})
 
 	httpServer := httpServer.NewHandler(*usecase)
+	consumer := consumer.NewConsumer(*usecase)
 
 	httpServer.Init(router)
-	
+	consumer.Start(context.Background())
+
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
 		Handler: router,
