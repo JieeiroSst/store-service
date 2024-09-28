@@ -1,6 +1,6 @@
 {
     "server": {
-        "PortServer": "1235"
+        "PortServer": "1236"
     },
     "secret": {
         "AuthorizeKey": "no_name"
@@ -10,7 +10,7 @@
         "PostgresqlPort": "31000",
         "PostgresqlUser": "postgres",
         "PostgresqlPassword": "postgres",
-        "PostgresqlDbname": "kitchen",
+        "PostgresqlDbname": "order",
         "PgDriver": "pgx"
     },
     "nats": {

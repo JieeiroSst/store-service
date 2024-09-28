@@ -11,10 +11,11 @@ type Config struct {
 	Secret   SecretConfig
 	Redis    Redis
 	Postgres PostgresConfig
+	Nats     NatsConfig
 }
 
 type ServerConfig struct {
-	PortServer     string
+	PortServer string
 }
 
 type PostgresConfig struct {
@@ -32,6 +33,10 @@ type SecretConfig struct {
 }
 
 type Redis struct {
+	Dns string
+}
+
+type NatsConfig struct {
 	Dns string
 }
 
