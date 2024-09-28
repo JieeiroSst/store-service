@@ -19,7 +19,6 @@ import (
 	"github.com/JIeeiroSst/order-service/pkg/postgres"
 	"github.com/JieeiroSst/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/nats-io/nats.go"
 )
 
 func main() {
@@ -52,7 +51,7 @@ func main() {
 	})
 
 	httpServer := httpServer.NewHandler(*usecase)
-	nats := logger.ConnectNats(nats.DefaultURL)
+	nats := logger.ConnectNats(config.Nats.Dns)
 	consumer := consumer.NewConsumer(*usecase, nats)
 
 	httpServer.Init(router)
