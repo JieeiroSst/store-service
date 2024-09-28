@@ -11,7 +11,11 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/kitchen-service/config"
+	"github.com/JIeeiroSst/kitchen-service/internal/delivery/consumer"
+	httpServer "github.com/JIeeiroSst/kitchen-service/internal/delivery/http"
 	"github.com/JIeeiroSst/kitchen-service/internal/model"
+	"github.com/JIeeiroSst/kitchen-service/internal/repository"
+	"github.com/JIeeiroSst/kitchen-service/internal/usecase"
 	"github.com/JIeeiroSst/kitchen-service/pkg/postgres"
 	"github.com/JieeiroSst/logger"
 	"github.com/gin-gonic/gin"
@@ -39,7 +43,18 @@ func main() {
 		config.Postgres.PostgresqlDbname, config.Postgres.PostgresqlPort)
 
 	postgresConn := postgres.NewPostgresConn(dsn)
-	postgresConn.AutoMigrate(&model.Food{}, &model.Category{}, &model.Kitchen{})
+	postgresConn.AutoMigrate(&model.Kitchen{}, &model.Food{}, &model.Category{})
+
+	repository := repository.NewRepository(postgresConn)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos: repository,
+	})
+	nats := logger.ConnectNats(config.Nats.Dns)
+	httpServer := httpServer.NewHandler(*usecase, nats)
+	consumer := consumer.NewConsumer(*usecase, nats)
+
+	httpServer.Init(router)
+	consumer.Start(context.Background())
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),

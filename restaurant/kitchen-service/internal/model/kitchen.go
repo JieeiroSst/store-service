@@ -2,6 +2,7 @@ package model
 
 type Kitchen struct {
 	ID    int    `gorm:"primaryKey;autoIncrement:false" json:"id"`
+	Name  string `json:"name"`
 	Foods []Food `gorm:"foreignKey:ID" json:"foods"`
 }
 
