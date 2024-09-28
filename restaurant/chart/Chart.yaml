@@ -19,3 +19,7 @@ dependencies:
     name: postgres
     version: "0.1.0"
     repository: file://postgres
+  - alias: redis
+    name: redis
+    version: "0.1.0"
+    repository: file://redis
