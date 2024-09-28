@@ -24,6 +24,7 @@ import (
 
 func main() {
 	router := gin.Default()
+	ctx := context.Background()
 	dirEnv, err := config.ReadFileEnv(".env")
 	if err != nil {
 		logger.ConfigZap().Error(err.Error())
@@ -55,7 +56,7 @@ func main() {
 	consumer := consumer.NewConsumer(*usecase, nats)
 
 	httpServer.Init(router)
-	consumer.Start()
+	consumer.Start(ctx)
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
