@@ -1,25 +1,26 @@
 package consumer
 
 import (
-	"context"
-
 	"github.com/JIeeiroSst/order-service/internal/usecase"
+	"github.com/nats-io/nats.go"
 )
 
 type consumer struct {
 	Usecase usecase.Usecase
+	Nats    *nats.Conn
 }
 
 type ConsumerInterface interface {
-	Start(ctx context.Context)
+	Start()
 }
 
-func NewConsumer(Usecase usecase.Usecase) ConsumerInterface {
+func NewConsumer(Usecase usecase.Usecase, Nats *nats.Conn) ConsumerInterface {
 	return &consumer{
 		Usecase: Usecase,
+		Nats:    Nats,
 	}
 }
 
-func (c *consumer) Start(ctx context.Context) {
+func (c *consumer) Start() {
 
 }
