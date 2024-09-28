@@ -23,7 +23,7 @@ func NewCategoryUsecase(CategoryRepository repository.Categories) *CategoryUseca
 }
 
 func (u *CategoryUsecase) Create(ctx context.Context, category dto.Category) error {
-	model := dto.BuildCategory(category)
+	model := dto.BuildCreateCategory(category)
 	if err := u.CategoryRepository.Create(ctx, model); err != nil {
 		return err
 	}

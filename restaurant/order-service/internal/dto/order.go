@@ -12,6 +12,7 @@ type Order struct {
 	ID        int      `json:"id" form:"id"`
 	TableName string   `json:"table_name" form:"table_name"`
 	Status    string   `json:"status" form:"status"`
+	KitchenID int      `json:"kitchen_id"`
 	MenuIDs   []string `json:"menu_id" form:"menu_id"`
 }
 
@@ -20,6 +21,7 @@ func (order Order) CreateOrder() model.Order {
 		ID:        logger.GearedIntID(),
 		TableName: order.TableName,
 		Status:    comon.PendingStatus,
+		KitchenID: order.KitchenID,
 		MenuID:    strings.Join(order.MenuIDs, ","),
 	}
 }
@@ -28,6 +30,7 @@ func (order Order) CancelOrder() model.Order {
 	return model.Order{
 		TableName: order.TableName,
 		Status:    comon.CancelStatus,
+		KitchenID: order.KitchenID,
 		MenuID:    strings.Join(order.MenuIDs, ","),
 	}
 }
@@ -36,6 +39,7 @@ func (order Order) SuccessOrder() model.Order {
 	return model.Order{
 		TableName: order.TableName,
 		Status:    comon.SuccessStatus,
+		KitchenID: order.KitchenID,
 		MenuID:    strings.Join(order.MenuIDs, ","),
 	}
 }
@@ -48,6 +52,7 @@ func BuildOrder(order *model.Order) *Order {
 		ID:        order.ID,
 		TableName: order.TableName,
 		Status:    order.Status,
+		KitchenID: order.KitchenID,
 		MenuIDs:   strings.Split(order.MenuID, ","),
 	}
 }

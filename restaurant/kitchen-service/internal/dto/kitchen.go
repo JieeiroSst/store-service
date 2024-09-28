@@ -1,9 +1,15 @@
 package dto
 
-import "github.com/JIeeiroSst/kitchen-service/internal/model"
+import (
+	"strconv"
+
+	"github.com/JIeeiroSst/kitchen-service/internal/model"
+	"github.com/JieeiroSst/logger"
+)
 
 type Kitchen struct {
 	ID    int    `json:"id"`
+	Name  string `json:"name"`
 	Foods []Food `json:"foods"`
 }
 
@@ -19,10 +25,26 @@ type Category struct {
 	Name string `json:"name"`
 }
 
+func BuildCreateCategory(d Category) model.Category {
+	return model.Category{
+		ID:   logger.GearedIntID(),
+		Name: d.Name,
+	}
+}
+
 func BuildCategory(d Category) model.Category {
 	return model.Category{
 		ID:   d.ID,
 		Name: d.Name,
+	}
+}
+
+func BuildCreateFood(d Food) model.Food {
+	return model.Food{
+		ID:         logger.GearedIntID(),
+		Name:       d.Name,
+		CategoryID: d.CategoryID,
+		Category:   BuildCategory(d.Category),
 	}
 }
 
@@ -43,9 +65,18 @@ func BuildFoods(d []Food) []model.Food {
 	return foods
 }
 
+func BuildCreateKitchen(d Kitchen) model.Kitchen {
+	return model.Kitchen{
+		ID:    logger.GearedIntID(),
+		Name:  d.Name,
+		Foods: BuildFoods(d.Foods),
+	}
+}
+
 func BuildKitchen(d Kitchen) model.Kitchen {
 	return model.Kitchen{
 		ID:    d.ID,
+		Name:  d.Name,
 		Foods: BuildFoods(d.Foods),
 	}
 }
@@ -80,4 +111,50 @@ func BuildDtoCategories(d []model.Category) []Category {
 		categories = append(categories, BuildDtoCategory(v))
 	}
 	return categories
+}
+
+type Order struct {
+	TableName string   `json:"table_name" form:"table_name"`
+	KitchenID int      `json:"kitchen_id"`
+	MenuIDs   []string `json:"menu_id" form:"menu_id"`
+}
+
+func (k Kitchen) Build() Order {
+	menuIds := make([]string, 0)
+	if len(k.Foods) > 0 {
+		for _, v := range k.Foods {
+			menuIds = append(menuIds, strconv.Itoa(v.ID))
+		}
+	}
+	return Order{
+		TableName: k.Name,
+		KitchenID: k.ID,
+		MenuIDs:   menuIds,
+	}
+}
+
+type Customer struct {
+	TableName string     `json:"table_name" form:"table_name"`
+	KitchenID int        `json:"kitchen_id"`
+	Menu      []MenuFood `json:"menu" form:"menu_id"`
+}
+
+type MenuFood struct {
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	CategoryID int    `json:"category_id"`
+}
+
+func (k Customer) Build() Kitchen {
+	foods := make([]Food, 0)
+	for _, v := range k.Menu {
+		foods = append(foods, Food{
+			Name:       v.Name,
+			CategoryID: v.CategoryID,
+		})
+	}
+	return Kitchen{
+		Name:  k.TableName,
+		Foods: foods,
+	}
 }
