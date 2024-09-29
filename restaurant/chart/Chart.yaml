@@ -31,3 +31,7 @@ dependencies:
     name: mongo
     version: "0.1.0"
     repository: file://mongo
+  - alias: mysql
+    name: mysql
+    version: "0.1.0"
+    repository: file://mysql
