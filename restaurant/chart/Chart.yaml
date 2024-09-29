@@ -27,3 +27,7 @@ dependencies:
     name: airflow
     version: "0.1.0"
     repository: file://airflow
+  - alias: mongo
+    name: mongo
+    version: "0.1.0"
+    repository: file://mongo
