@@ -14,5 +14,8 @@ dependencies:
 - name: airflow
   repository: file://airflow
   version: 0.1.0
-digest: sha256:4b045f784bbb151222c90c0640d142e0420f9c3e6736b188d114557da01d1fae
-generated: "2024-09-29T13:59:56.906678+07:00"
+- name: mongo
+  repository: file://mongo
+  version: 0.1.0
+digest: sha256:addf7808cd03af1d2ba04a6d4dd2848087ffaa60e49199b711156d4f323c0db5
+generated: "2024-09-29T15:44:51.886668+07:00"
