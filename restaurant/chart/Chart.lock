@@ -11,5 +11,8 @@ dependencies:
 - name: redis
   repository: file://redis
   version: 0.1.0
-digest: sha256:70f8f4a1ef78a843e4927489346ab6075d8bdcad545178f9f9495437946274a6
-generated: "2024-09-28T15:55:08.021582+07:00"
+- name: airflow
+  repository: file://airflow
+  version: 0.1.0
+digest: sha256:4b045f784bbb151222c90c0640d142e0420f9c3e6736b188d114557da01d1fae
+generated: "2024-09-29T13:59:56.906678+07:00"

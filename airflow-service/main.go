@@ -9,7 +9,7 @@ import (
 
 func main() {
 	conf := airflow.NewConfiguration()
-	conf.Host = "localhost:8080"
+	conf.Host = "localhost:31002"
 	conf.Scheme = "http"
 	cli := airflow.NewAPIClient(conf)
 

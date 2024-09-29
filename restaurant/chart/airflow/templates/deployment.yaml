@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-deployment
+  template:
+    metadata:
+      labels:
+        app: airflow-deployment
+    spec:
+      containers:
+      - name: airflow-deployment
+        image: puckel/docker-airflow:1.10.4
+        ports:
+        - containerPort: 8080
+        env:
+            - name: NODE_ENV
+              value: production
