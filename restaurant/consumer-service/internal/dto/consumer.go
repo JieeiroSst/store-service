@@ -19,6 +19,7 @@ type MenuFood struct {
 	ID       int      `json:"id"`
 	Name     string   `json:"name"`
 	Category Category `json:"category"`
+	Money    float64  `json:"money"`
 }
 type Category struct {
 	ID   int    `json:"id"`
@@ -39,15 +40,21 @@ func (d Consumer) Build() model.Consumer {
 }
 
 type Order struct {
-	ID        int    `json:"id" form:"id"`
-	TableName string `json:"table_name" form:"table_name"`
-	KitchenID int    `json:"kitchen_id"`
+	ID          int     `json:"id" form:"id"`
+	TableName   string  `json:"table_name" form:"table_name"`
+	KitchenID   int     `json:"kitchen_id"`
+	TotalAmount float64 `json:"total_amount"`
 }
 
 func (c Consumer) BuildV2() Order {
+	var totalAmount float64
+	for _, v := range c.Menu {
+		totalAmount += v.Money
+	}
 	return Order{
-		ID:        c.OrderID,
-		TableName: c.Name,
-		KitchenID: c.KitchenID,
+		ID:          c.OrderID,
+		TableName:   c.Name,
+		KitchenID:   c.KitchenID,
+		TotalAmount: totalAmount,
 	}
 }

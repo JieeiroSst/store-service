@@ -7,18 +7,20 @@ import (
 )
 
 type Order struct {
-	ID        int    `json:"id" form:"id"`
-	TableName string `json:"table_name" form:"table_name"`
-	Status    string `json:"status" form:"status"`
-	KitchenID int    `json:"kitchen_id"`
+	ID          int     `json:"id" form:"id"`
+	TableName   string  `json:"table_name" form:"table_name"`
+	Status      string  `json:"status" form:"status"`
+	KitchenID   int     `json:"kitchen_id"`
+	TotalAmount float64 `json:"total_amount"`
 }
 
 func (order Order) CreateOrder() model.Order {
 	return model.Order{
-		ID:        logger.GearedIntID(),
-		TableName: order.TableName,
-		Status:    comon.PendingStatus,
-		KitchenID: order.KitchenID,
+		ID:          logger.GearedIntID(),
+		TableName:   order.TableName,
+		Status:      comon.PendingStatus,
+		KitchenID:   order.KitchenID,
+		TotalAmount: order.TotalAmount,
 	}
 }
 
@@ -43,9 +45,10 @@ func BuildOrder(order *model.Order) *Order {
 		return nil
 	}
 	return &Order{
-		ID:        order.ID,
-		TableName: order.TableName,
-		Status:    order.Status,
-		KitchenID: order.KitchenID,
+		ID:          order.ID,
+		TableName:   order.TableName,
+		Status:      order.Status,
+		KitchenID:   order.KitchenID,
+		TotalAmount: order.TotalAmount,
 	}
 }
