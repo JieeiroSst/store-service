@@ -33,7 +33,7 @@ func (r *orderRepository) Create(ctx context.Context, order model.Order) error {
 }
 
 func (r *orderRepository) Update(ctx context.Context, id int, order model.Order) error {
-	err := r.db.Model(model.Order{}).Where("id = ? ", id).Updates(order).Error
+	err := r.db.Model(model.Order{}).Where("active = ?", true).Update("status", order.Status).Error
 	if err != nil {
 		return err
 	}
