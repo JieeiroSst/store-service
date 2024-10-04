@@ -1,0 +1,22 @@
+{
+    "server": {
+        "PortServer": "1137"
+    },
+    "secret": {
+        "AuthorizeKey": "no_name"
+    },
+    "postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "31000",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "delivery",
+        "PgDriver": "pgx"
+    },
+    "nats": {
+        "dns": "http://localhost:30002"
+    },
+    "redis": {
+        "dns": "localhost:31001"
+    }
+}
