@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/JieeiroSst/authorize-service/config"
-	"github.com/JieeiroSst/logger"
+	"github.com/JIeeiroSst/utils/logger"
 	consulapi "github.com/hashicorp/consul/api"
 )
 

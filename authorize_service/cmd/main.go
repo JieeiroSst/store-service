@@ -24,10 +24,10 @@ import (
 	"github.com/JieeiroSst/authorize-service/pkg/mysql"
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
 	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
-	"github.com/JieeiroSst/logger"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
+	"github.com/JIeeiroSst/utils/logger"
 )
 
 var (

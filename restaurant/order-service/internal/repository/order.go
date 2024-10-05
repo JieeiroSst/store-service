@@ -42,7 +42,7 @@ func (r *orderRepository) Update(ctx context.Context, id int, order model.Order)
 
 func (r *orderRepository) FindByID(ctx context.Context, id int) (*model.Order, error) {
 	var order model.Order
-	err := r.db.Preload("Roles").Where("id = ?", id).Find(&order).Error
+	err := r.db.Where("id = ?", id).Find(&order).Error
 	if err != nil {
 		return nil, err
 	}

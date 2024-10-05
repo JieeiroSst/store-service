@@ -1,8 +1,9 @@
 package model
 
 type Delivery struct {
-	ShipID    int    `json:"ship_id" form:"ship_id"`
-	Name      string `json:"name" form:"name"`
-	Address   string `json:"address" form:"address"`
-	KitchenID int    `json:"kitchen_id"`
+	ShipID    int    `json:"ship_id,omitempty"`
+	Name      string `json:"name,omitempty"`
+	Address   string `json:"address,omitempty"`
+	KitchenID int    `json:"kitchen_id,omitempty"`
+	Status    int    `json:"status,omitempty"`
 }
