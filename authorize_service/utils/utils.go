@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/JieeiroSst/logger"
+	"github.com/JIeeiroSst/utils/logger"
 )
 
 func DecodeBase(msg, decode string) bool {

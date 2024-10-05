@@ -11,6 +11,12 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/delivery-service/config"
+	"github.com/JIeeiroSst/delivery-service/internal/delivery/consumer"
+	httpServer "github.com/JIeeiroSst/delivery-service/internal/delivery/http"
+	"github.com/JIeeiroSst/delivery-service/internal/model"
+	"github.com/JIeeiroSst/delivery-service/internal/repository"
+	"github.com/JIeeiroSst/delivery-service/internal/usecase"
+	"github.com/JIeeiroSst/delivery-service/pkg/postgres"
 	"github.com/JieeiroSst/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -31,6 +37,24 @@ func main() {
 	if err := json.Unmarshal(conf, &config); err != nil {
 		logger.ConfigZap().Error(err.Error())
 	}
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		config.Postgres.PostgresqlHost, config.Postgres.PostgresqlUser, config.Postgres.PostgresqlPassword,
+		config.Postgres.PostgresqlDbname, config.Postgres.PostgresqlPort)
+
+	postgresConn := postgres.NewPostgresConn(dsn)
+	postgresConn.AutoMigrate(&model.Delivery{})
+
+	repository := repository.NewRepository(postgresConn)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos: repository,
+	})
+	nats := logger.ConnectNats(config.Nats.Dns)
+	httpServer := httpServer.NewHandler(nats, usecase)
+	consumer := consumer.NewConsumer(usecase, nats)
+
+	httpServer.Init(router)
+	consumer.Start(context.Background())
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),

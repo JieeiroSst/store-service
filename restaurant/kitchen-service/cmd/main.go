@@ -50,8 +50,8 @@ func main() {
 		Repos: repository,
 	})
 	nats := logger.ConnectNats(config.Nats.Dns)
-	httpServer := httpServer.NewHandler(*usecase, nats)
-	consumer := consumer.NewConsumer(*usecase, nats)
+	httpServer := httpServer.NewHandler(usecase, nats)
+	consumer := consumer.NewConsumer(usecase, nats)
 
 	httpServer.Init(router)
 	consumer.Start(context.Background())

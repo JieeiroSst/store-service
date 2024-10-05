@@ -10,11 +10,11 @@ import (
 )
 
 type Handler struct {
-	usecase usecase.Usecase
+	usecase *usecase.Usecase
 	nats    *nats.Conn
 }
 
-func NewHandler(nats *nats.Conn, usecase usecase.Usecase) *Handler {
+func NewHandler(nats *nats.Conn, usecase *usecase.Usecase) *Handler {
 	return &Handler{
 		nats:    nats,
 		usecase: usecase,
@@ -28,7 +28,7 @@ func (h *Handler) Init(router *gin.Engine) {
 }
 
 func (h *Handler) initApi(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(&h.usecase, h.nats)
+	handlerV1 := v1.NewHandler(h.usecase, h.nats)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

@@ -11,7 +11,7 @@ import (
 )
 
 type consumer struct {
-	Usecase usecase.Usecase
+	Usecase *usecase.Usecase
 	Nats    *nats.Conn
 }
 
@@ -19,7 +19,7 @@ type ConsumerInterface interface {
 	Start(ctx context.Context)
 }
 
-func NewConsumer(Usecase usecase.Usecase, Nats *nats.Conn) ConsumerInterface {
+func NewConsumer(Usecase *usecase.Usecase, Nats *nats.Conn) ConsumerInterface {
 	return &consumer{
 		Usecase: Usecase,
 		Nats:    Nats,
