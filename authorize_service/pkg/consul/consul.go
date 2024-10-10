@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/JieeiroSst/authorize-service/config"
 	"github.com/JIeeiroSst/utils/logger"
+	"github.com/JieeiroSst/authorize-service/config"
 	consulapi "github.com/hashicorp/consul/api"
 )
 

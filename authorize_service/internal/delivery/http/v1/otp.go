@@ -2,10 +2,12 @@ package v1
 
 import (
 	"errors"
-	"net/http"
 
+	"github.com/JIeeiroSst/utils/response"
+	"github.com/JIeeiroSst/utils/trace_id"
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func (h *Handler) initOtpRouters(api *gin.RouterGroup) {
@@ -16,57 +18,60 @@ func (h *Handler) initOtpRouters(api *gin.RouterGroup) {
 }
 
 func (h *Handler) CreateOtp(ctx *gin.Context) {
+	newCtx := trace_id.TracerID("")
 	username := ctx.Query("username")
 
 	otp, err := h.usecase.Otps.CreateOtpByUser(username)
 	if errors.Is(err, common.OTPFailed) {
-		Response(ctx, http.StatusInternalServerError, Message{Message: err.Error()})
-		return
+		response.ResponseStatus(ctx, 500, response.MessageStatus{
+			Message: err.Error(),
+			Error:   true,
+			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
+		})
 	}
 	if err != nil {
-		Response(ctx, http.StatusInternalServerError, Message{Message: err.Error()})
-		return
+		response.ResponseStatus(ctx, 500, response.MessageStatus{
+			Message: err.Error(),
+			Error:   true,
+			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
+		})
 	}
 
-	Response(ctx, http.StatusOK, Message{
-		OTP:            otp.OTP,
-		Message:        "Success",
-		QuotaRemaining: 70,
-		TextID:         username,
+	response.ResponseStatus(ctx, 200, response.MessageStatus{
+		Message: common.CreateSuccess,
+		Error:   true,
+		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
+		Data:    otp.OTP,
 	})
 }
 
 func (h *Handler) AuthorizeOTP(ctx *gin.Context) {
+	newCtx := trace_id.TracerID("")
 	username := ctx.Query("username")
 	otp := ctx.Query("otp")
 
 	err := h.usecase.Otps.Authorize(otp, username)
 	if errors.Is(err, common.OTPFailed) {
-		Response(ctx, http.StatusUnauthorized, Message{
-			OTP:            err.Error(),
-			Message:        "Faield",
-			QuotaRemaining: 0,
-			TextID:         username,
+		response.ResponseStatus(ctx, 401, response.MessageStatus{
+			Message: err.Error(),
+			Error:   true,
+			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
+			Data:    username,
 		})
-		return
 	}
 	if err != nil {
-		Response(ctx, http.StatusInternalServerError, Message{
-			OTP:            err.Error(),
-			Message:        "Faield",
-			QuotaRemaining: 0,
-			TextID:         username,
+		response.ResponseStatus(ctx, 500, response.MessageStatus{
+			Message: err.Error(),
+			Error:   true,
+			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
+			Data:    username,
 		})
-		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"success":    true,
-		"isValidOtp": true,
-	})
-	Response(ctx, http.StatusOK, Message{
-		Message:        "Success",
-		QuotaRemaining: 0,
-		TextID:         username,
+	response.ResponseStatus(ctx, 500, response.MessageStatus{
+		Message: common.Authorized,
+		Error:   true,
+		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
+		Data:    username,
 	})
 }
