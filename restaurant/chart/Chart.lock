@@ -20,5 +20,11 @@ dependencies:
 - name: mysql
   repository: file://mysql
   version: 0.1.0
-digest: sha256:5b70e73c5d440f06e1b0e44ad5362833199bd37758d9fab13baf80ac1c125c2e
-generated: "2024-09-29T15:55:41.497269+07:00"
+- name: keycloak
+  repository: file://keycloak
+  version: 0.1.0
+- name: rabbitmq
+  repository: file://rabbitmq
+  version: 0.1.0
+digest: sha256:69288b3d7301740002df0d4b9e79681cdeafd47f1e95e2cef595654978ee063d
+generated: "2024-10-14T20:16:43.025151+07:00"

@@ -11,5 +11,5 @@ mysql:
     port: 3306
 
   service:
-    name: mysql-service
+    name: mysql-svc
     type: LoadBalancer

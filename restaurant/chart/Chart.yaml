@@ -35,3 +35,11 @@ dependencies:
     name: mysql
     version: "0.1.0"
     repository: file://mysql
+  - alias: keycloak
+    name: keycloak
+    version: "0.1.0"
+    repository: file://keycloak
+  - alias: rabbitmq
+    name: rabbitmq
+    version: "0.1.0"
+    repository: file://rabbitmq
