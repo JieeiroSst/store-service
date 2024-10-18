@@ -8,6 +8,7 @@ import (
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/model"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
+	"github.com/JieeiroSst/authorize-service/pkg/pagination"
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,7 +47,7 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 		Act: method,
 	}
 	log.Info(auth)
-	err := h.usecase.Casbins.EnforceCasbin(auth)
+	err := h.usecase.Casbins.EnforceCasbin(ctx, auth)
 	if errors.Is(err, common.FailedDB) {
 		Response(ctx, http.StatusInternalServerError, Message{Message: common.FailedDBServer})
 		return
@@ -72,7 +73,12 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin [get]
 func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
-	casbins, err := h.usecase.Casbins.CasbinRuleAll()
+	var p pagination.Pagination
+	if err := ctx.ShouldBindQuery(&p); err != nil {
+		Response(ctx, http.StatusNotFound, Message{Message: common.NotAllowServer})
+		return
+	}
+	casbins, err := h.usecase.Casbins.CasbinRuleAll(ctx, p)
 	if errors.Is(err, common.NotFound) {
 		Response(ctx, http.StatusNotFound, Message{Message: common.NotAllowServer})
 		return
@@ -100,7 +106,7 @@ func (h *Handler) CasbinRuleById(ctx *gin.Context) {
 		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
 		return
 	}
-	casbin, err := h.usecase.Casbins.CasbinRuleById(id)
+	casbin, err := h.usecase.Casbins.CasbinRuleById(ctx, id)
 	if errors.Is(err, common.NotFound) {
 		Response(ctx, http.StatusNotFound, Message{Message: common.NotFoundServer})
 		return
@@ -128,7 +134,7 @@ func (h *Handler) CreateCasbinRule(ctx *gin.Context) {
 		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
 		return
 	}
-	err := h.usecase.Casbins.CreateCasbinRule(casbin)
+	err := h.usecase.Casbins.CreateCasbinRule(ctx, casbin)
 	if errors.Is(err, common.NotFound) {
 		Response(ctx, http.StatusNotFound, Message{Message: common.NotFoundServer})
 		return
@@ -157,7 +163,7 @@ func (h *Handler) DeleteCasbinRule(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.usecase.Casbins.DeleteCasbinRule(id); err != nil {
+	if err := h.usecase.Casbins.DeleteCasbinRule(ctx, id); err != nil {
 		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
@@ -182,7 +188,7 @@ func (h *Handler) UpdateCasbinRulePtype(ctx *gin.Context) {
 		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinRulePtype(id, ptype); err != nil {
+	if err := h.usecase.Casbins.UpdateCasbinRulePtype(ctx, id, ptype); err != nil {
 		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
@@ -207,7 +213,7 @@ func (h *Handler) UpdateCasbinRuleName(ctx *gin.Context) {
 		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinRuleName(id, name); err != nil {
+	if err := h.usecase.Casbins.UpdateCasbinRuleName(ctx, id, name); err != nil {
 		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
@@ -232,7 +238,7 @@ func (h *Handler) UpdateCasbinRuleEndpoint(ctx *gin.Context) {
 		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinRuleEndpoint(id, endpoint); err != nil {
+	if err := h.usecase.Casbins.UpdateCasbinRuleEndpoint(ctx, id, endpoint); err != nil {
 		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}
@@ -257,7 +263,7 @@ func (h *Handler) UpdateCasbinMethod(ctx *gin.Context) {
 		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
 		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinMethod(id, method); err != nil {
+	if err := h.usecase.Casbins.UpdateCasbinMethod(ctx, id, method); err != nil {
 		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
 		return
 	}

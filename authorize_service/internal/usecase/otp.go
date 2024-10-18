@@ -1,14 +1,16 @@
 package usecase
 
 import (
-	"github.com/JieeiroSst/authorize-service/model"
+	"context"
+
+	"github.com/JieeiroSst/authorize-service/dto"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
 )
 
 type Otps interface {
-	CreateOtpByUser(username string) (*model.OTP, error)
-	Authorize(otp string, username string) error
+	CreateOtpByUser(ctx context.Context, username string) (*dto.OTP, error)
+	Authorize(ctx context.Context, otp string, username string) error
 }
 
 type OTPUsecase struct {
@@ -21,7 +23,7 @@ func NewOTPUsecase(otp otp.OTP) *OTPUsecase {
 	}
 }
 
-func (u *OTPUsecase) CreateOtpByUser(username string) (*model.OTP, error) {
+func (u *OTPUsecase) CreateOtpByUser(ctx context.Context, username string) (*dto.OTP, error) {
 	otp, err := u.otp.CreateOtpByUser(username)
 	if err != nil {
 		log.Error(err.Error())
@@ -30,7 +32,7 @@ func (u *OTPUsecase) CreateOtpByUser(username string) (*model.OTP, error) {
 	return otp, nil
 }
 
-func (u *OTPUsecase) Authorize(otp string, username string) error {
+func (u *OTPUsecase) Authorize(ctx context.Context, otp string, username string) error {
 	if err := u.otp.Authorize(otp, username); err != nil {
 		log.Error(err.Error())
 		return err

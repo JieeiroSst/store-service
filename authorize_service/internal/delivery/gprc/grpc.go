@@ -26,7 +26,7 @@ func (s *GRPCServer) EnforceCasbin(ctx context.Context, req *pb.CasbinRuleReques
 		Act: req.Act,
 	}
 
-	err := s.usecase.EnforceCasbin(casbin)
+	err := s.usecase.EnforceCasbin(ctx, casbin)
 
 	if errors.Is(err, common.FailedDB) {
 		return &pb.CasbinRuleReponse{
