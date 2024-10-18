@@ -15,6 +15,9 @@ spec:
       containers:
       - name: rabbitmq-deployment
         image: rabbitmq:3.8
+        volumeMounts:
+          - name: rabbitmq-data
+            mountPath: /var/lib/rabbitmq
         ports:
           - name: http
             protocol: TCP
