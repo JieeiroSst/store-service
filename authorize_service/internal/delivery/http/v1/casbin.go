@@ -2,15 +2,13 @@ package v1
 
 import (
 	"errors"
+	"net/http"
 	"strconv"
 
-	"github.com/JIeeiroSst/utils/response"
-	"github.com/JIeeiroSst/utils/trace_id"
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/model"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/gin-gonic/gin"
-	"go.opentelemetry.io/otel/trace"
 )
 
 func (h *Handler) initCasbinRoutes(api *gin.RouterGroup) {
@@ -38,7 +36,6 @@ func (h *Handler) initCasbinRoutes(api *gin.RouterGroup) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/authentication [post]
 func (h *Handler) Authorize(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	username := ctx.Query("username")
 	path := ctx.Request.URL.Path
 	method := ctx.Request.Method
@@ -49,33 +46,20 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 		Act: method,
 	}
 	log.Info(auth)
-	err := h.usecase.Casbins.EnforceCasbin(newCtx, auth)
+	err := h.usecase.Casbins.EnforceCasbin(auth)
 	if errors.Is(err, common.FailedDB) {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.FailedDBServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.FailedDBServer})
+		return
 	}
 	if errors.Is(err, common.Failedenforcer) {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.Unauthorized,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusUnauthorized, Message{Message: common.Unauthorized})
+		return
 	}
 	if errors.Is(err, common.NotAllow) {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.NotAllowServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusUnauthorized, Message{Message: common.NotAllowServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Message: common.Authorized,
-		Error:   false,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.Authorized})
 }
 
 // CasbinRuleAll godoc
@@ -88,28 +72,16 @@ func (h *Handler) Authorize(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin [get]
 func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
-	casbins, err := h.usecase.Casbins.CasbinRuleAll(newCtx)
+	casbins, err := h.usecase.Casbins.CasbinRuleAll()
 	if errors.Is(err, common.NotFound) {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.NotAllowServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.NotAllowServer})
+		return
 	}
 	if err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Error:   false,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		Data:    casbins,
-	})
-
+	Response(ctx, http.StatusOK, casbins)
 }
 
 // CasbinRuleById godoc
@@ -123,35 +95,21 @@ func (h *Handler) CasbinRuleAll(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/:id [get]
 func (h *Handler) CasbinRuleById(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.BadRequest,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
+		return
 	}
-	casbin, err := h.usecase.Casbins.CasbinRuleById(newCtx, id)
+	casbin, err := h.usecase.Casbins.CasbinRuleById(id)
 	if errors.Is(err, common.NotFound) {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.NotFoundServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.NotFoundServer})
+		return
 	}
 	if err != nil {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Error:   true,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		Data:    casbin,
-	})
+	Response(ctx, http.StatusOK, casbin)
 }
 
 // CreateCasbinRule godoc
@@ -165,35 +123,21 @@ func (h *Handler) CasbinRuleById(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/ [post]
 func (h *Handler) CreateCasbinRule(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	var casbin model.CasbinRule
 	if err := ctx.ShouldBind(&casbin); err != nil {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.BadRequest,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
+		return
 	}
-	err := h.usecase.Casbins.CreateCasbinRule(newCtx, casbin)
+	err := h.usecase.Casbins.CreateCasbinRule(casbin)
 	if errors.Is(err, common.NotFound) {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.NotFoundServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.NotFoundServer})
+		return
 	}
 	if err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Message: common.CreateSuccess,
-		Error:   false,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.CreateSuccess})
 }
 
 // DeleteCasbinRule godoc
@@ -207,28 +151,17 @@ func (h *Handler) CreateCasbinRule(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/:id [delete]
 func (h *Handler) DeleteCasbinRule(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.BadRequest,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusBadRequest, Message{Message: common.BadRequest})
+		return
 	}
 
-	if err := h.usecase.Casbins.DeleteCasbinRule(newCtx, id); err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+	if err := h.usecase.Casbins.DeleteCasbinRule(id); err != nil {
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Message: common.UpdateSuccess,
-		Error:   false,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinRulePtype godoc
@@ -243,28 +176,17 @@ func (h *Handler) DeleteCasbinRule(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/:id/ptype/:ptype [put]
 func (h *Handler) UpdateCasbinRulePtype(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	ptype := ctx.Param("ptype")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.BadRequest,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
+		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinRulePtype(newCtx, id, ptype); err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+	if err := h.usecase.Casbins.UpdateCasbinRulePtype(id, ptype); err != nil {
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Message: common.UpdateSuccess,
-		Error:   true,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinRuleName godoc
@@ -279,28 +201,17 @@ func (h *Handler) UpdateCasbinRulePtype(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/:id/name/:name [put]
 func (h *Handler) UpdateCasbinRuleName(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	name := ctx.Param("name")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.BadRequest,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
+		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinRuleName(newCtx, id, name); err != nil {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+	if err := h.usecase.Casbins.UpdateCasbinRuleName(id, name); err != nil {
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Message: common.UpdateSuccess,
-		Error:   true,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinRuleEndpoint godoc
@@ -315,28 +226,17 @@ func (h *Handler) UpdateCasbinRuleName(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/:id/endpoint/:endpoint [put]
 func (h *Handler) UpdateCasbinRuleEndpoint(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	endpoint := ctx.Param("endpoint")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.BadRequest,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
+		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinRuleEndpoint(newCtx, id, endpoint); err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+	if err := h.usecase.Casbins.UpdateCasbinRuleEndpoint(id, endpoint); err != nil {
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Message: common.UpdateSuccess,
-		Error:   true,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }
 
 // UpdateCasbinMethod godoc
@@ -351,26 +251,15 @@ func (h *Handler) UpdateCasbinRuleEndpoint(ctx *gin.Context) {
 // @Success 401 {object} map[string]interface{}
 // @Router /api/v1/casbin/:id/method/:method [put]
 func (h *Handler) UpdateCasbinMethod(ctx *gin.Context) {
-	newCtx := trace_id.TracerID("")
 	method := ctx.Param("method")
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		response.ResponseStatus(ctx, 400, response.MessageStatus{
-			Message: common.BadRequest,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+		Response(ctx, http.StatusNotFound, Message{Message: common.BadRequest})
+		return
 	}
-	if err := h.usecase.Casbins.UpdateCasbinMethod(newCtx, id, method); err != nil {
-		response.ResponseStatus(ctx, 500, response.MessageStatus{
-			Message: common.InternalServer,
-			Error:   true,
-			TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-		})
+	if err := h.usecase.Casbins.UpdateCasbinMethod(id, method); err != nil {
+		Response(ctx, http.StatusInternalServerError, Message{Message: common.InternalServer})
+		return
 	}
-	response.ResponseStatus(ctx, 200, response.MessageStatus{
-		Message: common.UpdateSuccess,
-		Error:   true,
-		TraceID: trace.SpanFromContext(newCtx).SpanContext().TraceID().String(),
-	})
+	Response(ctx, http.StatusOK, Message{Message: common.UpdateSuccess})
 }

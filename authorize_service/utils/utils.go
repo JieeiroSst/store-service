@@ -4,27 +4,26 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/JIeeiroSst/utils/logger"
+	"github.com/JieeiroSst/authorize-service/pkg/log"
 )
 
 func DecodeBase(msg, decode string) bool {
 	msgDecode, err := base64.StdEncoding.DecodeString(msg)
 	if err != nil {
-		logger.ConfigZap().Error(err)
+		log.Error(err.Error())
 		return false
 	}
 	if !strings.EqualFold(string(msgDecode), decode) {
-		logger.ConfigZap().Error("Decode base failed")
+		log.Error("Decode base failed")
 		return false
 	}
-	logger.ConfigZap().Info("Decode base success")
+	log.Info("DEcode base success")
 	return true
 }
 
 func DecodeByte(msg string) []byte {
 	sDec, err := base64.StdEncoding.DecodeString(msg)
 	if err != nil {
-		logger.ConfigZap().Error(err)
 		return nil
 	}
 	return sDec
