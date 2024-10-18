@@ -15,6 +15,9 @@ spec:
       containers:
       - name: postgresql-deployment
         image: postgres:10.1
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
         ports:
         - containerPort: 5432
         env:
