@@ -15,8 +15,15 @@ spec:
       containers:
       - name: redis-deployment
         image: redis:7.0.10
+        volumeMounts:
+            - name: redis-data
+              mountPath: /data
         ports:
         - containerPort: 6379
         env:
             - name: NODE_ENV
               value: production
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-pvc
