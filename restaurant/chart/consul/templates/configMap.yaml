@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consul-config
+data:
+  consul.json: |
+    {
+      "data_dir": "/consul/data"
+    }
