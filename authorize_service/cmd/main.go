@@ -19,7 +19,6 @@ import (
 	"github.com/JieeiroSst/authorize-service/middleware"
 	"github.com/JieeiroSst/authorize-service/pkg/cache"
 	"github.com/JieeiroSst/authorize-service/pkg/consul"
-	"github.com/JieeiroSst/authorize-service/pkg/goose"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
 	"github.com/JieeiroSst/authorize-service/pkg/postgres"
@@ -31,10 +30,6 @@ import (
 
 func main() {
 	router := gin.Default()
-	nodeEnv := os.Getenv("NODE_ENV")
-
-	log.Info("nodeEnv is " + nodeEnv)
-
 	dirEnv, err := config.ReadFileEnv(".env")
 	if err != nil {
 		log.Error(err.Error())
@@ -46,38 +41,19 @@ func main() {
 		log.Error(err.Error())
 	}
 
-	// dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-	// 	conf.Mysql.MysqlUser,
-	// 	conf.Mysql.MysqlPassword,
-	// 	conf.Mysql.MysqlHost,
-	// 	conf.Mysql.MysqlPort,
-	// 	conf.Mysql.MysqlDbname,
-	// )
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
 		conf.Postgres.PostgresqlHost, conf.Postgres.PostgresqlUser, conf.Postgres.PostgresqlPassword,
 		conf.Postgres.PostgresqlDbname, conf.Postgres.PostgresqlPort)
 	postgresConn := postgres.NewPostgresConn(dsn)
-
-	db, err := postgresConn.DB()
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	migration := goose.NewMigration(db)
-	if err := migration.RunMigration(); err != nil {
-		log.Error(err.Error())
-	}
-
 	adapter, err := gormadapter.NewAdapterByDB(postgresConn)
 	if err != nil {
 		log.Error(err.Error())
 	}
-
+	
 	middleware := middleware.Newmiddleware(conf.Secret.AuthorizeKey)
-
-	var snowflakeData = snowflake.NewSnowflake()
-	var otp = otp.NewOtp(conf.Secret.JwtSecretKey)
-	var cache = cache.NewCacheHelper(conf.Cache.Host)
+	snowflakeData := snowflake.NewSnowflake()
+	otp := otp.NewOtp(conf.Secret.JwtSecretKey)
+	cache := cache.NewCacheHelper(conf.Cache.Host)
 
 	repository := repository.NewRepositories(postgresConn)
 	usecase := usecase.NewUsecase(usecase.Dependency{
@@ -118,7 +94,7 @@ func main() {
 		}
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Info("Shutdown Server ...")

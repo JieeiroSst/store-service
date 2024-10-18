@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/JieeiroSst/authorize-service/common"
-	"github.com/JieeiroSst/authorize-service/model"
+	"github.com/JieeiroSst/authorize-service/dto"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/jltorresm/otpgo"
 	"github.com/jltorresm/otpgo/config"
@@ -17,7 +17,7 @@ type otp struct {
 
 type OTP interface {
 	generate(username string) otpgo.TOTP
-	CreateOtpByUser(username string) (*model.OTP, error)
+	CreateOtpByUser(username string) (*dto.OTP, error)
 	Authorize(otp string, username string) error
 }
 
@@ -38,7 +38,7 @@ func (o *otp) generate(username string) otpgo.TOTP {
 	}
 }
 
-func (o *otp) CreateOtpByUser(username string) (*model.OTP, error) {
+func (o *otp) CreateOtpByUser(username string) (*dto.OTP, error) {
 	totp := o.generate(username)
 	token, err := totp.Generate()
 	if err != nil {
@@ -46,7 +46,7 @@ func (o *otp) CreateOtpByUser(username string) (*model.OTP, error) {
 		return nil, err
 	}
 	log.Info(token)
-	return &model.OTP{
+	return &dto.OTP{
 		OTP: token,
 	}, nil
 }
