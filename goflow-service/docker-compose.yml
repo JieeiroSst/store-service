@@ -1,7 +1,0 @@
-version: '3'
-services:
-  app:
-    image: ghcr.io/fieldryand/goflow-example:v3.0.0-alpha.5
-    container_name: goflow-app
-    ports:
-      - 8181:8181
