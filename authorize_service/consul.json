@@ -7,14 +7,14 @@
 		"JwtSecretKey": "secretkey",
 		"AuthorizeKey": "name_name"
 	},
-	"mysql": {
-		"MysqlHost": "mysql",
-		"MysqlPort": "3306",
-		"MysqlUser": "root",
-		"MysqlPassword": "password",
-		"MysqlDbname": "db",
-		"MysqlDriver": "mysql"
-	},
+	"postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "31000",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "authorize",
+        "PgDriver": "pgx"
+    },
 	"constant": {
 		"Rbac": "config/conf/rbac_model.conf"
 	},

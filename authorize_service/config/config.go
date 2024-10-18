@@ -11,7 +11,7 @@ import (
 
 type Config struct {
 	Server   ServerConfig
-	Mysql    MysqlConfig
+	Postgres PostgresConfig
 	Secret   SecretConfig
 	Constant ConstantConfig
 	Cache    CacheConfig
@@ -22,14 +22,14 @@ type ServerConfig struct {
 	GRPCServer string
 }
 
-type MysqlConfig struct {
-	MysqlHost     string
-	MysqlPort     string
-	MysqlUser     string
-	MysqlPassword string
-	MysqlDbname   string
-	MysqlSSLMode  bool
-	MysqlDriver   string
+type PostgresConfig struct {
+	PostgresqlHost     string
+	PostgresqlPort     string
+	PostgresqlUser     string
+	PostgresqlPassword string
+	PostgresqlDbname   string
+	PostgresqlSSLMode  bool
+	PgDriver           string
 }
 
 type SecretConfig struct {

@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
+	"github.com/JIeeiroSst/utils/logger"
 	"github.com/JieeiroSst/authorize-service/config"
 	grpcServer "github.com/JieeiroSst/authorize-service/internal/delivery/gprc"
 	http1 "github.com/JieeiroSst/authorize-service/internal/delivery/http"
@@ -21,19 +21,12 @@ import (
 	"github.com/JieeiroSst/authorize-service/pkg/cache"
 	"github.com/JieeiroSst/authorize-service/pkg/consul"
 	"github.com/JieeiroSst/authorize-service/pkg/goose"
-	"github.com/JieeiroSst/authorize-service/pkg/mysql"
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
+	"github.com/JieeiroSst/authorize-service/pkg/postgres"
 	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
-	"github.com/JIeeiroSst/utils/logger"
-)
-
-var (
-	conf   *config.Config
-	dirEnv *config.Dir
-	err    error
 )
 
 func main() {
@@ -42,34 +35,25 @@ func main() {
 
 	logger.ConfigZap().Infof("nodeEnv: %v time is :%s", nodeEnv, time.Now().Format("2006-January-02"))
 
-	dirEnv, err = config.ReadFileEnv(".env")
+	dirEnv, err := config.ReadFileEnv(".env")
 	if err != nil {
 		logger.ConfigZap().Errorf("time :%v err: %v", time.Now().Format("2006-January-02"), err.Error())
 	}
 
-	if !strings.EqualFold(nodeEnv, "") {
-		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
-		conf, err = consul.ConnectConfigConsul()
-		if err != nil {
-			logger.ConfigZap().Errorf("time :%v err: %v", time.Now().Format("2006-January-02"), err.Error())
-		}
-	} else {
-		conf, err = config.ReadConf("config.yml")
-		if err != nil {
-			logger.ConfigZap().Errorf("time :%v err: %v", time.Now().Format("2006-January-02"), err.Error())
-		}
+	consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+	conf, err := consul.ConnectConfigConsul()
+	if err != nil {
+		logger.ConfigZap().Errorf("time :%v err: %v", time.Now().Format("2006-January-02"), err.Error())
 	}
 
-	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		conf.Mysql.MysqlUser,
-		conf.Mysql.MysqlPassword,
-		conf.Mysql.MysqlHost,
-		conf.Mysql.MysqlPort,
-		conf.Mysql.MysqlDbname,
-	)
-	mysqlOrm := mysql.NewMysqlConn(dns)
+	fmt.Println(conf.Postgres.PostgresqlHost)
 
-	db, err := mysqlOrm.DB()
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		conf.Postgres.PostgresqlHost, conf.Postgres.PostgresqlUser, conf.Postgres.PostgresqlPassword,
+		conf.Postgres.PostgresqlDbname, conf.Postgres.PostgresqlPort)
+	postgresOrm := postgres.NewPostgresConn(dsn)
+
+	db, err := postgresOrm.DB()
 	if err != nil {
 		logger.ConfigZap().Errorf("time :%v err: %v", time.Now().Format("2006-January-02"), err.Error())
 	}
@@ -79,7 +63,7 @@ func main() {
 		logger.ConfigZap().Errorf("time :%v err: %v", time.Now().Format("2006-January-02"), err.Error())
 	}
 
-	adapter, err := gormadapter.NewAdapterByDB(mysqlOrm)
+	adapter, err := gormadapter.NewAdapterByDB(postgresOrm)
 	if err != nil {
 		logger.ConfigZap().Errorf("time :%v err: %v", time.Now().Format("2006-January-02"), err.Error())
 	}
@@ -90,7 +74,7 @@ func main() {
 	var otp = otp.NewOtp(conf.Secret.JwtSecretKey)
 	var cache = cache.NewCacheHelper(conf.Cache.Host)
 
-	repository := repository.NewRepositories(mysqlOrm)
+	repository := repository.NewRepositories(postgresOrm)
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repos:       repository,
 		Snowflake:   snowflakeData,

@@ -15,6 +15,10 @@ spec:
       containers:
       - name: mongo-deployment
         image: mongo:4.0.3
+        volumeMounts:
+        - name: mongodb-data   
+          mountPath: /data
+          readOnly: false
         ports:
         - containerPort: 27017
         env:
