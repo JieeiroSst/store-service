@@ -16,6 +16,9 @@ spec:
       containers:
         - image: {{.Values.mysql.image.name}}:{{.Values.mysql.image.tag}}
           name: {{.Values.mysql.name}}
+          volumeMounts:
+          - name: mysql-data
+            mountPath: /var/lib/mysql
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: {{.Values.mysql.env.password}}
