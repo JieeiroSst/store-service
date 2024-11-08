@@ -9,7 +9,7 @@ import (
 
 type AuthCarts interface {
 	SaveDelivery(ctx context.Context, delivery dto.Delivery) error
-	SaveOrder(ctx context.Context, order dto.Order) error
+	SaveOrder(ctx context.Context, order dto.Order, status string) error
 }
 
 type authCartUsecase struct {
@@ -29,8 +29,8 @@ func (u *authCartUsecase) SaveDelivery(ctx context.Context, delivery dto.Deliver
 	return nil
 }
 
-func (u *authCartUsecase) SaveOrder(ctx context.Context, order dto.Order) error {
-	if err := u.authCartRepository.SaveOrder(ctx, order.Build()); err != nil {
+func (u *authCartUsecase) SaveOrder(ctx context.Context, order dto.Order, status string) error {
+	if err := u.authCartRepository.SaveOrder(ctx, order.Build(status)); err != nil {
 		return err
 	}
 	return nil
