@@ -10,6 +10,7 @@ type Config struct {
 	Server   ServerConfig
 	Secret   SecretConfig
 	Nats     NatsConfig
+	Postgres PostgresConfig
 }
 
 type ServerConfig struct {
@@ -28,6 +29,16 @@ type Dir struct {
 	HostConsul    string
 	KeyConsul     string
 	ServiceConsul string
+}
+
+type PostgresConfig struct {
+	PostgresqlHost     string
+	PostgresqlPort     string
+	PostgresqlUser     string
+	PostgresqlPassword string
+	PostgresqlDbname   string
+	PostgresqlSSLMode  bool
+	PgDriver           string
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {

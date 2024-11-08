@@ -5,6 +5,14 @@
     "secret": {
         "AuthorizeKey": "no_name"
     },
+    "postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "31000",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "accounting",
+        "PgDriver": "pgx"
+    },
     "nats": {
         "dns": "http://localhost:30002"
     }
