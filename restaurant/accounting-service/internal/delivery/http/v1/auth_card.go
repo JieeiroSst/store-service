@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/JIeeiroSst/accounting-service/common"
 	"github.com/JIeeiroSst/accounting-service/internal/dto"
 	"github.com/JIeeiroSst/utils/response"
 	"github.com/gin-gonic/gin"
@@ -43,14 +44,14 @@ func (h *Handler) AuthCart(ctx *gin.Context) {
 	}
 
 	if hour > 8 && hour < 23 {
-		err := h.nats.Publish("order.success", orderJson)
+		err := h.nats.Publish(common.OrderSuccess, orderJson)
 		if err != nil {
 			response.ResponseStatus(ctx, 500, response.MessageStatus{
 				Error:   false,
 				Message: err.Error(),
 			})
 		} else {
-			err := h.nats.Publish("delivery.ship", deliveryJson)
+			err := h.nats.Publish(common.DeliveryShip, deliveryJson)
 			if err != nil {
 				response.ResponseStatus(ctx, 500, response.MessageStatus{
 					Error:   false,
@@ -59,7 +60,7 @@ func (h *Handler) AuthCart(ctx *gin.Context) {
 			}
 		}
 	} else {
-		if err := h.nats.Publish("order.reject", orderJson); err != nil {
+		if err := h.nats.Publish(common.OrderReject, orderJson); err != nil {
 			response.ResponseStatus(ctx, 500, response.MessageStatus{
 				Error:   false,
 				Message: err.Error(),
