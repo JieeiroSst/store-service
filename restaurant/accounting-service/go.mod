@@ -3,6 +3,7 @@ module github.com/JIeeiroSst/accounting-service
 go 1.22.2
 
 require (
+	github.com/JIeeiroSst/utils v0.0.0-20241018153902-d58a184ad58e
 	github.com/JieeiroSst/logger v1.1.8
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0

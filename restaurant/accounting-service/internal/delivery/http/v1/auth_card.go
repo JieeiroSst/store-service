@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/accounting-service/internal/dto"
+	"github.com/JIeeiroSst/utils/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,53 +21,53 @@ func (h *Handler) AuthCart(ctx *gin.Context) {
 
 	var authCart dto.AuthCart
 	if err := ctx.ShouldBindJSON(&authCart); err != nil {
-		ctx.JSON(400, gin.H{
-			"error": err,
+		response.ResponseStatus(ctx, 400, response.MessageStatus{
+			Error:   false,
+			Message: err.Error(),
 		})
-		return
 	}
 	orderJson, err := json.Marshal(&authCart.Order)
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"error": err,
+		response.ResponseStatus(ctx, 500, response.MessageStatus{
+			Error:   false,
+			Message: err.Error(),
 		})
-		return
 	}
 
 	deliveryJson, err := json.Marshal(&authCart.Delivery)
 	if err != nil {
-		ctx.JSON(500, gin.H{
-			"error": err,
+		response.ResponseStatus(ctx, 500, response.MessageStatus{
+			Error:   false,
+			Message: err.Error(),
 		})
-		return
 	}
 
 	if hour > 8 && hour < 23 {
 		err := h.nats.Publish("order.success", orderJson)
 		if err != nil {
-			ctx.JSON(500, gin.H{
-				"error": err,
+			response.ResponseStatus(ctx, 500, response.MessageStatus{
+				Error:   false,
+				Message: err.Error(),
 			})
-			return
 		} else {
 			err := h.nats.Publish("delivery.ship", deliveryJson)
 			if err != nil {
-				ctx.JSON(500, gin.H{
-					"error": err,
+				response.ResponseStatus(ctx, 500, response.MessageStatus{
+					Error:   false,
+					Message: err.Error(),
 				})
-				return
 			}
 		}
 	} else {
 		if err := h.nats.Publish("order.reject", orderJson); err != nil {
-			ctx.JSON(500, gin.H{
-				"error": err,
+			response.ResponseStatus(ctx, 500, response.MessageStatus{
+				Error:   false,
+				Message: err.Error(),
 			})
-			return
 		}
 	}
 
-	ctx.JSON(200, gin.H{
-		"sucess": true,
+	response.ResponseStatus(ctx, 200, response.MessageStatus{
+		Message: "success",
 	})
 }
