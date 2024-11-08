@@ -1,6 +1,4 @@
-package dto
-
-import "github.com/JIeeiroSst/accounting-service/model"
+package model
 
 type Order struct {
 	ID        int    `json:"id" form:"id"`
@@ -18,21 +16,4 @@ type Delivery struct {
 type AuthCart struct {
 	Order    Order    `json:"order" form:"order"`
 	Delivery Delivery `json:"delivery" form:"delivery"`
-}
-
-func (o *Order) Build() model.Order {
-	return model.Order{
-		ID:        o.ID,
-		TableName: o.TableName,
-		Status:    o.Status,
-		KitchenID: o.KitchenID,
-	}
-}
-
-func (d *Delivery) Build() model.Delivery {
-	return model.Delivery{
-		Name:      d.Name,
-		Address:   d.Address,
-		KitchenID: d.KitchenID,
-	}
 }
