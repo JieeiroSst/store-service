@@ -57,6 +57,19 @@ func (h *Handler) AuthCart(ctx *gin.Context) {
 					Error:   false,
 					Message: err.Error(),
 				})
+			} else {
+				if err := h.usecase.SaveDelivery(ctx, authCart.Delivery); err != nil {
+					response.ResponseStatus(ctx, 500, response.MessageStatus{
+						Error:   false,
+						Message: err.Error(),
+					})
+				}
+				if err := h.usecase.SaveOrder(ctx, authCart.Order, common.OrderSuccess); err != nil {
+					response.ResponseStatus(ctx, 500, response.MessageStatus{
+						Error:   false,
+						Message: err.Error(),
+					})
+				}
 			}
 		}
 	} else {
@@ -65,6 +78,13 @@ func (h *Handler) AuthCart(ctx *gin.Context) {
 				Error:   false,
 				Message: err.Error(),
 			})
+		} else {
+			if err := h.usecase.SaveOrder(ctx, authCart.Order, common.OrderReject); err != nil {
+				response.ResponseStatus(ctx, 500, response.MessageStatus{
+					Error:   false,
+					Message: err.Error(),
+				})
+			}
 		}
 	}
 
