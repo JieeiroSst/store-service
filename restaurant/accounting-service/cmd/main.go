@@ -13,6 +13,10 @@ import (
 	"github.com/JIeeiroSst/accounting-service/config"
 	"github.com/JIeeiroSst/accounting-service/internal/delivery/consumer"
 	httpServer "github.com/JIeeiroSst/accounting-service/internal/delivery/http"
+	"github.com/JIeeiroSst/accounting-service/internal/repository"
+	"github.com/JIeeiroSst/accounting-service/internal/usecase"
+	"github.com/JIeeiroSst/accounting-service/model"
+	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/JieeiroSst/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -34,8 +38,24 @@ func main() {
 		logger.ConfigZap().Error(err.Error())
 	}
 
+	db := postgres.NewPostgresConn(postgres.PostgresConfig{
+		PostgresqlHost:     config.Postgres.PostgresqlHost,
+		PostgresqlUser:     config.Postgres.PostgresqlUser,
+		PostgresqlPassword: config.Postgres.PostgresqlPassword,
+		PostgresqlPort:     config.Postgres.PostgresqlPort,
+		PostgresqlDbname:   config.Postgres.PostgresqlDbname,
+		PostgresqlSSLMode:  true,
+	})
+
+	db.AutoMigrate(&model.Delivery{}, &model.Order{})
+
+	repository := repository.NewRepositories(db)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos: repository,
+	})
+
 	nats := logger.ConnectNats(config.Nats.Dns)
-	httpServer := httpServer.NewHandler(nats)
+	httpServer := httpServer.NewHandler(nats, usecase)
 	consumer := consumer.NewConsumer(nats)
 
 	httpServer.Init(router)

@@ -1,17 +1,20 @@
 package v1
 
 import (
+	"github.com/JIeeiroSst/accounting-service/internal/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )
 
 type Handler struct {
-	nats *nats.Conn
+	nats    *nats.Conn
+	usecase *usecase.Usecase
 }
 
-func NewHandler(nats *nats.Conn) *Handler {
+func NewHandler(nats *nats.Conn, usecase *usecase.Usecase) *Handler {
 	return &Handler{
-		nats: nats,
+		nats:    nats,
+		usecase: usecase,
 	}
 }
 

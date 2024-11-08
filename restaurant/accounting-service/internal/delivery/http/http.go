@@ -2,6 +2,7 @@ package http
 
 import (
 	v1 "github.com/JIeeiroSst/accounting-service/internal/delivery/http/v1"
+	"github.com/JIeeiroSst/accounting-service/internal/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 	swaggerFiles "github.com/swaggo/files"
@@ -9,12 +10,14 @@ import (
 )
 
 type Handler struct {
-	nats *nats.Conn
+	nats    *nats.Conn
+	usecase *usecase.Usecase
 }
 
-func NewHandler(nats *nats.Conn) *Handler {
+func NewHandler(nats *nats.Conn, usecase *usecase.Usecase) *Handler {
 	return &Handler{
-		nats: nats,
+		nats:    nats,
+		usecase: usecase,
 	}
 }
 
@@ -25,7 +28,7 @@ func (h *Handler) Init(router *gin.Engine) {
 }
 
 func (h *Handler) initApi(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.nats)
+	handlerV1 := v1.NewHandler(h.nats, h.usecase)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)
