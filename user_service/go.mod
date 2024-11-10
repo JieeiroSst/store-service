@@ -3,7 +3,7 @@ module github.com/JIeeiroSst/user-service
 go 1.22.2
 
 require (
-	github.com/JIeeiroSst/utils v0.0.0-20241110134702-18c3bab11cd2
+	github.com/JIeeiroSst/utils v0.0.0-20241110141030-11e506578c08
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/ghodss/yaml v1.0.0

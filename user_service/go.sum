@@ -3,6 +3,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/JIeeiroSst/utils v0.0.0-20241110134702-18c3bab11cd2 h1:VA35Wzl5ZZBi//3Ibs/iKF/uHEwNc03D/RyAU4duZxw=
 github.com/JIeeiroSst/utils v0.0.0-20241110134702-18c3bab11cd2/go.mod h1:bfE9ANxridc68nGaQ9AtsCsuzqWnJMjeISRrO+GBC5U=
+github.com/JIeeiroSst/utils v0.0.0-20241110141030-11e506578c08 h1:7uB6WvZKJkdFY5pteNJ66ezWpB2IWMRegW+eWo7wOn8=
+github.com/JIeeiroSst/utils v0.0.0-20241110141030-11e506578c08/go.mod h1:bfE9ANxridc68nGaQ9AtsCsuzqWnJMjeISRrO+GBC5U=
 github.com/KyleBanks/depth v1.2.1 h1:5h8fQADFrWtarTdtDudMmGsC7GPbOAu6RVB3ffsVFHc=
 github.com/KyleBanks/depth v1.2.1/go.mod h1:jzSb9d0L43HxTQfT+oSA1EEp2q+ne2uh6XgeJcm8brE=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
