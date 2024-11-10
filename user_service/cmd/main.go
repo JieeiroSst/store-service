@@ -22,6 +22,7 @@ import (
 	"github.com/JIeeiroSst/user-service/pkg/postgres"
 	"github.com/JIeeiroSst/user-service/pkg/snowflake"
 	"github.com/JIeeiroSst/user-service/pkg/token"
+	"github.com/JIeeiroSst/utils/cache/expire"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 
@@ -70,12 +71,14 @@ func main() {
 	token := token.NewToken(conf)
 
 	repository := repository.NewRepositories(postgresConn)
+	cache := expire.NewCacheHelper(conf.Redis.Dns)
 
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repos:     repository,
 		Snowflake: snowflake,
 		Hash:      hash,
 		Token:     token,
+		Cache:     cache,
 	})
 
 	httpServer := httpServer.NewHandler(*usecase)

@@ -5,6 +5,7 @@ import (
 	"github.com/JIeeiroSst/user-service/pkg/hash"
 	"github.com/JIeeiroSst/user-service/pkg/snowflake"
 	"github.com/JIeeiroSst/user-service/pkg/token"
+	"github.com/JIeeiroSst/utils/cache/expire"
 )
 
 type Usecase struct {
@@ -18,6 +19,7 @@ type Dependency struct {
 	Snowflake snowflake.SnowflakeData
 	Hash      hash.Hash
 	Token     token.Tokens
+	Cache     expire.CacheHelper
 }
 
 func NewUsecase(deps Dependency) *Usecase {

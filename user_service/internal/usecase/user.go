@@ -1,7 +1,9 @@
 package usecase
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -9,24 +11,26 @@ import (
 	"github.com/JIeeiroSst/user-service/common"
 	"github.com/JIeeiroSst/user-service/pkg/hash"
 	"github.com/JIeeiroSst/user-service/pkg/token"
+	"github.com/go-redis/redis/v8"
 
 	"github.com/JIeeiroSst/user-service/internal/repository"
 	"github.com/JIeeiroSst/user-service/model"
 	"github.com/JIeeiroSst/user-service/pkg/snowflake"
+	"github.com/JIeeiroSst/utils/cache/expire"
 )
 
 type Users interface {
-	Login(user model.Users) (int, string, error)
-	SignUp(user model.Users) error
-	UpdateProfile(id int, user model.Users) error
-	LockAccount(id int) error
-	FindUser(userId int) (*model.Users, error)
+	Login(ctx context.Context, user model.Users) (int, string, error)
+	SignUp(ctx context.Context, user model.Users) error
+	UpdateProfile(ctx context.Context, id int, user model.Users) error
+	LockAccount(ctx context.Context, id int) error
+	FindUser(ctx context.Context, userId int) (*model.Users, error)
 
 	CheckPassword(password string) error
 	CheckEmail(email string) error
 	CheckIP(ip string) error
 
-	Authentication(token string, username string) error
+	Authentication(ctx context.Context, token string, username string) error
 }
 
 type UserUsecase struct {
@@ -34,6 +38,7 @@ type UserUsecase struct {
 	Snowflake snowflake.SnowflakeData
 	Hash      hash.Hash
 	Token     token.Tokens
+	Cache     expire.CacheHelper
 }
 
 func NewUsercase(UserRepo repository.Users,
@@ -47,7 +52,7 @@ func NewUsercase(UserRepo repository.Users,
 	}
 }
 
-func (u *UserUsecase) Login(user model.Users) (int, string, error) {
+func (u *UserUsecase) Login(ctx context.Context, user model.Users) (int, string, error) {
 	id, hashPassword, err := u.UserRepo.CheckAccount(user)
 	if err != nil {
 		return 0, "", errors.New("user does not exist")
@@ -59,7 +64,7 @@ func (u *UserUsecase) Login(user model.Users) (int, string, error) {
 	return id, token, nil
 }
 
-func (u *UserUsecase) SignUp(user model.Users) error {
+func (u *UserUsecase) SignUp(ctx context.Context, user model.Users) error {
 	if err := u.CheckEmail(user.Email); err != nil {
 		return err
 	}
@@ -92,26 +97,38 @@ func (u *UserUsecase) SignUp(user model.Users) error {
 	return nil
 }
 
-func (u *UserUsecase) UpdateProfile(id int, user model.Users) error {
+func (u *UserUsecase) UpdateProfile(ctx context.Context, id int, user model.Users) error {
 	if err := u.UserRepo.UpdateProfile(id, user); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *UserUsecase) LockAccount(id int) error {
+func (u *UserUsecase) LockAccount(ctx context.Context, id int) error {
 	if err := u.UserRepo.LockAccount(id); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *UserUsecase) FindUser(userId int) (*model.Users, error) {
-	users, err := u.UserRepo.FindUser(userId)
-	if err != nil {
-		return nil, err
+func (u *UserUsecase) FindUser(ctx context.Context, userId int) (*model.Users, error) {
+	var (
+		users *model.Users
+	)
+	key := fmt.Sprintf(common.UserKey, userId)
+
+	userInterface, err := u.Cache.GetInterface(ctx, key)
+	if err == redis.Nil {
+		usersDB, errDB := u.UserRepo.FindUser(userId)
+		if errDB != nil {
+			return nil, err
+		}
+		u.Cache.SetInterface(ctx, key, usersDB, time.Hour)
+	} else {
+		users = userInterface.(*model.Users)
 	}
-	return &users, nil
+
+	return users, nil
 }
 
 func (d *UserUsecase) CheckPassword(password string) error {
@@ -150,7 +167,7 @@ func (d *UserUsecase) CheckIP(ip string) error {
 	return nil
 }
 
-func (d *UserUsecase) Authentication(token string, username string) error {
+func (d *UserUsecase) Authentication(ctx context.Context, token string, username string) error {
 	strArr := strings.Split(token, " ")
 	parseToken, err := d.Token.ParseToken(strArr[1])
 	if err != nil {
