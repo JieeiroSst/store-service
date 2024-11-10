@@ -45,7 +45,7 @@ func (r *Handler) Login(c *gin.Context) {
 		Username: login.Username,
 		Password: login.Password,
 	}
-	id, token, err := r.usecase.Login(user)
+	id, token, err := r.usecase.Login(c, user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -83,7 +83,7 @@ func (r *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	err := r.usecase.SignUp(user)
+	err := r.usecase.SignUp(c, user)
 	if errors.Is(err, common.PasswordFailed) {
 		c.JSON(400, gin.H{
 			"message": err.Error(),
@@ -142,7 +142,7 @@ func (r *Handler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	if err := r.usecase.UpdateProfile(id, user); err != nil {
+	if err := r.usecase.UpdateProfile(c, id, user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -166,7 +166,7 @@ func (r *Handler) LockAccount(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := r.usecase.LockAccount(id); err != nil {
+	if err := r.usecase.LockAccount(c, id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -194,7 +194,7 @@ func (r *Handler) Authentication(c *gin.Context) {
 		return
 	}
 
-	err := r.usecase.Users.Authentication(token.EncodeToken, username)
+	err := r.usecase.Users.Authentication(c, token.EncodeToken, username)
 	if errors.Is(err, common.FailedTokenUsername) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -225,7 +225,7 @@ func (r *Handler) Refresh(c *gin.Context) {
 			Username: login.Username,
 			Password: login.Password,
 		}
-		id, token, err := r.usecase.Login(user)
+		id, token, err := r.usecase.Login(c, user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -263,7 +263,7 @@ func (r *Handler) FindUser(c *gin.Context) {
 		return
 	}
 
-	user, err := r.usecase.Users.FindUser(userID)
+	user, err := r.usecase.Users.FindUser(c, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
