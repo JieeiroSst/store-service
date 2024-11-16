@@ -35,6 +35,7 @@ func (c *CasbinRepo) CasbinRuleAll(ctx context.Context, p pagination.Pagination)
 	var casbinRules []model.CasbinRule
 
 	c.db.Scopes(pagination.Paginate(casbinRules, &p, c.db)).Find(&casbinRules)
+	p.Rows = casbinRules
 
 	return p, nil
 }
