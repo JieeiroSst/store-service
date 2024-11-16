@@ -24,7 +24,8 @@ func main() {
 	if err != nil {
 		logger.ConfigZap().Error(err.Error())
 	}
-	consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+	consul := consul.NewConfigConsul(dirEnv.HostConsul,
+		dirEnv.KeyConsul, dirEnv.ServiceConsul)
 	var config config.Config
 	conf, err := consul.ConnectConfigConsul()
 	if err != nil {
@@ -44,7 +45,7 @@ func main() {
 		PostgresqlSSLMode:  true,
 	})
 
-	db.AutoMigrate(&model.CampaignConfig{})
+	db.AutoMigrate(&model.CampaignTypeConfig{}, &model.CampaignConfig{})
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
