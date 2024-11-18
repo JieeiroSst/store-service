@@ -32,6 +32,7 @@ func (r *UserCampaignConfigRepo) SaveUserCampaignConfig(ctx context.Context, req
 		if err := r.db.Create(&req).Error; err != nil {
 			return err
 		}
+		return nil
 	}
 
 	if err := r.db.Save(&req).Error; err != nil {
