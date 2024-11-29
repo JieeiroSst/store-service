@@ -12,7 +12,7 @@ import (
 type Invoices interface {
 	SaveInvoices(ctx context.Context, invoices model.Invoices, invoiceDetails model.InvoiceDetails) error
 	FindInvoiceDetails(ctx context.Context, customerID, ticketID int) (*model.InvoiceDetails, error)
-	UpdateInvoiceDetails(ctx context.Context, status int) error
+	UpdateInvoiceDetails(ctx context.Context, status, ticketID int) error
 	FindInvoices(ctx context.Context, p pagination.Pagination) (*pagination.Pagination, error)
 }
 
