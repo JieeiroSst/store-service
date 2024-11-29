@@ -1,50 +1,28 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/ghodss/yaml"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
 	Server   ServerConfig
-	Mysql    MysqlConfig
 	Secret   SecretConfig
-	Constant ConstantConfig
-	Cache    CacheConfig
+	Nats     NatsConfig
+	Postgres PostgresConfig
 }
 
 type ServerConfig struct {
-	ServerPort string
-	GRPCServer string
-}
-
-type MysqlConfig struct {
-	MysqlHost     string
-	MysqlPort     string
-	MysqlUser     string
-	MysqlPassword string
-	MysqlDbname   string
-	MysqlSSLMode  bool
-	MysqlDriver   string
+	PortServer string
 }
 
 type SecretConfig struct {
 	JwtSecretKey string
-	AuthorizeKey string
 }
 
-type ConstantConfig struct {
-	Rbac string
-}
-
-type Consul struct {
-	LockIndex int
-	Key       int
-	Flags     int
-	Value     string
+type NatsConfig struct {
+	Dns string
 }
 
 type Dir struct {
@@ -53,23 +31,14 @@ type Dir struct {
 	ServiceConsul string
 }
 
-type CacheConfig struct {
-	Host string
-}
-
-func ReadConf(filename string) (*Config, error) {
-	buffer, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	config := &Config{}
-	err = yaml.Unmarshal(buffer, &config)
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-
-	}
-	return config, nil
+type PostgresConfig struct {
+	PostgresqlHost     string
+	PostgresqlPort     string
+	PostgresqlUser     string
+	PostgresqlPassword string
+	PostgresqlDbname   string
+	PostgresqlSSLMode  bool
+	PgDriver           string
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {

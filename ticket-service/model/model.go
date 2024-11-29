@@ -3,37 +3,37 @@ package model
 import "time"
 
 type Customers struct {
-	CustomerID   int
-	CustomerName string
-	Phone        string
-	Email        string
-	Address      string
+	CustomerID   int    `gorm:"primarykey" json:"customer_id"`
+	CustomerName string `json:"customer_name"`
+	Phone        string `json:"phone"`
+	Email        string `json:"email"`
+	Address      string `json:"address"`
 }
 
 type Tickets struct {
-	TicketID    int
-	TicketName  string
-	StartDate   time.Time
-	AddressRoom string
-	Amount      float64
-	Quantity    int
-	Status      string
+	TicketID    int       `gorm:"primarykey" json:"ticket_id"`
+	TicketName  string    `json:"ticket_name"`
+	StartDate   time.Time `json:"start_date"`
+	AddressRoom string    `json:"address_room"`
+	Amount      float64   `json:"amount"`
+	Quantity    int       `json:"quantity"`
+	Status      string    `json:"status"`
 }
 
 type Invoices struct {
-	InvoicesID  int
-	CustomerID  int
-	BuyDate     time.Time
-	TotalAmount float64
-	Note        string
-	Customers   Customers
+	InvoicesID  int       `gorm:"primarykey" json:"invoices_id"`
+	CustomerID  int       `json:"customer_id"`
+	BuyDate     time.Time `json:"buy_date"`
+	TotalAmount float64   `json:"total_amount"`
+	Note        string    `json:"note"`
+	Customers   Customers `gorm:"references:CustomerID"`
 }
 
 type InvoiceDetails struct {
-	InvoiceDetailID int
-	InvoicesID      int
-	TicketID        int
-	Quantity        int
-	Invoices        Invoices
-	Tickets         Tickets
+	InvoiceDetailID int      `gorm:"primarykey" json:"invoice_detail_id"`
+	InvoicesID      int      `json:"invoices_id"`
+	TicketID        int      `json:"ticket_id"`
+	Quantity        int      `json:"quantity"`
+	Invoices        Invoices `gorm:"references:InvoicesID"`
+	Tickets         Tickets  `gorm:"references:TicketID"`
 }
