@@ -34,6 +34,7 @@ type InvoiceDetails struct {
 	InvoicesID      int      `json:"invoices_id"`
 	TicketID        int      `json:"ticket_id"`
 	Quantity        int      `json:"quantity"`
+	Status          int      `json:"status"`
 	Invoices        Invoices `gorm:"references:InvoicesID"`
 	Tickets         Tickets  `gorm:"references:TicketID"`
 }
