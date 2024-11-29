@@ -10,6 +10,7 @@ import (
 
 type Customers interface {
 	SaveCustomer(ctx context.Context, req model.Customers) error
+	Find(ctx context.Context, customerID int) (*model.Customers, error)
 }
 
 type CustomerRepository struct {
@@ -42,4 +43,15 @@ func (r *CustomerRepository) SaveCustomer(ctx context.Context, req model.Custome
 		return err
 	}
 	return nil
+}
+
+func (r *CustomerRepository) Find(ctx context.Context, customerID int) (*model.Customers, error) {
+	var customer model.Customers
+
+	if err := r.db.Where("customer_id = ?", customerID).Find(&customer).Error; err != nil {
+		logger.Error(err)
+		return nil, err
+	}
+
+	return &customer, nil
 }
