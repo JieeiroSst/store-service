@@ -17,7 +17,7 @@ type Tickets struct {
 	AddressRoom string    `json:"address_room"`
 	Amount      float64   `json:"amount"`
 	Quantity    int       `json:"quantity"`
-	Status      string    `json:"status"`
+	Status      int       `json:"status"`
 }
 
 type Invoices struct {

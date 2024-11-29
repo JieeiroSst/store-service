@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/unidoc/unipdf/v3/common/license"
 	"github.com/unidoc/unipdf/v3/creator"
+	"golang.org/x/sync/errgroup"
 )
 
 type Invoices interface {
@@ -18,24 +20,56 @@ type Invoices interface {
 }
 
 type InvoicesUsecase struct {
-	InvoicesRepo    repository.Invoices
+	Repo            *repository.Repository
 	UnidocSerectKey string
 }
 
-func NewInvoicesUsecase(InvoicesRepo repository.Invoices,
+func NewInvoicesUsecase(Repo *repository.Repository,
 	UnidocSerectKey string) *InvoicesUsecase {
 	return &InvoicesUsecase{
-		InvoicesRepo:    InvoicesRepo,
+		Repo:            Repo,
 		UnidocSerectKey: UnidocSerectKey,
 	}
 }
 
 func (u *InvoicesUsecase) ExportInvoices(ctx context.Context, customerID, ticketID int) error {
+	var (
+		customerCtx       *model.Customers
+		invoiceDetailsCtx *model.InvoiceDetails
+	)
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		customer, err := u.Repo.Customers.Find(ctx, customerID)
+		if err != nil {
+			return err
+		}
+		customerCtx = customer
+		return nil
+	})
 
+	g.Go(func() error {
+		invoiceDetails, err := u.Repo.Invoices.FindInvoiceDetails(ctx, customerID, ticketID)
+		if err != nil {
+			return err
+		}
+		invoiceDetailsCtx = invoiceDetails
+		return nil
+	})
+
+	if err := g.Wait(); err != nil {
+		return err
+	}
+
+	if err := u.ExportPDFInvoices(ctx, invoiceDetailsCtx, customerCtx); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (u *InvoicesUsecase) ExportPDFInvoices(ctx context.Context, invoiceDetails model.InvoiceDetails, customer model.Customers) error {
+func (u *InvoicesUsecase) ExportPDFInvoices(ctx context.Context, invoiceDetails *model.InvoiceDetails, customer *model.Customers) error {
+	if invoiceDetails == nil || customer == nil {
+		return errors.New("empty pointer")
+	}
 	err := license.SetMeteredKey(u.UnidocSerectKey)
 	if err != nil {
 		return err
@@ -65,7 +99,7 @@ func (u *InvoicesUsecase) ExportPDFInvoices(ctx context.Context, invoiceDetails 
 		log.Fatalf("Error drawing: %v", err)
 	}
 
-	err = c.WriteToFile(fmt.Sprintf("%v_%v.pdf", invoiceDetails.Tickets.TicketName, customer.CustomerName))
+	err = c.WriteToFile(fmt.Sprintf("./docs/%v_%v.pdf", invoiceDetails.Tickets.TicketName, customer.CustomerName))
 	if err != nil {
 		logger.Error(err)
 	}

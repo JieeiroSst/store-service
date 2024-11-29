@@ -38,3 +38,12 @@ type InvoiceDetails struct {
 	Invoices        Invoices `gorm:"references:InvoicesID"`
 	Tickets         Tickets  `gorm:"references:TicketID"`
 }
+
+type CreateTicketsRequest struct {
+	TicketName  string    `json:"ticket_name"`
+	StartDate   time.Time `json:"start_date"`
+	AddressRoom string    `json:"address_room"`
+	Amount      float64   `json:"amount"`
+	Quantity    int       `json:"quantity"`
+}
+
