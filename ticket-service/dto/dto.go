@@ -40,6 +40,7 @@ type InvoiceDetails struct {
 }
 
 type CreateTicketsRequest struct {
+	TicketID    int       `json:"ticket_id"`
 	TicketName  string    `json:"ticket_name"`
 	StartDate   time.Time `json:"start_date"`
 	AddressRoom string    `json:"address_room"`
@@ -47,3 +48,8 @@ type CreateTicketsRequest struct {
 	Quantity    int       `json:"quantity"`
 }
 
+type BuyTicketRequest struct {
+	CustomerID int `json:"customer_id"`
+	TicketID   int `json:"ticket_id"`
+	Quantity   int `json:"quantity"`
+}
