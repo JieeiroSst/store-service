@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/JIeeiroSst/ticket-service/common"
 	"github.com/JIeeiroSst/ticket-service/dto"
@@ -12,7 +13,8 @@ import (
 )
 
 type Tickets interface {
-	CreateTicket(ctx context.Context, req dto.CreateTicketsRequest) error
+	SaveTicket(ctx context.Context, req dto.CreateTicketsRequest) error
+	UpdateTicket(ctx context.Context, ticketID, status int) error
 }
 
 type TicketsUsecase struct {
@@ -25,9 +27,9 @@ func NewTicketsUsecase(repo *repository.Repository) *TicketsUsecase {
 	}
 }
 
-func (u *TicketsUsecase) CreateTicket(ctx context.Context, req dto.CreateTicketsRequest) error {
+func (u *TicketsUsecase) SaveTicket(ctx context.Context, req dto.CreateTicketsRequest) error {
 	model := model.Tickets{
-		TicketID:    geared_id.GearedIntID(),
+		TicketID:    req.TicketID,
 		TicketName:  req.TicketName,
 		StartDate:   req.StartDate,
 		AddressRoom: req.AddressRoom,
@@ -36,9 +38,32 @@ func (u *TicketsUsecase) CreateTicket(ctx context.Context, req dto.CreateTickets
 		Status:      common.PENDING.Value(),
 	}
 
+	if req.TicketID == 0 {
+		model.TicketID = geared_id.GearedIntID()
+	}
+
 	if err := u.Repo.Tickets.SaveTickets(ctx, model); err != nil {
 		logger.Error(err)
 		return err
 	}
 	return nil
+}
+
+func (u *TicketsUsecase) UpdateTicket(ctx context.Context, ticketID, status int) error {
+	switch status {
+	case common.APPROVE.Value():
+		if err := u.Repo.Tickets.UpdateStatusTicket(ctx, common.APPROVE.Value(), ticketID); err != nil {
+			logger.Error(err)
+			return err
+		}
+		return nil
+	case common.REJECT.Value():
+		if err := u.Repo.Tickets.UpdateStatusTicket(ctx, common.REJECT.Value(), ticketID); err != nil {
+			logger.Error(err)
+			return err
+		}
+		return nil
+	default:
+		return errors.New("not found")
+	}
 }

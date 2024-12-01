@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/JIeeiroSst/ticket-service/common"
+	"github.com/JIeeiroSst/ticket-service/dto"
 	"github.com/JIeeiroSst/ticket-service/internal/repository"
+	"github.com/JIeeiroSst/ticket-service/internal/usecase/build"
 	"github.com/JIeeiroSst/ticket-service/model"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/unidoc/unipdf/v3/common/license"
@@ -17,6 +20,7 @@ import (
 type Invoices interface {
 	ExportInvoices(ctx context.Context, customerID, ticketID int) error
 	ExportPDFInvoices(ctx context.Context, invoiceDetails model.InvoiceDetails) error
+	BuyTicket(ctx context.Context, req dto.BuyTicketRequest) error
 }
 
 type InvoicesUsecase struct {
@@ -103,5 +107,63 @@ func (u *InvoicesUsecase) ExportPDFInvoices(ctx context.Context, invoiceDetails 
 	if err != nil {
 		logger.Error(err)
 	}
+	return nil
+}
+
+func (u *InvoicesUsecase) BuyTicket(ctx context.Context, req dto.BuyTicketRequest) error {
+	var (
+		customerCtx *model.Customers
+		ticketCtx   *model.Tickets
+	)
+
+	g, ctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+		customer, err := u.Repo.Customers.Find(ctx, req.CustomerID)
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		customerCtx = customer
+		return nil
+	})
+
+	g.Go(func() error {
+		ticket, err := u.Repo.Tickets.FindByID(ctx, req.TicketID)
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		ticketCtx = ticket
+		return nil
+	})
+
+	if err := g.Wait(); err != nil {
+		return err
+	}
+
+	invoices, invoiceDetails := build.BuildInvoiceDetails(customerCtx, ticketCtx, req.Quantity)
+
+	g1, ctx1 := errgroup.WithContext(ctx)
+
+	g1.Go(func() error {
+		if err := u.Repo.Invoices.SaveInvoices(ctx1, invoices, invoiceDetails); err != nil {
+			logger.Error(err)
+			return err
+		}
+		return nil
+	})
+
+	g1.Go(func() error {
+		if err := u.Repo.Tickets.UpdateQuantityTickets(ctx1, common.PENDING.Value(), req.Quantity, req.TicketID); err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err := g1.Wait(); err != nil {
+		return err
+	}
+
 	return nil
 }
