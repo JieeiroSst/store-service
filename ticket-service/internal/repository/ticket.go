@@ -32,19 +32,19 @@ func (r *TicketsRepository) SaveTickets(ctx context.Context, req model.Tickets) 
 	var ticket model.Tickets
 
 	if err := r.db.Where("ticket_id = ?", req.TicketID).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return err
 	}
 
 	if ticket.TicketID == 0 {
 		if err := r.db.Create(&req).Error; err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			return err
 		}
 		return nil
 	}
 	if err := r.db.Save(&req).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return err
 	}
 
@@ -54,7 +54,7 @@ func (r *TicketsRepository) SaveTickets(ctx context.Context, req model.Tickets) 
 func (r *TicketsRepository) FindByID(ctx context.Context, ticketID int) (*model.Tickets, error) {
 	var ticket model.Tickets
 	if err := r.db.Where("ticket_id = ?", ticketID).Find(&ticket).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return nil, err
 	}
 	return &ticket, nil
@@ -72,7 +72,7 @@ func (r *TicketsRepository) FindPagination(ctx context.Context, param pagination
 func (r *TicketsRepository) UpdateStatusTicket(ctx context.Context, status, ticketID int) error {
 	if err := r.db.Model(model.Tickets{}).Where("ticket_id = ?", ticketID).
 		Update("status = ?", status).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return err
 	}
 	return nil
@@ -88,14 +88,14 @@ func (r *TicketsRepository) UpdateQuantityTickets(ctx context.Context, status, q
 	case common.PENDING.Value():
 		ticket.Quantity -= quantity
 		if err := r.SaveTickets(ctx, *ticket); err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			return err
 		}
 		return nil
 	case common.REJECT.Value():
 		ticket.Quantity += quantity
 		if err := r.SaveTickets(ctx, *ticket); err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			return err
 		}
 		return nil
