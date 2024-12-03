@@ -32,7 +32,7 @@ func NewCampaignConfigRepo(db *gorm.DB) *CampaignConfigRepo {
 func (r *CampaignConfigRepo) CreateCampaignConfig(ctx context.Context, config *model.CampaignConfig) error {
 	if config != nil {
 		if err := r.db.Create(&config).Error; err != nil {
-			logger.ConfigZap().Errorf("CampaignConfigRepo config error %v", err)
+			logger.Info(ctx, "CampaignConfigRepo config error %v", err)
 			return err
 		}
 	}
@@ -42,7 +42,7 @@ func (r *CampaignConfigRepo) CreateCampaignConfig(ctx context.Context, config *m
 func (r *CampaignConfigRepo) FindByID(ctx context.Context, id string) (*model.CampaignConfig, error) {
 	var result model.CampaignConfig
 	if err := r.db.Where("id = ?", id).Find(&result).Error; err != nil {
-		logger.ConfigZap().Errorf("FindByID err %v", err)
+		logger.Info(ctx, "FindByID err %v", err)
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (r *CampaignConfigRepo) FindPagination(ctx context.Context, param paginatio
 func (r *CampaignConfigRepo) Update(ctx context.Context, campaignConfig model.CampaignConfig) error {
 	err := r.db.Model(model.CampaignConfig{}).Where("id = ? ", campaignConfig.ID).Updates(campaignConfig).Error
 	if err != nil {
-		logger.ConfigZap().Errorf("Update CampaignConfigRepo error %v", err)
+		logger.Info(ctx, "Update CampaignConfigRepo error %v", err)
 		return err
 	}
 	return nil
@@ -71,7 +71,7 @@ func (r *CampaignConfigRepo) FindByActive(ctx context.Context) (*model.CampaignC
 	var result model.CampaignConfig
 
 	if err := r.db.Where("status = ?", common.Active.Value()).Find(&result).Error; err != nil {
-		logger.ConfigZap().Errorf("FindByID err %v", err)
+		logger.Info(ctx, "FindByActive error %v", err)
 		return nil, err
 	}
 
@@ -81,7 +81,7 @@ func (r *CampaignConfigRepo) FindByActive(ctx context.Context) (*model.CampaignC
 func (r *CampaignConfigRepo) CreateCampaignTypeConfig(ctx context.Context, typeConfig *model.CampaignTypeConfig) error {
 	if typeConfig != nil {
 		if err := r.db.Create(&typeConfig).Error; err != nil {
-			logger.ConfigZap().Errorf("CampaignConfigRepo typeConfig error %v", err)
+			logger.Info(ctx, "Update CampaignConfigRepo typeConfig error %v", err)
 			return err
 		}
 	}

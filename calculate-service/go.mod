@@ -3,7 +3,7 @@ module github.com/JIeeiroSst/calculate-service
 go 1.22.2
 
 require (
-	github.com/JIeeiroSst/utils v0.0.0-20241110141030-11e506578c08
+	github.com/JIeeiroSst/utils v0.0.0-20241203135107-f3ae3d115505
 	github.com/gin-gonic/gin v1.10.0
 	github.com/joho/godotenv v1.5.1
 	gorm.io/gorm v1.25.12
@@ -22,6 +22,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/consul/api v1.29.4 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
