@@ -22,18 +22,18 @@ func main() {
 	router := gin.Default()
 	dirEnv, err := config.ReadFileEnv(".env")
 	if err != nil {
-		logger.ConfigZap().Error(err.Error())
+		logger.Error(context.Background(), err.Error())
 	}
 	consul := consul.NewConfigConsul(dirEnv.HostConsul,
 		dirEnv.KeyConsul, dirEnv.ServiceConsul)
 	var config config.Config
 	conf, err := consul.ConnectConfigConsul()
 	if err != nil {
-		logger.ConfigZap().Error(err.Error())
+		logger.Error(context.Background(), err.Error())
 	}
 
 	if err := json.Unmarshal(conf, &config); err != nil {
-		logger.ConfigZap().Error(err.Error())
+		logger.Error(context.Background(), err.Error())
 	}
 
 	db := postgres.NewPostgresConn(postgres.PostgresConfig{
@@ -54,23 +54,23 @@ func main() {
 
 	go func() {
 		if err := httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.ConfigZap().Infof("listen: %s\n", err)
+			logger.Error(context.Background(), err.Error())
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	logger.ConfigZap().Info("Shutdown Server ...")
+	logger.Info(context.Background(), "Shutdown Server ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := httpSrv.Shutdown(ctx); err != nil {
-		logger.ConfigZap().Error(fmt.Sprintf("Server Shutdown: %v", err))
+		logger.Info(context.Background(), "Server Shutdown: %v", err)
 	}
 	select {
 	case <-ctx.Done():
-		logger.ConfigZap().Info("timeout of 5 seconds.")
+		logger.Info(context.Background(), "timeout of 5 seconds.")
 	}
-	logger.ConfigZap().Info("Server exiting")
+	logger.Info(context.Background(), "Server exiting")
 }
