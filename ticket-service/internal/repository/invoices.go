@@ -29,12 +29,12 @@ func NewInvoicesRepository(db *gorm.DB) *InvoicesRepository {
 func (r *InvoicesRepository) SaveInvoices(ctx context.Context, invoices model.Invoices, invoiceDetails model.InvoiceDetails) error {
 	err := r.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&invoices).Error; err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			tx.Rollback()
 			return err
 		}
 		if err := tx.Create(&invoiceDetails).Error; err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			tx.Rollback()
 			return err
 		}
@@ -42,7 +42,7 @@ func (r *InvoicesRepository) SaveInvoices(ctx context.Context, invoices model.In
 	})
 
 	if err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return err
 	}
 	return nil
@@ -55,7 +55,7 @@ func (r *InvoicesRepository) FindInvoiceDetails(ctx context.Context, customerID,
 		Preload("Invoices", "customer_id = ?", customerID).
 		Find(&invoiceDetails).Error
 	if err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return nil, err
 	}
 	return &invoiceDetails, nil
@@ -64,7 +64,7 @@ func (r *InvoicesRepository) FindInvoiceDetails(ctx context.Context, customerID,
 func (r *InvoicesRepository) UpdateInvoiceDetails(ctx context.Context, status, ticketID int) error {
 	if err := r.db.Model(model.InvoiceDetails{}).Where("ticket_id = ?", ticketID).
 		Update("status = ?", status).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return err
 	}
 	return nil

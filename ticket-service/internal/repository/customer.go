@@ -27,19 +27,19 @@ func (r *CustomerRepository) SaveCustomer(ctx context.Context, req model.Custome
 	var customer model.Customers
 
 	if err := r.db.Where("customer_id = ?", req.CustomerID).Find(&customer).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return err
 	}
 
 	if customer.CustomerID == 0 {
 		if err := r.db.Create(&req).Error; err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			return err
 		}
 		return nil
 	}
 	if err := r.db.Save(&customer).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return err
 	}
 	return nil
@@ -49,7 +49,7 @@ func (r *CustomerRepository) Find(ctx context.Context, customerID int) (*model.C
 	var customer model.Customers
 
 	if err := r.db.Where("customer_id = ?", customerID).Find(&customer).Error; err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
 		return nil, err
 	}
 

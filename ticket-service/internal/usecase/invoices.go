@@ -105,7 +105,8 @@ func (u *InvoicesUsecase) ExportPDFInvoices(ctx context.Context, invoiceDetails 
 
 	err = c.WriteToFile(fmt.Sprintf("./docs/%v_%v.pdf", invoiceDetails.Tickets.TicketName, customer.CustomerName))
 	if err != nil {
-		logger.Error(err)
+		logger.Error(ctx, "error %v", err)
+		return err
 	}
 	return nil
 }
@@ -121,7 +122,7 @@ func (u *InvoicesUsecase) BuyTicket(ctx context.Context, req dto.BuyTicketReques
 	g.Go(func() error {
 		customer, err := u.Repo.Customers.Find(ctx, req.CustomerID)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			return err
 		}
 		customerCtx = customer
@@ -131,7 +132,7 @@ func (u *InvoicesUsecase) BuyTicket(ctx context.Context, req dto.BuyTicketReques
 	g.Go(func() error {
 		ticket, err := u.Repo.Tickets.FindByID(ctx, req.TicketID)
 		if err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			return err
 		}
 		ticketCtx = ticket
@@ -148,7 +149,7 @@ func (u *InvoicesUsecase) BuyTicket(ctx context.Context, req dto.BuyTicketReques
 
 	g1.Go(func() error {
 		if err := u.Repo.Invoices.SaveInvoices(ctx1, invoices, invoiceDetails); err != nil {
-			logger.Error(err)
+			logger.Error(ctx, "error %v", err)
 			return err
 		}
 		return nil

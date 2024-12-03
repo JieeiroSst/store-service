@@ -43,7 +43,7 @@ func (u *TicketsUsecase) SaveTicket(ctx context.Context, req dto.CreateTicketsRe
 	}
 
 	if err := u.Repo.Tickets.SaveTickets(ctx, model); err != nil {
-		logger.Error(err)
+		logger.Error(ctx,"error %v",err)
 		return err
 	}
 	return nil
@@ -53,13 +53,13 @@ func (u *TicketsUsecase) UpdateTicket(ctx context.Context, ticketID, status int)
 	switch status {
 	case common.APPROVE.Value():
 		if err := u.Repo.Tickets.UpdateStatusTicket(ctx, common.APPROVE.Value(), ticketID); err != nil {
-			logger.Error(err)
+			logger.Error(ctx,"error %v",err)
 			return err
 		}
 		return nil
 	case common.REJECT.Value():
 		if err := u.Repo.Tickets.UpdateStatusTicket(ctx, common.REJECT.Value(), ticketID); err != nil {
-			logger.Error(err)
+			logger.Error(ctx,"error %v",err)
 			return err
 		}
 		return nil
