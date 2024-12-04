@@ -14,9 +14,9 @@ type CampaignConfigs interface {
 	CreateCampaignConfig(ctx context.Context, config *model.CampaignConfig) error
 	FindByID(ctx context.Context, id string) (*model.CampaignConfig, error)
 	FindPagination(ctx context.Context, p pagination.Pagination) (*pagination.Pagination, error)
-	Update(ctx context.Context, campaignConfig model.CampaignConfig) error
+	UpdateCampaignConfig(ctx context.Context, campaignConfig model.CampaignConfig) error
 	FindByActive(ctx context.Context) (*model.CampaignConfig, error)
-	CreateCampaignTypeConfig(ctx context.Context, typeConfig *model.CampaignTypeConfig) error
+	SaveCampaignTypeConfig(ctx context.Context, typeConfig *model.CampaignTypeConfig) error
 }
 
 type CampaignConfigRepo struct {
@@ -58,7 +58,7 @@ func (r *CampaignConfigRepo) FindPagination(ctx context.Context, param paginatio
 	return &param, nil
 }
 
-func (r *CampaignConfigRepo) Update(ctx context.Context, campaignConfig model.CampaignConfig) error {
+func (r *CampaignConfigRepo) UpdateCampaignConfig(ctx context.Context, campaignConfig model.CampaignConfig) error {
 	err := r.db.Model(model.CampaignConfig{}).Where("id = ? ", campaignConfig.ID).Updates(campaignConfig).Error
 	if err != nil {
 		logger.Info(ctx, "Update CampaignConfigRepo error %v", err)
@@ -78,12 +78,28 @@ func (r *CampaignConfigRepo) FindByActive(ctx context.Context) (*model.CampaignC
 	return &result, nil
 }
 
-func (r *CampaignConfigRepo) CreateCampaignTypeConfig(ctx context.Context, typeConfig *model.CampaignTypeConfig) error {
-	if typeConfig != nil {
-		if err := r.db.Create(&typeConfig).Error; err != nil {
+func (r *CampaignConfigRepo) SaveCampaignTypeConfig(ctx context.Context, req *model.CampaignTypeConfig) error {
+	var campaignTypeConfig model.CampaignTypeConfig
+	if req == nil {
+		return nil
+	}
+	if err := r.db.Where("id = ?", req.ID).Find(&campaignTypeConfig).Error; err != nil {
+		logger.Error(ctx, "FindCampaignTypeConfig error %v", err)
+	}
+
+	if campaignTypeConfig.ID == "" {
+		if err := r.db.Create(&req).Error; err != nil {
 			logger.Info(ctx, "Update CampaignConfigRepo typeConfig error %v", err)
 			return err
 		}
+
+		return nil
 	}
+
+	if err := r.db.Save(&req).Error; err != nil {
+		logger.Info(ctx, "Update CampaignConfigRepo typeConfig error %v", err)
+		return err
+	}
+
 	return nil
 }

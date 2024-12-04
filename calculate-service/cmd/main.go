@@ -11,9 +11,17 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/calculate-service/config"
+	"github.com/JIeeiroSst/calculate-service/internal/delivery/consumer"
+	http1 "github.com/JIeeiroSst/calculate-service/internal/delivery/http"
+	"github.com/JIeeiroSst/calculate-service/internal/delivery/worker"
+	"github.com/JIeeiroSst/calculate-service/internal/repository"
+	"github.com/JIeeiroSst/calculate-service/internal/usecase"
+	"github.com/JIeeiroSst/calculate-service/middleware"
 	"github.com/JIeeiroSst/calculate-service/model"
+	"github.com/JIeeiroSst/utils/cache/expire"
 	"github.com/JIeeiroSst/utils/consul"
 	"github.com/JIeeiroSst/utils/logger"
+	nat "github.com/JIeeiroSst/utils/nats"
 	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/gin-gonic/gin"
 )
@@ -45,7 +53,26 @@ func main() {
 		PostgresqlSSLMode:  true,
 	})
 
+	cache := expire.NewCacheHelper(config.Cache.DNS)
+	middleware := middleware.Newmiddleware(config.Secret.JwtSecretKey)
+
 	db.AutoMigrate(&model.CampaignTypeConfig{}, &model.CampaignConfig{})
+
+	repository := repository.NewRepositories(db)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos:       repository,
+		CacheHelper: cache,
+	})
+
+	nats := nat.ConnectNats(config.Nats.Dns)
+
+	httpServer := http1.NewHandler(usecase, middleware)
+	worker := worker.NewWorker(usecase)
+	consumer := consumer.NewConsumer(nats, usecase)
+
+	worker.RunWorker()
+	consumer.RunConsumer()
+	httpServer.Init(router)
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
