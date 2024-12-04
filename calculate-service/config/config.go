@@ -11,6 +11,7 @@ type Config struct {
 	Secret   SecretConfig
 	Nats     NatsConfig
 	Postgres PostgresConfig
+	Cache    CacheConfig
 }
 
 type ServerConfig struct {
@@ -39,6 +40,10 @@ type PostgresConfig struct {
 	PostgresqlDbname   string
 	PostgresqlSSLMode  bool
 	PgDriver           string
+}
+
+type CacheConfig struct {
+	DNS string
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {
