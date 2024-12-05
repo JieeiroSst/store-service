@@ -64,7 +64,7 @@ func (u *CampaignUsecase) UpdateCampaignConfig(ctx context.Context, req dto.Upda
 		return err
 	}
 
-	if model.DeletedAt.IsZero() {
+	if !model.DeletedAt.IsZero() {
 		key := CampaignConfigByActiveKey
 		u.Redis.Removekey(ctx, key)
 	}
