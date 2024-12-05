@@ -70,7 +70,7 @@ func (r *CampaignConfigRepo) UpdateCampaignConfig(ctx context.Context, campaignC
 func (r *CampaignConfigRepo) FindByActive(ctx context.Context) (*model.CampaignConfig, error) {
 	var result model.CampaignConfig
 
-	if err := r.db.Where("status = ?", common.Active.Value()).Find(&result).Error; err != nil {
+	if err := r.db.Where("status = ? and deleted_at is not null", common.Active.Value()).Find(&result).Error; err != nil {
 		logger.Info(ctx, "FindByActive error %v", err)
 		return nil, err
 	}
