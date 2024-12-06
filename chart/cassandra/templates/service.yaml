@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.cassandra.name}}-service
+spec:
+  ports:
+  - port: 80
+    targetPort: {{.Values.cassandra.image.port}}
+  selector:
+    app: {{.Values.cassandra.name}}-deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.cassandra.name}}-nodeport
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: {{.Values.cassandra.image.port}}
+    nodePort: {{.Values.cassandra.service.nodeport}}
+  selector:
+    app: {{.Values.cassandra.name}}-deployment
