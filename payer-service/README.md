@@ -1,17 +1,24 @@
+```
 CREATE TABLE payers (
-  payer_id INT PRIMARY KEY AUTO_INCREMENT,
-  amount DECIMAL(10,2) NOT NULL,
-  currency CHAR(3) NOT NULL,
-  payer_method_id INT NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  reference_id VARCHAR(255) DEFAULT NULL,
-  status ENUM('pending', 'succeeded', 'failed') NOT NULL,
-  FOREIGN KEY (payer_method_id) REFERENCES payerMethods(payer_method_id)
+    payer_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    phone_number VARCHAR(20)
 );
 
-CREATE TABLE payerMethods (
-  payer_method_id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
-  description VARCHAR(1000) DEFAULT NULL
+CREATE TABLE buyers (
+    buyer_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    phone_number VARCHAR(20)
 );
+
+CREATE TABLE transactions (
+    transaction_id SERIAL PRIMARY KEY,
+    payer_id INTEGER REFERENCES payers(payer_id),
+    buyer_id INTEGER REFERENCES buyers(buyer_id),
+    amount DECIMAL(10,2) NOT NULL,
+    transaction_date TIMESTAMP DEFAULT NOW(),
+    -- Additional fields as needed, e.g., transaction_type, description, etc.
+);
+```
