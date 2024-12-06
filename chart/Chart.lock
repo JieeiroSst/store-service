@@ -47,5 +47,8 @@ dependencies:
 - name: rabbitmq
   repository: file://rabbitmq
   version: 0.1.0
-digest: sha256:bea6d78821c107a1e3003ed1c35f7f59e3967f4651bcdad58b86dbaff72394ed
-generated: "2023-05-23T20:52:35.897489+07:00"
+- name: cassandra
+  repository: file://cassandra
+  version: 0.1.0
+digest: sha256:971474aaccd0df8df619b2c73780f4770ca24347f84f8e90883da76bdce032ab
+generated: "2024-12-06T20:31:06.822481+07:00"
