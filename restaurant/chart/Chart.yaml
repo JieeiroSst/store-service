@@ -43,3 +43,7 @@ dependencies:
     name: rabbitmq
     version: "0.1.0"
     repository: file://rabbitmq
+  - alias: cassandra
+    name: cassandra
+    version: "0.1.0"
+    repository: file://cassandra

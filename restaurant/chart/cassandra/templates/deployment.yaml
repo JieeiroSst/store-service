@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.cassandra.name}}-deployment
+spec:
+  replicas: {{.Values.cassandra.replicas}}
+  selector:
+    matchLabels:
+      app: {{.Values.cassandra.name}}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{.Values.cassandra.name}}-deployment
+    spec:
+      containers:
+      - name: {{.Values.cassandra.name}}-deployment
+        image: {{.Values.cassandra.image.name}}:{{.Values.cassandra.image.tag}}
+        ports:
+        - containerPort: {{.Values.cassandra.image.port}}
+        env:
+            - name: NODE_ENV
+              value: production
