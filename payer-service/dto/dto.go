@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/JIeeiroSst/payer-service/model"
 	"github.com/JIeeiroSst/utils/geared_id"
 	"github.com/JIeeiroSst/utils/time_custom"
@@ -57,4 +59,44 @@ func (p CreateTransactionsRequest) Build() model.Transactions {
 		TransactionDate: time_custom.FormatUnixTime(p.TransactionDate),
 		Description:     p.Description,
 	}
+}
+
+type Transactions struct {
+	TransactionID   int       `json:"transaction_id" cql:"transaction_id"`
+	PayerID         int       `json:"payer_id" cql:"payer_id"`
+	BuyerID         int       `json:"buyer_id" cql:"buyer_id"`
+	Amount          float64   `json:"amount" cql:"amount"`
+	TransactionDate time.Time `json:"transaction_date" cql:"transaction_date"`
+	TransactionType int       `json:"transaction_type" cql:"transaction_type"`
+	Description     string    `json:"description" cql:"description"`
+	Status          int       `json:"status" cql:"status"`
+}
+
+func BuildGetTransaction(
+	transaction *model.Transactions,
+	payers *model.Payers,
+	buyers *model.Buyers,
+) (*Buyers, *Payers, *Transactions) {
+	if transaction == nil || payers == nil || buyers == nil {
+		return nil, nil, nil
+	}
+	return &Buyers{
+			BuyerID:     buyers.BuyerID,
+			Name:        buyers.Name,
+			Email:       buyers.Email,
+			PhoneNumber: buyers.PhoneNumber,
+		}, &Payers{
+			PayerID:     payers.PayerID,
+			Name:        buyers.Name,
+			Email:       buyers.Email,
+			PhoneNumber: buyers.PhoneNumber,
+		}, &Transactions{
+			TransactionID:   transaction.TransactionID,
+			PayerID:         transaction.PayerID,
+			BuyerID:         transaction.BuyerID,
+			Amount:          transaction.Amount,
+			TransactionDate: transaction.TransactionDate,
+			TransactionType: transaction.TransactionType,
+			Status:          transaction.Status,
+		}
 }
