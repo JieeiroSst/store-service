@@ -11,6 +11,7 @@ type Config struct {
 	Secret    SecretConfig
 	Nats      NatsConfig
 	Cassandra CassandraConfig
+	Cache     CacheConfig
 }
 
 type ServerConfig struct {
@@ -22,6 +23,10 @@ type SecretConfig struct {
 }
 
 type NatsConfig struct {
+	Dns string
+}
+
+type CacheConfig struct {
 	Dns string
 }
 
