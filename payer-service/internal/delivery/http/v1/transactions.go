@@ -8,7 +8,9 @@ import (
 )
 
 func (h *Handler) initTransaction(api *gin.RouterGroup) {
-	_ = api.Group("/transaction")
+	transactionGrp := api.Group("/transaction")
+
+	transactionGrp.GET("", h.GetTransactions)
 }
 
 func (h *Handler) GetTransactions(ctx *gin.Context) {
