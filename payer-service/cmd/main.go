@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/payer-service/config"
+	"github.com/JIeeiroSst/payer-service/internal/delivery/consumer"
 	httpV1 "github.com/JIeeiroSst/payer-service/internal/delivery/http"
 	"github.com/JIeeiroSst/payer-service/internal/repository"
 	"github.com/JIeeiroSst/payer-service/internal/usecase"
@@ -19,6 +20,7 @@ import (
 	"github.com/JIeeiroSst/utils/cassandra"
 	"github.com/JIeeiroSst/utils/consul"
 	"github.com/JIeeiroSst/utils/logger"
+	"github.com/JIeeiroSst/utils/nats"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,12 +54,16 @@ func main() {
 		Repos:       repository,
 		CacheHelper: cache,
 	})
+	nats := nats.ConnectNats(config.Nats.Dns)
 
 	middleware := middleware.Newmiddleware(config.Secret.JwtSecretKey)
 
 	httpServer := httpV1.NewHandler(usecase, middleware)
 
+	cr := consumer.NewConsumer(usecase, nats)
+
 	httpServer.Init(router)
+	cr.Start(context.Background())
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
