@@ -11,6 +11,12 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/payer-service/config"
+	httpV1 "github.com/JIeeiroSst/payer-service/internal/delivery/http"
+	"github.com/JIeeiroSst/payer-service/internal/repository"
+	"github.com/JIeeiroSst/payer-service/internal/usecase"
+	"github.com/JIeeiroSst/payer-service/middleware"
+	"github.com/JIeeiroSst/utils/cache/expire"
+	"github.com/JIeeiroSst/utils/cassandra"
 	"github.com/JIeeiroSst/utils/consul"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/gin-gonic/gin"
@@ -33,6 +39,25 @@ func main() {
 	if err := json.Unmarshal(conf, &config); err != nil {
 		logger.Error(context.Background(), err.Error())
 	}
+
+	db := cassandra.NewCassandra(cassandra.Cassandra{
+		Dns:      config.Cassandra.Dns,
+		Password: config.Cassandra.Password,
+		Username: config.Cassandra.Username,
+	})
+
+	repository := repository.NewRepositories(db)
+	cache := expire.NewCacheHelper(config.Cache.Dns)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos:       repository,
+		CacheHelper: cache,
+	})
+
+	middleware := middleware.Newmiddleware(config.Secret.JwtSecretKey)
+
+	httpServer := httpV1.NewHandler(usecase, middleware)
+
+	httpServer.Init(router)
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
