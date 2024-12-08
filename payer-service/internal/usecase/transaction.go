@@ -10,7 +10,7 @@ import (
 
 type Transactions interface {
 	Transactions(ctx context.Context, req dto.CreateTransactionsRequest) error
-	GetTransactions(ctx context.Context, transactionID int) (*dto.Buyers, *dto.Payers, *dto.Transactions, error)
+	GetTransactions(ctx context.Context, transactionID int) (*dto.TransactionResponse, error)
 }
 
 type TransactionUsecase struct {
@@ -37,12 +37,16 @@ func (u *TransactionUsecase) Transactions(ctx context.Context, req dto.CreateTra
 }
 
 func (u *TransactionUsecase) GetTransactions(ctx context.Context,
-	transactionID int) (*dto.Buyers, *dto.Payers, *dto.Transactions, error) {
+	transactionID int) (*dto.TransactionResponse, error) {
 	buyers, payers, transaction, err := u.Repo.Transactions.GetTransactions(ctx, transactionID)
 	if err != nil {
 		logger.Error(ctx, "error %v", err)
-		return nil, nil, nil, err
+		return nil, err
 	}
-	transactionDTO, payersDTO, buyersDTo := dto.BuildGetTransaction(transaction, payers, buyers)
-	return transactionDTO, payersDTO, buyersDTo, nil
+	buyersDTo, payersDTO, transactionDTO := dto.BuildGetTransaction(transaction, payers, buyers)
+	return &dto.TransactionResponse{
+		Transaction: transactionDTO,
+		Payers:      payersDTO,
+		Buyers:      buyersDTo,
+	}, nil
 }

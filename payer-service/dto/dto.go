@@ -100,3 +100,9 @@ func BuildGetTransaction(
 			Status:          transaction.Status,
 		}
 }
+
+type TransactionResponse struct {
+	Transaction *Transactions `json:"transaction" cql:"transaction"`
+	Payers      *Payers       `json:"payers" cql:"payers"`
+	Buyers      *Buyers       `json:"buyers" cql:"buyers"`
+}
