@@ -141,12 +141,44 @@ func (c UpdateCampaignConfigRequest) Build() model.CampaignConfig {
 }
 
 type UserCampaignConfig struct {
-	ID             string          `json:"id,omitempty" gorm:"primaryKey"`
-	UserID         string          `json:"user_id,omitempty"`
-	CampaignID     string          `json:"campaign_id,omitempty"`
-	CreateAdt      time.Time       `json:"create_adt,omitempty"`
-	UpdatedAt      time.Time       `json:"updated_at,omitempty"`
-	TotalAmount    float64         `json:"total_amount,omitempty"`
-	DateAt         time.Time       `json:"date_at,omitempty"`
-	CampaignConfig *CampaignConfig `json:"campaign_type_config,omitempty"`
+	ID                string            `json:"id,omitempty" gorm:"primaryKey"`
+	UserID            string            `json:"user_id,omitempty"`
+	CampaignID        string            `json:"campaign_id,omitempty"`
+	CreateAdt         time.Time         `json:"create_adt,omitempty"`
+	UpdatedAt         time.Time         `json:"updated_at,omitempty"`
+	TotalAmount       float64           `json:"total_amount,omitempty"`
+	DateAt            time.Time         `json:"date_at,omitempty"`
+	CampaignTypeID    string            `json:"campaign_type_id,omitempty"`
+	CampaignContentID string            `json:"campaign_content_id,omitempty"`
+	CampaignConfig    *CampaignConfig   `json:"campaign_type_config,omitempty"`
+	CampaignContent   []CampaignContent `json:"campaign_content,omitempty"`
+}
+
+type SaveUserCampaignConfig struct {
+	ID                string            `json:"id,omitempty" gorm:"primaryKey"`
+	UserID            string            `json:"user_id,omitempty"`
+	CampaignID        string            `json:"campaign_id,omitempty"`
+	CreateAdt         time.Time         `json:"create_adt,omitempty"`
+	UpdatedAt         time.Time         `json:"updated_at,omitempty"`
+	TotalAmount       float64           `json:"total_amount,omitempty"`
+	DateAt            time.Time         `json:"date_at,omitempty"`
+	CampaignTypeID    string            `json:"campaign_type_id,omitempty"`
+	CampaignContentID string            `json:"campaign_content_id,omitempty"`
+	CampaignConfig    *CampaignConfig   `json:"campaign_type_config,omitempty"`
+	CampaignContent   []CampaignContent `json:"campaign_content,omitempty"`
+}
+
+func (u UserCampaignConfig) Build() model.UserCampaignConfig {
+	id := u.ID
+	if len(u.ID) == 0 {
+		id = geared_id.GearedStringID()
+	}
+	var totalAmount float64
+	for _, v := range u.CampaignContent {
+		totalAmount += v.Value
+	}
+
+	return model.UserCampaignConfig{
+		ID: id,
+	}
 }
