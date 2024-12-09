@@ -24,9 +24,10 @@ type CampaignConfig struct {
 }
 
 type CampaignContent struct {
-	ID      string  `json:"id,omitempty" gorm:"primaryKey"`
-	Content string  `json:"content,omitempty"`
-	Value   float64 `json:"value,omitempty" gorm:"index"`
+	ID        string  `json:"id,omitempty" gorm:"primaryKey"`
+	Content   string  `json:"content,omitempty"`
+	Value     float64 `json:"value,omitempty" gorm:"index"`
+	Condition int     `json:"condition,omitempty"`
 }
 
 type UserCampaignConfig struct {
