@@ -34,6 +34,7 @@ type CampaignConfig struct {
 	ClassifyType       string             `json:"classify_type"`
 	CampaignTypeID     string             `json:"campaign_type_id"`
 	CampaignTypeConfig CampaignTypeConfig `json:"campaign_type_config"`
+	CampaignContent    []CampaignContent  `json:"campaign_content,omitempty"`
 }
 
 func BuildCampaignConfig(c model.CampaignConfig) *CampaignConfig {
@@ -45,61 +46,93 @@ func BuildCampaignConfig(c model.CampaignConfig) *CampaignConfig {
 			Type: c.CampaignTypeConfig.Type,
 		}
 	}
+	campaignContent := make([]CampaignContent, 0)
+	for _, v := range c.CampaignContent {
+		campaignContent = append(campaignContent, CampaignContent{
+			ID:      v.ID,
+			Content: v.Content,
+			Value:   v.Value,
+		})
+	}
 	return &CampaignConfig{
 		ID:                 c.ID,
 		Name:               c.Name,
-		Value:              c.Value,
 		Description:        c.Description,
 		ClassifyType:       c.ClassifyType,
 		CampaignTypeID:     c.CampaignTypeID,
 		CampaignTypeConfig: campaignTypeConfig,
+		CampaignContent:    campaignContent,
 	}
 }
 
 type CreateCampaignConfigRequest struct {
-	Name           string  `json:"name"`
-	Value          float64 `json:"value"`
-	Description    string  `json:"description"`
-	ClassifyType   string  `json:"classify_type"`
-	CampaignTypeID string  `json:"campaign_type_id"`
+	Name            string            `json:"name"`
+	Value           float64           `json:"value"`
+	Description     string            `json:"description"`
+	ClassifyType    string            `json:"classify_type"`
+	CampaignTypeID  string            `json:"campaign_type_id"`
+	CampaignContent []CampaignContent `json:"campaign_content,omitempty"`
+}
+
+type CampaignContent struct {
+	ID      string  `json:"id,omitempty" gorm:"primaryKey"`
+	Content string  `json:"content,omitempty"`
+	Value   float64 `json:"value,omitempty" gorm:"index"`
 }
 
 func (c CreateCampaignConfigRequest) Build() model.CampaignConfig {
+	campaignContent := make([]model.CampaignContent, 0)
+	for _, v := range c.CampaignContent {
+		campaignContent = append(campaignContent, model.CampaignContent{
+			ID:      v.ID,
+			Content: v.Content,
+			Value:   v.Value,
+		})
+	}
 	return model.CampaignConfig{
-		ID:             geared_id.GearedStringID(),
-		Name:           c.Name,
-		Value:          c.Value,
-		Description:    c.Description,
-		ClassifyType:   c.ClassifyType,
-		CampaignTypeID: c.CampaignTypeID,
-		Status:         common.Draft.Value(),
-		UpdatedAt:      time.Now(),
-		CreateAdt:      time.Now(),
+		ID:              geared_id.GearedStringID(),
+		Name:            c.Name,
+		Description:     c.Description,
+		ClassifyType:    c.ClassifyType,
+		CampaignTypeID:  c.CampaignTypeID,
+		Status:          common.Draft.Value(),
+		UpdatedAt:       time.Now(),
+		CreateAdt:       time.Now(),
+		CampaignContent: campaignContent,
 	}
 }
 
 type UpdateCampaignConfigRequest struct {
-	ID             string    `json:"id"`
-	Name           string    `json:"name"`
-	Value          float64   `json:"value"`
-	Description    string    `json:"description"`
-	ClassifyType   string    `json:"classify_type"`
-	CampaignTypeID string    `json:"campaign_type_id"`
-	Status         int       `json:"status,omitempty"`
-	DeletedAt      time.Time `json:"deleted_at,omitempty"`
+	ID              string            `json:"id"`
+	Name            string            `json:"name"`
+	Value           float64           `json:"value"`
+	Description     string            `json:"description"`
+	ClassifyType    string            `json:"classify_type"`
+	CampaignTypeID  string            `json:"campaign_type_id"`
+	Status          int               `json:"status,omitempty"`
+	DeletedAt       time.Time         `json:"deleted_at,omitempty"`
+	CampaignContent []CampaignContent `json:"campaign_content,omitempty"`
 }
 
 func (c UpdateCampaignConfigRequest) Build() model.CampaignConfig {
+	campaignContent := make([]model.CampaignContent, 0)
+	for _, v := range c.CampaignContent {
+		campaignContent = append(campaignContent, model.CampaignContent{
+			ID:      v.ID,
+			Content: v.Content,
+			Value:   v.Value,
+		})
+	}
 	return model.CampaignConfig{
-		ID:             c.ID,
-		Name:           c.Name,
-		Value:          c.Value,
-		Description:    c.Description,
-		ClassifyType:   c.ClassifyType,
-		CampaignTypeID: c.CampaignTypeID,
-		Status:         c.Status,
-		DeletedAt:      c.DeletedAt,
-		UpdatedAt:      time.Now(),
+		ID:              c.ID,
+		Name:            c.Name,
+		Description:     c.Description,
+		ClassifyType:    c.ClassifyType,
+		CampaignTypeID:  c.CampaignTypeID,
+		Status:          c.Status,
+		DeletedAt:       c.DeletedAt,
+		UpdatedAt:       time.Now(),
+		CampaignContent: campaignContent,
 	}
 }
 
