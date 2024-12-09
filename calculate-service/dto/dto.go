@@ -86,7 +86,7 @@ func (c CreateCampaignConfigRequest) Build() model.CampaignConfig {
 	campaignContent := make([]model.CampaignContent, 0)
 	for _, v := range c.CampaignContent {
 		campaignContent = append(campaignContent, model.CampaignContent{
-			ID:        v.ID,
+			ID:        geared_id.GearedStringID(),
 			Content:   v.Content,
 			Value:     v.Value,
 			Condition: v.Condition,
