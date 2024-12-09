@@ -49,9 +49,10 @@ func BuildCampaignConfig(c model.CampaignConfig) *CampaignConfig {
 	campaignContent := make([]CampaignContent, 0)
 	for _, v := range c.CampaignContent {
 		campaignContent = append(campaignContent, CampaignContent{
-			ID:      v.ID,
-			Content: v.Content,
-			Value:   v.Value,
+			ID:        v.ID,
+			Content:   v.Content,
+			Value:     v.Value,
+			Condition: v.Condition,
 		})
 	}
 	return &CampaignConfig{
@@ -75,18 +76,20 @@ type CreateCampaignConfigRequest struct {
 }
 
 type CampaignContent struct {
-	ID      string  `json:"id,omitempty" gorm:"primaryKey"`
-	Content string  `json:"content,omitempty"`
-	Value   float64 `json:"value,omitempty" gorm:"index"`
+	ID        string  `json:"id,omitempty"`
+	Content   string  `json:"content,omitempty"`
+	Value     float64 `json:"value,omitempty"`
+	Condition int     `json:"condition,omitempty"`
 }
 
 func (c CreateCampaignConfigRequest) Build() model.CampaignConfig {
 	campaignContent := make([]model.CampaignContent, 0)
 	for _, v := range c.CampaignContent {
 		campaignContent = append(campaignContent, model.CampaignContent{
-			ID:      v.ID,
-			Content: v.Content,
-			Value:   v.Value,
+			ID:        v.ID,
+			Content:   v.Content,
+			Value:     v.Value,
+			Condition: v.Condition,
 		})
 	}
 	return model.CampaignConfig{
@@ -118,9 +121,10 @@ func (c UpdateCampaignConfigRequest) Build() model.CampaignConfig {
 	campaignContent := make([]model.CampaignContent, 0)
 	for _, v := range c.CampaignContent {
 		campaignContent = append(campaignContent, model.CampaignContent{
-			ID:      v.ID,
-			Content: v.Content,
-			Value:   v.Value,
+			ID:        v.ID,
+			Content:   v.Content,
+			Value:     v.Value,
+			Condition: v.Condition,
 		})
 	}
 	return model.CampaignConfig{
