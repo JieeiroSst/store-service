@@ -19,7 +19,7 @@ import (
 
 type Invoices interface {
 	ExportInvoices(ctx context.Context, customerID, ticketID int) error
-	ExportPDFInvoices(ctx context.Context, invoiceDetails model.InvoiceDetails) error
+	ExportPDFInvoices(ctx context.Context, invoiceDetails *model.InvoiceDetails, customer *model.Customers) error
 	BuyTicket(ctx context.Context, req dto.BuyTicketRequest) error
 }
 
