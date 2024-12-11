@@ -11,6 +11,11 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/ticket-service/config"
+	httpV1 "github.com/JIeeiroSst/ticket-service/internal/delivery/http"
+	"github.com/JIeeiroSst/ticket-service/internal/repository"
+	"github.com/JIeeiroSst/ticket-service/internal/usecase"
+	"github.com/JIeeiroSst/ticket-service/middleware"
+	"github.com/JIeeiroSst/utils/cache/expire"
 	"github.com/JIeeiroSst/utils/consul"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/JIeeiroSst/utils/postgres"
@@ -40,11 +45,25 @@ func main() {
 		PostgresqlSSLMode:  true,
 	})
 
+	cache := expire.NewCacheHelper(config.Cache.Dns)
+
 	db.AutoMigrate()
 
 	if err := json.Unmarshal(conf, &config); err != nil {
 		logger.Error(context.Background(), "error %v", err)
 	}
+
+	repository := repository.NewRepositories(db)
+	usecase := usecase.NewUsecase(usecase.Dependency{
+		Repos:           repository,
+		CacheHelper:     cache,
+		UnidocSerectKey: config.Secret.UnidocSerectKey,
+	})
+	middleware := middleware.Newmiddleware(config.Secret.JwtSecretKey)
+
+	httpServer := httpV1.NewHandler(usecase, middleware)
+
+	httpServer.Init(router)
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
