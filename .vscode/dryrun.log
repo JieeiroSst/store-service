@@ -1,4 +1,7 @@
 make --dry-run --always-make --keep-going --print-directory
-
+make: Entering directory `/Users/alainliu/Desktop/store-service'
+ 
+make: Leaving directory `/Users/alainliu/Desktop/store-service'
+ 
 make: *** No targets.  Stop.
 

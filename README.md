@@ -13,3 +13,8 @@ trello
 
 https://trello.com/invite/b/Xr2VZyyz/ATTI3cb68d7010beef35d8ead8a2e31c3789B4ACCBC1/store-service
 ```
+
+```
+notion
+https://www.notion.so/Getting-Started-1621c27a3dd580dc806dce41bcaaf8eb?pvs=4
+```
