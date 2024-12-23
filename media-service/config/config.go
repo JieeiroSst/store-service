@@ -13,6 +13,7 @@ type Config struct {
 	Postgres   PostgresConfig
 	Cache      CacheConfig
 	Cloudflare CloudflareConfig
+	Elastic    ElasticConfig
 }
 
 type ServerConfig struct {
@@ -44,6 +45,10 @@ type PostgresConfig struct {
 type CloudflareConfig struct {
 	ApiToken  string
 	AccountId string
+}
+
+type ElasticConfig struct {
+	DNS string
 }
 
 type Dir struct {
