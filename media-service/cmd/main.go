@@ -17,8 +17,9 @@ import (
 	"github.com/JIeeiroSst/media-service/middleware"
 	"github.com/JIeeiroSst/utils/cache/expire"
 	"github.com/JIeeiroSst/utils/consul"
-	"github.com/JIeeiroSst/utils/postgres"
+	"github.com/JIeeiroSst/utils/elastic"
 	"github.com/JIeeiroSst/utils/logger"
+	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/gin-gonic/gin"
 )
 
@@ -53,7 +54,9 @@ func main() {
 		logger.Error(context.Background(), "error %v", err)
 	}
 
-	repository := repository.NewRepositories(db)
+	elastic := elastic.NewElastic(config.Elastic.DNS)
+
+	repository := repository.NewRepositories(db, elastic)
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repos:       repository,
 		CacheHelper: cache,

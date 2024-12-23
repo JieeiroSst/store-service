@@ -5,7 +5,7 @@ import "time"
 type Subscription struct {
 	SubscriptionID int    `json:"subscription_id"`
 	Name           string `json:"name"`
-	SubscribedFrom string `json:"subscribed_from"`
+	SubscribedFrom int    `json:"subscribed_from"`
 	ValidUpto      bool   `json:"valid_upto"`
 }
 
@@ -33,4 +33,12 @@ type View struct {
 	Platform  string    `json:"platform"`
 	CreatedAt time.Time `json:"created_at"`
 	TotalView int       `json:"total_view"`
+}
+
+type SearchVideo struct {
+	Videos []Video
+	Total  int64
+	Page   int
+	Size   int
+	Pages  int
 }
