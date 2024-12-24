@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"mime/multipart"
+	"time"
+)
 
 type Subscription struct {
 	SubscriptionID int    `json:"subscription_id"`
@@ -35,6 +38,7 @@ type View struct {
 }
 
 type UploadVideoRequest struct {
-	Video Video `json:"video"`
-	Tag   Tag   `json:"tag"`
+	FileHeader *multipart.FileHeader `json:"_"`
+	Video      Video                 `json:"video"`
+	Tag        Tag                   `json:"tag"`
 }
