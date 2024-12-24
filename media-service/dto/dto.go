@@ -33,3 +33,8 @@ type View struct {
 	CreatedAt time.Time `json:"created_at"`
 	TotalView int       `json:"total_view"`
 }
+
+type UploadVideoRequest struct {
+	Video Video `json:"video"`
+	Tag   Tag   `json:"tag"`
+}
