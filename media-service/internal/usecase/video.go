@@ -17,6 +17,7 @@ import (
 type Videos interface {
 	UploadVideo(ctx context.Context, req dto.UploadVideoRequest) error
 	SearchVideo(ctx context.Context, req dto.SearchVideoRequest) (*dto.SearchVideo, error)
+	FindVideoByIDES(ctx context.Context, videoID int) (*dto.Video, error)
 }
 
 type VideoUsecase struct {
@@ -91,5 +92,14 @@ func (u *VideoUsecase) SearchVideo(ctx context.Context, req dto.SearchVideoReque
 		return nil, err
 	}
 
-	return build.BuildSearchVideo(videos), nil 
+	return build.BuildSearchVideo(videos), nil
+}
+
+func (u *VideoUsecase) FindVideoByIDES(ctx context.Context, videoID int) (*dto.Video, error) {
+	video, err := u.repo.Video.FindVideoByIDES(ctx, videoID)
+	if err != nil {
+		return nil, err
+	}
+
+	return build.BuildVideo(video), nil
 }

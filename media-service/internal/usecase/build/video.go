@@ -5,8 +5,11 @@ import (
 	"github.com/JIeeiroSst/media-service/model"
 )
 
-func BuildVideo(video model.Video) dto.Video {
-	return dto.Video{
+func BuildVideo(video *model.Video) *dto.Video {
+	if video == nil {
+		return nil
+	}
+	return &dto.Video{
 		VideoID:      video.VideoID,
 		Description:  video.Description,
 		ThumbnailURL: video.ThumbnailURL,
@@ -19,7 +22,7 @@ func BuildVideos(req []model.Video) []dto.Video {
 	videos := make([]dto.Video, 0)
 
 	for _, v := range req {
-		videos = append(videos, BuildVideo(v))
+		videos = append(videos, *BuildVideo(&v))
 	}
 
 	return videos
@@ -29,7 +32,7 @@ func BuildSearchVideo(req *model.SearchVideo) *dto.SearchVideo {
 	if req == nil {
 		return nil
 	}
-	
+
 	return &dto.SearchVideo{
 		Videos: BuildVideos(req.Videos),
 		Total:  req.Total,
