@@ -21,6 +21,7 @@ type Video interface {
 	InsertOrUpdateVideo(ctx context.Context, video model.Video) error
 	SearchVideo(ctx context.Context, query string, page int, size int) (*model.SearchVideo, error)
 	FindVideoByIDES(ctx context.Context, videoID int) (*model.Video, error)
+	FindVideoByID(ctx context.Context, videoID int) (*model.Video, error)
 }
 
 type VideoRepository struct {
@@ -191,4 +192,12 @@ func (r *VideoRepository) FindVideoByIDES(ctx context.Context, videoID int) (*mo
 		}
 	}
 	return &videoDoc, nil
+}
+
+func (r *VideoRepository) FindVideoByID(ctx context.Context, videoID int) (*model.Video, error) {
+	var video model.Video
+	if err := r.db.Where("video_id = ?", videoID).Find(&video).Error; err != nil {
+		return nil, err
+	}
+	return &video, nil
 }
