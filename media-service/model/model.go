@@ -36,9 +36,9 @@ type View struct {
 }
 
 type SearchVideo struct {
-	Videos []Video
-	Total  int64
-	Page   int
-	Size   int
-	Pages  int
+	Videos []Video `json:"videos"`
+	Total  int64   `json:"total"`
+	Page   int     `json:"page"`
+	Size   int     `json:"size"`
+	Pages  int     `json:"pages"`
 }
