@@ -25,8 +25,12 @@ func BuildVideos(req []model.Video) []dto.Video {
 	return videos
 }
 
-func BuildSearchVideo(req model.SearchVideo) dto.SearchVideo {
-	return dto.SearchVideo{
+func BuildSearchVideo(req *model.SearchVideo) *dto.SearchVideo {
+	if req == nil {
+		return nil
+	}
+	
+	return &dto.SearchVideo{
 		Videos: BuildVideos(req.Videos),
 		Total:  req.Total,
 		Page:   req.Page,
