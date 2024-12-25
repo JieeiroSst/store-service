@@ -51,3 +51,22 @@ type SearchVideo struct {
 	Pages  int     `json:"pages"`
 }
 
+type SearchVideoRequest struct {
+	Query string `json:"query"`
+	Page  int    `json:"page"`
+	Size  int    `json:"size"`
+}
+
+func (s SearchVideoRequest) Build() SearchVideoRequest {
+	if s.Page == 0 {
+		s.Page = 1
+	}
+	if s.Size == 0 {
+		s.Size = 20
+	}
+	return SearchVideoRequest{
+		Query: s.Query,
+		Page:  s.Page,
+		Size:  s.Size,
+	}
+}

@@ -6,6 +6,7 @@ import (
 	"github.com/JIeeiroSst/media-service/dto"
 	"github.com/JIeeiroSst/media-service/internal/proxy/cloudflare"
 	"github.com/JIeeiroSst/media-service/internal/repository"
+	"github.com/JIeeiroSst/media-service/internal/usecase/build"
 	"github.com/JIeeiroSst/media-service/model"
 	"github.com/JIeeiroSst/media-service/utils"
 	"github.com/JIeeiroSst/utils/cache/expire"
@@ -15,6 +16,7 @@ import (
 
 type Videos interface {
 	UploadVideo(ctx context.Context, req dto.UploadVideoRequest) error
+	SearchVideo(ctx context.Context, req dto.SearchVideoRequest) (*dto.SearchVideo, error)
 }
 
 type VideoUsecase struct {
@@ -80,4 +82,14 @@ func (u *VideoUsecase) UploadVideo(ctx context.Context, req dto.UploadVideoReque
 	}
 
 	return nil
+}
+
+func (u *VideoUsecase) SearchVideo(ctx context.Context, req dto.SearchVideoRequest) (*dto.SearchVideo, error) {
+	req = req.Build()
+	videos, err := u.repo.Video.SearchVideo(ctx, req.Query, req.Page, req.Size)
+	if err != nil {
+		return nil, err
+	}
+
+	return build.BuildSearchVideo(videos), nil 
 }
