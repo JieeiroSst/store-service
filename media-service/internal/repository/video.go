@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math"
 
 	"github.com/JIeeiroSst/media-service/model"
@@ -19,6 +20,7 @@ type Video interface {
 	InsertOrUpdateTag(ctx context.Context, tag model.Tag) error
 	InsertOrUpdateVideo(ctx context.Context, video model.Video) error
 	SearchVideo(ctx context.Context, query string, page int, size int) (*model.SearchVideo, error)
+	FindVideoByIDES(ctx context.Context, videoID int) (*model.Video, error)
 }
 
 type VideoRepository struct {
@@ -164,4 +166,29 @@ func (r *VideoRepository) SearchVideo(ctx context.Context, query string, page in
 		Size:   size,
 		Pages:  totalPages,
 	}, nil
+}
+
+func (r *VideoRepository) FindVideoByIDES(ctx context.Context, videoID int) (*model.Video, error) {
+	index := "videos"
+	query := elastic.NewTermQuery("video_id", videoID)
+
+	searchResult, err := r.elastic.Search().
+		Index(index).
+		Query(query).
+		Do(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var videoDoc model.Video
+	if searchResult.Hits.TotalHits.Value > 0 {
+		for _, hit := range searchResult.Hits.Hits {
+			data, _ := hit.Source.MarshalJSON()
+			err := json.Unmarshal(data, &videoDoc)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+	return &videoDoc, nil
 }
