@@ -8,7 +8,7 @@ import (
 type Subscription struct {
 	SubscriptionID int    `json:"subscription_id"`
 	Name           string `json:"name"`
-	SubscribedFrom string `json:"subscribed_from"`
+	SubscribedFrom int    `json:"subscribed_from"`
 	ValidUpto      bool   `json:"valid_upto"`
 }
 
