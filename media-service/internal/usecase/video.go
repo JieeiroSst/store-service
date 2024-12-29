@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"mime/multipart"
 
 	"github.com/JIeeiroSst/media-service/dto"
 	"github.com/JIeeiroSst/media-service/internal/proxy/cloudflare"
@@ -15,9 +16,10 @@ import (
 )
 
 type Videos interface {
-	UploadVideo(ctx context.Context, req dto.UploadVideoRequest) error
+	UploadVideo(ctx context.Context, fileHeader *multipart.FileHeader) (string, error)
 	SearchVideo(ctx context.Context, req dto.SearchVideoRequest) (*dto.SearchVideo, error)
 	FindVideoByIDES(ctx context.Context, videoID int) (*dto.Video, error)
+	SaveVideo(ctx context.Context, req dto.UploadVideoRequest) error
 }
 
 type VideoUsecase struct {
@@ -36,7 +38,7 @@ func NewVideoUsecase(repo *repository.Repository,
 	}
 }
 
-func (u *VideoUsecase) UploadVideo(ctx context.Context, req dto.UploadVideoRequest) error {
+func (u *VideoUsecase) SaveVideo(ctx context.Context, req dto.UploadVideoRequest) error {
 	var (
 		video model.Video
 		tag   model.Tag
@@ -58,17 +60,6 @@ func (u *VideoUsecase) UploadVideo(ctx context.Context, req dto.UploadVideoReque
 	if err := copier.Copy(&tag, &req.Tag); err != nil {
 		return err
 	}
-
-	buffer, err := utils.FileHeaderToBytesBuffer(req.FileHeader)
-	if err != nil {
-		return err
-	}
-
-	streamURL, err := u.cloudflare.UploadVideo(ctx, buffer)
-	if err != nil {
-		return err
-	}
-	video.StreamURL = streamURL
 
 	if err := u.repo.Video.UploadVideo(ctx, video, tag); err != nil {
 		return err
@@ -102,4 +93,17 @@ func (u *VideoUsecase) FindVideoByIDES(ctx context.Context, videoID int) (*dto.V
 	}
 
 	return build.BuildVideo(video), nil
+}
+
+func (u *VideoUsecase) UploadVideo(ctx context.Context, fileHeader *multipart.FileHeader) (string, error) {
+	buffer, err := utils.FileHeaderToBytesBuffer(fileHeader)
+	if err != nil {
+		return "", err
+	}
+
+	streamURL, err := u.cloudflare.UploadVideo(ctx, buffer)
+	if err != nil {
+		return "", err
+	}
+	return streamURL, nil
 }
