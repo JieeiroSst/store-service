@@ -26,7 +26,7 @@ func (h *Handler) UploadVideo(ctx *gin.Context) {
 			Error:   true,
 		})
 	}
-	response.ResponseStatus(ctx, 500, response.MessageStatus{
+	response.ResponseStatus(ctx, 200, response.MessageStatus{
 		Data:  streamURL,
 		Error: false,
 	})
