@@ -12,6 +12,7 @@ type View interface {
 	SaveView(ctx context.Context, view model.View) error
 	FindByID(ctx context.Context, viewID int) (*model.View, error)
 	FindViewByUser(ctx context.Context, userID, videoID int) (*model.View, error)
+	FindByVideoID(ctx context.Context, viewID int) ([]model.View, error)
 }
 
 type ViewRepository struct {
@@ -58,6 +59,15 @@ func (r *ViewRepository) FindByID(ctx context.Context, viewID int) (*model.View,
 func (r *ViewRepository) FindViewByUser(ctx context.Context, userID, videoID int) (*model.View, error) {
 	var view *model.View
 	if err := r.db.Where("user_id = ? ", userID).Where("video_id = ?", videoID).Find(&view).Error; err != nil {
+		logger.Error(ctx, "FindByID error %v", err)
+		return nil, err
+	}
+	return view, nil
+}
+
+func (r *ViewRepository) FindByVideoID(ctx context.Context, videoID int) ([]model.View, error) {
+	var view []model.View
+	if err := r.db.Where("video_id = ?", videoID).Find(&view).Error; err != nil {
 		logger.Error(ctx, "FindByID error %v", err)
 		return nil, err
 	}
