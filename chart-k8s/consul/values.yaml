@@ -9,7 +9,7 @@ ingress:
   hosts:
     - host: consul.yourdomain.com 
       paths:
-        - path: /
+        - path: /consul
           pathType: Prefix
 persistence:
   enabled: true
