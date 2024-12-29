@@ -12,6 +12,7 @@ import (
 type View interface {
 	SaveView(ctx context.Context, view dto.View) error
 	FindByID(ctx context.Context, viewID int) (*dto.View, error)
+	FindByVideoID(ctx context.Context, videoID int) ([]dto.View, error)
 }
 
 type ViewUsecase struct {
@@ -44,4 +45,13 @@ func (u *ViewUsecase) FindByID(ctx context.Context, viewID int) (*dto.View, erro
 	}
 
 	return build.BuildView(view), nil
+}
+
+func (u *ViewUsecase) FindByVideoID(ctx context.Context, videoID int) ([]dto.View, error) {
+	view, err := u.repo.View.FindByVideoID(ctx, videoID)
+	if err != nil {
+		return nil, err
+	}
+
+	return build.BuildViews(view), nil
 }

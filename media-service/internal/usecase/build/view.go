@@ -34,3 +34,12 @@ func BuildView(view *model.View) *dto.View {
 		TotalView: view.TotalView,
 	}
 }
+
+func BuildViews(view []model.View) []dto.View {
+	views := make([]dto.View, 0)
+
+	for _, v := range view {
+		views = append(views, *BuildView(&v))
+	}
+	return views
+}
