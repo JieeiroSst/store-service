@@ -1,0 +1,6 @@
+dependencies:
+- name: consul
+  repository: file://consul
+  version: 0.1.0
+digest: sha256:8e2d40d81007aef2793a8a21c037d3a53995c70695ca59d98e23e6d93ab3c926
+generated: "2024-12-29T21:46:40.397858+07:00"
