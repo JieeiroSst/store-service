@@ -11,6 +11,7 @@ import (
 type View interface {
 	SaveView(ctx context.Context, view model.View) error
 	FindByID(ctx context.Context, viewID int) (*model.View, error)
+	FindViewByUser(ctx context.Context, userID, videoID int) (*model.View, error)
 }
 
 type ViewRepository struct {
@@ -24,7 +25,7 @@ func NewViewRepository(db *gorm.DB) *ViewRepository {
 }
 
 func (r *ViewRepository) SaveView(ctx context.Context, req model.View) error {
-	view, err := r.FindByID(ctx, req.ViewID)
+	view, err := r.FindViewByUser(ctx, req.UserID, req.ViewID)
 	if err != nil {
 		logger.Error(ctx, "FindView error %v", err)
 		return err
@@ -48,6 +49,15 @@ func (r *ViewRepository) SaveView(ctx context.Context, req model.View) error {
 func (r *ViewRepository) FindByID(ctx context.Context, viewID int) (*model.View, error) {
 	var view *model.View
 	if err := r.db.Where("view_id = ?", viewID).Find(&view).Error; err != nil {
+		logger.Error(ctx, "FindByID error %v", err)
+		return nil, err
+	}
+	return view, nil
+}
+
+func (r *ViewRepository) FindViewByUser(ctx context.Context, userID, videoID int) (*model.View, error) {
+	var view *model.View
+	if err := r.db.Where("user_id = ? ", userID).Where("video_id = ?", videoID).Find(&view).Error; err != nil {
 		logger.Error(ctx, "FindByID error %v", err)
 		return nil, err
 	}

@@ -18,7 +18,7 @@ import (
 type Videos interface {
 	UploadVideo(ctx context.Context, fileHeader *multipart.FileHeader) (string, error)
 	SearchVideo(ctx context.Context, req dto.SearchVideoRequest) (*dto.SearchVideo, error)
-	FindVideoByIDES(ctx context.Context, videoID int) (*dto.Video, error)
+	FindVideoByIDES(ctx context.Context, videoID, userID int) (*dto.Video, error)
 	SaveVideo(ctx context.Context, req dto.UploadVideoRequest) error
 }
 
@@ -26,15 +26,18 @@ type VideoUsecase struct {
 	repo       *repository.Repository
 	cache      expire.CacheHelper
 	cloudflare cloudflare.CloudflareProxy
+	view       View
 }
 
 func NewVideoUsecase(repo *repository.Repository,
 	cache expire.CacheHelper,
-	cloudflare cloudflare.CloudflareProxy) *VideoUsecase {
+	cloudflare cloudflare.CloudflareProxy,
+	view View) *VideoUsecase {
 	return &VideoUsecase{
 		repo:       repo,
 		cache:      cache,
 		cloudflare: cloudflare,
+		view:       view,
 	}
 }
 
@@ -86,9 +89,16 @@ func (u *VideoUsecase) SearchVideo(ctx context.Context, req dto.SearchVideoReque
 	return build.BuildSearchVideo(videos), nil
 }
 
-func (u *VideoUsecase) FindVideoByIDES(ctx context.Context, videoID int) (*dto.Video, error) {
+func (u *VideoUsecase) FindVideoByIDES(ctx context.Context, videoID, userID int) (*dto.Video, error) {
 	video, err := u.repo.Video.FindVideoByIDES(ctx, videoID)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := u.view.SaveView(ctx, dto.View{
+		VideoID: videoID,
+		UserID:  userID,
+	}); err != nil {
 		return nil, err
 	}
 

@@ -19,9 +19,9 @@ type Dependency struct {
 }
 
 func NewUsecase(deps Dependency) *Usecase {
-	videos := NewVideoUsecase(deps.Repos, deps.CacheHelper, deps.Cloudflare)
 	subscription := NewSubscriptionUsecase(deps.Repos, deps.CacheHelper)
 	view := NewViewUsecase(deps.Repos, deps.CacheHelper)
+	videos := NewVideoUsecase(deps.Repos, deps.CacheHelper, deps.Cloudflare, view)
 	return &Usecase{
 		Videos:       videos,
 		Subscription: subscription,

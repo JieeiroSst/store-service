@@ -14,7 +14,7 @@ func (h *Handler) initVideo(api *gin.RouterGroup) {
 		videoGr.POST("/upload", h.UploadVideo)
 		videoGr.POST("/", h.SaveVideo)
 		videoGr.POST("/search", h.SearchVideo)
-		videoGr.GET("/:video_id", h.FindVideoByID)
+		videoGr.GET("/:video_id/user/:user_id", h.FindVideoByID)
 	}
 }
 
@@ -90,8 +90,15 @@ func (h *Handler) FindVideoByID(ctx *gin.Context) {
 			Error:   true,
 		})
 	}
+	userID, err := strconv.Atoi(ctx.Param("user_id"))
+	if err != nil {
+		response.ResponseStatus(ctx, 400, response.MessageStatus{
+			Message: err.Error(),
+			Error:   true,
+		})
+	}
 
-	video, err := h.usecase.Videos.FindVideoByIDES(ctx, videoID)
+	video, err := h.usecase.Videos.FindVideoByIDES(ctx, videoID, userID)
 	if err != nil {
 		response.ResponseStatus(ctx, 500, response.MessageStatus{
 			Message: err.Error(),
