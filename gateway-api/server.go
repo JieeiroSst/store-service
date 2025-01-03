@@ -17,6 +17,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/JIeeiroSst/gateway-api/config"
 	"github.com/JIeeiroSst/gateway-api/graph"
+	"github.com/JIeeiroSst/gateway-api/middlware"
 	"github.com/JIeeiroSst/utils/consul"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,7 @@ func playgroundHandler() gin.HandlerFunc {
 
 func main() {
 	router := gin.Default()
+	router.Use(middlware.NewMiddlware())
 	dirEnv, err := config.ReadFileEnv(".env")
 	if err != nil {
 		logger.Error(context.Background(), "error %v", err)
