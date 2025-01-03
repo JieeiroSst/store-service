@@ -93,6 +93,4 @@ func main() {
 		logger.Info(context.Background(), "timeout of 5 seconds.")
 	}
 	logger.Info(context.Background(), "Server exiting")
-
-	router.Run()
 }
