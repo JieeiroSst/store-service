@@ -1,16 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: consul
+  annotations:
+  name: kekibook.uk
 spec:
   rules:
-  - host: {{ index .Values.ingress.hosts 0 | default "" }}
+  - host: kekibook.uk
     http:
       paths:
-      - path: {{ index .Values.ingress.hosts 0 .paths 0 | default "/" }}
-        pathType: {{ index .Values.ingress.hosts 0 .paths 0 .pathType | default "Prefix" }}
-        backend:
+      - backend:
           service:
             name: consul
             port:
               number: 8500
+        path: /consul
+        pathType: Prefix

@@ -7,7 +7,7 @@ service:
 ingress:
   enabled: true 
   hosts:
-    - host: consul.yourdomain.com 
+    - host: kekibook.uk
       paths:
         - path: /consul
           pathType: Prefix
