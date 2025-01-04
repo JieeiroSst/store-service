@@ -19,3 +19,7 @@ dependencies:
     name: mysql
     version: "0.1.0"
     repository: file://mysql
+  - alias: cassandra
+    name: cassandra
+    version: "0.1.0"
+    repository: file://cassandra

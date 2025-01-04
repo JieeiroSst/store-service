@@ -8,5 +8,8 @@ dependencies:
 - name: mysql
   repository: file://mysql
   version: 0.1.0
-digest: sha256:b3beebede5abfcce1ccb530cc608777ac3f7fc8cd6b427f0c574e47aaaa1f135
-generated: "2025-01-04T21:32:15.778351+07:00"
+- name: cassandra
+  repository: file://cassandra
+  version: 0.1.0
+digest: sha256:114913900bf64bd9adfa87e914f5ece14b8bbb7759155abbd8e3fef2dcfaaa94
+generated: "2025-01-04T21:58:44.051546+07:00"
