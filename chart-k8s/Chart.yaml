@@ -31,3 +31,7 @@ dependencies:
     name: nats
     version: "0.1.0"
     repository: file://nats
+  - alias: mongo
+    name: mongo
+    version: "0.1.0"
+    repository: file://mongo

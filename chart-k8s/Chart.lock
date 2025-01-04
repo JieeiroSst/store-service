@@ -17,5 +17,8 @@ dependencies:
 - name: nats
   repository: file://nats
   version: 0.1.0
-digest: sha256:5b335dc61f3731128edd07cdedabd778defdea107d55883d4c0550fe302cb7ea
-generated: "2025-01-04T23:23:25.637126+07:00"
+- name: mongo
+  repository: file://mongo
+  version: 0.1.0
+digest: sha256:a4ab8059768f08abe8ce88a0b67342814134940ba6e2f808e5137d426cb3ba65
+generated: "2025-01-04T23:26:44.007393+07:00"
