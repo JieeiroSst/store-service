@@ -5,5 +5,8 @@ dependencies:
 - name: postgres
   repository: file://postgres
   version: 0.1.0
-digest: sha256:dbb1cd9cdc4a6a0e59074a297b670a1883d0c9d42d024414231c534b74ea74b5
-generated: "2025-01-04T20:40:25.827332+07:00"
+- name: mysql
+  repository: file://mysql
+  version: 0.1.0
+digest: sha256:b3beebede5abfcce1ccb530cc608777ac3f7fc8cd6b427f0c574e47aaaa1f135
+generated: "2025-01-04T21:32:15.778351+07:00"
