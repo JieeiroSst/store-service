@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: consul-pod
+spec:
+  containers:
+  - name: consul
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    args: ["agent", "-server", "-bootstrap-expect=1", "-ui"] 
+    ports:
+    - containerPort: 8500 
+  volumes:
+  - name: consul-data
+    persistentVolumeClaim:
+      claimName: consul-data
