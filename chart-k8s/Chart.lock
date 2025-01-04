@@ -20,5 +20,8 @@ dependencies:
 - name: mongo
   repository: file://mongo
   version: 0.1.0
-digest: sha256:a4ab8059768f08abe8ce88a0b67342814134940ba6e2f808e5137d426cb3ba65
-generated: "2025-01-04T23:26:44.007393+07:00"
+- name: rabbitmq
+  repository: file://rabbitmq
+  version: 0.1.0
+digest: sha256:cfebc29a76f7c28965336095bc48959e11be776d54b93f85c883edba42b0c5ea
+generated: "2025-01-04T23:57:29.339767+07:00"

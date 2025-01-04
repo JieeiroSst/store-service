@@ -35,3 +35,7 @@ dependencies:
     name: mongo
     version: "0.1.0"
     repository: file://mongo
+  - alias: rabbitmq
+    name: rabbitmq
+    version: "0.1.0"
+    repository: file://rabbitmq
