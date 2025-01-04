@@ -23,7 +23,7 @@ type Dependency struct {
 
 func NewUsecase(deps Dependency) *Usecase {
 	casbinUsecase := NewCasbinUsecase(deps.Repos.Casbins, deps.Snowflake, deps.Adapter, deps.CacheHelper)
-	otpUsecase := NewOTPUsecase(deps.OTP)
+	otpUsecase := NewOTPUsecase(deps.OTP, deps.CacheHelper)
 
 	return &Usecase{
 		Casbins: casbinUsecase,

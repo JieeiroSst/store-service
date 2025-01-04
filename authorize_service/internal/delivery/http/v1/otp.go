@@ -23,6 +23,10 @@ func (h *Handler) CreateOtp(ctx *gin.Context) {
 		Response(ctx, http.StatusInternalServerError, Message{Message: err.Error()})
 		return
 	}
+	if errors.Is(err, common.OTPLimmit) {
+		Response(ctx, http.StatusOK, Message{Message: err.Error()})
+		return
+	}
 	if err != nil {
 		Response(ctx, http.StatusInternalServerError, Message{Message: err.Error()})
 		return
