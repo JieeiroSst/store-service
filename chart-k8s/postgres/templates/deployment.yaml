@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
       - name: postgresql-deployment
-        image: postgres:10.1
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         ports:
-        - containerPort: 5432
+        - containerPort: {{ .Values.ports.targetPort }}
         env:
             - name: NODE_ENV
               value: production
