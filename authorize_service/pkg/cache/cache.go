@@ -18,6 +18,8 @@ type CacheHelper interface {
 	GetInterface(ctx context.Context, key string, value interface{}) (interface{}, error)
 	Set(ctx context.Context, key string, value interface{}, exppiration time.Duration) error
 	Delete(ctx context.Context, key string) error
+	GetInt(ctx context.Context, key string) (int, error)
+	SetInt(ctx context.Context, key string, value int) error
 }
 
 func NewCacheHelper(dns string) CacheHelper {
@@ -79,6 +81,22 @@ func (h *cacheHelper) Delete(ctx context.Context, key string) error {
 	value := h.resdis.Del(ctx, key)
 	if value.Err() != nil {
 		return value.Err()
+	}
+	return nil
+}
+
+func (h *cacheHelper) GetInt(ctx context.Context, key string) (int, error) {
+	val, err := h.resdis.Get(context.Background(), key).Int()
+	if err != nil || err == redis.Nil {
+		return 0, nil
+	}
+	return val, nil
+}
+
+func (h *cacheHelper) SetInt(ctx context.Context, key string, value int) error {
+	err := h.resdis.Set(ctx, key, value, time.Hour*24).Err()
+	if err != nil {
+		return err
 	}
 	return nil
 }
