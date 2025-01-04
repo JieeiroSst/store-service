@@ -27,3 +27,7 @@ dependencies:
     name: redis
     version: "0.1.0"
     repository: file://redis
+  - alias: nats
+    name: nats
+    version: "0.1.0"
+    repository: file://nats

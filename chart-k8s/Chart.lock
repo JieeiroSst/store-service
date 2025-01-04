@@ -14,5 +14,8 @@ dependencies:
 - name: redis
   repository: file://redis
   version: 0.1.0
-digest: sha256:94ce2480c204456965ac57b3d65f54ba69f9faa3b01f7e0eb1eaed3bb58cf62e
-generated: "2025-01-04T22:49:49.153854+07:00"
+- name: nats
+  repository: file://nats
+  version: 0.1.0
+digest: sha256:5b335dc61f3731128edd07cdedabd778defdea107d55883d4c0550fe302cb7ea
+generated: "2025-01-04T23:23:25.637126+07:00"
