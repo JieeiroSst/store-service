@@ -1,46 +1,27 @@
 {
     "server": {
-        "PortServer": 1235,
-        "PortServerGrpc": 1236
+        "PortServer": "1235",
+        "PortServerGrpc": "1236"
     },
     "secret": {
         "JwtSecretKey": "secretkey",
         "AuthorizeKey": "no_name"
     },
-    "mysql": {
-        "MysqlHost": "localhost",
-        "MysqlPort": 3307,
-        "MysqlUser": "root",
-        "MysqlPassword": 1234,
-        "MysqlDbname": "user",
-        "MysqlDriver": "mysql"
-    },
-    "rabbitmq": {
-        "Host": "localhost",
-        "Port": 5672,
-        "User": "guest",
-        "Password": "guest",
-        "Exchange": "emails-exchange",
-        "Queue": "emails-queue",
-        "RoutingKey": "emails-routing-key",
-        "ConsumerTag": "emails-consumer",
-        "WorkerPoolSize": 24
-    },
     "redis": {
-        "dns": "localhost:7002"
+        "dns": "localhost:31001"
     },
     "email": {
         "NameEmail": "luumanhquan7@gmail.com",
         "PasswordEmail": "#############",
-        "Port": 587,
+        "Port": "587",
         "Host": "smtp.gmail.com"
     },
-    "postgres": {
-        "PostgresqlHost": "kesavan.db.elephantsql.com",
-        "PostgresqlPort": 5432,
-        "PostgresqlUser": "kekxrkco",
-        "PostgresqlPassword": "61zIfY1T1lbg9A_xsJMYxetluLZyvuit",
-        "PostgresqlDbname": "kekxrkco",
+	"postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "31000",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "user",
         "PgDriver": "pgx"
     }
 }

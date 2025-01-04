@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -39,24 +38,15 @@ var (
 func main() {
 	router := gin.Default()
 
-	nodeEnv := os.Getenv("NODE_ENV")
-
 	dirEnv, err = config.ReadFileEnv(".env")
 	if err != nil {
 		log.Error(err.Error())
 	}
-	if !strings.EqualFold(nodeEnv, "") {
-		consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
-		conf, err = consul.ConnectConfigConsul()
-		if err != nil {
-			log.Error(err.Error())
-		}
-	} else {
-		dir := "config.yml"
-		conf, err = config.ReadConf(dir)
-		if err != nil {
-			log.Error(err.Error())
-		}
+
+	consul := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul)
+	conf, err = consul.ConnectConfigConsul()
+	if err != nil {
+		log.Error(err.Error())
 	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
