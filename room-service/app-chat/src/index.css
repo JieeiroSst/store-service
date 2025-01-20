@@ -1,0 +1,204 @@
+.container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .rooms-list {
+    flex: 0 0 300px;
+    border-right: 1px solid #ddd;
+    padding-right: 20px;
+  }
+  
+  .rooms-header {
+    margin-bottom: 20px;
+  }
+  
+  .rooms-container {
+    overflow-y: auto;
+    max-height: calc(100vh - 300px);
+  }
+  
+  .room-item {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .room-item:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .room-item.active {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+  }
+  
+  .room-name {
+    font-weight: bold;
+  }
+  
+  .room-users {
+    font-size: 0.9em;
+    color: #666;
+  }
+  
+  .chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  
+  .chat-header {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+  }
+  
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  
+  .message {
+    margin-bottom: 15px;
+    max-width: 70%;
+  }
+  
+  .message.sent {
+    margin-left: auto;
+    background-color: #e3f2fd;
+    border-radius: 15px 15px 0 15px;
+  }
+  
+  .message.received {
+    margin-right: auto;
+    background-color: #f5f5f5;
+    border-radius: 15px 15px 15px 0;
+  }
+  
+  .message .username {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .message .content {
+    padding: 10px;
+    word-break: break-word;
+  }
+  
+  .message .content img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  
+  .message .timestamp {
+    font-size: 0.8em;
+    color: #666;
+    text-align: right;
+    padding: 4px 8px;
+  }
+  
+  .typing-indicator {
+    padding: 8px;
+    color: #666;
+    font-style: italic;
+  }
+  
+  .input-container {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .input-container input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .input-container button {
+    padding: 8px 16px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .input-container button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .input-container .file-upload {
+    display: none;
+  }
+  
+  .input-container .upload-btn {
+    background-color: #4caf50;
+  }
+  
+  .create-room-form {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .create-room-form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .error {
+    color: #f44336;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #f44336;
+    border-radius: 4px;
+  }
+  
+  .loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #666;
+    padding: 20px;
+  }
+  
+  /* Utility classes */
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
+  
+  .ml-2 {
+    margin-left: 0.5rem;
+  }
+  
+  .w-full {
+    width: 100%;
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }

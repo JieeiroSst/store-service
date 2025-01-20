@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: calc(100vh - 40px);
+            padding: 0 20px;
+        }
+
+        .rooms-list {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .rooms-header {
+            margin-bottom: 20px;
+        }
+
+        .rooms-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .create-room-form {
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .message.sent {
+            background: #007bff;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message.received {
+            background: #f0f0f0;
+            align-self: flex-start;
+        }
+
+        .message .username {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .message .timestamp {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .message img {
+            max-width: 300px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .input-container {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="text"], 
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .file-upload {
+            display: none;
+        }
+
+        .upload-btn {
+            background: #28a745;
+        }
+
+        .upload-btn:hover {
+            background: #218838;
+        }
+
+        .room-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .room-item:hover {
+            background: #f5f5f5;
+        }
+
+        .room-item.active {
+            background: #e3f2fd;
+        }
+
+        .room-name {
+            font-weight: bold;
+        }
+
+        .room-users {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .success {
+            color: #28a745;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .typing-indicator {
+            padding: 10px;
+            color: #666;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+
+            .rooms-list {
+                display: none;
+            }
+
+            .rooms-list.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="rooms-list">
+            <div class="rooms-header">
+                <h2>Chat Rooms</h2>
+                <div id="user-info"></div>
+            </div>
+            <div class="rooms-container" id="rooms">
+                <div class="loading">Loading rooms...</div>
+            </div>
+            <div class="create-room-form">
+                <h3>Create New Room</h3>
+                <div style="margin-top: 10px;">
+                    <input type="text" id="new-room-name" placeholder="Room name">
+                </div>
+                <div style="margin-top: 10px;">
+                    <input type="password" id="new-room-password" placeholder="Room password">
+                </div>
+                <div style="margin-top: 10px;">
+                    <button onclick="createRoom()">Create Room</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2 id="current-room-name">Select a Room</h2>
+                <div id="room-info"></div>
+            </div>
+            <div class="chat-messages" id="messages">
+                <div class="loading">Join a room to start chatting</div>
+            </div>
+            <div id="typing-indicator" class="typing-indicator" style="display: none;"></div>
+            <div class="input-container">
+                <input type="text" id="message-input" placeholder="Type a message..." disabled>
+                <input type="file" id="file-upload" class="file-upload" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('file-upload').click()" disabled>
+                    Upload Image
+                </button>
+                <button id="send-button" onclick="sendMessage()" disabled>Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRoom = null;
+        let socket = null;
+        let username = null;
+        let typingTimeout = null;
+
+        // Initialize the application
+        async function init() {
+            const token = localStorage.getItem('chatToken');
+            username = localStorage.getItem('username');
+            
+            if (token && username) {
+                updateUserInfo();
+                loadRooms();
+            } else {
+                promptLogin();
+            }
+
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Message input events
+            const messageInput = document.getElementById('message-input');
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+                handleTyping();
+            });
+
+            // File upload handling
+            const fileUpload = document.getElementById('file-upload');
+            fileUpload.addEventListener('change', handleFileUpload);
+
+            // Window events
+            window.addEventListener('focus', function() {
+                if (currentRoom) loadMessages(currentRoom);
+            });
+        }
+
+        function handleTyping() {
+            if (!socket || !currentRoom) return;
+
+            if (typingTimeout) clearTimeout(typingTimeout);
+
+            socket.send(JSON.stringify({
+                type: 'typing',
+                roomId: currentRoom,
+                username: username
+            }));
+
+            typingTimeout = setTimeout(() => {
+                socket.send(JSON.stringify({
+                    type: 'stop_typing',
+                    roomId: currentRoom,
+                    username: username
+                }));
+            }, 1000);
+        }
+
+        async function loadRooms() {
+            try {
+                console.log('Attempting to load rooms...');
+                const response = await fetch('http://localhost:8081/rooms');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const rooms = await response.json();
+                console.log('Rooms loaded:', rooms);
+                
+                const roomsDiv = document.getElementById('rooms');
+                if (!Array.isArray(rooms)) {
+                    throw new Error('Expected rooms data to be an array');
+                }
+                
+                roomsDiv.innerHTML = rooms.map(room => `
+                    <div class="room-item ${currentRoom === room.id ? 'active' : ''}" 
+                        onclick="joinRoom(${room.id || 0})">
+                        <div class="room-name">${escapeHtml(room.name)}</div>
+                        <div class="room-users">${room.activeUsers || 0} online</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Detailed error loading rooms:', error);
+                const roomsDiv = document.getElementById('rooms');
+                roomsDiv.innerHTML = `
+                    <div class="error">
+                        Error loading rooms: ${error.message}
+                        <br>
+                        <button onclick="loadRooms()" style="margin-top: 10px;">
+                            Retry
+                        </button>
+                    </div>`;
+            }
+        }
+
+        async function createRoom() {
+            const nameInput = document.getElementById('new-room-name');
+            const passwordInput = document.getElementById('new-room-password');
+            
+            const name = nameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!name || !password) {
+                alert('Please enter both room name and password');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8081/rooms', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, password })
+                });
+
+                if (response.ok) {
+                    nameInput.value = '';
+                    passwordInput.value = '';
+                    loadRooms();
+                } else {
+                    const error = await response.json();
+                    alert(error.message || 'Failed to create room');
+                }
+            } catch (error) {
+                console.error('Error creating room:', error);
+                alert('Failed to create room');
+            }
+        }
+
+        async function joinRoom(roomId) {
+            if (!username) {
+                promptLogin();
+                return;
+            }
+
+            const password = prompt('Enter room password:');
+            if (!password) return;
+
+            try {
+                const response = await fetch(`http://localhost:8081/rooms/${roomId}/join`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+
+                if (response.ok) {
+                    const {token} = await response.json();
+                    localStorage.setItem('chatToken', token);
+                    currentRoom = roomId;
+                    
+                    // Update UI
+                    document.getElementById('message-input').disabled = false;
+                    document.getElementById('send-button').disabled = false;
+                    document.querySelector('.upload-btn').disabled = false;
+                    
+                    // Connect and load data
+                    connectWebSocket(token);
+                    loadMessages(roomId);
+                    loadRooms();
+                    updateRoomInfo(roomId);
+                } else {
+                    alert('Invalid password');
+                }
+            } catch (error) {
+                console.error('Error joining room:', error);
+                alert('Failed to join room');
+            }
+        }
+
+        function connectWebSocket(token) {
+            if (socket) {
+                socket.close();
+            }
+
+            socket = new WebSocket(`ws://localhost:8081/ws?token=${token}&room_id=${currentRoom}`);
+            
+            socket.onmessage = function(event) {
+                const message = JSON.parse(event.data);
+                if (message.type === 'typing') {
+                    showTypingIndicator(message.username);
+                } else if (message.type === 'stop_typing') {
+                    hideTypingIndicator(message.username);
+                } else {
+                    appendMessage(message);
+                }
+            };
+
+            socket.onopen = function() {
+                console.log('Connected to chat server');
+            };
+
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+
+            socket.onclose = function() {
+                console.log('Disconnected from chat server');
+            };
+        }
+
+        async function loadMessages(roomId) {
+            try {
+                const response = await fetch(`http://localhost:8081/rooms/${roomId}/messages`, {
+                    headers: getAuthHeaders()
+                });
+                const messages = await response.json();
+                
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML = '';
+                messages.reverse().forEach(appendMessage);
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                document.getElementById('messages').innerHTML = 
+                    '<div class="error">Error loading messages</div>';
+            }
+        }
+
+        function appendMessage(message) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.username === username ? 'sent' : 'received'}`;
+            
+            let content = '';
+            if (message.type === 'image') {
+                content = `<img src="${message.content}" alt="Shared image">`;
+            } else {
+                content = escapeHtml(message.content);
+            }
+
+            messageDiv.innerHTML = `
+                <div class="username">${escapeHtml(message.username)}</div>
+                <div class="content">${content}</div>
+                <div class="timestamp">${formatDate(message.timestamp)}</div>
+            `;
+
+            messagesDiv.insertBefore(messageDiv, messagesDiv.firstChild);
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const content = input.value.trim();
+            
+            if (!content || !socket) return;
+
+            try {
+                socket.send(JSON.stringify({
+                    type: 'text',
+                    content: content,
+                    roomId: currentRoom
+                }));
+
+                input.value = '';
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message');
+            }
+        }
+
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Check file size (limit to 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                return;
+            }
+
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                alert('Only image files are allowed');
+                return;
+            }
+
+            try {
+                const base64 = await convertFileToBase64(file);
+                
+                socket.send(JSON.stringify({
+                    type: 'image',
+                    content: base64,
+                    roomId: currentRoom
+                }));
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                alert('Failed to upload file');
+            }
+
+            // Clear the input
+            event.target.value = '';
+        }
+
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function promptLogin() {
+            username = prompt('Enter your username to start chatting:');
+            if (username) {
+                localStorage.setItem('username', username);
+                updateUserInfo();
+                loadRooms();
+            } else {
+                setTimeout(promptLogin, 500);
+            }
+        }
+
+        function updateUserInfo() {
+            const userInfo = document.getElementById('user-info');
+            userInfo.innerHTML = `
+                <div style="margin-top: 10px;">
+                    Logged in as: <strong>${escapeHtml(username)}</strong>
+                    <button onclick="logout()" style="margin-left: 10px;">Logout</button>
+                </div>
+            `;
+        }
+
+        async function updateRoomInfo(roomId) {
+            try {
+                const response = await fetch(`http://localhost:8081/rooms/${roomId}/messages`, {
+                    headers: getAuthHeaders()
+                });
+                const room = await response.json();
+                
+                document.getElementById('current-room-name').textContent = room.name;
+                document.getElementById('room-info').textContent = 
+                    `${room.ActiveUsers || 0} users online`;
+            } catch (error) {
+                console.error('Error updating room info:', error);
+            }
+        }
+
+        function showTypingIndicator(typingUsername) {
+            if (typingUsername === username) return;
+            
+            const indicator = document.getElementById('typing-indicator');
+            indicator.textContent = `${escapeHtml(typingUsername)} is typing...`;
+            indicator.style.display = 'block';
+        }
+
+        function hideTypingIndicator(typingUsername) {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator.textContent.includes(typingUsername)) {
+                indicator.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('chatToken');
+            localStorage.removeItem('username');
+            username = null;
+            currentRoom = null;
+            
+            if (socket) {
+                socket.close();
+                socket = null;
+            }
+
+            // Reset UI
+            document.getElementById('messages').innerHTML = 
+                '<div class="loading">Join a room to start chatting</div>';
+            document.getElementById('message-input').disabled = true;
+            document.getElementById('send-button').disabled = true;
+            document.querySelector('.upload-btn').disabled = true;
+            document.getElementById('current-room-name').textContent = 'Select a Room';
+            document.getElementById('room-info').textContent = '';
+            
+            promptLogin();
+        }
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('chatToken');
+            return {
+                'Authorization': token ? `Bearer ${token}` : '',
+                'Content-Type': 'application/json'
+            };
+        }
+
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';  // Return empty string if input is null/undefined
+            return String(unsafe)    // Convert to string in case of numbers or other types
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('en-US', { 
+                hour: 'numeric', 
+                minute: 'numeric',
+                hour12: true,
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Reconnection logic
+        function setupReconnection() {
+            let reconnectAttempts = 0;
+            const maxReconnectAttempts = 5;
+            const baseDelay = 1000; // Start with 1 second delay
+
+            window.addEventListener('online', () => {
+                if (currentRoom) {
+                    reconnectAttempts = 0;
+                    attemptReconnect();
+                }
+            });
+
+            function attemptReconnect() {
+                if (reconnectAttempts >= maxReconnectAttempts) {
+                    alert('Unable to reconnect to chat. Please refresh the page.');
+                    return;
+                }
+
+                const delay = baseDelay * Math.pow(2, reconnectAttempts);
+                setTimeout(() => {
+                    const token = localStorage.getItem('chatToken');
+                    if (token) {
+                        connectWebSocket(token);
+                        reconnectAttempts++;
+                    }
+                }, delay);
+            }
+
+            // Monitor WebSocket state
+            setInterval(() => {
+                if (socket && socket.readyState === WebSocket.CLOSED) {
+                    attemptReconnect();
+                }
+            }, 5000);
+        }
+
+        // Handle mobile view
+        function setupMobileView() {
+            const toggleButton = document.createElement('button');
+            toggleButton.textContent = 'Rooms';
+            toggleButton.className = 'mobile-toggle';
+            toggleButton.style.display = 'none';
+
+            document.body.appendChild(toggleButton);
+
+            function handleResize() {
+                if (window.innerWidth <= 768) {
+                    toggleButton.style.display = 'block';
+                } else {
+                    toggleButton.style.display = 'none';
+                    document.querySelector('.rooms-list').classList.remove('active');
+                }
+            }
+
+            toggleButton.addEventListener('click', () => {
+                document.querySelector('.rooms-list').classList.toggle('active');
+            });
+
+            window.addEventListener('resize', handleResize);
+            handleResize();
+        }
+
+        // Image preview
+        function setupImagePreview() {
+            document.addEventListener('click', (e) => {
+                if (e.target.tagName === 'IMG' && e.target.parentElement.classList.contains('message')) {
+                    const modal = document.createElement('div');
+                    modal.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0,0,0,0.8);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 1000;
+                        cursor: pointer;
+                    `;
+
+                    const img = document.createElement('img');
+                    img.src = e.target.src;
+                    img.style.cssText = `
+                        max-width: 90%;
+                        max-height: 90%;
+                        object-fit: contain;
+                    `;
+
+                    modal.appendChild(img);
+                    document.body.appendChild(modal);
+
+                    modal.onclick = () => {
+                        modal.remove();
+                    };
+                }
+            });
+        }
+
+        // Initialize everything
+        window.onload = function() {
+            init();
+            setupReconnection();
+            setupMobileView();
+            setupImagePreview();
+        };
+    </script>
+</body>
+</html>
