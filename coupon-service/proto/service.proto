@@ -168,6 +168,8 @@ message Coupon {
     int32 current_uses = 10;
     google.protobuf.Timestamp created_at = 11;
     google.protobuf.Timestamp updated_at = 12;
+    double discount_value = 13;
+    string type = 14;
 }
 
 message CouponRestriction {
@@ -206,6 +208,8 @@ message CreateCouponRequest {
     google.protobuf.Timestamp end_date = 6;
     bool is_active = 7;
     int32 max_uses = 8;
+    double discount_value = 9;
+    string type = 10;
 }
 
 message GetCouponRequest {
@@ -222,6 +226,8 @@ message UpdateCouponRequest {
     google.protobuf.Timestamp end_date = 7;
     bool is_active = 8;
     int32 max_uses = 9;
+    double discount_value = 10;
+    string type = 11;
 }
 
 message DeleteCouponRequest {

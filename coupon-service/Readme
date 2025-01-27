@@ -102,3 +102,49 @@ which protoc-gen-go-grpc
 
 ```
 ```
+
+```
+.
+├── Makefile
+├── Readme
+├── cmd
+│   └── main.go
+├── consul.json
+├── gateway
+│   └── proto
+│       ├── service.pb.go
+│       ├── service.pb.gw.go
+│       └── service_grpc.pb.go
+├── go.mod
+├── go.sum
+├── googleapis...
+├── internal
+│   ├── config
+│   │   └── config.go
+│   ├── delivery
+│   │   ├── consumer
+│   │   │   └── consumer.go
+│   │   ├── cron
+│   │   │   └── cron.go
+│   │   └── http
+│   │       └── http.go
+│   ├── dto
+│   │   └── dto.go
+│   ├── model
+│   │   └── model.go
+│   ├── repository
+│   │   ├── coupon.go
+│   │   ├── coupon_restriction.go
+│   │   ├── coupon_usage.go
+│   │   ├── repository.go
+│   │   └── user_coupon.go
+│   └── usecase
+│       ├── cache.go
+│       ├── coupon.go
+│       ├── coupon_restriction.go
+│       ├── coupon_usage.go
+│       ├── usecase.go
+│       └── user_coupon.go
+└── proto
+    └── service.proto
+```
