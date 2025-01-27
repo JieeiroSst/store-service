@@ -1,0 +1,20 @@
+{
+	"server": {
+		"PortHttpServer": "1234",
+		"PortGrpcServer": "1231"
+	},
+	"postgres": {
+		"PostgresqlHost": "localhost",
+		"PostgresqlPort": "31000",
+		"PostgresqlUser": "postgres",
+		"PostgresqlPassword": "postgres",
+		"PostgresqlDbname": "coupon",
+		"PgDriver": "pgx"
+	},
+	"cache": {
+		"URL": "localhost:31001"
+	},
+	"nats": {
+		"DNS": "localhost:30002"
+	}
+}
