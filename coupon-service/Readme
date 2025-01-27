@@ -1,0 +1,104 @@
+```
+Database
+
+-- Coupons table - stores coupon definitions
+CREATE TABLE coupons (
+    id BIGSERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    type VARCHAR(20) NOT NULL, -- 'percentage', 'fixed_amount', 'buy_x_get_y'
+    discount_value DECIMAL(10,2) NOT NULL, -- percentage or fixed amount
+    minimum_purchase DECIMAL(10,2) DEFAULT 0,
+    max_discount_amount DECIMAL(10,2), -- NULL for unlimited
+    description TEXT,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    is_active BOOLEAN DEFAULT true,
+    max_uses INTEGER, -- NULL for unlimited
+    current_uses INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Additional constraints
+    CONSTRAINT valid_dates CHECK (end_date > start_date),
+    CONSTRAINT valid_discount CHECK (discount_value > 0),
+    CONSTRAINT valid_minimum CHECK (minimum_purchase >= 0)
+);
+
+-- Coupon Restrictions table - for category/product specific restrictions
+CREATE TABLE coupon_restrictions (
+    id BIGSERIAL PRIMARY KEY,
+    coupon_id BIGINT REFERENCES coupons(id),
+    restriction_type VARCHAR(20) NOT NULL, -- 'category', 'product', 'user_group'
+    restricted_entity_id BIGINT NOT NULL,
+    is_exclude BOOLEAN DEFAULT false, -- true for exclusion, false for inclusion
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE(coupon_id, restriction_type, restricted_entity_id)
+);
+
+-- Coupon Usage table - tracks individual coupon usage
+CREATE TABLE coupon_usage (
+    id BIGSERIAL PRIMARY KEY,
+    coupon_id BIGINT REFERENCES coupons(id),
+    user_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
+    discount_amount DECIMAL(10,2) NOT NULL,
+    used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE(order_id, coupon_id)
+);
+
+-- User Coupon table - for user-specific coupons
+CREATE TABLE user_coupons (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    coupon_id BIGINT REFERENCES coupons(id),
+    is_used BOOLEAN DEFAULT false,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    used_at TIMESTAMP,
+    
+    UNIQUE(user_id, coupon_id)
+);
+
+-- Indexes for performance
+CREATE INDEX idx_coupons_code ON coupons(code);
+CREATE INDEX idx_coupons_dates ON coupons(start_date, end_date);
+CREATE INDEX idx_coupon_usage_user ON coupon_usage(user_id);
+CREATE INDEX idx_coupon_usage_order ON coupon_usage(order_id);
+
+```
+
+```
+Multiple coupon types (percentage, fixed amount, buy X get Y)
+Time-based validity
+Usage limits (per coupon and per user)
+Minimum purchase requirements
+Maximum discount caps
+Product/category restrictions
+User-specific coupons
+```
+
+```
+```
+git clone https://github.com/googleapis/googleapis.git
+
+# Ensure Go is installed
+go version
+
+# Install protoc plugins
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+
+# Check GOPATH
+echo $GOPATH
+
+# Add Go binaries to PATH
+export PATH=$PATH:$(go env GOPATH)/bin
+
+which protoc-gen-go-grpc
+
+
+```
+```
