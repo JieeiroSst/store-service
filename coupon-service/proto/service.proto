@@ -1,0 +1,397 @@
+syntax = "proto3";
+
+package coupon;
+
+option go_package = "./pb";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service CouponService {
+    rpc CreateCoupon(CreateCouponRequest) returns (Coupon) {
+        option (google.api.http) = {
+            post: "/v1/coupons"
+            body: "*"
+        };
+    }
+    rpc GetCoupon(GetCouponRequest) returns (Coupon) {
+        option (google.api.http) = {
+            get: "/v1/coupons/{id}"
+        };
+    }
+    rpc UpdateCoupon(UpdateCouponRequest) returns (Coupon) {
+        option (google.api.http) = {
+            put: "/v1/coupons/{id}"
+            body: "*"
+        };
+    }
+    rpc DeleteCoupon(DeleteCouponRequest) returns (DeleteCouponResponse) {
+        option (google.api.http) = {
+            delete: "/v1/coupons/{id}"
+        };
+    }
+    rpc ListCoupons(ListCouponsRequest) returns (ListCouponsResponse) {
+        option (google.api.http) = {
+            get: "/v1/coupons"
+        };
+    }
+    rpc CreateCouponRestriction(CreateCouponRestrictionRequest) returns (CouponRestriction) {
+        option (google.api.http) = {
+            post: "/v1/coupons/{coupon_id}/restrictions"
+            body: "*"
+        };
+    }
+    rpc GetCouponRestriction(GetCouponRestrictionRequest) returns (CouponRestriction) {
+        option (google.api.http) = {
+            get: "/v1/coupons/{coupon_id}/restrictions/{id}"
+        };
+    }
+    rpc UpdateCouponRestriction(UpdateCouponRestrictionRequest) returns (CouponRestriction) {
+        option (google.api.http) = {
+            put: "/v1/coupons/{coupon_id}/restrictions/{id}"
+            body: "*"
+        };
+    }
+    rpc DeleteCouponRestriction(DeleteCouponRestrictionRequest) returns (DeleteCouponRestrictionResponse) {
+        option (google.api.http) = {
+            delete: "/v1/coupons/{coupon_id}/restrictions/{id}"
+        };
+    }
+    rpc ListCouponRestrictions(ListCouponRestrictionsRequest) returns (ListCouponRestrictionsResponse) {
+        option (google.api.http) = {
+            get: "/v1/coupons/{coupon_id}/restrictions"
+        };
+    }
+
+    rpc CreateUserCoupon(CreateUserCouponRequest) returns (UserCoupon) {
+        option (google.api.http) = {
+            post: "/v1/users/{user_id}/coupons"
+            body: "*"
+        };
+    }
+
+    rpc GetUserCoupon(GetUserCouponRequest) returns (UserCoupon) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/coupons/{id}"
+        };
+    }
+
+    rpc ListUserCoupons(ListUserCouponsRequest) returns (ListUserCouponsResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/coupons"
+        };
+    }
+
+    rpc UseUserCoupon(UseUserCouponRequest) returns (UserCoupon) {
+        option (google.api.http) = {
+            post: "/v1/users/{user_id}/coupons/{id}/use"
+        };
+    }
+
+    rpc UnuseUserCoupon(UnuseUserCouponRequest) returns (UserCoupon) {
+        option (google.api.http) = {
+            post: "/v1/users/{user_id}/coupons/{id}/unuse"
+        };
+    }
+
+    rpc ListCouponUsages(ListCouponUsagesRequest) returns (ListCouponUsagesResponse) {
+        option (google.api.http) = {
+            get: "/v1/coupons/{coupon_id}/usages"
+        };
+    }
+
+    rpc ListUserCouponUsages(ListUserCouponUsagesRequest) returns (ListUserCouponUsagesResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/coupons/{coupon_id}/usages"
+        };
+    }
+
+    rpc ListUserCouponUsagesByOrder(ListUserCouponUsagesByOrderRequest) returns (ListUserCouponUsagesByOrderResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/orders/{order_id}/coupons"
+        };
+    }
+
+    rpc ListUserCouponUsagesByCoupon(ListUserCouponUsagesByCouponRequest) returns (ListUserCouponUsagesByCouponResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/coupons/{coupon_id}/orders"
+        };
+    }
+
+    rpc ListUserCouponUsagesByOrderAndCoupon(ListUserCouponUsagesByOrderAndCouponRequest) returns (ListUserCouponUsagesByOrderAndCouponResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/orders/{order_id}/coupons/{coupon_id}"
+        };
+    }
+
+    rpc ListUserCouponUsagesByOrderAndCouponAndUser(ListUserCouponUsagesByOrderAndCouponAndUserRequest) returns (ListUserCouponUsagesByOrderAndCouponAndUserResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/orders/{order_id}/coupons/{coupon_id}/users/{user_id}"
+        };
+    }
+
+    rpc ListUserCouponUsagesByOrderAndUser(ListUserCouponUsagesByOrderAndUserRequest) returns (ListUserCouponUsagesByOrderAndUserResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/orders/{order_id}/users/{user_id}/coupons"
+        };
+    }
+
+    rpc ListUserCouponUsagesByCouponAndUser(ListUserCouponUsagesByCouponAndUserRequest) returns (ListUserCouponUsagesByCouponAndUserResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/coupons/{coupon_id}/users/{user_id}/orders"
+        };
+    }
+
+    rpc ListUserCouponUsagesByUser(ListUserCouponUsagesByUserRequest) returns (ListUserCouponUsagesByUserResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/coupons/users/{user_id}/orders"
+        };
+    }
+
+    rpc ListUserCouponUsagesByOrderAndUserAndCoupon(ListUserCouponUsagesByOrderAndUserAndCouponRequest) returns (ListUserCouponUsagesByOrderAndUserAndCouponResponse) {
+        option (google.api.http) = {
+            get: "/v1/users/{user_id}/orders/{order_id}/users/{user_id}/coupons/{coupon_id}"
+        };
+    }
+}
+
+message Coupon {
+    int64 id = 1;
+    string code = 2;
+    double minimum_purchase = 3;
+    double max_discount_amount = 4;
+    string description = 5;
+    google.protobuf.Timestamp start_date = 6;
+    google.protobuf.Timestamp end_date = 7;
+    bool is_active = 8;
+    int32 max_uses = 9;
+    int32 current_uses = 10;
+    google.protobuf.Timestamp created_at = 11;
+    google.protobuf.Timestamp updated_at = 12;
+}
+
+message CouponRestriction {
+    int64 id = 1;
+    int64 coupon_id = 2;
+    string restriction_type = 3;
+    int64 restricted_entity_id = 4;
+    bool is_exclude = 5;
+    google.protobuf.Timestamp created_at = 6;
+}
+
+message CouponUsage {
+    int64 id = 1;
+    int64 coupon_id = 2;
+    int64 user_id = 3;
+    int64 order_id = 4;
+    double discount_amount = 5;
+    google.protobuf.Timestamp used_at = 6;
+}
+
+message UserCoupon {
+    int64 id = 1;
+    int64 user_id = 2;
+    int64 coupon_id = 3;
+    bool is_used = 4;
+    google.protobuf.Timestamp assigned_at = 5;
+    google.protobuf.Timestamp used_at = 6;
+}
+
+message CreateCouponRequest {
+    string code = 1;
+    double minimum_purchase = 2;
+    double max_discount_amount = 3;
+    string description = 4;
+    google.protobuf.Timestamp start_date = 5;
+    google.protobuf.Timestamp end_date = 6;
+    bool is_active = 7;
+    int32 max_uses = 8;
+}
+
+message GetCouponRequest {
+    int64 id = 1;
+}
+
+message UpdateCouponRequest {
+    int64 id = 1;
+    string code = 2;
+    double minimum_purchase = 3;
+    double max_discount_amount = 4;
+    string description = 5;
+    google.protobuf.Timestamp start_date = 6;
+    google.protobuf.Timestamp end_date = 7;
+    bool is_active = 8;
+    int32 max_uses = 9;
+}
+
+message DeleteCouponRequest {
+    int64 id = 1;
+}
+
+message DeleteCouponRestrictionResponse {
+    bool success = 1;
+}
+
+message DeleteCouponResponse {
+    bool success = 1;
+}
+
+message ListCouponsRequest {
+    // Add fields if necessary
+}
+
+message ListCouponsResponse {
+    repeated Coupon coupons = 1;
+}
+
+message CreateCouponRestrictionRequest {
+    int64 coupon_id = 1;
+    string restriction_type = 2;
+    int64 restricted_entity_id = 3;
+    bool is_exclude = 4;
+}
+
+message GetCouponRestrictionRequest {
+    int64 coupon_id = 1;
+    int64 id = 2;
+}
+
+message UpdateCouponRestrictionRequest {
+    int64 coupon_id = 1;
+    int64 id = 2;
+    string restriction_type = 3;
+    int64 restricted_entity_id = 4;
+    bool is_exclude = 5;
+}
+
+message DeleteCouponRestrictionRequest {
+    int64 coupon_id = 1;
+    int64 id = 2;
+}
+
+message ListCouponRestrictionsRequest {
+    int64 coupon_id = 1;
+}
+
+message ListCouponRestrictionsResponse {
+    repeated CouponRestriction restrictions = 1;
+}
+
+message CreateUserCouponRequest {
+    int64 user_id = 1;
+    int64 coupon_id = 2;
+}
+
+message GetUserCouponRequest {
+    int64 user_id = 1;
+    int64 id = 2;
+}
+
+message ListUserCouponsRequest {
+    int64 user_id = 1;
+}
+
+message ListUserCouponsResponse {
+    repeated UserCoupon user_coupons = 1;
+}
+
+message UseUserCouponRequest {
+    int64 user_id = 1;
+    int64 id = 2;
+}
+
+message ListCouponUsagesRequest {
+    int64 coupon_id = 1;
+}
+
+message ListCouponUsagesResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesRequest {
+    int64 user_id = 1;
+    int64 coupon_id = 2;
+}
+
+message UnuseUserCouponRequest {
+    int64 user_id = 1;
+    int64 id = 2;
+}
+
+message ListUserCouponUsagesResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByOrderRequest {
+    int64 user_id = 1;
+    int64 order_id = 2;
+}
+
+message ListUserCouponUsagesByOrderResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByOrderAndCouponRequest {
+    int64 user_id = 1;
+    int64 order_id = 2;
+    int64 coupon_id = 3;
+}
+
+message ListUserCouponUsagesByCouponRequest {
+    int64 user_id = 1;
+    int64 coupon_id = 2;
+}
+
+message ListUserCouponUsagesByCouponResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByOrderAndCouponResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByOrderAndCouponAndUserRequest {
+    int64 user_id = 1;
+    int64 order_id = 2;
+    int64 coupon_id = 3;
+}
+
+message ListUserCouponUsagesByOrderAndUserAndCouponRequest {
+    int64 user_id = 1;
+    int64 order_id = 2;
+    int64 coupon_id = 3;
+}
+
+message ListUserCouponUsagesByOrderAndUserAndCouponResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByOrderAndCouponAndUserResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByOrderAndUserRequest {
+    int64 user_id = 1;
+    int64 order_id = 2;
+}
+
+message ListUserCouponUsagesByOrderAndUserResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByUserRequest {
+    int64 user_id = 1;
+}
+
+message ListUserCouponUsagesByCouponAndUserRequest {
+    int64 user_id = 1;
+    int64 coupon_id = 2;
+}
+
+message ListUserCouponUsagesByCouponAndUserResponse {
+    repeated CouponUsage usages = 1;
+}
+
+message ListUserCouponUsagesByUserResponse {
+    repeated CouponUsage usages = 1;
+}
