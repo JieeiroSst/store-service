@@ -4,18 +4,28 @@ import (
 	"context"
 
 	pd "github.com/JIeeiroSst/coupon-service/gateway/proto"
+	"github.com/JIeeiroSst/coupon-service/internal/usecase"
 )
 
 type Handler struct {
+	usecase *usecase.Usecase
 	pd.UnimplementedCouponServiceServer
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(usecase *usecase.Usecase) *Handler {
+	return &Handler{
+		usecase: usecase,
+	}
 }
 
 func (h *Handler) CreateCoupon(ctx context.Context, in *pd.CreateCouponRequest) (*pd.Coupon, error) {
-	return nil, nil
+	dtoCoupon := buildDtoCoupon(in)
+	coupon, err := h.usecase.CreateCoupon(ctx, &dtoCoupon)
+	if err != nil {
+		return nil, err
+	}
+	pbCoupon := buildPbCoupon(coupon)
+	return &pbCoupon, nil
 }
 
 func (h *Handler) GetCoupon(ctx context.Context, in *pd.GetCouponRequest) (*pd.Coupon, error) {

@@ -16,3 +16,10 @@ consumer:
 
 subscriber:
 	go run main.go subscriber
+
+gen_proxy:
+	protoc -I./googleapis -I. \
+	--go_out=./internal/proxy/${folder}/gateway --go_opt=paths=source_relative \
+	--go-grpc_out=./internal/proxy/${folder}/gateway --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=./internal/proxy/${folder}/gateway --grpc-gateway_opt=paths=source_relative \
+	./internal/proxy${folder}/proto/*.proto

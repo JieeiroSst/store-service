@@ -1,6 +1,8 @@
 package usecase
 
-import "github.com/JIeeiroSst/coupon-service/internal/repository"
+import (
+	"github.com/JIeeiroSst/coupon-service/internal/repository"
+)
 
 type Usecase struct {
 	CouponRestrictionUsecase
@@ -10,15 +12,16 @@ type Usecase struct {
 }
 
 type Dependency struct {
-	Repos *repository.Repositories
-	Cache CacheUsecase
+	Repos    *repository.Repositories
+	RedisURl []string
 }
 
 func NewUsecase(dep *Dependency) *Usecase {
+	cache := NewCacheUsecase(dep.RedisURl)
 	return &Usecase{
-		CouponRestrictionUsecase: NewCouponRestrictionUsecase(dep.Repos.CouponRepository, dep.Cache),
-		CouponUsecase:            NewCouponUsecase(dep.Repos.CouponRepository, dep.Cache),
-		CouponUsageUsecase:       NewCouponUsageUsecase(dep.Repos.CouponRepository, dep.Cache),
-		UserCouponUsecase:        NewUserCouponUsecase(dep.Repos.UserCouponRepository, dep.Cache),
+		CouponRestrictionUsecase: NewCouponRestrictionUsecase(dep.Repos.CouponRestrictionRepository, cache),
+		CouponUsecase:            NewCouponUsecase(dep.Repos.CouponRepository, cache),
+		CouponUsageUsecase:       NewCouponUsageUsecase(dep.Repos.CouponUsageRepository, cache),
+		UserCouponUsecase:        NewUserCouponUsecase(dep.Repos.UserCouponRepository, cache),
 	}
 }

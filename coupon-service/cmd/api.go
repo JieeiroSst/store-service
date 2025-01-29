@@ -10,6 +10,9 @@ import (
 	pd "github.com/JIeeiroSst/coupon-service/gateway/proto"
 	"github.com/JIeeiroSst/coupon-service/internal/config"
 	serverHttp "github.com/JIeeiroSst/coupon-service/internal/delivery/http"
+	"github.com/JIeeiroSst/coupon-service/internal/repository"
+	"github.com/JIeeiroSst/coupon-service/internal/usecase"
+	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 )
@@ -25,7 +28,22 @@ func runAPI() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	server := serverHttp.NewHandler()
+	db := postgres.NewPostgresConn(postgres.PostgresConfig{
+		PostgresqlHost:     config.Postgres.PostgresqlHost,
+		PostgresqlPort:     config.Postgres.PostgresqlPort,
+		PostgresqlUser:     config.Postgres.PostgresqlUser,
+		PostgresqlPassword: config.Postgres.PostgresqlPassword,
+		PostgresqlDbname:   config.Postgres.PostgresqlDbname,
+		PostgresqlSSLMode:  config.Postgres.PostgresqlSSLMode,
+	})
+
+	repository := repository.NewRepositories(db)
+	usecase := usecase.NewUsecase(&usecase.Dependency{
+		Repos:    repository,
+		RedisURl: []string{config.Cache.URL},
+	})
+
+	server := serverHttp.NewHandler(usecase)
 	grpcServer := grpc.NewServer()
 	pd.RegisterCouponServiceServer(grpcServer, server)
 
