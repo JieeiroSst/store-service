@@ -1,27 +1,34 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
-type Request struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
-	Stream   bool      `json:"stream"`
-}
-
-type Message struct {
+// ChatMessage represents a single message in the chat
+type ChatMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
+// ChatRequest represents the incoming chat request
+type ChatRequest struct {
+	Messages []ChatMessage `json:"messages"`
+}
+
+// LlamaRequest represents the request to the Llama service
+type LlamaRequest struct {
+	Model    string        `json:"model"`
+	Messages []ChatMessage `json:"messages"`
+	Stream   bool         `json:"stream"`
+}
+
+// StreamResponse represents the streaming response from Llama
 type StreamResponse struct {
 	Message struct {
 		Role    string `json:"role"`
@@ -30,65 +37,89 @@ type StreamResponse struct {
 	Done bool `json:"done"`
 }
 
-func main() {
-	var history []Message
-	scanner := bufio.NewScanner(os.Stdin)
-
-	fmt.Println("Chat with Llama (type 'quit' to exit)")
-	fmt.Println("--------------------------------------")
-
-	for {
-		fmt.Print("\nYou: ")
-		if !scanner.Scan() {
-			break
-		}
-
-		userInput := scanner.Text()
-		if userInput == "quit" {
-			break
-		}
-
-		history = append(history, Message{
-			Role:    "user",
-			Content: userInput,
-		})
-
-		req := Request{
-			Model:    "llama3.2-vision",
-			Messages: history,
-			Stream:   true,
-		}
-		if err := streamResponse(req, &history); err != nil {
-			log.Printf("Error: %v\n", err)
-			continue
-		}
-	}
+// ChatResponse represents the API response
+type ChatResponse struct {
+	Response string `json:"response"`
 }
 
-func streamResponse(req Request, history *[]Message) error {
+func main() {
+	r := gin.Default()
+
+	// Add CORS middleware
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		
+		c.Next()
+	})
+
+	// Health check endpoint
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status": "healthy",
+		})
+	})
+
+	// Chat endpoint
+	r.POST("/chat", handleChat)
+
+	// Start server
+	log.Fatal(r.Run(":8082"))
+}
+
+func handleChat(c *gin.Context) {
+	var chatReq ChatRequest
+	if err := c.BindJSON(&chatReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	// Create Llama request
+	llamaReq := LlamaRequest{
+		Model:    "llama3.2-vision",
+		Messages: chatReq.Messages,
+		Stream:   true,
+	}
+
+	// Send request to Llama service
+	response, err := sendToLlama(llamaReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, ChatResponse{
+		Response: response,
+	})
+}
+
+func sendToLlama(req LlamaRequest) (string, error) {
 	jsonData, err := json.Marshal(req)
 	if err != nil {
-		return fmt.Errorf("error marshaling request: %v", err)
+		return "", err
 	}
 
 	httpReq, err := http.NewRequest("POST", "http://localhost:11434/api/chat", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return fmt.Errorf("error creating request: %v", err)
+		return "", err
 	}
 	httpReq.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(httpReq)
 	if err != nil {
-		return fmt.Errorf("error sending request: %v", err)
+		return "", err
 	}
 	defer resp.Body.Close()
 
-	fmt.Print("\nAssistant: ")
-
 	decoder := json.NewDecoder(resp.Body)
-	var assistantMessage Message
-	assistantMessage.Role = "assistant"
+	var fullResponse string
 
 	for {
 		var streamResp StreamResponse
@@ -96,20 +127,15 @@ func streamResponse(req Request, history *[]Message) error {
 			if err == io.EOF {
 				break
 			}
-			return fmt.Errorf("error decoding response: %v", err)
+			return "", err
 		}
 
-		fmt.Print(streamResp.Message.Content)
-
-		assistantMessage.Content += streamResp.Message.Content
+		fullResponse += streamResp.Message.Content
 
 		if streamResp.Done {
 			break
 		}
 	}
 
-	*history = append(*history, assistantMessage)
-	fmt.Println()
-
-	return nil
+	return fullResponse, nil
 }
