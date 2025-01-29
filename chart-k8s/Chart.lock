@@ -23,5 +23,8 @@ dependencies:
 - name: rabbitmq
   repository: file://rabbitmq
   version: 0.1.0
-digest: sha256:cfebc29a76f7c28965336095bc48959e11be776d54b93f85c883edba42b0c5ea
-generated: "2025-01-04T23:57:29.339767+07:00"
+- name: ollama
+  repository: file://ollama
+  version: 0.1.0
+digest: sha256:797b8bce71fd9601fc1a2f127b32ece6adfb56a6eca6ab6ad316796b4afe3585
+generated: "2025-01-29T19:19:08.578072+07:00"

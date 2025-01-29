@@ -39,3 +39,7 @@ dependencies:
     name: rabbitmq
     version: "0.1.0"
     repository: file://rabbitmq
+  - alias: ollama
+    name: ollama
+    version: "0.1.0"
+    repository: file://ollama
