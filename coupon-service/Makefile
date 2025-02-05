@@ -22,4 +22,4 @@ gen_proxy:
 	--go_out=./internal/proxy/${folder}/gateway --go_opt=paths=source_relative \
 	--go-grpc_out=./internal/proxy/${folder}/gateway --go-grpc_opt=paths=source_relative \
 	--grpc-gateway_out=./internal/proxy/${folder}/gateway --grpc-gateway_opt=paths=source_relative \
-	./internal/proxy${folder}/proto/*.proto
+	./internal/proxy/${folder}/proto/*.proto
