@@ -1,0 +1,152 @@
+-- Users table to store basic user information
+CREATE TABLE users (
+    user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone_number VARCHAR(15) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    kyc_status ENUM('PENDING', 'VERIFIED', 'REJECTED') DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- Wallets table to store wallet information
+CREATE TABLE wallets (
+    wallet_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    balance DECIMAL(19,4) DEFAULT 0.0000,
+    currency VARCHAR(3) DEFAULT 'USD',
+    wallet_status ENUM('ACTIVE', 'FROZEN', 'CLOSED') DEFAULT 'ACTIVE',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT positive_balance CHECK (balance >= 0)
+);
+
+-- Transactions table to store all wallet transactions
+CREATE TABLE transactions (
+    transaction_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    wallet_id BIGINT NOT NULL,
+    transaction_type ENUM('CREDIT', 'DEBIT', 'TRANSFER', 'REFUND') NOT NULL,
+    amount DECIMAL(19,4) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    status ENUM('PENDING', 'COMPLETED', 'FAILED', 'REVERSED') DEFAULT 'PENDING',
+    description TEXT,
+    reference_id VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (wallet_id) REFERENCES wallets(wallet_id)
+);
+
+-- Payment Methods table to store user's payment methods
+CREATE TABLE payment_methods (
+    payment_method_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    payment_type ENUM('CREDIT_CARD', 'DEBIT_CARD', 'BANK_ACCOUNT', 'UPI') NOT NULL,
+    provider VARCHAR(50) NOT NULL,
+    account_number VARCHAR(255) NOT NULL,
+    is_default BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Transfer History table to store wallet-to-wallet transfers
+CREATE TABLE transfer_history (
+    transfer_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    sender_wallet_id BIGINT NOT NULL,
+    receiver_wallet_id BIGINT NOT NULL,
+    amount DECIMAL(19,4) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    status ENUM('PENDING', 'COMPLETED', 'FAILED', 'REVERSED') DEFAULT 'PENDING',
+    transaction_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_wallet_id) REFERENCES wallets(wallet_id),
+    FOREIGN KEY (receiver_wallet_id) REFERENCES wallets(wallet_id),
+    FOREIGN KEY (transaction_id) REFERENCES transactions(transaction_id)
+);
+
+-- KYC Documents table to store user verification documents
+CREATE TABLE kyc_documents (
+    document_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    document_type ENUM('PASSPORT', 'DRIVING_LICENSE', 'NATIONAL_ID', 'OTHER') NOT NULL,
+    document_number VARCHAR(100) NOT NULL,
+    document_url VARCHAR(255) NOT NULL,
+    verification_status ENUM('PENDING', 'VERIFIED', 'REJECTED') DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Create indexes for better query performance
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_phone ON users(phone_number);
+CREATE INDEX idx_transactions_wallet ON transactions(wallet_id);
+CREATE INDEX idx_transactions_created_at ON transactions(created_at);
+CREATE INDEX idx_transfer_history_sender ON transfer_history(sender_wallet_id);
+CREATE INDEX idx_transfer_history_receiver ON transfer_history(receiver_wallet_id);
+CREATE INDEX idx_payment_methods_user ON payment_methods(user_id);
+
+This database schema includes the following key features:
+
+Users Management
+
+Basic user information
+KYC status tracking
+Account status management
+
+
+Wallet Management
+
+Balance tracking
+Multi-currency support
+Wallet status management
+
+
+Transaction Management
+
+Different transaction types (credit, debit, transfer, refund)
+Transaction status tracking
+Detailed transaction history
+
+
+Payment Methods
+
+Support for multiple payment types
+Default payment method flag
+Payment method status management
+
+
+Transfer System
+
+Wallet-to-wallet transfers
+Transfer status tracking
+Reference to original transaction
+
+
+KYC System
+
+Document management
+Verification status tracking
+Support for multiple document types
+
+
+Security Features
+
+Password hashing
+Balance constraints
+Status tracking for all major entities
+
+
+Performance Optimization
+
+Appropriate indexes for frequent queries
+Timestamp tracking for all records
+Efficient foreign key relationships
