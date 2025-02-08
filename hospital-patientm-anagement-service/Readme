@@ -1,0 +1,145 @@
+-- Create custom types for common enums
+CREATE TYPE gender_type AS ENUM ('Male', 'Female', 'Other');
+CREATE TYPE blood_type AS ENUM ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-');
+CREATE TYPE appointment_status AS ENUM ('Scheduled', 'Completed', 'Cancelled', 'No-Show');
+
+-- Departments
+CREATE TABLE departments (
+    department_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Staff (doctors, nurses, etc.)
+CREATE TABLE staff (
+    staff_id SERIAL PRIMARY KEY,
+    department_id INTEGER REFERENCES departments(department_id),
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    specialization VARCHAR(100),
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    hire_date DATE NOT NULL,
+    license_number VARCHAR(50) UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Patients
+CREATE TABLE patients (
+    patient_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    gender gender_type NOT NULL,
+    blood_type blood_type,
+    address TEXT,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    emergency_contact_name VARCHAR(100),
+    emergency_contact_phone VARCHAR(20),
+    insurance_provider VARCHAR(100),
+    insurance_policy_number VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Medical Records
+CREATE TABLE medical_records (
+    record_id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(patient_id),
+    diagnosis TEXT NOT NULL,
+    treatment_plan TEXT,
+    notes TEXT,
+    created_by INTEGER REFERENCES staff(staff_id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Appointments
+CREATE TABLE appointments (
+    appointment_id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(patient_id),
+    staff_id INTEGER REFERENCES staff(staff_id),
+    department_id INTEGER REFERENCES departments(department_id),
+    appointment_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    status appointment_status DEFAULT 'Scheduled',
+    reason TEXT,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Prescriptions
+CREATE TABLE prescriptions (
+    prescription_id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(patient_id),
+    prescribed_by INTEGER REFERENCES staff(staff_id),
+    medication_name VARCHAR(100) NOT NULL,
+    dosage VARCHAR(50) NOT NULL,
+    frequency VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    instructions TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Lab Results
+CREATE TABLE lab_results (
+    result_id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(patient_id),
+    ordered_by INTEGER REFERENCES staff(staff_id),
+    test_name VARCHAR(100) NOT NULL,
+    test_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    results TEXT NOT NULL,
+    normal_range TEXT,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Billing
+CREATE TABLE billing (
+    bill_id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(patient_id),
+    appointment_id INTEGER REFERENCES appointments(appointment_id),
+    amount DECIMAL(10,2) NOT NULL,
+    insurance_covered DECIMAL(10,2),
+    patient_responsibility DECIMAL(10,2),
+    status VARCHAR(50) DEFAULT 'Pending',
+    due_date DATE,
+    paid_date DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create indexes for frequently accessed columns
+CREATE INDEX idx_patient_name ON patients(last_name, first_name);
+CREATE INDEX idx_staff_name ON staff(last_name, first_name);
+CREATE INDEX idx_appointments_date ON appointments(appointment_date);
+CREATE INDEX idx_medical_records_patient ON medical_records(patient_id);
+CREATE INDEX idx_prescriptions_patient ON prescriptions(patient_id);
+CREATE INDEX idx_lab_results_patient ON lab_results(patient_id);
+
+-- Create trigger function for updating timestamps
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create triggers for all tables to update timestamps
+CREATE TRIGGER update_departments_timestamp BEFORE UPDATE ON departments FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+CREATE TRIGGER update_staff_timestamp BEFORE UPDATE ON staff FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+CREATE TRIGGER update_patients_timestamp BEFORE UPDATE ON patients FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+CREATE TRIGGER update_medical_records_timestamp BEFORE UPDATE ON medical_records FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+CREATE TRIGGER update_appointments_timestamp BEFORE UPDATE ON appointments FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+CREATE TRIGGER update_prescriptions_timestamp BEFORE UPDATE ON prescriptions FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+CREATE TRIGGER update_lab_results_timestamp BEFORE UPDATE ON lab_results FOR EACH ROW EXECUTE FUNCTION update_timestamp();
+CREATE TRIGGER update_billing_timestamp BEFORE UPDATE ON billing FOR EACH ROW EXECUTE FUNCTION update_timestamp();
