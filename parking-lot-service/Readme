@@ -1,0 +1,27 @@
+-- Create ParkingSpot table
+CREATE TABLE ParkingSpot (
+    spot_id INT PRIMARY KEY,
+    type VARCHAR(50) CHECK (type IN ('Car', 'Motorcycle', 'Truck')),
+    is_available BOOLEAN NOT NULL
+);
+
+-- Create Vehicle table
+CREATE TABLE Vehicle (
+    license_plate VARCHAR(20) PRIMARY KEY,
+    type VARCHAR(50) CHECK (type IN ('Car', 'Motorcycle', 'Truck'))
+);
+
+-- Create ParkingHistory table
+CREATE TABLE ParkingHistory (
+    history_id INT PRIMARY KEY,
+    vehicle_plate VARCHAR(20) REFERENCES Vehicle(license_plate),
+    spot_id INT REFERENCES ParkingSpot(spot_id),
+    parked_time TIMESTAMP NOT NULL,
+    leave_time TIMESTAMP,
+    CONSTRAINT check_leave_time CHECK (leave_time IS NULL OR leave_time > parked_time)
+);
+
+-- Create indexes for better query performance
+CREATE INDEX idx_parking_history_vehicle ON ParkingHistory(vehicle_plate);
+CREATE INDEX idx_parking_history_spot ON ParkingHistory(spot_id);
+CREATE INDEX idx_parking_history_times ON ParkingHistory(parked_time, leave_time);

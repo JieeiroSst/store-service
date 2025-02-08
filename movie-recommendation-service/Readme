@@ -1,0 +1,168 @@
+-- Create tables for the movie recommendation system
+
+-- Movies table
+CREATE TABLE movies (
+    movie_id INTEGER PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    release_year INTEGER,
+    genre VARCHAR(100),
+    director VARCHAR(255),
+    average_rating DECIMAL(3,2),
+    popularity_score INTEGER DEFAULT 0
+);
+
+-- Users table
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    join_date DATE DEFAULT CURRENT_DATE,
+    last_active TIMESTAMP
+);
+
+-- Movie ratings by users
+CREATE TABLE ratings (
+    rating_id INTEGER PRIMARY KEY,
+    user_id INTEGER,
+    movie_id INTEGER,
+    rating DECIMAL(2,1) CHECK (rating >= 0 AND rating <= 5),
+    rating_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
+);
+
+-- User genre preferences
+CREATE TABLE user_preferences (
+    preference_id INTEGER PRIMARY KEY,
+    user_id INTEGER,
+    genre VARCHAR(100),
+    weight DECIMAL(3,2) DEFAULT 1.0,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Movie tags for better categorization
+CREATE TABLE movie_tags (
+    tag_id INTEGER PRIMARY KEY,
+    movie_id INTEGER,
+    tag VARCHAR(50),
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
+);
+
+-- Create indexes for better performance
+CREATE INDEX idx_movie_genre ON movies(genre);
+CREATE INDEX idx_rating_user ON ratings(user_id);
+CREATE INDEX idx_rating_movie ON ratings(movie_id);
+CREATE INDEX idx_movie_tags ON movie_tags(movie_id);
+
+-- Sample queries for the recommendation system
+
+-- 1. Get top-rated movies (overall)
+CREATE VIEW top_rated_movies AS
+SELECT 
+    m.movie_id,
+    m.title,
+    m.genre,
+    m.release_year,
+    ROUND(AVG(r.rating), 2) as average_rating,
+    COUNT(r.rating_id) as number_of_ratings
+FROM movies m
+LEFT JOIN ratings r ON m.movie_id = r.movie_id
+GROUP BY m.movie_id, m.title, m.genre, m.release_year
+HAVING COUNT(r.rating_id) >= 10
+ORDER BY average_rating DESC;
+
+-- 2. Get personalized recommendations based on user's genre preferences
+CREATE OR REPLACE FUNCTION get_recommendations(user_id_param INTEGER)
+RETURNS TABLE (
+    movie_id INTEGER,
+    title VARCHAR(255),
+    genre VARCHAR(100),
+    recommended_score DECIMAL(10,2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    WITH user_genres AS (
+        SELECT genre, weight
+        FROM user_preferences
+        WHERE user_id = user_id_param
+    )
+    SELECT 
+        m.movie_id,
+        m.title,
+        m.genre,
+        (m.average_rating * COALESCE(up.weight, 1.0) * m.popularity_score) as recommended_score
+    FROM movies m
+    LEFT JOIN user_genres up ON m.genre = up.genre
+    WHERE m.movie_id NOT IN (
+        SELECT movie_id 
+        FROM ratings 
+        WHERE user_id = user_id_param
+    )
+    ORDER BY recommended_score DESC
+    LIMIT 10;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3. Update movie popularity scores (run periodically)
+CREATE OR REPLACE PROCEDURE update_popularity_scores()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE movies m
+    SET popularity_score = (
+        SELECT 
+            CAST((
+                COUNT(r.rating_id) * 0.5 + 
+                AVG(r.rating) * 10 * 0.3 +
+                (CASE 
+                    WHEN m.release_year >= EXTRACT(YEAR FROM CURRENT_DATE) - 2 THEN 20
+                    WHEN m.release_year >= EXTRACT(YEAR FROM CURRENT_DATE) - 5 THEN 10
+                    ELSE 5
+                END) * 0.2
+            ) AS INTEGER)
+        FROM ratings r
+        WHERE r.movie_id = m.movie_id
+        GROUP BY m.movie_id
+    );
+END;
+$$;
+
+-- 4. Find similar movies
+CREATE OR REPLACE FUNCTION find_similar_movies(movie_id_param INTEGER)
+RETURNS TABLE (
+    similar_movie_id INTEGER,
+    title VARCHAR(255),
+    similarity_score DECIMAL(10,2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    WITH movie_tags_agg AS (
+        SELECT 
+            mt.movie_id,
+            array_agg(mt.tag) as tags
+        FROM movie_tags mt
+        GROUP BY mt.movie_id
+    )
+    SELECT 
+        m.movie_id,
+        m.title,
+        (
+            (CAST(array_length(ARRAY(
+                SELECT UNNEST(mta1.tags)
+                INTERSECT
+                SELECT UNNEST(mta2.tags)
+            ), 1) AS DECIMAL) /
+            CAST(array_length(ARRAY(
+                SELECT UNNEST(mta1.tags)
+                UNION
+                SELECT UNNEST(mta2.tags)
+            ), 1) AS DECIMAL) * 100)
+        ) as similarity_score
+    FROM movies m
+    JOIN movie_tags_agg mta1 ON mta1.movie_id = movie_id_param
+    JOIN movie_tags_agg mta2 ON mta2.movie_id = m.movie_id
+    WHERE m.movie_id != movie_id_param
+    ORDER BY similarity_score DESC
+    LIMIT 5;
+END;
+$$ LANGUAGE plpgsql;
