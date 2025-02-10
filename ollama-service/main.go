@@ -3,32 +3,39 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"sync"
+	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
-// ChatMessage represents a single message in the chat
+// Message represents the chat message structure
+type Message struct {
+	Type        string `json:"type"`
+	MessageType string `json:"messageType"`
+	SenderID    string `json:"sender_id"`
+	Data        struct {
+		URL     string `json:"url"`
+		Content string `json:"content"`
+	} `json:"data"`
+	Timestamp time.Time `json:"timestamp"`
+}
+
 type ChatMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-// ChatRequest represents the incoming chat request
-type ChatRequest struct {
-	Messages []ChatMessage `json:"messages"`
-}
-
-// LlamaRequest represents the request to the Llama service
 type LlamaRequest struct {
 	Model    string        `json:"model"`
 	Messages []ChatMessage `json:"messages"`
-	Stream   bool         `json:"stream"`
+	Stream   bool          `json:"stream"`
 }
 
-// StreamResponse represents the streaming response from Llama
 type StreamResponse struct {
 	Message struct {
 		Role    string `json:"role"`
@@ -37,69 +44,197 @@ type StreamResponse struct {
 	Done bool `json:"done"`
 }
 
-// ChatResponse represents the API response
-type ChatResponse struct {
-	Response string `json:"response"`
+// Client represents a connected WebSocket client
+type Client struct {
+	Conn     *websocket.Conn
+	SendChan chan Message
+	UserID   string
 }
 
-func main() {
-	r := gin.Default()
+// ChatServer manages WebSocket connections and broadcasts
+type ChatServer struct {
+	Clients    map[*Client]bool
+	Broadcast  chan Message
+	Register   chan *Client
+	Unregister chan *Client
+	Mutex      sync.RWMutex
+}
 
-	// Add CORS middleware
-	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
+// NewChatServer initializes a new chat server
+func NewChatServer() *ChatServer {
+	return &ChatServer{
+		Clients:    make(map[*Client]bool),
+		Broadcast:  make(chan Message, 1000),
+		Register:   make(chan *Client, 100),
+		Unregister: make(chan *Client, 100),
+	}
+}
+
+// Run manages client connections and message broadcasting
+func (server *ChatServer) Run() {
+	for {
+		select {
+		case client := <-server.Register:
+			server.Mutex.Lock()
+			server.Clients[client] = true
+			server.Mutex.Unlock()
+
+		case client := <-server.Unregister:
+			server.Mutex.Lock()
+			if _, ok := server.Clients[client]; ok {
+				delete(server.Clients, client)
+				close(client.SendChan)
+			}
+			server.Mutex.Unlock()
+
+		case message := <-server.Broadcast:
+			server.Mutex.RLock()
+			for client := range server.Clients {
+				select {
+				case client.SendChan <- message:
+				default:
+					close(client.SendChan)
+					delete(server.Clients, client)
+				}
+			}
+			server.Mutex.RUnlock()
 		}
-		
-		c.Next()
-	})
-
-	// Health check endpoint
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"status": "healthy",
-		})
-	})
-
-	// Chat endpoint
-	r.POST("/chat", handleChat)
-
-	// Start server
-	log.Fatal(r.Run(":8082"))
+	}
 }
 
-func handleChat(c *gin.Context) {
-	var chatReq ChatRequest
-	if err := c.BindJSON(&chatReq); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
-		return
+// HandleWebSocket manages WebSocket connection and messaging
+func (server *ChatServer) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
+	upgrader := websocket.Upgrader{
+		CheckOrigin:     func(r *http.Request) bool { return true },
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
 	}
 
-	// Create Llama request
-	llamaReq := LlamaRequest{
-		Model:    "llama3.2-vision",
-		Messages: chatReq.Messages,
-		Stream:   true,
-	}
-
-	// Send request to Llama service
-	response, err := sendToLlama(llamaReq)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		log.Println("WebSocket upgrade error:", err)
+		return
+	}
+	defer conn.Close()
+
+	userID := r.URL.Query().Get("user_id")
+	client := &Client{
+		Conn:     conn,
+		SendChan: make(chan Message, 256),
+		UserID:   userID,
+	}
+
+	server.Register <- client
+
+	go server.writePump(client)
+	server.readPump(client)
+}
+
+// writePump sends messages to the client
+func (server *ChatServer) writePump(client *Client) {
+	defer func() {
+		client.Conn.Close()
+		server.Unregister <- client
+	}()
+
+	for {
+		select {
+		case message, ok := <-client.SendChan:
+			if !ok {
+				client.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+			err := client.Conn.WriteJSON(message)
+			if err != nil {
+				return
+			}
+		}
+	}
+}
+
+// readPump receives messages from the client
+func (server *ChatServer) readPump(client *Client) {
+	defer func() {
+		server.Unregister <- client
+		client.Conn.Close()
+	}()
+
+	for {
+		_, payload, err := client.Conn.ReadMessage()
+		if err != nil {
+			break
+		}
+
+		var message Message
+		if err := json.Unmarshal(payload, &message); err != nil {
+			log.Println("Invalid message format:", err)
+			continue
+		}
+
+		message.Timestamp = time.Now()
+		server.processMessage(message)
+	}
+}
+
+// processMessage handles different message types
+func (server *ChatServer) processMessage(message Message) {
+	switch message.Type {
+	case "bot":
+		go server.handleBotMessage(message)
+	case "consultant":
+		go server.handleConsultantMessage(message)
+	default:
+		log.Println("Unknown message type:", message.Type)
+	}
+}
+
+// handleBotMessage processes bot responses
+func (server *ChatServer) handleBotMessage(message Message) {
+	// Integration with Ollama API for bot responses
+	botResponse, err := fetchOllamaResponse(message.Data.Content)
+	if err != nil {
+		log.Println("Bot response error:", err)
 		return
 	}
 
-	c.JSON(http.StatusOK, ChatResponse{
-		Response: response,
-	})
+	botMessage := Message{
+		Type:        "bot",
+		MessageType: "text",
+		SenderID:    "system",
+		Data: struct {
+			URL     string `json:"url"`
+			Content string `json:"content"`
+		}{
+			Content: botResponse,
+		},
+		Timestamp: time.Now(),
+	}
+
+	aa, _ := json.Marshal(&botMessage)
+	fmt.Println("=======", string(aa))
+
+	server.Broadcast <- botMessage
 }
 
-func sendToLlama(req LlamaRequest) (string, error) {
+// handleConsultantMessage routes messages to consultant API
+func (server *ChatServer) handleConsultantMessage(message Message) {
+	// Implement consultant API routing logic
+	consultantMessage := message
+	server.Broadcast <- consultantMessage
+}
+
+// fetchOllamaResponse handles chat with Ollama API
+func fetchOllamaResponse(message string) (string, error) {
+	req := LlamaRequest{
+		Model: "Tuanpham/t-visstar-7b",
+		Messages: []ChatMessage{
+			{
+				Role:    "user",
+				Content: message,
+			},
+		},
+		Stream: true,
+	}
 	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return "", err
@@ -138,4 +273,12 @@ func sendToLlama(req LlamaRequest) (string, error) {
 	}
 
 	return fullResponse, nil
+}
+
+func main() {
+	chatServer := NewChatServer()
+	go chatServer.Run()
+
+	http.HandleFunc("/ws", chatServer.HandleWebSocket)
+	log.Fatal(http.ListenAndServe(":8083", nil))
 }
