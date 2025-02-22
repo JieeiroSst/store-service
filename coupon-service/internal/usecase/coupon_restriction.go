@@ -6,6 +6,7 @@ import (
 	"github.com/JIeeiroSst/coupon-service/internal/dto"
 	"github.com/JIeeiroSst/coupon-service/internal/model"
 	"github.com/JIeeiroSst/coupon-service/internal/repository"
+	"github.com/JIeeiroSst/utils/geared_id"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -48,6 +49,7 @@ func (c *couponRestrictionUsecase) GetCouponRestrictionByCouponID(ctx context.Co
 
 func (c *couponRestrictionUsecase) CreateCouponRestriction(ctx context.Context, restrictions *dto.CouponRestriction) (*dto.CouponRestriction, error) {
 	couponRestrictions := &model.CouponRestriction{
+		Id:                 int64(geared_id.GearedIntID()),
 		CouponId:           restrictions.CouponId,
 		RestrictionType:    restrictions.RestrictionType,
 		RestrictedEntityId: restrictions.RestrictedEntityId,

@@ -7,11 +7,11 @@ import (
 	"net"
 	"net/http"
 
-	pd "github.com/JIeeiroSst/coupon-service/gateway/proto"
 	"github.com/JIeeiroSst/coupon-service/internal/config"
 	serverHttp "github.com/JIeeiroSst/coupon-service/internal/delivery/http"
 	"github.com/JIeeiroSst/coupon-service/internal/repository"
 	"github.com/JIeeiroSst/coupon-service/internal/usecase"
+	couponServiceGrpc "github.com/JIeeiroSst/lib-gateway/coupon-service/gateway/coupon-service"
 	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -45,7 +45,7 @@ func runAPI() {
 
 	server := serverHttp.NewHandler(usecase)
 	grpcServer := grpc.NewServer()
-	pd.RegisterCouponServiceServer(grpcServer, server)
+	couponServiceGrpc.RegisterCouponServiceServer(grpcServer, server)
 
 	go func() {
 		log.Printf("Starting gRPC server on :%v", config.Server.PortGrpcServer)
@@ -57,7 +57,7 @@ func runAPI() {
 	ctx := context.Background()
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	err = pd.RegisterCouponServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%v", config.Server.PortGrpcServer), opts)
+	err = couponServiceGrpc.RegisterCouponServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%v", config.Server.PortGrpcServer), opts)
 	if err != nil {
 		log.Fatalf("Failed to register gateway: %v", err)
 	}
