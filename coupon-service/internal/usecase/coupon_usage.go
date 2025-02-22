@@ -6,6 +6,7 @@ import (
 	"github.com/JIeeiroSst/coupon-service/internal/dto"
 	"github.com/JIeeiroSst/coupon-service/internal/model"
 	"github.com/JIeeiroSst/coupon-service/internal/repository"
+	"github.com/JIeeiroSst/utils/geared_id"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -68,6 +69,7 @@ func (c *couponUsageUsecase) GetCouponUsageByCouponID(ctx context.Context, coupo
 
 func (c *couponUsageUsecase) CreateCouponUsage(ctx context.Context, usage *dto.CouponUsage) (*dto.CouponUsage, error) {
 	couponUsage := &model.CouponUsage{
+		Id:             int64(geared_id.GearedIntID()),
 		CouponId:       usage.CouponId,
 		UserId:         usage.UserId,
 		UsedAt:         usage.UsedAt.AsTime(),

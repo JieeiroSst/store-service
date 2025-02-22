@@ -4,14 +4,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
 	"github.com/ghodss/yaml"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Server   ServerConfig
-	Redis    Redis
+	Server ServerConfig
+	Redis  Redis
+	Rabbit RabbitConfig
 }
 
 type ServerConfig struct {
@@ -24,12 +26,21 @@ type Redis struct {
 	Dns string
 }
 
-
 type Consul struct {
 	LockIndex int
 	Key       int
 	Flags     int
 	Value     string
+}
+
+type RabbitConfig struct {
+	Host        string
+	Port        int
+	Username    string
+	Password    string
+	VirtualHost string
+	MaxRetries  int
+	RetryDelay  time.Duration
 }
 
 type Dir struct {
