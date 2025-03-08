@@ -1,0 +1,27 @@
+flowchart TD
+    A[Người dùng] -->|Đăng ký| B[Trang đăng ký]
+    B -->|Nhập thông tin cá nhân| C[Tạo tài khoản]
+    C -->|Chọn gói subscription| D[Trang thanh toán]
+    D -->|Nhập thông tin thanh toán| E[Xử lý thanh toán]
+    
+    E -->|Thanh toán thành công| F[Tạo subscription]
+    E -->|Thanh toán thất bại| G[Thông báo lỗi]
+    G -->|Thử lại| D
+    
+    F -->|Tạo hóa đơn| H[Gửi email xác nhận]
+    H --> I[Kích hoạt tài khoản]
+    
+    J[Hệ thống định kỳ] -->|Hàng ngày| K[Kiểm tra subscription sắp hết hạn]
+    K -->|Gửi thông báo| L[Email nhắc nhở gia hạn]
+    
+    M[Hệ thống định kỳ] -->|Hàng ngày| N[Kiểm tra subscription cần gia hạn tự động]
+    N -->|Subscription cần gia hạn| O[Xử lý thanh toán tự động]
+    
+    O -->|Thanh toán thành công| P[Cập nhật thời hạn subscription]
+    O -->|Thanh toán thất bại| Q[Thử lại thanh toán]
+    
+    Q -->|Thất bại nhiều lần| R[Tạm dừng subscription]
+    R -->|Gửi thông báo| S[Email thông báo tạm dừng]
+    
+    T[Người dùng] -->|Hủy subscription| U[Xử lý hủy]
+    U -->|Cập nhật trạng thái| V[Email xác nhận hủy]
