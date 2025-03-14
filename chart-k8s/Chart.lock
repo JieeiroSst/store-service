@@ -26,5 +26,8 @@ dependencies:
 - name: ollama
   repository: file://ollama
   version: 0.1.0
-digest: sha256:797b8bce71fd9601fc1a2f127b32ece6adfb56a6eca6ab6ad316796b4afe3585
-generated: "2025-01-29T19:19:08.578072+07:00"
+- name: kafka
+  repository: file://kafka
+  version: 0.1.0
+digest: sha256:882fe184967d2db3d6d2c7b1202d19016de6a184fc0608fb25947a02c28ae634
+generated: "2025-03-14T20:19:59.940009+07:00"

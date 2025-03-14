@@ -43,3 +43,7 @@ dependencies:
     name: ollama
     version: "0.1.0"
     repository: file://ollama
+  - alias: kafka
+    name: kafka
+    version: "0.1.0"
+    repository: file://kafka
