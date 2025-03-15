@@ -1,11 +1,10 @@
 package config
 
 import (
-	"fmt"
-	"io/ioutil"
+	"encoding/json"
 	"os"
 
-	"github.com/ghodss/yaml"
+	"github.com/JIeeiroSst/utils/consul"
 	"github.com/joho/godotenv"
 )
 
@@ -20,8 +19,8 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	PortServer     string
-	PortServerGrpc string
+	PortHttpServer string
+	PortGrpcServer string
 }
 
 type Redis struct {
@@ -88,31 +87,21 @@ type Dir struct {
 	ServiceConsul string
 }
 
-func ReadConf(filename string) (*Config, error) {
-	buffer, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	config := &Config{}
-	err = yaml.Unmarshal(buffer, &config)
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-
-	}
-	return config, nil
-}
-
-func ReadFileEnv(dir string) (*Dir, error) {
+func InitializeConfiguration(dir string) (*Config, error) {
 	err := godotenv.Load(dir)
 	if err != nil {
 		return nil, err
 	}
 
-	data := &Dir{
-		HostConsul:    os.Getenv("HostConsul"),
-		KeyConsul:     os.Getenv("KeyConsul"),
-		ServiceConsul: os.Getenv("ServiceConsul"),
+	consul := consul.NewConfigConsul(os.Getenv("HostConsul"), os.Getenv("KeyConsul"), os.Getenv("ServiceConsul"))
+	conf, err := consul.ConnectConfigConsul()
+	if err != nil {
+		return nil, err
 	}
-	return data, nil
+	var config Config
+	if err := json.Unmarshal(conf, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }
