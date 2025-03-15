@@ -23,7 +23,7 @@ definitions:
       encodeToken:
         type: string
     type: object
-  model.UserRoles:
+  model.RoleItem:
     properties:
       roleId:
         type: integer
@@ -309,14 +309,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: AddRole
+      description: AddRoleItem
       parameters:
       - description: user role in json
         in: body
         name: user-role
         required: true
         schema:
-          $ref: '#/definitions/model.UserRoles'
+          $ref: '#/definitions/model.RoleItem'
       produces:
       - application/json
       responses:
@@ -335,7 +335,7 @@ paths:
           schema:
             additionalProperties: true
             type: object
-      summary: AddRole
+      summary: AddRoleItem
     put:
       consumes:
       - application/json

@@ -1,69 +1,85 @@
 package usecase
 
 import (
+	"context"
+
+	"github.com/JIeeiroSst/user-service/dto"
 	"github.com/JIeeiroSst/user-service/internal/repository"
 	"github.com/JIeeiroSst/user-service/model"
-	"github.com/JIeeiroSst/user-service/pkg/snowflake"
+	"github.com/JIeeiroSst/utils/copy"
+	"github.com/JIeeiroSst/utils/geared_id"
+	"github.com/JIeeiroSst/utils/pagination"
 )
 
 type Roles interface {
-	Create(role model.Role) error
-	Update(id int, name string) error
-	Delete(id int) error
-	Role(id int) (*model.Role, error)
-	Roles() ([]model.Role, error)
+	GetRole(ctx context.Context, in dto.GetRoleRequest) (dto.GetRoleResponse, error)
+	ListRoles(ctx context.Context, in dto.ListRolesRequest) (dto.ListRolesResponse, error)
+	CreateRole(ctx context.Context, in dto.CreateRoleResquest) (dto.CreateRoleResponse, error)
+	UpdateRole(ctx context.Context, in dto.UpdateRoleRequest) (dto.UpdateRoleResponse, error)
+	DeleteRole(ctx context.Context, in dto.DeleteRoleRequest) (dto.DeleteRoleResponse, error)
 }
 
 type RoleUsecase struct {
-	RoleRepo  repository.Roles
-	Snowflake snowflake.SnowflakeData
+	RoleRepo repository.Roles
 }
 
-func NewRoleUsecase(RoleRepo repository.Roles,
-	Snowflake snowflake.SnowflakeData) *RoleUsecase {
+func NewRoleUsecase(RoleRepo repository.Roles) *RoleUsecase {
 	return &RoleUsecase{
-		RoleRepo:  RoleRepo,
-		Snowflake: Snowflake,
+		RoleRepo: RoleRepo,
 	}
 }
 
-func (u *RoleUsecase) Create(req model.Role) error {
+func (u *RoleUsecase) CreateRole(ctx context.Context, in dto.CreateRoleResquest) (dto.CreateRoleResponse, error) {
 	role := model.Role{
-		Id:   u.Snowflake.GearedID(),
-		Name: req.Name,
+		Id:   geared_id.GearedIntID(),
+		Name: in.Name,
 	}
-	if err := u.RoleRepo.Create(role); err != nil {
-		return err
+	if err := u.RoleRepo.Create(ctx, role); err != nil {
+		return dto.CreateRoleResponse{}, err
 	}
-	return nil
+	return dto.CreateRoleResponse{}, nil
 }
 
-func (u *RoleUsecase) Update(id int, name string) error {
-	if err := u.RoleRepo.Update(id, name); err != nil {
-		return err
+func (u *RoleUsecase) UpdateRole(ctx context.Context, in dto.UpdateRoleRequest) (dto.UpdateRoleResponse, error) {
+	if err := u.RoleRepo.Update(ctx, int(in.Id), in.Name); err != nil {
+		return dto.UpdateRoleResponse{}, err
 	}
-	return nil
+	return dto.UpdateRoleResponse{}, nil
 }
 
-func (u *RoleUsecase) Delete(id int) error {
-	if err := u.RoleRepo.Delete(id); err != nil {
-		return err
+func (u *RoleUsecase) DeleteRole(ctx context.Context, in dto.DeleteRoleRequest) (dto.DeleteRoleResponse, error) {
+	if err := u.RoleRepo.Delete(ctx, int(in.Id)); err != nil {
+		return dto.DeleteRoleResponse{}, err
 	}
-	return nil
+	return dto.DeleteRoleResponse{}, nil
 }
 
-func (u *RoleUsecase) Role(id int) (*model.Role, error) {
-	role, err := u.RoleRepo.Role(id)
+func (u *RoleUsecase) GetRole(ctx context.Context, in dto.GetRoleRequest) (dto.GetRoleResponse, error) {
+	role, err := u.RoleRepo.Role(ctx, int(in.Id))
 	if err != nil {
-		return nil, err
+		return dto.GetRoleResponse{}, err
 	}
-	return role, nil
+
+	var res dto.GetRoleResponse
+	if err := copy.CopyObject(&role, &res.Role); err != nil {
+		return dto.GetRoleResponse{}, err
+	}
+	return res, nil
 }
 
-func (u *RoleUsecase) Roles() ([]model.Role, error) {
-	roles, err := u.RoleRepo.Roles()
-	if err != nil {
-		return nil, err
+func (u *RoleUsecase) ListRoles(ctx context.Context, in dto.ListRolesRequest) (dto.ListRolesResponse, error) {
+	var p pagination.Pagination
+	if err := copy.CopyObject(&in, &p); err != nil {
+		return dto.ListRolesResponse{}, err
 	}
-	return roles, nil
+	roles, err := u.RoleRepo.Roles(ctx, p)
+	if err != nil {
+		return dto.ListRolesResponse{}, err
+	}
+
+	var res dto.ListRolesResponse
+	if err := copy.CopyObject(&roles, &res.Roles); err != nil {
+		return dto.ListRolesResponse{}, err
+	}
+	return res, nil
 }

@@ -5,13 +5,13 @@ import "gorm.io/gorm"
 type Repository struct {
 	Users
 	Roles
-	UserRoles
+	RoleItem
 }
 
 func NewRepositories(db *gorm.DB) *Repository {
 	return &Repository{
-		Users:     NewUserRepository(db),
-		Roles:     NewRoleRepository(db),
-		UserRoles: NewUserRoleRepository(db),
+		Users:    NewUserRepository(db),
+		Roles:    NewRoleRepository(db),
+		RoleItem: NewRoleItemRepository(db),
 	}
 }
