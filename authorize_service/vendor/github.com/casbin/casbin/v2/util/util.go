@@ -15,6 +15,7 @@
 package util
 
 import (
+	"encoding/json"
 	"regexp"
 	"sort"
 	"strings"
@@ -24,6 +25,15 @@ import (
 var evalReg = regexp.MustCompile(`\beval\((?P<rule>[^)]*)\)`)
 
 var escapeAssertionRegex = regexp.MustCompile(`\b((r|p)[0-9]*)\.`)
+
+func JsonToMap(jsonStr string) (map[string]interface{}, error) {
+	result := make(map[string]interface{})
+	err := json.Unmarshal([]byte(jsonStr), &result)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
+}
 
 // EscapeAssertion escapes the dots in the assertion, because the expression evaluation doesn't support such variable names.
 func EscapeAssertion(s string) string {
@@ -64,6 +74,44 @@ func Array2DEquals(a [][]string, b [][]string) bool {
 
 	for i, v := range a {
 		if !ArrayEquals(v, b[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+// SortArray2D  Sorts the two-dimensional string array.
+func SortArray2D(arr [][]string) {
+	if len(arr) != 0 {
+		sort.Slice(arr, func(i, j int) bool {
+			elementLen := len(arr[0])
+			for k := 0; k < elementLen; k++ {
+				if arr[i][k] < arr[j][k] {
+					return true
+				} else if arr[i][k] > arr[j][k] {
+					return false
+				}
+			}
+			return true
+		})
+	}
+}
+
+// SortedArray2DEquals determines whether two 2-dimensional string arrays are identical.
+func SortedArray2DEquals(a [][]string, b [][]string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	copyA := make([][]string, len(a))
+	copy(copyA, a)
+	copyB := make([][]string, len(b))
+	copy(copyB, b)
+
+	SortArray2D(copyA)
+	SortArray2D(copyB)
+
+	for i, v := range copyA {
+		if !ArrayEquals(v, copyB[i]) {
 			return false
 		}
 	}
@@ -111,7 +159,7 @@ func SetEquals(a []string, b []string) bool {
 	return true
 }
 
-// SetEquals determines whether two string sets are identical.
+// SetEquals determines whether two int sets are identical.
 func SetEqualsInt(a []int, b []int) bool {
 	if len(a) != len(b) {
 		return false
@@ -128,7 +176,7 @@ func SetEqualsInt(a []int, b []int) bool {
 	return true
 }
 
-// SetEquals determines whether two string sets are identical.
+// Set2DEquals determines whether two string slice sets are identical.
 func Set2DEquals(a [][]string, b [][]string) bool {
 	if len(a) != len(b) {
 		return false
@@ -185,12 +233,12 @@ func SetSubtract(a []string, b []string) []string {
 	return diff
 }
 
-// HasEval determine whether matcher contains function eval
+// HasEval determine whether matcher contains function eval.
 func HasEval(s string) bool {
 	return evalReg.MatchString(s)
 }
 
-// ReplaceEval replace function eval with the value of its parameters
+// ReplaceEval replace function eval with the value of its parameters.
 func ReplaceEval(s string, rule string) string {
 	return evalReg.ReplaceAllString(s, "("+rule+")")
 }
@@ -211,7 +259,7 @@ func ReplaceEvalWithMap(src string, sets map[string]string) string {
 	})
 }
 
-// GetEvalValue returns the parameters of function eval
+// GetEvalValue returns the parameters of function eval.
 func GetEvalValue(s string) []string {
 	subMatch := evalReg.FindAllStringSubmatch(s, -1)
 	var rules []string
@@ -323,8 +371,8 @@ func NewSyncLRUCache(capacity int) *SyncLRUCache {
 }
 
 func (cache *SyncLRUCache) Get(key interface{}) (value interface{}, ok bool) {
-	cache.rwm.RLock()
-	defer cache.rwm.RUnlock()
+	cache.rwm.Lock()
+	defer cache.rwm.Unlock()
 	return cache.LRUCache.Get(key)
 }
 

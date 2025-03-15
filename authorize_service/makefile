@@ -13,8 +13,8 @@ migrate-down:
 
 gen:
 	protoc --go_out=. --go-grpc_opt=. ./internal/proto/api.proto
-run:
-	go run cmd/main.go
+api:
+	go run main.go api
 
 mod:
 	go mod vendor
