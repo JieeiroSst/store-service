@@ -5,9 +5,12 @@ import (
 	"errors"
 
 	authorizeServiceGrpc "github.com/JIeeiroSst/lib-gateway/authorize-service/gateway/authorize-service"
+	"github.com/JIeeiroSst/utils/copy"
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/internal/usecase"
 	"github.com/JieeiroSst/authorize-service/model"
+	"github.com/JieeiroSst/authorize-service/pkg/log"
+	"github.com/JieeiroSst/authorize-service/pkg/pagination"
 )
 
 type Handler struct {
@@ -21,27 +24,101 @@ func NewHandler(usecase *usecase.Usecase) *Handler {
 	}
 }
 
-func (h *Handler) Authorize(ctx context.Context, in *authorizeServiceGrpc.CasbinAuth) (*authorizeServiceGrpc.OTP, error) {
+func (h *Handler) Authorize(ctx context.Context, in *authorizeServiceGrpc.CasbinAuth) (*authorizeServiceGrpc.AuthorizeResponse, error) {
+	auth := model.CasbinAuth{
+		Sub: in.Sub, // username
+		Obj: in.Obj, // path api
+		Act: in.Act, // method api
+	}
+	log.Info(auth)
+	err := h.usecase.Casbins.EnforceCasbin(ctx, auth)
+	if errors.Is(err, common.FailedDB) {
+		return &authorizeServiceGrpc.AuthorizeResponse{
+			Message: common.FailedDB.Error(),
+		}, err
+	}
+	if errors.Is(err, common.Failedenforcer) {
+		return &authorizeServiceGrpc.AuthorizeResponse{
+			Message: common.Failedenforcer.Error(),
+		}, err
+	}
+	if errors.Is(err, common.NotAllow) {
+		return &authorizeServiceGrpc.AuthorizeResponse{
+			Message: common.NotAllow.Error(),
+		}, err
+	}
 	return nil, nil
 }
 
 func (h *Handler) GetCasbinRules(ctx context.Context, in *authorizeServiceGrpc.CasbinRequest) (*authorizeServiceGrpc.CasbinRuleList, error) {
-	return nil, nil
+	var p pagination.Pagination
+	if err := copy.CopyObject(&in, &p); err != nil {
+		return nil, err
+	}
+	casbins, err := h.usecase.Casbins.CasbinRuleAll(ctx, p)
+	if errors.Is(err, common.NotFound) {
+		return nil, err
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	var res *authorizeServiceGrpc.CasbinRuleList
+	if err := copy.CopyObject(&casbins, &res); err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 func (h *Handler) GetCasbinRuleById(ctx context.Context, in *authorizeServiceGrpc.CasbinRuleId) (*authorizeServiceGrpc.CasbinRule, error) {
-	return nil, nil
+	casbin, err := h.usecase.Casbins.CasbinRuleById(ctx, int(in.GetId()))
+	if errors.Is(err, common.NotFound) {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var resp *authorizeServiceGrpc.CasbinRule
+	if err := copy.CopyObject(&casbin, &resp); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func (h *Handler) CreateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.CasbinRule) (*authorizeServiceGrpc.CasbinRule, error) {
-	return nil, nil
+	var casbin model.CasbinRule
+	if err := copy.CopyObject(&in, &casbin); err != nil {
+		return nil, err
+	}
+	err := h.usecase.Casbins.CreateCasbinRule(ctx, casbin)
+	if errors.Is(err, common.FailedDB) {
+		return nil, err
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &authorizeServiceGrpc.CasbinRule{}, nil
 }
 
 func (h *Handler) DeleteCasbinRule(ctx context.Context, in *authorizeServiceGrpc.CasbinRuleId) (*authorizeServiceGrpc.DeleteCasbinRuleResponse, error) {
-	return nil, nil
+	if err := h.usecase.Casbins.DeleteCasbinRule(ctx, int(in.GetId())); err != nil {
+		return &authorizeServiceGrpc.DeleteCasbinRuleResponse{
+			Success: false,
+		}, err
+	}
+	return &authorizeServiceGrpc.DeleteCasbinRuleResponse{
+		Success: true,
+	}, nil // success
 }
 
 func (h *Handler) UpdateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.UpdateCasbinRuleRequest) (*authorizeServiceGrpc.CasbinRule, error) {
+	if err := h.usecase.Casbins.UpdateCasbinRule(ctx, int(in.Id), in.GetField(), in.GetValue()); err != nil {	
+		return nil, err
+	}
 	return nil, nil
 }
 

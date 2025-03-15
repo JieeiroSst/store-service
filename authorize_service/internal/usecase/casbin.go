@@ -27,6 +27,7 @@ type Casbins interface {
 	UpdateCasbinRuleName(ctx context.Context, id int, name string) error
 	UpdateCasbinRuleEndpoint(ctx context.Context, id int, endpoint string) error
 	UpdateCasbinMethod(ctx context.Context, id int, method string) error
+	UpdateCasbinRule(ctx context.Context, id int, filed, value string) error
 }
 
 type CasbinUsecase struct {
@@ -151,6 +152,28 @@ func (a *CasbinUsecase) UpdateCasbinMethod(ctx context.Context, id int, method s
 	if err := a.casbinRepo.UpdateCasbinMethod(ctx, id, method); err != nil {
 		log.Error(err.Error())
 		return err
+	}
+	return nil
+}
+
+func (a *CasbinUsecase) UpdateCasbinRule(ctx context.Context, id int, filed, value string) error {
+	switch filed {
+	case "ptype":
+		if err := a.UpdateCasbinRulePtype(ctx, id, value); err != nil {
+			return err
+		}
+	case "name":
+		if err := a.UpdateCasbinRuleName(ctx, id, value); err != nil {
+			return err
+		}
+	case "endpoint":
+		if err := a.UpdateCasbinRuleEndpoint(ctx, id, value); err != nil {
+			return err
+		}
+	case "method":
+		if err := a.UpdateCasbinMethod(ctx, id, value); err != nil {
+			return err
+		}
 	}
 	return nil
 }

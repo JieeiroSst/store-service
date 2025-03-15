@@ -34,7 +34,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthorizeServiceClient interface {
-	Authorize(ctx context.Context, in *CasbinAuth, opts ...grpc.CallOption) (*OTP, error)
+	Authorize(ctx context.Context, in *CasbinAuth, opts ...grpc.CallOption) (*AuthorizeResponse, error)
 	GetCasbinRules(ctx context.Context, in *CasbinRequest, opts ...grpc.CallOption) (*CasbinRuleList, error)
 	GetCasbinRuleById(ctx context.Context, in *CasbinRuleId, opts ...grpc.CallOption) (*CasbinRule, error)
 	CreateCasbinRule(ctx context.Context, in *CasbinRule, opts ...grpc.CallOption) (*CasbinRule, error)
@@ -53,9 +53,9 @@ func NewAuthorizeServiceClient(cc grpc.ClientConnInterface) AuthorizeServiceClie
 	return &authorizeServiceClient{cc}
 }
 
-func (c *authorizeServiceClient) Authorize(ctx context.Context, in *CasbinAuth, opts ...grpc.CallOption) (*OTP, error) {
+func (c *authorizeServiceClient) Authorize(ctx context.Context, in *CasbinAuth, opts ...grpc.CallOption) (*AuthorizeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OTP)
+	out := new(AuthorizeResponse)
 	err := c.cc.Invoke(ctx, AuthorizeService_Authorize_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func (c *authorizeServiceClient) EnforceCasbin(ctx context.Context, in *CasbinRu
 // All implementations must embed UnimplementedAuthorizeServiceServer
 // for forward compatibility.
 type AuthorizeServiceServer interface {
-	Authorize(context.Context, *CasbinAuth) (*OTP, error)
+	Authorize(context.Context, *CasbinAuth) (*AuthorizeResponse, error)
 	GetCasbinRules(context.Context, *CasbinRequest) (*CasbinRuleList, error)
 	GetCasbinRuleById(context.Context, *CasbinRuleId) (*CasbinRule, error)
 	CreateCasbinRule(context.Context, *CasbinRule) (*CasbinRule, error)
@@ -166,7 +166,7 @@ type AuthorizeServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuthorizeServiceServer struct{}
 
-func (UnimplementedAuthorizeServiceServer) Authorize(context.Context, *CasbinAuth) (*OTP, error) {
+func (UnimplementedAuthorizeServiceServer) Authorize(context.Context, *CasbinAuth) (*AuthorizeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authorize not implemented")
 }
 func (UnimplementedAuthorizeServiceServer) GetCasbinRules(context.Context, *CasbinRequest) (*CasbinRuleList, error) {

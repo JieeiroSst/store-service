@@ -1,0 +1,24 @@
+{
+	"server": {
+		"PortHttpServer": "1234",
+		"PortGrpcServer": "1231"
+	},
+	"secret": {
+		"JwtSecretKey": "secretkey",
+		"AuthorizeKey": "name_name"
+	},
+	"postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "31000",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "authorize",
+        "PgDriver": "pgx"
+    },
+	"constant": {
+		"Rbac": "config/conf/rbac_model.conf"
+	},
+	"cache": {
+		"host": "localhost:30002"
+	}
+}
