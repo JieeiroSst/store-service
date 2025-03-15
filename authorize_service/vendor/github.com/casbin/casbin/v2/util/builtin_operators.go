@@ -18,36 +18,70 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"path"
 	"regexp"
 	"strings"
+	"sync"
+	"time"
 
-	"github.com/Knetic/govaluate"
+	"github.com/bmatcuk/doublestar/v4"
+
 	"github.com/casbin/casbin/v2/rbac"
+
+	"github.com/casbin/govaluate"
 )
 
 var (
-	keyMatch4Re *regexp.Regexp = regexp.MustCompile(`{([^/]+)}`)
+	keyMatch2Re = regexp.MustCompile(`:[^/]+`)
+	keyMatch3Re = regexp.MustCompile(`\{[^/]+\}`)
+	keyMatch4Re = regexp.MustCompile(`{([^/]+)}`)
+	keyMatch5Re = regexp.MustCompile(`\{[^/]+\}`)
+	keyGet2Re1  = regexp.MustCompile(`:[^/]+`)
+	keyGet3Re1  = regexp.MustCompile(`\{[^/]+?\}`) // non-greedy match of `{...}` to support multiple {} in `/.../`
+	reCache     = map[string]*regexp.Regexp{}
+	reCacheMu   = sync.RWMutex{}
 )
 
-// validate the variadic parameter size and type as string
+func mustCompileOrGet(key string) *regexp.Regexp {
+	reCacheMu.RLock()
+	re, ok := reCache[key]
+	reCacheMu.RUnlock()
+
+	if !ok {
+		re = regexp.MustCompile(key)
+		reCacheMu.Lock()
+		reCache[key] = re
+		reCacheMu.Unlock()
+	}
+
+	return re
+}
+
+// validate the variadic parameter size and type as string.
 func validateVariadicArgs(expectedLen int, args ...interface{}) error {
 	if len(args) != expectedLen {
-		return fmt.Errorf("Expected %d arguments, but got %d", expectedLen, len(args))
+		return fmt.Errorf("expected %d arguments, but got %d", expectedLen, len(args))
 	}
 
 	for _, p := range args {
 		_, ok := p.(string)
 		if !ok {
-			return errors.New("Argument must be a string")
+			return errors.New("argument must be a string")
 		}
 	}
 
 	return nil
 }
 
+// validate the variadic string parameter size.
+func validateVariadicStringArgs(expectedLen int, args ...string) error {
+	if len(args) != expectedLen {
+		return fmt.Errorf("expected %d arguments, but got %d", expectedLen, len(args))
+	}
+	return nil
+}
+
 // KeyMatch determines whether key1 matches the pattern of key2 (similar to RESTful path), key2 can contain a *.
-// For example, "/foo/bar" matches "/foo/*"
+// For example, "/foo/bar" matches "/foo/*".
 func KeyMatch(key1 string, key2 string) bool {
 	i := strings.Index(key2, "*")
 	if i == -1 {
@@ -63,18 +97,18 @@ func KeyMatch(key1 string, key2 string) bool {
 // KeyMatchFunc is the wrapper for KeyMatch.
 func KeyMatchFunc(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyMatch", err)
+		return false, fmt.Errorf("%s: %w", "keyMatch", err)
 	}
 
 	name1 := args[0].(string)
 	name2 := args[1].(string)
 
-	return bool(KeyMatch(name1, name2)), nil
+	return KeyMatch(name1, name2), nil
 }
 
 // KeyGet returns the matched part
 // For example, "/foo/bar/foo" matches "/foo/*"
-// "bar/foo" will been returned
+// "bar/foo" will been returned.
 func KeyGet(key1, key2 string) string {
 	i := strings.Index(key2, "*")
 	if i == -1 {
@@ -88,10 +122,10 @@ func KeyGet(key1, key2 string) string {
 	return ""
 }
 
-// KeyGetFunc is the wrapper for KeyGet
+// KeyGetFunc is the wrapper for KeyGet.
 func KeyGetFunc(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyGet", err)
+		return false, fmt.Errorf("%s: %w", "keyGet", err)
 	}
 
 	name1 := args[0].(string)
@@ -101,12 +135,11 @@ func KeyGetFunc(args ...interface{}) (interface{}, error) {
 }
 
 // KeyMatch2 determines whether key1 matches the pattern of key2 (similar to RESTful path), key2 can contain a *.
-// For example, "/foo/bar" matches "/foo/*", "/resource1" matches "/:resource"
+// For example, "/foo/bar" matches "/foo/*", "/resource1" matches "/:resource".
 func KeyMatch2(key1 string, key2 string) bool {
 	key2 = strings.Replace(key2, "/*", "/.*", -1)
 
-	re := regexp.MustCompile(`:[^/]+`)
-	key2 = re.ReplaceAllString(key2, "$1[^/]+$2")
+	key2 = keyMatch2Re.ReplaceAllString(key2, "$1[^/]+$2")
 
 	return RegexMatch(key1, "^"+key2+"$")
 }
@@ -114,27 +147,26 @@ func KeyMatch2(key1 string, key2 string) bool {
 // KeyMatch2Func is the wrapper for KeyMatch2.
 func KeyMatch2Func(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyMatch2", err)
+		return false, fmt.Errorf("%s: %w", "keyMatch2", err)
 	}
 
 	name1 := args[0].(string)
 	name2 := args[1].(string)
 
-	return bool(KeyMatch2(name1, name2)), nil
+	return KeyMatch2(name1, name2), nil
 }
 
 // KeyGet2 returns value matched pattern
 // For example, "/resource1" matches "/:resource"
-// if the pathVar == "resource", then "resource1" will be returned
+// if the pathVar == "resource", then "resource1" will be returned.
 func KeyGet2(key1, key2 string, pathVar string) string {
 	key2 = strings.Replace(key2, "/*", "/.*", -1)
-
-	re := regexp.MustCompile(`:[^/]+`)
-	keys := re.FindAllString(key2, -1)
-	key2 = re.ReplaceAllString(key2, "$1([^/]+)$2")
+	keys := keyGet2Re1.FindAllString(key2, -1)
+	key2 = keyGet2Re1.ReplaceAllString(key2, "$1([^/]+)$2")
 	key2 = "^" + key2 + "$"
-	re2 := regexp.MustCompile(key2)
-	values := re2.FindAllStringSubmatch(key1, -1)
+
+	re := mustCompileOrGet(key2)
+	values := re.FindAllStringSubmatch(key1, -1)
 	if len(values) == 0 {
 		return ""
 	}
@@ -146,10 +178,10 @@ func KeyGet2(key1, key2 string, pathVar string) string {
 	return ""
 }
 
-// KeyGet2Func is the wrapper for KeyGet2
+// KeyGet2Func is the wrapper for KeyGet2.
 func KeyGet2Func(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(3, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyGet2", err)
+		return false, fmt.Errorf("%s: %w", "keyGet2", err)
 	}
 
 	name1 := args[0].(string)
@@ -160,12 +192,10 @@ func KeyGet2Func(args ...interface{}) (interface{}, error) {
 }
 
 // KeyMatch3 determines whether key1 matches the pattern of key2 (similar to RESTful path), key2 can contain a *.
-// For example, "/foo/bar" matches "/foo/*", "/resource1" matches "/{resource}"
+// For example, "/foo/bar" matches "/foo/*", "/resource1" matches "/{resource}".
 func KeyMatch3(key1 string, key2 string) bool {
 	key2 = strings.Replace(key2, "/*", "/.*", -1)
-
-	re := regexp.MustCompile(`\{[^/]+\}`)
-	key2 = re.ReplaceAllString(key2, "$1[^/]+$2")
+	key2 = keyMatch3Re.ReplaceAllString(key2, "$1[^/]+$2")
 
 	return RegexMatch(key1, "^"+key2+"$")
 }
@@ -173,27 +203,26 @@ func KeyMatch3(key1 string, key2 string) bool {
 // KeyMatch3Func is the wrapper for KeyMatch3.
 func KeyMatch3Func(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyMatch3", err)
+		return false, fmt.Errorf("%s: %w", "keyMatch3", err)
 	}
 
 	name1 := args[0].(string)
 	name2 := args[1].(string)
 
-	return bool(KeyMatch3(name1, name2)), nil
+	return KeyMatch3(name1, name2), nil
 }
 
 // KeyGet3 returns value matched pattern
 // For example, "project/proj_project1_admin/" matches "project/proj_{project}_admin/"
-// if the pathVar == "project", then "project1" will be returned
+// if the pathVar == "project", then "project1" will be returned.
 func KeyGet3(key1, key2 string, pathVar string) string {
 	key2 = strings.Replace(key2, "/*", "/.*", -1)
 
-	re := regexp.MustCompile(`\{[^/]+?\}`) // non-greedy match of `{...}` to support multiple {} in `/.../`
-	keys := re.FindAllString(key2, -1)
-	key2 = re.ReplaceAllString(key2, "$1([^/]+?)$2")
+	keys := keyGet3Re1.FindAllString(key2, -1)
+	key2 = keyGet3Re1.ReplaceAllString(key2, "$1([^/]+?)$2")
 	key2 = "^" + key2 + "$"
-	re2 := regexp.MustCompile(key2)
-	values := re2.FindAllStringSubmatch(key1, -1)
+	re := mustCompileOrGet(key2)
+	values := re.FindAllStringSubmatch(key1, -1)
 	if len(values) == 0 {
 		return ""
 	}
@@ -205,10 +234,10 @@ func KeyGet3(key1, key2 string, pathVar string) string {
 	return ""
 }
 
-// KeyGet3Func is the wrapper for KeyGet3
+// KeyGet3Func is the wrapper for KeyGet3.
 func KeyGet3Func(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(3, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyGet3", err)
+		return false, fmt.Errorf("%s: %w", "keyGet3", err)
 	}
 
 	name1 := args[0].(string)
@@ -234,7 +263,7 @@ func KeyMatch4(key1 string, key2 string) bool {
 		return "([^/]+)"
 	})
 
-	re = regexp.MustCompile("^" + key2 + "$")
+	re = mustCompileOrGet("^" + key2 + "$")
 	matches := re.FindStringSubmatch(key1)
 	if matches == nil {
 		return false
@@ -262,36 +291,43 @@ func KeyMatch4(key1 string, key2 string) bool {
 // KeyMatch4Func is the wrapper for KeyMatch4.
 func KeyMatch4Func(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyMatch4", err)
+		return false, fmt.Errorf("%s: %w", "keyMatch4", err)
 	}
 
 	name1 := args[0].(string)
 	name2 := args[1].(string)
 
-	return bool(KeyMatch4(name1, name2)), nil
+	return KeyMatch4(name1, name2), nil
 }
 
-// KeyMatch determines whether key1 matches the pattern of key2 and ignores the parameters in key2.
-// For example, "/foo/bar?status=1&type=2" matches "/foo/bar"
+// KeyMatch5 determines whether key1 matches the pattern of key2 (similar to RESTful path), key2 can contain a *
+// For example,
+// - "/foo/bar?status=1&type=2" matches "/foo/bar"
+// - "/parent/child1" and "/parent/child1" matches "/parent/*"
+// - "/parent/child1?status=1" matches "/parent/*".
 func KeyMatch5(key1 string, key2 string) bool {
 	i := strings.Index(key1, "?")
-	if i == -1 {
-		return key1 == key2
+
+	if i != -1 {
+		key1 = key1[:i]
 	}
 
-	return key1[:i] == key2
+	key2 = strings.Replace(key2, "/*", "/.*", -1)
+	key2 = keyMatch5Re.ReplaceAllString(key2, "$1[^/]+$2")
+
+	return RegexMatch(key1, "^"+key2+"$")
 }
 
 // KeyMatch5Func is the wrapper for KeyMatch5.
 func KeyMatch5Func(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "keyMatch5", err)
+		return false, fmt.Errorf("%s: %w", "keyMatch5", err)
 	}
 
 	name1 := args[0].(string)
 	name2 := args[1].(string)
 
-	return bool(KeyMatch5(name1, name2)), nil
+	return KeyMatch5(name1, name2), nil
 }
 
 // RegexMatch determines whether key1 matches the pattern of key2 in regular expression.
@@ -306,17 +342,17 @@ func RegexMatch(key1 string, key2 string) bool {
 // RegexMatchFunc is the wrapper for RegexMatch.
 func RegexMatchFunc(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "regexMatch", err)
+		return false, fmt.Errorf("%s: %w", "regexMatch", err)
 	}
 
 	name1 := args[0].(string)
 	name2 := args[1].(string)
 
-	return bool(RegexMatch(name1, name2)), nil
+	return RegexMatch(name1, name2), nil
 }
 
 // IPMatch determines whether IP address ip1 matches the pattern of IP address ip2, ip2 can be an IP address or a CIDR pattern.
-// For example, "192.168.2.123" matches "192.168.2.0/24"
+// For example, "192.168.2.123" matches "192.168.2.0/24".
 func IPMatch(ip1 string, ip2 string) bool {
 	objIP1 := net.ParseIP(ip1)
 	if objIP1 == nil {
@@ -339,24 +375,24 @@ func IPMatch(ip1 string, ip2 string) bool {
 // IPMatchFunc is the wrapper for IPMatch.
 func IPMatchFunc(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "ipMatch", err)
+		return false, fmt.Errorf("%s: %w", "ipMatch", err)
 	}
 
 	ip1 := args[0].(string)
 	ip2 := args[1].(string)
 
-	return bool(IPMatch(ip1, ip2)), nil
+	return IPMatch(ip1, ip2), nil
 }
 
-// GlobMatch determines whether key1 matches the pattern of key2 using glob pattern
+// GlobMatch determines whether key1 matches the pattern of key2 using glob pattern.
 func GlobMatch(key1 string, key2 string) (bool, error) {
-	return path.Match(key2, key1)
+	return doublestar.Match(key2, key1)
 }
 
 // GlobMatchFunc is the wrapper for GlobMatch.
 func GlobMatchFunc(args ...interface{}) (interface{}, error) {
 	if err := validateVariadicArgs(2, args...); err != nil {
-		return false, fmt.Errorf("%s: %s", "globMatch", err)
+		return false, fmt.Errorf("%s: %w", "globMatch", err)
 	}
 
 	name1 := args[0].(string)
@@ -367,7 +403,7 @@ func GlobMatchFunc(args ...interface{}) (interface{}, error) {
 
 // GenerateGFunction is the factory method of the g(_, _[, _]) function.
 func GenerateGFunction(rm rbac.RoleManager) govaluate.ExpressionFunction {
-	memorized := map[string]bool{}
+	memorized := sync.Map{}
 	return func(args ...interface{}) (interface{}, error) {
 		// Like all our other govaluate functions, all args are strings.
 
@@ -386,7 +422,7 @@ func GenerateGFunction(rm rbac.RoleManager) govaluate.ExpressionFunction {
 		key := builder.String()
 
 		// ...and see if we've already calculated this.
-		v, found := memorized[key]
+		v, found := memorized.Load(key)
 		if found {
 			return v, nil
 		}
@@ -403,7 +439,60 @@ func GenerateGFunction(rm rbac.RoleManager) govaluate.ExpressionFunction {
 			v, _ = rm.HasLink(name1, name2, domain)
 		}
 
-		memorized[key] = v
+		memorized.Store(key, v)
 		return v, nil
 	}
+}
+
+// GenerateConditionalGFunction is the factory method of the g(_, _[, _]) function with conditions.
+func GenerateConditionalGFunction(crm rbac.ConditionalRoleManager) govaluate.ExpressionFunction {
+	return func(args ...interface{}) (interface{}, error) {
+		// Like all our other govaluate functions, all args are strings.
+		var hasLink bool
+
+		name1, name2 := args[0].(string), args[1].(string)
+		if crm == nil {
+			hasLink = name1 == name2
+		} else if len(args) == 2 {
+			hasLink, _ = crm.HasLink(name1, name2)
+		} else {
+			domain := args[2].(string)
+			hasLink, _ = crm.HasLink(name1, name2, domain)
+		}
+
+		return hasLink, nil
+	}
+}
+
+// builtin LinkConditionFunc
+
+// TimeMatchFunc is the wrapper for TimeMatch.
+func TimeMatchFunc(args ...string) (bool, error) {
+	if err := validateVariadicStringArgs(2, args...); err != nil {
+		return false, fmt.Errorf("%s: %w", "TimeMatch", err)
+	}
+	return TimeMatch(args[0], args[1])
+}
+
+// TimeMatch determines whether the current time is between startTime and endTime.
+// You can use "_" to indicate that the parameter is ignored.
+func TimeMatch(startTime, endTime string) (bool, error) {
+	now := time.Now()
+	if startTime != "_" {
+		if start, err := time.Parse("2006-01-02 15:04:05", startTime); err != nil {
+			return false, err
+		} else if !now.After(start) {
+			return false, nil
+		}
+	}
+
+	if endTime != "_" {
+		if end, err := time.Parse("2006-01-02 15:04:05", endTime); err != nil {
+			return false, err
+		} else if !now.Before(end) {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }
