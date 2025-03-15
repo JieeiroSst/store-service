@@ -18,14 +18,15 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/casbin/casbin/v2/persist/cache"
 )
 
-// CachedEnforcer wraps Enforcer and provides decision cache
+// CachedEnforcer wraps Enforcer and provides decision cache.
 type CachedEnforcer struct {
 	*Enforcer
-	expireTime  uint
+	expireTime  time.Duration
 	cache       cache.Cache
 	enableCache int32
 	locker      *sync.RWMutex
@@ -45,8 +46,7 @@ func NewCachedEnforcer(params ...interface{}) (*CachedEnforcer, error) {
 	}
 
 	e.enableCache = 1
-	cache := cache.DefaultCache(make(map[string]bool))
-	e.cache = &cache
+	e.cache, _ = cache.NewDefaultCache()
 	e.locker = new(sync.RWMutex)
 	return e, nil
 }
@@ -61,7 +61,7 @@ func (e *CachedEnforcer) EnableCache(enableCache bool) {
 }
 
 // Enforce decides whether a "subject" can access a "object" with the operation "action", input parameters are usually: (sub, obj, act).
-// if rvals is not string , ingore the cache
+// if rvals is not string , ignore the cache.
 func (e *CachedEnforcer) Enforce(rvals ...interface{}) (bool, error) {
 	if atomic.LoadInt32(&e.enableCache) == 0 {
 		return e.Enforcer.Enforce(rvals...)
@@ -127,12 +127,12 @@ func (e *CachedEnforcer) RemovePolicies(rules [][]string) (bool, error) {
 }
 
 func (e *CachedEnforcer) getCachedResult(key string) (res bool, err error) {
-	e.locker.RLock()
-	defer e.locker.RUnlock()
+	e.locker.Lock()
+	defer e.locker.Unlock()
 	return e.cache.Get(key)
 }
 
-func (e *CachedEnforcer) SetExpireTime(expireTime uint) {
+func (e *CachedEnforcer) SetExpireTime(expireTime time.Duration) {
 	e.expireTime = expireTime
 }
 
@@ -147,6 +147,17 @@ func (e *CachedEnforcer) setCachedResult(key string, res bool, extra ...interfac
 }
 
 func (e *CachedEnforcer) getKey(params ...interface{}) (string, bool) {
+	return GetCacheKey(params...)
+}
+
+// InvalidateCache deletes all the existing cached decisions.
+func (e *CachedEnforcer) InvalidateCache() error {
+	e.locker.Lock()
+	defer e.locker.Unlock()
+	return e.cache.Clear()
+}
+
+func GetCacheKey(params ...interface{}) (string, bool) {
 	key := strings.Builder{}
 	for _, param := range params {
 		switch typedParam := param.(type) {
@@ -162,9 +173,13 @@ func (e *CachedEnforcer) getKey(params ...interface{}) (string, bool) {
 	return key.String(), true
 }
 
-// InvalidateCache deletes all the existing cached decisions.
-func (e *CachedEnforcer) InvalidateCache() error {
-	e.locker.Lock()
-	defer e.locker.Unlock()
-	return e.cache.Clear()
+// ClearPolicy clears all policy.
+func (e *CachedEnforcer) ClearPolicy() {
+	if atomic.LoadInt32(&e.enableCache) != 0 {
+		if err := e.cache.Clear(); err != nil {
+			e.logger.LogError(err, "clear cache failed")
+			return
+		}
+	}
+	e.Enforcer.ClearPolicy()
 }

@@ -30,25 +30,33 @@ func (e *Enforcer) shouldPersist() bool {
 	return e.adapter != nil && e.autoSave
 }
 
+func (e *Enforcer) shouldNotify() bool {
+	return e.watcher != nil && e.autoNotifyWatcher
+}
+
 // addPolicy adds a rule to the current policy.
-func (e *Enforcer) addPolicy(sec string, ptype string, rule []string) (bool, error) {
+func (e *Enforcer) addPolicyWithoutNotify(sec string, ptype string, rule []string) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.AddPolicies(sec, ptype, [][]string{rule})
 	}
 
-	if e.model.HasPolicy(sec, ptype, rule) {
-		return false, nil
+	hasPolicy, err := e.model.HasPolicy(sec, ptype, rule)
+	if hasPolicy || err != nil {
+		return hasPolicy, err
 	}
 
 	if e.shouldPersist() {
-		if err := e.adapter.AddPolicy(sec, ptype, rule); err != nil {
+		if err = e.adapter.AddPolicy(sec, ptype, rule); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
 		}
 	}
 
-	e.model.AddPolicy(sec, ptype, rule)
+	err = e.model.AddPolicy(sec, ptype, rule)
+	if err != nil {
+		return false, err
+	}
 
 	if sec == "g" {
 		err := e.BuildIncrementalRoleLinks(model.PolicyAdd, ptype, [][]string{rule})
@@ -57,27 +65,22 @@ func (e *Enforcer) addPolicy(sec string, ptype string, rule []string) (bool, err
 		}
 	}
 
-	if e.watcher != nil && e.autoNotifyWatcher {
-		var err error
-		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
-			err = watcher.UpdateForAddPolicy(sec, ptype, rule...)
-		} else {
-			err = e.watcher.Update()
-		}
-		return true, err
-	}
-
 	return true, nil
 }
 
-// addPolicies adds rules to the current policy.
-func (e *Enforcer) addPolicies(sec string, ptype string, rules [][]string) (bool, error) {
+// addPoliciesWithoutNotify adds rules to the current policy without notify
+// If autoRemoveRepeat == true, existing rules are automatically filtered
+// Otherwise, false is returned directly.
+func (e *Enforcer) addPoliciesWithoutNotify(sec string, ptype string, rules [][]string, autoRemoveRepeat bool) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.AddPolicies(sec, ptype, rules)
 	}
 
-	if e.model.HasPolicies(sec, ptype, rules) {
-		return false, nil
+	if !autoRemoveRepeat {
+		hasPolicies, err := e.model.HasPolicies(sec, ptype, rules)
+		if hasPolicies || err != nil {
+			return false, err
+		}
 	}
 
 	if e.shouldPersist() {
@@ -88,30 +91,28 @@ func (e *Enforcer) addPolicies(sec string, ptype string, rules [][]string) (bool
 		}
 	}
 
-	e.model.AddPolicies(sec, ptype, rules)
+	err := e.model.AddPolicies(sec, ptype, rules)
+	if err != nil {
+		return false, err
+	}
 
 	if sec == "g" {
 		err := e.BuildIncrementalRoleLinks(model.PolicyAdd, ptype, rules)
 		if err != nil {
 			return true, err
 		}
-	}
 
-	if e.watcher != nil && e.autoNotifyWatcher {
-		var err error
-		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
-			err = watcher.UpdateForAddPolicies(sec, ptype, rules...)
-		} else {
-			err = e.watcher.Update()
+		err = e.BuildIncrementalConditionalRoleLinks(model.PolicyAdd, ptype, rules)
+		if err != nil {
+			return true, err
 		}
-		return true, err
 	}
 
 	return true, nil
 }
 
 // removePolicy removes a rule from the current policy.
-func (e *Enforcer) removePolicy(sec string, ptype string, rule []string) (bool, error) {
+func (e *Enforcer) removePolicyWithoutNotify(sec string, ptype string, rule []string) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.RemovePolicies(sec, ptype, [][]string{rule})
 	}
@@ -124,9 +125,9 @@ func (e *Enforcer) removePolicy(sec string, ptype string, rule []string) (bool, 
 		}
 	}
 
-	ruleRemoved := e.model.RemovePolicy(sec, ptype, rule)
-	if !ruleRemoved {
-		return ruleRemoved, nil
+	ruleRemoved, err := e.model.RemovePolicy(sec, ptype, rule)
+	if !ruleRemoved || err != nil {
+		return ruleRemoved, err
 	}
 
 	if sec == "g" {
@@ -136,21 +137,10 @@ func (e *Enforcer) removePolicy(sec string, ptype string, rule []string) (bool, 
 		}
 	}
 
-	if e.watcher != nil && e.autoNotifyWatcher {
-		var err error
-		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
-			err = watcher.UpdateForRemovePolicy(sec, ptype, rule...)
-		} else {
-			err = e.watcher.Update()
-		}
-		return ruleRemoved, err
-
-	}
-
 	return ruleRemoved, nil
 }
 
-func (e *Enforcer) updatePolicy(sec string, ptype string, oldRule []string, newRule []string) (bool, error) {
+func (e *Enforcer) updatePolicyWithoutNotify(sec string, ptype string, oldRule []string, newRule []string) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.UpdatePolicy(sec, ptype, oldRule, newRule)
 	}
@@ -162,9 +152,9 @@ func (e *Enforcer) updatePolicy(sec string, ptype string, oldRule []string, newR
 			}
 		}
 	}
-	ruleUpdated := e.model.UpdatePolicy(sec, ptype, oldRule, newRule)
-	if !ruleUpdated {
-		return ruleUpdated, nil
+	ruleUpdated, err := e.model.UpdatePolicy(sec, ptype, oldRule, newRule)
+	if !ruleUpdated || err != nil {
+		return ruleUpdated, err
 	}
 
 	if sec == "g" {
@@ -178,20 +168,10 @@ func (e *Enforcer) updatePolicy(sec string, ptype string, oldRule []string, newR
 		}
 	}
 
-	if e.watcher != nil && e.autoNotifyWatcher {
-		var err error
-		if watcher, ok := e.watcher.(persist.WatcherUpdatable); ok {
-			err = watcher.UpdateForUpdatePolicy(oldRule, newRule)
-		} else {
-			err = e.watcher.Update()
-		}
-		return ruleUpdated, err
-	}
-
 	return ruleUpdated, nil
 }
 
-func (e *Enforcer) updatePolicies(sec string, ptype string, oldRules [][]string, newRules [][]string) (bool, error) {
+func (e *Enforcer) updatePoliciesWithoutNotify(sec string, ptype string, oldRules [][]string, newRules [][]string) (bool, error) {
 	if len(newRules) != len(oldRules) {
 		return false, fmt.Errorf("the length of oldRules should be equal to the length of newRules, but got the length of oldRules is %d, the length of newRules is %d", len(oldRules), len(newRules))
 	}
@@ -208,9 +188,9 @@ func (e *Enforcer) updatePolicies(sec string, ptype string, oldRules [][]string,
 		}
 	}
 
-	ruleUpdated := e.model.UpdatePolicies(sec, ptype, oldRules, newRules)
-	if !ruleUpdated {
-		return ruleUpdated, nil
+	ruleUpdated, err := e.model.UpdatePolicies(sec, ptype, oldRules, newRules)
+	if !ruleUpdated || err != nil {
+		return ruleUpdated, err
 	}
 
 	if sec == "g" {
@@ -224,23 +204,13 @@ func (e *Enforcer) updatePolicies(sec string, ptype string, oldRules [][]string,
 		}
 	}
 
-	if e.watcher != nil && e.autoNotifyWatcher {
-		var err error
-		if watcher, ok := e.watcher.(persist.WatcherUpdatable); ok {
-			err = watcher.UpdateForUpdatePolicies(oldRules, newRules)
-		} else {
-			err = e.watcher.Update()
-		}
-		return ruleUpdated, err
-	}
-
 	return ruleUpdated, nil
 }
 
 // removePolicies removes rules from the current policy.
-func (e *Enforcer) removePolicies(sec string, ptype string, rules [][]string) (bool, error) {
-	if !e.model.HasPolicies(sec, ptype, rules) {
-		return false, nil
+func (e *Enforcer) removePoliciesWithoutNotify(sec string, ptype string, rules [][]string) (bool, error) {
+	if hasPolicies, err := e.model.HasPolicies(sec, ptype, rules); !hasPolicies || err != nil {
+		return hasPolicies, err
 	}
 
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
@@ -255,9 +225,9 @@ func (e *Enforcer) removePolicies(sec string, ptype string, rules [][]string) (b
 		}
 	}
 
-	rulesRemoved := e.model.RemovePolicies(sec, ptype, rules)
-	if !rulesRemoved {
-		return rulesRemoved, nil
+	rulesRemoved, err := e.model.RemovePolicies(sec, ptype, rules)
+	if !rulesRemoved || err != nil {
+		return rulesRemoved, err
 	}
 
 	if sec == "g" {
@@ -266,24 +236,13 @@ func (e *Enforcer) removePolicies(sec string, ptype string, rules [][]string) (b
 			return rulesRemoved, err
 		}
 	}
-
-	if e.watcher != nil && e.autoNotifyWatcher {
-		var err error
-		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
-			err = watcher.UpdateForRemovePolicies(sec, ptype, rules...)
-		} else {
-			err = e.watcher.Update()
-		}
-		return true, err
-	}
-
 	return rulesRemoved, nil
 }
 
 // removeFilteredPolicy removes rules based on field filters from the current policy.
-func (e *Enforcer) removeFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues ...string) (bool, error) {
+func (e *Enforcer) removeFilteredPolicyWithoutNotify(sec string, ptype string, fieldIndex int, fieldValues []string) (bool, error) {
 	if len(fieldValues) == 0 {
-		return false, Err.INVALID_FIELDVAULES_PARAMETER
+		return false, Err.ErrInvalidFieldValuesParameter
 	}
 
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
@@ -298,9 +257,9 @@ func (e *Enforcer) removeFilteredPolicy(sec string, ptype string, fieldIndex int
 		}
 	}
 
-	ruleRemoved, effects := e.model.RemoveFilteredPolicy(sec, ptype, fieldIndex, fieldValues...)
-	if !ruleRemoved {
-		return ruleRemoved, nil
+	ruleRemoved, effects, err := e.model.RemoveFilteredPolicy(sec, ptype, fieldIndex, fieldValues...)
+	if !ruleRemoved || err != nil {
+		return ruleRemoved, err
 	}
 
 	if sec == "g" {
@@ -309,72 +268,223 @@ func (e *Enforcer) removeFilteredPolicy(sec string, ptype string, fieldIndex int
 			return ruleRemoved, err
 		}
 	}
-	if e.watcher != nil && e.autoNotifyWatcher {
-		var err error
-		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
-			err = watcher.UpdateForRemoveFilteredPolicy(sec, ptype, fieldIndex, fieldValues...)
-		} else {
-			err = e.watcher.Update()
-		}
-		return ruleRemoved, err
-	}
 
 	return ruleRemoved, nil
 }
 
-func (e *Enforcer) updateFilteredPolicies(sec string, ptype string, newRules [][]string, fieldIndex int, fieldValues ...string) (bool, error) {
+func (e *Enforcer) updateFilteredPoliciesWithoutNotify(sec string, ptype string, newRules [][]string, fieldIndex int, fieldValues ...string) ([][]string, error) {
 	var (
 		oldRules [][]string
 		err      error
 	)
 
+	if _, err = e.model.GetAssertion(sec, ptype); err != nil {
+		return oldRules, err
+	}
+
 	if e.shouldPersist() {
 		if oldRules, err = e.adapter.(persist.UpdatableAdapter).UpdateFilteredPolicies(sec, ptype, newRules, fieldIndex, fieldValues...); err != nil {
 			if err.Error() != notImplemented {
-				return false, err
+				return nil, err
 			}
 		}
 		// For compatibility, because some adapters return oldRules containing ptype, see https://github.com/casbin/xorm-adapter/issues/49
 		for i, oldRule := range oldRules {
-			if len(oldRules[i]) == len(newRules[i])+1 {
+			if len(oldRules[i]) == len(e.model[sec][ptype].Tokens)+1 {
 				oldRules[i] = oldRule[1:]
 			}
 		}
 	}
 
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
-		return true, e.dispatcher.UpdateFilteredPolicies(sec, ptype, oldRules, newRules)
+		return oldRules, e.dispatcher.UpdateFilteredPolicies(sec, ptype, oldRules, newRules)
 	}
 
-	ruleChanged := e.model.RemovePolicies(sec, ptype, oldRules)
-	e.model.AddPolicies(sec, ptype, newRules)
+	ruleChanged, err := e.model.RemovePolicies(sec, ptype, oldRules)
+	if err != nil {
+		return oldRules, err
+	}
+	err = e.model.AddPolicies(sec, ptype, newRules)
+	if err != nil {
+		return oldRules, err
+	}
 	ruleChanged = ruleChanged && len(newRules) != 0
 	if !ruleChanged {
-		return ruleChanged, nil
+		return make([][]string, 0), nil
 	}
 
 	if sec == "g" {
 		err := e.BuildIncrementalRoleLinks(model.PolicyRemove, ptype, oldRules) // remove the old rules
 		if err != nil {
-			return ruleChanged, err
+			return oldRules, err
 		}
 		err = e.BuildIncrementalRoleLinks(model.PolicyAdd, ptype, newRules) // add the new rules
 		if err != nil {
-			return ruleChanged, err
+			return oldRules, err
 		}
 	}
 
-	if e.watcher != nil && e.autoNotifyWatcher {
+	return oldRules, nil
+}
+
+// addPolicy adds a rule to the current policy.
+func (e *Enforcer) addPolicy(sec string, ptype string, rule []string) (bool, error) {
+	ok, err := e.addPolicyWithoutNotify(sec, ptype, rule)
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
 		var err error
-		if watcher, ok := e.watcher.(persist.WatcherUpdatable); ok {
-			err = watcher.UpdateForUpdatePolicies(oldRules, newRules)
+		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
+			err = watcher.UpdateForAddPolicy(sec, ptype, rule...)
 		} else {
 			err = e.watcher.Update()
 		}
-		return ruleChanged, err
+		return true, err
 	}
 
-	return ruleChanged, nil
+	return true, nil
+}
+
+// addPolicies adds rules to the current policy.
+// If autoRemoveRepeat == true, existing rules are automatically filtered
+// Otherwise, false is returned directly.
+func (e *Enforcer) addPolicies(sec string, ptype string, rules [][]string, autoRemoveRepeat bool) (bool, error) {
+	ok, err := e.addPoliciesWithoutNotify(sec, ptype, rules, autoRemoveRepeat)
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
+		var err error
+		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
+			err = watcher.UpdateForAddPolicies(sec, ptype, rules...)
+		} else {
+			err = e.watcher.Update()
+		}
+		return true, err
+	}
+
+	return true, nil
+}
+
+// removePolicy removes a rule from the current policy.
+func (e *Enforcer) removePolicy(sec string, ptype string, rule []string) (bool, error) {
+	ok, err := e.removePolicyWithoutNotify(sec, ptype, rule)
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
+		var err error
+		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
+			err = watcher.UpdateForRemovePolicy(sec, ptype, rule...)
+		} else {
+			err = e.watcher.Update()
+		}
+		return true, err
+	}
+
+	return true, nil
+}
+
+func (e *Enforcer) updatePolicy(sec string, ptype string, oldRule []string, newRule []string) (bool, error) {
+	ok, err := e.updatePolicyWithoutNotify(sec, ptype, oldRule, newRule)
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
+		var err error
+		if watcher, ok := e.watcher.(persist.UpdatableWatcher); ok {
+			err = watcher.UpdateForUpdatePolicy(sec, ptype, oldRule, newRule)
+		} else {
+			err = e.watcher.Update()
+		}
+		return true, err
+	}
+
+	return true, nil
+}
+
+func (e *Enforcer) updatePolicies(sec string, ptype string, oldRules [][]string, newRules [][]string) (bool, error) {
+	ok, err := e.updatePoliciesWithoutNotify(sec, ptype, oldRules, newRules)
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
+		var err error
+		if watcher, ok := e.watcher.(persist.UpdatableWatcher); ok {
+			err = watcher.UpdateForUpdatePolicies(sec, ptype, oldRules, newRules)
+		} else {
+			err = e.watcher.Update()
+		}
+		return true, err
+	}
+
+	return true, nil
+}
+
+// removePolicies removes rules from the current policy.
+func (e *Enforcer) removePolicies(sec string, ptype string, rules [][]string) (bool, error) {
+	ok, err := e.removePoliciesWithoutNotify(sec, ptype, rules)
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
+		var err error
+		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
+			err = watcher.UpdateForRemovePolicies(sec, ptype, rules...)
+		} else {
+			err = e.watcher.Update()
+		}
+		return true, err
+	}
+
+	return true, nil
+}
+
+// removeFilteredPolicy removes rules based on field filters from the current policy.
+func (e *Enforcer) removeFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues []string) (bool, error) {
+	ok, err := e.removeFilteredPolicyWithoutNotify(sec, ptype, fieldIndex, fieldValues)
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
+		var err error
+		if watcher, ok := e.watcher.(persist.WatcherEx); ok {
+			err = watcher.UpdateForRemoveFilteredPolicy(sec, ptype, fieldIndex, fieldValues...)
+		} else {
+			err = e.watcher.Update()
+		}
+		return true, err
+	}
+
+	return true, nil
+}
+
+func (e *Enforcer) updateFilteredPolicies(sec string, ptype string, newRules [][]string, fieldIndex int, fieldValues ...string) (bool, error) {
+	oldRules, err := e.updateFilteredPoliciesWithoutNotify(sec, ptype, newRules, fieldIndex, fieldValues...)
+	ok := len(oldRules) != 0
+	if !ok || err != nil {
+		return ok, err
+	}
+
+	if e.shouldNotify() {
+		var err error
+		if watcher, ok := e.watcher.(persist.UpdatableWatcher); ok {
+			err = watcher.UpdateForUpdatePolicies(sec, ptype, oldRules, newRules)
+		} else {
+			err = e.watcher.Update()
+		}
+		return true, err
+	}
+
+	return true, nil
 }
 
 func (e *Enforcer) GetFieldIndex(ptype string, field string) (int, error) {

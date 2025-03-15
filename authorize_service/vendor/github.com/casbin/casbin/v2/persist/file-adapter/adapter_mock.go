@@ -50,7 +50,7 @@ func (a *AdapterMock) SavePolicy(model model.Model) error {
 	return nil
 }
 
-func (a *AdapterMock) loadPolicyFile(model model.Model, handler func(string, model.Model)) error {
+func (a *AdapterMock) loadPolicyFile(model model.Model, handler func(string, model.Model) error) error {
 	f, err := os.Open(a.filePath)
 	if err != nil {
 		return err
@@ -61,21 +61,24 @@ func (a *AdapterMock) loadPolicyFile(model model.Model, handler func(string, mod
 	for {
 		line, err := buf.ReadString('\n')
 		line = strings.TrimSpace(line)
-		handler(line, model)
+		if err2 := handler(line, model); err2 != nil {
+			return err2
+		}
 		if err != nil {
 			if err == io.EOF {
 				return nil
 			}
+			return err
 		}
 	}
 }
 
-// SetMockErr sets string to be returned by of the mock during testing
+// SetMockErr sets string to be returned by of the mock during testing.
 func (a *AdapterMock) SetMockErr(errorToSet string) {
 	a.errorValue = errorToSet
 }
 
-// GetMockErr returns a mock error or nil
+// GetMockErr returns a mock error or nil.
 func (a *AdapterMock) GetMockErr() error {
 	var returnError error
 	if a.errorValue != "" {

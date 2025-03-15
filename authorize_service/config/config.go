@@ -1,10 +1,12 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 
+	"github.com/JIeeiroSst/utils/consul"
 	"github.com/ghodss/yaml"
 	"github.com/joho/godotenv"
 )
@@ -19,8 +21,8 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	ServerPort string
-	GRPCServer string
+	PortHttpServer string
+	PortGrpcServer string
 }
 
 type MysqlConfig struct {
@@ -96,4 +98,23 @@ func ReadFileEnv(dir string) (*Dir, error) {
 		ServiceConsul: os.Getenv("ServiceConsul"),
 	}
 	return data, nil
+}
+
+func InitializeConfiguration(dir string) (*Config, error) {
+	err := godotenv.Load(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	consul := consul.NewConfigConsul(os.Getenv("HostConsul"), os.Getenv("KeyConsul"), os.Getenv("ServiceConsul"))
+	conf, err := consul.ConnectConfigConsul()
+	if err != nil {
+		return nil, err
+	}
+	var config Config
+	if err := json.Unmarshal(conf, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }

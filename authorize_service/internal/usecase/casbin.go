@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/JIeeiroSst/utils/geared_id"
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/internal/repository"
 	"github.com/JieeiroSst/authorize-service/model"
 	"github.com/JieeiroSst/authorize-service/pkg/cache"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/JieeiroSst/authorize-service/pkg/pagination"
-	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/persist"
 	"github.com/redis/go-redis/v9"
@@ -27,21 +27,19 @@ type Casbins interface {
 	UpdateCasbinRuleName(ctx context.Context, id int, name string) error
 	UpdateCasbinRuleEndpoint(ctx context.Context, id int, endpoint string) error
 	UpdateCasbinMethod(ctx context.Context, id int, method string) error
+	UpdateCasbinRule(ctx context.Context, id int, filed, value string) error
 }
 
 type CasbinUsecase struct {
 	casbinRepo  repository.Casbins
-	snowflake   snowflake.SnowflakeData
 	adapter     persist.Adapter
 	cacheHelper cache.CacheHelper
 }
 
-func NewCasbinUsecase(casbinRepo repository.Casbins,
-	snowflake snowflake.SnowflakeData, adapter persist.Adapter,
+func NewCasbinUsecase(casbinRepo repository.Casbins, adapter persist.Adapter,
 	cacheHelper cache.CacheHelper) *CasbinUsecase {
 	return &CasbinUsecase{
 		casbinRepo:  casbinRepo,
-		snowflake:   snowflake,
 		adapter:     adapter,
 		cacheHelper: cacheHelper,
 	}
@@ -103,7 +101,7 @@ func (a *CasbinUsecase) CasbinRuleById(ctx context.Context, id int) (*model.Casb
 
 func (a *CasbinUsecase) CreateCasbinRule(ctx context.Context, casbin model.CasbinRule) error {
 	object := model.CasbinRule{
-		ID:    a.snowflake.GearedID(),
+		ID:    geared_id.GearedIntID(),
 		Ptype: casbin.Ptype,
 		V0:    casbin.V0,
 		V1:    casbin.V1,
@@ -154,6 +152,28 @@ func (a *CasbinUsecase) UpdateCasbinMethod(ctx context.Context, id int, method s
 	if err := a.casbinRepo.UpdateCasbinMethod(ctx, id, method); err != nil {
 		log.Error(err.Error())
 		return err
+	}
+	return nil
+}
+
+func (a *CasbinUsecase) UpdateCasbinRule(ctx context.Context, id int, filed, value string) error {
+	switch filed {
+	case "ptype":
+		if err := a.UpdateCasbinRulePtype(ctx, id, value); err != nil {
+			return err
+		}
+	case "name":
+		if err := a.UpdateCasbinRuleName(ctx, id, value); err != nil {
+			return err
+		}
+	case "endpoint":
+		if err := a.UpdateCasbinRuleEndpoint(ctx, id, value); err != nil {
+			return err
+		}
+	case "method":
+		if err := a.UpdateCasbinMethod(ctx, id, value); err != nil {
+			return err
+		}
 	}
 	return nil
 }
