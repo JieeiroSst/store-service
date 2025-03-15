@@ -1,7 +1,7 @@
 {
     "server": {
-        "PortServer": "1235",
-        "PortServerGrpc": "1236"
+        "PortHttpServer": "1235",
+        "PortGrpcServer": "1236"
     },
     "secret": {
         "JwtSecretKey": "secretkey",
