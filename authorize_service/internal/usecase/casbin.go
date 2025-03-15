@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/JIeeiroSst/utils/geared_id"
 	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/internal/repository"
 	"github.com/JieeiroSst/authorize-service/model"
 	"github.com/JieeiroSst/authorize-service/pkg/cache"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/JieeiroSst/authorize-service/pkg/pagination"
-	"github.com/JieeiroSst/authorize-service/pkg/snowflake"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/persist"
 	"github.com/redis/go-redis/v9"
@@ -31,17 +31,14 @@ type Casbins interface {
 
 type CasbinUsecase struct {
 	casbinRepo  repository.Casbins
-	snowflake   snowflake.SnowflakeData
 	adapter     persist.Adapter
 	cacheHelper cache.CacheHelper
 }
 
-func NewCasbinUsecase(casbinRepo repository.Casbins,
-	snowflake snowflake.SnowflakeData, adapter persist.Adapter,
+func NewCasbinUsecase(casbinRepo repository.Casbins, adapter persist.Adapter,
 	cacheHelper cache.CacheHelper) *CasbinUsecase {
 	return &CasbinUsecase{
 		casbinRepo:  casbinRepo,
-		snowflake:   snowflake,
 		adapter:     adapter,
 		cacheHelper: cacheHelper,
 	}
@@ -103,7 +100,7 @@ func (a *CasbinUsecase) CasbinRuleById(ctx context.Context, id int) (*model.Casb
 
 func (a *CasbinUsecase) CreateCasbinRule(ctx context.Context, casbin model.CasbinRule) error {
 	object := model.CasbinRule{
-		ID:    a.snowflake.GearedID(),
+		ID:    geared_id.GearedIntID(),
 		Ptype: casbin.Ptype,
 		V0:    casbin.V0,
 		V1:    casbin.V1,

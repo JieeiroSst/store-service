@@ -46,12 +46,24 @@ var sectionNameMap = map[string]string{
 	"m": "matchers",
 }
 
-// Minimal required sections for a model to be valid
+// Minimal required sections for a model to be valid.
 var requiredSections = []string{"r", "p", "e", "m"}
 
 func loadAssertion(model Model, cfg config.ConfigInterface, sec string, key string) bool {
 	value := cfg.String(sectionNameMap[sec] + "::" + key)
 	return model.AddDef(sec, key, value)
+}
+
+var paramsRegex = regexp.MustCompile(`\((.*?)\)`)
+
+// getParamsToken Get ParamsToken from Assertion.Value.
+func getParamsToken(value string) []string {
+	paramsString := paramsRegex.FindString(value)
+	if paramsString == "" {
+		return nil
+	}
+	paramsString = strings.TrimSuffix(strings.TrimPrefix(paramsString, "("), ")")
+	return strings.Split(paramsString, ",")
 }
 
 // AddDef adds an assertion to the model.
@@ -73,7 +85,9 @@ func (model Model) AddDef(sec string, key string, value string) bool {
 			ast.Tokens[i] = key + "_" + strings.TrimSpace(ast.Tokens[i])
 		}
 	} else if sec == "g" {
+		ast.ParamsTokens = getParamsToken(ast.Value)
 		ast.Tokens = strings.Split(ast.Value, ",")
+		ast.Tokens = ast.Tokens[:len(ast.Tokens)-len(ast.ParamsTokens)]
 	} else {
 		ast.Value = util.RemoveComments(util.EscapeAssertion(ast.Value))
 	}
@@ -198,6 +212,16 @@ func (model Model) hasSection(sec string) bool {
 	return section != nil
 }
 
+func (model Model) GetAssertion(sec string, ptype string) (*Assertion, error) {
+	if model[sec] == nil {
+		return nil, fmt.Errorf("missing required section %s", sec)
+	}
+	if model[sec][ptype] == nil {
+		return nil, fmt.Errorf("missiong required definition %s in section %s", ptype, sec)
+	}
+	return model[sec][ptype], nil
+}
+
 // PrintModel prints the model to the log.
 func (model Model) PrintModel() {
 	if !model.GetLogger().IsEnabled() {
@@ -222,6 +246,10 @@ func (model Model) SortPoliciesBySubjectHierarchy() error {
 	if model["e"]["e"].Value != constant.SubjectPriorityEffect {
 		return nil
 	}
+	g, err := model.GetAssertion("g", "g")
+	if err != nil {
+		return err
+	}
 	subIndex := 0
 	for ptype, assertion := range model["p"] {
 		domainIndex, err := model.GetFieldIndex(ptype, constant.DomainIndex)
@@ -229,7 +257,7 @@ func (model Model) SortPoliciesBySubjectHierarchy() error {
 			domainIndex = -1
 		}
 		policies := assertion.Policy
-		subjectHierarchyMap, err := getSubjectHierarchyMap(model["g"]["g"].Policy)
+		subjectHierarchyMap, err := getSubjectHierarchyMap(g.Policy)
 		if err != nil {
 			return err
 		}
@@ -331,10 +359,14 @@ func (model Model) SortPoliciesByPriority() error {
 	return nil
 }
 
+var (
+	pPattern = regexp.MustCompile("^p_")
+	rPattern = regexp.MustCompile("^r_")
+)
+
 func (model Model) ToText() string {
 	tokenPatterns := make(map[string]string)
 
-	pPattern, rPattern := regexp.MustCompile("^p_"), regexp.MustCompile("^r_")
 	for _, ptype := range []string{"r", "p"} {
 		for _, token := range model[ptype][ptype].Tokens {
 			tokenPatterns[token] = rPattern.ReplaceAllString(pPattern.ReplaceAllString(token, "p."), "r.")

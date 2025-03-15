@@ -8,6 +8,7 @@ DBResolver adds multiple databases support to GORM, the following features are s
 * Manual connection switching
 * Sources/Replicas load balancing
 * Works for RAW SQL
+* Transaction
 
 ## Quick Start
 
@@ -26,6 +27,8 @@ DB.Use(dbresolver.Register(dbresolver.Config{
   Replicas: []gorm.Dialector{mysql.Open("db3_dsn"), mysql.Open("db4_dsn")},
   // sources/replicas load balancing policy
   Policy: dbresolver.RandomPolicy{},
+  // print sources/replicas mode in logger
+  ResolverModeReplica: true,
 }).Register(dbresolver.Config{
   // use `db1` as sources (DB's default connection), `db5` as replicas for `User`, `Address`
   Replicas: []gorm.Dialector{mysql.Open("db5_dsn")},
@@ -36,13 +39,9 @@ DB.Use(dbresolver.Register(dbresolver.Config{
 }, "orders", &Product{}, "secondary"))
 ```
 
-### Transaction
-
-When using transaction, DBResolver will use the transaction and won't switch to sources/replicas
-
 ### Automatic connection switching
 
-DBResolver will automatically switch connection based on the working table/struct
+DBResolver will automatically switch connections based on the working table/struct
 
 For RAW SQL, DBResolver will extract the table name from the SQL to match the resolver, and will use `sources` unless the SQL begins with `SELECT`, for example:
 
@@ -83,6 +82,23 @@ DB.Clauses(dbresolver.Use("secondary")).First(&user)
 
 // Specify Resolver and Write Mode: read user from `secondary`'s sources: db6 or db7
 DB.Clauses(dbresolver.Use("secondary"), dbresolver.Write).First(&user)
+```
+
+### Transaction
+
+When using transaction, DBResolver will keep using the transaction and won't switch to sources/replicas based on configuration
+
+But you can specifies which DB to use before starting a transaction, for example:
+
+```go
+// Start transaction based on default replicas db
+tx := DB.Clauses(dbresolver.Read).Begin()
+
+// Start transaction based on default sources db
+tx := DB.Clauses(dbresolver.Write).Begin()
+
+// Start transaction based on `secondary`'s sources
+tx := DB.Clauses(dbresolver.Use("secondary"), dbresolver.Write).Begin()
 ```
 
 ### Load Balancing
