@@ -366,14 +366,14 @@
                 }
             },
             "post": {
-                "description": "AddRole",
+                "description": "AddRoleItem",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "AddRole",
+                "summary": "AddRoleItem",
                 "parameters": [
                     {
                         "description": "user role in json",
@@ -381,7 +381,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRoles"
+                            "$ref": "#/definitions/model.RoleItem"
                         }
                     }
                 ],
@@ -637,7 +637,7 @@
                 }
             }
         },
-        "model.UserRoles": {
+        "model.RoleItem": {
             "type": "object",
             "properties": {
                 "roleId": {

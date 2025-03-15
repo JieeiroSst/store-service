@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/user-service/common"
-	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/model"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -15,12 +14,12 @@ type Tokens interface {
 }
 
 type token struct {
-	config *config.Config
+	jwtSecretKey string
 }
 
-func NewToken(config *config.Config) Tokens {
+func NewToken(jwtSecretKey string) Tokens {
 	return &token{
-		config: config,
+		jwtSecretKey: jwtSecretKey,
 	}
 }
 
@@ -30,7 +29,7 @@ func (t *token) GenerateToken(username string) (string, error) {
 	atClaims["username"] = username
 	atClaims["exp"] = time.Now().Add(time.Minute * 10).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(t.config.Secret.JwtSecretKey))
+	token, err := at.SignedString([]byte(t.jwtSecretKey))
 	if err != nil {
 		return "", err
 	}
@@ -39,7 +38,7 @@ func (t *token) GenerateToken(username string) (string, error) {
 
 func (t *token) ParseToken(tokenStr string) (*model.ParseToken, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		return []byte(t.config.Secret.JwtSecretKey), nil
+		return []byte(t.jwtSecretKey), nil
 	})
 
 	if err != nil {

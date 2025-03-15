@@ -373,14 +373,14 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "AddRole",
+                "description": "AddRoleItem",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "AddRole",
+                "summary": "AddRoleItem",
                 "parameters": [
                     {
                         "description": "user role in json",
@@ -388,7 +388,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserRoles"
+                            "$ref": "#/definitions/model.RoleItem"
                         }
                     }
                 ],
@@ -644,7 +644,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserRoles": {
+        "model.RoleItem": {
             "type": "object",
             "properties": {
                 "roleId": {

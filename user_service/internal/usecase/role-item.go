@@ -1,42 +1,54 @@
 package usecase
 
 import (
+	"context"
+
+	"github.com/JIeeiroSst/user-service/dto"
 	"github.com/JIeeiroSst/user-service/internal/repository"
 	"github.com/JIeeiroSst/user-service/model"
+	"github.com/JIeeiroSst/utils/copy"
 )
 
-type UserRoles interface {
-	AddRole(userRole model.UserRoles) error
-	RemoveRole(userId int) error
-	Update(userId int, roleId int) error
+type RoleItem interface {
+	AddRoleItem(ctx context.Context, in dto.AddRoleItemRequest) (dto.AddRoleItemResponse, error)
+	RemoveRoleItem(ctx context.Context, in dto.RemoveRoleItemRequest) (dto.RemoveRoleItemResponse, error)
+	UpdateItemRole(ctx context.Context, in dto.UpdateRoleItemRequest) (dto.UpdateRoleItemResponse, error)
 }
 
 type UserRoleUsecase struct {
-	UserRoleRepo repository.UserRoles
+	UserRoleRepo repository.RoleItem
 }
 
-func NewUserRoleUsecase(UserRoleRepo repository.UserRoles) *UserRoleUsecase {
+func NewUserRoleUsecase(UserRoleRepo repository.RoleItem) *UserRoleUsecase {
 	return &UserRoleUsecase{
 		UserRoleRepo: UserRoleRepo,
 	}
 }
 
-func (u *UserRoleUsecase) AddRole(userRole model.UserRoles) error {
-	if err := u.UserRoleRepo.AddRole(userRole); err != nil {
-		return err
+func (u *UserRoleUsecase) AddRoleItem(ctx context.Context, in dto.AddRoleItemRequest) (dto.AddRoleItemResponse, error) {
+	var userRole model.RoleItem
+	if err := copy.CopyObject(&in, &userRole); err != nil {
+		return dto.AddRoleItemResponse{}, err
 	}
-	return nil
+	if err := u.UserRoleRepo.AddRoleItem(ctx, userRole); err != nil {
+		return dto.AddRoleItemResponse{}, err
+	}
+	var res dto.AddRoleItemResponse
+	res.Message = "success"
+	return res, nil
 }
-func (u *UserRoleUsecase) RemoveRole(userId int) error {
-	if err := u.UserRoleRepo.RemoveRole(userId); err != nil {
-		return err
+func (u *UserRoleUsecase) RemoveRoleItem(ctx context.Context, in dto.RemoveRoleItemRequest) (dto.RemoveRoleItemResponse, error) {
+	if err := u.UserRoleRepo.RemoveRoleItem(ctx, int(in.UserId)); err != nil {
+		return dto.RemoveRoleItemResponse{Message: "failed"}, err
 	}
-	return nil
+	var res dto.RemoveRoleItemResponse
+	res.Message = "success"
+	return res, nil
 }
 
-func (u *UserRoleUsecase) Update(userId int, roleId int) error {
-	if err := u.UserRoleRepo.Update(userId, roleId); err != nil {
-		return err
+func (u *UserRoleUsecase) UpdateItemRole(ctx context.Context, in dto.UpdateRoleItemRequest) (dto.UpdateRoleItemResponse, error) {
+	if err := u.UserRoleRepo.UpdateRoleItem(ctx, int(in.UserId), int(in.RoleId)); err != nil {
+		return dto.UpdateRoleItemResponse{Message: "failed"}, err
 	}
-	return nil
+	return dto.UpdateRoleItemResponse{Message: "success"}, nil
 }

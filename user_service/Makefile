@@ -1,5 +1,5 @@
-run:
-	go run cmd/main.go
+api:
+	go run main.go api
 gen-client:
 	protoc --go_out=. --go-grpc_out=. ./proto/api.proto
 gen-server:

@@ -1,6 +1,6 @@
 package model
 
-type UserRoles struct {
+type RoleItem struct {
 	RoleId  int
 	UsersId int
 }
