@@ -11,6 +11,7 @@ import (
 	"github.com/JieeiroSst/authorize-service/model"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/JieeiroSst/authorize-service/pkg/pagination"
+	"github.com/JIeeiroSst/utils/trace_id"
 )
 
 type Handler struct {
@@ -25,6 +26,7 @@ func NewHandler(usecase *usecase.Usecase) *Handler {
 }
 
 func (h *Handler) Authorize(ctx context.Context, in *authorizeServiceGrpc.CasbinAuth) (*authorizeServiceGrpc.AuthorizeResponse, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	auth := model.CasbinAuth{
 		Sub: in.Sub, // username
 		Obj: in.Obj, // path api
@@ -51,6 +53,7 @@ func (h *Handler) Authorize(ctx context.Context, in *authorizeServiceGrpc.Casbin
 }
 
 func (h *Handler) GetCasbinRules(ctx context.Context, in *authorizeServiceGrpc.CasbinRequest) (*authorizeServiceGrpc.CasbinRuleList, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	var p pagination.Pagination
 	if err := copy.CopyObject(&in, &p); err != nil {
 		return nil, err
@@ -73,6 +76,7 @@ func (h *Handler) GetCasbinRules(ctx context.Context, in *authorizeServiceGrpc.C
 }
 
 func (h *Handler) GetCasbinRuleById(ctx context.Context, in *authorizeServiceGrpc.CasbinRuleId) (*authorizeServiceGrpc.CasbinRule, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	casbin, err := h.usecase.Casbins.CasbinRuleById(ctx, int(in.GetId()))
 	if errors.Is(err, common.NotFound) {
 		return nil, err
@@ -90,6 +94,7 @@ func (h *Handler) GetCasbinRuleById(ctx context.Context, in *authorizeServiceGrp
 }
 
 func (h *Handler) CreateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.CasbinRule) (*authorizeServiceGrpc.CasbinRule, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	var casbin model.CasbinRule
 	if err := copy.CopyObject(&in, &casbin); err != nil {
 		return nil, err
@@ -105,6 +110,7 @@ func (h *Handler) CreateCasbinRule(ctx context.Context, in *authorizeServiceGrpc
 }
 
 func (h *Handler) DeleteCasbinRule(ctx context.Context, in *authorizeServiceGrpc.CasbinRuleId) (*authorizeServiceGrpc.DeleteCasbinRuleResponse, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	if err := h.usecase.Casbins.DeleteCasbinRule(ctx, int(in.GetId())); err != nil {
 		return &authorizeServiceGrpc.DeleteCasbinRuleResponse{
 			Success: false,
@@ -116,6 +122,7 @@ func (h *Handler) DeleteCasbinRule(ctx context.Context, in *authorizeServiceGrpc
 }
 
 func (h *Handler) UpdateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.UpdateCasbinRuleRequest) (*authorizeServiceGrpc.CasbinRule, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	if err := h.usecase.Casbins.UpdateCasbinRule(ctx, int(in.Id), in.GetField(), in.GetValue()); err != nil {	
 		return nil, err
 	}
@@ -123,6 +130,7 @@ func (h *Handler) UpdateCasbinRule(ctx context.Context, in *authorizeServiceGrpc
 }
 
 func (h *Handler) CreateOTP(ctx context.Context, in *authorizeServiceGrpc.CreateOTPRequest) (*authorizeServiceGrpc.CreateOTPResponse, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	otp, err := h.usecase.Otps.CreateOtpByUser(ctx, in.Username)
 	if errors.Is(err, common.OTPFailed) {
 		return nil, err
@@ -140,6 +148,7 @@ func (h *Handler) CreateOTP(ctx context.Context, in *authorizeServiceGrpc.Create
 }
 
 func (h *Handler) AuthorizeOTP(ctx context.Context, in *authorizeServiceGrpc.AuthorizeOTPRequest) (*authorizeServiceGrpc.AuthorizeOTPResponse, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	err := h.usecase.Otps.Authorize(ctx, in.Otp, in.Username)
 	if errors.Is(err, common.OTPFailed) {
 		return &authorizeServiceGrpc.AuthorizeOTPResponse{
@@ -152,6 +161,7 @@ func (h *Handler) AuthorizeOTP(ctx context.Context, in *authorizeServiceGrpc.Aut
 }
 
 func (h *Handler) EnforceCasbin(ctx context.Context, in *authorizeServiceGrpc.CasbinRuleRequest) (*authorizeServiceGrpc.CasbinRuleReponse, error) {
+	ctx = trace_id.EnsureTracerID(ctx)
 	casbin := model.CasbinAuth{
 		Sub: in.Sub,
 		Obj: in.Obj,
