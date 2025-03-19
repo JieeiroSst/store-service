@@ -18,6 +18,7 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"github.com/JIeeiroSst/utils/logger"
 )
 
 var (
@@ -25,6 +26,11 @@ var (
 )
 
 func runAPI() {
+	logger.InitDefault(logger.Config{
+		Level:      "info",
+		JSONFormat: true,
+		AppName:    "authorize-service",
+	})
 	config, _ := config.InitializeConfiguration(ecosystem)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", config.Server.PortGrpcServer))
 	if err != nil {
