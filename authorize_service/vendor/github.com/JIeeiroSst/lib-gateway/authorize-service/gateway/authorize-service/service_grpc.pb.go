@@ -37,9 +37,9 @@ type AuthorizeServiceClient interface {
 	Authorize(ctx context.Context, in *CasbinAuth, opts ...grpc.CallOption) (*AuthorizeResponse, error)
 	GetCasbinRules(ctx context.Context, in *CasbinRequest, opts ...grpc.CallOption) (*CasbinRuleList, error)
 	GetCasbinRuleById(ctx context.Context, in *CasbinRuleId, opts ...grpc.CallOption) (*CasbinRule, error)
-	CreateCasbinRule(ctx context.Context, in *CasbinRule, opts ...grpc.CallOption) (*CasbinRule, error)
+	CreateCasbinRule(ctx context.Context, in *CasbinRule, opts ...grpc.CallOption) (*CreateCasbinRuleResponse, error)
 	DeleteCasbinRule(ctx context.Context, in *CasbinRuleId, opts ...grpc.CallOption) (*DeleteCasbinRuleResponse, error)
-	UpdateCasbinRule(ctx context.Context, in *UpdateCasbinRuleRequest, opts ...grpc.CallOption) (*CasbinRule, error)
+	UpdateCasbinRule(ctx context.Context, in *UpdateCasbinRuleRequest, opts ...grpc.CallOption) (*UpdateCasbinRuleResponse, error)
 	CreateOTP(ctx context.Context, in *CreateOTPRequest, opts ...grpc.CallOption) (*CreateOTPResponse, error)
 	AuthorizeOTP(ctx context.Context, in *AuthorizeOTPRequest, opts ...grpc.CallOption) (*AuthorizeOTPResponse, error)
 	EnforceCasbin(ctx context.Context, in *CasbinRuleRequest, opts ...grpc.CallOption) (*CasbinRuleReponse, error)
@@ -83,9 +83,9 @@ func (c *authorizeServiceClient) GetCasbinRuleById(ctx context.Context, in *Casb
 	return out, nil
 }
 
-func (c *authorizeServiceClient) CreateCasbinRule(ctx context.Context, in *CasbinRule, opts ...grpc.CallOption) (*CasbinRule, error) {
+func (c *authorizeServiceClient) CreateCasbinRule(ctx context.Context, in *CasbinRule, opts ...grpc.CallOption) (*CreateCasbinRuleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CasbinRule)
+	out := new(CreateCasbinRuleResponse)
 	err := c.cc.Invoke(ctx, AuthorizeService_CreateCasbinRule_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -103,9 +103,9 @@ func (c *authorizeServiceClient) DeleteCasbinRule(ctx context.Context, in *Casbi
 	return out, nil
 }
 
-func (c *authorizeServiceClient) UpdateCasbinRule(ctx context.Context, in *UpdateCasbinRuleRequest, opts ...grpc.CallOption) (*CasbinRule, error) {
+func (c *authorizeServiceClient) UpdateCasbinRule(ctx context.Context, in *UpdateCasbinRuleRequest, opts ...grpc.CallOption) (*UpdateCasbinRuleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CasbinRule)
+	out := new(UpdateCasbinRuleResponse)
 	err := c.cc.Invoke(ctx, AuthorizeService_UpdateCasbinRule_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -150,9 +150,9 @@ type AuthorizeServiceServer interface {
 	Authorize(context.Context, *CasbinAuth) (*AuthorizeResponse, error)
 	GetCasbinRules(context.Context, *CasbinRequest) (*CasbinRuleList, error)
 	GetCasbinRuleById(context.Context, *CasbinRuleId) (*CasbinRule, error)
-	CreateCasbinRule(context.Context, *CasbinRule) (*CasbinRule, error)
+	CreateCasbinRule(context.Context, *CasbinRule) (*CreateCasbinRuleResponse, error)
 	DeleteCasbinRule(context.Context, *CasbinRuleId) (*DeleteCasbinRuleResponse, error)
-	UpdateCasbinRule(context.Context, *UpdateCasbinRuleRequest) (*CasbinRule, error)
+	UpdateCasbinRule(context.Context, *UpdateCasbinRuleRequest) (*UpdateCasbinRuleResponse, error)
 	CreateOTP(context.Context, *CreateOTPRequest) (*CreateOTPResponse, error)
 	AuthorizeOTP(context.Context, *AuthorizeOTPRequest) (*AuthorizeOTPResponse, error)
 	EnforceCasbin(context.Context, *CasbinRuleRequest) (*CasbinRuleReponse, error)
@@ -175,13 +175,13 @@ func (UnimplementedAuthorizeServiceServer) GetCasbinRules(context.Context, *Casb
 func (UnimplementedAuthorizeServiceServer) GetCasbinRuleById(context.Context, *CasbinRuleId) (*CasbinRule, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCasbinRuleById not implemented")
 }
-func (UnimplementedAuthorizeServiceServer) CreateCasbinRule(context.Context, *CasbinRule) (*CasbinRule, error) {
+func (UnimplementedAuthorizeServiceServer) CreateCasbinRule(context.Context, *CasbinRule) (*CreateCasbinRuleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCasbinRule not implemented")
 }
 func (UnimplementedAuthorizeServiceServer) DeleteCasbinRule(context.Context, *CasbinRuleId) (*DeleteCasbinRuleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCasbinRule not implemented")
 }
-func (UnimplementedAuthorizeServiceServer) UpdateCasbinRule(context.Context, *UpdateCasbinRuleRequest) (*CasbinRule, error) {
+func (UnimplementedAuthorizeServiceServer) UpdateCasbinRule(context.Context, *UpdateCasbinRuleRequest) (*UpdateCasbinRuleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCasbinRule not implemented")
 }
 func (UnimplementedAuthorizeServiceServer) CreateOTP(context.Context, *CreateOTPRequest) (*CreateOTPResponse, error) {

@@ -21,6 +21,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.1.0/go.mod h1:wP83
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/JIeeiroSst/lib-gateway v0.0.0-20250315072637-39cd28fe3092 h1:uxQeFLb2SZP7JlAGWAcfxgkWecCQDAeGXMLvePmGiYE=
 github.com/JIeeiroSst/lib-gateway v0.0.0-20250315072637-39cd28fe3092/go.mod h1:75kCb3aX7N8aDEQp20i1jNNFno2FrubVvCrdjazLFrs=
+github.com/JIeeiroSst/lib-gateway v0.0.0-20250321165101-5eac943acec6 h1:0SfEvL9hH5UXdPCm5U+UwExAdZAFVnCLl3+4BfV3gtE=
+github.com/JIeeiroSst/lib-gateway v0.0.0-20250321165101-5eac943acec6/go.mod h1:75kCb3aX7N8aDEQp20i1jNNFno2FrubVvCrdjazLFrs=
 github.com/JIeeiroSst/utils v0.0.0-20250319121542-d2d8118bfe60 h1:f9WaPugD61cSpF3YMPJwi+g9QFm0WNO92AaI+R/J6Lc=
 github.com/JIeeiroSst/utils v0.0.0-20250319121542-d2d8118bfe60/go.mod h1:WjEMG+SztXOKe9b8fP8CLauWOnuPvnVqaxh2sNQD5mw=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=

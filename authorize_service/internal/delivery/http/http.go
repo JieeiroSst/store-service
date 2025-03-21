@@ -108,24 +108,30 @@ func (h *Handler) GetCasbinRuleById(ctx context.Context, in *authorizeServiceGrp
 	return resp, nil
 }
 
-func (h *Handler) CreateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.CasbinRule) (*authorizeServiceGrpc.CasbinRule, error) {
+func (h *Handler) CreateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.CasbinRule) (*authorizeServiceGrpc.CreateCasbinRuleResponse, error) {
 	ctx = trace_id.EnsureTracerID(ctx)
 	lg := logger.WithContext(ctx)
 	var casbin model.CasbinRule
 	if err := copy.CopyObject(&in, &casbin); err != nil {
 		lg.Error("copy object failed", zap.Error(err))
-		return nil, err
+		return &authorizeServiceGrpc.CreateCasbinRuleResponse{
+			Message: "failed",
+		}, err
 	}
 	err := h.usecase.Casbins.CreateCasbinRule(ctx, casbin)
 	if errors.Is(err, common.FailedDB) {
 		lg.Error("FailedDB", zap.Error(err))
-		return nil, err
+		return &authorizeServiceGrpc.CreateCasbinRuleResponse{
+			Message: "failed",
+		}, err
 	}
 	if err != nil {
 		lg.Error("FailedDB", zap.Error(err))
 		return nil, err
 	}
-	return &authorizeServiceGrpc.CasbinRule{}, nil
+	return &authorizeServiceGrpc.CreateCasbinRuleResponse{
+		Message: "success",
+	}, nil
 }
 
 func (h *Handler) DeleteCasbinRule(ctx context.Context, in *authorizeServiceGrpc.CasbinRuleId) (*authorizeServiceGrpc.DeleteCasbinRuleResponse, error) {
@@ -142,14 +148,18 @@ func (h *Handler) DeleteCasbinRule(ctx context.Context, in *authorizeServiceGrpc
 	}, nil // success
 }
 
-func (h *Handler) UpdateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.UpdateCasbinRuleRequest) (*authorizeServiceGrpc.CasbinRule, error) {
+func (h *Handler) UpdateCasbinRule(ctx context.Context, in *authorizeServiceGrpc.UpdateCasbinRuleRequest) (*authorizeServiceGrpc.UpdateCasbinRuleResponse, error) {
 	ctx = trace_id.EnsureTracerID(ctx)
 	lg := logger.WithContext(ctx)
 	if err := h.usecase.Casbins.UpdateCasbinRule(ctx, int(in.Id), in.GetField(), in.GetValue()); err != nil {
 		lg.Error("FailedDB", zap.Error(err))
-		return nil, err
+		return &authorizeServiceGrpc.UpdateCasbinRuleResponse{
+			Message: "failed",
+		}, err
 	}
-	return &authorizeServiceGrpc.CasbinRule{}, nil
+	return &authorizeServiceGrpc.UpdateCasbinRuleResponse{
+		Message: "success",
+	}, nil
 }
 
 func (h *Handler) CreateOTP(ctx context.Context, in *authorizeServiceGrpc.CreateOTPRequest) (*authorizeServiceGrpc.CreateOTPResponse, error) {
