@@ -3,19 +3,18 @@ package model
 import "time"
 
 type Account struct {
-	ID           int           `json:"id"`
+	ID           string        `json:"id"`
 	FirstName    string        `json:"first_name"`
 	LastName     string        `json:"last_name"`
-	CreatedAt    time.Time     `json:"created_at"`
 	Transactions []Transaction `json:"transactions"`
 }
 
 type Transaction struct {
-	ID        int       `json:"id"`
-	Type      string    `json:"type"`
-	Amount    float64   `json:"amount"`
-	CreatedAt time.Time `json:"created_at"`
-	Account   *Account  `json:"account"`
+	ID          int       `json:"id"`
+	Type        string    `json:"type"`
+	Amount      float64   `json:"amount"`
+	DateCreated time.Time `json:"created_at"`
+	Account     *Account  `json:"account"`
 }
 
 type AccountToAccountTransaction struct {
