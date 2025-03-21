@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.7
 
 require (
-	github.com/JIeeiroSst/lib-gateway v0.0.0-20250315072637-39cd28fe3092
+	github.com/JIeeiroSst/lib-gateway v0.0.0-20250321165101-5eac943acec6
 	github.com/JIeeiroSst/utils v0.0.0-20250319121542-d2d8118bfe60
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.100.0

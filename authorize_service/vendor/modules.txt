@@ -2,7 +2,7 @@
 ## explicit; go 1.20
 filippo.io/edwards25519
 filippo.io/edwards25519/field
-# github.com/JIeeiroSst/lib-gateway v0.0.0-20250315072637-39cd28fe3092
+# github.com/JIeeiroSst/lib-gateway v0.0.0-20250321165101-5eac943acec6
 ## explicit; go 1.23.0
 github.com/JIeeiroSst/lib-gateway/authorize-service/gateway/authorize-service
 # github.com/JIeeiroSst/utils v0.0.0-20250319121542-d2d8118bfe60
