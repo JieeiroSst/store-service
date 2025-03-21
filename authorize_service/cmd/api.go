@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	authorizeServiceGrpc "github.com/JIeeiroSst/lib-gateway/authorize-service/gateway/authorize-service"
+	"github.com/JIeeiroSst/utils/logger"
 	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/JieeiroSst/authorize-service/config"
 	serverHttp "github.com/JieeiroSst/authorize-service/internal/delivery/http"
@@ -17,8 +18,8 @@ import (
 	"github.com/JieeiroSst/authorize-service/pkg/otp"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"github.com/JIeeiroSst/utils/logger"
 )
 
 var (
@@ -31,10 +32,12 @@ func runAPI() {
 		JSONFormat: true,
 		AppName:    "authorize-service",
 	})
+	ctx := context.Background()
+	mux := runtime.NewServeMux()
 	config, _ := config.InitializeConfiguration(ecosystem)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", config.Server.PortGrpcServer))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logger.WithContext(ctx).Error("failed to listen", zap.Error(err))
 	}
 
 	db := postgres.NewPostgresConn(postgres.PostgresConfig{
@@ -64,21 +67,20 @@ func runAPI() {
 
 	go func() {
 		log.Printf("Starting gRPC server on :%v", config.Server.PortGrpcServer)
+		logger.WithContext(ctx).Error("Starting gRPC server on", zap.String("PortGrpcServer", config.Server.PortGrpcServer))
 		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatalf("failed to serve: %v", err)
+			logger.WithContext(ctx).Error("Starting gRPC server", zap.Error(err))
 		}
 	}()
 
-	ctx := context.Background()
-	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	err = authorizeServiceGrpc.RegisterAuthorizeServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%v", config.Server.PortGrpcServer), opts)
 	if err != nil {
-		log.Fatalf("Failed to register gateway: %v", err)
+		logger.WithContext(ctx).Error("RegisterAuthorizeServiceHandlerFromEndpoint", zap.Error(err))
 	}
 
 	log.Printf("Starting HTTP server on :%v", config.Server.PortHttpServer)
 	if err := http.ListenAndServe(fmt.Sprintf(":%v", config.Server.PortHttpServer), mux); err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		logger.WithContext(ctx).Debug("ListenAndServe", zap.Error(err))
 	}
 }
