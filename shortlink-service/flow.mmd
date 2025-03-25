@@ -1,0 +1,21 @@
+flowchart TD
+    A[User Registration/Login] --> B{Authenticated?}
+    B -->|Yes| C[Create Short Link]
+    B -->|No| A
+    
+    C --> D[Validate Original URL]
+    D --> E{URL Valid?}
+    E -->|Yes| F[Generate Unique Short Code]
+    E -->|No| G[Show Error]
+    
+    F --> H[Save to Database]
+    H --> I[Generate Short URL]
+    I --> J[Return Short URL to User]
+    
+    K[Redirect Request] --> L[Lookup Short Code]
+    L --> M{Link Exists?}
+    M -->|Yes| N[Increment Click Count]
+    M -->|No| O[404 Not Found]
+    
+    N --> P[Redirect to Original URL]
+    P --> Q[Log Click Details]
