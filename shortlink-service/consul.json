@@ -1,0 +1,22 @@
+{
+	"server": {
+		"PortHttpServer": "1234",
+		"PortGrpcServer": "1231",
+		"PortGinServer": "1232"
+	},
+	"secret": {
+		"JwtSecretKey": "secretkey",
+		"AuthorizeKey": "name_name"
+	},
+	"postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "31000",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "shortlink",
+        "PgDriver": "pgx"
+    },
+	"cache": {
+		"host": "localhost:30002"
+	}
+}
