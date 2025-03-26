@@ -13,6 +13,7 @@ type Config struct {
 	Postgres PostgresConfig
 	Secret   SecretConfig
 	Cache    CacheConfig
+	Host     HostConfig
 }
 
 type ServerConfig struct {
@@ -49,6 +50,10 @@ type Dir struct {
 }
 
 type CacheConfig struct {
+	Host string
+}
+
+type HostConfig struct {
 	Host string
 }
 
