@@ -19,6 +19,7 @@ type Config struct {
 type ServerConfig struct {
 	PortHttpServer string
 	PortGrpcServer string
+	PortGinServer  string
 }
 
 type PostgresConfig struct {
@@ -54,7 +55,7 @@ type CacheConfig struct {
 }
 
 type HostConfig struct {
-	Host string
+	Domain string
 }
 
 func InitializeConfiguration(dir string) (*Config, error) {
