@@ -5,10 +5,13 @@ metadata:
 spec:
   containers:
   - name: consul
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    image: "hashicorp/consul:1.12.0"
     args: ["agent", "-server", "-bootstrap-expect=1", "-ui"] 
     ports:
-    - containerPort: 8500 
+    - containerPort: 8500
+    volumeMounts:
+    - name: consul-data
+      mountPath: /data
   volumes:
   - name: consul-data
     persistentVolumeClaim:

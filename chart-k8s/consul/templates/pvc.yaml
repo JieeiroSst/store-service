@@ -3,8 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: consul-data
 spec:
+  storageClassName: consul-storage-class
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.persistence.size }}
+      storage: 5Gi
