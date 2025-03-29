@@ -113,5 +113,5 @@ func runAPIV2() {
 
 	serverHttp.NewRouter(r, usecase)
 
-	r.Run(config.Server.PortGinServer)
+	r.Run(fmt.Sprintf(":%v", config.Server.PortGinServer))
 }
