@@ -58,6 +58,7 @@ func (u *LinkUsecase) CreateLink(ctx context.Context, req *dto.Link) (string, er
 	shortcode := u.createShortCode()
 	shortlink := fmt.Sprintf("%s/%s", u.Domain, shortcode)
 	link := model.Link{
+		ID:          xid.New().String(),
 		OriginalURL: req.OriginalURL,
 		ShortCode:   shortcode,
 		UserID:      req.UserID,

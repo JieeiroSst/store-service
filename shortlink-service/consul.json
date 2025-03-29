@@ -18,5 +18,8 @@
     },
 	"cache": {
 		"host": "localhost:30002"
+	},
+	"host": {
+		"Domain": "localhost:1232"
 	}
 }

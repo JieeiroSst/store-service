@@ -1,20 +1,14 @@
--- Enum type for Link Status
-CREATE TYPE link_status AS ENUM (
-    'ACTIVE',
-    'EXPIRED',
-    'DISABLED'
-);
-
 -- Links Table
 CREATE TABLE links (
     id VARCHAR(255) PRIMARY KEY,
     original_url TEXT NOT NULL,
+    shortlink TEXT NOT NULL,
     short_code VARCHAR(50) NOT NULL UNIQUE,
     user_id VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     expired_at TIMESTAMP WITH TIME ZONE,
     total_clicks INTEGER DEFAULT 0,
-    status link_status DEFAULT 'ACTIVE',
+    status INTEGER DEFAULT 1, -- 1: active, 0: inactive
     
     -- Optional additional constraints
     CONSTRAINT valid_short_code CHECK (length(short_code) > 0),
