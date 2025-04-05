@@ -17,24 +17,16 @@ import (
 	pb "github.com/JIeeiroSst/lib-gateway/cdn-service/gateway/cdn-service"
 )
 
-type FileStorage interface {
-	Save(ctx context.Context, data []byte, path string) error
-	Load(ctx context.Context, path string) ([]byte, error)
-	Delete(ctx context.Context, path string) error
-}
-
 type FileService struct {
 	pb.UnimplementedFileServiceServer
 	db      *sql.DB
-	storage FileStorage
 	baseURL string
 	baseDir string
 }
 
-func NewFileService(db *sql.DB, storage FileStorage, baseURL, baseDir string) *FileService {
+func NewFileService(db *sql.DB, baseURL, baseDir string) *FileService {
 	return &FileService{
 		db:      db,
-		storage: storage,
 		baseURL: baseURL,
 		baseDir: baseDir,
 	}
@@ -59,10 +51,6 @@ func (s *FileService) UploadFile(ctx context.Context, req *pb.UploadFileRequest)
 	fullPath := filepath.Join(s.baseDir, storagePath)
 	if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create directory: %v", err)
-	}
-
-	if err := s.storage.Save(ctx, req.Content, storagePath); err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to save file: %v", err)
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -206,13 +194,7 @@ func (s *FileService) GetFileContent(ctx context.Context, req *pb.GetFileRequest
 		return nil, status.Errorf(codes.NotFound, "file with ID %s has been deleted", req.FileId)
 	}
 
-	content, err := s.storage.Load(ctx, path)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to load file content: %v", err)
-	}
-
 	return &pb.FileContentResponse{
-		Content:  content,
 		MimeType: mimeType,
 		Filename: filename,
 	}, nil
@@ -224,7 +206,7 @@ func (s *FileService) ListFiles(ctx context.Context, req *pb.ListFilesRequest) (
 		pageSize = 100
 	}
 	if pageSize > 1000 {
-		pageSize = 1000 
+		pageSize = 1000
 	}
 
 	query := `
@@ -378,13 +360,6 @@ func (s *FileService) DeleteFile(ctx context.Context, req *pb.DeleteFileRequest)
 	if err := tx.Commit(); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to commit transaction: %v", err)
 	}
-
-	go func() {
-		ctx := context.Background()
-		if err := s.storage.Delete(ctx, path); err != nil {
-			fmt.Printf("Failed to delete file %s from storage: %v\n", path, err)
-		}
-	}()
 
 	return &emptypb.Empty{}, nil
 }

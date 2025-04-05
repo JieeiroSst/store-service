@@ -7,6 +7,7 @@ toolchain go1.23.8
 require (
 	github.com/JIeeiroSst/lib-gateway v0.0.0-20250404142101-920ddeef4188
 	github.com/google/uuid v1.6.0
+	github.com/lib/pq v1.10.9
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 )
