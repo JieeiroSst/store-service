@@ -243,7 +243,7 @@ func (s *FileService) ListFiles(ctx context.Context, req *pb.ListFilesRequest) (
 		query += fmt.Sprintf(" AND id > $%d", argPos)
 		args = append(args, req.PageToken)
 		argPos++
-	}
+	} 
 
 	query += fmt.Sprintf(" ORDER BY created_at DESC LIMIT $%d", argPos)
 	args = append(args, pageSize+1)
