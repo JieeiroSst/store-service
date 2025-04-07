@@ -5,7 +5,7 @@ go 1.23.0
 toolchain go1.23.8
 
 require (
-	github.com/JIeeiroSst/lib-gateway v0.0.0-20250404142101-920ddeef4188
+	github.com/JIeeiroSst/lib-gateway v1.1.7
 	github.com/JIeeiroSst/utils v0.0.0-20250328154539-9458dc5a48d0
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
