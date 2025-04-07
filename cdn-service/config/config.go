@@ -18,6 +18,7 @@ type Config struct {
 type ServerConfig struct {
 	PortHttpServer string
 	PortGrpcServer string
+	PortGinServer  string
 }
 
 type PostgresConfig struct {

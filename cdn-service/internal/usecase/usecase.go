@@ -11,7 +11,7 @@ type Usecase struct {
 }
 
 type Dependency struct {
-	Repos    repository.Repositories
+	Repos    *repository.Repositories
 	BaseHost config.BaseHostConfig
 	Cache    expire.CacheHelper
 }
