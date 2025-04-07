@@ -13,7 +13,9 @@ import (
 	"github.com/JIeeiroSst/cdn-service/model"
 	pb "github.com/JIeeiroSst/lib-gateway/cdn-service/gateway/cdn-service"
 	"github.com/JIeeiroSst/utils/cache/expire"
+	"github.com/JIeeiroSst/utils/logger"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -24,12 +26,12 @@ type CDNs interface {
 }
 
 type CDNUsecase struct {
-	Repos    repository.Repositories
+	Repos    *repository.Repositories
 	BaseHost config.BaseHostConfig
 	Cache    expire.CacheHelper
 }
 
-func NewCDNUsecase(deps repository.Repositories,
+func NewCDNUsecase(deps *repository.Repositories,
 	baseHost config.BaseHostConfig,
 	cache expire.CacheHelper) *CDNUsecase {
 	return &CDNUsecase{
@@ -40,8 +42,10 @@ func NewCDNUsecase(deps repository.Repositories,
 }
 func (u *CDNUsecase) UploadFile(ctx context.Context, req dto.UploadFileRequest) (*dto.FileResponse, error) {
 	fileID := uuid.New().String()
+	lg := logger.WithContext(ctx)
 
 	if req.FileType != pb.FileType_FILE_TYPE_IMAGE && req.FileType != pb.FileType_FILE_TYPE_VIDEO {
+		lg.Error("invalid file type", zap.String("file_type", req.FileType.String()))
 		return nil, status.Error(codes.InvalidArgument, "file type must be either IMAGE or VIDEO")
 	}
 
@@ -56,6 +60,7 @@ func (u *CDNUsecase) UploadFile(ctx context.Context, req dto.UploadFileRequest) 
 
 	fullPath := filepath.Join(u.BaseHost.BaseDirUpload, storagePath)
 	if err := os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
+		lg.Error("failed to create directory", zap.String("path", fullPath), zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "failed to create directory: %v", err)
 	}
 
@@ -66,7 +71,7 @@ func (u *CDNUsecase) UploadFile(ctx context.Context, req dto.UploadFileRequest) 
 		MimeType:    req.MimeType,
 		SizeBytes:   int64(len(req.Content)),
 		StoragePath: storagePath,
-		ContentHash: req.MimeType,
+		ContentHash: "hash-placeholder",
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 		IsDeleted:   false,
@@ -85,6 +90,7 @@ func (u *CDNUsecase) UploadFile(ctx context.Context, req dto.UploadFileRequest) 
 
 	fileID, err := u.Repos.CDN.UploadFile(ctx, file, meta)
 	if err != nil {
+		lg.Error("failed to save file metadata", zap.String("file_id", fileID), zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "failed to save file metadata: %v", err)
 	}
 	fileResp := &dto.FileResponse{
@@ -102,8 +108,11 @@ func (u *CDNUsecase) UploadFile(ctx context.Context, req dto.UploadFileRequest) 
 }
 
 func (u *CDNUsecase) GetFile(ctx context.Context, fileID string) (*dto.FileResponse, error) {
+	lg := logger.WithContext(ctx)
+	lg.Info("get file", zap.String("file_id", fileID))
 	file, meta, err := u.Repos.CDN.GetFile(ctx, fileID)
 	if err == nil {
+		lg.Info("get file success", zap.String("file_id", fileID))
 		return nil, status.Errorf(codes.Internal, "failed to get file: %v", err)
 	}
 
@@ -113,14 +122,15 @@ func (u *CDNUsecase) GetFile(ctx context.Context, fileID string) (*dto.FileRespo
 	}
 
 	fileResp := &dto.FileResponse{
-		FileID:    file.ID,
-		Filename:  file.Filename,
-		SizeBytes: file.SizeBytes,
-		MimeType:  file.MimeType,
-		FileType:  file.FileType,
-		Url:       fmt.Sprintf("%s/v1/files/%s/content", u.BaseHost.DominServiceURL, file.ID),
-		CreatedAt: file.CreatedAt,
-		Metadata:  metadata,
+		FileID:      file.ID,
+		Filename:    file.Filename,
+		SizeBytes:   file.SizeBytes,
+		MimeType:    file.MimeType,
+		FileType:    file.FileType,
+		Url:         fmt.Sprintf("%s/v1/files/%s/content", u.BaseHost.DominServiceURL, file.ID),
+		CreatedAt:   file.CreatedAt,
+		Metadata:    metadata,
+		StoragePath: file.StoragePath,
 	}
 
 	return fileResp, nil

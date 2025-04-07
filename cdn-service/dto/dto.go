@@ -28,14 +28,15 @@ type FileMetadata struct {
 }
 
 type FileResponse struct {
-	FileID    string            `json:"file_id"`
-	Filename  string            `json:"filename"`
-	SizeBytes int64             `json:"size_bytes"`
-	MimeType  string            `json:"mime_type"`
-	FileType  string            `json:"file_type"` // Should be "IMAGE" or "VIDEO"
-	Url       string            `json:"url"`
-	CreatedAt time.Time         `json:"created_at"`
-	Metadata  map[string]string `json:"metadata"`
+	FileID      string            `json:"file_id"`
+	Filename    string            `json:"filename"`
+	SizeBytes   int64             `json:"size_bytes"`
+	MimeType    string            `json:"mime_type"`
+	FileType    string            `json:"file_type"` // Should be "IMAGE" or "VIDEO"
+	Url         string            `json:"url"`
+	CreatedAt   time.Time         `json:"created_at"`
+	Metadata    map[string]string `json:"metadata"`
+	StoragePath string            `json:"storage_path" db:"storage_path"`
 }
 
 type UploadFileRequest struct {

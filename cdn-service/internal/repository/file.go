@@ -5,7 +5,9 @@ import (
 	"database/sql"
 
 	"github.com/JIeeiroSst/cdn-service/model"
+	"github.com/JIeeiroSst/utils/logger"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -26,8 +28,10 @@ func NewCdnRepository(db *sql.DB) *CdnRepository {
 }
 
 func (r *CdnRepository) UploadFile(ctx context.Context, file model.File, meta []model.FileMetadata) (string, error) {
+	lg := logger.WithContext(ctx)
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
+		lg.Error("failed to begin transaction", zap.Error(err))
 		return "nil", status.Errorf(codes.Internal, "failed to begin transaction: %v", err)
 	}
 	defer tx.Rollback()
@@ -38,6 +42,7 @@ func (r *CdnRepository) UploadFile(ctx context.Context, file model.File, meta []
 	`, file.ID, file.Filename, file.FileType, file.MimeType, file.ContentHash, file.StoragePath, file.ContentHash)
 
 	if err != nil {
+		lg.Error("failed to save file metadata", zap.Error(err))
 		return "", status.Errorf(codes.Internal, "failed to save file metadata: %v", err)
 	}
 
@@ -47,6 +52,7 @@ func (r *CdnRepository) UploadFile(ctx context.Context, file model.File, meta []
 			VALUES ($1, $2, $3, $4)
 		`)
 		if err != nil {
+			lg.Error("failed to prepare metadata statement", zap.Error(err))
 			return "", status.Errorf(codes.Internal, "failed to prepare metadata statement: %v", err)
 		}
 		defer stmt.Close()
@@ -60,6 +66,7 @@ func (r *CdnRepository) UploadFile(ctx context.Context, file model.File, meta []
 	}
 
 	if err := tx.Commit(); err != nil {
+		lg.Error("failed to commit transaction", zap.Error(err))
 		return "", status.Errorf(codes.Internal, "failed to commit transaction: %v", err)
 	}
 
@@ -67,6 +74,7 @@ func (r *CdnRepository) UploadFile(ctx context.Context, file model.File, meta []
 }
 
 func (r *CdnRepository) GetFile(ctx context.Context, fileID string) (*model.File, []model.FileMetadata, error) {
+	lg := logger.WithContext(ctx)
 	var (
 		file     model.File
 		fileMeta []model.FileMetadata
@@ -78,6 +86,7 @@ func (r *CdnRepository) GetFile(ctx context.Context, fileID string) (*model.File
 	`, fileID).Scan(&file.ID, &file.Filename, &file.FileType, &file.MimeType, &file.SizeBytes, &file.StoragePath, &file.ContentHash)
 
 	if err != nil {
+		lg.Error("failed to get file", zap.String("file_id", fileID), zap.Error(err))
 		return nil, nil, status.Errorf(codes.Internal, "failed to get file: %v", err)
 	}
 
@@ -86,6 +95,7 @@ func (r *CdnRepository) GetFile(ctx context.Context, fileID string) (*model.File
 		FROM file_metadata WHERE file_id = $1
 	`, fileID)
 	if err != nil {
+		lg.Error("failed to get file metadata", zap.String("file_id", fileID), zap.Error(err))
 		return nil, nil, status.Errorf(codes.Internal, "failed to get file metadata: %v", err)
 	}
 
