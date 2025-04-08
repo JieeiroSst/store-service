@@ -1,11 +1,17 @@
+{{- if .Values.persistence.enabled }}
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ollama-models
-  namespace: ollama
+  name: {{ .Release.Name }}-ollama
+  labels:
+    app: ollama
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    release: {{ .Release.Name }}
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: {{ .Values.persistence.size }}
+{{- end }}

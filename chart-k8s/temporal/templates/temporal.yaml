@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: temporal
+  labels:
+    app: temporal
 spec:
   replicas: 1
   selector:
@@ -17,43 +19,66 @@ spec:
         image: temporalio/auto-setup:1.16.2
         env:
         - name: DB
-          value: "postgresql"
+          value: postgresql
+        - name: DB_PORT
+          value: "5432"
         - name: POSTGRES_USER
-          value: "postgres"
+          value: postgres
         - name: POSTGRES_PWD
-          value: "postgres"
+          value: postgres
         - name: POSTGRES_SEEDS
-          value: "postgresql-service:5432"
-        - name: DYNAMIC_CONFIG_FILE_PATH
-          value: "/etc/temporal/config/dynamicconfig/development.yaml"
+          value: postgresql-service
         - name: POSTGRES_DB
-          value: "postgres"
+          value: postgres
+        - name: DYNAMIC_CONFIG_FILE_PATH
+          value: config/dynamicconfig/development.yaml
         ports:
         - containerPort: 7233
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
         volumeMounts:
-        - name: temporal-config
+        - name: config-volume
           mountPath: /etc/temporal/config/dynamicconfig
       volumes:
-      - name: temporal-config
+      - name: config-volume
         configMap:
           name: temporal-dynamicconfig
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: temporal
+  name: temporal-service
 spec:
   selector:
     app: temporal
   ports:
   - port: 7233
     targetPort: 7233
-  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: temporal-nodeport
+spec:
+  selector:
+    app: temporal
+  ports:
+  - port: 7233
+    targetPort: 7233
+    nodePort: 30000
+  type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: temporal-web
+  labels:
+    app: temporal-web
 spec:
   replicas: 1
   selector:
@@ -69,9 +94,18 @@ spec:
         image: temporalio/web:1.13.0
         env:
         - name: TEMPORAL_GRPC_ENDPOINT
-          value: "temporal:7233"
+          value: temporal-service:7233
+        - name: TEMPORAL_PERMIT_WRITE_API
+          value: "true"
         ports:
         - containerPort: 8088
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
 ---
 apiVersion: v1
 kind: Service
@@ -83,12 +117,15 @@ spec:
   ports:
   - port: 8088
     targetPort: 8088
-  type: NodePort  
+    nodePort: 30080
+  type: NodePort
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: temporal-admin-tools
+  labels:
+    app: temporal-admin-tools
 spec:
   replicas: 1
   selector:
@@ -102,10 +139,18 @@ spec:
       containers:
       - name: admin-tools
         image: temporalio/admin-tools:1.16.2
-        command: ["sleep", "infinity"]
         env:
         - name: TEMPORAL_CLI_ADDRESS
-          value: "temporal:7233"
+          value: temporal-service:7233
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do sleep 3600; done"]
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -116,27 +161,25 @@ data:
     frontend.enableClientVersionCheck:
       - value: true
         constraints: {}
-    history.enableTaskInfoLogByDomainID:
-      - value: false
-        constraints: {}
-    system.enableActivityEagerExecution:
-      - value: false
+    history.enableTaskInfoLogByNamespaceID:
+      - value: true
         constraints: {}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
   name: temporal-web-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
   - host: kekibook.uk
     http:
       paths:
-      - backend:
+      - path: /temporal
+        pathType: Prefix
+        backend:
           service:
             name: temporal-web
             port:
               number: 8088
-        path: /temporal
-        pathType: Prefix
