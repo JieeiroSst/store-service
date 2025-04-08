@@ -226,7 +226,7 @@ func (server *ChatServer) handleConsultantMessage(message Message) {
 // fetchOllamaResponse handles chat with Ollama API
 func fetchOllamaResponse(message string) (string, error) {
 	req := LlamaRequest{
-		Model: "Tuanpham/t-visstar-7b",
+		Model: "vietnamese-vision-assistant",
 		Messages: []ChatMessage{
 			{
 				Role:    "user",
