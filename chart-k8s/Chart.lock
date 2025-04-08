@@ -23,11 +23,11 @@ dependencies:
 - name: rabbitmq
   repository: file://rabbitmq
   version: 0.1.0
-- name: ollama
-  repository: file://ollama
-  version: 0.1.0
 - name: kafka
   repository: file://kafka
   version: 0.1.0
-digest: sha256:882fe184967d2db3d6d2c7b1202d19016de6a184fc0608fb25947a02c28ae634
-generated: "2025-03-29T23:26:23.231194+07:00"
+- name: temporal
+  repository: file://temporal
+  version: 0.1.0
+digest: sha256:f5a1cfd2938f33cbe8a1c36914de51725c1e6dfde1b64657174ee180cc1c0d33
+generated: "2025-04-08T23:22:03.847231+07:00"

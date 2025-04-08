@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-  name: kekibook.uk
+  name:  ollama-web-ingress
 spec:
   rules:
     - host: kekibook.uk
