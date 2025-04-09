@@ -1,4 +1,4 @@
-FROM ollama/ollama:latest
+FROM Tuanpham/t-visstar-7b:latest
 
 WORKDIR /app
 
