@@ -1,45 +1,37 @@
 use actix_web::{web, App, HttpServer};
 use env_logger::Env;
-use sqlx::postgres::PgPoolOptions;
+use booking_mini_service::adapters::api::config_routes;
+use booking_mini_service::adapters::db::PostgresRepository;
+use log::info;
+use std::sync::Arc;
 use std::env;
-
-mod adapters;
-mod application;
-mod domain;
-mod ports;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Initialize logger
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-    log::info!("Starting hotel management system");
+    if dotenv::dotenv().is_err() {
+        eprintln!("Note: .env file not found or couldn't be loaded");
+    }
+    info!("Starting hotel booking service");
 
-    // Load database connection from environment or use default
-    let database_url = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://postgres:postgres@localhost/hotel_db".to_string());
+    // Database connection
+    let db_url = env::var("DATABASE_URL")
+        .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:31000/hotel_booking".to_string());
 
-    // Create connection pool
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&database_url)
-        .await
-        .expect("Failed to create pool");
+    let repo = Arc::new(PostgresRepository::new(&db_url).await.expect("Failed to connect to database"));
 
-    // Run database migrations
-    sqlx::migrate!("./migrations")
-        .run(&pool)
-        .await
-        .expect("Failed to run migrations");
-
-    // Setup HTTP server with routes
+    let port = env::var("PORT")
+        .unwrap_or_else(|_| "8080".to_string())
+        .parse::<u16>()
+        .expect("PORT must be a valid number");
+    // Start HTTP server
     HttpServer::new(move || {
         App::new()
-            .app_data(web::Data::new(pool.clone()))
-            .service(adapters::api::room::configure())
-            .service(adapters::api::booking::configure())
-            .service(adapters::api::passenger::configure())
+            .app_data(web::Data::new(repo.clone()))
+            .configure(config_routes)
     })
-        .bind(("127.0.0.1", 8080))?
+        .bind(("0.0.0.0", port))?
         .run()
         .await
 }
