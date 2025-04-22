@@ -1,0 +1,94 @@
+flowchart TD
+    subgraph Clients
+        WebApp[Web Application]
+        MobileApp[Mobile Application]
+        AdminPanel[Admin Panel]
+    end
+
+    subgraph API_Gateway
+        Gateway[gRPC Gateway]
+    end
+
+    subgraph Microservices
+        UserService[User Service]
+        VehicleService[Vehicle Service]
+        ReservationService[Reservation Service]
+        RentalService[Rental Service]
+        PaymentService[Payment Service]
+        LocationService[Location Service]
+        NotificationService[Notification Service]
+    end
+
+    subgraph Storage
+        Database[(PostgreSQL)]
+        Cache[(Redis Cache)]
+    end
+
+    %% Client connections to Gateway
+    WebApp --> Gateway
+    MobileApp --> Gateway
+    AdminPanel --> Gateway
+
+    %% Gateway to Services
+    Gateway --> UserService
+    Gateway --> VehicleService
+    Gateway --> ReservationService
+    Gateway --> RentalService
+    Gateway --> PaymentService
+    Gateway --> LocationService
+
+    %% Service to Service communications
+    ReservationService --> VehicleService
+    RentalService --> ReservationService
+    RentalService --> VehicleService
+    PaymentService --> RentalService
+    NotificationService --> ReservationService
+    NotificationService --> RentalService
+    NotificationService --> PaymentService
+
+    %% Services to Storage
+    UserService --> Database
+    VehicleService --> Database
+    ReservationService --> Database
+    RentalService --> Database
+    PaymentService --> Database
+    LocationService --> Database
+    
+    UserService --> Cache
+    VehicleService --> Cache
+    ReservationService --> Cache
+    LocationService --> Cache
+
+    %% Main User Flows
+    User([User]) -- "1. Search for vehicles" --> Gateway
+    Gateway -- "2. Check availability" --> VehicleService
+    User -- "3. Make reservation" --> Gateway
+    Gateway -- "4. Create reservation" --> ReservationService
+    ReservationService -- "5. Update vehicle status" --> VehicleService
+    ReservationService -- "6. Send confirmation" --> NotificationService
+    User -- "7. Pick up vehicle" --> Gateway
+    Gateway -- "8. Start rental" --> RentalService
+    RentalService -- "9. Process payment" --> PaymentService
+    User -- "10. Return vehicle" --> Gateway
+    Gateway -- "11. Complete rental" --> RentalService
+    RentalService -- "12. Calculate final charges" --> PaymentService
+    RentalService -- "13. Update vehicle status" --> VehicleService
+    PaymentService -- "14. Send receipt" --> NotificationService
+
+    %% Admin Flows
+    Admin([Admin]) -- "Manage vehicles" --> AdminPanel
+    Admin -- "Manage users" --> AdminPanel
+    Admin -- "View reports" --> AdminPanel
+    
+    %% Additional annotations
+    classDef client fill:#d0e0ff,stroke:#000,stroke-width:1px
+    classDef service fill:#c9e6ca,stroke:#000,stroke-width:1px
+    classDef storage fill:#ffe6cc,stroke:#000,stroke-width:1px
+    classDef gateway fill:#fff2cc,stroke:#000,stroke-width:1px
+    classDef user fill:#f5f5f5,stroke:#000,stroke-width:1px
+
+    class WebApp,MobileApp,AdminPanel client
+    class UserService,VehicleService,ReservationService,RentalService,PaymentService,LocationService,NotificationService service
+    class Database,Cache storage
+    class Gateway gateway
+    class User,Admin user

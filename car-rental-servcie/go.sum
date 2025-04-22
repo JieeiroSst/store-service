@@ -1,0 +1,6 @@
+github.com/JIeeiroSst/lib-gateway v1.2.2 h1:K6jLQF1UhrNMO1hjBe2DbfJST74yc3WVgXfgmRnodP8=
+github.com/JIeeiroSst/lib-gateway v1.2.2/go.mod h1:K0q/CLsstQGdQhAJzj05uZbxZq+j7eBqbrSeA/1e7H0=
+github.com/JIeeiroSst/utils v1.4.4 h1:32s2uBIwQAxyIzZ07aP2AKSblZic0WuLp6N0DdGJAYY=
+github.com/JIeeiroSst/utils v1.4.4/go.mod h1:WSWGvo4uWmsss39B/qgTDJWKZ8LuF7GxNg0klLJvkQU=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
