@@ -5,9 +5,10 @@ use booking_mini_service::adapters::db::PostgresRepository;
 use log::info;
 use std::sync::Arc;
 use std::env;
+use std::io;
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> io::Result<()> {
     // Initialize logger
     env_logger::init_from_env(Env::default().default_filter_or("info"));
     if dotenv::dotenv().is_err() {

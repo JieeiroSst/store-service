@@ -1,0 +1,17 @@
+{
+	"server": {
+		"PortHttpServer": "2222",
+		"PortGrpcServer": "2223"
+	},
+	"postgres": {
+        "PostgresqlHost": "localhost",
+        "PostgresqlPort": "31000",
+        "PostgresqlUser": "postgres",
+        "PostgresqlPassword": "postgres",
+        "PostgresqlDbname": "car-rental",
+        "PgDriver": "pgx"
+    },
+	"cache": {
+		"host": "localhost:30002"
+	}
+}
