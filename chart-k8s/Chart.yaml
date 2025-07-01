@@ -51,3 +51,7 @@ dependencies:
     name: temporal
     version: "0.1.0"
     repository: file://temporal
+  - alias: qdrant
+    name: qdrant
+    version: "0.1.0"
+    repository: file://qdrant

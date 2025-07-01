@@ -32,5 +32,8 @@ dependencies:
 - name: temporal
   repository: file://temporal
   version: 0.1.0
-digest: sha256:abcf02ac3c14c00660f2fb4d5d41a9f6c8a7ec1cb8c8834a766fb4d5c125ace5
-generated: "2025-04-09T04:04:24.047117+07:00"
+- name: qdrant
+  repository: file://qdrant
+  version: 0.1.0
+digest: sha256:58792863b88641d7d8a87b3258b1f95917546f25893039994d2b237e4b6e9f74
+generated: "2025-07-02T05:19:03.794567+07:00"
