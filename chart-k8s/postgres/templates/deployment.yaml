@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresql-deployment
+  template:
+    metadata:
+      labels:
+        app: postgresql-deployment
+    spec:
+      containers:
+      - name: postgresql-deployment
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.ports.targetPort }}
+        env:
+            - name: NODE_ENV
+              value: production

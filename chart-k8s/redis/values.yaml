@@ -1,0 +1,6 @@
+replicaCount: 1
+image: redis:7.0.10
+service:
+  type: NodePort
+  port: 6379
+  nodePort: 30001

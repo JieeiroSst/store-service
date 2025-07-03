@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kafka-client
+  labels:
+    app: kafka-client
+spec:
+  containers:
+  - name: kafka-client
+    image: docker.io/bitnami/kafka:latest
+    command:
+      - sleep
+      - "3600"
+    env:
+    - name: KAFKA_ENABLE_KRAFT
+      value: "yes"
+    - name: KAFKA_BOOTSTRAP_SERVERS
+      value: "kafka:9092"

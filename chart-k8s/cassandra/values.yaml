@@ -1,0 +1,13 @@
+cassandra:
+  name: cassandra
+  replicas: 1
+
+  image:
+    name: cassandra
+    tag: latest
+    port: 9042
+
+  service:
+    name: cassandra-svc
+    type: LoadBalancer
+    nodeport: 30019

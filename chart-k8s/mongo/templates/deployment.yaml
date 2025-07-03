@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-deployment
+  template:
+    metadata:
+      labels:
+        app: mongo-deployment
+    spec:
+      containers:
+      - name: mongo-deployment
+        image: mongo:4.0.3
+        ports:
+        - containerPort: 27017
+        env:
+            - name: NODE_ENV
+              value: production

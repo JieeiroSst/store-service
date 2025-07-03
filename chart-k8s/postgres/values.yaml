@@ -1,0 +1,6 @@
+image:
+  repository: postgres
+  tag: 10.1
+ports:
+  targetPort: 5432
+  nodePort: 31000
