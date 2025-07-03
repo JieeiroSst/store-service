@@ -1,0 +1,20 @@
+mysql:
+  name: mysql
+  replicas: 1
+
+  env:
+    password: password
+
+  image:
+    name: mysql
+    tag: 8.0
+    port: 3306
+
+  service:
+    loadBalancer:
+      name: mysql-svc
+      type: LoadBalancer
+    nodeport:
+      name: mysql-nodeport
+      type: NodePort
+  

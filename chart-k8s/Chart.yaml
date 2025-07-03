@@ -1,0 +1,57 @@
+apiVersion: v2
+name: app-cluster
+description: A Helm chart for Kubernetes
+
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+
+dependencies:
+  - alias: consul
+    name: consul
+    version: "0.1.0"
+    repository: file://consul
+  - alias: postgres
+    name: postgres
+    version: "0.1.0"
+    repository: file://postgres
+  - alias: mysql
+    name: mysql
+    version: "0.1.0"
+    repository: file://mysql
+  - alias: cassandra
+    name: cassandra
+    version: "0.1.0"
+    repository: file://cassandra
+  - alias: redis
+    name: redis
+    version: "0.1.0"
+    repository: file://redis
+  - alias: nats
+    name: nats
+    version: "0.1.0"
+    repository: file://nats
+  - alias: mongo
+    name: mongo
+    version: "0.1.0"
+    repository: file://mongo
+  - alias: rabbitmq
+    name: rabbitmq
+    version: "0.1.0"
+    repository: file://rabbitmq
+  - alias: ollama
+    name: ollama
+    version: "0.1.0"
+    repository: file://ollama
+  - alias: kafka
+    name: kafka
+    version: "0.1.0"
+    repository: file://kafka
+  - alias: temporal
+    name: temporal
+    version: "0.1.0"
+    repository: file://temporal
+  - alias: qdrant
+    name: qdrant
+    version: "0.1.0"
+    repository: file://qdrant

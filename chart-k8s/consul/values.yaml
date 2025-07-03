@@ -1,0 +1,16 @@
+image:
+  repository: hashicorp/consul
+  tag: 1.12.0 
+replicaCount: 1
+service:
+  type: LoadBalancer 
+ingress:
+  enabled: true 
+  hosts:
+    - host: kekibook.uk
+      paths:
+        - path: /consul
+          pathType: Prefix
+persistence:
+  enabled: true
+  size: 1Gi 

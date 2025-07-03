@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+  name: consul-web-ingress
+spec:
+  rules:
+  - host: kekibook.uk
+    http:
+      paths:
+      - backend:
+          service:
+            name: consul
+            port:
+              number: 8500
+        path: /consul
+        pathType: Prefix

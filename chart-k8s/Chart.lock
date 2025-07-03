@@ -1,0 +1,39 @@
+dependencies:
+- name: consul
+  repository: file://consul
+  version: 0.1.0
+- name: postgres
+  repository: file://postgres
+  version: 0.1.0
+- name: mysql
+  repository: file://mysql
+  version: 0.1.0
+- name: cassandra
+  repository: file://cassandra
+  version: 0.1.0
+- name: redis
+  repository: file://redis
+  version: 0.1.0
+- name: nats
+  repository: file://nats
+  version: 0.1.0
+- name: mongo
+  repository: file://mongo
+  version: 0.1.0
+- name: rabbitmq
+  repository: file://rabbitmq
+  version: 0.1.0
+- name: ollama
+  repository: file://ollama
+  version: 0.1.0
+- name: kafka
+  repository: file://kafka
+  version: 0.1.0
+- name: temporal
+  repository: file://temporal
+  version: 0.1.0
+- name: qdrant
+  repository: file://qdrant
+  version: 0.1.0
+digest: sha256:58792863b88641d7d8a87b3258b1f95917546f25893039994d2b237e4b6e9f74
+generated: "2025-07-02T05:19:03.794567+07:00"

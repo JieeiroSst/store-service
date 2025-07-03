@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: ollama/ollama
+  tag: latest
+  pullPolicy: IfNotPresent
+
+environment:
+  OLLAMA_MODELS: "llama2-3.2-vision"
+
+service:
+  type: ClusterIP
+  port: 11434
+  nodePort: 30434
+  createNodePort: false
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2
+    memory: 4Gi
+
+persistence:
+  enabled: true
+  size: 10Gi
