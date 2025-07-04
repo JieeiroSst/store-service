@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+        }
+        
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .video-box {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .video-box h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        video {
+            width: 100%;
+            height: 200px;
+            background-color: #000;
+            border-radius: 5px;
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .users-list {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .user-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .call-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .call-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Video Call Application</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="userIdInput">User ID:</label>
+                <input type="text" id="userIdInput" placeholder="Enter your user ID">
+            </div>
+            
+            <div class="control-group">
+                <label for="roomIdInput">Room ID:</label>
+                <input type="text" id="roomIdInput" placeholder="Enter room ID">
+            </div>
+            
+            <div class="control-group">
+                <button id="joinButton">Join Room</button>
+                <button id="leaveButton" disabled>Leave Room</button>
+                <button id="toggleVideo">Toggle Video</button>
+                <button id="toggleAudio">Toggle Audio</button>
+            </div>
+        </div>
+        
+        <div class="status" id="status">Disconnected</div>
+        
+        <div class="users-list" id="usersList" style="display: none;">
+            <h3>Users in Room</h3>
+            <div id="usersContainer"></div>
+        </div>
+        
+        <div class="video-container">
+            <div class="video-box">
+                <h3>Your Video</h3>
+                <video id="localVideo" autoplay muted></video>
+            </div>
+            <div id="remoteVideos"></div>
+        </div>
+    </div>
+
+    <script>
+        class VideoCallClient {
+            constructor() {
+                this.ws = null;
+                this.localStream = null;
+                this.peerConnections = {};
+                this.isVideoEnabled = true;
+                this.isAudioEnabled = true;
+                this.userId = '';
+                this.roomId = '';
+                
+                this.initializeElements();
+                this.setupEventListeners();
+            }
+            
+            initializeElements() {
+                this.joinButton = document.getElementById('joinButton');
+                this.leaveButton = document.getElementById('leaveButton');
+                this.toggleVideoButton = document.getElementById('toggleVideo');
+                this.toggleAudioButton = document.getElementById('toggleAudio');
+                this.userIdInput = document.getElementById('userIdInput');
+                this.roomIdInput = document.getElementById('roomIdInput');
+                this.statusDiv = document.getElementById('status');
+                this.usersListDiv = document.getElementById('usersList');
+                this.usersContainer = document.getElementById('usersContainer');
+                this.localVideo = document.getElementById('localVideo');
+                this.remoteVideos = document.getElementById('remoteVideos');
+            }
+            
+            setupEventListeners() {
+                this.joinButton.addEventListener('click', () => this.joinRoom());
+                this.leaveButton.addEventListener('click', () => this.leaveRoom());
+                this.toggleVideoButton.addEventListener('click', () => this.toggleVideo());
+                this.toggleAudioButton.addEventListener('click', () => this.toggleAudio());
+            }
+            
+            async joinRoom() {
+                const userId = this.userIdInput.value.trim();
+                const roomId = this.roomIdInput.value.trim();
+                
+                if (!userId || !roomId) {
+                    alert('Please enter both User ID and Room ID');
+                    return;
+                }
+                
+                this.userId = userId;
+                this.roomId = roomId;
+                
+                try {
+                    this.localStream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: true
+                    });
+                    
+                    this.localVideo.srcObject = this.localStream;
+                    
+                    this.connectWebSocket();
+                    
+                    this.joinButton.disabled = true;
+                    this.leaveButton.disabled = false;
+                    this.userIdInput.disabled = true;
+                    this.roomIdInput.disabled = true;
+                    
+                } catch (error) {
+                    console.error('Error accessing media devices:', error);
+                    alert('Error accessing camera/microphone');
+                }
+            }
+            
+            connectWebSocket() {
+                const wsUrl = `ws://localhost:8080/ws?user_id=${this.userId}&room_id=${this.roomId}`;
+                this.ws = new WebSocket(wsUrl);
+                
+                this.ws.onopen = () => {
+                    console.log('WebSocket connected');
+                    this.updateStatus('Connected', true);
+                };
+                
+                this.ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+                    this.handleMessage(message);
+                };
+                
+                this.ws.onclose = () => {
+                    console.log('WebSocket disconnected');
+                    this.updateStatus('Disconnected', false);
+                };
+                
+                this.ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                    this.updateStatus('Connection Error', false);
+                };
+            }
+            
+            handleMessage(message) {
+                console.log('Received message:', message);
+                
+                switch (message.type) {
+                    case 'room_users':
+                        this.updateUsersList(message.data);
+                        break;
+                    case 'user_joined':
+                        this.handleUserJoined(message.user_id);
+                        break;
+                    case 'user_left':
+                        this.handleUserLeft(message.user_id);
+                        break;
+                    case 'offer':
+                        this.handleOffer(message);
+                        break;
+                    case 'answer':
+                        this.handleAnswer(message);
+                        break;
+                    case 'ice_candidate':
+                        this.handleICECandidate(message);
+                        break;
+                }
+            }
+            
+            updateUsersList(users) {
+                this.usersContainer.innerHTML = '';
+                if (users.length > 0) {
+                    this.usersListDiv.style.display = 'block';
+                    users.forEach(userId => {
+                        const userDiv = document.createElement('div');
+                        userDiv.className = 'user-item';
+                        userDiv.innerHTML = `
+                            <span>${userId}</span>
+                            <button class="call-button" onclick="videoCall.callUser('${userId}')">Call</button>
+                        `;
+                        this.usersContainer.appendChild(userDiv);
+                    });
+                } else {
+                    this.usersListDiv.style.display = 'none';
+                }
+            }
+            
+            async callUser(userId) {
+                const peerConnection = await this.createPeerConnection(userId);
+                
+                this.localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, this.localStream);
+                });
+                
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                
+                this.sendMessage({
+                    type: 'offer',
+                    to_user_id: userId,
+                    data: offer
+                });
+            }
+            
+            async handleOffer(message) {
+                const peerConnection = await this.createPeerConnection(message.user_id);
+                
+                this.localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, this.localStream);
+                });
+                
+                await peerConnection.setRemoteDescription(message.data);
+                
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                
+                this.sendMessage({
+                    type: 'answer',
+                    to_user_id: message.user_id,
+                    data: answer
+                });
+            }
+            
+            async handleAnswer(message) {
+                const peerConnection = this.peerConnections[message.user_id];
+                if (peerConnection) {
+                    await peerConnection.setRemoteDescription(message.data);
+                }
+            }
+            
+            async handleICECandidate(message) {
+                const peerConnection = this.peerConnections[message.user_id];
+                if (peerConnection) {
+                    await peerConnection.addIceCandidate(message.data);
+                }
+            }
+            
+            async createPeerConnection(userId) {
+                const peerConnection = new RTCPeerConnection({
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' }
+                    ]
+                });
+                
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        this.sendMessage({
+                            type: 'ice_candidate',
+                            to_user_id: userId,
+                            data: event.candidate
+                        });
+                    }
+                };
+                
+                peerConnection.ontrack = (event) => {
+                    this.handleRemoteStream(userId, event.streams[0]);
+                };
+                
+                this.peerConnections[userId] = peerConnection;
+                return peerConnection;
+            }
+            
+            handleRemoteStream(userId, stream) {
+                let remoteVideoDiv = document.getElementById(`remote-${userId}`);
+                if (!remoteVideoDiv) {
+                    remoteVideoDiv = document.createElement('div');
+                    remoteVideoDiv.id = `remote-${userId}`;
+                    remoteVideoDiv.className = 'video-box';
+                    remoteVideoDiv.innerHTML = `
+                        <h3>User: ${userId}</h3>
+                        <video autoplay></video>
+                    `;
+                    this.remoteVideos.appendChild(remoteVideoDiv);
+                }
+                
+                const remoteVideo = remoteVideoDiv.querySelector('video');
+                remoteVideo.srcObject = stream;
+            }
+            
+            handleUserJoined(userId) {
+                console.log(`User ${userId} joined`);
+            }
+            
+            handleUserLeft(userId) {
+                if (this.peerConnections[userId]) {
+                    this.peerConnections[userId].close();
+                    delete this.peerConnections[userId];
+                }
+                
+                const remoteVideoDiv = document.getElementById(`remote-${userId}`);
+                if (remoteVideoDiv) {
+                    remoteVideoDiv.remove();
+                }
+                
+                console.log(`User ${userId} left`);
+            }
+            
+            sendMessage(message) {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify(message));
+                }
+            }
+            
+            leaveRoom() {
+                if (this.ws) {
+                    this.ws.close();
+                }
+                
+                Object.values(this.peerConnections).forEach(pc => pc.close());
+                this.peerConnections = {};
+                
+                if (this.localStream) {
+                    this.localStream.getTracks().forEach(track => track.stop());
+                    this.localStream = null;
+                }
+                
+                this.localVideo.srcObject = null;
+                this.remoteVideos.innerHTML = '';
+                
+                this.joinButton.disabled = false;
+                this.leaveButton.disabled = true;
+                this.userIdInput.disabled = false;
+                this.roomIdInput.disabled = false;
+                this.usersListDiv.style.display = 'none';
+                
+                this.updateStatus('Disconnected', false);
+            }
+            
+            toggleVideo() {
+                if (this.localStream) {
+                    this.isVideoEnabled = !this.isVideoEnabled;
+                    this.localStream.getVideoTracks().forEach(track => {
+                        track.enabled = this.isVideoEnabled;
+                    });
+                    this.toggleVideoButton.textContent = this.isVideoEnabled ? 'Turn Off Video' : 'Turn On Video';
+                }
+            }
+            
+            toggleAudio() {
+                if (this.localStream) {
+                    this.isAudioEnabled = !this.isAudioEnabled;
+                    this.localStream.getAudioTracks().forEach(track => {
+                        track.enabled = this.isAudioEnabled;
+                    });
+                    this.toggleAudioButton.textContent = this.isAudioEnabled ? 'Mute' : 'Unmute';
+                }
+            }
+            
+            updateStatus(message, isConnected) {
+                this.statusDiv.textContent = message;
+                this.statusDiv.className = `status ${isConnected ? 'connected' : 'disconnected'}`;
+            }
+        }
+        
+        const videoCall = new VideoCallClient();
+    </script>
+</body>
+</html>
