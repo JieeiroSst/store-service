@@ -1,0 +1,47 @@
+server:
+  port: "8080"
+  mode: "debug"
+
+database:
+  url: "user:password@tcp(localhost:3306)/payment_gateway?charset=utf8mb4&parseTime=True&loc=Local"
+
+redis:
+  url: "redis://localhost:6379"
+
+momo:
+  partner_code: "MOMO_PARTNER_CODE"
+  access_key: "MOMO_ACCESS_KEY"
+  secret_key: "MOMO_SECRET_KEY"
+  endpoint: "https://test-payment.momo.vn/v2/gateway/api/create"
+  return_url: "http://localhost:8080/payment/momo/return"
+  notify_url: "http://localhost:8080/api/v1/webhooks/momo"
+
+vnpay:
+  tmn_code: "VNPAY_TMN_CODE"
+  hash_secret: "VNPAY_HASH_SECRET"
+  endpoint: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+  return_url: "http://localhost:8080/payment/vnpay/return"
+
+zalopay:
+  app_id: "ZALOPAY_APP_ID"
+  key1: "ZALOPAY_KEY1"
+  key2: "ZALOPAY_KEY2"
+  endpoint: "https://sb-openapi.zalopay.vn/v2/create"
+  return_url: "http://localhost:8080/payment/zalopay/return"
+
+paypal:
+  client_id: "PAYPAL_CLIENT_ID"
+  client_secret: "PAYPAL_CLIENT_SECRET"
+  endpoint: "https://api.sandbox.paypal.com"
+  return_url: "http://localhost:8080/payment/paypal/return"
+
+stripe:
+  secret_key: "STRIPE_SECRET_KEY"
+  webhook_secret: "STRIPE_WEBHOOK_SECRET"
+  return_url: "http://localhost:8080/payment/stripe/return"
+
+jwt:
+  secret_key: "your-super-secret-jwt-key"
+  expires_in: 3600
+
+log_level: "info"
