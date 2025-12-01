@@ -10,7 +10,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Fri Dec 20 21:17:09 2024
+# Make data base, printed on Sun Nov 30 02:41:18 2025
 
 # Variables
 
@@ -19,6 +19,7 @@ make: *** No rule to make target `all'.  Stop.
 # automatic
 ?F = $(notdir $?)
 # environment
+ 
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
 VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
@@ -31,7 +32,7 @@ LC_CTYPE = UTF-8
 # automatic
 @F = $(notdir $@)
 # makefile
-CURDIR := /Users/alainliu/Desktop/store-service
+CURDIR := /Users/quan/Desktop/store-service
 # makefile
 SHELL = /bin/sh
 # environment
@@ -41,60 +42,51 @@ _ = /usr/bin/make
 # makefile (from `Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # environment
- 
-XDG_DATA_DIRS = /usr/local/share:/usr/share:/Users/alainliu/.nix-profile/share:/nix/var/nix/profiles/default/share
-# environment
 __CFBundleIdentifier = com.microsoft.VSCode
 # environment
 INFOPATH = /opt/homebrew/share/info:
 # environment
-VSCODE_CWD = /Users/alainliu/Desktop/store-service
+VSCODE_CWD = /Users/quan/Desktop/store-service
 # environment
-GOPROXY = https://proxy.golang.org,direct
+PATH = /opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin
 # environment
-PATH = /bin:/Users/alainliu/.asdf/shims:/opt/homebrew/opt/asdf/libexec/bin:/Users/alainliu/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/opt/homebrew/bin:/opt/homebrew/opt/llvm/bin:/opt/homebrew/anaconda3/bin:/Users/alainliu/.bun/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Users/alainliu/.cargo/bin
-# environment
-GOPATH = /Users/alainliu/go
-# environment
-LaunchInstanceID = B70EB6ED-FD17-4E0B-8CF0-DDD070D9B362
+LaunchInstanceID = B25AC883-4613-4D20-921C-1B7D6008500E
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.CyoCg2Hvv3/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.Lsh9d979Iv/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
-NIX_SSL_CERT_FILE = /nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt
-# environment
-PWD = /Users/alainliu/Desktop/store-service
+PWD = /Users/quan/Desktop/store-service
 # environment
 HOMEBREW_CELLAR = /opt/homebrew/Cellar
+# environment
+OSLogRateLimit = 64
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = undefined
 # environment
 MANPATH = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man:/Library/Developer/CommandLineTools/usr/share/man:/Library/Developer/CommandLineTools/Toolchains/XcodeDefault.xctoolchain/usr/share/man:
 # environment
-GOMODCACHE = /Users/alainliu/go/pkg/mod
-# environment
-HOME = /Users/alainliu
+HOME = /Users/quan
 # default
 MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/alainliu/Library/Application Support/Code/CachedData/f1a4fb101478ce6ec82fe9627c43efbf9e98c813
+VSCODE_CODE_CACHE_PATH = /Users/quan/Library/Application Support/Code/CachedData/bf9252a2fb45be6893dd8870c0bf37e2e1766d61
 # environment
-LOGNAME = alainliu
-# environment
-GOTELEMETRY_GOPLS_CLIENT_START_TIME = 1713188788
+LOGNAME = quan
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # environment
 XPC_FLAGS = 0x0
+# environment
+COLORTERM = truecolor
 # default
 MAKE = $(MAKE_COMMAND)
 # default
@@ -102,17 +94,17 @@ MAKECMDGOALS := all
 # environment
 SHLVL = 3
 # environment
-NIX_PROFILES = /nix/var/nix/profiles/default /Users/alainliu/.nix-profile
-# environment
 VSCODE_ESM_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # default
 MAKE_VERSION := 3.81
 # environment
-USER = alainliu
+USER = quan
 # makefile
 .DEFAULT_GOAL := 
 # environment
-TERM_SESSION_ID = E4FEB2A8-09C5-43A7-B243-47057F418CDC
+APPLICATION_INSIGHTS_NO_STATSBEAT = true
+# environment
+TERM_SESSION_ID = B91A0562-4028-4631-9517-FB3207B15ED8
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # default
@@ -122,15 +114,13 @@ TERM_PROGRAM = Apple_Terminal
 # default
 .VARIABLES := 
 # environment
-TMPDIR = /var/folders/w6/4d4pv4z158v3jb49n0crqpmc0000gn/T/
+TMPDIR = /var/folders/vk/35qt7j2d42v1dsj7qpt2x5540000gn/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/alainliu/Library/Application Support/Code/1.95-main.sock
+VSCODE_IPC_HOOK = /Users/quan/Library/Application Support/Code/1.10-main.sock
 # environment
 MallocNanoZone = 0
-# environment
-BUN_INSTALL = /Users/alainliu/.bun
 # makefile
 MAKEFLAGS = Rrqp
 # environment
@@ -138,15 +128,13 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-TERM_PROGRAM_VERSION = 447.1
+TERM_PROGRAM_VERSION = 465
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.15978544.15978550.BACCBABA-4A87-4150-AD2F-5C8542445DB2
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.8212536.8212542.99A39BCA-7074-470D-99AF-F07FB0E160CE
 # environment
 HOMEBREW_PREFIX = /opt/homebrew
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
-# environment
-GOTELEMETRY_GOPLS_CLIENT_TOKEN = 497
 # automatic
 +F = $(notdir $+)
 # environment
@@ -162,13 +150,11 @@ MAKEFILES :=
 # environment
 LC_ALL = C
 # environment
-SECURITYSESSIONID = 18700
+SECURITYSESSIONID = 18703
 # automatic
 ^F = $(notdir $^)
 # default
 SUFFIXES := 
-# environment
-ASDF_DIR = /opt/homebrew/opt/asdf/libexec
 # environment
 MAKELEVEL := 0
 # environment
@@ -176,10 +162,10 @@ LANG = C
 # environment
 TERM = xterm-256color
 # environment
-VSCODE_PID = 47040
+VSCODE_PID = 13005
 # variable set hash-table stats:
  
-# Load=81/1024=8%, Rehash=0, Collisions=1/103=1%
+# Load=74/1024=7%, Rehash=0, Collisions=1/96=1%
 
 # Pattern-specific Variable Values
 
@@ -187,9 +173,9 @@ VSCODE_PID = 47040
 
 # Directories
 
-# . (device 16777229, inode 229447): 83 files, no impossibilities.
+# . (device 16777229, inode 2492559): 105 files, no impossibilities.
 
-# 83 files, no impossibilities in 1 directories.
+# 105 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -215,7 +201,7 @@ all:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2024-10-18 22:46:02
+#  Last modified 2025-11-04 18:33:18
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
@@ -240,6 +226,6 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Fri Dec 20 21:17:09 2024
+# Finished Make data base on Sun Nov 30 02:41:18 2025
 
  
