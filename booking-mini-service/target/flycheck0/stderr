@@ -1,0 +1,103 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   0.234339833s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("booking_mini_service", ["lib"], "/Users/chmp/Desktop/store-service/booking-mini-service/src/lib.rs", Edition2024) }
+   0.234364917s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-0558764a5aee4c73/lib-booking_mini_service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.258914750s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("booking_mini_service", ["lib"], "/Users/chmp/Desktop/store-service/booking-mini-service/src/lib.rs", Edition2024) }
+   0.258931083s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-d80d5187a13c8541/test-lib-booking_mini_service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.259861750s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: false }/TargetInner { name: "booking-mini-service", doc: true, ..: with_path("/Users/chmp/Desktop/store-service/booking-mini-service/src/main.rs", Edition2024) }
+   0.259868875s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-cef41038248eb180/bin-booking-mini-service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+   0.260559208s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: true }/TargetInner { name: "booking-mini-service", doc: true, ..: with_path("/Users/chmp/Desktop/store-service/booking-mini-service/src/main.rs", Edition2024) }
+   0.260564667s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-58d06c00e48ef472/test-bin-booking-mini-service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: std::backtrace::Backtrace::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   7: cargo::ops::cargo_compile::compile_ws
+   8: cargo::ops::cargo_compile::compile_with_exec
+   9: cargo::ops::cargo_compile::compile
+  10: cargo::commands::check::exec
+  11: <cargo::cli::Exec>::exec
+  12: cargo::main
+  13: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  14: std::rt::lang_start::<()>::{closure#0}
+  15: std::rt::lang_start_internal
+  16: _main
+    Checking booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)
+error: could not compile `booking-mini-service` (lib test) due to 9 previous errors; 2 warnings emitted
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `booking-mini-service` (lib) due to 9 previous errors; 2 warnings emitted

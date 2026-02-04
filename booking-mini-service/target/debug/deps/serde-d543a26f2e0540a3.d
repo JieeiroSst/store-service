@@ -1,0 +1,12 @@
+/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/deps/serde-d543a26f2e0540a3.d: /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/chmp/Desktop/store-service/booking-mini-service/target/debug/build/serde-8b65f3d89392c4f4/out/private.rs
+
+/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/deps/libserde-d543a26f2e0540a3.rmeta: /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/chmp/Desktop/store-service/booking-mini-service/target/debug/build/serde-8b65f3d89392c4f4/out/private.rs
+
+/Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/chmp/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/build/serde-8b65f3d89392c4f4/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/build/serde-8b65f3d89392c4f4/out
