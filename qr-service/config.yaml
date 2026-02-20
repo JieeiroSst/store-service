@@ -1,0 +1,13 @@
+app:
+  name: qr-service
+  base_url: http://localhost:8080
+  env: development
+
+mongodb:
+  uri: mongodb://localhost:27017
+  database: qr_service
+
+server:
+  port: "8080"
+  read_timeout: 30
+  write_timeout: 30
