@@ -1,0 +1,20 @@
+server:
+  port: "8080"
+  read_timeout_sec: 30
+  write_timeout_sec: 30
+
+database:
+  dsn: "postgres://wallet:wallet@localhost:5432/wallet_db?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+  conn_max_lifetime_sec: 3600
+
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+
+app:
+  env: "development"
+  log_level: "info"
+  rate_limit_rps: 100
