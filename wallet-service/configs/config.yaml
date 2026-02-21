@@ -1,0 +1,18 @@
+server:
+  port: ":8080"
+  read_timeout: 30
+  write_timeout: 30
+
+database:
+  dsn: "host=localhost port=5432 user=postgres password=secret dbname=wallet_service sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 10
+  conn_max_lifetime: 300
+
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+
+log:
+  level: "production"
