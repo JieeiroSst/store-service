@@ -1,0 +1,61 @@
+package api
+
+import (
+	"log/slog"
+	"net/http"
+
+	"github.com/JIeeiroSst/congito-service/internal/config"
+	"github.com/JIeeiroSst/congito-service/internal/db"
+	"github.com/JIeeiroSst/congito-service/internal/handlers"
+	"github.com/JIeeiroSst/congito-service/internal/models"
+	"github.com/JIeeiroSst/congito-service/internal/services"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
+)
+
+func newRoutes(cfg *config.Config) http.Handler {
+	router := chi.NewRouter()
+
+	router.Use(middleware.Heartbeat("/ping"))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.RequestID)
+	router.Use(requestLogger)
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
+
+	authStore, err := db.NewCognitoStore(cfg)
+	if err != nil {
+		slog.Error("failed to initialize auth store", "err", err)
+		panic(err)
+	}
+	authHandlers := handlers.NewAuthHandlers(
+		services.NewAuthService(
+			authStore,
+		),
+	)
+	authRouter := chi.NewRouter()
+
+	authRouter.Post("/signup", authHandlers.SignUp)
+	authRouter.Post("/login", authHandlers.Login)
+	authRouter.Post("/confirm", authHandlers.ConfirmAccount)
+
+	authRouter.Group(func(r chi.Router) {
+		r.Use(jwtAuthMiddleware(authStore))
+		r.Get("/protected", func(w http.ResponseWriter, r *http.Request) {
+			models.ResponseWithJSON(w, http.StatusOK, models.NewDataResponse(http.StatusOK, "Protected route"))
+		})
+		r.Get("/user/info", authHandlers.GetUser)
+	})
+
+	router.Mount("/auth", authRouter)
+	return router
+}
