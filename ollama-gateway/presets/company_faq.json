@@ -1,0 +1,35 @@
+{
+  "category": "company_faq",
+  "items": [
+    {
+      "id": "faq_greeting",
+      "keywords": ["xin chào", "chào", "hello", "hi", "hey", "chào buổi sáng", "good morning"],
+      "question": "Lời chào hỏi",
+      "answer": "Xin chào! Tôi là trợ lý AI của công ty. Tôi có thể giúp bạn với các câu hỏi về sản phẩm, dịch vụ, hoặc hỗ trợ kỹ thuật. Bạn cần hỗ trợ gì?"
+    },
+    {
+      "id": "faq_hours",
+      "keywords": ["giờ làm việc", "mở cửa", "đóng cửa", "working hours", "office hours", "open", "close", "giờ hoạt động"],
+      "question": "Giờ làm việc của công ty?",
+      "answer": "🕐 Giờ làm việc:\n- Thứ 2 - Thứ 6: 8:00 - 17:30\n- Thứ 7: 8:00 - 12:00\n- Chủ nhật: Nghỉ\n\nHotline hỗ trợ 24/7: 1900-xxxx"
+    },
+    {
+      "id": "faq_contact",
+      "keywords": ["liên hệ", "contact", "email", "phone", "số điện thoại", "địa chỉ", "address", "hotline"],
+      "question": "Thông tin liên hệ",
+      "answer": "📞 Thông tin liên hệ:\n- Hotline: 1900-xxxx\n- Email: support@company.com\n- Địa chỉ: 123 Nguyễn Huệ, Q1, TP.HCM\n- Website: www.company.com"
+    },
+    {
+      "id": "faq_return",
+      "keywords": ["đổi trả", "hoàn tiền", "return", "refund", "bảo hành", "warranty", "đổi hàng"],
+      "question": "Chính sách đổi trả?",
+      "answer": "🔄 Chính sách đổi trả:\n- Đổi trả trong vòng 30 ngày kể từ ngày mua\n- Sản phẩm còn nguyên seal, chưa qua sử dụng\n- Bảo hành 12 tháng cho lỗi sản xuất\n\nLiên hệ support@company.com để được hỗ trợ."
+    },
+    {
+      "id": "faq_payment",
+      "keywords": ["thanh toán", "payment", "chuyển khoản", "tiền mặt", "thẻ", "momo", "vnpay", "paypal"],
+      "question": "Phương thức thanh toán?",
+      "answer": "💳 Phương thức thanh toán:\n- Tiền mặt\n- Chuyển khoản ngân hàng\n- Thẻ Visa/Mastercard\n- MoMo, VNPay, ZaloPay\n- Trả góp 0% qua thẻ tín dụng"
+    }
+  ]
+}
