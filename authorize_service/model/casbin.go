@@ -12,7 +12,7 @@ type CasbinRule struct {
 }
 
 type CasbinAuth struct {
-	Sub  string
-	Obj  string
-	Act  string
+	Sub string
+	Obj string
+	Act string
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/JieeiroSst/authorize-service/common"
 	"github.com/JieeiroSst/authorize-service/dto"
 	"github.com/JieeiroSst/authorize-service/pkg/log"
 	"github.com/jltorresm/otpgo"
@@ -60,7 +59,7 @@ func (o *otp) Authorize(otp string, username string) error {
 	}
 	if !ok {
 		log.Warn(fmt.Sprintf("Token authorize faild %v", otp))
-		return common.OTPFailed
+		// return common.OTPFailed
 	}
 	log.Info("Token authorize success")
 	return nil

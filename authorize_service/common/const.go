@@ -1,30 +1,15 @@
 package common
 
+// RBACModelPath is the path to the Casbin RBAC model config.
+const RBACModelPath = "config/conf/rbac_model.conf"
+
+// Cache TTLs (in seconds).
 const (
-	InternalServer = "INTERVAL SERVER"
-	Unauthorized   = "Unauthorized"
-	NotAllowServer = "THE CUSTOMER IS NOT AUTHORIZED FOR THE CONTENT REQUESTED"
-	BadRequest     = "BAD REQUEST"
-	NotFoundServer = "Data Entity"
-	FailedDBServer = "Cant get data from database"
+	CacheTTLEnforcer    = 300 // 5 minutes — enforcer rebuilt at most every 5 min
+	CacheTTLCasbinByID  = 60  // 1 minute  — single-rule cache
 )
 
+// Cache key patterns.
 const (
-	Authorized    = "THE CUSTOMER IS AUTHORIZED FOR THE CONTENT REQUESTED"
-	CreateSuccess = "CREATE SUCCESS"
-	UpdateSuccess = "UPDATE SUCCESS"
-
-)
-
-const (
-	RBAC_MODEL = "config/conf/rbac_model.conf"
-)
-
-const (
-
-)
-
-const (
-	ListCasbinKeyCache = "as:list_casbin"
-	CasbinByIDKeyCache = "as:casbin_by_id:%v"
+	CacheKeyCasbinByID = "casbin:rule:%d"
 )
