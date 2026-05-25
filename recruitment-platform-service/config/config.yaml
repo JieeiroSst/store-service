@@ -1,0 +1,28 @@
+app:
+  env: development
+  port: 8080
+  jwt_secret: ${JWT_SECRET}
+
+database:
+  host: localhost
+  port: 5432
+  name: recruitment_db
+  user: postgres
+  password: secret
+  ssl_mode: disable
+  max_open_conns: 25
+  max_idle_conns: 10
+
+temporal:
+  host_port: localhost:7233
+  namespace: recruitment
+
+ai:
+  base_url: https://api.openai.com/v1
+  api_key: ${OPENAI_API_KEY}
+  model: gpt-4o
+
+notification:
+  api_key: ${SENDGRID_API_KEY}
+  from_email: no-reply@recruitment.vn
+  from_name: Recruitment Platform
