@@ -1,0 +1,107 @@
+version: "3.9"
+
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:8000/shell || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    container_name: dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb-local:8000
+      AWS_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+    depends_on:
+      - dynamodb-local
+
+  table-setup:
+    image: amazon/aws-cli
+    container_name: table-setup
+    depends_on:
+      dynamodb-local:
+        condition: service_healthy
+    environment:
+      AWS_DEFAULT_REGION: ap-southeast-1
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Creating DynamoDB tables..."
+
+        aws dynamodb create-table \
+          --endpoint-url http://dynamodb-local:8000 \
+          --table-name referral_links \
+          --attribute-definitions \
+            AttributeName=ref_code,AttributeType=S \
+            AttributeName=created_at,AttributeType=S \
+            AttributeName=owner_user_id,AttributeType=S \
+          --key-schema \
+            AttributeName=ref_code,KeyType=HASH \
+            AttributeName=created_at,KeyType=RANGE \
+          --global-secondary-indexes '[{
+            "IndexName": "owner_user_id-index",
+            "KeySchema": [{"AttributeName":"owner_user_id","KeyType":"HASH"},{"AttributeName":"created_at","KeyType":"RANGE"}],
+            "Projection": {"ProjectionType":"ALL"},
+            "ProvisionedThroughput": {"ReadCapacityUnits":5,"WriteCapacityUnits":5}
+          }]' \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+          --time-to-live-specification AttributeName=ttl,Enabled=true \
+          || echo "referral_links already exists"
+
+        aws dynamodb create-table \
+          --endpoint-url http://dynamodb-local:8000 \
+          --table-name referral_events \
+          --attribute-definitions \
+            AttributeName=ref_code,AttributeType=S \
+            AttributeName=event_id,AttributeType=S \
+            AttributeName=new_user_id,AttributeType=S \
+          --key-schema \
+            AttributeName=ref_code,KeyType=HASH \
+            AttributeName=event_id,KeyType=RANGE \
+          --global-secondary-indexes '[{
+            "IndexName": "new_user_id-index",
+            "KeySchema": [{"AttributeName":"new_user_id","KeyType":"HASH"}],
+            "Projection": {"ProjectionType":"ALL"},
+            "ProvisionedThroughput": {"ReadCapacityUnits":5,"WriteCapacityUnits":5}
+          }]' \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+          || echo "referral_events already exists"
+
+        aws dynamodb create-table \
+          --endpoint-url http://dynamodb-local:8000 \
+          --table-name referral_rewards \
+          --attribute-definitions \
+            AttributeName=owner_user_id,AttributeType=S \
+            AttributeName=ref_code,AttributeType=S \
+          --key-schema \
+            AttributeName=owner_user_id,KeyType=HASH \
+            AttributeName=ref_code,KeyType=RANGE \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+          || echo "referral_rewards already exists"
+
+        aws dynamodb create-table \
+          --endpoint-url http://dynamodb-local:8000 \
+          --table-name user_referral_stats \
+          --attribute-definitions \
+            AttributeName=user_id,AttributeType=S \
+            AttributeName=sk,AttributeType=S \
+          --key-schema \
+            AttributeName=user_id,KeyType=HASH \
+            AttributeName=sk,KeyType=RANGE \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+          || echo "user_referral_stats already exists"
+
+        echo "All tables ready."
