@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "GID_2": "VNM.25.5_1", "GID_1": "VNM.25_1", "NAME_2": "Quận 1", "TYPE_2": "Quận" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.69,10.76],[106.71,10.76],[106.71,10.79],[106.69,10.79],[106.69,10.76]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "GID_2": "VNM.25.9_1", "GID_1": "VNM.25_1", "NAME_2": "Quận 3", "TYPE_2": "Quận" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.67,10.77],[106.69,10.77],[106.69,10.80],[106.67,10.80],[106.67,10.77]]]
+      }
+    }
+  ]
+}

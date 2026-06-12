@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/fx"
@@ -15,11 +16,11 @@ var Module = fx.Options(
 
 type Config struct {
 	App      AppConfig
-	AWS      AWSConfig
-	DynamoDB DynamoDBConfig
+	MySQL    MySQLConfig
 	DeepLink DeepLinkConfig
 	Referral ReferralConfig
 	Logger   LoggerConfig
+	Redis    RedisConfig
 }
 
 type AppConfig struct {
@@ -29,25 +30,21 @@ type AppConfig struct {
 	Version string
 }
 
-type AWSConfig struct {
-	Region           string
-	AccessKeyID      string
-	SecretAccessKey  string
-	DynamoDBEndpoint string 
-}
-
-type DynamoDBConfig struct {
-	TableReferralLinks  string
-	TableReferralEvents string
-	TableRewards        string
-	TableUserStats      string
+type MySQLConfig struct {
+	Host            string
+	Port            string
+	User            string
+	Password        string
+	Database        string
+	MaxOpenConns    int
+	MaxIdleConns    int
+	ConnMaxLifetime time.Duration
 }
 
 type DeepLinkConfig struct {
-	BaseURL      string
+	PublicURL    string
 	AppStoreURL  string
 	PlayStoreURL string
-	AppURLScheme string // e.g. "yourapp://open" — used to attempt opening installed app
 }
 
 type ReferralConfig struct {
@@ -56,11 +53,23 @@ type ReferralConfig struct {
 }
 
 type LoggerConfig struct {
-	Level string
-	FilePath string
-	MaxSizeMB int
+	Level      string
+	FilePath   string
+	MaxSizeMB  int
 	MaxBackups int
 	MaxAgeDays int
+}
+
+type RedisConfig struct {
+	Endpoint      string
+	Port          string
+	Username      string
+	Password      string
+	Database      int
+	PoolSize      int
+	MinConnection int
+	Timeout       time.Duration
+	TLS           string
 }
 
 func Load() (*Config, error) {
@@ -103,23 +112,20 @@ func Load() (*Config, error) {
 			Name:    getEnv("APP_NAME", "referral-service"),
 			Version: getEnv("APP_VERSION", "0.0.0"),
 		},
-		AWS: AWSConfig{
-			Region:           requireEnv("AWS_REGION"),
-			AccessKeyID:      getEnv("AWS_ACCESS_KEY_ID", ""),
-			SecretAccessKey:  getEnv("AWS_SECRET_ACCESS_KEY", ""),
-			DynamoDBEndpoint: getEnv("DYNAMODB_ENDPOINT", ""),
-		},
-		DynamoDB: DynamoDBConfig{
-			TableReferralLinks:  getEnv("TABLE_REFERRAL_LINKS", "referral_links"),
-			TableReferralEvents: getEnv("TABLE_REFERRAL_EVENTS", "referral_events"),
-			TableRewards:        getEnv("TABLE_REFERRAL_REWARDS", "referral_rewards"),
-			TableUserStats:      getEnv("TABLE_USER_STATS", "user_referral_stats"),
+		MySQL: MySQLConfig{
+			Host:            getEnv("MYSQL_HOST", "localhost"),
+			Port:            getEnv("MYSQL_PORT", "3306"),
+			User:            getEnv("COM_MYSQL_USERNAME", "root"),
+			Password:        getEnv("COM_MYSQL_PASSWORD", "root"),
+			Database:        getEnv("MYSQL_DATABASE", "referral_service"),
+			MaxOpenConns:    getEnvAsInt("MYSQL_MAX_OPEN_CONNS", 20),
+			MaxIdleConns:    getEnvAsInt("MYSQL_MAX_IDLE_CONNS", 10),
+			ConnMaxLifetime: getEnvAsDuration("MYSQL_CONN_MAX_LIFETIME", 5*time.Minute),
 		},
 		DeepLink: DeepLinkConfig{
-			BaseURL:      requireEnv("DEEP_LINK_BASE_URL"),
-			AppStoreURL:  requireEnv("APP_STORE_URL"),
-			PlayStoreURL: requireEnv("PLAY_STORE_URL"),
-			AppURLScheme: getEnv("APP_URL_SCHEME", ""),
+			PublicURL:    getEnv("APP_PUBLIC_URL", fmt.Sprintf("http://localhost:%d", port)),
+			AppStoreURL:  getEnv("APP_STORE_URL", ""),
+			PlayStoreURL: getEnv("PLAY_STORE_URL", ""),
 		},
 		Referral: ReferralConfig{
 			TTLDays:   ttl,
@@ -131,6 +137,17 @@ func Load() (*Config, error) {
 			MaxSizeMB:  logMaxSize,
 			MaxBackups: logMaxBackups,
 			MaxAgeDays: logMaxAge,
+		},
+		Redis: RedisConfig{
+			Endpoint:      getEnv("COM_REDIS_ENDPOINT", "localhost"),
+			Port:          getEnv("COM_REDIS_PORT", "6379"),
+			Username:      getEnv("COM_REDIS_USERNAME", "myadmin"),
+			Password:      getEnv("COM_REDIS_PASSWORD", "MyAdm1nP455w0rd"),
+			Database:      getEnvAsInt("COM_REDIS_DATABASE", 0),
+			PoolSize:      getEnvAsInt("COM_REDIS_POOL_SIZE", 10),
+			MinConnection: getEnvAsInt("COM_REDIS_MIN_CONNECTION", 1),
+			Timeout:       getEnvAsDuration("COM_REDIS_TIMEOUT", 10*time.Second),
+			TLS:           getEnv("COM_REDIS_TLS_ENABLED", "false"),
 		},
 	}
 
@@ -144,10 +161,20 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-func requireEnv(key string) string {
-	v := os.Getenv(key)
-	if v == "" {
-		panic(fmt.Sprintf("config: required env var %q is not set", key))
+func getEnvAsInt(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := strconv.Atoi(value); err == nil {
+			return intValue
+		}
 	}
-	return v
+	return defaultValue
+}
+
+func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
+	if value := os.Getenv(key); value != "" {
+		if duration, err := time.ParseDuration(value); err == nil {
+			return duration
+		}
+	}
+	return defaultValue
 }

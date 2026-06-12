@@ -1,0 +1,77 @@
+image: atlassian/pipelines-awscli:1.29.35
+
+definitions:
+  steps:
+    - step: &build-step
+        name: Build Go Binary
+        image: golang:1.25
+        size: 2x
+        script:
+          - go mod download
+          - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o main ./cmd/server
+          - ls -lh main
+        artifacts:
+          - main
+
+    - step: &test-step
+        name: Test
+        caches:
+          - node
+        script:
+          - echo "Run testcases"
+
+    - step: &build-and-deploy-dev-step
+        name: Build and Push Image (Dev)
+        deployment: Development
+        services:
+          - docker
+        script:
+          - export IMAGE_TAG=$BITBUCKET_COMMIT
+          - export FULL_IMAGE_URI=$ECR_REPOSITORY:$IMAGE_TAG
+          - ls -lh main  # Verify artifact is available
+          - docker build -t $FULL_IMAGE_URI .
+          - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
+          - docker push $FULL_IMAGE_URI
+
+          - aws ecs describe-task-definition --task-definition $TASK_DEFINITION_FAMILY --region $AWS_REGION > td_full.json
+          - jq --arg IMAGE "$ECR_REPOSITORY:$IMAGE_TAG" --arg CONTAINER "$CONTAINER_NAME" '.taskDefinition | del(.taskDefinitionArn, .revision, .status, .compatibilities, .requiresAttributes, .registeredAt, .registeredBy) | .containerDefinitions = [.containerDefinitions[] | if .name == $CONTAINER then .image = $IMAGE else . end]' td_full.json > td_new.json
+          - NEW_TASK_ARN=$(aws ecs register-task-definition --cli-input-json file://td_new.json --region $AWS_REGION | jq -r '.taskDefinition.taskDefinitionArn')
+          - echo "New Task Definition ARN - $NEW_TASK_ARN"
+          - aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_ARN --region $AWS_REGION > /dev/null 2>&1
+          - echo "Deployment completed successfully!"
+
+    - step: &build-and-deploy-prod-step
+        name: Build and Push Image
+        deployment: Production
+        services:
+          - docker
+        script:
+          - export IMAGE_TAG=$BITBUCKET_COMMIT
+          - export FULL_IMAGE_URI=$ECR_REPOSITORY:$IMAGE_TAG
+          - ls -lh main  # Verify artifact is available
+          - docker build -t $FULL_IMAGE_URI .
+          - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
+          - docker push $FULL_IMAGE_URI
+
+          - aws ecs describe-task-definition --task-definition $TASK_DEFINITION_FAMILY --region $AWS_REGION > td_full.json
+          - jq --arg IMAGE "$ECR_REPOSITORY:$IMAGE_TAG" --arg CONTAINER "$CONTAINER_NAME" '.taskDefinition | del(.taskDefinitionArn, .revision, .status, .compatibilities, .requiresAttributes, .registeredAt, .registeredBy) | .containerDefinitions = [.containerDefinitions[] | if .name == $CONTAINER then .image = $IMAGE else . end]' td_full.json > td_new.json
+          - NEW_TASK_ARN=$(aws ecs register-task-definition --cli-input-json file://td_new.json --region $AWS_REGION | jq -r '.taskDefinition.taskDefinitionArn')
+          - echo "New Task Definition ARN - $NEW_TASK_ARN"
+          - aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_ARN --region $AWS_REGION > /dev/null 2>&1
+          - echo "Deployment completed successfully!"
+
+pipelines:
+  branches:
+    develop:
+      - step: *build-step
+      - step: *test-step
+      - step: *build-and-deploy-dev-step
+
+  custom:
+    manual-build-prod:
+      - step: *build-step
+      - step: *test-step
+      - step: *build-and-deploy-prod-step
+    manual-build-check-code:
+      - step: *build-step
+      - step: *test-step

@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "GID_3": "VNM.25.5.3_1", "GID_2": "VNM.25.5_1", "GID_1": "VNM.25_1", "NAME_3": "Bến Nghé", "TYPE_3": "Phường" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.700,10.775],[106.710,10.775],[106.710,10.785],[106.700,10.785],[106.700,10.775]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "GID_3": "VNM.25.5.4_1", "GID_2": "VNM.25.5_1", "GID_1": "VNM.25_1", "NAME_3": "Bến Thành", "TYPE_3": "Phường" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.690,10.770],[106.700,10.770],[106.700,10.780],[106.690,10.780],[106.690,10.770]]]
+      }
+    }
+  ]
+}

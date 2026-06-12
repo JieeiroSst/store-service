@@ -10,7 +10,8 @@ import (
 	"go.uber.org/zap"
 
 	appconfig "github.com/referral/service/internal/config"
-	"github.com/referral/service/pkg/logger"
+	"github.com/referral/service/pkg/middleware"
+	"github.com/referral/service/pkg/token"
 )
 
 var ServerModule = fx.Options(
@@ -25,7 +26,9 @@ func NewServer(cfg *appconfig.Config, log *zap.Logger) *gin.Engine {
 
 	r := gin.New()
 
-	r.Use(logger.GinMiddleware(log))
+	r.Use(middleware.Middleware())
+	r.Use(token.Middleware())
+	r.Use(middleware.GinLogger(log))
 	r.Use(gin.Recovery())
 
 	return r

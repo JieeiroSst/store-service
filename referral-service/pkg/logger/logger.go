@@ -10,8 +10,6 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-
-	appconfig "github.com/referral/service/internal/config"
 )
 
 var Module = fx.Options(
@@ -22,13 +20,13 @@ var Module = fx.Options(
 	fx.Invoke(registerShutdownHook),
 )
 
-func New(cfg *appconfig.Config) (*zap.Logger, error) {
-	level := parseLevel(cfg.Logger.Level)
+func New(cfg *Config) (*zap.Logger, error) {
+	level := parseLevel(cfg.Level)
 
 	var cores []zapcore.Core
 	var opts []zap.Option
 
-	if cfg.App.Env != "production" {
+	if cfg.AppEnv != "production" {
 		cores = append(cores, zapcore.NewCore(
 			zapcore.NewConsoleEncoder(consoleEncoderConfig()),
 			zapcore.AddSync(os.Stdout),
@@ -37,7 +35,7 @@ func New(cfg *appconfig.Config) (*zap.Logger, error) {
 		opts = append(opts,
 			zap.Development(),
 			zap.AddCaller(),
-			zap.AddStacktrace(zap.WarnLevel),
+			zap.AddStacktrace(zap.ErrorLevel),
 		)
 	} else {
 		rawCore := zapcore.NewCore(
@@ -59,13 +57,13 @@ func New(cfg *appconfig.Config) (*zap.Logger, error) {
 		))
 	}
 
-	if cfg.Logger.FilePath != "" {
-		if err := os.MkdirAll(filepath.Dir(cfg.Logger.FilePath), 0o755); err == nil {
+	if cfg.FilePath != "" {
+		if err := os.MkdirAll(filepath.Dir(cfg.FilePath), 0o755); err == nil {
 			roller := &lumberjack.Logger{
-				Filename:   cfg.Logger.FilePath,
-				MaxSize:    cfg.Logger.MaxSizeMB,
-				MaxBackups: cfg.Logger.MaxBackups,
-				MaxAge:     cfg.Logger.MaxAgeDays,
+				Filename:   cfg.FilePath,
+				MaxSize:    cfg.MaxSizeMB,
+				MaxBackups: cfg.MaxBackups,
+				MaxAge:     cfg.MaxAgeDays,
 				Compress:   true,
 			}
 			cores = append(cores, zapcore.NewCore(
@@ -77,15 +75,15 @@ func New(cfg *appconfig.Config) (*zap.Logger, error) {
 	}
 
 	log := zap.New(zapcore.NewTee(cores...), opts...).With(
-		zap.String("service", cfg.App.Name),
-		zap.String("env", cfg.App.Env),
-		zap.String("version", cfg.App.Version),
+		zap.String("service", cfg.AppName),
+		zap.String("env", cfg.AppEnv),
+		zap.String("version", cfg.AppVersion),
 	)
 
 	log.Info("logger initialised",
-		zap.String("level", cfg.Logger.Level),
-		zap.String("env", cfg.App.Env),
-		zap.Bool("file_sink", cfg.Logger.FilePath != ""),
+		zap.String("level", cfg.Level),
+		zap.String("env", cfg.AppEnv),
+		zap.Bool("file_sink", cfg.FilePath != ""),
 	)
 
 	return log, nil
