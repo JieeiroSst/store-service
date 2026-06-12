@@ -1,10 +1,17 @@
-.PHONY: run dev deps tidy docker-up docker-down test lint
+.PHONY: run dev deps tidy docker-up docker-down test lint migrate-up migrate-down
+
+MYSQL_HOST ?= localhost
+MYSQL_PORT ?= 3306
+MYSQL_USER ?= root
+MYSQL_PASSWORD ?= root
+MYSQL_DATABASE ?= referral_service
+MIGRATE_DSN := mysql://$(MYSQL_USER):$(MYSQL_PASSWORD)@tcp($(MYSQL_HOST):$(MYSQL_PORT))/$(MYSQL_DATABASE)
 
 ## Run the service (requires .env file)
 run:
 	go run ./cmd/server/main.go
 
-## Start local DynamoDB + create tables, then run service
+## Start local MySQL + apply migrations, then run service
 dev: docker-up
 	sleep 3
 	go run ./cmd/server/main.go
@@ -18,13 +25,21 @@ deps:
 tidy:
 	go mod tidy
 
-## Spin up local DynamoDB via Docker Compose
+## Spin up local MySQL via Docker Compose (auto-applies migrations via the `migrate` service)
 docker-up:
 	docker compose up -d
 
-## Tear down local DynamoDB
+## Tear down local MySQL
 docker-down:
 	docker compose down -v
+
+## Apply migrations against MYSQL_* env vars (requires: go install github.com/golang-migrate/migrate/v4/cmd/migrate)
+migrate-up:
+	migrate -path migrations -database "$(MIGRATE_DSN)" up
+
+## Roll back the last migration against MYSQL_* env vars
+migrate-down:
+	migrate -path migrations -database "$(MIGRATE_DSN)" down 1
 
 ## Run tests
 test:

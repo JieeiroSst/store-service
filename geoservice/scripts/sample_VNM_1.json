@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "GID_1": "VNM.25_1", "NAME_1": "Hồ Chí Minh", "VARNAME_1": "Ho Chi Minh City", "TYPE_1": "Thành phố trực thuộc trung ương" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.60,10.72],[106.78,10.72],[106.78,10.86],[106.60,10.86],[106.60,10.72]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "GID_1": "VNM.27_1", "NAME_1": "Hà Nội", "VARNAME_1": "Hanoi", "TYPE_1": "Thành phố trực thuộc trung ương" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[105.78,20.95],[105.92,20.95],[105.92,21.08],[105.78,21.08],[105.78,20.95]]]
+      }
+    }
+  ]
+}
