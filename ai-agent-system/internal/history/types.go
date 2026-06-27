@@ -7,6 +7,6 @@ type Message struct {
 	UserID    string
 	Role      string // "user" | "assistant"
 	Content   string
-	Source    string // "faq" | "claude"; empty for role "user"
+	Source    string // "ollama"; empty for role "user"
 	CreatedAt time.Time
 }
