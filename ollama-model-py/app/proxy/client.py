@@ -1,12 +1,15 @@
 """The one place to wire in a real backend.
 
-routes.py calls answer() for both /api/generate and /api/chat, and embed()
-for /api/embed — replace the bodies below with a real call (an LLM API, an
-internal service, a database lookup, whatever should actually answer the
-question) and nothing else in this project needs to change.
+answer() is called for both /api/generate and /api/chat whenever the FAQ
+check (see ../faq.py) finds no match — replace its body with a real call (an
+LLM API, an internal service, a database lookup, whatever should actually
+answer the question) and nothing else in this project needs to change.
+
+embed() is used by ../faq.py to semantically match incoming questions
+against the scripted FAQ.
 
 This implementation forwards both to a real Ollama server (OLLAMA_BASE_URL /
-OLLAMA_TARGET_MODEL / OLLAMA_EMBED_MODEL) and relays its response.
+OLLAMA_TARGET_MODEL / OLLAMA_EMBED_MODEL) and relays the response.
 """
 import httpx
 

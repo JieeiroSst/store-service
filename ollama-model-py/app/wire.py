@@ -79,16 +79,6 @@ class TagsResponse(BaseModel):
     models: list[TagsModel]
 
 
-class EmbedRequest(BaseModel):
-    model: str
-    input: str | list[str]
-
-
-class EmbedResponse(BaseModel):
-    model: str
-    embeddings: list[list[float]]
-
-
 class ShowRequest(BaseModel):
     model: str
 
