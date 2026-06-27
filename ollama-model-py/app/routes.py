@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from . import config
-from .proxy.client import answer
+from .proxy.client import BackendError, answer
 from .wire import (
     ChatMessage,
     ChatRequest,
@@ -38,7 +38,10 @@ def _default_details() -> ModelDetails:
 
 @router.post("/api/generate")
 async def generate(req: GenerateRequest):
-    text = await answer(req.prompt)
+    try:
+        text = await answer(req.prompt)
+    except BackendError as exc:
+        return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
 
     if req.stream is None or req.stream:
@@ -80,7 +83,10 @@ async def generate(req: GenerateRequest):
 @router.post("/api/chat")
 async def chat(req: ChatRequest):
     question = req.messages[-1].content if req.messages else ""
-    text = await answer(question)
+    try:
+        text = await answer(question)
+    except BackendError as exc:
+        return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
 
     if req.stream is None or req.stream:
