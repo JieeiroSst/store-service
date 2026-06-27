@@ -10,7 +10,7 @@ type Config struct {
 	Port                   string
 	OllamaBaseURL          string
 	OllamaModel            string
-	VoyageAPIKey           string
+	OllamaEmbedModel       string
 	FAQFile                string
 	FAQSimilarityThreshold float64
 	MySQLDSN               string
@@ -18,12 +18,12 @@ type Config struct {
 
 func Load() (Config, error) {
 	cfg := Config{
-		Port:          getEnv("PORT", "8080"),
-		OllamaBaseURL: getEnv("OLLAMA_BASE_URL", "http://localhost:11434"),
-		OllamaModel:   os.Getenv("OLLAMA_MODEL"),
-		VoyageAPIKey:  os.Getenv("VOYAGE_API_KEY"),
-		FAQFile:       getEnv("FAQ_FILE", "./configs/faq.yaml"),
-		MySQLDSN:      os.Getenv("MYSQL_DSN"),
+		Port:             getEnv("PORT", "8080"),
+		OllamaBaseURL:    getEnv("OLLAMA_BASE_URL", "http://localhost:11434"),
+		OllamaModel:      os.Getenv("OLLAMA_MODEL"),
+		OllamaEmbedModel: getEnv("OLLAMA_EMBED_MODEL", "nomic-embed-text"),
+		FAQFile:          getEnv("FAQ_FILE", "./configs/faq.yaml"),
+		MySQLDSN:         os.Getenv("MYSQL_DSN"),
 	}
 
 	threshold, err := strconv.ParseFloat(getEnv("FAQ_SIMILARITY_THRESHOLD", "0.85"), 64)
@@ -34,9 +34,6 @@ func Load() (Config, error) {
 
 	if cfg.OllamaModel == "" {
 		return Config{}, fmt.Errorf("config: OLLAMA_MODEL is required")
-	}
-	if cfg.VoyageAPIKey == "" {
-		return Config{}, fmt.Errorf("config: VOYAGE_API_KEY is required")
 	}
 	if cfg.MySQLDSN == "" {
 		return Config{}, fmt.Errorf("config: MYSQL_DSN is required")
