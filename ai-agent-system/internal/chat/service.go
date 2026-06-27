@@ -16,15 +16,15 @@ const (
 )
 
 type Service struct {
-	ollama  proxy.OllamaClient
-	voyage  proxy.VoyageClient
-	faqs    *faq.Store
-	history *history.Store
-	logger  *slog.Logger
+	ollama   proxy.OllamaClient
+	embedder proxy.EmbeddingClient
+	faqs     *faq.Store
+	history  *history.Store
+	logger   *slog.Logger
 }
 
-func NewService(ollama proxy.OllamaClient, voyage proxy.VoyageClient, faqs *faq.Store, hist *history.Store, logger *slog.Logger) *Service {
-	return &Service{ollama: ollama, voyage: voyage, faqs: faqs, history: hist, logger: logger}
+func NewService(ollama proxy.OllamaClient, embedder proxy.EmbeddingClient, faqs *faq.Store, hist *history.Store, logger *slog.Logger) *Service {
+	return &Service{ollama: ollama, embedder: embedder, faqs: faqs, history: hist, logger: logger}
 }
 
 func (s *Service) AnswerQuestion(ctx context.Context, req AnswerRequest) (AnswerResult, error) {
@@ -80,7 +80,7 @@ func (s *Service) AnswerQuestionStream(ctx context.Context, req AnswerRequest, o
 }
 
 func (s *Service) matchFAQ(ctx context.Context, question string) (AnswerResult, bool) {
-	entry, score, ok, err := s.faqs.Match(ctx, s.voyage, question)
+	entry, score, ok, err := s.faqs.Match(ctx, s.embedder, question)
 	if err != nil {
 		if s.logger != nil {
 			s.logger.WarnContext(ctx, "faq match failed, falling through to ollama", "error", err)

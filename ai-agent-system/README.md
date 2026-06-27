@@ -5,7 +5,7 @@ A Go gateway that sits between web/mobile clients and a real, locally-running [O
 ```
 web/mobile  --WebSocket-->  ai-agent-system  --HTTP (Ollama API)-->  Ollama server (real, local model)
                                   |
-                                  +-- FAQ check (Voyage embeddings) before ever calling Ollama
+                                  +-- FAQ check (Ollama embeddings) before ever calling Ollama for a full answer
                                   +-- every turn logged to MySQL
 
 other Ollama-style clients --HTTP--> ai-agent-system's own /api/... facade --(same path above)
@@ -21,9 +21,9 @@ internal/
   config/                 env-var configuration, validated at startup
   proxy/                  ALL outbound calls to external services live here
     ollama_client.go        HTTP client for a real Ollama server's own /api/chat
-    voyage_client.go        raw HTTP client for Voyage AI embeddings (no Go SDK exists)
+    embed_client.go          HTTP client for Ollama's own /api/embed, used for FAQ matching
     retry.go                backoff helper
-    errors.go                normalizes Ollama/Voyage errors into one Error{Kind}
+    errors.go                normalizes Ollama errors into one Error{Kind}
   chat/                   the ONE shared "answer a question" path
     service.go               AnswerQuestion / AnswerQuestionStream
   faq/                    FAQ store + semantic (embedding) matching
@@ -41,24 +41,25 @@ docker-compose.yml        local MySQL for development
 
 ### Why a `proxy` package
 
-The real Ollama server has no Go SDK, so `internal/proxy/ollama_client.go` talks to it over raw HTTP using its own wire format (the same shapes `internal/ollamaapi` implements as a server, redefined locally to avoid a cross-package refactor for a handful of small structs). Voyage AI (used for FAQ embeddings) also has no Go SDK. Both outbound integrations — timeouts, retries, request construction — are centralized in `internal/proxy` so no other package needs to know how to talk to an external service directly.
+The real Ollama server has no Go SDK, so `internal/proxy/ollama_client.go` talks to it over raw HTTP using its own wire format (the same shapes `internal/ollamaapi` implements as a server, redefined locally to avoid a cross-package refactor for a handful of small structs). `internal/proxy/embed_client.go` talks to the same Ollama-compatible backend's `/api/embed` for FAQ embeddings. Both outbound integrations — timeouts, retries, request construction — are centralized in `internal/proxy` so no other package needs to know how to talk to an external service directly.
 
 ## Setup
 
 ```bash
 docker compose up -d   # local MySQL for chat history, on host port 3307
 cp .env.example .env
-# edit .env: set VOYAGE_API_KEY, and point OLLAMA_BASE_URL/OLLAMA_MODEL at your Ollama install
+# edit .env: point OLLAMA_BASE_URL/OLLAMA_MODEL at your Ollama install
 ```
 
-This expects a **real Ollama server** already running somewhere reachable — install it natively from [ollama.com](https://ollama.com) (simplest: it listens on `http://localhost:11434` by default) or run it yourself however you prefer. There's no bundled Ollama container here: if you already have one running locally (`ollama serve`, or the desktop app), just point `OLLAMA_BASE_URL` at it. Make sure the model named in `OLLAMA_MODEL` has actually been pulled:
+This expects a **real Ollama server** already running somewhere reachable — install it natively from [ollama.com](https://ollama.com) (simplest: it listens on `http://localhost:11434` by default) or run it yourself however you prefer. There's no bundled Ollama container here: if you already have one running locally (`ollama serve`, or the desktop app), just point `OLLAMA_BASE_URL` at it. Make sure the models named in `OLLAMA_MODEL` and `OLLAMA_EMBED_MODEL` have actually been pulled:
 
 ```bash
 ollama pull llama3.2
-ollama list   # confirm it's there
+ollama pull nomic-embed-text   # used for FAQ matching, see OLLAMA_EMBED_MODEL below
+ollama list   # confirm both are there
 ```
 
-`OLLAMA_BASE_URL` doesn't have to point at a real Ollama install — anything that speaks the same wire format works. [`../ollama-model-py`](../ollama-model-py/) is exactly that: a standalone Python service exposing the same `/api/generate`/`/api/chat`/`/api/tags`/`/api/show` endpoints, useful as a starting point for plugging in a custom (non-Ollama) answering backend without touching any Go code.
+`OLLAMA_BASE_URL` doesn't have to point at a real Ollama install — anything that speaks the same wire format works. [`../ollama-model-py`](../ollama-model-py/) is exactly that: a standalone Python service exposing the same `/api/generate`/`/api/chat`/`/api/tags`/`/api/show`/`/api/embed` endpoints, useful as a starting point for plugging in a custom (non-Ollama) answering backend without touching any Go code. Both the chat model (`OLLAMA_MODEL`) and the embedding model (`OLLAMA_EMBED_MODEL`) are requested from this same `OLLAMA_BASE_URL`.
 
 > The compose file maps MySQL to host port **3307**, not the default 3306, in case something else on your machine already owns 3306. Adjust `MYSQL_DSN` if you change the mapping.
 
@@ -66,13 +67,13 @@ ollama list   # confirm it's there
 |---|---|---|
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Base URL of the real Ollama server |
 | `OLLAMA_MODEL` | — (required) | Model name to request from that Ollama server (must already be pulled there) |
-| `VOYAGE_API_KEY` | — (required) | Voyage AI embeddings API key, used for FAQ matching |
+| `OLLAMA_EMBED_MODEL` | `nomic-embed-text` | Embedding model requested from `OLLAMA_BASE_URL`'s `/api/embed`, used for FAQ matching (must already be pulled there) |
 | `MYSQL_DSN` | — (required) | Go MySQL DSN, e.g. `app:app@tcp(localhost:3307)/aiagent?parseTime=true&loc=Local` |
 | `PORT` | `8080` | HTTP listen port |
 | `FAQ_FILE` | `./configs/faq.yaml` | Path to the FAQ question/answer file |
 | `FAQ_SIMILARITY_THRESHOLD` | `0.85` | Minimum cosine similarity to short-circuit to a canned FAQ answer instead of calling Ollama |
 
-The server fails fast at startup if `OLLAMA_MODEL`, `VOYAGE_API_KEY`, or `MYSQL_DSN` is missing, if MySQL is unreachable, or if the FAQ file can't be loaded/embedded — all treated as hard requirements, not best-effort features. It does **not** check at startup that the real Ollama server is reachable — that's only discovered on the first question (surfaced as an `upstream_unavailable` error), since Ollama being temporarily down shouldn't block the whole process from starting.
+The server fails fast at startup if `OLLAMA_MODEL` or `MYSQL_DSN` is missing, if MySQL is unreachable, or if the FAQ file can't be loaded/embedded (which requires `OLLAMA_EMBED_MODEL` to already be reachable and pulled) — all treated as hard requirements, not best-effort features. It does **not** check at startup that the real Ollama server can serve `OLLAMA_MODEL` — that's only discovered on the first question (surfaced as an `upstream_unavailable` error), since Ollama being temporarily down shouldn't block the whole process from starting.
 
 ## Run
 
@@ -90,7 +91,7 @@ faqs:
     answer: "Our support team is available 9am-6pm ET, Monday through Friday."
 ```
 
-At startup, every FAQ question is embedded once (batched into a single Voyage call). On each incoming question, the question itself is embedded and compared via cosine similarity against the cached FAQ vectors; a match at or above `FAQ_SIMILARITY_THRESHOLD` returns the canned answer with zero Ollama calls. If Voyage is temporarily unreachable, the FAQ check is skipped (logged as a warning) and the question falls through to Ollama rather than failing the request.
+At startup, every FAQ question is embedded once (batched into a single `/api/embed` call against `OLLAMA_EMBED_MODEL`). On each incoming question, the question itself is embedded and compared via cosine similarity against the cached FAQ vectors; a match at or above `FAQ_SIMILARITY_THRESHOLD` returns the canned answer with zero calls to the chat model. If the embedding backend is temporarily unreachable, the FAQ check is skipped (logged as a warning) and the question falls through to the chat model rather than failing the request.
 
 ## Chat history
 

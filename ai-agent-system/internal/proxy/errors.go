@@ -61,23 +61,3 @@ func mapOllamaHTTPError(statusCode int, body string) *Error {
 		Err:        fmt.Errorf("ollama: status %d: %s", statusCode, body),
 	}
 }
-
-func mapVoyageHTTPError(statusCode int, body string) *Error {
-	kind := ErrKindUnknown
-	switch {
-	case statusCode == http.StatusTooManyRequests:
-		kind = ErrKindRateLimited
-	case statusCode == http.StatusUnauthorized || statusCode == http.StatusForbidden:
-		kind = ErrKindAuth
-	case statusCode == http.StatusBadRequest || statusCode == http.StatusUnprocessableEntity:
-		kind = ErrKindInvalidRequest
-	case statusCode >= 500:
-		kind = ErrKindUpstreamUnavailable
-	}
-	return &Error{
-		Kind:       kind,
-		StatusCode: statusCode,
-		Message:    "the embeddings provider rejected or failed to process the request",
-		Err:        fmt.Errorf("voyage: status %d: %s", statusCode, body),
-	}
-}

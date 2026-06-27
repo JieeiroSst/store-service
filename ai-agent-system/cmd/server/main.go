@@ -32,9 +32,9 @@ func main() {
 	}
 
 	proxyClient := proxy.New(proxy.Config{
-		OllamaBaseURL: cfg.OllamaBaseURL,
-		OllamaModel:   cfg.OllamaModel,
-		VoyageAPIKey:  cfg.VoyageAPIKey,
+		OllamaBaseURL:    cfg.OllamaBaseURL,
+		OllamaModel:      cfg.OllamaModel,
+		OllamaEmbedModel: cfg.OllamaEmbedModel,
 	})
 
 	faqEntries, err := faq.LoadFromFile(cfg.FAQFile)
@@ -47,7 +47,7 @@ func main() {
 
 	loadCtx, cancelLoad := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancelLoad()
-	if err := faqStore.Load(loadCtx, proxyClient.Voyage, faqEntries); err != nil {
+	if err := faqStore.Load(loadCtx, proxyClient.Embedder, faqEntries); err != nil {
 		// FAQ matching is a stated requirement across every entry point, not
 		// a best-effort feature, so a failure to embed the FAQ set at
 		// startup should fail the server rather than silently degrade.
@@ -78,7 +78,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	service := chat.NewService(proxyClient.Ollama, proxyClient.Voyage, faqStore, historyStore, logger)
+	service := chat.NewService(proxyClient.Ollama, proxyClient.Embedder, faqStore, historyStore, logger)
 
 	mux := http.NewServeMux()
 	mux.Handle("/v1/", httpapi.NewRouter(service, historyStore, logger))
