@@ -41,8 +41,7 @@ func generateDeltaChunk(model, text string) GenerateResponse {
 
 // generateFinalChunk builds the final line (done:true) for both streaming
 // and non-streaming /api/generate responses, with stats derived from
-// Ollama's actual token usage where available (zero for FAQ answers, since
-// no Ollama call was made).
+// the backend's actual token usage.
 func generateFinalChunk(model string, result chat.AnswerResult, elapsed time.Duration, includeText bool) GenerateResponse {
 	resp := GenerateResponse{
 		Model:           model,
