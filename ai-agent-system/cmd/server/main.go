@@ -15,7 +15,6 @@ import (
 
 	"aiagentsystem/internal/chat"
 	"aiagentsystem/internal/config"
-	"aiagentsystem/internal/faq"
 	"aiagentsystem/internal/history"
 	"aiagentsystem/internal/httpapi"
 	"aiagentsystem/internal/ollamaapi"
@@ -32,29 +31,9 @@ func main() {
 	}
 
 	proxyClient := proxy.New(proxy.Config{
-		OllamaBaseURL:    cfg.OllamaBaseURL,
-		OllamaModel:      cfg.OllamaModel,
-		OllamaEmbedModel: cfg.OllamaEmbedModel,
+		OllamaBaseURL: cfg.OllamaBaseURL,
+		OllamaModel:   cfg.OllamaModel,
 	})
-
-	faqEntries, err := faq.LoadFromFile(cfg.FAQFile)
-	if err != nil {
-		logger.Error("failed to load FAQ file", "error", err)
-		os.Exit(1)
-	}
-
-	faqStore := faq.NewStore(cfg.FAQSimilarityThreshold)
-
-	loadCtx, cancelLoad := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancelLoad()
-	if err := faqStore.Load(loadCtx, proxyClient.Embedder, faqEntries); err != nil {
-		// FAQ matching is a stated requirement across every entry point, not
-		// a best-effort feature, so a failure to embed the FAQ set at
-		// startup should fail the server rather than silently degrade.
-		logger.Error("failed to load FAQ embeddings", "error", err)
-		os.Exit(1)
-	}
-	logger.Info("loaded FAQ entries", "count", len(faqEntries))
 
 	db, err := sql.Open("mysql", cfg.MySQLDSN)
 	if err != nil {
@@ -78,7 +57,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	service := chat.NewService(proxyClient.Ollama, proxyClient.Embedder, faqStore, historyStore, logger)
+	service := chat.NewService(proxyClient.Ollama, historyStore, logger)
 
 	mux := http.NewServeMux()
 	mux.Handle("/v1/", httpapi.NewRouter(service, historyStore, logger))

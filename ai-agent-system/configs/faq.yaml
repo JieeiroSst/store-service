@@ -1,9 +1,0 @@
-faqs:
-  - question: "What are your support hours?"
-    answer: "Our support team is available 9am-6pm ET, Monday through Friday."
-  - question: "How do I reset my password?"
-    answer: "Go to Settings > Security > Reset Password, and follow the emailed link."
-  - question: "Do you offer refunds?"
-    answer: "Yes, we offer full refunds within 30 days of purchase. Contact support@example.com to start a request."
-  - question: "How do I contact a human support agent?"
-    answer: "Email support@example.com or use the live chat widget in the bottom-right corner of the dashboard."

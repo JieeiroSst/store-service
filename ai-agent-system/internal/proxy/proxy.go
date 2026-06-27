@@ -3,16 +3,14 @@ package proxy
 import "time"
 
 type Config struct {
-	OllamaBaseURL    string
-	OllamaModel      string
-	OllamaEmbedModel string
-	RequestTimeout   time.Duration
-	MaxRetries       int
+	OllamaBaseURL  string
+	OllamaModel    string
+	RequestTimeout time.Duration
+	MaxRetries     int
 }
 
 type Client struct {
-	Ollama   OllamaClient
-	Embedder EmbeddingClient
+	Ollama OllamaClient
 }
 
 func New(cfg Config) *Client {
@@ -26,7 +24,6 @@ func New(cfg Config) *Client {
 	}
 
 	return &Client{
-		Ollama:   newOllamaClient(cfg.OllamaBaseURL, cfg.OllamaModel, timeout, maxRetries),
-		Embedder: newOllamaEmbedClient(cfg.OllamaBaseURL, cfg.OllamaEmbedModel, timeout, maxRetries),
+		Ollama: newOllamaClient(cfg.OllamaBaseURL, cfg.OllamaModel, timeout, maxRetries),
 	}
 }
