@@ -6,11 +6,13 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from . import config
-from .proxy.client import BackendError, answer
+from .proxy.client import BackendError, answer, embed
 from .wire import (
     ChatMessage,
     ChatRequest,
     ChatResponseChunk,
+    EmbedRequest,
+    EmbedResponse,
     GenerateRequest,
     GenerateResponseChunk,
     ModelDetails,
@@ -124,6 +126,17 @@ async def chat(req: ChatRequest):
         eval_count=len(text.split()),
     )
     return JSONResponse(content=final.model_dump(exclude_none=True))
+
+
+@router.post("/api/embed")
+async def embeddings(req: EmbedRequest):
+    inputs = [req.input] if isinstance(req.input, str) else req.input
+    try:
+        vectors = await embed(inputs)
+    except BackendError as exc:
+        return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
+
+    return EmbedResponse(model=req.model, embeddings=vectors)
 
 
 @router.get("/api/tags")

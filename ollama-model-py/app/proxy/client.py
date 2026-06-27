@@ -1,12 +1,12 @@
 """The one place to wire in a real backend.
 
-routes.py calls answer() for both /api/generate and /api/chat — replace the
-body below with a real call (an LLM API, an internal service, a database
-lookup, whatever should actually answer the question) and nothing else in
-this project needs to change.
+routes.py calls answer() for both /api/generate and /api/chat, and embed()
+for /api/embed — replace the bodies below with a real call (an LLM API, an
+internal service, a database lookup, whatever should actually answer the
+question) and nothing else in this project needs to change.
 
-This implementation forwards the question to a real Ollama server
-(OLLAMA_BASE_URL / OLLAMA_TARGET_MODEL) and relays its answer.
+This implementation forwards both to a real Ollama server (OLLAMA_BASE_URL /
+OLLAMA_TARGET_MODEL / OLLAMA_EMBED_MODEL) and relays its response.
 """
 import httpx
 
@@ -45,3 +45,23 @@ async def answer(question: str) -> str:
         raise BackendError(detail, status_code=resp.status_code)
 
     return resp.json()["message"]["content"]
+
+
+async def embed(inputs: list[str]) -> list[list[float]]:
+    try:
+        async with httpx.AsyncClient(base_url=cfg.ollama_base_url, timeout=120.0) as client:
+            resp = await client.post(
+                "/api/embed",
+                json={"model": cfg.ollama_embed_model, "input": inputs},
+            )
+    except httpx.RequestError as exc:
+        raise BackendError(f"can't reach Ollama at {cfg.ollama_base_url}: {exc}") from exc
+
+    if resp.is_error:
+        try:
+            detail = resp.json().get("error", resp.text)
+        except ValueError:
+            detail = resp.text
+        raise BackendError(detail, status_code=resp.status_code)
+
+    return resp.json()["embeddings"]
