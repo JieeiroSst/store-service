@@ -8,6 +8,7 @@ class Config:
     model_name: str
     ollama_base_url: str
     ollama_target_model: str
+    ollama_embed_model: str
 
 
 def load() -> Config:
@@ -16,4 +17,5 @@ def load() -> Config:
         model_name=os.environ.get("MODEL_NAME", "custom-model"),
         ollama_base_url=os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"),
         ollama_target_model=os.environ.get("OLLAMA_TARGET_MODEL", "llama3.2:latest"),
+        ollama_embed_model=os.environ.get("OLLAMA_EMBED_MODEL", "nomic-embed-text"),
     )
