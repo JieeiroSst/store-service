@@ -1,3 +1,4 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode"
+    "makefile.extensionOutputFolder": "./.vscode",
+    "python.defaultInterpreterPath": "${workspaceFolder}/ollama-model-py/.venv/bin/python"
 }
