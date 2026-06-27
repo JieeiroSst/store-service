@@ -1,0 +1,6 @@
+# Go
+/cmd/server/server
+*.exe
+
+# Environment files
+.env
