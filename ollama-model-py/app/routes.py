@@ -5,14 +5,12 @@ from datetime import datetime, timezone
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse, StreamingResponse
 
-from . import config
-from .proxy.client import BackendError, answer, embed
+from . import config, faq
+from .proxy.client import BackendError, answer
 from .wire import (
     ChatMessage,
     ChatRequest,
     ChatResponseChunk,
-    EmbedRequest,
-    EmbedResponse,
     GenerateRequest,
     GenerateResponseChunk,
     ModelDetails,
@@ -38,10 +36,17 @@ def _default_details() -> ModelDetails:
     return ModelDetails(format="gguf", family="ollama", families=["ollama"])
 
 
+async def _resolve(question: str) -> str:
+    scripted = await faq.match(question)
+    if scripted is not None:
+        return scripted
+    return await answer(question)
+
+
 @router.post("/api/generate")
 async def generate(req: GenerateRequest):
     try:
-        text = await answer(req.prompt)
+        text = await _resolve(req.prompt)
     except BackendError as exc:
         return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
@@ -86,7 +91,7 @@ async def generate(req: GenerateRequest):
 async def chat(req: ChatRequest):
     question = req.messages[-1].content if req.messages else ""
     try:
-        text = await answer(question)
+        text = await _resolve(question)
     except BackendError as exc:
         return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
@@ -126,17 +131,6 @@ async def chat(req: ChatRequest):
         eval_count=len(text.split()),
     )
     return JSONResponse(content=final.model_dump(exclude_none=True))
-
-
-@router.post("/api/embed")
-async def embeddings(req: EmbedRequest):
-    inputs = [req.input] if isinstance(req.input, str) else req.input
-    try:
-        vectors = await embed(inputs)
-    except BackendError as exc:
-        return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
-
-    return EmbedResponse(model=req.model, embeddings=vectors)
 
 
 @router.get("/api/tags")

@@ -1,6 +1,17 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-from . import routes
+from . import faq, routes
 
-app = FastAPI(title="ollama-model-py")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # FAQ matching is a mandatory feature, not best-effort, so a failure to
+    # embed the FAQ set here should fail startup rather than silently degrade.
+    await faq.load()
+    yield
+
+
+app = FastAPI(title="ollama-model-py", lifespan=lifespan)
 app.include_router(routes.router)
