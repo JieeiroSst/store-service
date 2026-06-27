@@ -20,7 +20,6 @@ func (r AnswerRequest) LastUserQuestion() string {
 type Source string
 
 const (
-	SourceFAQ    Source = "faq"
 	SourceOllama Source = "ollama"
 )
 
