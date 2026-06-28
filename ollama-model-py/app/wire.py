@@ -20,6 +20,7 @@ class ChatRequest(BaseModel):
     model: str
     messages: list[ChatMessage] = Field(default_factory=list)
     stream: Optional[bool] = None
+    user_id: Optional[str] = None
 
 
 class ChatResponseChunk(BaseModel):
@@ -40,6 +41,7 @@ class GenerateRequest(BaseModel):
     model: str
     prompt: str = ""
     stream: Optional[bool] = None
+    user_id: Optional[str] = None
 
 
 class GenerateResponseChunk(BaseModel):

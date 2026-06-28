@@ -6,6 +6,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from . import config, faq
+from .internal_api import intents as internal_intents
 from .proxy.client import BackendError, answer
 from .wire import (
     ChatMessage,
@@ -36,17 +37,20 @@ def _default_details() -> ModelDetails:
     return ModelDetails(format="gguf", family="ollama", families=["ollama"])
 
 
-async def _resolve(question: str) -> str:
+async def _resolve(question: str, user_id: str | None = None) -> str:
     scripted = await faq.match(question)
     if scripted is not None:
         return scripted
+    internal = await internal_intents.match(question, user_id)
+    if internal is not None:
+        return internal
     return await answer(question)
 
 
 @router.post("/api/generate")
 async def generate(req: GenerateRequest):
     try:
-        text = await _resolve(req.prompt)
+        text = await _resolve(req.prompt, req.user_id)
     except BackendError as exc:
         return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
@@ -91,7 +95,7 @@ async def generate(req: GenerateRequest):
 async def chat(req: ChatRequest):
     question = req.messages[-1].content if req.messages else ""
     try:
-        text = await _resolve(question)
+        text = await _resolve(question, req.user_id)
     except BackendError as exc:
         return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
