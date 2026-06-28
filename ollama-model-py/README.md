@@ -43,6 +43,66 @@ At startup (`app/main.py`'s lifespan), every FAQ question in `app/faq.json` is e
 
 **Tuning `FAQ_SIMILARITY_THRESHOLD`:** `nomic-embed-text` on short sentences doesn't separate cleanly — in testing, real paraphrases of the FAQ scored anywhere from ~0.55 to ~0.90, while unrelated questions topped out around ~0.45-0.55. There's no threshold that's correct for every case: lower it to catch more loosely-worded paraphrases at the risk of occasionally matching an unrelated question to the wrong FAQ; raise it to be stricter at the risk of letting more real paraphrases fall through to the LLM. `0.6` is a starting point, not a guarantee — tune it against your own FAQ content and real traffic, or swap in a stronger embedding model via `OLLAMA_EMBED_MODEL`.
 
+## Calling an internal API instead of the LLM (`app/internal_api/`)
+
+Some questions shouldn't go to the LLM at all because the LLM has no way to
+know the answer — e.g. "how many points do I have?" needs a real call to
+point-service, not a guess. `app/internal_api/` is the package for this:
+
+- `intents.py` recognizes that a question needs an internal API call, the
+  same way `faq.py` recognizes a scripted question — embed a few example
+  phrases per intent, embed the incoming question, and dispatch to the
+  closest intent's handler if it scores at or above
+  `INTERNAL_API_SIMILARITY_THRESHOLD` (default `0.6`).
+- `client.py` is where each internal service gets its own small function,
+  e.g. `get_points_balance()` calls point-service's `GET /:id` at
+  `POINTS_SERVICE_BASE_URL`.
+
+`routes.py`'s `_resolve()` checks `internal_api.intents.match()` after the
+FAQ and before falling back to the LLM. Recognition is best-effort like the
+FAQ (if the embedder is briefly down, the check is skipped for that
+question), but once a question IS recognized, a failure to reach the
+internal API itself is a real error returned to the caller — not silently
+swallowed into an LLM-guessed answer.
+
+**Adding a new intent:** add an entry to `_REGISTRY` in `intents.py` with a
+few example phrasings and an async handler, and a matching function in
+`client.py` if it needs to call a new internal service.
+
+**User identity** flows end-to-end from `ai-agent-system`: it reads the
+caller's `X-User-Id` header (`ai-agent-system/internal/ollamaapi/handlers.go`)
+and now carries it all the way through `chat.AnswerRequest.UserID` →
+`proxy.CompletionRequest.UserID` → the `user_id` field on the JSON body it
+posts to this service's `/api/chat` (`ai-agent-system/internal/proxy/ollama_client.go`).
+`ChatRequest`/`GenerateRequest` here (`app/wire.py`) accept that `user_id`,
+and `routes.py`'s `_resolve()` passes it through to `internal_api.intents.match()`.
+If a caller sends no `user_id` (e.g. a direct curl, or no `X-User-Id` on the
+original request), handlers fall back to `PLACEHOLDER_USER_ID` in
+`intents.py` rather than failing the request.
+
+## Giving the LLM fallback a persona (`Modelfile`)
+
+The FAQ and internal-API layers above already own anything with an exact
+answer; by the time a question reaches the real Ollama server
+(`app/proxy/client.py:answer()`), there's no canned answer and no API to
+call. `Modelfile` defines a persona/system prompt for that fallback model —
+friendly, concise, and honest about not having live account data instead of
+guessing.
+
+```bash
+ollama create store-assistant -f Modelfile
+```
+
+Then point this service at it:
+
+```bash
+OLLAMA_TARGET_MODEL=store-assistant
+```
+
+This only applies to the chat/completion model (`OLLAMA_TARGET_MODEL`), not
+the embed model (`OLLAMA_EMBED_MODEL`) — embedding models don't take a
+`SYSTEM` prompt, so FAQ/intent matching is unaffected.
+
 ## Point ai-agent-system (Go) at this instead of real Ollama
 
 ```bash

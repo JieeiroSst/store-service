@@ -19,26 +19,33 @@ cfg = config.load()
 
 
 class BackendError(Exception):
-    """Raised when the upstream Ollama server can't answer the question."""
+    """Raised when an upstream service (Ollama, or an internal API — see
+    ../internal_api/client.py) can't answer the question."""
 
     def __init__(self, message: str, status_code: int = 502):
         super().__init__(message)
         self.status_code = status_code
 
 
-async def answer(question: str) -> str:
+async def request_json(
+    base_url: str,
+    method: str,
+    path: str,
+    *,
+    json: dict | None = None,
+    timeout: float = 120.0,
+    error_label: str = "backend",
+) -> dict:
+    """Shared request/error-handling for any JSON-speaking upstream — used
+    below for Ollama itself, and by ../internal_api/client.py for internal
+    services. Raises BackendError on a network failure or an error response,
+    so every caller gets the same error shape for free.
+    """
     try:
-        async with httpx.AsyncClient(base_url=cfg.ollama_base_url, timeout=120.0) as client:
-            resp = await client.post(
-                "/api/chat",
-                json={
-                    "model": cfg.ollama_target_model,
-                    "messages": [{"role": "user", "content": question}],
-                    "stream": False,
-                },
-            )
+        async with httpx.AsyncClient(base_url=base_url, timeout=timeout) as http_client:
+            resp = await http_client.request(method, path, json=json)
     except httpx.RequestError as exc:
-        raise BackendError(f"can't reach Ollama at {cfg.ollama_base_url}: {exc}") from exc
+        raise BackendError(f"can't reach {error_label} at {base_url}: {exc}") from exc
 
     if resp.is_error:
         try:
@@ -47,24 +54,30 @@ async def answer(question: str) -> str:
             detail = resp.text
         raise BackendError(detail, status_code=resp.status_code)
 
-    return resp.json()["message"]["content"]
+    return resp.json()
+
+
+async def answer(question: str) -> str:
+    data = await request_json(
+        cfg.ollama_base_url,
+        "POST",
+        "/api/chat",
+        json={
+            "model": cfg.ollama_target_model,
+            "messages": [{"role": "user", "content": question}],
+            "stream": False,
+        },
+        error_label="Ollama",
+    )
+    return data["message"]["content"]
 
 
 async def embed(inputs: list[str]) -> list[list[float]]:
-    try:
-        async with httpx.AsyncClient(base_url=cfg.ollama_base_url, timeout=120.0) as client:
-            resp = await client.post(
-                "/api/embed",
-                json={"model": cfg.ollama_embed_model, "input": inputs},
-            )
-    except httpx.RequestError as exc:
-        raise BackendError(f"can't reach Ollama at {cfg.ollama_base_url}: {exc}") from exc
-
-    if resp.is_error:
-        try:
-            detail = resp.json().get("error", resp.text)
-        except ValueError:
-            detail = resp.text
-        raise BackendError(detail, status_code=resp.status_code)
-
-    return resp.json()["embeddings"]
+    data = await request_json(
+        cfg.ollama_base_url,
+        "POST",
+        "/api/embed",
+        json={"model": cfg.ollama_embed_model, "input": inputs},
+        error_label="Ollama",
+    )
+    return data["embeddings"]

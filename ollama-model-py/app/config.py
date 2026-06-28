@@ -14,6 +14,8 @@ class Config:
     ollama_embed_model: str
     faq_file: str
     faq_similarity_threshold: float
+    points_service_base_url: str
+    internal_api_similarity_threshold: float
 
 
 def load() -> Config:
@@ -25,4 +27,10 @@ def load() -> Config:
         ollama_embed_model=os.environ.get("OLLAMA_EMBED_MODEL", "nomic-embed-text"),
         faq_file=os.environ.get("FAQ_FILE", _DEFAULT_FAQ_FILE),
         faq_similarity_threshold=float(os.environ.get("FAQ_SIMILARITY_THRESHOLD", "0.6")),
+        points_service_base_url=os.environ.get(
+            "POINTS_SERVICE_BASE_URL", "http://localhost:8089"
+        ),
+        internal_api_similarity_threshold=float(
+            os.environ.get("INTERNAL_API_SIMILARITY_THRESHOLD", "0.6")
+        ),
     )
