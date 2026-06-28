@@ -23,7 +23,7 @@ def load() -> Config:
         port=int(os.environ.get("PORT", "11434")),
         model_name=os.environ.get("MODEL_NAME", "custom-model"),
         ollama_base_url=os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"),
-        ollama_target_model=os.environ.get("OLLAMA_TARGET_MODEL", "llama3.2:latest"),
+        ollama_target_model=os.environ.get("OLLAMA_TARGET_MODEL", "store-assistant"),
         ollama_embed_model=os.environ.get("OLLAMA_EMBED_MODEL", "nomic-embed-text"),
         faq_file=os.environ.get("FAQ_FILE", _DEFAULT_FAQ_FILE),
         faq_similarity_threshold=float(os.environ.get("FAQ_SIMILARITY_THRESHOLD", "0.6")),
