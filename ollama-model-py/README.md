@@ -10,6 +10,8 @@ A standalone Python service that speaks Ollama's own wire format (`/api/generate
 pip install -r requirements.txt
 cp .env.example .env   # PORT (default 11435), MODEL_NAME, OLLAMA_BASE_URL/OLLAMA_TARGET_MODEL/OLLAMA_EMBED_MODEL
 ollama pull nomic-embed-text   # the default OLLAMA_EMBED_MODEL, used for FAQ matching
+ollama pull llama3.2:latest    # base model Modelfile builds OLLAMA_TARGET_MODEL from
+make create-model              # builds the default OLLAMA_TARGET_MODEL, store-assistant (see Modelfile)
 uvicorn app.main:app --port "${PORT:-11435}"
 ```
 
@@ -86,17 +88,18 @@ The FAQ and internal-API layers above already own anything with an exact
 answer; by the time a question reaches the real Ollama server
 (`app/proxy/client.py:answer()`), there's no canned answer and no API to
 call. `Modelfile` defines a persona/system prompt for that fallback model —
-friendly, concise, and honest about not having live account data instead of
-guessing.
+always replies in Vietnamese (regardless of what language the question was
+asked in) in a friendly, natural customer-support tone, concise, and honest
+about not having live account data instead of guessing.
 
 ```bash
-ollama create store-assistant -f Modelfile
+make create-model   # runs: ollama create store-assistant -f Modelfile
 ```
 
-Then point this service at it:
+`store-assistant` is the default `OLLAMA_TARGET_MODEL` (`.env.example`, `app/config.py`) — run `make create-model` once before starting this service (see Run, above), or point `OLLAMA_TARGET_MODEL` at a different model name and build that one instead:
 
 ```bash
-OLLAMA_TARGET_MODEL=store-assistant
+make create-model OLLAMA_TARGET_MODEL=my-persona
 ```
 
 This only applies to the chat/completion model (`OLLAMA_TARGET_MODEL`), not
