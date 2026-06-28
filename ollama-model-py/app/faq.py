@@ -60,6 +60,10 @@ async def match(question: str) -> str | None:
     if not _entries:
         return None
 
+    # FAQ only contains greetings — skip for real questions (> 3 words)
+    if len(question.split()) > 3:
+        return None
+
     try:
         embeddings = await client.embed([question])
     except client.BackendError:

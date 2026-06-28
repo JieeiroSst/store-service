@@ -13,7 +13,7 @@ OLLAMA_TARGET_MODEL / OLLAMA_EMBED_MODEL) and relays the response.
 """
 import httpx
 
-from .. import config
+from .. import bank_context, config
 
 cfg = config.load()
 
@@ -57,14 +57,40 @@ async def request_json(
     return resp.json()
 
 
-async def answer(question: str) -> str:
+async def answer(messages: list[dict]) -> str:
+    ctx = bank_context.get()
+    payload = [{"role": "system", "content": ctx}] + messages if ctx else messages
     data = await request_json(
         cfg.ollama_base_url,
         "POST",
         "/api/chat",
         json={
             "model": cfg.ollama_target_model,
-            "messages": [{"role": "user", "content": question}],
+            "messages": payload,
+            "stream": False,
+        },
+        error_label="Ollama",
+    )
+    return data["message"]["content"]
+
+
+async def answer_with_context(question: str, context: str) -> str:
+    """Answer a question using only the provided context (from PDF chunks).
+    Instructs the model to be concise and not fabricate beyond the context.
+    """
+    prompt = (
+        "Dựa trên thông tin tài liệu dưới đây, hãy trả lời ngắn gọn câu hỏi của khách. "
+        "Chỉ dùng thông tin được cung cấp; nếu tài liệu không đủ để trả lời, hãy nói rõ.\n\n"
+        f"Tài liệu:\n{context}\n\n"
+        f"Câu hỏi: {question}"
+    )
+    data = await request_json(
+        cfg.ollama_base_url,
+        "POST",
+        "/api/chat",
+        json={
+            "model": cfg.ollama_target_model,
+            "messages": [{"role": "user", "content": prompt}],
             "stream": False,
         },
         error_label="Ollama",

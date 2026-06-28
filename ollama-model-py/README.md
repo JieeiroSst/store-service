@@ -2,124 +2,276 @@
 
 A standalone Python service that speaks Ollama's own wire format (`/api/generate`, `/api/chat`, `/api/tags`, `/api/show`) — a drop-in alternative to a real Ollama install. The sibling Go service (`../ai-agent-system`) doesn't know or care whether `OLLAMA_BASE_URL` points at a real Ollama server or at this one; both speak the same HTTP API.
 
-**This is also where the mandatory scripted FAQ lives.** Every question to `/api/generate`/`/api/chat` is checked against `app/faq.json` first. Real questions are rarely worded exactly like the script, so matching is semantic (Ollama embeddings + cosine similarity), not exact string matching — a close-enough match returns that scripted answer verbatim, with zero calls to the LLM. Only questions with no close-enough match fall through to a real Ollama server (`app/proxy/client.py`, using `OLLAMA_BASE_URL`/`OLLAMA_TARGET_MODEL`).
+**Domain:** banking & fintech customer support (Vietnamese). Every incoming question is resolved through a four-layer pipeline before reaching the LLM:
 
-## Run
+```
+Question
+   │
+   ▼
+1. Scripted FAQ         (app/faq.json)                  → exact scripted answer, no LLM call
+   │ no match
+   ▼
+2. PDF RAG              (app/pdf_rag.py)                → answer grounded in uploaded docs
+   │ no match
+   ▼
+3. Internal API intents (app/internal_api/intents.py)   → live data from internal services
+   │ no match
+   ▼
+4. LLM fallback         (app/proxy/client.py:answer())  → bank-assistant persona (Modelfile)
+```
+
+---
+
+## Quick start
 
 ```bash
-pip install -r requirements.txt
-cp .env.example .env   # PORT (default 11435), MODEL_NAME, OLLAMA_BASE_URL/OLLAMA_TARGET_MODEL/OLLAMA_EMBED_MODEL
-ollama pull nomic-embed-text   # the default OLLAMA_EMBED_MODEL, used for FAQ matching
-ollama pull qwen2.5:14b         # base model Modelfile builds OLLAMA_TARGET_MODEL from
-make create-model              # builds the default OLLAMA_TARGET_MODEL, store-assistant (see Modelfile)
-uvicorn app.main:app --port "${PORT:-11435}"
+# 1. Install dependencies
+make install
+
+# 2. Copy env and configure
+cp .env.example .env   # edit OLLAMA_BASE_URL if Ollama runs elsewhere
+
+# 3. Pull required Ollama models
+ollama pull nomic-embed-text   # embed model (FAQ + intent + PDF matching)
+ollama pull qwen2.5:14b        # base model for the bank-assistant persona
+
+# 4. Build the bank-assistant persona
+make create-model
+
+# 5. (Optional) Embed your PDF documents — see PDF RAG section below
+make ingest
+
+# 6. Start the service
+make dev
 ```
+
+---
+
+## Environment variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `11436` | Port this service listens on |
+| `MODEL_NAME` | `custom-model` | Model name advertised on `/api/tags` |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Real Ollama server for chat + embed |
+| `OLLAMA_TARGET_MODEL` | `bank-assistant` | Chat/completion model |
+| `OLLAMA_EMBED_MODEL` | `nomic-embed-text` | Embedding model |
+| `FAQ_SIMILARITY_THRESHOLD` | `0.6` | Cosine threshold for FAQ matching |
+| `INTERNAL_API_SIMILARITY_THRESHOLD` | `0.6` | Cosine threshold for intent matching |
+| `POINTS_SERVICE_BASE_URL` | `http://localhost:8089` | Internal points/account service |
+| `PDF_VECTOR_FILE` | `data/pdf_vectors.json` | Pre-built PDF vector store |
+| `PDF_SIMILARITY_THRESHOLD` | `0.65` | Cosine threshold for PDF RAG matching |
+
+---
 
 ## Try it
 
+### GET /api/tags — list available models
+
 ```bash
-curl -s localhost:11435/api/tags | jq
-curl -s localhost:11435/api/show -d '{"model":"custom-model"}' | jq
-
-# worded differently than the script, but close enough -> scripted answer, no LLM call
-curl -s localhost:11435/api/chat -H 'Content-Type: application/json' -d '{"model":"custom-model","messages":[{"role":"user","content":"when can I reach support?"}],"stream":false}' | jq
-
-# no FAQ match -> forwarded to the real Ollama server
-curl -s -N localhost:11435/api/chat -H 'Content-Type: application/json' -d '{"model":"custom-model","messages":[{"role":"user","content":"hi"}],"stream":true}'
+curl -s localhost:11436/api/tags | jq
 ```
 
-## The scripted FAQ (`app/faq.json`)
+### POST /api/show — model info
+
+```bash
+curl -s localhost:11436/api/show \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"custom-model"}' | jq
+```
+
+### POST /api/chat — single turn (stream off)
+
+```bash
+# Layer 1: FAQ match — scripted answer, no LLM call
+curl -s localhost:11436/api/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "messages": [{"role":"user","content":"giờ hỗ trợ khách hàng là mấy giờ?"}],
+    "stream": false
+  }' | jq
+
+# Layer 2: PDF RAG — answer grounded in uploaded docs (requires make ingest)
+curl -s localhost:11436/api/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "messages": [{"role":"user","content":"lãi suất tiết kiệm 12 tháng là bao nhiêu?"}],
+    "stream": false
+  }' | jq
+
+# Layer 3: Internal API intent — live data, requires user_id
+curl -s localhost:11436/api/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "messages": [{"role":"user","content":"số dư tài khoản của tôi là bao nhiêu?"}],
+    "stream": false,
+    "user_id": "user-123"
+  }' | jq
+
+# Layer 4: LLM fallback — no match in any layer, forwarded to bank-assistant
+curl -s localhost:11436/api/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "messages": [{"role":"user","content":"xin chào"}],
+    "stream": false
+  }' | jq
+```
+
+### POST /api/chat — streaming (Layer 4)
+
+```bash
+curl -s -N localhost:11436/api/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "messages": [{"role":"user","content":"thẻ tín dụng có lợi gì so với thẻ ghi nợ?"}],
+    "stream": true
+  }'
+```
+
+### POST /api/chat — multi-turn conversation
+
+Truyền toàn bộ lịch sử hội thoại để model nhớ context:
+
+```bash
+curl -s localhost:11436/api/chat \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "messages": [
+      {"role":"user",     "content":"tôi muốn mở thẻ tín dụng"},
+      {"role":"assistant","content":"Anh/chị cho mình biết thu nhập hàng tháng khoảng bao nhiêu để mình tư vấn hạn mức phù hợp nhé?"},
+      {"role":"user",     "content":"khoảng 20 triệu"}
+    ],
+    "stream": false
+  }' | jq
+```
+
+### POST /api/generate — generate endpoint
+
+```bash
+# Non-streaming
+curl -s localhost:11436/api/generate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "prompt": "vay tiêu dùng tín chấp cần hồ sơ gì?",
+    "stream": false
+  }' | jq
+
+# Streaming
+curl -s -N localhost:11436/api/generate \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "custom-model",
+    "prompt": "vay tiêu dùng tín chấp cần hồ sơ gì?",
+    "stream": true
+  }'
+```
+
+---
+
+## Layer 1 — Scripted FAQ (`app/faq.json`)
+
+Questions that must always return a fixed answer (support hours, fee policies, hotline numbers, etc.). Matching is semantic, not exact string matching — embed the incoming question, compare cosine similarity against all FAQ embeddings, return the scripted answer if score ≥ `FAQ_SIMILARITY_THRESHOLD`.
 
 ```json
 {
   "faqs": [
     {
-      "question": "What are your support hours?",
-      "answer": "Our support team is available 9am-6pm ET, Monday through Friday."
+      "question": "Hotline hỗ trợ khách hàng là số nào?",
+      "answer": "Hotline của chúng tôi là 1800-XXXX, miễn phí 24/7."
+    },
+    {
+      "question": "Phí chuyển khoản ngoại mạng là bao nhiêu?",
+      "answer": "Phí chuyển khoản ngoại mạng là 11.000đ/giao dịch."
     }
   ]
 }
 ```
 
-At startup (`app/main.py`'s lifespan), every FAQ question in `app/faq.json` is embedded once via `OLLAMA_EMBED_MODEL` (`app/faq.py:load()`) — this requires the real Ollama server at `OLLAMA_BASE_URL` to be reachable and that model already pulled, and fails startup otherwise (mandatory feature, not best-effort). On each incoming question, `app/faq.py:match()` embeds it and compares via cosine similarity against the cached FAQ vectors; the closest match at or above `FAQ_SIMILARITY_THRESHOLD` (default `0.6`) wins. If the embedding backend is temporarily unreachable mid-request, the FAQ check is skipped for that question (not a hard failure) and it falls through to `answer()`. Change `app/faq.json` and restart to update the script; point `FAQ_FILE` at a different path to use a JSON file elsewhere.
+FAQ questions are embedded once at startup (`app/faq.py:load()`). If the embed backend is unreachable mid-request, the FAQ check is skipped (not a hard failure) and the question falls through. Edit `app/faq.json` and restart to update.
 
-**Tuning `FAQ_SIMILARITY_THRESHOLD`:** `nomic-embed-text` on short sentences doesn't separate cleanly — in testing, real paraphrases of the FAQ scored anywhere from ~0.55 to ~0.90, while unrelated questions topped out around ~0.45-0.55. There's no threshold that's correct for every case: lower it to catch more loosely-worded paraphrases at the risk of occasionally matching an unrelated question to the wrong FAQ; raise it to be stricter at the risk of letting more real paraphrases fall through to the LLM. `0.6` is a starting point, not a guarantee — tune it against your own FAQ content and real traffic, or swap in a stronger embedding model via `OLLAMA_EMBED_MODEL`.
+**Tuning `FAQ_SIMILARITY_THRESHOLD`:** lower = catch more loosely-worded paraphrases (risk: wrong match); higher = stricter (risk: FAQ miss falls to LLM). `0.6` is a starting point — tune against real traffic or swap `OLLAMA_EMBED_MODEL` for a stronger model.
 
-## Calling an internal API instead of the LLM (`app/internal_api/`)
+---
 
-Some questions shouldn't go to the LLM at all because the LLM has no way to
-know the answer — e.g. "how many points do I have?" needs a real call to
-point-service, not a guess. `app/internal_api/` is the package for this:
+## Layer 2 — PDF RAG (`app/pdf_rag.py`)
 
-- `intents.py` recognizes that a question needs an internal API call, the
-  same way `faq.py` recognizes a scripted question — embed a few example
-  phrases per intent, embed the incoming question, and dispatch to the
-  closest intent's handler if it scores at or above
-  `INTERNAL_API_SIMILARITY_THRESHOLD` (default `0.6`).
-- `client.py` is where each internal service gets its own small function,
-  e.g. `get_points_balance()` calls point-service's `GET /:id` at
-  `POINTS_SERVICE_BASE_URL`.
+Answers grounded in your uploaded banking documents (rate sheets, product brochures, NHNN circulars, internal procedures). When a question matches a PDF chunk above `PDF_SIMILARITY_THRESHOLD`, the matching chunks are sent as context to the LLM which generates a concise answer — it cannot fabricate beyond what the document says.
 
-`routes.py`'s `_resolve()` checks `internal_api.intents.match()` after the
-FAQ and before falling back to the LLM. Recognition is best-effort like the
-FAQ (if the embedder is briefly down, the check is skipped for that
-question), but once a question IS recognized, a failure to reach the
-internal API itself is a real error returned to the caller — not silently
-swallowed into an LLM-guessed answer.
+---
 
-**Adding a new intent:** add an entry to `_REGISTRY` in `intents.py` with a
-few example phrasings and an async handler, and a matching function in
-`client.py` if it needs to call a new internal service.
+## Layer 3 — Internal API intents (`app/internal_api/`)
 
-**User identity** flows end-to-end from `ai-agent-system`: it reads the
-caller's `X-User-Id` header (`ai-agent-system/internal/ollamaapi/handlers.go`)
-and now carries it all the way through `chat.AnswerRequest.UserID` →
-`proxy.CompletionRequest.UserID` → the `user_id` field on the JSON body it
-posts to this service's `/api/chat` (`ai-agent-system/internal/proxy/ollama_client.go`).
-`ChatRequest`/`GenerateRequest` here (`app/wire.py`) accept that `user_id`,
-and `routes.py`'s `_resolve()` passes it through to `internal_api.intents.match()`.
-If a caller sends no `user_id` (e.g. a direct curl, or no `X-User-Id` on the
-original request), handlers fall back to `PLACEHOLDER_USER_ID` in
-`intents.py` rather than failing the request.
+Questions the LLM can't answer correctly because they need live data (e.g. "số dư tài khoản của tôi là bao nhiêu?", "tra cứu lịch sử giao dịch"). These are matched the same way as FAQs (embed + cosine), then dispatched to a real internal service call.
 
-## Giving the LLM fallback a persona (`Modelfile`)
+- `intents.py` — maps example phrases → async handler, dispatched at `INTERNAL_API_SIMILARITY_THRESHOLD`
+- `client.py` — one function per internal service endpoint (e.g. `get_points_balance()`)
 
-The FAQ and internal-API layers above already own anything with an exact
-answer; by the time a question reaches the real Ollama server
-(`app/proxy/client.py:answer()`), there's no canned answer and no API to
-call. `Modelfile` defines a persona/system prompt for that fallback model —
-always replies in Vietnamese (regardless of what language the question was
-asked in) in a friendly, natural customer-support tone, concise, and honest
-about not having live account data instead of guessing.
+**Adding a new intent:** add an entry to `_REGISTRY` in `intents.py` with example phrasings + handler, and a matching fetch function in `client.py`.
+
+**User identity** flows from the sibling Go service via the `user_id` field on `/api/chat` requests (populated from `X-User-Id` header). Handlers fall back to `PLACEHOLDER_USER_ID` when absent.
+
+### Folder structure
+
+```
+docs/
+  banking-products/   ← rate cards, product sheets, brochures
+  regulations/        ← NHNN circulars, compliance documents
+  procedures/         ← internal guides, user manuals
+```
+
+### Workflow
 
 ```bash
-make create-model   # runs: ollama create store-assistant -f Modelfile
+# 1. Drop PDF files into the appropriate subfolder under docs/
+# 2. Run the ingest script (chunks PDFs, embeds, saves data/pdf_vectors.json)
+make ingest
+
+# 3. Restart the service to load the new vectors
+make dev
 ```
 
-`store-assistant` is the default `OLLAMA_TARGET_MODEL` (`.env.example`, `app/config.py`) — run `make create-model` once before starting this service (see Run, above), or point `OLLAMA_TARGET_MODEL` at a different model name and build that one instead:
+Re-run `make ingest` every time you add, remove, or update PDFs. The service loads `data/pdf_vectors.json` at startup — if the file doesn't exist (ingest hasn't been run yet), the PDF layer is silently skipped.
+
+**Tuning `PDF_SIMILARITY_THRESHOLD`:** `0.65` is slightly stricter than the FAQ threshold because PDF chunks are longer and less precisely phrased than FAQ questions — lower it if relevant document questions are falling through to the LLM.
+
+---
+
+## Layer 4 — LLM fallback persona (`Modelfile`)
+
+Reached only when all three layers above find no match. Defined by `Modelfile` on top of `qwen2.5:14b`:
+
+- Always replies in Vietnamese (regardless of input language)
+- Professional banking tone — friendly but not overly formal
+- Concise — a few sentences, no unnecessary lists
+- Honest about what it doesn't know (no live account data) → directs to `support@example.com`
+- Never fabricates balances, transaction status, or interest rates
 
 ```bash
-make create-model OLLAMA_TARGET_MODEL=my-persona
+make create-model              # ollama create bank-assistant -f Modelfile
+make create-model OLLAMA_TARGET_MODEL=my-persona   # custom name
 ```
 
-This only applies to the chat/completion model (`OLLAMA_TARGET_MODEL`), not
-the embed model (`OLLAMA_EMBED_MODEL`) — embedding models don't take a
-`SYSTEM` prompt, so FAQ/intent matching is unaffected.
+Drop back to `FROM qwen2.5:7b` in `Modelfile` if `14b` is too slow (~10GB RAM needed).
 
-## Point ai-agent-system (Go) at this instead of real Ollama
+---
+
+## Pointing ai-agent-system (Go) at this service
 
 ```bash
-OLLAMA_BASE_URL=http://localhost:11435
-OLLAMA_MODEL=custom-model   # must match MODEL_NAME above
+# In ai-agent-system's .env
+OLLAMA_BASE_URL=http://localhost:11436
+OLLAMA_MODEL=custom-model   # must match MODEL_NAME in this service's .env
 ```
 
-## Wiring in a real answer
+---
 
-Edit `app/proxy/client.py`:
+## Adding a real answer backend
 
-```python
-async def answer(question: str) -> str:
-    ...  # called for /api/generate and /api/chat, after the FAQ check finds no match
-```
-
-`routes.py`'s `_resolve()` calls `faq.match()` first for both `/api/generate` and `/api/chat`, streaming or not, and falls back to `answer()` only when nothing scores above `FAQ_SIMILARITY_THRESHOLD` — `answer()` is the only function that needs real backend logic.
+Edit `app/proxy/client.py:answer()` — it's called for both `/api/generate` and `/api/chat` as the last fallback. Everything above it in the pipeline (FAQ, internal API, PDF RAG) is already handled; `answer()` only needs to handle what genuinely requires open-ended generation.

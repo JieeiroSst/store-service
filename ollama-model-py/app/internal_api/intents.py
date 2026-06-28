@@ -53,6 +53,7 @@ class _Intent:
     name: str
     examples: list[str]
     handler: _Handler
+    keywords: frozenset[str]  # at least one must appear in the question (lowercased)
 
 
 _REGISTRY: list[_Intent] = [
@@ -68,6 +69,7 @@ _REGISTRY: list[_Intent] = [
             "Kiểm tra điểm thưởng của tôi",
         ],
         handler=_handle_points_balance,
+        keywords=frozenset({"điểm", "points", "reward", "point"}),
     ),
 ]
 
@@ -116,6 +118,14 @@ async def match(question: str, user_id: str | None = None) -> str | None:
     if not _examples:
         return None
 
+    # Fast keyword pre-filter: skip cosine similarity if the question contains
+    # none of any registered intent's required keywords. Prevents false
+    # positives from the embedding model conflating unrelated banking questions.
+    q_lower = question.lower()
+    eligible = [ex for ex in _examples if ex.intent.keywords & set(q_lower.split())]
+    if not eligible:
+        return None
+
     try:
         embeddings = await ollama_client.embed([question])
     except ollama_client.BackendError:
@@ -126,7 +136,7 @@ async def match(question: str, user_id: str | None = None) -> str | None:
 
     best_example: _Example | None = None
     best_score = 0.0
-    for ex in _examples:
+    for ex in eligible:
         score = _cosine_similarity(query, ex.embedding)
         if score > best_score:
             best_score = score

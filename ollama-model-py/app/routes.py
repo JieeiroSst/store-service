@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse, StreamingResponse
 
-from . import config, faq
+from . import config, faq, pdf_rag
 from .internal_api import intents as internal_intents
 from .proxy.client import BackendError, answer
 from .wire import (
@@ -37,20 +37,29 @@ def _default_details() -> ModelDetails:
     return ModelDetails(format="gguf", family="ollama", families=["ollama"])
 
 
-async def _resolve(question: str, user_id: str | None = None) -> str:
+async def _resolve(
+    messages: list[ChatMessage], user_id: str | None = None
+) -> str:
+    question = messages[-1].content if messages else ""
     scripted = await faq.match(question)
     if scripted is not None:
         return scripted
+    pdf_answer = await pdf_rag.match(question)
+    if pdf_answer is not None:
+        return pdf_answer
     internal = await internal_intents.match(question, user_id)
     if internal is not None:
         return internal
-    return await answer(question)
+    # Pass full history so the model retains conversation context
+    return await answer([{"role": m.role, "content": m.content} for m in messages])
 
 
 @router.post("/api/generate")
 async def generate(req: GenerateRequest):
     try:
-        text = await _resolve(req.prompt, req.user_id)
+        text = await _resolve(
+            [ChatMessage(role="user", content=req.prompt)], req.user_id
+        )
     except BackendError as exc:
         return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
@@ -93,12 +102,12 @@ async def generate(req: GenerateRequest):
 
 @router.post("/api/chat")
 async def chat(req: ChatRequest):
-    question = req.messages[-1].content if req.messages else ""
     try:
-        text = await _resolve(question, req.user_id)
+        text = await _resolve(req.messages, req.user_id)
     except BackendError as exc:
         return JSONResponse(status_code=exc.status_code, content={"error": str(exc)})
     start = time.monotonic()
+    prompt_tokens = sum(len(m.content.split()) for m in req.messages)
 
     if req.stream is None or req.stream:
         async def gen():
@@ -117,7 +126,7 @@ async def chat(req: ChatRequest):
                 done=True,
                 done_reason="stop",
                 total_duration=int((time.monotonic() - start) * 1e9),
-                prompt_eval_count=len(question.split()),
+                prompt_eval_count=prompt_tokens,
                 eval_count=len(text.split()),
             )
             yield final.model_dump_json(exclude_none=True) + "\n"
@@ -131,7 +140,7 @@ async def chat(req: ChatRequest):
         done=True,
         done_reason="stop",
         total_duration=int((time.monotonic() - start) * 1e9),
-        prompt_eval_count=len(question.split()),
+        prompt_eval_count=prompt_tokens,
         eval_count=len(text.split()),
     )
     return JSONResponse(content=final.model_dump(exclude_none=True))
