@@ -10,7 +10,7 @@ A standalone Python service that speaks Ollama's own wire format (`/api/generate
 pip install -r requirements.txt
 cp .env.example .env   # PORT (default 11435), MODEL_NAME, OLLAMA_BASE_URL/OLLAMA_TARGET_MODEL/OLLAMA_EMBED_MODEL
 ollama pull nomic-embed-text   # the default OLLAMA_EMBED_MODEL, used for FAQ matching
-ollama pull llama3.2:latest    # base model Modelfile builds OLLAMA_TARGET_MODEL from
+ollama pull qwen2.5:14b         # base model Modelfile builds OLLAMA_TARGET_MODEL from
 make create-model              # builds the default OLLAMA_TARGET_MODEL, store-assistant (see Modelfile)
 uvicorn app.main:app --port "${PORT:-11435}"
 ```

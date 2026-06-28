@@ -17,7 +17,15 @@
 # Use it: set OLLAMA_TARGET_MODEL=store-assistant in .env, then restart this
 #         service (app/proxy/client.py forwards chat questions to whatever
 #         OLLAMA_TARGET_MODEL is set to).
-FROM llama3.2:latest
+#
+# Base model: qwen2.5:14b, not llama3.2:latest — Qwen2.5 was trained on
+# substantially more multilingual data (Vietnamese included) and follows the
+# Vietnamese-language persona below far more reliably than Llama 3.2 3B. The
+# 14b size trades speed for quality over qwen2.5:7b — ~9GB download, needs
+# ~10GB RAM/VRAM to run, which is tight but workable on a 16GB machine
+# (expect noticeably slower responses than 7b, especially under load). Drop
+# back to `FROM qwen2.5:7b` if 14b is too slow in practice.
+FROM qwen2.5:14b
 
 PARAMETER temperature 0.4
 PARAMETER num_ctx 4096
