@@ -21,7 +21,7 @@ func Load() (Config, error) {
 
 	cfg := Config{
 		Port:          getEnv("PORT", "8080"),
-		OllamaBaseURL: getEnv("OLLAMA_BASE_URL", "http://localhost:11434"),
+		OllamaBaseURL: getEnv("OLLAMA_BASE_URL", "http://localhost:11435"),
 		OllamaModel:   os.Getenv("OLLAMA_MODEL"),
 		MySQLDSN:      os.Getenv("MYSQL_DSN"),
 	}
