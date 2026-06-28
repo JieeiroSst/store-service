@@ -1,20 +1,37 @@
 {
+  "bank_facts": {
+    "Hotline": "1800-599-919 (miễn phí, 24/7)",
+    "Email hỗ trợ": "support@example.com",
+    "Giờ làm việc": "Tổng đài 24/7; chi nhánh và phòng giao dịch 8h–17h thứ Hai đến thứ Sáu (trừ ngày lễ)",
+    "Lãi suất tiết kiệm 12 tháng": "5,2%/năm (tại quầy), 5,4%/năm (online) — có thể thay đổi theo từng thời kỳ",
+    "Lãi suất vay mua nhà": "Từ 7,5%/năm (ưu đãi 12–24 tháng đầu), sau đó thả nổi theo lãi suất cơ sở",
+    "Lãi suất vay tín chấp": "1,2%–2%/tháng (14,4%–24%/năm) tùy hồ sơ và kỳ hạn",
+    "Phí thẻ tín dụng chuẩn": "Miễn phí năm đầu, từ năm 2: 299.000đ/năm",
+    "Phí thẻ tín dụng vàng": "599.000đ/năm",
+    "Phí thẻ tín dụng platinum": "1.200.000đ/năm",
+    "Hạn mức chuyển khoản": "500 triệu/giao dịch, 2 tỷ/ngày (qua Smart OTP)",
+    "Phí chuyển khoản ngoại mạng Napas": "Miễn phí 5 giao dịch đầu/tháng; từ giao dịch thứ 6: 11.000đ/giao dịch",
+    "Điều kiện mở thẻ tín dụng": "Từ 18 tuổi, thu nhập tối thiểu 5 triệu/tháng (tín chấp). Hồ sơ: CCCD + sao kê lương 3 tháng gần nhất",
+    "Hạn mức tín dụng": "50 triệu đến 500 triệu đồng, dựa trên thu nhập và lịch sử tín dụng",
+    "Phí phạt tất toán vay trước hạn": "2% trên số dư còn lại nếu tất toán trong 12 tháng đầu; miễn phí từ tháng 13",
+    "Thời gian phê duyệt vay tiêu dùng": "24–48 giờ làm việc sau khi nộp đủ hồ sơ qua app"
+  },
   "faqs": [
     {
-      "question": "What are your support hours?",
-      "answer": "Our support team is available 9am-6pm ET, Monday through Friday."
+      "question": "hello",
+      "answer": "Xin chào! Mình là trợ lý tư vấn tài chính ngân hàng 🏦\n\nMình có thể hỗ trợ bạn về:\n- Tài khoản, thẻ ngân hàng (debit, credit)\n- Vay vốn (mua nhà, tiêu dùng, tín chấp)\n- Gửi tiết kiệm, lãi suất\n- Chuyển khoản, thanh toán QR\n- Bảo mật tài khoản và xử lý sự cố\n\nBạn cần tư vấn gì, mình nghe nè!"
     },
     {
-      "question": "How do I reset my password?",
-      "answer": "Go to Settings > Security > Reset Password, and follow the emailed link."
+      "question": "hi",
+      "answer": "Xin chào! Mình là trợ lý tư vấn tài chính ngân hàng 🏦\n\nMình có thể hỗ trợ bạn về:\n- Tài khoản, thẻ ngân hàng (debit, credit)\n- Vay vốn (mua nhà, tiêu dùng, tín chấp)\n- Gửi tiết kiệm, lãi suất\n- Chuyển khoản, thanh toán QR\n- Bảo mật tài khoản và xử lý sự cố\n\nBạn cần tư vấn gì, mình nghe nè!"
     },
     {
-      "question": "Do you offer refunds?",
-      "answer": "Yes, we offer full refunds within 30 days of purchase. Contact support@example.com to start a request."
+      "question": "xin chào",
+      "answer": "Xin chào! Mình là trợ lý tư vấn tài chính ngân hàng 🏦\n\nMình có thể hỗ trợ bạn về:\n- Tài khoản, thẻ ngân hàng (debit, credit)\n- Vay vốn (mua nhà, tiêu dùng, tín chấp)\n- Gửi tiết kiệm, lãi suất\n- Chuyển khoản, thanh toán QR\n- Bảo mật tài khoản và xử lý sự cố\n\nBạn cần tư vấn gì, mình nghe nè!"
     },
     {
-      "question": "How do I contact a human support agent?",
-      "answer": "Email support@example.com or use the live chat widget in the bottom-right corner of the dashboard."
+      "question": "chào bạn",
+      "answer": "Xin chào! Mình là trợ lý tư vấn tài chính ngân hàng 🏦\n\nMình có thể hỗ trợ bạn về:\n- Tài khoản, thẻ ngân hàng (debit, credit)\n- Vay vốn (mua nhà, tiêu dùng, tín chấp)\n- Gửi tiết kiệm, lãi suất\n- Chuyển khoản, thanh toán QR\n- Bảo mật tài khoản và xử lý sự cố\n\nBạn cần tư vấn gì, mình nghe nè!"
     }
   ]
 }
