@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -13,6 +15,10 @@ type Config struct {
 }
 
 func Load() (Config, error) {
+	if err := godotenv.Load(); err != nil && !os.IsNotExist(err) {
+		return Config{}, fmt.Errorf("config: failed to load .env: %w", err)
+	}
+
 	cfg := Config{
 		Port:          getEnv("PORT", "8080"),
 		OllamaBaseURL: getEnv("OLLAMA_BASE_URL", "http://localhost:11434"),
