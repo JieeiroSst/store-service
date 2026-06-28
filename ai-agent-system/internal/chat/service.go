@@ -89,7 +89,7 @@ func toCompletionRequest(req AnswerRequest) proxy.CompletionRequest {
 	for _, m := range req.Messages {
 		messages = append(messages, proxy.Message{Role: m.Role, Content: m.Content})
 	}
-	return proxy.CompletionRequest{Messages: messages}
+	return proxy.CompletionRequest{Messages: messages, UserID: req.UserID}
 }
 
 func toAnswerResult(result proxy.CompletionResult) AnswerResult {

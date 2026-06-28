@@ -42,6 +42,7 @@ type ollamaChatRequest struct {
 	Model    string              `json:"model"`
 	Messages []ollamaChatMessage `json:"messages"`
 	Stream   bool                `json:"stream"`
+	UserID   string              `json:"user_id,omitempty"`
 }
 
 type ollamaChatChunk struct {
@@ -68,6 +69,7 @@ func (c *ollamaClient) doChatRequest(ctx context.Context, stream bool, req Compl
 		Model:    c.model,
 		Messages: buildOllamaMessages(req),
 		Stream:   stream,
+		UserID:   req.UserID,
 	})
 	if err != nil {
 		return nil, &Error{Kind: ErrKindInvalidRequest, Message: "failed to build Ollama request", Err: err}

@@ -9,6 +9,7 @@ type CompletionRequest struct {
 	SystemPrompt string
 	Messages     []Message
 	MaxTokens    int64
+	UserID       string
 }
 
 type CompletionResult struct {
