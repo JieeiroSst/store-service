@@ -4,7 +4,7 @@ mongo:
 
   image:
     name: mongo
-    tag: v1
+    tag: latest
     port: 27017
 
   service:

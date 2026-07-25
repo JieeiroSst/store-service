@@ -4,7 +4,6 @@ metadata:
   name: kafka-deployment
 spec:
   replicas: 1
-  serviceName: kafka-deployment
   selector:
     matchLabels:
         app: kafka-deployment

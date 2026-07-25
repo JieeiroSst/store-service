@@ -12,7 +12,7 @@ spec:
         app: {{.Values.mongo.name}}-deployment   
     spec:
       containers:     
-      - image: {{.Values.mongo.image.name}}
+      - image: {{.Values.mongo.image.name}}:{{.Values.mongo.image.tag}}
         name: mongodb
         ports:
         - containerPort: {{.Values.mongo.image.port}}      

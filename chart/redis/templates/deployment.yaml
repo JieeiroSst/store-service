@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: {{.Values.redis.name}}-deployment
-        image: {{.Values.redis.image.name}}
+        image: {{.Values.redis.image.name}}:{{.Values.redis.image.tag}}
         ports:
         - containerPort: {{.Values.redis.image.port}}
         env:
