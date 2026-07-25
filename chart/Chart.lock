@@ -50,5 +50,17 @@ dependencies:
 - name: cassandra
   repository: file://cassandra
   version: 0.1.0
-digest: sha256:971474aaccd0df8df619b2c73780f4770ca24347f84f8e90883da76bdce032ab
-generated: "2024-12-06T20:31:06.822481+07:00"
+- name: nats
+  repository: file://nats
+  version: 0.1.0
+- name: ollama
+  repository: file://ollama
+  version: 0.1.0
+- name: qdrant
+  repository: file://qdrant
+  version: 0.1.0
+- name: temporal
+  repository: file://temporal
+  version: 0.1.0
+digest: sha256:6d301b0c99e31aee67cab0af8bc15174e1029a57f0c459f292479831948d0926
+generated: "2026-07-26T03:16:11.067492+07:00"

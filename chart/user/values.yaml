@@ -3,8 +3,8 @@ userApi:
   replicas: 1
 
   image:
-    name: 1760151/user_service_api
-    tag: v1
+    name: ghcr.io/jieeirosst/user-service
+    tag: latest
     port: 1235
 
   service:
@@ -16,8 +16,8 @@ userGrpc:
   replicas: 1
 
   image:
-    name: 1760151/user_service_grpc
-    tag: v1
+    name: ghcr.io/jieeirosst/user-service
+    tag: latest
     port: 1236
 
   service:
