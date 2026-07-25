@@ -108,3 +108,20 @@ jobs:
 
     - name: Test
       run: cd upload_service && go test -v ./...
+
+  account_transaction_service:
+    name: account_transaction_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.23
+
+    - name: Build
+      run: cd account-transaction-service && go build -v ./...
+
+    - name: Test
+      run: cd account-transaction-service && go test -v ./...
