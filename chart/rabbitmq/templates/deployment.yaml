@@ -24,12 +24,12 @@ spec:
             containerPort: 5672
         imagePullPolicy: Always
         env:
-          - name: RABBIT_USERNAME
+          - name: RABBITMQ_DEFAULT_USER
             valueFrom:
               secretKeyRef:
                 name: rabbitmq-config
                 key: RABBIT_USERNAME
-          - name: RABBIT_PASSWORD
+          - name: RABBITMQ_DEFAULT_PASS
             valueFrom:
               secretKeyRef:
                 name: rabbitmq-config

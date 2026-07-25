@@ -125,3 +125,20 @@ jobs:
 
     - name: Test
       run: cd account-transaction-service && go test -v ./...
+
+  address_country_service:
+    name: address_country_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.22
+
+    - name: Build
+      run: cd address-country-service && go build -v ./...
+
+    - name: Test
+      run: cd address-country-service && go test -v ./...

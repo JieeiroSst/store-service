@@ -21,7 +21,7 @@ spec:
             - configMapRef:
                 name: db-secret-credentials
           volumeMounts:
-            - mountPath: /var/lib/postgres/data
+            - mountPath: /var/lib/postgresql/data
               name: db-data
           env:
             - name: NODE_ENV

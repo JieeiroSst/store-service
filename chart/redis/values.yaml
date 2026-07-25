@@ -4,7 +4,7 @@ redis:
 
   image:
     name: redis
-    tag: v1
+    tag: latest
     port: 6379
 
   service:

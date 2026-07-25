@@ -10,7 +10,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target `all'.  Stop.
 
 
-# Make data base, printed on Sun Nov 30 02:41:18 2025
+# Make data base, printed on Sun Jul 26 02:52:37 2026
 
 # Variables
 
@@ -19,7 +19,6 @@ make: *** No rule to make target `all'.  Stop.
 # automatic
 ?F = $(notdir $?)
 # environment
- 
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
 VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
@@ -48,15 +47,22 @@ INFOPATH = /opt/homebrew/share/info:
 # environment
 VSCODE_CWD = /Users/quan/Desktop/store-service
 # environment
+GOPROXY = https://proxy.golang.org,direct
+# environment
 PATH = /opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin
 # environment
-LaunchInstanceID = B25AC883-4613-4D20-921C-1B7D6008500E
+ 
+FPATH = /opt/homebrew/share/zsh/site-functions:/usr/local/share/zsh/site-functions:/usr/share/zsh/site-functions:/usr/share/zsh/5.9/functions
+# environment
+GOPATH = /Users/quan/go
+# environment
+LaunchInstanceID = D348735A-137D-4CD3-BC87-70CB0586289A
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # default
 .FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
-SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.Lsh9d979Iv/Listeners
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.BmeRcHgUYN/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
@@ -66,9 +72,9 @@ HOMEBREW_CELLAR = /opt/homebrew/Cellar
 # environment
 OSLogRateLimit = 64
 # environment
-ORIGINAL_XDG_CURRENT_DESKTOP = undefined
-# environment
 MANPATH = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man:/Library/Developer/CommandLineTools/usr/share/man:/Library/Developer/CommandLineTools/Toolchains/XcodeDefault.xctoolchain/usr/share/man:
+# environment
+GOMODCACHE = /Users/quan/go/pkg/mod
 # environment
 HOME = /Users/quan
 # default
@@ -76,9 +82,11 @@ MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /De
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /Users/quan/Library/Application Support/Code/CachedData/bf9252a2fb45be6893dd8870c0bf37e2e1766d61
+VSCODE_CODE_CACHE_PATH = /Users/quan/Library/Application Support/Code/CachedData/1b6a188127eeaf9194f945eb6eb89a657e93c54c
 # environment
 LOGNAME = quan
+# environment
+CLAUDE_AGENT_SDK_VERSION = 0.3.220
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -102,11 +110,13 @@ USER = quan
 # makefile
 .DEFAULT_GOAL := 
 # environment
-APPLICATION_INSIGHTS_NO_STATSBEAT = true
+TERM_SESSION_ID = 45061C80-7663-4EE6-9F32-E68B8C47E6A7
 # environment
-TERM_SESSION_ID = B91A0562-4028-4631-9517-FB3207B15ED8
+NoDefaultCurrentDirectoryInExePath = 1
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
+# environment
+MACH_PORT_RENDEZVOUS_PEER_VALDATION = 1
 # default
 MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
 # environment
@@ -114,11 +124,11 @@ TERM_PROGRAM = Apple_Terminal
 # default
 .VARIABLES := 
 # environment
-TMPDIR = /var/folders/vk/35qt7j2d42v1dsj7qpt2x5540000gn/T/
+TMPDIR = /var/folders/mn/hb6kqqws0yz3nx8bf1q9fct00000gn/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /Users/quan/Library/Application Support/Code/1.10-main.sock
+VSCODE_IPC_HOOK = /Users/quan/Library/Application Support/Code/1.13-main.sock
 # environment
 MallocNanoZone = 0
 # makefile
@@ -128,13 +138,17 @@ MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-TERM_PROGRAM_VERSION = 465
+TERM_PROGRAM_VERSION = 466
 # environment
-XPC_SERVICE_NAME = application.com.microsoft.VSCode.8212536.8212542.99A39BCA-7074-470D-99AF-F07FB0E160CE
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.276152.276158.0AA09127-96A9-41BF-8FB5-6089710B9E9E
 # environment
 HOMEBREW_PREFIX = /opt/homebrew
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
+# environment
+GOTELEMETRY_GOPLS_CLIENT_TOKEN = 474
+# environment
+VSCODE_L10N_BUNDLE_LOCATION = 
 # automatic
 +F = $(notdir $+)
 # environment
@@ -150,11 +164,13 @@ MAKEFILES :=
 # environment
 LC_ALL = C
 # environment
-SECURITYSESSIONID = 18703
+SECURITYSESSIONID = 186b5
 # automatic
 ^F = $(notdir $^)
 # default
 SUFFIXES := 
+# environment
+GOTELEMETRY_GOPLS_CLIENT_START_TIME = 1785005092
 # environment
 MAKELEVEL := 0
 # environment
@@ -162,10 +178,9 @@ LANG = C
 # environment
 TERM = xterm-256color
 # environment
-VSCODE_PID = 13005
+VSCODE_PID = 627
 # variable set hash-table stats:
- 
-# Load=74/1024=7%, Rehash=0, Collisions=1/96=1%
+# Load=82/1024=8%, Rehash=0, Collisions=2/104=2%
 
 # Pattern-specific Variable Values
 
@@ -173,14 +188,15 @@ VSCODE_PID = 13005
 
 # Directories
 
-# . (device 16777229, inode 2492559): 105 files, no impossibilities.
+# . (device 16777229, inode 307903): 118 files, no impossibilities.
 
-# 105 files, no impossibilities in 1 directories.
+# 118 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
 # No implicit rules.
 
+ 
 # Files
 
 # Not a target:
@@ -201,7 +217,7 @@ all:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2025-11-04 18:33:18
+#  Last modified 2026-07-26 01:26:51
 #  File has been updated.
 #  Successfully updated.
 # variable set hash-table stats:
@@ -226,6 +242,6 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Nov 30 02:41:18 2025
+# Finished Make data base on Sun Jul 26 02:52:37 2026
 
  
