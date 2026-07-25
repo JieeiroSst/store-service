@@ -75,3 +75,19 @@ dependencies:
     name: cassandra
     version: "0.1.0"
     repository: file://cassandra
+  - alias: nats
+    name: nats
+    version: "0.1.0"
+    repository: file://nats
+  - alias: ollama
+    name: ollama
+    version: "0.1.0"
+    repository: file://ollama
+  - alias: qdrant
+    name: qdrant
+    version: "0.1.0"
+    repository: file://qdrant
+  - alias: temporal
+    name: temporal
+    version: "0.1.0"
+    repository: file://temporal
