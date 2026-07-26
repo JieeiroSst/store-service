@@ -23,4 +23,5 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
     - name: Run tests
-      run: sbt test
+      working-directory: book-srvice
+      run: ./sbt test
