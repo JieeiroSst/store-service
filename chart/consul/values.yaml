@@ -11,3 +11,9 @@ consul:
     name: consul-svc
     type: LoadBalancer
     nodeport: 30009
+
+  persistence:
+    enabled: true
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    storageClassName: ""
