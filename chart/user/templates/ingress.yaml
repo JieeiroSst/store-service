@@ -1,0 +1,47 @@
+{{- if .Values.userApi.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.userApi.name }}-ingress
+  {{- with .Values.userApi.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.userApi.ingress.className }}
+  rules:
+  - host: {{ .Values.userApi.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.userApi.ingress.path }}
+        pathType: {{ .Values.userApi.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.userApi.service.name }}
+            port:
+              number: 80
+{{- end }}
+{{- if .Values.userGrpc.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.userGrpc.name }}-ingress
+  {{- with .Values.userGrpc.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.userGrpc.ingress.className }}
+  rules:
+  - host: {{ .Values.userGrpc.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.userGrpc.ingress.path }}
+        pathType: {{ .Values.userGrpc.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.userGrpc.service.name }}
+            port:
+              number: 80
+{{- end }}

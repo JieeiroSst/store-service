@@ -1,0 +1,48 @@
+{{- if .Values.accountTransaction.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.accountTransaction.name }}-http-ingress
+  {{- with .Values.accountTransaction.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.accountTransaction.ingress.className }}
+  rules:
+  - host: {{ .Values.accountTransaction.ingress.http.host }}
+    http:
+      paths:
+      - path: {{ .Values.accountTransaction.ingress.http.path }}
+        pathType: {{ .Values.accountTransaction.ingress.http.pathType }}
+        backend:
+          service:
+            name: {{ .Values.accountTransaction.service.httpName }}
+            port:
+              number: 80
+{{- end }}
+{{- if .Values.accountTransaction.ingress.grpc.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.accountTransaction.name }}-grpc-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    {{- with .Values.accountTransaction.ingress.grpc.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.accountTransaction.ingress.className }}
+  rules:
+  - host: {{ .Values.accountTransaction.ingress.grpc.host }}
+    http:
+      paths:
+      - path: {{ .Values.accountTransaction.ingress.grpc.path }}
+        pathType: {{ .Values.accountTransaction.ingress.grpc.pathType }}
+        backend:
+          service:
+            name: {{ .Values.accountTransaction.service.grpcName }}
+            port:
+              number: 90
+{{- end }}

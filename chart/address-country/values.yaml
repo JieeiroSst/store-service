@@ -1,0 +1,20 @@
+addressCountry:
+  name: address-country
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/address-country-service
+    tag: latest
+    port: 8000
+
+  service:
+    name: address-country-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: address-country.local
+    path: /
+    pathType: Prefix

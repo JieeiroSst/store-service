@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.addressCountry.name }}-deployment
+spec:
+  replicas: {{ .Values.addressCountry.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.addressCountry.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.addressCountry.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.addressCountry.name }}-deployment
+        image: {{ .Values.addressCountry.image.name }}:{{ .Values.addressCountry.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.addressCountry.image.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.addressCountry.service.name }}
+spec:
+  type: {{ .Values.addressCountry.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.addressCountry.image.port }}
+  selector:
+    app: {{ .Values.addressCountry.name }}-deployment
