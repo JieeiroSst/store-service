@@ -1,0 +1,23 @@
+automaticPayment:
+  name: automatic-payment-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/automatic-payment-service
+    tag: latest
+    # Must match config.Server.HTTPPort as resolved from Consul at startup
+    # (see automatic-payment-service/config/config.go); gofr itself reads
+    # this from the HTTP_PORT env var set below.
+    port: 8080
+
+  service:
+    name: automatic-payment-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: automatic-payment-service.local
+    path: /
+    pathType: Prefix

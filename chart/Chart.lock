@@ -86,5 +86,8 @@ dependencies:
 - name: authorize-service
   repository: file://authorize-service
   version: 0.1.0
-digest: sha256:7ebbc72cc3c93aa3a9264b5caa0222d1c6910c65f47c08b7a2a77abf6ea96fb9
-generated: "2026-07-26T19:13:52.32896+07:00"
+- name: automatic-payment-service
+  repository: file://automatic-payment-service
+  version: 0.1.0
+digest: sha256:8ce0680f6c247eae78cf8ca689bf8137a4ee46a5a92b635738717195f4a99a24
+generated: "2026-07-26T20:27:48.571226+07:00"

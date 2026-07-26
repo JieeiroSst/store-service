@@ -2,12 +2,15 @@ CREATE TABLE subscriptions (
     subscription_id UUID PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(user_id),
     plan_id UUID NOT NULL REFERENCES subscription_plans(plan_id),
-    status VARCHAR(20) NOT NULL, -- active, cancelled, expired, trial
+    status VARCHAR(20) NOT NULL, -- active, trial, suspended, cancelled, expired
+    amount DECIMAL(10, 2) NOT NULL,
+    currency VARCHAR(3) NOT NULL DEFAULT 'USD',
     start_date DATE NOT NULL,
     end_date DATE,
     auto_renewal BOOLEAN DEFAULT TRUE,
     trial_end_date DATE,
     next_billing_date DATE,
+    payment_failure_count INT NOT NULL DEFAULT 0, -- consecutive failed renewal attempts; subscription is suspended at MaxPaymentRetries
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,0 +1,23 @@
+{{- if .Values.automaticPayment.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.automaticPayment.name }}-ingress
+  {{- with .Values.automaticPayment.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.automaticPayment.ingress.className }}
+  rules:
+  - host: {{ .Values.automaticPayment.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.automaticPayment.ingress.path }}
+        pathType: {{ .Values.automaticPayment.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.automaticPayment.service.name }}
+            port:
+              number: 80
+{{- end }}
