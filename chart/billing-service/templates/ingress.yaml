@@ -1,0 +1,23 @@
+{{- if .Values.billing.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.billing.name }}-ingress
+  {{- with .Values.billing.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.billing.ingress.className }}
+  rules:
+  - host: {{ .Values.billing.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.billing.ingress.path }}
+        pathType: {{ .Values.billing.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.billing.service.name }}
+            port:
+              number: 80
+{{- end }}

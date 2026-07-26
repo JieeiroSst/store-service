@@ -9,4 +9,4 @@ services:
     environment:
       POSTGRES_USER: timescaledb
       POSTGRES_PASSWORD: password
-      POSTGRES_DATABASE: billing
+      POSTGRES_DB: billing
