@@ -127,3 +127,7 @@ dependencies:
     name: automatic-payment-service
     version: "0.1.0"
     repository: file://automatic-payment-service
+  - alias: bankingService
+    name: banking-service
+    version: "0.1.0"
+    repository: file://banking-service

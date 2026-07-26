@@ -89,5 +89,8 @@ dependencies:
 - name: automatic-payment-service
   repository: file://automatic-payment-service
   version: 0.1.0
-digest: sha256:8ce0680f6c247eae78cf8ca689bf8137a4ee46a5a92b635738717195f4a99a24
-generated: "2026-07-26T20:27:48.571226+07:00"
+- name: banking-service
+  repository: file://banking-service
+  version: 0.1.0
+digest: sha256:2a326779907c53e34b5a2c0a8d3e093d75f2fa157eb9f0dccf308ff6c848c1f6
+generated: "2026-07-26T21:31:40.754063+07:00"

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.bankingService.name }}-deployment
+spec:
+  replicas: {{ .Values.bankingService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.bankingService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.bankingService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.bankingService.name }}-deployment
+        image: {{ .Values.bankingService.image.name }}:{{ .Values.bankingService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.bankingService.image.port }}
+        env:
+          - name: PORT
+            value: "{{ .Values.bankingService.image.port }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.bankingService.service.name }}
+spec:
+  type: {{ .Values.bankingService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.bankingService.image.port }}
+  selector:
+    app: {{ .Values.bankingService.name }}-deployment
