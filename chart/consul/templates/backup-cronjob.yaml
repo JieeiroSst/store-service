@@ -1,0 +1,37 @@
+{{- if .Values.consul.backup.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.consul.name }}-backup
+spec:
+  schedule: {{ .Values.consul.backup.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: consul-backup
+            image: {{ .Values.consul.image.name }}:{{ .Values.consul.image.tag }}
+            env:
+            - name: CONSUL_HTTP_ADDR
+              value: "http://{{ .Values.consul.name }}-service:80"
+            command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+              FILE=/backup/consul-$TIMESTAMP.snap
+              consul snapshot save "$FILE"
+              echo "Saved snapshot: $FILE"
+              cd /backup
+              ls -1t consul-*.snap | tail -n +$(( {{ .Values.consul.backup.retention }} + 1 )) | xargs -r rm -f
+            volumeMounts:
+            - name: backup
+              mountPath: /backup
+          volumes:
+          - name: backup
+            persistentVolumeClaim:
+              claimName: {{ .Values.consul.name }}-backup-pvc
+{{- end }}
