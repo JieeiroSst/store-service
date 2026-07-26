@@ -1,0 +1,23 @@
+{
+    "server": {
+        "serverPort": "8000",
+        "grpcServer": ""
+    },
+    "mysql": {
+        "mysqlHost": "localhost",
+        "mysqlPort": "3306",
+        "mysqlUser": "root",
+        "mysqlPassword": "",
+        "mysqlDbname": "basket_service",
+        "mysqlSSLMode": false,
+        "mysqlDriver": "mysql"
+    },
+    "secret": {
+        "jwtSecretKey": "",
+        "authorizeKey": ""
+    },
+    "cache": {
+        "host": "localhost:6379",
+        "password": ""
+    }
+}

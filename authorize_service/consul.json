@@ -1,0 +1,20 @@
+{
+    "server": {
+        "portHttpServer": "8080",
+        "portGrpcServer": "9090"
+    },
+    "postgres": {
+        "postgresqlHost": "localhost",
+        "postgresqlPort": "5432",
+        "postgresqlUser": "postgres",
+        "postgresqlPassword": "postgres",
+        "postgresqlDbname": "authorize",
+        "postgresqlSSLMode": false
+    },
+    "cache": {
+        "host": "localhost:6379"
+    },
+    "secret": {
+        "jwtSecretKey": "secretkey"
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "server": {
+        "serverPort": "8000"
+    },
+    "postgres": {
+        "postgresqlHost": "localhost",
+        "postgresqlPort": "5432",
+        "postgresqlUser": "timescaledb",
+        "postgresqlPassword": "password",
+        "postgresqlDbname": "billing",
+        "postgresqlSSLMode": false
+    },
+    "secret": {
+        "jwtSecretKey": "",
+        "authorizeKey": ""
+    }
+}

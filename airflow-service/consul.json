@@ -1,0 +1,11 @@
+{
+  "Server": {
+    "ServerPort": "8000"
+  },
+  "Airflow": {
+    "Host": "airflow-webserver-svc",
+    "Scheme": "http",
+    "Username": "airflow",
+    "Password": "airflow"
+  }
+}
