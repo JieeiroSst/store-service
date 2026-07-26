@@ -1,11 +1,19 @@
 cassandra:
   name: cassandra
-  replicas: 3
+  replicas: 1
 
   image:
     name: cassandra
     tag: latest
     port: 9042
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
 
   service:
     name: cassandra-svc
