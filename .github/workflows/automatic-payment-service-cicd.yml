@@ -65,19 +65,19 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push
-        uses: Wandalen/wretry.action@v3
-        with:
-          action: docker/build-push-action@v5
-          attempt_limit: 3
-          attempt_delay: 15000
-          with: |
-            context: ./automatic-payment-service
-            push: true
-            builder: ${{ steps.buildx.outputs.name }}
-            platforms: linux/amd64,linux/arm64
-            tags: |
-              ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
-              ${{ env.IMAGE_NAME }}:latest
+        run: |
+          for i in 1 2 3; do
+            docker buildx build \
+              --builder "${{ steps.buildx.outputs.name }}" \
+              --platform linux/amd64,linux/arm64 \
+              --tag "${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}" \
+              --tag "${{ env.IMAGE_NAME }}:latest" \
+              --push \
+              ./automatic-payment-service && exit 0
+            echo "Build attempt $i failed, retrying in 15s..."
+            sleep 15
+          done
+          exit 1
 
   deploy:
     needs: build-and-push
