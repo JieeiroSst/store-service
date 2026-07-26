@@ -115,3 +115,7 @@ dependencies:
     name: airflow-server
     version: "0.1.0"
     repository: file://airflow-server
+  - alias: arrange
+    name: arrange-service
+    version: "0.1.0"
+    repository: file://arrange-service

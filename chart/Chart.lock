@@ -80,5 +80,8 @@ dependencies:
 - name: airflow-server
   repository: file://airflow-server
   version: 0.1.0
-digest: sha256:9ea6f19a625b04311748320d1fef2b9ef3ed92a4ac4a8749e697795de5305994
-generated: "2026-07-26T17:51:35.285236+07:00"
+- name: arrange-service
+  repository: file://arrange-service
+  version: 0.1.0
+digest: sha256:d8c656761794fe3a81fb2ca5f98e0060f60ed4c65f6b85c1b84556f3a587e570
+generated: "2026-07-26T18:27:37.996457+07:00"

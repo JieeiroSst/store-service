@@ -176,3 +176,23 @@ jobs:
 
     - name: Test
       run: cd airflow-service && go test -v ./...
+
+  # arrange-service is a Kotlin/Ktor + Gradle project, not Go — kept here
+  # since this workflow is where every service's CI job currently lives.
+  arrange_service:
+    name: arrange_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: "21"
+
+    - name: Build
+      run: cd arrange-service && ./gradlew build -x test --no-daemon
+
+    - name: Test
+      run: cd arrange-service && ./gradlew test --no-daemon
