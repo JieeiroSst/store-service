@@ -1,0 +1,48 @@
+{{- if .Values.authorize.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.authorize.name }}-http-ingress
+  {{- with .Values.authorize.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.authorize.ingress.className }}
+  rules:
+  - host: {{ .Values.authorize.ingress.http.host }}
+    http:
+      paths:
+      - path: {{ .Values.authorize.ingress.http.path }}
+        pathType: {{ .Values.authorize.ingress.http.pathType }}
+        backend:
+          service:
+            name: {{ .Values.authorize.service.httpName }}
+            port:
+              number: 80
+{{- end }}
+{{- if .Values.authorize.ingress.grpc.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.authorize.name }}-grpc-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    {{- with .Values.authorize.ingress.grpc.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.authorize.ingress.className }}
+  rules:
+  - host: {{ .Values.authorize.ingress.grpc.host }}
+    http:
+      paths:
+      - path: {{ .Values.authorize.ingress.grpc.path }}
+        pathType: {{ .Values.authorize.ingress.grpc.pathType }}
+        backend:
+          service:
+            name: {{ .Values.authorize.service.grpcName }}
+            port:
+              number: 90
+{{- end }}
