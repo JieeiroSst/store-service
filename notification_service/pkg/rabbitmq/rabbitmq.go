@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/nofitifaction-service/config"
-	"github.com/JIeeiroSst/nofitifaction-service/internal/dto"
+	"github.com/JIeeiroSst/nofitifaction-service/internal/domain/model"
 	"github.com/streadway/amqp"
 )
 
@@ -20,8 +20,8 @@ type rabbitMQ struct {
 }
 
 type RabbitMQ interface {
-	PublishToQueue(notification *dto.Notification) error
-	StartConsumer(fn func(notification dto.Notification) error) error
+	PublishToQueue(notification *model.Notification) error
+	StartConsumer(fn func(notification model.Notification) error) error
 }
 
 var (
@@ -132,7 +132,7 @@ func (r *rabbitMQ) CreateChannel() (*amqp.Channel, error) {
 	return rabbitmq.Channel()
 }
 
-func (s *rabbitMQ) PublishToQueue(notification *dto.Notification) error {
+func (s *rabbitMQ) PublishToQueue(notification *model.Notification) error {
 	ch, err := s.rabbitmq.Channel()
 	if err != nil {
 		return err
@@ -169,7 +169,7 @@ func (s *rabbitMQ) PublishToQueue(notification *dto.Notification) error {
 	)
 }
 
-func (s *rabbitMQ) StartConsumer(fn func(notification dto.Notification) error) error {
+func (s *rabbitMQ) StartConsumer(fn func(notification model.Notification) error) error {
 	ch, err := s.rabbitmq.Channel()
 	if err != nil {
 		return err
@@ -193,7 +193,7 @@ func (s *rabbitMQ) StartConsumer(fn func(notification dto.Notification) error) e
 
 	go func() {
 		for d := range msgs {
-			var notification dto.Notification
+			var notification model.Notification
 			if err := json.Unmarshal(d.Body, &notification); err != nil {
 				d.Nack(false, true)
 				continue

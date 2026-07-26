@@ -98,5 +98,8 @@ dependencies:
 - name: billing-service
   repository: file://billing-service
   version: 0.1.0
-digest: sha256:4cf9ca3e87d81a95f8ee29b9803489551cfe3704db770599d2712c3d02698052
-generated: "2026-07-27T01:54:53.025596+07:00"
+- name: notification-service
+  repository: file://notification-service
+  version: 0.1.0
+digest: sha256:63e17bcb82b604ba5aa59d41e93b11e1e5a4073c78d34fc566843375853fecdc
+generated: "2026-07-27T02:48:33.363865+07:00"

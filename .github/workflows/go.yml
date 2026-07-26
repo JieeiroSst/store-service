@@ -84,7 +84,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.18
+        go-version: "1.23"
 
     - name: Build
       run: cd notification_service && go build -v ./...
@@ -93,7 +93,7 @@ jobs:
       run: cd notification_service && go test -v ./...
 
   upload_service:
-    name: notification_service
+    name: upload_service
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

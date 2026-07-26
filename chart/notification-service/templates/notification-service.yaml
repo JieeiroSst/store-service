@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.notificationService.name }}-deployment
+spec:
+  replicas: {{ .Values.notificationService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.notificationService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.notificationService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.notificationService.name }}-deployment
+        image: {{ .Values.notificationService.image.name }}:{{ .Values.notificationService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.notificationService.image.port }}
+        env:
+          - name: PORT
+            value: "{{ .Values.notificationService.image.port }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.notificationService.service.name }}
+spec:
+  type: {{ .Values.notificationService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.notificationService.image.port }}
+  selector:
+    app: {{ .Values.notificationService.name }}-deployment
