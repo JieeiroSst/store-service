@@ -123,3 +123,7 @@ dependencies:
     name: authorize-service
     version: "0.1.0"
     repository: file://authorize-service
+  - alias: automaticPayment
+    name: automatic-payment-service
+    version: "0.1.0"
+    repository: file://automatic-payment-service

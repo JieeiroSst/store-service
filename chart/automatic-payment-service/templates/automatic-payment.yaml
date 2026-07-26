@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.automaticPayment.name }}-deployment
+spec:
+  replicas: {{ .Values.automaticPayment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.automaticPayment.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.automaticPayment.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.automaticPayment.name }}-deployment
+        image: {{ .Values.automaticPayment.image.name }}:{{ .Values.automaticPayment.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.automaticPayment.image.port }}
+        env:
+          - name: HTTP_PORT
+            value: "{{ .Values.automaticPayment.image.port }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.automaticPayment.service.name }}
+spec:
+  type: {{ .Values.automaticPayment.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.automaticPayment.image.port }}
+  selector:
+    app: {{ .Values.automaticPayment.name }}-deployment

@@ -1,0 +1,5 @@
+.git
+.env
+*.md
+flow.mmd
+database.sql

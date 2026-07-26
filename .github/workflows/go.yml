@@ -177,6 +177,23 @@ jobs:
     - name: Test
       run: cd airflow-service && go test -v ./...
 
+  automatic_payment_service:
+    name: automatic_payment_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd automatic-payment-service && go build -v ./...
+
+    - name: Test
+      run: cd automatic-payment-service && go test -v ./...
+
   # arrange-service is a Kotlin/Ktor + Gradle project, not Go — kept here
   # since this workflow is where every service's CI job currently lives.
   arrange_service:
