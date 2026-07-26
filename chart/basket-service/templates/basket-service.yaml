@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.basketService.name }}-deployment
+spec:
+  replicas: {{ .Values.basketService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.basketService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.basketService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.basketService.name }}-deployment
+        image: {{ .Values.basketService.image.name }}:{{ .Values.basketService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.basketService.image.port }}
+        env:
+          - name: PORT
+            value: "{{ .Values.basketService.image.port }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.basketService.service.name }}
+spec:
+  type: {{ .Values.basketService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.basketService.image.port }}
+  selector:
+    app: {{ .Values.basketService.name }}-deployment

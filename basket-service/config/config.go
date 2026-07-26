@@ -1,20 +1,16 @@
 package config
 
 import (
-	"fmt"
-	"io/ioutil"
 	"os"
 
-	"github.com/ghodss/yaml"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Server   ServerConfig
-	Mysql    MysqlConfig
-	Secret   SecretConfig
-	Constant ConstantConfig
-	Cache    CacheConfig
+	Server ServerConfig
+	Mysql  MysqlConfig
+	Secret SecretConfig
+	Cache  CacheConfig
 }
 
 type ServerConfig struct {
@@ -37,40 +33,15 @@ type SecretConfig struct {
 	AuthorizeKey string
 }
 
-type ConstantConfig struct {
-	Rbac string
-}
-
-type Consul struct {
-	LockIndex int
-	Key       int
-	Flags     int
-	Value     string
+type CacheConfig struct {
+	Host     string
+	Password string
 }
 
 type Dir struct {
 	HostConsul    string
 	KeyConsul     string
 	ServiceConsul string
-}
-
-type CacheConfig struct {
-	Host string
-}
-
-func ReadConf(filename string) (*Config, error) {
-	buffer, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	config := &Config{}
-	err = yaml.Unmarshal(buffer, &config)
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-
-	}
-	return config, nil
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {
@@ -85,4 +56,39 @@ func ReadFileEnv(dir string) (*Dir, error) {
 		ServiceConsul: os.Getenv("ServiceConsul"),
 	}
 	return data, nil
+}
+
+// FromEnv builds configuration straight from environment variables. Used
+// when Consul is not configured (local dev, CI, Consul-less deployments).
+func FromEnv() *Config {
+	return &Config{
+		Server: ServerConfig{
+			ServerPort: getEnv("PORT", "8000"),
+			GRPCServer: getEnv("GRPC_SERVER", ""),
+		},
+		Mysql: MysqlConfig{
+			MysqlHost:     getEnv("MYSQL_HOST", "localhost"),
+			MysqlPort:     getEnv("MYSQL_PORT", "3306"),
+			MysqlUser:     getEnv("MYSQL_USER", "root"),
+			MysqlPassword: getEnv("MYSQL_PASSWORD", ""),
+			MysqlDbname:   getEnv("MYSQL_DBNAME", "basket_service"),
+			MysqlSSLMode:  getEnv("MYSQL_SSL_MODE", "false") == "true",
+			MysqlDriver:   getEnv("MYSQL_DRIVER", "mysql"),
+		},
+		Secret: SecretConfig{
+			JwtSecretKey: getEnv("JWT_SECRET_KEY", ""),
+			AuthorizeKey: getEnv("AUTHORIZE_KEY", ""),
+		},
+		Cache: CacheConfig{
+			Host:     getEnv("CACHE_HOST", "localhost:6379"),
+			Password: getEnv("CACHE_PASSWORD", ""),
+		},
+	}
+}
+
+func getEnv(key, fallback string) string {
+	if v, ok := os.LookupEnv(key); ok {
+		return v
+	}
+	return fallback
 }

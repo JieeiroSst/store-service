@@ -1,0 +1,22 @@
+basketService:
+  name: basket-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/basket-service
+    tag: latest
+    # Must match config.Server.ServerPort as resolved from Consul, or the
+    # PORT env var fallback (see basket-service/config/config.go).
+    port: 8000
+
+  service:
+    name: basket-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: basket-service.local
+    path: /
+    pathType: Prefix
