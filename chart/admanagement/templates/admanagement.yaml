@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.admanagement.name }}-deployment
+spec:
+  replicas: {{ .Values.admanagement.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.admanagement.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.admanagement.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.admanagement.name }}-deployment
+        image: {{ .Values.admanagement.image.name }}:{{ .Values.admanagement.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.admanagement.image.port }}
+        env:
+          - name: SERVER_PORT
+            value: "{{ .Values.admanagement.image.port }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.admanagement.service.name }}
+spec:
+  type: {{ .Values.admanagement.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.admanagement.image.port }}
+  selector:
+    app: {{ .Values.admanagement.name }}-deployment

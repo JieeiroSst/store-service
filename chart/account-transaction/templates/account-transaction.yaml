@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.accountTransaction.name }}-deployment
+spec:
+  replicas: {{ .Values.accountTransaction.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.accountTransaction.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.accountTransaction.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.accountTransaction.name }}-deployment
+        image: {{ .Values.accountTransaction.image.name }}:{{ .Values.accountTransaction.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.accountTransaction.image.httpPort }}
+        - name: grpc
+          containerPort: {{ .Values.accountTransaction.image.grpcPort }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.accountTransaction.service.httpName }}
+spec:
+  type: {{ .Values.accountTransaction.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.accountTransaction.image.httpPort }}
+  selector:
+    app: {{ .Values.accountTransaction.name }}-deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.accountTransaction.service.grpcName }}
+spec:
+  type: {{ .Values.accountTransaction.service.type }}
+  ports:
+  - port: 90
+    targetPort: {{ .Values.accountTransaction.image.grpcPort }}
+  selector:
+    app: {{ .Values.accountTransaction.name }}-deployment

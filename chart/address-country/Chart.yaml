@@ -1,0 +1,8 @@
+apiVersion: v2
+name: address-country
+description: A Helm chart for address-country-service
+
+type: application
+
+version: 0.1.0
+appVersion: "1.0.0"

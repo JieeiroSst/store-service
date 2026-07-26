@@ -11,6 +11,14 @@ userApi:
     name: user-api-svc
     type: LoadBalancer
 
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: user-api.local
+    path: /
+    pathType: Prefix
+
 userGrpc:
   name: user-grpc
   replicas: 1
@@ -23,3 +31,12 @@ userGrpc:
   service:
     name: user-grpc-svc
     type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+    host: user-grpc.local
+    path: /
+    pathType: Prefix
