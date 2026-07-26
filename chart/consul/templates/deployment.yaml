@@ -20,3 +20,14 @@ spec:
         env:
             - name: NODE_ENV
               value: production
+        volumeMounts:
+        - name: {{.Values.consul.name}}-data
+          mountPath: /consul/data
+      volumes:
+      - name: {{.Values.consul.name}}-data
+        {{- if .Values.consul.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{.Values.consul.name}}-pvc
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
