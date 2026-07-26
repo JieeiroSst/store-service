@@ -23,5 +23,9 @@
         "PostgresqlPassword": "postgres",
         "PostgresqlDbname": "user",
         "PgDriver": "pgx"
+    },
+    "token": {
+        "AccessTokenExpMinutes": 15,
+        "RefreshTokenExpHours": 168
     }
 }

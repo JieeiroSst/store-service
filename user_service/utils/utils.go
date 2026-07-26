@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/JIeeiroSst/user-service/common"
+	"github.com/JIeeiroSst/user-service/internal/domain"
 )
 
 func DecodeBase(msg, decode string) bool {
@@ -31,7 +31,7 @@ func CheckPassword(password string) error {
 	regex := `([A-Z])\w+`
 	matched, err := regexp.MatchString(regex, password)
 	if !matched {
-		return common.PasswordFailed
+		return domain.ErrPasswordFailed
 	}
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func CheckEmail(email string) error {
 	regex := `^[a-z][a-z0-9_\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$`
 	matched, err := regexp.MatchString(regex, email)
 	if !matched {
-		return common.EmailFailed
+		return domain.ErrEmailFailed
 	}
 	if err != nil {
 		return nil
@@ -55,7 +55,7 @@ func CheckIP(ip string) error {
 	regex := `/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/`
 	matched, err := regexp.MatchString(regex, ip)
 	if !matched {
-		return common.IPFailed
+		return domain.ErrIPFailed
 	}
 	if err != nil {
 		return err

@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"time"
 
 	"github.com/JIeeiroSst/utils/consul"
 	"github.com/joho/godotenv"
@@ -16,6 +17,26 @@ type Config struct {
 	Redis    Redis
 	Email    Email
 	Postgres PostgresConfig
+	Token    TokenPolicy
+}
+
+type TokenPolicy struct {
+	AccessTokenExpMinutes int
+	RefreshTokenExpHours  int
+}
+
+func (t TokenPolicy) AccessTokenTTL() time.Duration {
+	if t.AccessTokenExpMinutes <= 0 {
+		return 15 * time.Minute
+	}
+	return time.Duration(t.AccessTokenExpMinutes) * time.Minute
+}
+
+func (t TokenPolicy) RefreshTokenTTL() time.Duration {
+	if t.RefreshTokenExpHours <= 0 {
+		return 24 * 7 * time.Hour
+	}
+	return time.Duration(t.RefreshTokenExpHours) * time.Hour
 }
 
 type ServerConfig struct {
