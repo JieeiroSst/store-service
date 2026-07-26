@@ -1,3 +1,79 @@
+# admanagement-service
+
+Ad management & serving service: campaigns, ads, positions and targeting
+rules go in; a weighted/targeted ad-serving engine and impression/click/CTR
+analytics come out.
+
+## Architecture
+
+Hexagonal (ports & adapters), wired with [uber-go/fx](https://github.com/uber-go/fx):
+
+```
+cmd/main.go                                  entrypoint - fx.New(infrastructure.Module).Run()
+config/                                      env-based configuration
+
+internal/
+  domain/
+    model/                                   plain structs, no framework deps (AdCampaign, Ad, ...)
+    port/
+      driving.go                             usecase interfaces - what adapters call INTO the app
+      driven.go                              repository interfaces - what the app calls OUT to infra
+
+  application/                               business logic, implements the driving ports
+    campaign.go, category.go, position.go, ad.go, position_mapping.go,
+    impression.go, click.go, targeting_rule.go
+    performance_summary.go                   CTR rollups (per-ad and per-campaign)
+    serving.go, targeting.go                 ad-serving engine: eligibility + weighted random pick
+
+  adapter/
+    primary/http/                            driving adapter - gorilla/mux HTTP handlers + routes
+    secondary/repository/                    driven adapter - GORM/Postgres repositories
+
+  infrastructure/                            fx wiring: config, logger, *gorm.DB, HTTP server lifecycle
+```
+
+Dependencies only ever point inward (adapter -> application -> domain). The
+application layer never imports gorm or net/http directly - it only knows
+the `port` interfaces, so the HTTP framework or the database driver can be
+swapped without touching business logic.
+
+## Features
+
+Beyond CRUD over the 9 tables below, the service implements:
+
+- **Campaign lifecycle** - `PATCH /campaigns/{id}/status` enforces the
+  `draft -> active -> paused/completed/cancelled` transition graph instead
+  of allowing an arbitrary status overwrite.
+- **Ad-serving engine** - `GET /positions/{id}/serve?country=&device=&age=&...`
+  picks a winning ad for a position: filters candidates by active
+  campaign/ad state, schedule window (`start_date`/`end_date`), and every
+  active `ad_targeting_rules` row (`equals`/`in`/`between`/`greater`/`less`
+  over country, device, gender, age, hour-of-day), then does a
+  weighted-random draw using `ad_position_mappings.weight`. Every served ad
+  auto-records an `ad_impressions` row.
+- **Click attribution & redirect** - `GET /clicks/track?ad_id=&impression_id=`
+  records an `ad_clicks` row linked back to its impression and 302-redirects
+  to the ad's `target_url`.
+- **Performance analytics** - `POST /ads/{id}/performance/recompute?date=`
+  rolls the day's raw impressions/clicks into `ad_performance_summary`
+  (upsert, CTR computed as clicks/impressions); `GET /campaigns/{id}/performance?from=&to=`
+  rolls those daily summaries up across every ad in a campaign.
+
+See `internal/adapter/primary/http/routes.go` for the full endpoint list.
+
+## Running locally
+
+```
+cp .env.example .env   # then edit as needed
+go run ./cmd
+```
+
+Postgres tables are created automatically via `AutoMigrate` on startup
+(see `internal/infrastructure/database/postgres.go`); the SQL below is kept
+as the reference schema.
+
+## Reference schema
+
 ***SQL***
 
 ```
