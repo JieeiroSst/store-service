@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.authorize.name }}-deployment
+spec:
+  replicas: {{ .Values.authorize.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.authorize.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.authorize.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.authorize.name }}-deployment
+        image: {{ .Values.authorize.image.name }}:{{ .Values.authorize.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.authorize.image.httpPort }}
+        - name: grpc
+          containerPort: {{ .Values.authorize.image.grpcPort }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.authorize.service.httpName }}
+spec:
+  type: {{ .Values.authorize.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.authorize.image.httpPort }}
+  selector:
+    app: {{ .Values.authorize.name }}-deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.authorize.service.grpcName }}
+spec:
+  type: {{ .Values.authorize.service.type }}
+  ports:
+  - port: 90
+    targetPort: {{ .Values.authorize.image.grpcPort }}
+  selector:
+    app: {{ .Values.authorize.name }}-deployment

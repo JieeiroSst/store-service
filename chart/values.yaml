@@ -66,3 +66,33 @@ arrange:
     host: arrange-service.local
     path: /
     pathType: Prefix
+
+authorize:
+  name: authorize-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/authorize-service
+    tag: latest
+    httpPort: 8080
+    grpcPort: 9090
+
+  service:
+    httpName: authorize-service-api-svc
+    grpcName: authorize-service-grpc-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    http:
+      host: authorize-service.local
+      path: /
+      pathType: Prefix
+    grpc:
+      enabled: false
+      host: authorize-service-grpc.local
+      path: /
+      pathType: Prefix
+      annotations: {}

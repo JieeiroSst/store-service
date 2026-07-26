@@ -119,3 +119,7 @@ dependencies:
     name: arrange-service
     version: "0.1.0"
     repository: file://arrange-service
+  - alias: authorize
+    name: authorize-service
+    version: "0.1.0"
+    repository: file://authorize-service

@@ -1,0 +1,31 @@
+authorize:
+  name: authorize-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/authorize-service
+    tag: latest
+    # Must match config.Server.PortHttpServer / PortGrpcServer as resolved
+    # from Consul at startup (see authorize_service/config/config.go).
+    httpPort: 8080
+    grpcPort: 9090
+
+  service:
+    httpName: authorize-service-api-svc
+    grpcName: authorize-service-grpc-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    http:
+      host: authorize-service.local
+      path: /
+      pathType: Prefix
+    grpc:
+      enabled: false
+      host: authorize-service-grpc.local
+      path: /
+      pathType: Prefix
+      annotations: {}

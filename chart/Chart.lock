@@ -83,5 +83,8 @@ dependencies:
 - name: arrange-service
   repository: file://arrange-service
   version: 0.1.0
-digest: sha256:d8c656761794fe3a81fb2ca5f98e0060f60ed4c65f6b85c1b84556f3a587e570
-generated: "2026-07-26T18:27:37.996457+07:00"
+- name: authorize-service
+  repository: file://authorize-service
+  version: 0.1.0
+digest: sha256:7ebbc72cc3c93aa3a9264b5caa0222d1c6910c65f47c08b7a2a77abf6ea96fb9
+generated: "2026-07-26T19:13:52.32896+07:00"
