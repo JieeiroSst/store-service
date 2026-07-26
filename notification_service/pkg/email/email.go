@@ -6,21 +6,33 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
+type Client struct {
+	host     string
+	port     int
+	username string
+	password string
+	from     string
+}
 
+func NewClient(host string, port int, username, password, from string) *Client {
+	return &Client{
+		host:     host,
+		port:     port,
+		username: username,
+		password: password,
+		from:     from,
+	}
+}
 
-func sendMail() {
+func (c *Client) Send(to []string, subject, body string) error {
 	m := gomail.NewMessage()
-	m.SetHeader("From", "alex@example.com")
-	m.SetHeader("To", "bob@example.com", "cora@example.com")
-	m.SetAddressHeader("Cc", "dan@example.com", "Dan")
-	m.SetHeader("Subject", "Hello!")
-	m.SetBody("text/html", "Hello <b>Bob</b> and <i>Cora</i>!")
-	m.Attach("/home/Alex/lolcat.jpg")
+	m.SetHeader("From", c.from)
+	m.SetHeader("To", to...)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", body)
 
-	d := gomail.NewDialer("smtp.example.com", 587, "user", "123456")
+	d := gomail.NewDialer(c.host, c.port, c.username, c.password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	if err := d.DialAndSend(m); err != nil {
-		panic(err)
-	}
+	return d.DialAndSend(m)
 }
