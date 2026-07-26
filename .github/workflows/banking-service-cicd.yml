@@ -1,0 +1,78 @@
+name: Banking Service CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'banking-service/**'
+      - 'chart/banking-service/**'
+      - '.github/workflows/banking-service-cicd.yml'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/jieeirosst/banking-service
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build
+        run: cd banking-service && go build -v ./...
+
+      - name: Test
+        run: cd banking-service && go test -v ./...
+
+  build-and-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./banking-service
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Helm upgrade banking service
+        run: |
+          helm upgrade --install banking-service ./chart/banking-service \
+            --namespace default \
+            --set bankingService.image.name=${{ env.IMAGE_NAME }} \
+            --set bankingService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            --wait --timeout 5m

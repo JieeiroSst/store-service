@@ -117,3 +117,24 @@ automaticPayment:
     host: automatic-payment-service.local
     path: /
     pathType: Prefix
+
+bankingService:
+  name: banking-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/banking-service
+    tag: latest
+    port: 3000
+
+  service:
+    name: banking-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: banking-service.local
+    path: /
+    pathType: Prefix
