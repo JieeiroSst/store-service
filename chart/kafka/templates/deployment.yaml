@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: kafka-deployment
-        image: bitnami/kafka:2.6.0  
+        image: bitnamilegacy/kafka:3.3.2
         securityContext:
           runAsUser: 0
         resources:
