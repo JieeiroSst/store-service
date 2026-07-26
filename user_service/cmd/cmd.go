@@ -3,7 +3,9 @@ package cmd
 import (
 	"os"
 
+	"github.com/JIeeiroSst/user-service/di"
 	"github.com/spf13/cobra"
+	"go.uber.org/fx"
 )
 
 var rootCmd = &cobra.Command{
@@ -15,7 +17,7 @@ var apiCmd = &cobra.Command{
 	Use:   "api",
 	Short: "Start the API server",
 	Run: func(cmd *cobra.Command, args []string) {
-		runAPI()
+		fx.New(di.Module).Run()
 	},
 }
 
