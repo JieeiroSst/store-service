@@ -21,6 +21,14 @@ spec:
           containerPort: {{ .Values.authorize.image.httpPort }}
         - name: grpc
           containerPort: {{ .Values.authorize.image.grpcPort }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: authorize-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
 ---
 apiVersion: v1
 kind: Service

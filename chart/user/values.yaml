@@ -61,7 +61,7 @@ userGrpc:
 # (github.com/JIeeiroSst/user-service/config.InitializeConfiguration),
 # rendered into a Secret and injected via envFrom.
 env:
-  hostConsul: "http://consul-svc"
+  hostConsul: "http://consul-service"
   keyConsul: "user_service"
   serviceConsul: "consul"
   jwtSecretKey: "secretkey"
