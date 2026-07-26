@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.airflowServer.postgres.name }}-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.airflowServer.postgres.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.airflowServer.postgres.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.airflowServer.postgres.name }}-deployment
+        image: {{ .Values.airflowServer.postgres.image.name }}:{{ .Values.airflowServer.postgres.image.tag }}
+        ports:
+        - containerPort: {{ .Values.airflowServer.postgres.port }}
+        env:
+          - name: POSTGRES_DB
+            value: {{ .Values.airflowServer.postgres.db }}
+          - name: POSTGRES_USER
+            value: {{ .Values.airflowServer.postgres.user }}
+          - name: POSTGRES_PASSWORD
+            value: {{ .Values.airflowServer.postgres.password }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.airflowServer.postgres.service.name }}
+spec:
+  ports:
+  - port: 5432
+    targetPort: {{ .Values.airflowServer.postgres.port }}
+  selector:
+    app: {{ .Values.airflowServer.postgres.name }}-deployment

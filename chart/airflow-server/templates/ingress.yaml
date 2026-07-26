@@ -1,0 +1,23 @@
+{{- if .Values.airflowServer.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.airflowServer.name }}-ingress
+  {{- with .Values.airflowServer.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.airflowServer.ingress.className }}
+  rules:
+  - host: {{ .Values.airflowServer.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.airflowServer.ingress.path }}
+        pathType: {{ .Values.airflowServer.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.airflowServer.webserver.service.name }}
+            port:
+              number: 80
+{{- end }}

@@ -91,3 +91,27 @@ dependencies:
     name: temporal
     version: "0.1.0"
     repository: file://temporal
+  - alias: admanagement
+    name: admanagement
+    version: "0.1.0"
+    repository: file://admanagement
+  - alias: account-transaction
+    name: account-transaction
+    version: "0.1.0"
+    repository: file://account-transaction
+  - alias: user
+    name: user
+    version: "0.1.0"
+    repository: file://user
+  - alias: address-country
+    name: address-country
+    version: "0.1.0"
+    repository: file://address-country
+  - alias: airflow-service
+    name: airflow-service
+    version: "0.1.0"
+    repository: file://airflow-service
+  - alias: airflowServer
+    name: airflow-server
+    version: "0.1.0"
+    repository: file://airflow-server

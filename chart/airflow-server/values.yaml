@@ -5,8 +5,11 @@ airflowServer:
     name: apache/airflow
     tag: 2.8.1-python3.11
 
+  # LocalExecutor keeps this to a single-node deployment: no Celery/Redis broker needed.
   executor: LocalExecutor
 
+  # Bootstrap admin user, created idempotently on webserver start.
+  # This is also the account airflow-service authenticates as (config.AirflowConfig).
   auth:
     username: airflow
     password: airflow
@@ -14,6 +17,9 @@ airflowServer:
     lastName: Admin
     email: admin@example.com
 
+  # Must be identical across webserver/scheduler pods. Leave blank only for local/dev use;
+  # generate a real key (e.g. `python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`)
+  # before running this anywhere shared.
   fernetKey: ""
 
   webserver:
@@ -26,6 +32,7 @@ airflowServer:
   scheduler:
     replicas: 1
 
+  # Dedicated metadata database for this Airflow instance.
   postgres:
     name: airflow-postgres
     db: airflow

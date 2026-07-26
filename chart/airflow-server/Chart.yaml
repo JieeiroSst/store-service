@@ -1,0 +1,8 @@
+apiVersion: v2
+name: airflow-server
+description: A Helm chart for the Apache Airflow server (webserver + scheduler)
+
+type: application
+
+version: 0.1.0
+appVersion: "2.8.1"

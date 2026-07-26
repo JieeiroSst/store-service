@@ -159,3 +159,20 @@ jobs:
 
     - name: Test
       run: cd admanagement-service && go test -v ./...
+
+  airflow_service:
+    name: airflow_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.22
+
+    - name: Build
+      run: cd airflow-service && go build -v ./...
+
+    - name: Test
+      run: cd airflow-service && go test -v ./...

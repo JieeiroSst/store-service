@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.airflowServer.name }}-scheduler
+spec:
+  replicas: {{ .Values.airflowServer.scheduler.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.airflowServer.name }}-scheduler
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.airflowServer.name }}-scheduler
+    spec:
+      containers:
+      - name: {{ .Values.airflowServer.name }}-scheduler
+        image: {{ .Values.airflowServer.image.name }}:{{ .Values.airflowServer.image.tag }}
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            airflow db migrate
+            exec airflow scheduler
+        env:
+        {{- include "airflow-server.env" . | nindent 8 }}
