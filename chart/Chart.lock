@@ -62,5 +62,23 @@ dependencies:
 - name: temporal
   repository: file://temporal
   version: 0.1.0
-digest: sha256:6d301b0c99e31aee67cab0af8bc15174e1029a57f0c459f292479831948d0926
-generated: "2026-07-26T03:16:11.067492+07:00"
+- name: admanagement
+  repository: file://admanagement
+  version: 0.1.0
+- name: account-transaction
+  repository: file://account-transaction
+  version: 0.1.0
+- name: user
+  repository: file://user
+  version: 0.1.0
+- name: address-country
+  repository: file://address-country
+  version: 0.1.0
+- name: airflow-service
+  repository: file://airflow-service
+  version: 0.1.0
+- name: airflow-server
+  repository: file://airflow-server
+  version: 0.1.0
+digest: sha256:9ea6f19a625b04311748320d1fef2b9ef3ed92a4ac4a8749e697795de5305994
+generated: "2026-07-26T17:51:35.285236+07:00"

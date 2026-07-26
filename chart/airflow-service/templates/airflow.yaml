@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.airflow.name }}-deployment
+spec:
+  replicas: {{ .Values.airflow.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.airflow.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.airflow.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.airflow.name }}-deployment
+        image: {{ .Values.airflow.image.name }}:{{ .Values.airflow.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.airflow.image.port }}
+        env:
+          - name: SERVER_PORT
+            value: "{{ .Values.airflow.image.port }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.airflow.service.name }}
+spec:
+  type: {{ .Values.airflow.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.airflow.image.port }}
+  selector:
+    app: {{ .Values.airflow.name }}-deployment

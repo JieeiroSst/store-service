@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.airflowServer.name }}-webserver
+spec:
+  replicas: {{ .Values.airflowServer.webserver.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.airflowServer.name }}-webserver
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.airflowServer.name }}-webserver
+    spec:
+      containers:
+      - name: {{ .Values.airflowServer.name }}-webserver
+        image: {{ .Values.airflowServer.image.name }}:{{ .Values.airflowServer.image.tag }}
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            airflow db migrate
+            airflow users create \
+              --username "{{ .Values.airflowServer.auth.username }}" \
+              --password "{{ .Values.airflowServer.auth.password }}" \
+              --firstname "{{ .Values.airflowServer.auth.firstName }}" \
+              --lastname "{{ .Values.airflowServer.auth.lastName }}" \
+              --role Admin \
+              --email "{{ .Values.airflowServer.auth.email }}" || true
+            exec airflow webserver
+        ports:
+        - containerPort: {{ .Values.airflowServer.webserver.port }}
+        env:
+        {{- include "airflow-server.env" . | nindent 8 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.airflowServer.webserver.service.name }}
+spec:
+  type: {{ .Values.airflowServer.webserver.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.airflowServer.webserver.port }}
+  selector:
+    app: {{ .Values.airflowServer.name }}-webserver
