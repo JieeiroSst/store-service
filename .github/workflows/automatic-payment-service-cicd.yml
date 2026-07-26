@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade banking service
+      - name: Helm upgrade automatic payment service
         run: |
           helm upgrade --install automatic-payment-service ./chart/automatic-payment-service \
             --namespace default \
