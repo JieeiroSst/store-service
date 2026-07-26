@@ -23,3 +23,7 @@ spec:
         env:
         - name: discovery.type
           value: single-node
+        - name: ES_JAVA_OPTS
+          value: {{ .Values.javaOpts | quote }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
