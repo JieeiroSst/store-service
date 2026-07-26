@@ -1,0 +1,23 @@
+{{- if .Values.basketService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.basketService.name }}-ingress
+  {{- with .Values.basketService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.basketService.ingress.className }}
+  rules:
+  - host: {{ .Values.basketService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.basketService.ingress.path }}
+        pathType: {{ .Values.basketService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.basketService.service.name }}
+            port:
+              number: 80
+{{- end }}

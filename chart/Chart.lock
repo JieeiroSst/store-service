@@ -92,5 +92,8 @@ dependencies:
 - name: banking-service
   repository: file://banking-service
   version: 0.1.0
-digest: sha256:2a326779907c53e34b5a2c0a8d3e093d75f2fa157eb9f0dccf308ff6c848c1f6
-generated: "2026-07-26T21:31:40.754063+07:00"
+- name: basket-service
+  repository: file://basket-service
+  version: 0.1.0
+digest: sha256:19d92f92d8f94b38dd195e3c89a778873d5e111e5bcbc313a87b7e31cee0f7db
+generated: "2026-07-27T01:28:40.229799+07:00"
