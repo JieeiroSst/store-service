@@ -21,6 +21,14 @@ spec:
         env:
           - name: PORT
             value: "{{ .Values.notificationService.image.port }}"
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: notification-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
 ---
 apiVersion: v1
 kind: Service

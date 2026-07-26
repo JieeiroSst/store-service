@@ -21,6 +21,10 @@ spec:
         envFrom:
           - secretRef:
               name: user-service-config
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: user-service.env
         livenessProbe:
           tcpSocket:
             port: {{.Values.userApi.image.port}}
@@ -33,6 +37,10 @@ spec:
           periodSeconds: 10
         resources:
           {{- toYaml .Values.userApi.resources | nindent 10 }}
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
 ---
 apiVersion: v1
 kind: Service
