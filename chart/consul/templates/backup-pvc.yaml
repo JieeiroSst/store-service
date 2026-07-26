@@ -1,0 +1,15 @@
+{{- if .Values.consul.backup.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.consul.name }}-backup-pvc
+spec:
+  accessModes:
+    - {{ .Values.consul.backup.persistence.accessMode }}
+  {{- if .Values.consul.backup.persistence.storageClassName }}
+  storageClassName: {{ .Values.consul.backup.persistence.storageClassName }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.consul.backup.persistence.size }}
+{{- end }}
