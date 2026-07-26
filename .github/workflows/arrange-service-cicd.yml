@@ -1,0 +1,79 @@
+name: Arrange Service CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'arrange-service/**'
+      - 'chart/arrange-service/**'
+      - '.github/workflows/arrange-service-cicd.yml'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/jieeirosst/arrange-service
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build
+        run: cd arrange-service && ./gradlew build -x test --no-daemon
+
+      - name: Test
+        run: cd arrange-service && ./gradlew test --no-daemon
+
+  build-and-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./arrange-service
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Helm upgrade arrange service
+        run: |
+          helm upgrade --install arrange-service ./chart/arrange-service \
+            --namespace default \
+            --set arrange.image.name=${{ env.IMAGE_NAME }} \
+            --set arrange.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            --wait --timeout 5m

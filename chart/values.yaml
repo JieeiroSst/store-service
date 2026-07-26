@@ -45,3 +45,24 @@ airflowServer:
     host: airflow.local
     path: /
     pathType: Prefix
+
+arrange:
+  name: arrange-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/arrange-service
+    tag: latest
+    port: 8080
+
+  service:
+    name: arrange-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: arrange-service.local
+    path: /
+    pathType: Prefix

@@ -7,10 +7,10 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureAdministration()
     configureSerialization()
-    configureDatabases()
+    val connection = configureDatabases()
     configureHTTP()
     configureSecurity()
-    configureRouting()
+    configureAdministration()
+    configureRouting(connection)
 }
