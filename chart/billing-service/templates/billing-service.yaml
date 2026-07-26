@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.billing.name }}-deployment
+spec:
+  replicas: {{ .Values.billing.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.billing.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.billing.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.billing.name }}-deployment
+        image: {{ .Values.billing.image.name }}:{{ .Values.billing.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.billing.image.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.billing.service.name }}
+spec:
+  type: {{ .Values.billing.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.billing.image.port }}
+  selector:
+    app: {{ .Values.billing.name }}-deployment

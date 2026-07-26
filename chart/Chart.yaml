@@ -135,3 +135,7 @@ dependencies:
     name: basket-service
     version: "0.1.0"
     repository: file://basket-service
+  - alias: billingService
+    name: billing-service
+    version: "0.1.0"
+    repository: file://billing-service

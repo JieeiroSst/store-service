@@ -95,5 +95,8 @@ dependencies:
 - name: basket-service
   repository: file://basket-service
   version: 0.1.0
-digest: sha256:19d92f92d8f94b38dd195e3c89a778873d5e111e5bcbc313a87b7e31cee0f7db
-generated: "2026-07-27T01:28:40.229799+07:00"
+- name: billing-service
+  repository: file://billing-service
+  version: 0.1.0
+digest: sha256:4cf9ca3e87d81a95f8ee29b9803489551cfe3704db770599d2712c3d02698052
+generated: "2026-07-27T01:54:53.025596+07:00"

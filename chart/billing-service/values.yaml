@@ -1,0 +1,20 @@
+billing:
+  name: billing-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/billing-service
+    tag: latest
+    port: 8000
+
+  service:
+    name: billing-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: billing-service.local
+    path: /
+    pathType: Prefix
