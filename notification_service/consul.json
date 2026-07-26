@@ -1,0 +1,35 @@
+{
+    "server": {
+        "serverPort": "1235"
+    },
+    "mysql": {
+        "mysqlHost": "localhost",
+        "mysqlPort": "3306",
+        "mysqlUser": "root",
+        "mysqlPassword": "",
+        "mysqlDbname": "notification_service"
+    },
+    "rabbit": {
+        "host": "localhost",
+        "port": 5672,
+        "username": "guest",
+        "password": "guest",
+        "virtualHost": "/",
+        "maxRetries": 5,
+        "retryDelay": 5000000000
+    },
+    "firebase": {
+        "credentialsFile": ""
+    },
+    "email": {
+        "host": "",
+        "port": 587,
+        "username": "",
+        "password": "",
+        "from": ""
+    },
+    "slack": {
+        "webhookSecret": "",
+        "channel": "#notifications"
+    }
+}
