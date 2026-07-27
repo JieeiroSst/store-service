@@ -35,6 +35,10 @@ dependencies:
     name: loki
     version: "0.1.0"
     repository: file://loki
+  - alias: promtail
+    name: promtail
+    version: "0.1.0"
+    repository: file://promtail
   - alias: prometheus
     name: prometheus
     version: "0.1.0"

@@ -1,0 +1,15 @@
+# Default values for promtail.
+image:
+  repository: docker.io/grafana/promtail
+  tag: "2.9.4"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+lokiUrl: http://loki:3100/loki/api/v1/push
