@@ -1,14 +1,14 @@
 {
-	"server": {
-		"PortHttpServer": "2234",
-		"PortGrpcServer": "2231",
-		"PortGinServer": "2232"
-	},
-	"secret": {
-		"JwtSecretKey": "secretkey",
-		"AuthorizeKey": "name_name"
-	},
-	"postgres": {
+    "server": {
+        "PortHttpServer": "2234",
+        "PortGrpcServer": "2231",
+        "PortGinServer": "2232"
+    },
+    "secret": {
+        "JwtSecretKey": "secretkey",
+        "AuthorizeKey": "name_name"
+    },
+    "postgres": {
         "PostgresqlHost": "localhost",
         "PostgresqlPort": "31000",
         "PostgresqlUser": "postgres",
@@ -16,11 +16,11 @@
         "PostgresqlDbname": "cdn",
         "PgDriver": "pgx"
     },
-	"cache": {
-		"host": "localhost:30002"
-	},
-    "baseHost":{
-        "DominServiceURL":"localhost:2232",
-        "BaseDirUpload":"./uploads"
+    "cache": {
+        "host": "localhost:30002"
+    },
+    "baseHost": {
+        "DominServiceURL": "localhost:2232",
+        "BaseDirUpload": "./uploads"
     }
 }

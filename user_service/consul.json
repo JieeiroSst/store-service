@@ -8,7 +8,7 @@
         "AuthorizeKey": "no_name"
     },
     "redis": {
-        "dns": "localhost:31001"
+        "dns": "redis-svc:80"
     },
     "email": {
         "NameEmail": "luumanhquan7@gmail.com",
@@ -16,11 +16,11 @@
         "Port": "587",
         "Host": "smtp.gmail.com"
     },
-	"postgres": {
-        "PostgresqlHost": "localhost",
-        "PostgresqlPort": "31000",
-        "PostgresqlUser": "postgres",
-        "PostgresqlPassword": "postgres",
+    "postgres": {
+        "PostgresqlHost": "postgresdb",
+        "PostgresqlPort": "80",
+        "PostgresqlUser": "testUser",
+        "PostgresqlPassword": "testPassword",
         "PostgresqlDbname": "user",
         "PgDriver": "pgx"
     },

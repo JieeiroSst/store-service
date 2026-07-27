@@ -3,14 +3,14 @@
         "serverPort": "1235"
     },
     "mysql": {
-        "mysqlHost": "localhost",
-        "mysqlPort": "3306",
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
         "mysqlUser": "root",
-        "mysqlPassword": "",
+        "mysqlPassword": "password",
         "mysqlDbname": "notification_service"
     },
     "rabbit": {
-        "host": "localhost",
+        "host": "rabbitmq-service",
         "port": 5672,
         "username": "guest",
         "password": "guest",
