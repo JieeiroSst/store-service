@@ -4,15 +4,15 @@
         "portGrpcServer": "9090"
     },
     "postgres": {
-        "postgresqlHost": "localhost",
-        "postgresqlPort": "5432",
-        "postgresqlUser": "postgres",
-        "postgresqlPassword": "postgres",
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
         "postgresqlDbname": "authorize",
         "postgresqlSSLMode": false
     },
     "cache": {
-        "host": "localhost:6379"
+        "host": "redis-svc:80"
     },
     "secret": {
         "jwtSecretKey": "secretkey"

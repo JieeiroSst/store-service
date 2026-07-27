@@ -4,10 +4,10 @@
         "grpcServer": "9090"
     },
     "mysql": {
-        "mysqlHost": "localhost",
-        "mysqlPort": "3306",
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
         "mysqlUser": "root",
-        "mysqlPassword": "",
+        "mysqlPassword": "password",
         "mysqlDbname": "address_country",
         "mysqlSSLMode": false,
         "mysqlDriver": "mysql"
@@ -17,6 +17,6 @@
         "authorizeKey": "no_name"
     },
     "cache": {
-        "host": "localhost:6379"
+        "host": "redis-svc:80"
     }
 }

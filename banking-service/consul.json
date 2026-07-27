@@ -4,20 +4,22 @@
         "grpcServer": ""
     },
     "mysql": {
-        "mysqlHost": "localhost",
-        "mysqlPort": "3306",
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
         "mysqlUser": "root",
-        "mysqlPassword": "",
+        "mysqlPassword": "password",
         "mysqlDbname": "banking_service",
         "mysqlSSLMode": false,
         "mysqlDriver": "mysql"
     },
     "cache": {
-        "host": "localhost:6379",
+        "host": "redis-svc:80",
         "password": ""
     },
     "kafka": {
-        "brokers": ["localhost:9092"],
+        "brokers": [
+            "kafka-service:9092"
+        ],
         "transactionTopic": "banking.transactions",
         "consumerGroup": "banking-service"
     }

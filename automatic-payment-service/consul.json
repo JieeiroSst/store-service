@@ -3,10 +3,10 @@
         "httpPort": "8080"
     },
     "postgres": {
-        "postgresqlHost": "localhost",
-        "postgresqlPort": "5432",
-        "postgresqlUser": "postgres",
-        "postgresqlPassword": "postgres",
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
         "postgresqlDbname": "automatic_payment",
         "postgresqlSSLMode": false
     },
