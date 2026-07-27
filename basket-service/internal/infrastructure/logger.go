@@ -1,7 +1,15 @@
 package infrastructure
 
-import "log"
+import (
+	"log"
+
+	"github.com/sirupsen/logrus"
+)
 
 func initLogger() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetLevel(logrus.InfoLevel)
+
+	log.SetOutput(logrus.StandardLogger().Writer())
+	log.SetFlags(0)
 }
