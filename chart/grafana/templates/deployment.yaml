@@ -46,6 +46,14 @@ spec:
             mountPath: /etc/grafana/provisioning/datasources/datasource.yaml
             subPath: datasource.yaml
             readOnly: false
+          - name: grafana-dashboard-provider
+            mountPath: /etc/grafana/provisioning/dashboards/dashboards.yaml
+            subPath: dashboards.yaml
+            readOnly: false
+          - name: grafana-dashboard-logs
+            mountPath: /var/lib/grafana/dashboards/logs-search.json
+            subPath: logs-search.json
+            readOnly: false
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
@@ -61,6 +69,12 @@ spec:
         - name: grafana-datastore
           configMap:
             name: grafana-datasource
+        - name: grafana-dashboard-provider
+          configMap:
+            name: grafana-dashboard-provider
+        - name: grafana-dashboard-logs
+          configMap:
+            name: grafana-dashboard-logs
         - name: grafana-storage
           emptyDir:
             sizeLimit: "1Gi"

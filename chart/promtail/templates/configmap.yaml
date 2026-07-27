@@ -36,7 +36,7 @@ data:
             separator: /
             replacement: /var/log/pods/*$1/*.log
         pipeline_stages:
-          - cri: {}
+          - docker: {}
           - json:
               expressions:
                 level: level
