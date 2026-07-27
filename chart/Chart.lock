@@ -20,6 +20,9 @@ dependencies:
 - name: loki
   repository: file://loki
   version: 0.1.0
+- name: promtail
+  repository: file://promtail
+  version: 0.1.0
 - name: prometheus
   repository: file://prometheus
   version: 0.1.0
@@ -101,5 +104,5 @@ dependencies:
 - name: notification-service
   repository: file://notification-service
   version: 0.1.0
-digest: sha256:63e17bcb82b604ba5aa59d41e93b11e1e5a4073c78d34fc566843375853fecdc
-generated: "2026-07-27T02:48:33.363865+07:00"
+digest: sha256:4cf3f209febcc5163c0bbb309e11d979c8b5613d2dca6eaeec5486fc39a10415
+generated: "2026-07-27T07:47:52.346938+07:00"
