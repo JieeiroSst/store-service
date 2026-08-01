@@ -115,12 +115,12 @@ impl BookingRepository for PostgresRepository {
             };
 
             let room = Room {
-                room_no: row.roomno.unwrap(),
+                room_no: row.roomno,
                 room_type,
                 room_type_details: RoomTypeDetails {
-                    id: row.roomtypeid.unwrap(),
-                    description: row.description.unwrap(),
-                    capacity: row.capacity.unwrap(),
+                    id: row.roomtypeid,
+                    description: row.description,
+                    capacity: row.capacity,
                 },
                 bed_type: row.bed_type,
                 bed_count: row.bed_count,

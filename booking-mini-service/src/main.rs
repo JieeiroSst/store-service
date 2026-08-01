@@ -2,6 +2,7 @@ use actix_web::{web, App, HttpServer};
 use env_logger::Env;
 use booking_mini_service::adapters::api::config_routes;
 use booking_mini_service::adapters::db::PostgresRepository;
+use booking_mini_service::adapters::migrations;
 use log::info;
 use std::sync::Arc;
 use std::env;
@@ -19,6 +20,8 @@ async fn main() -> io::Result<()> {
     // Database connection
     let db_url = env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:31000/hotel_booking".to_string());
+
+    migrations::run(&db_url).await.expect("Failed to run database migrations");
 
     let repo = Arc::new(PostgresRepository::new(&db_url).await.expect("Failed to connect to database"));
 
