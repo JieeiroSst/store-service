@@ -5,7 +5,6 @@ use booking_mini_service::adapters::db::PostgresRepository;
 use booking_mini_service::adapters::migrations;
 use log::info;
 use std::sync::Arc;
-use std::env;
 use std::io;
 
 #[actix_web::main]
@@ -17,18 +16,18 @@ async fn main() -> io::Result<()> {
     }
     info!("Starting hotel booking service");
 
-    // Database connection
-    let db_url = env::var("DATABASE_URL")
-        .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:31000/hotel_booking".to_string());
+    // Load config (DATABASE_URL, PORT) from Consul KV
+    let config = booking_mini_service::adapters::consul::load_config()
+        .await
+        .expect("Failed to load config from Consul");
+
+    let db_url = config.database_url;
 
     migrations::run(&db_url).await.expect("Failed to run database migrations");
 
     let repo = Arc::new(PostgresRepository::new(&db_url).await.expect("Failed to connect to database"));
 
-    let port = env::var("PORT")
-        .unwrap_or_else(|_| "8080".to_string())
-        .parse::<u16>()
-        .expect("PORT must be a valid number");
+    let port = config.port;
     // Start HTTP server
     HttpServer::new(move || {
         App::new()

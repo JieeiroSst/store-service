@@ -1,0 +1,11 @@
+/Users/quan/Desktop/store-service/booking-mini-service/target/debug/deps/tower_layer-861118904b53eb3d.d: /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/lib.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/identity.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/layer_fn.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/stack.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/tuple.rs
+
+/Users/quan/Desktop/store-service/booking-mini-service/target/debug/deps/libtower_layer-861118904b53eb3d.rlib: /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/lib.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/identity.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/layer_fn.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/stack.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/tuple.rs
+
+/Users/quan/Desktop/store-service/booking-mini-service/target/debug/deps/libtower_layer-861118904b53eb3d.rmeta: /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/lib.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/identity.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/layer_fn.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/stack.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/tuple.rs
+
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/lib.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/identity.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/layer_fn.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/stack.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tower-layer-0.3.3/src/tuple.rs:
