@@ -1,0 +1,11 @@
+/Users/quan/Desktop/store-service/booking-mini-service/target/debug/deps/sha2-823d621ae2971030.d: /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/lib.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/core_api.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha256.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha512.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/consts.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha256/soft.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha512/soft.rs
+
+/Users/quan/Desktop/store-service/booking-mini-service/target/debug/deps/libsha2-823d621ae2971030.rmeta: /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/lib.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/core_api.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha256.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha512.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/consts.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha256/soft.rs /Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha512/soft.rs
+
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/lib.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/core_api.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha256.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha512.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/consts.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha256/soft.rs:
+/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/sha512/soft.rs:

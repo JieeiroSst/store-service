@@ -1,14 +1,15 @@
     Blocking waiting for file lock on package cache
     Blocking waiting for file lock on package cache
     Blocking waiting for file lock on package cache
-   0.234339833s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("booking_mini_service", ["lib"], "/Users/chmp/Desktop/store-service/booking-mini-service/src/lib.rs", Edition2024) }
-   0.234364917s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-0558764a5aee4c73/lib-booking_mini_service`
+    Blocking waiting for file lock on package cache
+   1.754122417s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service)/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("booking_mini_service", ["lib"], "/Users/quan/Desktop/store-service/booking-mini-service/src/lib.rs", Edition2024) }
+   1.754604750s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-29bc0b0f9a5882c0/lib-booking_mini_service`
 
 Caused by:
     No such file or directory (os error 2)
 
 Stack backtrace:
-   0: std::backtrace::Backtrace::create
+   0: <std::backtrace::Backtrace>::create
    1: cargo_util::paths::read_bytes
    2: cargo_util::paths::read
    3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
@@ -25,14 +26,1866 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-   0.258914750s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("booking_mini_service", ["lib"], "/Users/chmp/Desktop/store-service/booking-mini-service/src/lib.rs", Edition2024) }
-   0.258931083s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-d80d5187a13c8541/test-lib-booking_mini_service`
+   1.814418917s  INFO prepare_target{force=false package_id=actix-web v4.12.1 target="actix_web"}: cargo::core::compiler::fingerprint: fingerprint error for actix-web v4.12.1/Check { test: false }/TargetInner { ..: lib_target("actix_web", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/actix-web-4.12.1/src/lib.rs", Edition2021) }
+   1.814440125s  INFO prepare_target{force=false package_id=actix-web v4.12.1 target="actix_web"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/actix-web-30b1ef8b738881de/lib-actix_web`
 
 Caused by:
     No such file or directory (os error 2)
 
 Stack backtrace:
-   0: std::backtrace::Backtrace::create
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   1.815647208s  INFO prepare_target{force=false package_id=actix-codec v0.5.2 target="actix_codec"}: cargo::core::compiler::fingerprint: fingerprint error for actix-codec v0.5.2/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("actix_codec", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/actix-codec-0.5.2/src/lib.rs", Edition2021) }
+   1.815660042s  INFO prepare_target{force=false package_id=actix-codec v0.5.2 target="actix_codec"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/actix-codec-3957240205d56445/lib-actix_codec`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   1.816908208s  INFO prepare_target{force=false package_id=bytes v1.12.1 target="bytes"}: cargo::core::compiler::fingerprint: fingerprint error for bytes v1.12.1/Check { test: false }/TargetInner { ..: lib_target("bytes", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bytes-1.12.1/src/lib.rs", Edition2021) }
+   1.816920417s  INFO prepare_target{force=false package_id=bytes v1.12.1 target="bytes"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/bytes-bbcccb64d4ddad17/lib-bytes`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.822194958s  INFO prepare_target{force=false package_id=tokio v1.49.0 target="tokio"}: cargo::core::compiler::fingerprint: fingerprint error for tokio v1.49.0/Check { test: false }/TargetInner { ..: lib_target("tokio", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.49.0/src/lib.rs", Edition2021) }
+   1.822218625s  INFO prepare_target{force=false package_id=tokio v1.49.0 target="tokio"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/tokio-512070a3007e21fa/lib-tokio`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.847278583s  INFO prepare_target{force=false package_id=tokio-util v0.7.14 target="tokio_util"}: cargo::core::compiler::fingerprint: fingerprint error for tokio-util v0.7.14/Check { test: false }/TargetInner { ..: lib_target("tokio_util", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-util-0.7.14/src/lib.rs", Edition2021) }
+   1.847300208s  INFO prepare_target{force=false package_id=tokio-util v0.7.14 target="tokio_util"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/tokio-util-15218a648629139e/lib-tokio_util`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.850115625s  INFO prepare_target{force=false package_id=actix-http v3.11.2 target="actix_http"}: cargo::core::compiler::fingerprint: fingerprint error for actix-http v3.11.2/Check { test: false }/TargetInner { ..: lib_target("actix_http", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/actix-http-3.11.2/src/lib.rs", Edition2021) }
+   1.850134500s  INFO prepare_target{force=false package_id=actix-http v3.11.2 target="actix_http"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/actix-http-9e78ab6d8f7b1986/lib-actix_http`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   1.851834833s  INFO prepare_target{force=false package_id=actix-rt v2.10.0 target="actix_rt"}: cargo::core::compiler::fingerprint: fingerprint error for actix-rt v2.10.0/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("actix_rt", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/actix-rt-2.10.0/src/lib.rs", Edition2021) }
+   1.851852167s  INFO prepare_target{force=false package_id=actix-rt v2.10.0 target="actix_rt"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/actix-rt-f9234202f5b151f9/lib-actix_rt`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.862321083s  INFO prepare_target{force=false package_id=bytestring v1.4.0 target="bytestring"}: cargo::core::compiler::fingerprint: fingerprint error for bytestring v1.4.0/Check { test: false }/TargetInner { ..: lib_target("bytestring", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bytestring-1.4.0/src/lib.rs", Edition2021) }
+   1.862343500s  INFO prepare_target{force=false package_id=bytestring v1.4.0 target="bytestring"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/bytestring-d10cbddf457af4e0/lib-bytestring`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.867500417s  INFO prepare_target{force=false package_id=h2 v0.3.27 target="h2"}: cargo::core::compiler::fingerprint: fingerprint error for h2 v0.3.27/Check { test: false }/TargetInner { ..: lib_target("h2", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/h2-0.3.27/src/lib.rs", Edition2018) }
+   1.867515500s  INFO prepare_target{force=false package_id=h2 v0.3.27 target="h2"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/h2-92704853e261a51e/lib-h2`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.873747792s  INFO prepare_target{force=false package_id=http v0.2.12 target="http"}: cargo::core::compiler::fingerprint: fingerprint error for http v0.2.12/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("http", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/http-0.2.12/src/lib.rs", Edition2018) }
+   1.873761708s  INFO prepare_target{force=false package_id=http v0.2.12 target="http"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/http-67f0d96baa561951/lib-http`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.880354875s  INFO prepare_target{force=false package_id=indexmap v2.14.0 target="indexmap"}: cargo::core::compiler::fingerprint: fingerprint error for indexmap v2.14.0/Check { test: false }/TargetInner { benched: false, ..: lib_target("indexmap", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/indexmap-2.14.0/src/lib.rs", Edition2024) }
+   1.880373917s  INFO prepare_target{force=false package_id=indexmap v2.14.0 target="indexmap"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/indexmap-dfec0a8c85670847/lib-indexmap`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.881249208s  INFO prepare_target{force=false package_id=hashbrown v0.17.1 target="hashbrown"}: cargo::core::compiler::fingerprint: fingerprint error for hashbrown v0.17.1/Check { test: false }/TargetInner { ..: lib_target("hashbrown", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hashbrown-0.17.1/src/lib.rs", Edition2024) }
+   1.881261375s  INFO prepare_target{force=false package_id=hashbrown v0.17.1 target="hashbrown"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/hashbrown-4c90d7a256d6312d/lib-hashbrown`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.892129083s  INFO prepare_target{force=false package_id=sha1 v0.10.6 target="sha1"}: cargo::core::compiler::fingerprint: fingerprint error for sha1 v0.10.6/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sha1", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha1-0.10.6/src/lib.rs", Edition2018) }
+   1.892151750s  INFO prepare_target{force=false package_id=sha1 v0.10.6 target="sha1"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/sha1-9b0b9182f317b695/lib-sha1`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.893196958s  INFO prepare_target{force=false package_id=digest v0.10.7 target="digest"}: cargo::core::compiler::fingerprint: fingerprint error for digest v0.10.7/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("digest", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/digest-0.10.7/src/lib.rs", Edition2018) }
+   1.893211750s  INFO prepare_target{force=false package_id=digest v0.10.7 target="digest"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/digest-c7c08508b7e5a03a/lib-digest`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.895461542s  INFO prepare_target{force=false package_id=block-buffer v0.10.4 target="block_buffer"}: cargo::core::compiler::fingerprint: fingerprint error for block-buffer v0.10.4/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("block_buffer", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/block-buffer-0.10.4/src/lib.rs", Edition2018) }
+   1.895475792s  INFO prepare_target{force=false package_id=block-buffer v0.10.4 target="block_buffer"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/block-buffer-77c975d43741bf8c/lib-block_buffer`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.896008042s  INFO prepare_target{force=false package_id=generic-array v0.14.7 target="generic_array"}: cargo::core::compiler::fingerprint: fingerprint error for generic-array v0.14.7/Check { test: false }/TargetInner { ..: lib_target("generic_array", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generic-array-0.14.7/src/lib.rs", Edition2015) }
+   1.896017667s  INFO prepare_target{force=false package_id=generic-array v0.14.7 target="generic_array"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/generic-array-7d1b12c40540a3d8/lib-generic_array`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+  22: _main
+   1.898854875s  INFO prepare_target{force=false package_id=typenum v1.20.1 target="typenum"}: cargo::core::compiler::fingerprint: fingerprint error for typenum v1.20.1/Check { test: false }/TargetInner { ..: lib_target("typenum", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/typenum-1.20.1/src/lib.rs", Edition2018) }
+   1.899415958s  INFO prepare_target{force=false package_id=typenum v1.20.1 target="typenum"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/typenum-26d9f97b7950a3cf/lib-typenum`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+  23: _main
+   1.900062083s  INFO prepare_target{force=false package_id=crypto-common v0.1.6 target="crypto_common"}: cargo::core::compiler::fingerprint: fingerprint error for crypto-common v0.1.6/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("crypto_common", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.1.6/src/lib.rs", Edition2018) }
+   1.900075583s  INFO prepare_target{force=false package_id=crypto-common v0.1.6 target="crypto_common"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/crypto-common-78c005a7e6cb07b8/lib-crypto_common`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.907186000s  INFO prepare_target{force=false package_id=actix-router v0.5.3 target="actix_router"}: cargo::core::compiler::fingerprint: fingerprint error for actix-router v0.5.3/Check { test: false }/TargetInner { ..: lib_target("actix_router", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/actix-router-0.5.3/src/lib.rs", Edition2021) }
+   1.907205458s  INFO prepare_target{force=false package_id=actix-router v0.5.3 target="actix_router"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/actix-router-0cecd519f56be5a5/lib-actix_router`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   1.909820750s  INFO prepare_target{force=false package_id=actix-server v2.6.0 target="actix_server"}: cargo::core::compiler::fingerprint: fingerprint error for actix-server v2.6.0/Check { test: false }/TargetInner { ..: lib_target("actix_server", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/actix-server-2.6.0/src/lib.rs", Edition2021) }
+   1.909835375s  INFO prepare_target{force=false package_id=actix-server v2.6.0 target="actix_server"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/actix-server-85e9a1ab218c8bab/lib-actix_server`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   1.914865000s  INFO prepare_target{force=false package_id=cookie v0.16.2 target="cookie"}: cargo::core::compiler::fingerprint: fingerprint error for cookie v0.16.2/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("cookie", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cookie-0.16.2/src/lib.rs", Edition2018) }
+   1.914882125s  INFO prepare_target{force=false package_id=cookie v0.16.2 target="cookie"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/cookie-68634a250bcbcce3/lib-cookie`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   1.918562208s  INFO prepare_target{force=false package_id=time v0.3.41 target="time"}: cargo::core::compiler::fingerprint: fingerprint error for time v0.3.41/Check { test: false }/TargetInner { benched: false, ..: lib_target("time", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/time-0.3.41/src/lib.rs", Edition2021) }
+   1.918576708s  INFO prepare_target{force=false package_id=time v0.3.41 target="time"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/time-acb83c7f8564e242/lib-time`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.919640417s  INFO prepare_target{force=false package_id=deranged v0.4.0 target="deranged"}: cargo::core::compiler::fingerprint: fingerprint error for deranged v0.4.0/Check { test: false }/TargetInner { ..: lib_target("deranged", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/deranged-0.4.0/src/lib.rs", Edition2021) }
+   1.919657375s  INFO prepare_target{force=false package_id=deranged v0.4.0 target="deranged"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/deranged-f9743a847f22b3b5/lib-deranged`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.957226167s  INFO prepare_target{force=false package_id=refinery v0.9.2 target="refinery"}: cargo::core::compiler::fingerprint: fingerprint error for refinery v0.9.2/Check { test: false }/TargetInner { ..: lib_target("refinery", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/refinery-0.9.2/src/lib.rs", Edition2018) }
+   1.957251500s  INFO prepare_target{force=false package_id=refinery v0.9.2 target="refinery"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/refinery-3dacf905ded2c0cb/lib-refinery`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   1.959778125s  INFO prepare_target{force=false package_id=refinery-core v0.9.2 target="refinery_core"}: cargo::core::compiler::fingerprint: fingerprint error for refinery-core v0.9.2/Check { test: false }/TargetInner { ..: lib_target("refinery_core", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/refinery-core-0.9.2/src/lib.rs", Edition2021) }
+   1.959796000s  INFO prepare_target{force=false package_id=refinery-core v0.9.2 target="refinery_core"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/refinery-core-2a2669a45a408220/lib-refinery_core`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   1.961822542s  INFO prepare_target{force=false package_id=siphasher v1.0.3 target="siphasher"}: cargo::core::compiler::fingerprint: fingerprint error for siphasher v1.0.3/Check { test: false }/TargetInner { ..: lib_target("siphasher", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/siphasher-1.0.3/src/lib.rs", Edition2018) }
+   1.961843792s  INFO prepare_target{force=false package_id=siphasher v1.0.3 target="siphasher"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/siphasher-995cf7ec558c95e8/lib-siphasher`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.965038292s  INFO prepare_target{force=false package_id=tokio-postgres v0.7.18 target="tokio_postgres"}: cargo::core::compiler::fingerprint: fingerprint error for tokio-postgres v0.7.18/Check { test: false }/TargetInner { tested: false, ..: lib_target("tokio_postgres", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-postgres-0.7.18/src/lib.rs", Edition2024) }
+   1.965056458s  INFO prepare_target{force=false package_id=tokio-postgres v0.7.18 target="tokio_postgres"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/tokio-postgres-5fe13cb1ee7b41c7/lib-tokio_postgres`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.967462292s  INFO prepare_target{force=false package_id=byteorder v1.5.0 target="byteorder"}: cargo::core::compiler::fingerprint: fingerprint error for byteorder v1.5.0/Check { test: false }/TargetInner { benched: false, ..: lib_target("byteorder", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/byteorder-1.5.0/src/lib.rs", Edition2021) }
+   1.967481375s  INFO prepare_target{force=false package_id=byteorder v1.5.0 target="byteorder"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/byteorder-aca7f53558f7d4de/lib-byteorder`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.969448500s  INFO prepare_target{force=false package_id=fallible-iterator v0.2.0 target="fallible_iterator"}: cargo::core::compiler::fingerprint: fingerprint error for fallible-iterator v0.2.0/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("fallible_iterator", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/fallible-iterator-0.2.0/src/lib.rs", Edition2018) }
+   1.969462750s  INFO prepare_target{force=false package_id=fallible-iterator v0.2.0 target="fallible_iterator"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/fallible-iterator-73a57ab739fdfa72/lib-fallible_iterator`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.970740875s  INFO prepare_target{force=false package_id=futures-channel v0.3.31 target="futures_channel"}: cargo::core::compiler::fingerprint: fingerprint error for futures-channel v0.3.31/Check { test: false }/TargetInner { ..: lib_target("futures_channel", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-channel-0.3.31/src/lib.rs", Edition2018) }
+   1.971056792s  INFO prepare_target{force=false package_id=futures-channel v0.3.31 target="futures_channel"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/futures-channel-9a3965a648b98d60/lib-futures_channel`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.972462000s  INFO prepare_target{force=false package_id=phf v0.13.1 target="phf"}: cargo::core::compiler::fingerprint: fingerprint error for phf v0.13.1/Check { test: false }/TargetInner { tested: false, ..: lib_target("phf", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/phf-0.13.1/src/lib.rs", Edition2021) }
+   1.972479458s  INFO prepare_target{force=false package_id=phf v0.13.1 target="phf"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/phf-9e8ad5680f862717/lib-phf`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.973912208s  INFO prepare_target{force=false package_id=phf_shared v0.13.1 target="phf_shared"}: cargo::core::compiler::fingerprint: fingerprint error for phf_shared v0.13.1/Check { test: false }/TargetInner { tested: false, ..: lib_target("phf_shared", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/phf_shared-0.13.1/src/lib.rs", Edition2021) }
+   1.973925917s  INFO prepare_target{force=false package_id=phf_shared v0.13.1 target="phf_shared"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/phf_shared-4c532da768502cfb/lib-phf_shared`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.974449625s  INFO prepare_target{force=false package_id=postgres-protocol v0.6.12 target="postgres_protocol"}: cargo::core::compiler::fingerprint: fingerprint error for postgres-protocol v0.6.12/Check { test: false }/TargetInner { ..: lib_target("postgres_protocol", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/postgres-protocol-0.6.12/src/lib.rs", Edition2024) }
+   1.974460542s  INFO prepare_target{force=false package_id=postgres-protocol v0.6.12 target="postgres_protocol"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/postgres-protocol-3e93e10961f6d7c8/lib-postgres_protocol`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.975026167s  INFO prepare_target{force=false package_id=hmac v0.13.0 target="hmac"}: cargo::core::compiler::fingerprint: fingerprint error for hmac v0.13.0/Check { test: false }/TargetInner { ..: lib_target("hmac", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hmac-0.13.0/src/lib.rs", Edition2024) }
+   1.975035833s  INFO prepare_target{force=false package_id=hmac v0.13.0 target="hmac"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/hmac-759f389fe3d0d3c5/lib-hmac`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.975596833s  INFO prepare_target{force=false package_id=digest v0.11.3 target="digest"}: cargo::core::compiler::fingerprint: fingerprint error for digest v0.11.3/Check { test: false }/TargetInner { ..: lib_target("digest", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/digest-0.11.3/src/lib.rs", Edition2024) }
+   1.975606333s  INFO prepare_target{force=false package_id=digest v0.11.3 target="digest"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/digest-e2b272f93764cbf6/lib-digest`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+  22: _main
+   1.976138875s  INFO prepare_target{force=false package_id=block-buffer v0.12.1 target="block_buffer"}: cargo::core::compiler::fingerprint: fingerprint error for block-buffer v0.12.1/Check { test: false }/TargetInner { ..: lib_target("block_buffer", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/block-buffer-0.12.1/src/lib.rs", Edition2024) }
+   1.976148667s  INFO prepare_target{force=false package_id=block-buffer v0.12.1 target="block_buffer"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/block-buffer-428c47bf3cdc4f90/lib-block_buffer`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+  23: _main
+   1.977206292s  INFO prepare_target{force=false package_id=hybrid-array v0.4.14 target="hybrid_array"}: cargo::core::compiler::fingerprint: fingerprint error for hybrid-array v0.4.14/Check { test: false }/TargetInner { ..: lib_target("hybrid_array", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hybrid-array-0.4.14/src/lib.rs", Edition2024) }
+   1.977221667s  INFO prepare_target{force=false package_id=hybrid-array v0.4.14 target="hybrid_array"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/hybrid-array-b1a6c9c7cf5cd5a7/lib-hybrid_array`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  15: cargo::ops::cargo_compile::compile_ws
+  16: cargo::ops::cargo_compile::compile_with_exec
+  17: cargo::ops::cargo_compile::compile
+  18: cargo::commands::check::exec
+  19: <cargo::cli::Exec>::exec
+  20: cargo::main
+  21: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  22: std::rt::lang_start::<()>::{closure#0}
+  23: std::rt::lang_start_internal
+  24: _main
+   1.977880167s  INFO prepare_target{force=false package_id=const-oid v0.10.2 target="const_oid"}: cargo::core::compiler::fingerprint: fingerprint error for const-oid v0.10.2/Check { test: false }/TargetInner { ..: lib_target("const_oid", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/const-oid-0.10.2/src/lib.rs", Edition2024) }
+   1.977898333s  INFO prepare_target{force=false package_id=const-oid v0.10.2 target="const_oid"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/const-oid-655437e8df1592fc/lib-const_oid`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+  23: _main
+   1.978929833s  INFO prepare_target{force=false package_id=crypto-common v0.2.2 target="crypto_common"}: cargo::core::compiler::fingerprint: fingerprint error for crypto-common v0.2.2/Check { test: false }/TargetInner { ..: lib_target("crypto_common", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.2.2/src/lib.rs", Edition2024) }
+   1.978942875s  INFO prepare_target{force=false package_id=crypto-common v0.2.2 target="crypto_common"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/crypto-common-2bbcf21fd24e802e/lib-crypto_common`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+  23: _main
+   1.979517417s  INFO prepare_target{force=false package_id=ctutils v0.4.2 target="ctutils"}: cargo::core::compiler::fingerprint: fingerprint error for ctutils v0.4.2/Check { test: false }/TargetInner { ..: lib_target("ctutils", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/ctutils-0.4.2/src/lib.rs", Edition2024) }
+   1.979527458s  INFO prepare_target{force=false package_id=ctutils v0.4.2 target="ctutils"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/ctutils-7e77a0ecbaf6883a/lib-ctutils`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+  23: _main
+   1.980038750s  INFO prepare_target{force=false package_id=cmov v0.5.4 target="cmov"}: cargo::core::compiler::fingerprint: fingerprint error for cmov v0.5.4/Check { test: false }/TargetInner { ..: lib_target("cmov", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cmov-0.5.4/src/lib.rs", Edition2024) }
+   1.980047667s  INFO prepare_target{force=false package_id=cmov v0.5.4 target="cmov"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/cmov-bfd304610e6295f6/lib-cmov`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: cargo::core::compiler::compile
+  14: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  15: cargo::ops::cargo_compile::compile_ws
+  16: cargo::ops::cargo_compile::compile_with_exec
+  17: cargo::ops::cargo_compile::compile
+  18: cargo::commands::check::exec
+  19: <cargo::cli::Exec>::exec
+  20: cargo::main
+  21: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  22: std::rt::lang_start::<()>::{closure#0}
+  23: std::rt::lang_start_internal
+  24: _main
+   1.980512833s  INFO prepare_target{force=false package_id=md-5 v0.11.0 target="md5"}: cargo::core::compiler::fingerprint: fingerprint error for md-5 v0.11.0/Check { test: false }/TargetInner { ..: lib_target("md5", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/md-5-0.11.0/src/lib.rs", Edition2024) }
+   1.980532917s  INFO prepare_target{force=false package_id=md-5 v0.11.0 target="md5"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/md-5-ee36b97701286446/lib-md5`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.981008042s  INFO prepare_target{force=false package_id=rand v0.10.2 target="rand"}: cargo::core::compiler::fingerprint: fingerprint error for rand v0.10.2/Check { test: false }/TargetInner { ..: lib_target("rand", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rand-0.10.2/src/lib.rs", Edition2024) }
+   1.981016542s  INFO prepare_target{force=false package_id=rand v0.10.2 target="rand"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/rand-5a383a6b43507f7e/lib-rand`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.981478500s  INFO prepare_target{force=false package_id=chacha20 v0.10.1 target="chacha20"}: cargo::core::compiler::fingerprint: fingerprint error for chacha20 v0.10.1/Check { test: false }/TargetInner { ..: lib_target("chacha20", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/chacha20-0.10.1/src/lib.rs", Edition2024) }
+   1.981486250s  INFO prepare_target{force=false package_id=chacha20 v0.10.1 target="chacha20"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/chacha20-43513191057e5225/lib-chacha20`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+  22: _main
+   1.982427958s  INFO prepare_target{force=false package_id=rand_core v0.10.1 target="rand_core"}: cargo::core::compiler::fingerprint: fingerprint error for rand_core v0.10.1/Check { test: false }/TargetInner { ..: lib_target("rand_core", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rand_core-0.10.1/src/lib.rs", Edition2024) }
+   1.982439292s  INFO prepare_target{force=false package_id=rand_core v0.10.1 target="rand_core"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/rand_core-963691a5e971373b/lib-rand_core`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: cargo::core::compiler::compile
+  13: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  14: cargo::ops::cargo_compile::compile_ws
+  15: cargo::ops::cargo_compile::compile_with_exec
+  16: cargo::ops::cargo_compile::compile
+  17: cargo::commands::check::exec
+  18: <cargo::cli::Exec>::exec
+  19: cargo::main
+  20: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  21: std::rt::lang_start::<()>::{closure#0}
+  22: std::rt::lang_start_internal
+  23: _main
+   1.983240792s  INFO prepare_target{force=false package_id=getrandom v0.4.3 target="getrandom"}: cargo::core::compiler::fingerprint: fingerprint error for getrandom v0.4.3/Check { test: false }/TargetInner { ..: lib_target("getrandom", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/getrandom-0.4.3/src/lib.rs", Edition2024) }
+   1.983257792s  INFO prepare_target{force=false package_id=getrandom v0.4.3 target="getrandom"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/getrandom-51d8232c8336f2ff/lib-getrandom`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+  22: _main
+   1.988471250s  INFO prepare_target{force=false package_id=sha2 v0.11.0 target="sha2"}: cargo::core::compiler::fingerprint: fingerprint error for sha2 v0.11.0/Check { test: false }/TargetInner { ..: lib_target("sha2", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.11.0/src/lib.rs", Edition2024) }
+   1.988493250s  INFO prepare_target{force=false package_id=sha2 v0.11.0 target="sha2"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/sha2-6b28c544ba87be0a/lib-sha2`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   1.989175458s  INFO prepare_target{force=false package_id=cpufeatures v0.3.0 target="cpufeatures"}: cargo::core::compiler::fingerprint: fingerprint error for cpufeatures v0.3.0/Check { test: false }/TargetInner { ..: lib_target("cpufeatures", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.3.0/src/lib.rs", Edition2024) }
+   1.989187042s  INFO prepare_target{force=false package_id=cpufeatures v0.3.0 target="cpufeatures"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/cpufeatures-08d632fa696717f4/lib-cpufeatures`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: cargo::core::compiler::compile
+  12: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  13: cargo::ops::cargo_compile::compile_ws
+  14: cargo::ops::cargo_compile::compile_with_exec
+  15: cargo::ops::cargo_compile::compile
+  16: cargo::commands::check::exec
+  17: <cargo::cli::Exec>::exec
+  18: cargo::main
+  19: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  20: std::rt::lang_start::<()>::{closure#0}
+  21: std::rt::lang_start_internal
+  22: _main
+   1.993199708s  INFO prepare_target{force=false package_id=postgres-types v0.2.14 target="postgres_types"}: cargo::core::compiler::fingerprint: fingerprint error for postgres-types v0.2.14/Check { test: false }/TargetInner { ..: lib_target("postgres_types", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/postgres-types-0.2.14/src/lib.rs", Edition2024) }
+   1.993220333s  INFO prepare_target{force=false package_id=postgres-types v0.2.14 target="postgres_types"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/postgres-types-e327ec47c92260a1/lib-postgres_types`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.995225333s  INFO prepare_target{force=false package_id=whoami v2.1.0 target="whoami"}: cargo::core::compiler::fingerprint: fingerprint error for whoami v2.1.0/Check { test: false }/TargetInner { ..: lib_target("whoami", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/whoami-2.1.0/src/lib.rs", Edition2021) }
+   1.995244375s  INFO prepare_target{force=false package_id=whoami v2.1.0 target="whoami"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/whoami-9eb54801b10e16e1/lib-whoami`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.995988042s  INFO prepare_target{force=false package_id=toml v1.1.4+spec-1.1.0 target="toml"}: cargo::core::compiler::fingerprint: fingerprint error for toml v1.1.4+spec-1.1.0/Check { test: false }/TargetInner { ..: lib_target("toml", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml-1.1.4+spec-1.1.0/src/lib.rs", Edition2024) }
+   1.996133917s  INFO prepare_target{force=false package_id=toml v1.1.4+spec-1.1.0 target="toml"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/toml-f3f04b3f1439f057/lib-toml`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   1.997089917s  INFO prepare_target{force=false package_id=serde_spanned v1.1.1 target="serde_spanned"}: cargo::core::compiler::fingerprint: fingerprint error for serde_spanned v1.1.1/Check { test: false }/TargetInner { ..: lib_target("serde_spanned", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_spanned-1.1.1/src/lib.rs", Edition2024) }
+   1.997102125s  INFO prepare_target{force=false package_id=serde_spanned v1.1.1 target="serde_spanned"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/serde_spanned-1903c8d9bee3169e/lib-serde_spanned`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.998014917s  INFO prepare_target{force=false package_id=toml_datetime v1.1.1+spec-1.1.0 target="toml_datetime"}: cargo::core::compiler::fingerprint: fingerprint error for toml_datetime v1.1.1+spec-1.1.0/Check { test: false }/TargetInner { ..: lib_target("toml_datetime", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_datetime-1.1.1+spec-1.1.0/src/lib.rs", Edition2024) }
+   1.998030167s  INFO prepare_target{force=false package_id=toml_datetime v1.1.1+spec-1.1.0 target="toml_datetime"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/toml_datetime-d8b84f0d186081a4/lib-toml_datetime`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.998559125s  INFO prepare_target{force=false package_id=toml_parser v1.1.3+spec-1.1.0 target="toml_parser"}: cargo::core::compiler::fingerprint: fingerprint error for toml_parser v1.1.3+spec-1.1.0/Check { test: false }/TargetInner { ..: lib_target("toml_parser", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_parser-1.1.3+spec-1.1.0/src/lib.rs", Edition2024) }
+   1.998569417s  INFO prepare_target{force=false package_id=toml_parser v1.1.3+spec-1.1.0 target="toml_parser"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/toml_parser-94791461fe1b3b36/lib-toml_parser`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   1.999401750s  INFO prepare_target{force=false package_id=winnow v1.0.4 target="winnow"}: cargo::core::compiler::fingerprint: fingerprint error for winnow v1.0.4/Check { test: false }/TargetInner { ..: lib_target("winnow", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/winnow-1.0.4/src/lib.rs", Edition2021) }
+   1.999413625s  INFO prepare_target{force=false package_id=winnow v1.0.4 target="winnow"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/winnow-f48d4f095905ef25/lib-winnow`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: cargo::core::compiler::compile
+  11: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  12: cargo::ops::cargo_compile::compile_ws
+  13: cargo::ops::cargo_compile::compile_with_exec
+  14: cargo::ops::cargo_compile::compile
+  15: cargo::commands::check::exec
+  16: <cargo::cli::Exec>::exec
+  17: cargo::main
+  18: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  19: std::rt::lang_start::<()>::{closure#0}
+  20: std::rt::lang_start_internal
+  21: _main
+   2.000852000s  INFO prepare_target{force=false package_id=toml_writer v1.1.2+spec-1.1.0 target="toml_writer"}: cargo::core::compiler::fingerprint: fingerprint error for toml_writer v1.1.2+spec-1.1.0/Check { test: false }/TargetInner { ..: lib_target("toml_writer", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/toml_writer-1.1.2+spec-1.1.0/src/lib.rs", Edition2024) }
+   2.000870000s  INFO prepare_target{force=false package_id=toml_writer v1.1.2+spec-1.1.0 target="toml_writer"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/toml_writer-125a57c9d108eee3/lib-toml_writer`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   2.002106167s  INFO prepare_target{force=false package_id=walkdir v2.5.0 target="walkdir"}: cargo::core::compiler::fingerprint: fingerprint error for walkdir v2.5.0/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("walkdir", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/lib.rs", Edition2018) }
+   2.002119917s  INFO prepare_target{force=false package_id=walkdir v2.5.0 target="walkdir"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/walkdir-eda778e5dc815fef/lib-walkdir`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   2.003728750s  INFO prepare_target{force=false package_id=same-file v1.0.6 target="same_file"}: cargo::core::compiler::fingerprint: fingerprint error for same-file v1.0.6/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("same_file", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/same-file-1.0.6/src/lib.rs", Edition2018) }
+   2.003746667s  INFO prepare_target{force=false package_id=same-file v1.0.6 target="same_file"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/same-file-29a1419850ca90ee/lib-same_file`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   2.035687833s  INFO prepare_target{force=false package_id=sqlx v0.8.6 target="sqlx"}: cargo::core::compiler::fingerprint: fingerprint error for sqlx v0.8.6/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sqlx", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sqlx-0.8.6/src/lib.rs", Edition2021) }
+   2.035713125s  INFO prepare_target{force=false package_id=sqlx v0.8.6 target="sqlx"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/sqlx-4a7ca12bd1cf8f97/lib-sqlx`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   8: cargo::ops::cargo_compile::compile_ws
+   9: cargo::ops::cargo_compile::compile_with_exec
+  10: cargo::ops::cargo_compile::compile
+  11: cargo::commands::check::exec
+  12: <cargo::cli::Exec>::exec
+  13: cargo::main
+  14: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  15: std::rt::lang_start::<()>::{closure#0}
+  16: std::rt::lang_start_internal
+  17: _main
+   2.037312917s  INFO prepare_target{force=false package_id=sqlx-core v0.8.6 target="sqlx_core"}: cargo::core::compiler::fingerprint: fingerprint error for sqlx-core v0.8.6/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sqlx_core", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sqlx-core-0.8.6/src/lib.rs", Edition2021) }
+   2.037336000s  INFO prepare_target{force=false package_id=sqlx-core v0.8.6 target="sqlx_core"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/sqlx-core-4d0cbefee01ab35e/lib-sqlx_core`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   2.043974333s  INFO prepare_target{force=false package_id=sha2 v0.10.8 target="sha2"}: cargo::core::compiler::fingerprint: fingerprint error for sha2 v0.10.8/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sha2", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.8/src/lib.rs", Edition2018) }
+   2.043989875s  INFO prepare_target{force=false package_id=sha2 v0.10.8 target="sha2"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/sha2-261f0e02d4044750/lib-sha2`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   2.045056458s  INFO prepare_target{force=false package_id=tokio-stream v0.1.17 target="tokio_stream"}: cargo::core::compiler::fingerprint: fingerprint error for tokio-stream v0.1.17/Check { test: false }/TargetInner { ..: lib_target("tokio_stream", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-stream-0.1.17/src/lib.rs", Edition2021) }
+   2.045083792s  INFO prepare_target{force=false package_id=tokio-stream v0.1.17 target="tokio_stream"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/tokio-stream-028438cf9873fbb8/lib-tokio_stream`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   2.103663042s  INFO prepare_target{force=false package_id=sqlx-postgres v0.8.6 target="sqlx_postgres"}: cargo::core::compiler::fingerprint: fingerprint error for sqlx-postgres v0.8.6/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("sqlx_postgres", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sqlx-postgres-0.8.6/src/lib.rs", Edition2021) }
+   2.104021125s  INFO prepare_target{force=false package_id=sqlx-postgres v0.8.6 target="sqlx_postgres"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/sqlx-postgres-6e844ffd645928b5/lib-sqlx_postgres`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: <cargo::core::compiler::build_runner::BuildRunner>::compile
+   9: cargo::ops::cargo_compile::compile_ws
+  10: cargo::ops::cargo_compile::compile_with_exec
+  11: cargo::ops::cargo_compile::compile
+  12: cargo::commands::check::exec
+  13: <cargo::cli::Exec>::exec
+  14: cargo::main
+  15: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  16: std::rt::lang_start::<()>::{closure#0}
+  17: std::rt::lang_start_internal
+  18: _main
+   2.107885833s  INFO prepare_target{force=false package_id=hkdf v0.12.4 target="hkdf"}: cargo::core::compiler::fingerprint: fingerprint error for hkdf v0.12.4/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("hkdf", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hkdf-0.12.4/src/lib.rs", Edition2018) }
+   2.107907625s  INFO prepare_target{force=false package_id=hkdf v0.12.4 target="hkdf"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/hkdf-d2ed5344c4f0e7f6/lib-hkdf`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   2.109016125s  INFO prepare_target{force=false package_id=hmac v0.12.1 target="hmac"}: cargo::core::compiler::fingerprint: fingerprint error for hmac v0.12.1/Check { test: false }/TargetInner { name_inferred: true, ..: lib_target("hmac", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hmac-0.12.1/src/lib.rs", Edition2018) }
+   2.109038417s  INFO prepare_target{force=false package_id=hmac v0.12.1 target="hmac"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/hmac-8febc2e89f3317ff/lib-hmac`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: cargo::core::compiler::compile
+  10: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  11: cargo::ops::cargo_compile::compile_ws
+  12: cargo::ops::cargo_compile::compile_with_exec
+  13: cargo::ops::cargo_compile::compile
+  14: cargo::commands::check::exec
+  15: <cargo::cli::Exec>::exec
+  16: cargo::main
+  17: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  18: std::rt::lang_start::<()>::{closure#0}
+  19: std::rt::lang_start_internal
+  20: _main
+   2.111562125s  INFO prepare_target{force=false package_id=md-5 v0.10.6 target="md5"}: cargo::core::compiler::fingerprint: fingerprint error for md-5 v0.10.6/Check { test: false }/TargetInner { ..: lib_target("md5", ["lib"], "/Users/quan/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/md-5-0.10.6/src/lib.rs", Edition2018) }
+   2.111742958s  INFO prepare_target{force=false package_id=md-5 v0.10.6 target="md5"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/md-5-2eeb6b34d1991723/lib-md5`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
+   1: cargo_util::paths::read_bytes
+   2: cargo_util::paths::read
+   3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
+   4: cargo::core::compiler::fingerprint::prepare_target
+   5: cargo::core::compiler::compile
+   6: cargo::core::compiler::compile
+   7: cargo::core::compiler::compile
+   8: cargo::core::compiler::compile
+   9: <cargo::core::compiler::build_runner::BuildRunner>::compile
+  10: cargo::ops::cargo_compile::compile_ws
+  11: cargo::ops::cargo_compile::compile_with_exec
+  12: cargo::ops::cargo_compile::compile
+  13: cargo::commands::check::exec
+  14: <cargo::cli::Exec>::exec
+  15: cargo::main
+  16: std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>
+  17: std::rt::lang_start::<()>::{closure#0}
+  18: std::rt::lang_start_internal
+  19: _main
+   2.121140708s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service)/Check { test: true }/TargetInner { name_inferred: true, ..: lib_target("booking_mini_service", ["lib"], "/Users/quan/Desktop/store-service/booking-mini-service/src/lib.rs", Edition2024) }
+   2.121164625s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking_mini_service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-40824fafac3c4421/test-lib-booking_mini_service`
+
+Caused by:
+    No such file or directory (os error 2)
+
+Stack backtrace:
+   0: <std::backtrace::Backtrace>::create
    1: cargo_util::paths::read_bytes
    2: cargo_util::paths::read
    3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
@@ -49,14 +1902,14 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-   0.259861750s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: false }/TargetInner { name: "booking-mini-service", doc: true, ..: with_path("/Users/chmp/Desktop/store-service/booking-mini-service/src/main.rs", Edition2024) }
-   0.259868875s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-cef41038248eb180/bin-booking-mini-service`
+   2.132343333s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service)/Check { test: false }/TargetInner { name: "booking-mini-service", doc: true, ..: with_path("/Users/quan/Desktop/store-service/booking-mini-service/src/main.rs", Edition2024) }
+   2.132403417s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-eb7574637723b0dd/bin-booking-mini-service`
 
 Caused by:
     No such file or directory (os error 2)
 
 Stack backtrace:
-   0: std::backtrace::Backtrace::create
+   0: <std::backtrace::Backtrace>::create
    1: cargo_util::paths::read_bytes
    2: cargo_util::paths::read
    3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
@@ -73,14 +1926,14 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-   0.260559208s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)/Check { test: true }/TargetInner { name: "booking-mini-service", doc: true, ..: with_path("/Users/chmp/Desktop/store-service/booking-mini-service/src/main.rs", Edition2024) }
-   0.260564667s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/chmp/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-58d06c00e48ef472/test-bin-booking-mini-service`
+   2.136898583s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint: fingerprint error for booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service)/Check { test: true }/TargetInner { name: "booking-mini-service", doc: true, ..: with_path("/Users/quan/Desktop/store-service/booking-mini-service/src/main.rs", Edition2024) }
+   2.136933917s  INFO prepare_target{force=false package_id=booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service) target="booking-mini-service"}: cargo::core::compiler::fingerprint:     err: failed to read `/Users/quan/Desktop/store-service/booking-mini-service/target/debug/.fingerprint/booking-mini-service-b0f15e448f79fb38/test-bin-booking-mini-service`
 
 Caused by:
     No such file or directory (os error 2)
 
 Stack backtrace:
-   0: std::backtrace::Backtrace::create
+   0: <std::backtrace::Backtrace>::create
    1: cargo_util::paths::read_bytes
    2: cargo_util::paths::read
    3: cargo::core::compiler::fingerprint::_compare_old_fingerprint
@@ -97,7 +1950,71 @@ Stack backtrace:
   14: std::rt::lang_start::<()>::{closure#0}
   15: std::rt::lang_start_internal
   16: _main
-    Checking booking-mini-service v0.1.0 (/Users/chmp/Desktop/store-service/booking-mini-service)
-error: could not compile `booking-mini-service` (lib test) due to 9 previous errors; 2 warnings emitted
-warning: build failed, waiting for other jobs to finish...
-error: could not compile `booking-mini-service` (lib) due to 9 previous errors; 2 warnings emitted
+    Checking typenum v1.20.1
+    Checking bytes v1.12.1
+    Checking cmov v0.5.4
+    Checking const-oid v0.10.2
+    Checking rand_core v0.10.1
+    Checking byteorder v1.5.0
+    Checking hashbrown v0.17.1
+    Checking cpufeatures v0.3.0
+    Checking deranged v0.4.0
+    Checking futures-channel v0.3.31
+    Checking getrandom v0.4.3
+    Checking chacha20 v0.10.1
+    Checking ctutils v0.4.2
+    Checking fallible-iterator v0.2.0
+    Checking siphasher v1.0.3
+    Checking rand v0.10.2
+    Checking phf_shared v0.13.1
+    Checking winnow v1.0.4
+    Checking tokio v1.49.0
+    Checking http v0.2.12
+    Checking indexmap v2.14.0
+    Checking phf v0.13.1
+    Checking bytestring v1.4.0
+    Checking toml_parser v1.1.3+spec-1.1.0
+    Checking time v0.3.41
+    Checking serde_spanned v1.1.1
+    Checking toml_datetime v1.1.1+spec-1.1.0
+    Checking generic-array v0.14.7
+    Checking hybrid-array v0.4.14
+    Checking same-file v1.0.6
+    Checking toml_writer v1.1.2+spec-1.1.0
+    Checking whoami v2.1.0
+    Checking walkdir v2.5.0
+    Checking toml v1.1.4+spec-1.1.0
+    Checking actix-router v0.5.3
+    Checking block-buffer v0.12.1
+    Checking crypto-common v0.2.2
+    Checking crypto-common v0.1.6
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking hmac v0.12.1
+    Checking sha2 v0.10.8
+    Checking md-5 v0.10.6
+    Checking sha1 v0.10.6
+    Checking hkdf v0.12.4
+    Checking cookie v0.16.2
+    Checking digest v0.11.3
+    Checking hmac v0.13.0
+    Checking sha2 v0.11.0
+    Checking md-5 v0.11.0
+    Checking postgres-protocol v0.6.12
+    Checking postgres-types v0.2.14
+    Checking tokio-util v0.7.14
+    Checking actix-rt v2.10.0
+    Checking tokio-stream v0.1.17
+    Checking actix-server v2.6.0
+    Checking sqlx-core v0.8.6
+    Checking actix-codec v0.5.2
+    Checking tokio-postgres v0.7.18
+    Checking h2 v0.3.27
+    Checking refinery-core v0.9.2
+    Checking sqlx-postgres v0.8.6
+    Checking refinery v0.9.2
+    Checking actix-http v3.11.2
+    Checking sqlx v0.8.6
+    Checking actix-web v4.12.1
+    Checking booking-mini-service v0.1.0 (/Users/quan/Desktop/store-service/booking-mini-service)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 33.88s
