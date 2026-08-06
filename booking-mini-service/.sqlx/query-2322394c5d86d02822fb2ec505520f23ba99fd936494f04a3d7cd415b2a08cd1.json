@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT PassengerId, Name FROM Passengers WHERE PassengerId = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "passengerid",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "2322394c5d86d02822fb2ec505520f23ba99fd936494f04a3d7cd415b2a08cd1"
+}
