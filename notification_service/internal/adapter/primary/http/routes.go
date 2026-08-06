@@ -18,6 +18,8 @@ func RegisterRoutes(api *gin.RouterGroup, h *Handler) {
 	notifications := api.Group("/notifications")
 	{
 		notifications.POST("", h.CreateNotification)
+		notifications.POST("/email", h.SendEmail)
+		notifications.POST("/slack", h.SendSlack)
 		notifications.GET("", h.ListNotifications)
 		notifications.GET("/:id", h.GetNotification)
 		notifications.PUT("/:id", h.UpdateNotification)

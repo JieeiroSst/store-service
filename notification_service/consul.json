@@ -22,11 +22,8 @@
         "credentialsFile": ""
     },
     "email": {
-        "host": "",
-        "port": 587,
-        "username": "",
-        "password": "",
-        "from": ""
+        "apiKey": "",
+        "from": "onboarding@resend.dev"
     },
     "slack": {
         "webhookSecret": "",

@@ -1,0 +1,3 @@
+{{define "title"}}:bar_chart: Báo cáo ngày {{.Date}}{{end}}
+{{define "text"}}*Tổng đơn hàng:* {{.TotalOrders}}
+*Doanh thu:* {{.Revenue}}{{end}}
