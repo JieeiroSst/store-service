@@ -1,0 +1,82 @@
+name: CDN Service CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'cdn-service/**'
+      - 'chart/cdn-service/**'
+      - '.github/workflows/cdn-service-cicd.yml'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/jieeirosst/cdn-service
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Build
+        run: cd cdn-service && go build -v ./...
+
+      - name: Test
+        run: cd cdn-service && go test -v ./...
+
+  build-and-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./cdn-service
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Helm upgrade cdn service
+        run: |
+          helm upgrade --install cdn-service ./chart/cdn-service \
+            --namespace default \
+            --set cdnService.image.name=${{ env.IMAGE_NAME }} \
+            --set cdnService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            --wait --timeout 5m

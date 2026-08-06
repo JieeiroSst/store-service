@@ -1,0 +1,24 @@
+cdnService:
+  name: cdn-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/cdn-service
+    tag: latest
+    # Must match config.Server.Port* as resolved from Consul, or the
+    # PORT_*_SERVER env var fallbacks (see cdn-service/config/config.go).
+    grpcPort: 2231
+    httpPort: 2234
+    ginPort: 2232
+
+  service:
+    name: cdn-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: cdn-service.local
+    path: /
+    pathType: Prefix

@@ -1,17 +1,10 @@
 package config
 
-import (
-	"encoding/json"
-	"os"
-
-	"github.com/JIeeiroSst/utils/consul"
-	"github.com/joho/godotenv"
-)
+import "os"
 
 type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
-	Cache    CacheConfig
 	BaseHost BaseHostConfig
 }
 
@@ -28,17 +21,6 @@ type PostgresConfig struct {
 	PostgresqlPassword string
 	PostgresqlDbname   string
 	PostgresqlSSLMode  bool
-	PgDriver           string
-}
-
-type Dir struct {
-	HostConsul    string
-	KeyConsul     string
-	ServiceConsul string
-}
-
-type CacheConfig struct {
-	Host string
 }
 
 type BaseHostConfig struct {
@@ -46,35 +28,31 @@ type BaseHostConfig struct {
 	BaseDirUpload   string
 }
 
-func ReadFileEnv(dir string) (*Dir, error) {
-	err := godotenv.Load(dir)
-	if err != nil {
-		return nil, err
+func FromEnv() *Config {
+	return &Config{
+		Server: ServerConfig{
+			PortHttpServer: getEnv("PORT_HTTP_SERVER", "2234"),
+			PortGrpcServer: getEnv("PORT_GRPC_SERVER", "2231"),
+			PortGinServer:  getEnv("PORT_GIN_SERVER", "2232"),
+		},
+		Postgres: PostgresConfig{
+			PostgresqlHost:     getEnv("POSTGRES_HOST", "localhost"),
+			PostgresqlPort:     getEnv("POSTGRES_PORT", "5432"),
+			PostgresqlUser:     getEnv("POSTGRES_USER", "postgres"),
+			PostgresqlPassword: getEnv("POSTGRES_PASSWORD", ""),
+			PostgresqlDbname:   getEnv("POSTGRES_DBNAME", "cdn"),
+			PostgresqlSSLMode:  getEnv("POSTGRES_SSLMODE", "disable") == "require",
+		},
+		BaseHost: BaseHostConfig{
+			DominServiceURL: getEnv("DOMAIN_SERVICE_URL", "http://localhost:2232"),
+			BaseDirUpload:   getEnv("BASE_DIR_UPLOAD", "./uploads"),
+		},
 	}
-
-	data := &Dir{
-		HostConsul:    os.Getenv("HostConsul"),
-		KeyConsul:     os.Getenv("KeyConsul"),
-		ServiceConsul: os.Getenv("ServiceConsul"),
-	}
-	return data, nil
 }
 
-func InitializeConfiguration(dir string) (*Config, error) {
-	err := godotenv.Load(dir)
-	if err != nil {
-		return nil, err
+func getEnv(key, fallback string) string {
+	if v, ok := os.LookupEnv(key); ok {
+		return v
 	}
-
-	consul := consul.NewConfigConsul(os.Getenv("HostConsul"), os.Getenv("KeyConsul"), os.Getenv("ServiceConsul"))
-	conf, err := consul.ConnectConfigConsul()
-	if err != nil {
-		return nil, err
-	}
-	var config Config
-	if err := json.Unmarshal(conf, &config); err != nil {
-		return nil, err
-	}
-
-	return &config, nil
+	return fallback
 }
