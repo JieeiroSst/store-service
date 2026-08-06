@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.bookingMiniService.name }}-deployment
+spec:
+  replicas: {{ .Values.bookingMiniService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.bookingMiniService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.bookingMiniService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.bookingMiniService.name }}-deployment
+        image: {{ .Values.bookingMiniService.image.name }}:{{ .Values.bookingMiniService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.bookingMiniService.image.port }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: booking-mini-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.bookingMiniService.service.name }}
+spec:
+  type: {{ .Values.bookingMiniService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.bookingMiniService.image.port }}
+  selector:
+    app: {{ .Values.bookingMiniService.name }}-deployment

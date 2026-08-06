@@ -1,0 +1,23 @@
+{{- if .Values.bookingMiniService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.bookingMiniService.name }}-ingress
+  {{- with .Values.bookingMiniService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.bookingMiniService.ingress.className }}
+  rules:
+  - host: {{ .Values.bookingMiniService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.bookingMiniService.ingress.path }}
+        pathType: {{ .Values.bookingMiniService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.bookingMiniService.service.name }}
+            port:
+              number: 80
+{{- end }}

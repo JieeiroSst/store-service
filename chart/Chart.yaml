@@ -147,3 +147,7 @@ dependencies:
     name: notification-service
     version: "0.1.0"
     repository: file://notification-service
+  - alias: bookingMiniService
+    name: booking-mini-service
+    version: "0.1.0"
+    repository: file://booking-mini-service
