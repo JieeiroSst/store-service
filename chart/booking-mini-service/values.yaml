@@ -1,0 +1,22 @@
+bookingMiniService:
+  name: booking-mini-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/booking-mini-service
+    tag: latest
+    # Must match the PORT resolved from Consul KV at startup
+    # (see booking-mini-service/src/adapters/consul.rs).
+    port: 3000
+
+  service:
+    name: booking-mini-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: booking-mini-service.local
+    path: /
+    pathType: Prefix
