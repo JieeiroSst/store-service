@@ -44,11 +44,8 @@ type FirebaseConfig struct {
 }
 
 type EmailConfig struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	From     string
+	APIKey string
+	From   string
 }
 
 type SlackConfig struct {
@@ -103,11 +100,8 @@ func FromEnv() *Config {
 			CredentialsFile: getEnv("FIREBASE_CREDENTIALS_FILE", ""),
 		},
 		Email: EmailConfig{
-			Host:     getEnv("SMTP_HOST", ""),
-			Port:     getEnvInt("SMTP_PORT", 587),
-			Username: getEnv("SMTP_USERNAME", ""),
-			Password: getEnv("SMTP_PASSWORD", ""),
-			From:     getEnv("SMTP_FROM", ""),
+			APIKey: getEnv("RESEND_API_KEY", ""),
+			From:   getEnv("RESEND_FROM", "onboarding@resend.dev"),
 		},
 		Slack: SlackConfig{
 			WebhookSecret: getEnv("SLACK_WEBHOOK_SECRET", ""),

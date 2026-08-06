@@ -10,12 +10,14 @@ import (
 )
 
 type notificationService struct {
-	repo       port.NotificationRepository
-	deviceRepo port.UserDeviceRepository
-	publisher  port.NotificationPublisher
-	push       port.PushSender
-	email      port.EmailSender
-	slack      port.SlackSender
+	repo          port.NotificationRepository
+	deviceRepo    port.UserDeviceRepository
+	publisher     port.NotificationPublisher
+	push          port.PushSender
+	email         port.EmailSender
+	slack         port.SlackSender
+	template      port.TemplateRenderer
+	slackTemplate port.SlackTemplateRenderer
 }
 
 func NewNotificationService(
@@ -25,14 +27,18 @@ func NewNotificationService(
 	push port.PushSender,
 	email port.EmailSender,
 	slack port.SlackSender,
+	template port.TemplateRenderer,
+	slackTemplate port.SlackTemplateRenderer,
 ) port.NotificationUsecase {
 	return &notificationService{
-		repo:       repo,
-		deviceRepo: deviceRepo,
-		publisher:  publisher,
-		push:       push,
-		email:      email,
-		slack:      slack,
+		repo:          repo,
+		deviceRepo:    deviceRepo,
+		publisher:     publisher,
+		push:          push,
+		email:         email,
+		slack:         slack,
+		template:      template,
+		slackTemplate: slackTemplate,
 	}
 }
 
@@ -94,12 +100,46 @@ func (s *notificationService) send(ctx context.Context, notification *model.Noti
 	case "push":
 		return s.sendPush(ctx, notification)
 	case "email":
-		return s.email.Send(ctx, []string{notification.Recipient}, notification.Title, notification.Message)
+		return s.sendEmail(ctx, notification)
 	case "slack":
-		return s.slack.Send(ctx, notification.Title, notification.Message)
+		return s.sendSlack(ctx, notification)
 	default:
 		return common.ErrInvalidRequest
 	}
+}
+
+// sendSlack sends Title/Message as-is unless TemplateType is set, in which
+// case the title and mrkdwn text are rendered from that template with
+// TemplateData instead.
+func (s *notificationService) sendSlack(ctx context.Context, notification *model.Notification) error {
+	title, text := notification.Title, notification.Message
+
+	if notification.TemplateType != "" {
+		renderedTitle, renderedText, err := s.slackTemplate.Render(notification.TemplateType, notification.TemplateData)
+		if err != nil {
+			return err
+		}
+		title, text = renderedTitle, renderedText
+	}
+
+	return s.slack.Send(ctx, title, text)
+}
+
+// sendEmail sends Title/Message as-is unless TemplateType is set, in which
+// case the subject and HTML body are rendered from that template with
+// TemplateData instead.
+func (s *notificationService) sendEmail(ctx context.Context, notification *model.Notification) error {
+	subject, body := notification.Title, notification.Message
+
+	if notification.TemplateType != "" {
+		renderedSubject, renderedHTML, err := s.template.Render(notification.TemplateType, notification.TemplateData)
+		if err != nil {
+			return err
+		}
+		subject, body = renderedSubject, renderedHTML
+	}
+
+	return s.email.Send(ctx, []string{notification.Recipient}, subject, body)
 }
 
 func (s *notificationService) sendPush(ctx context.Context, notification *model.Notification) error {

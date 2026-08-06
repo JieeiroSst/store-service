@@ -104,5 +104,8 @@ dependencies:
 - name: notification-service
   repository: file://notification-service
   version: 0.1.0
-digest: sha256:4cf3f209febcc5163c0bbb309e11d979c8b5613d2dca6eaeec5486fc39a10415
-generated: "2026-07-27T07:47:52.346938+07:00"
+- name: booking-mini-service
+  repository: file://booking-mini-service
+  version: 0.1.0
+digest: sha256:daa282f92d6411d31d2d401db15005a18f405e6f3db77d8413520a7db1fb13d5
+generated: "2026-08-06T21:40:04.611093+07:00"

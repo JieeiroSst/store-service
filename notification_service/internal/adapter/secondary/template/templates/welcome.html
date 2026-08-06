@@ -1,0 +1,11 @@
+{{define "subject"}}Chào mừng {{.Name}} đến với chúng tôi!{{end}}
+{{define "html"}}
+<!DOCTYPE html>
+<html>
+  <body style="font-family: sans-serif; color: #1a1a1a;">
+    <h2>Xin chào {{.Name}},</h2>
+    <p>Cảm ơn bạn đã đăng ký tài khoản với email <strong>{{.Email}}</strong>.</p>
+    <p>Chúc bạn có trải nghiệm tốt cùng chúng tôi!</p>
+  </body>
+</html>
+{{end}}

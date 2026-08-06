@@ -15,12 +15,12 @@ type emailSender struct {
 }
 
 func NewEmailSender(cfg *config.Config) port.EmailSender {
-	if cfg.Email.Host == "" {
-		log.Println("smtp host not configured, email notifications disabled")
+	if cfg.Email.APIKey == "" {
+		log.Println("resend api key not configured, email notifications disabled")
 		return &emailSender{}
 	}
 	return &emailSender{
-		client: email.NewClient(cfg.Email.Host, cfg.Email.Port, cfg.Email.Username, cfg.Email.Password, cfg.Email.From),
+		client: email.NewClient(cfg.Email.APIKey, cfg.Email.From),
 	}
 }
 

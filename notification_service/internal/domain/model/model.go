@@ -28,6 +28,13 @@ type Notification struct {
 	CreatedAt  time.Time `json:"created_at" gorm:"column:created_at"`
 	SentAt     time.Time `json:"sent_at" gorm:"column:sent_at"`
 	RetryCount int       `json:"retry_count" gorm:"column:retry_count"`
+
+	// TemplateType selects an HTML email template (see
+	// internal/adapter/secondary/template/templates); TemplateData supplies
+	// the {{.Key}} placeholder values for it. Only used when Type == "email".
+	// When TemplateType is empty, Title/Message are sent as-is instead.
+	TemplateType string            `json:"template_type,omitempty" gorm:"column:template_type"`
+	TemplateData map[string]string `json:"template_data,omitempty" gorm:"column:template_data;serializer:json"`
 }
 
 func (Notification) TableName() string {

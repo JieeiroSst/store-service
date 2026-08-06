@@ -1,0 +1,4 @@
+{{define "title"}}:rotating_light: Cảnh báo: {{.AlertName}}{{end}}
+{{define "text"}}*Mức độ:* {{.Severity}}
+*Dịch vụ:* {{.Service}}
+*Chi tiết:* {{.Message}}{{end}}

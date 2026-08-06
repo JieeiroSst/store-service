@@ -1,0 +1,2 @@
+{{define "title"}}:package: Đơn hàng #{{.OrderID}} - {{.Status}}{{end}}
+{{define "text"}}Đơn hàng *#{{.OrderID}}* của khách hàng *{{.CustomerName}}* vừa chuyển sang trạng thái `{{.Status}}`.{{end}}

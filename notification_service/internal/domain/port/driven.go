@@ -38,3 +38,17 @@ type EmailSender interface {
 type SlackSender interface {
 	Send(ctx context.Context, title, message string) error
 }
+
+// TemplateRenderer renders a named email template (subject + HTML body),
+// substituting placeholders from data. templateType selects the template
+// file (see internal/adapter/secondary/template/templates).
+type TemplateRenderer interface {
+	Render(templateType string, data map[string]string) (subject string, html string, err error)
+}
+
+// SlackTemplateRenderer renders a named Slack message template (title +
+// mrkdwn text), substituting placeholders from data. templateType selects
+// the template file (see internal/adapter/secondary/slacktemplate/templates).
+type SlackTemplateRenderer interface {
+	Render(templateType string, data map[string]string) (title string, text string, err error)
+}

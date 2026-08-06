@@ -6,6 +6,8 @@ import (
 	"github.com/JIeeiroSst/nofitifaction-service/internal/adapter/secondary/notifier"
 	"github.com/JIeeiroSst/nofitifaction-service/internal/adapter/secondary/publisher"
 	"github.com/JIeeiroSst/nofitifaction-service/internal/adapter/secondary/repository"
+	"github.com/JIeeiroSst/nofitifaction-service/internal/adapter/secondary/slacktemplate"
+	emailtemplate "github.com/JIeeiroSst/nofitifaction-service/internal/adapter/secondary/template"
 	"github.com/JIeeiroSst/nofitifaction-service/internal/application"
 	"github.com/JIeeiroSst/nofitifaction-service/internal/infrastructure/database"
 	"github.com/JIeeiroSst/nofitifaction-service/internal/infrastructure/queue"
@@ -20,9 +22,11 @@ var Module = fx.Options(
 	database.Module, // *gorm.DB
 	queue.Module,    // rabbitmq.RabbitMQ
 
-	repository.Module, // port.*Repository
-	notifier.Module,   // port.PushSender / EmailSender / SlackSender
-	publisher.Module,  // port.NotificationPublisher
+	repository.Module,    // port.*Repository
+	notifier.Module,      // port.PushSender / EmailSender / SlackSender
+	publisher.Module,     // port.NotificationPublisher
+	emailtemplate.Module, // port.TemplateRenderer
+	slacktemplate.Module, // port.SlackTemplateRenderer
 
 	application.Module, // port.*Usecase
 
