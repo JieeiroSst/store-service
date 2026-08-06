@@ -1,0 +1,16 @@
+{
+    "server": {
+        "serverPort": "8000"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "5432",
+        "postgresqlUser": "postgres",
+        "postgresqlPassword": "postgres",
+        "postgresqlDbname": "book_store",
+        "postgresqlSSLMode": false
+    },
+    "secret": {
+        "authorizeKey": ""
+    }
+}

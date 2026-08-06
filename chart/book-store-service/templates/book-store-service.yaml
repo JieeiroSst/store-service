@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.bookStoreService.name }}-deployment
+spec:
+  replicas: {{ .Values.bookStoreService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.bookStoreService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.bookStoreService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.bookStoreService.name }}-deployment
+        image: {{ .Values.bookStoreService.image.name }}:{{ .Values.bookStoreService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.bookStoreService.image.port }}
+        env:
+          - name: PORT
+            value: "{{ .Values.bookStoreService.image.port }}"
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: book-store-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.bookStoreService.service.name }}
+spec:
+  type: {{ .Values.bookStoreService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.bookStoreService.image.port }}
+  selector:
+    app: {{ .Values.bookStoreService.name }}-deployment
