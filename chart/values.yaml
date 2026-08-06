@@ -159,3 +159,24 @@ notificationService:
     host: notification-service.local
     path: /
     pathType: Prefix
+
+bookStoreService:
+  name: book-store-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/book-store-service
+    tag: latest
+    port: 8000
+
+  service:
+    name: book-store-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: book-store-service.local
+    path: /
+    pathType: Prefix

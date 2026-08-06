@@ -107,5 +107,8 @@ dependencies:
 - name: booking-mini-service
   repository: file://booking-mini-service
   version: 0.1.0
-digest: sha256:daa282f92d6411d31d2d401db15005a18f405e6f3db77d8413520a7db1fb13d5
-generated: "2026-08-06T21:40:04.611093+07:00"
+- name: book-store-service
+  repository: file://book-store-service
+  version: 0.1.0
+digest: sha256:aebe044b6db04631204650dd0622b6cbb5b4284ea5ffdb84f6623bdf413f1a75
+generated: "2026-08-06T22:34:04.029131+07:00"

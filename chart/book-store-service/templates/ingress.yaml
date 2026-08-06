@@ -1,0 +1,23 @@
+{{- if .Values.bookStoreService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.bookStoreService.name }}-ingress
+  {{- with .Values.bookStoreService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.bookStoreService.ingress.className }}
+  rules:
+  - host: {{ .Values.bookStoreService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.bookStoreService.ingress.path }}
+        pathType: {{ .Values.bookStoreService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.bookStoreService.service.name }}
+            port:
+              number: 80
+{{- end }}

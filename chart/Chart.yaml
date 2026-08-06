@@ -151,3 +151,7 @@ dependencies:
     name: booking-mini-service
     version: "0.1.0"
     repository: file://booking-mini-service
+  - alias: bookStoreService
+    name: book-store-service
+    version: "0.1.0"
+    repository: file://book-store-service
