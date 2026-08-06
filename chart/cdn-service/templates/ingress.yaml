@@ -1,0 +1,23 @@
+{{- if .Values.cdnService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.cdnService.name }}-ingress
+  {{- with .Values.cdnService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.cdnService.ingress.className }}
+  rules:
+  - host: {{ .Values.cdnService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.cdnService.ingress.path }}
+        pathType: {{ .Values.cdnService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.cdnService.service.name }}
+            port:
+              number: 80
+{{- end }}

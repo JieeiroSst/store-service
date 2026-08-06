@@ -155,3 +155,7 @@ dependencies:
     name: book-store-service
     version: "0.1.0"
     repository: file://book-store-service
+  - alias: cdnService
+    name: cdn-service
+    version: "0.1.0"
+    repository: file://cdn-service

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.cdnService.name }}-deployment
+spec:
+  replicas: {{ .Values.cdnService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.cdnService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.cdnService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.cdnService.name }}-deployment
+        image: {{ .Values.cdnService.image.name }}:{{ .Values.cdnService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: grpc
+          containerPort: {{ .Values.cdnService.image.grpcPort }}
+        - name: http-gateway
+          containerPort: {{ .Values.cdnService.image.httpPort }}
+        - name: gin
+          containerPort: {{ .Values.cdnService.image.ginPort }}
+        env:
+          - name: PORT_GRPC_SERVER
+            value: "{{ .Values.cdnService.image.grpcPort }}"
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.cdnService.image.httpPort }}"
+          - name: PORT_GIN_SERVER
+            value: "{{ .Values.cdnService.image.ginPort }}"
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: cdn-service.env
+        - name: uploads
+          mountPath: /app/uploads
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+      - name: uploads
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.cdnService.service.name }}
+spec:
+  type: {{ .Values.cdnService.service.type }}
+  ports:
+  - name: grpc
+    port: {{ .Values.cdnService.image.grpcPort }}
+    targetPort: {{ .Values.cdnService.image.grpcPort }}
+  - name: http-gateway
+    port: {{ .Values.cdnService.image.httpPort }}
+    targetPort: {{ .Values.cdnService.image.httpPort }}
+  - name: gin
+    port: 80
+    targetPort: {{ .Values.cdnService.image.ginPort }}
+  selector:
+    app: {{ .Values.cdnService.name }}-deployment
