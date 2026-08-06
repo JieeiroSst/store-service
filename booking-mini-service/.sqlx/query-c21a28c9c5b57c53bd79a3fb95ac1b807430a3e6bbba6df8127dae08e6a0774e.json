@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO Passengers (Name) VALUES ($1) RETURNING PassengerId",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "passengerid",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "c21a28c9c5b57c53bd79a3fb95ac1b807430a3e6bbba6df8127dae08e6a0774e"
+}

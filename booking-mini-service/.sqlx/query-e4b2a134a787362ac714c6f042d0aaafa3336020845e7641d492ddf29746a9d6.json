@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            UPDATE Bookings\n            SET FromDate = $1, ToDate = $2, RoomNo = $3, PassengerId = $4\n            WHERE BookingId = $5\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Date",
+        "Date",
+        "Int4",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "e4b2a134a787362ac714c6f042d0aaafa3336020845e7641d492ddf29746a9d6"
+}

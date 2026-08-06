@@ -1,0 +1,58 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT r.RoomNo, rt.RoomTypeId, rt.Description, rt.Capacity,\n               s.BedType as \"bed_type?\",\n               d.BedCount as \"bed_count?\",\n               su.Amenities as \"amenities?\"\n        FROM Rooms r\n        JOIN RoomTypes rt ON r.RoomTypeId = rt.RoomTypeId\n        LEFT JOIN Singles s ON r.RoomNo = s.RoomNo\n        LEFT JOIN Doubles d ON r.RoomNo = d.RoomNo\n        LEFT JOIN Suites su ON r.RoomNo = su.RoomNo\n        WHERE r.RoomNo = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "roomno",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "roomtypeid",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "capacity",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "bed_type?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "bed_count?",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "amenities?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "8349af64d0512fadc845be6a4a610ebfdfb0e49e0241d271835d7d976aa97ea8"
+}

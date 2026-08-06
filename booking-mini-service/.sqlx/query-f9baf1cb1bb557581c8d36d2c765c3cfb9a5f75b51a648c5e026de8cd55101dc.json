@@ -1,0 +1,59 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT r.RoomNo, rt.RoomTypeId, rt.Description, rt.Capacity,\n               s.BedType as \"bed_type?\",\n               d.BedCount as \"bed_count?\",\n               su.Amenities as \"amenities?\"\n        FROM Rooms r\n        JOIN RoomTypes rt ON r.RoomTypeId = rt.RoomTypeId\n        LEFT JOIN Singles s ON r.RoomNo = s.RoomNo\n        LEFT JOIN Doubles d ON r.RoomNo = d.RoomNo\n        LEFT JOIN Suites su ON r.RoomNo = su.RoomNo\n        WHERE r.RoomNo NOT IN (\n            SELECT RoomNo\n            FROM Bookings\n            WHERE (FromDate <= $1 AND ToDate > $1)  -- Booking starts before and ends after from_date\n               OR (FromDate < $2 AND ToDate >= $2)  -- Booking starts before and ends after to_date\n               OR (FromDate >= $1 AND ToDate <= $2) -- Booking is completely within requested range\n        )\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "roomno",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "roomtypeid",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "capacity",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "bed_type?",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 5,
+        "name": "bed_count?",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 6,
+        "name": "amenities?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Date",
+        "Date"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "f9baf1cb1bb557581c8d36d2c765c3cfb9a5f75b51a648c5e026de8cd55101dc"
+}

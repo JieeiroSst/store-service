@@ -1,0 +1,25 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO Bookings (FromDate, ToDate, RoomNo, PassengerId)\n            VALUES ($1, $2, $3, $4)\n            RETURNING BookingId\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "bookingid",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Date",
+        "Date",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "1d90f03ca9bc650ecadad2a56b1c79b9109dc276dfea70107a834e510d74be6c"
+}
