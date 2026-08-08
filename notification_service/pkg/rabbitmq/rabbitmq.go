@@ -176,8 +176,20 @@ func (s *rabbitMQ) StartConsumer(fn func(notification model.Notification) error)
 	}
 	defer ch.Close()
 
-	msgs, err := ch.Consume(
+	q, err := ch.QueueDeclare(
 		"notifications",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	msgs, err := ch.Consume(
+		q.Name,
 		"",
 		false,
 		false,
