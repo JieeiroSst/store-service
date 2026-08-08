@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.automaticPayment.name }}-deployment
 spec:
+{{- if not .Values.automaticPayment.autoscaling.enabled }}
   replicas: {{ .Values.automaticPayment.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.automaticPayment.name }}-deployment
@@ -21,6 +23,8 @@ spec:
         env:
           - name: HTTP_PORT
             value: "{{ .Values.automaticPayment.image.port }}"
+        resources:
+          {{- toYaml .Values.automaticPayment.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

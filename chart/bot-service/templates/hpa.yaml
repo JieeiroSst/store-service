@@ -1,0 +1,20 @@
+{{- if .Values.botService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.botService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.botService.name }}-deployment
+  minReplicas: {{ .Values.botService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.botService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.botService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

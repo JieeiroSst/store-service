@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.notificationService.name }}-deployment
 spec:
+{{- if not .Values.notificationService.autoscaling.enabled }}
   replicas: {{ .Values.notificationService.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.notificationService.name }}-deployment
@@ -21,6 +23,8 @@ spec:
         env:
           - name: PORT
             value: "{{ .Values.notificationService.image.port }}"
+        resources:
+          {{- toYaml .Values.notificationService.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

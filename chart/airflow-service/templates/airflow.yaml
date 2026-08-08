@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.airflow.name }}-deployment
 spec:
+{{- if not .Values.airflow.autoscaling.enabled }}
   replicas: {{ .Values.airflow.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.airflow.name }}-deployment
@@ -21,6 +23,8 @@ spec:
         env:
           - name: SERVER_PORT
             value: "{{ .Values.airflow.image.port }}"
+        resources:
+          {{- toYaml .Values.airflow.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

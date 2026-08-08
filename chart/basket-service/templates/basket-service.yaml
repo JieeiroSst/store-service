@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.basketService.name }}-deployment
 spec:
+{{- if not .Values.basketService.autoscaling.enabled }}
   replicas: {{ .Values.basketService.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.basketService.name }}-deployment
@@ -21,6 +23,8 @@ spec:
         env:
           - name: PORT
             value: "{{ .Values.basketService.image.port }}"
+        resources:
+          {{- toYaml .Values.basketService.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

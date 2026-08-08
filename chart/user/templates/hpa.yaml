@@ -1,0 +1,41 @@
+{{- if .Values.userApi.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.userApi.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.userApi.name }}-deployment
+  minReplicas: {{ .Values.userApi.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.userApi.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.userApi.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
+---
+{{- if .Values.userGrpc.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.userGrpc.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.userGrpc.name }}-deployment
+  minReplicas: {{ .Values.userGrpc.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.userGrpc.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.userGrpc.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

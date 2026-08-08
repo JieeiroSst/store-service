@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.bankingService.name }}-deployment
 spec:
+{{- if not .Values.bankingService.autoscaling.enabled }}
   replicas: {{ .Values.bankingService.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.bankingService.name }}-deployment
@@ -21,6 +23,8 @@ spec:
         env:
           - name: PORT
             value: "{{ .Values.bankingService.image.port }}"
+        resources:
+          {{- toYaml .Values.bankingService.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

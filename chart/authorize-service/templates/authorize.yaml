@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.authorize.name }}-deployment
 spec:
+{{- if not .Values.authorize.autoscaling.enabled }}
   replicas: {{ .Values.authorize.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.authorize.name }}-deployment
@@ -21,6 +23,8 @@ spec:
           containerPort: {{ .Values.authorize.image.httpPort }}
         - name: grpc
           containerPort: {{ .Values.authorize.image.grpcPort }}
+        resources:
+          {{- toYaml .Values.authorize.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

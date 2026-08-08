@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.admanagement.name }}-deployment
 spec:
+{{- if not .Values.admanagement.autoscaling.enabled }}
   replicas: {{ .Values.admanagement.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.admanagement.name }}-deployment
@@ -21,6 +23,8 @@ spec:
         env:
           - name: SERVER_PORT
             value: "{{ .Values.admanagement.image.port }}"
+        resources:
+          {{- toYaml .Values.admanagement.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env
