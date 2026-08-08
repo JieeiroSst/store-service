@@ -110,5 +110,11 @@ dependencies:
 - name: book-store-service
   repository: file://book-store-service
   version: 0.1.0
-digest: sha256:aebe044b6db04631204650dd0622b6cbb5b4284ea5ffdb84f6623bdf413f1a75
-generated: "2026-08-06T22:34:04.029131+07:00"
+- name: cdn-service
+  repository: file://cdn-service
+  version: 0.1.0
+- name: bot-service
+  repository: file://bot-service
+  version: 0.1.0
+digest: sha256:13bfc283e03dc385b400b944c996ba0db29170f8e765e1cb7180a4cb0b038c49
+generated: "2026-08-09T01:43:16.802574+07:00"
