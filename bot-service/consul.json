@@ -1,0 +1,38 @@
+{
+    "server": {
+        "portHttpServer": "8080"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "5432",
+        "postgresqlUser": "postgres",
+        "postgresqlPassword": "postgres",
+        "postgresqlDbname": "bot_service",
+        "postgresqlSSLMode": false
+    },
+    "scheduler": {
+        "pollInterval": "30s"
+    },
+    "telegram": {
+        "botToken": "",
+        "debug": false,
+        "broadcastChatID": ""
+    },
+    "twitter": {
+        "enabled": false,
+        "userId": "",
+        "bearerToken": "",
+        "consumerKey": "",
+        "consumerSecret": "",
+        "accessToken": "",
+        "accessTokenSecret": "",
+        "pollIntervalSeconds": 60
+    },
+    "facebook": {
+        "enabled": false,
+        "pageId": "",
+        "pageAccessToken": "",
+        "verifyToken": "",
+        "appSecret": ""
+    }
+}

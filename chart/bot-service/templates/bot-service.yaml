@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.botService.name }}-deployment
+spec:
+  replicas: {{ .Values.botService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.botService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.botService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.botService.name }}-deployment
+        image: {{ .Values.botService.image.name }}:{{ .Values.botService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.botService.image.httpPort }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.botService.image.httpPort }}"
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: bot-service.env
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.botService.image.httpPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.botService.image.httpPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.botService.service.name }}
+spec:
+  type: {{ .Values.botService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.botService.image.httpPort }}
+  selector:
+    app: {{ .Values.botService.name }}-deployment

@@ -159,3 +159,7 @@ dependencies:
     name: cdn-service
     version: "0.1.0"
     repository: file://cdn-service
+  - alias: botService
+    name: bot-service
+    version: "0.1.0"
+    repository: file://bot-service

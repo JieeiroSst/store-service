@@ -1,0 +1,22 @@
+botService:
+  name: bot-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/bot-service
+    tag: latest
+    # Must match config.Server.PortHttpServer / the PORT_HTTP_SERVER env var
+    # fallback (see bot-service/config/config.go).
+    httpPort: 8080
+
+  service:
+    name: bot-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: bot-service.local
+    path: /
+    pathType: Prefix
