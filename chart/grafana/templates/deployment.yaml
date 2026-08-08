@@ -54,6 +54,10 @@ spec:
             mountPath: /var/lib/grafana/dashboards/logs-search.json
             subPath: logs-search.json
             readOnly: false
+          - name: grafana-dashboard-metrics
+            mountPath: /var/lib/grafana/dashboards-metrics/resource-usage.json
+            subPath: resource-usage.json
+            readOnly: false
         securityContext:
           allowPrivilegeEscalation: false
           privileged: false
@@ -75,6 +79,9 @@ spec:
         - name: grafana-dashboard-logs
           configMap:
             name: grafana-dashboard-logs
+        - name: grafana-dashboard-metrics
+          configMap:
+            name: grafana-dashboard-metrics
         - name: grafana-storage
           emptyDir:
             sizeLimit: "1Gi"

@@ -16,3 +16,11 @@ data:
         updateIntervalSeconds: 30
         options:
           path: /var/lib/grafana/dashboards
+      - name: metrics
+        orgId: 1
+        folder: "Metrics"
+        type: file
+        disableDeletion: false
+        updateIntervalSeconds: 30
+        options:
+          path: /var/lib/grafana/dashboards-metrics
