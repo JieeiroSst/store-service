@@ -73,10 +73,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade notification service
+      - name: Deploy notification service
+        # These resources are owned by the umbrella "chart-1785009827" helm
+        # release (chart/), not a standalone release. `helm upgrade --install
+        # notification-service ...` fails every run with an ownership
+        # conflict against that release, so render+apply directly instead -
+        # this still triggers a normal rollout since the image tag changes.
         run: |
-          helm upgrade --install notification-service ./chart/notification-service \
+          helm template ./chart/notification-service \
             --namespace default \
             --set notificationService.image.name=${{ env.IMAGE_NAME }} \
             --set notificationService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --wait --timeout 5m
+            | kubectl apply -n default -f -
+          kubectl rollout status deployment/notification-service-deployment -n default --timeout=5m

@@ -74,10 +74,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade arrange service
+      - name: Deploy arrange service
+        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
+        # not a standalone release - render+apply directly to avoid ownership conflicts.
         run: |
-          helm upgrade --install arrange-service ./chart/arrange-service \
-            --namespace default \
-            --set arrange.image.name=${{ env.IMAGE_NAME }} \
-            --set arrange.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --wait --timeout 5m
+          helm template ./chart/arrange-service \
+          --namespace default \
+          --set arrange.image.name=${{ env.IMAGE_NAME }} \
+          --set arrange.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          | kubectl apply -n default -f -
+          kubectl rollout status deployment/arrange-service-deployment -n default --timeout=5m

@@ -73,10 +73,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade bot service
+      - name: Deploy bot service
+        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
+        # not a standalone release - render+apply directly to avoid ownership conflicts.
         run: |
-          helm upgrade --install bot-service ./chart/bot-service \
-            --namespace default \
-            --set botService.image.name=${{ env.IMAGE_NAME }} \
-            --set botService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --wait --timeout 5m
+          helm template ./chart/bot-service \
+          --namespace default \
+          --set botService.image.name=${{ env.IMAGE_NAME }} \
+          --set botService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          | kubectl apply -n default -f -
+          kubectl rollout status deployment/bot-service-deployment -n default --timeout=5m
