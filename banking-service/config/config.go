@@ -2,7 +2,6 @@ package config
 
 import (
 	"os"
-	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -67,36 +66,3 @@ func ReadFileEnv(dir string) (*Dir, error) {
 	return data, nil
 }
 
-func FromEnv() *Config {
-	return &Config{
-		Server: ServerConfig{
-			ServerPort: getEnv("PORT", "3000"),
-			GRPCServer: getEnv("GRPC_SERVER", ""),
-		},
-		Mysql: MysqlConfig{
-			MysqlHost:     getEnv("MYSQL_HOST", "localhost"),
-			MysqlPort:     getEnv("MYSQL_PORT", "3306"),
-			MysqlUser:     getEnv("MYSQL_USER", "root"),
-			MysqlPassword: getEnv("MYSQL_PASSWORD", ""),
-			MysqlDbname:   getEnv("MYSQL_DBNAME", "banking_service"),
-			MysqlSSLMode:  getEnv("MYSQL_SSL_MODE", "false") == "true",
-			MysqlDriver:   getEnv("MYSQL_DRIVER", "mysql"),
-		},
-		Cache: CacheConfig{
-			Host:     getEnv("CACHE_HOST", "localhost:6379"),
-			Password: getEnv("CACHE_PASSWORD", ""),
-		},
-		Kafka: KafkaConfig{
-			Brokers:          strings.Split(getEnv("KAFKA_BROKERS", "localhost:9092"), ","),
-			TransactionTopic: getEnv("KAFKA_TRANSACTION_TOPIC", "banking.transactions"),
-			ConsumerGroup:    getEnv("KAFKA_CONSUMER_GROUP", "banking-service"),
-		},
-	}
-}
-
-func getEnv(key, fallback string) string {
-	if v, ok := os.LookupEnv(key); ok {
-		return v
-	}
-	return fallback
-}

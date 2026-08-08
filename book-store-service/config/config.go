@@ -49,28 +49,3 @@ func ReadFileEnv(dir string) (*Dir, error) {
 	return data, nil
 }
 
-func FromEnv() *Config {
-	return &Config{
-		Server: ServerConfig{
-			ServerPort: getEnv("PORT", "8000"),
-		},
-		Postgres: PostgresConfig{
-			PostgresqlHost:     getEnv("POSTGRES_HOST", "localhost"),
-			PostgresqlPort:     getEnv("POSTGRES_PORT", "5432"),
-			PostgresqlUser:     getEnv("POSTGRES_USER", "postgres"),
-			PostgresqlPassword: getEnv("POSTGRES_PASSWORD", ""),
-			PostgresqlDbname:   getEnv("POSTGRES_DBNAME", "book_store"),
-			PostgresqlSSLMode:  getEnv("POSTGRES_SSLMODE", "disable") == "require",
-		},
-		Secret: SecretConfig{
-			AuthorizeKey: getEnv("AUTHORIZE_KEY", ""),
-		},
-	}
-}
-
-func getEnv(key, fallback string) string {
-	if v, ok := os.LookupEnv(key); ok {
-		return v
-	}
-	return fallback
-}
