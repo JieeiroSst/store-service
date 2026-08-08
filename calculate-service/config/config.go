@@ -1,29 +1,35 @@
 package config
 
-import (
-	"os"
-
-	"github.com/joho/godotenv"
-)
+import "os"
 
 type Config struct {
-	Server   ServerConfig
-	Secret   SecretConfig
-	Nats     NatsConfig
-	Postgres PostgresConfig
-	Cache    CacheConfig
+	Server  ServerConfig
+	Cache   CacheConfig
+	Weather WeatherConfig
 }
 
 type ServerConfig struct {
 	PortServer string
 }
 
-type SecretConfig struct {
-	JwtSecretKey string
+type CacheConfig struct {
+	DNS string
 }
 
-type NatsConfig struct {
-	Dns string
+type WeatherConfig struct {
+	OpenMeteoBaseURL   string
+	NoaaBaseURL        string
+	RainViewerBaseURL  string
+	RequestTimeoutSec  int
+	RefreshIntervalMin int
+	Locations          []LocationConfig
+}
+
+type LocationConfig struct {
+	Name          string
+	Lat           float64
+	Lon           float64
+	TideStationID string
 }
 
 type Dir struct {
@@ -32,30 +38,33 @@ type Dir struct {
 	ServiceConsul string
 }
 
-type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+func FromEnv() *Config {
+	return &Config{
+		Server: ServerConfig{
+			PortServer: getEnv("PORT_SERVER", "1239"),
+		},
+		Cache: CacheConfig{
+			DNS: getEnv("CACHE_DNS", "localhost:6379"),
+		},
+		Weather: WeatherConfig{
+			OpenMeteoBaseURL:   getEnv("OPEN_METEO_BASE_URL", "https://api.open-meteo.com/v1/forecast"),
+			NoaaBaseURL:        getEnv("NOAA_BASE_URL", "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter"),
+			RainViewerBaseURL:  getEnv("RAINVIEWER_BASE_URL", "https://api.rainviewer.com/public/weather-maps.json"),
+			RequestTimeoutSec:  10,
+			RefreshIntervalMin: 15,
+			Locations: []LocationConfig{
+				{Name: "ho-chi-minh-city", Lat: 10.7769, Lon: 106.7009},
+				{Name: "vung-tau", Lat: 10.3460, Lon: 107.0843},
+				{Name: "da-nang", Lat: 16.0544, Lon: 108.2022},
+				{Name: "new-york-the-battery", Lat: 40.7003, Lon: -74.0142, TideStationID: "8518750"},
+			},
+		},
+	}
 }
 
-type CacheConfig struct {
-	DNS string
-}
-
-func ReadFileEnv(dir string) (*Dir, error) {
-	err := godotenv.Load(dir)
-	if err != nil {
-		return nil, err
+func getEnv(key, fallback string) string {
+	if v, ok := os.LookupEnv(key); ok {
+		return v
 	}
-
-	data := &Dir{
-		HostConsul:    os.Getenv("HostConsul"),
-		KeyConsul:     os.Getenv("KeyConsul"),
-		ServiceConsul: os.Getenv("ServiceConsul"),
-	}
-	return data, nil
+	return fallback
 }

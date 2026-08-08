@@ -245,6 +245,23 @@ jobs:
     - name: Test
       run: cd billing-service && go test -v ./...
 
+  calculate_service:
+    name: calculate_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd calculate-service && go build -v ./...
+
+    - name: Test
+      run: cd calculate-service && go test -v ./...
+
   book_store_service:
     name: book_store_service
     runs-on: ubuntu-latest
