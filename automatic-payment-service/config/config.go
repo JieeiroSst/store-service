@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"time"
 
@@ -40,6 +41,10 @@ type GatewayConfig struct {
 	IntegratedPaymentServiceURL string `json:"integratedPaymentServiceUrl"`
 }
 
+// InitializeConfiguration loads configuration exclusively from Consul KV.
+// HostConsul/KeyConsul/ServiceConsul bootstrap coordinates come from the
+// .env file; there is no fallback to reading individual config values from
+// the environment.
 func InitializeConfiguration(ecosystem string) (*Config, error) {
 	_ = godotenv.Load(ecosystem)
 
@@ -47,52 +52,17 @@ func InitializeConfiguration(ecosystem string) (*Config, error) {
 	key := os.Getenv("KeyConsul")
 	service := os.Getenv("ServiceConsul")
 
-	consulClient := consul.NewConfigConsul(host, key, service)
-	data, err := consulClient.ConnectConfigConsul()
-	if err != nil || data == nil {
-		return configFromEnv(), nil
+	data, err := consul.NewConfigConsul(host, key, service).ConnectConfigConsul()
+	if err != nil {
+		return nil, fmt.Errorf("consul config unavailable: %w", err)
+	}
+	if data == nil {
+		return nil, fmt.Errorf("consul returned no config for key %q", key)
 	}
 
 	var cfg Config
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse consul config: %w", err)
 	}
 	return &cfg, nil
-}
-
-func configFromEnv() *Config {
-	return &Config{
-		Server: ServerConfig{
-			HTTPPort: getEnv("HTTP_PORT", "8080"),
-		},
-		Postgres: PostgresConfig{
-			PostgresqlHost:     getEnv("PG_HOST", "localhost"),
-			PostgresqlPort:     getEnv("PG_PORT", "5432"),
-			PostgresqlUser:     getEnv("PG_USER", "postgres"),
-			PostgresqlPassword: getEnv("PG_PASSWORD", ""),
-			PostgresqlDbname:   getEnv("PG_DB", "automatic_payment"),
-		},
-		Billing: BillingConfig{
-			RenewalCheckInterval: getEnvDuration("RENEWAL_CHECK_INTERVAL", 24*time.Hour),
-		},
-		Gateway: GatewayConfig{
-			IntegratedPaymentServiceURL: getEnv("INTEGRATED_PAYMENT_SERVICE_URL", "http://localhost:8080"),
-		},
-	}
-}
-
-func getEnv(key, fallback string) string {
-	if v, ok := os.LookupEnv(key); ok {
-		return v
-	}
-	return fallback
-}
-
-func getEnvDuration(key string, fallback time.Duration) time.Duration {
-	if v, ok := os.LookupEnv(key); ok {
-		if d, err := time.ParseDuration(v); err == nil {
-			return d
-		}
-	}
-	return fallback
 }

@@ -1,37 +1,30 @@
 package infrastructure
 
 import (
-	"context"
 	"encoding/json"
-	"os"
+	"fmt"
 
 	"github.com/JIeeiroSst/calculate-service/config"
 	"github.com/JIeeiroSst/utils/consul"
-	"github.com/JIeeiroSst/utils/logger"
-	"github.com/joho/godotenv"
 )
 
 func newConfig() (*config.Config, error) {
-	_ = godotenv.Load(".env")
-
-	host := os.Getenv("HostConsul")
-	key := os.Getenv("KeyConsul")
-	service := os.Getenv("ServiceConsul")
-
-	if host == "" || key == "" || service == "" {
-		return config.FromEnv(), nil
+	dirEnv, err := config.ReadFileEnv(".env")
+	if err != nil {
+		return nil, err
 	}
 
-	raw, err := consul.NewConfigConsul(host, key, service).ConnectConfigConsul()
-	if err != nil || raw == nil {
-		logger.Error(context.Background(), "consul config unavailable, falling back to env: %v", err)
-		return config.FromEnv(), nil
+	raw, err := consul.NewConfigConsul(dirEnv.HostConsul, dirEnv.KeyConsul, dirEnv.ServiceConsul).ConnectConfigConsul()
+	if err != nil {
+		return nil, fmt.Errorf("consul config unavailable: %w", err)
+	}
+	if raw == nil {
+		return nil, fmt.Errorf("consul returned no config for key %q", dirEnv.KeyConsul)
 	}
 
 	var cfg config.Config
 	if err := json.Unmarshal(raw, &cfg); err != nil {
-		logger.Error(context.Background(), "consul config unmarshal error, falling back to env: %v", err)
-		return config.FromEnv(), nil
+		return nil, fmt.Errorf("failed to parse consul config: %w", err)
 	}
 	return &cfg, nil
 }

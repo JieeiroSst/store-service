@@ -2,7 +2,6 @@ package config
 
 import (
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -73,58 +72,3 @@ func ReadFileEnv(dir string) (*Dir, error) {
 	return data, nil
 }
 
-// FromEnv builds configuration straight from environment variables. Used
-// when Consul is not configured (local dev, CI, Consul-less deployments).
-func FromEnv() *Config {
-	return &Config{
-		Server: ServerConfig{
-			ServerPort: getEnv("PORT", "1235"),
-		},
-		Mysql: MysqlConfig{
-			MysqlHost:     getEnv("MYSQL_HOST", "localhost"),
-			MysqlPort:     getEnv("MYSQL_PORT", "3306"),
-			MysqlUser:     getEnv("MYSQL_USER", "root"),
-			MysqlPassword: getEnv("MYSQL_PASSWORD", ""),
-			MysqlDbname:   getEnv("MYSQL_DBNAME", "notification_service"),
-		},
-		Rabbit: RabbitConfig{
-			Host:        getEnv("RABBIT_HOST", "localhost"),
-			Port:        getEnvInt("RABBIT_PORT", 5672),
-			Username:    getEnv("RABBIT_USERNAME", "guest"),
-			Password:    getEnv("RABBIT_PASSWORD", "guest"),
-			VirtualHost: getEnv("RABBIT_VHOST", "/"),
-			MaxRetries:  getEnvInt("RABBIT_MAX_RETRIES", 5),
-			RetryDelay:  time.Duration(getEnvInt("RABBIT_RETRY_DELAY_SECONDS", 5)) * time.Second,
-		},
-		Firebase: FirebaseConfig{
-			CredentialsFile: getEnv("FIREBASE_CREDENTIALS_FILE", ""),
-		},
-		Email: EmailConfig{
-			APIKey: getEnv("RESEND_API_KEY", ""),
-			From:   getEnv("RESEND_FROM", "onboarding@resend.dev"),
-		},
-		Slack: SlackConfig{
-			WebhookSecret: getEnv("SLACK_WEBHOOK_SECRET", ""),
-			Channel:       getEnv("SLACK_CHANNEL", "#notifications"),
-		},
-	}
-}
-
-func getEnv(key, fallback string) string {
-	if v, ok := os.LookupEnv(key); ok {
-		return v
-	}
-	return fallback
-}
-
-func getEnvInt(key string, fallback int) int {
-	v, ok := os.LookupEnv(key)
-	if !ok {
-		return fallback
-	}
-	n, err := strconv.Atoi(v)
-	if err != nil {
-		return fallback
-	}
-	return n
-}

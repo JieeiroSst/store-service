@@ -1,6 +1,10 @@
 package config
 
-import "os"
+import (
+	"os"
+
+	"github.com/joho/godotenv"
+)
 
 type Config struct {
 	Server   ServerConfig
@@ -32,31 +36,16 @@ type Dir struct {
 	ServiceConsul string
 }
 
-// FromEnv builds configuration straight from environment variables. Used
-// when Consul is not configured (local dev, CI, Consul-less deployments).
-func FromEnv() *Config {
-	return &Config{
-		Server: ServerConfig{
-			ServerPort: getEnv("PORT", "8000"),
-		},
-		Postgres: PostgresConfig{
-			PostgresqlHost:     getEnv("POSTGRES_HOST", "localhost"),
-			PostgresqlPort:     getEnv("POSTGRES_PORT", "5432"),
-			PostgresqlUser:     getEnv("POSTGRES_USER", "timescaledb"),
-			PostgresqlPassword: getEnv("POSTGRES_PASSWORD", "password"),
-			PostgresqlDbname:   getEnv("POSTGRES_DBNAME", "billing"),
-			PostgresqlSSLMode:  getEnv("POSTGRES_SSL_MODE", "false") == "true",
-		},
-		Secret: SecretConfig{
-			JwtSecretKey: getEnv("JWT_SECRET_KEY", ""),
-			AuthorizeKey: getEnv("AUTHORIZE_KEY", ""),
-		},
+func ReadFileEnv(dir string) (*Dir, error) {
+	err := godotenv.Load(dir)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func getEnv(key, fallback string) string {
-	if v, ok := os.LookupEnv(key); ok {
-		return v
+	data := &Dir{
+		HostConsul:    os.Getenv("HostConsul"),
+		KeyConsul:     os.Getenv("KeyConsul"),
+		ServiceConsul: os.Getenv("ServiceConsul"),
 	}
-	return fallback
+	return data, nil
 }

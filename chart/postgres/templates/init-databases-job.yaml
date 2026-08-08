@@ -1,0 +1,60 @@
+# Creates the per-service databases on the shared postgresdb instance.
+# The postgres container only auto-creates POSTGRES_DB (testDB) on first
+# init, so services pointing POSTGRES_DBNAME/PG_DB at their own database
+# (admanagement, book_store, authorize, automatic_payment, billing) need it
+# provisioned separately. Runs as a post-install/post-upgrade hook so it
+# also picks up newly added databases against an already-initialized PVC.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgresdb-init-databases
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: init-databases
+          image: postgres:16
+          env:
+            - name: PGHOST
+              value: postgresdb
+            - name: PGPORT
+              value: "80"
+            - name: PGUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_PASSWORD
+            - name: PGDATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_DB
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              until pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER"; do
+                echo "waiting for postgresdb..."
+                sleep 2
+              done
+              for db in admanagement book_store authorize automatic_payment billing; do
+                exists=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname = '$db'")
+                if [ "$exists" = "1" ]; then
+                  echo "database $db already exists"
+                else
+                  echo "creating database $db"
+                  psql -c "CREATE DATABASE \"$db\""
+                fi
+              done
