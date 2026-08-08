@@ -73,10 +73,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade calculate service
+      - name: Deploy calculate service
+        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
+        # not a standalone release - render+apply directly to avoid ownership conflicts.
         run: |
-          helm upgrade --install calculate-service ./chart/calculate-service \
-            --namespace default \
-            --set calculate.image.name=${{ env.IMAGE_NAME }} \
-            --set calculate.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --wait --timeout 5m
+          helm template ./chart/calculate-service \
+          --namespace default \
+          --set calculate.image.name=${{ env.IMAGE_NAME }} \
+          --set calculate.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          | kubectl apply -n default -f -
+          kubectl rollout status deployment/calculate-service-deployment -n default --timeout=5m

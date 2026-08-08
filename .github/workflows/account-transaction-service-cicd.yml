@@ -73,10 +73,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade account transaction service
+      - name: Deploy account transaction service
+        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
+        # not a standalone release - render+apply directly to avoid ownership conflicts.
         run: |
-          helm upgrade --install account-transaction-service ./chart/account-transaction \
-            --namespace default \
-            --set accountTransaction.image.name=${{ env.IMAGE_NAME }} \
-            --set accountTransaction.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --wait --timeout 5m
+          helm template ./chart/account-transaction \
+          --namespace default \
+          --set accountTransaction.image.name=${{ env.IMAGE_NAME }} \
+          --set accountTransaction.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          | kubectl apply -n default -f -
+          kubectl rollout status deployment/account-transaction-deployment -n default --timeout=5m

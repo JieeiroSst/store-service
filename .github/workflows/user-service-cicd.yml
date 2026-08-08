@@ -73,12 +73,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade user service
+      - name: Deploy user service
+        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
+        # not a standalone release - render+apply directly to avoid ownership conflicts.
         run: |
-          helm upgrade --install user-service ./chart/user \
-            --namespace default \
-            --set userApi.image.name=${{ env.IMAGE_NAME }} \
-            --set userApi.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --set userGrpc.image.name=${{ env.IMAGE_NAME }} \
-            --set userGrpc.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --wait --timeout 5m
+          helm template ./chart/user \
+          --namespace default \
+          --set userApi.image.name=${{ env.IMAGE_NAME }} \
+          --set userApi.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          --set userGrpc.image.name=${{ env.IMAGE_NAME }} \
+          --set userGrpc.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          | kubectl apply -n default -f -
+          kubectl rollout status deployment/user-api-deployment -n default --timeout=5m
+          kubectl rollout status deployment/user-grpc-deployment -n default --timeout=5m

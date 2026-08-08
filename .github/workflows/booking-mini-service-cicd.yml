@@ -83,10 +83,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Helm upgrade booking mini service
+      - name: Deploy booking mini service
+        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
+        # not a standalone release - render+apply directly to avoid ownership conflicts.
         run: |
-          helm upgrade --install booking-mini-service ./chart/booking-mini-service \
-            --namespace default \
-            --set bookingMiniService.image.name=${{ env.IMAGE_NAME }} \
-            --set bookingMiniService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --wait --timeout 5m
+          helm template ./chart/booking-mini-service \
+          --namespace default \
+          --set bookingMiniService.image.name=${{ env.IMAGE_NAME }} \
+          --set bookingMiniService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          | kubectl apply -n default -f -
+          kubectl rollout status deployment/booking-mini-service-deployment -n default --timeout=5m
