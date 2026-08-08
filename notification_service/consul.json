@@ -12,8 +12,8 @@
     "rabbit": {
         "host": "rabbitmq-service",
         "port": 5672,
-        "username": "guest",
-        "password": "guest",
+        "username": "admin",
+        "password": "admin",
         "virtualHost": "/",
         "maxRetries": 5,
         "retryDelay": 5000000000

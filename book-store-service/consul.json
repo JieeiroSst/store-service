@@ -4,9 +4,9 @@
     },
     "postgres": {
         "postgresqlHost": "postgresdb",
-        "postgresqlPort": "5432",
-        "postgresqlUser": "postgres",
-        "postgresqlPassword": "postgres",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
         "postgresqlDbname": "book_store",
         "postgresqlSSLMode": false
     },
