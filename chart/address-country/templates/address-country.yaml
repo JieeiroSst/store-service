@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.addressCountry.name }}-deployment
 spec:
+{{- if not .Values.addressCountry.autoscaling.enabled }}
   replicas: {{ .Values.addressCountry.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.addressCountry.name }}-deployment
@@ -18,6 +20,8 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.addressCountry.image.port }}
+        resources:
+          {{- toYaml .Values.addressCountry.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

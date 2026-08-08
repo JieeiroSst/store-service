@@ -1,0 +1,20 @@
+{{- if .Values.cdnService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.cdnService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.cdnService.name }}-deployment
+  minReplicas: {{ .Values.cdnService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.cdnService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.cdnService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

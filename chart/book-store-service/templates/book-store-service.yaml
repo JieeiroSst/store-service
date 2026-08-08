@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.bookStoreService.name }}-deployment
 spec:
+{{- if not .Values.bookStoreService.autoscaling.enabled }}
   replicas: {{ .Values.bookStoreService.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.bookStoreService.name }}-deployment
@@ -21,6 +23,8 @@ spec:
         env:
           - name: PORT
             value: "{{ .Values.bookStoreService.image.port }}"
+        resources:
+          {{- toYaml .Values.bookStoreService.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

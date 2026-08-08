@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.botService.name }}-deployment
 spec:
+{{- if not .Values.botService.autoscaling.enabled }}
   replicas: {{ .Values.botService.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.botService.name }}-deployment
@@ -22,6 +24,8 @@ spec:
         env:
           - name: PORT_HTTP_SERVER
             value: "{{ .Values.botService.image.httpPort }}"
+        resources:
+          {{- toYaml .Values.botService.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

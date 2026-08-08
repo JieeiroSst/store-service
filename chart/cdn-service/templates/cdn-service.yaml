@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.cdnService.name }}-deployment
 spec:
+{{- if not .Values.cdnService.autoscaling.enabled }}
   replicas: {{ .Values.cdnService.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.cdnService.name }}-deployment
@@ -30,6 +32,8 @@ spec:
             value: "{{ .Values.cdnService.image.httpPort }}"
           - name: PORT_GIN_SERVER
             value: "{{ .Values.cdnService.image.ginPort }}"
+        resources:
+          {{- toYaml .Values.cdnService.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

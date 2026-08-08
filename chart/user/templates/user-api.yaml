@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{.Values.userApi.name}}-deployment
 spec:
+{{- if not .Values.userApi.autoscaling.enabled }}
   replicas: {{.Values.userApi.replicas}}
+{{- end }}
   selector:
     matchLabels:
       app: {{.Values.userApi.name}}-deployment

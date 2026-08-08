@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.accountTransaction.name }}-deployment
 spec:
+{{- if not .Values.accountTransaction.autoscaling.enabled }}
   replicas: {{ .Values.accountTransaction.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.accountTransaction.name }}-deployment
@@ -21,6 +23,8 @@ spec:
           containerPort: {{ .Values.accountTransaction.image.httpPort }}
         - name: grpc
           containerPort: {{ .Values.accountTransaction.image.grpcPort }}
+        resources:
+          {{- toYaml .Values.accountTransaction.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

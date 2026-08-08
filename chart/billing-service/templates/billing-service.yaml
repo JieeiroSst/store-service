@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.billing.name }}-deployment
 spec:
+{{- if not .Values.billing.autoscaling.enabled }}
   replicas: {{ .Values.billing.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.billing.name }}-deployment
@@ -18,6 +20,8 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.billing.image.port }}
+        resources:
+          {{- toYaml .Values.billing.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env

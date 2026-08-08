@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{.Values.userGrpc.name}}-deployment
 spec:
+{{- if not .Values.userGrpc.autoscaling.enabled }}
   replicas: {{.Values.userGrpc.replicas}}
+{{- end }}
   selector:
     matchLabels:
       app: {{.Values.userGrpc.name}}-deployment

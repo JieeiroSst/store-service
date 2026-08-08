@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Values.calculate.name }}-deployment
 spec:
+{{- if not .Values.calculate.autoscaling.enabled }}
   replicas: {{ .Values.calculate.replicas }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Values.calculate.name }}-deployment
@@ -18,6 +20,8 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: {{ .Values.calculate.image.port }}
+        resources:
+          {{- toYaml .Values.calculate.resources | nindent 10 }}
         volumeMounts:
         - name: env-file
           mountPath: /app/.env
