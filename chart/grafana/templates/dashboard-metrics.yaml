@@ -1,0 +1,164 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: grafana-dashboard-metrics
+    labels:
+      app: {{.Values.grafana.name}}-deployment
+data:
+    resource-usage.json: |-
+      {
+        "uid": "service-resource-usage",
+        "title": "Service Resource Usage",
+        "tags": ["metrics", "prometheus"],
+        "timezone": "browser",
+        "schemaVersion": 37,
+        "version": 1,
+        "refresh": "30s",
+        "time": { "from": "now-1h", "to": "now" },
+        "templating": {
+          "list": [
+            {
+              "name": "namespace",
+              "label": "Namespace",
+              "type": "query",
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "query": "label_values(container_memory_working_set_bytes{image!=\"\"}, namespace)",
+              "refresh": 2,
+              "sort": 1,
+              "multi": false,
+              "includeAll": false,
+              "current": { "text": "default", "value": "default" }
+            },
+            {
+              "name": "pod",
+              "label": "Pod",
+              "type": "query",
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "query": "label_values(container_memory_working_set_bytes{image!=\"\", namespace=\"$namespace\"}, pod)",
+              "refresh": 2,
+              "sort": 1,
+              "multi": true,
+              "includeAll": true,
+              "allValue": ".+",
+              "current": { "text": "All", "value": "$__all" }
+            }
+          ]
+        },
+        "panels": [
+          {
+            "id": 1,
+            "type": "stat",
+            "title": "Pods reporting metrics",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+            "targets": [
+              {
+                "refId": "A",
+                "datasource": { "type": "prometheus", "uid": "prometheus" },
+                "expr": "count(count by (pod) (container_memory_working_set_bytes{image!=\"\", namespace=\"$namespace\"}))",
+                "instant": true
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "type": "stat",
+            "title": "Total CPU usage (cores)",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
+            "fieldConfig": { "defaults": { "unit": "short", "decimals": 2 }, "overrides": [] },
+            "targets": [
+              {
+                "refId": "A",
+                "datasource": { "type": "prometheus", "uid": "prometheus" },
+                "expr": "sum(rate(container_cpu_usage_seconds_total{image!=\"\", namespace=\"$namespace\"}[$__rate_interval]))",
+                "instant": true
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "type": "stat",
+            "title": "Total memory usage",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
+            "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+            "targets": [
+              {
+                "refId": "A",
+                "datasource": { "type": "prometheus", "uid": "prometheus" },
+                "expr": "sum(container_memory_working_set_bytes{image!=\"\", namespace=\"$namespace\"})",
+                "instant": true
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "type": "timeseries",
+            "title": "CPU usage by pod",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "gridPos": { "h": 9, "w": 12, "x": 0, "y": 4 },
+            "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+            "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+            "targets": [
+              {
+                "refId": "A",
+                "datasource": { "type": "prometheus", "uid": "prometheus" },
+                "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{image!=\"\", namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+                "legendFormat": {{ `"{{pod}}"` }}
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "type": "timeseries",
+            "title": "Memory usage by pod",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "gridPos": { "h": 9, "w": 12, "x": 12, "y": 4 },
+            "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+            "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+            "targets": [
+              {
+                "refId": "A",
+                "datasource": { "type": "prometheus", "uid": "prometheus" },
+                "expr": "sum by (pod) (container_memory_working_set_bytes{image!=\"\", namespace=\"$namespace\", pod=~\"$pod\"})",
+                "legendFormat": {{ `"{{pod}}"` }}
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "type": "timeseries",
+            "title": "Network receive by pod",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "gridPos": { "h": 9, "w": 12, "x": 0, "y": 13 },
+            "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+            "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+            "targets": [
+              {
+                "refId": "A",
+                "datasource": { "type": "prometheus", "uid": "prometheus" },
+                "expr": "sum by (pod) (rate(container_network_receive_bytes_total{namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+                "legendFormat": {{ `"{{pod}}"` }}
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "type": "timeseries",
+            "title": "Network transmit by pod",
+            "datasource": { "type": "prometheus", "uid": "prometheus" },
+            "gridPos": { "h": 9, "w": 12, "x": 12, "y": 13 },
+            "fieldConfig": { "defaults": { "unit": "Bps", "custom": { "drawStyle": "line", "fillOpacity": 10 } }, "overrides": [] },
+            "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+            "targets": [
+              {
+                "refId": "A",
+                "datasource": { "type": "prometheus", "uid": "prometheus" },
+                "expr": "sum by (pod) (rate(container_network_transmit_bytes_total{namespace=\"$namespace\", pod=~\"$pod\"}[$__rate_interval]))",
+                "legendFormat": {{ `"{{pod}}"` }}
+              }
+            ]
+          }
+        ]
+      }
