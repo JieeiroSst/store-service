@@ -2,18 +2,20 @@
     "server": {
         "PortServer": "1239"
     },
-    "secret": {
-        "AuthorizeKey": "no_name"
+    "cache": {
+        "DNS": "localhost:6379"
     },
-    "postgres": {
-        "PostgresqlHost": "localhost",
-        "PostgresqlPort": "31000",
-        "PostgresqlUser": "postgres",
-        "PostgresqlPassword": "postgres",
-        "PostgresqlDbname": "calculate",
-        "PgDriver": "pgx"
-    },
-    "nats": {
-        "dns": "http://localhost:30002"
+    "weather": {
+        "OpenMeteoBaseURL": "https://api.open-meteo.com/v1/forecast",
+        "NoaaBaseURL": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
+        "RainViewerBaseURL": "https://api.rainviewer.com/public/weather-maps.json",
+        "RequestTimeoutSec": 10,
+        "RefreshIntervalMin": 15,
+        "Locations": [
+            { "Name": "ho-chi-minh-city", "Lat": 10.7769, "Lon": 106.7009 },
+            { "Name": "vung-tau", "Lat": 10.3460, "Lon": 107.0843 },
+            { "Name": "da-nang", "Lat": 16.0544, "Lon": 108.2022 },
+            { "Name": "new-york-the-battery", "Lat": 40.7003, "Lon": -74.0142, "TideStationID": "8518750" }
+        ]
     }
 }
