@@ -203,3 +203,24 @@ cdnService:
     host: cdn-service.local
     path: /
     pathType: Prefix
+
+botService:
+  name: bot-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/bot-service
+    tag: latest
+    httpPort: 8080
+
+  service:
+    name: bot-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: bot-service.local
+    path: /
+    pathType: Prefix
