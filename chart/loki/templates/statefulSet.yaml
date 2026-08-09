@@ -74,6 +74,11 @@ spec:
           configMap:
             name: loki
             defaultMode: 0755
-        - name: storage
-          emptyDir:
-            sizeLimit: "2Gi"
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
