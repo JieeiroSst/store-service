@@ -20,11 +20,22 @@ spec:
         resources:
           requests:
             memory: "1G"
-            cpu: "1"             
+            cpu: "1"
+          limits:
+            memory: "2G"
+            cpu: "2"
         ports:
          - containerPort: 9092
         env:
         - name: KAFKA_CFG_ZOOKEEPER_CONNECT
           value: zookeeper-service:2181
         - name: ALLOW_PLAINTEXT_LISTENER
-          value: "yes" 
+          value: "yes"
+        - name: KAFKA_CFG_LISTENERS
+          value: PLAINTEXT://:9092
+        - name: KAFKA_CFG_ADVERTISED_LISTENERS
+          value: PLAINTEXT://kafka-service:9092
+        - name: KAFKA_CFG_BROKER_ID
+          value: "1001"
+        - name: KAFKA_CFG_BROKER_ID_GENERATION_ENABLE
+          value: "false"
