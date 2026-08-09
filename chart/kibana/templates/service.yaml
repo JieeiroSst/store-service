@@ -6,6 +6,7 @@ spec:
   ports:
   - port: 80
     targetPort: 5601
+    nodePort: 31225
   selector:
     app: kibana-deployment
-  type: LoadBalancer
+  type: NodePort
