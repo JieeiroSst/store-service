@@ -12,12 +12,8 @@ import (
 	"github.com/go-mysql-org/go-mysql/canal"
 )
 
-// ErrRuleNotExist is the error if rule is not defined.
 var ErrRuleNotExist = errors.New("rule is not exist")
 
-// River is a pluggable service within Elasticsearch pulling data then indexing it into Elasticsearch.
-// We use this definition here too, although it may not run within Elasticsearch.
-// Maybe later I can implement a acutal river in Elasticsearch, but I must learn java. :-)
 type River struct {
 	c *Config
 
@@ -288,6 +284,21 @@ func (r *River) Run() error {
 	go r.syncLoop()
 
 	pos := r.master.Position()
+	if len(pos.Name) == 0 {
+		masterPos, err := r.canal.GetMasterPos()
+		if err != nil {
+			canalSyncState.Set(0)
+			return err
+		}
+
+		if err := r.Backfill(); err != nil {
+			canalSyncState.Set(0)
+			return err
+		}
+
+		pos = masterPos
+	}
+
 	if err := r.canal.RunFrom(pos); err != nil {
 		canalSyncState.Set(0)
 		return err

@@ -1,14 +1,16 @@
-FROM golang:alpine
+FROM golang:1.25-alpine AS builder
 
-MAINTAINER siddontang
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -o /out/sync-mysql-elasticsearch ./cmd
 
-RUN apk add --no-cache tini mariadb-client
+FROM debian:bookworm-slim
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tini default-mysql-client ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
-ADD . /go/src/github.com/siddontang/go-mysql-elasticsearch
+COPY --from=builder /out/sync-mysql-elasticsearch /usr/local/bin/sync-mysql-elasticsearch
 
-RUN apk add --no-cache mariadb-client
-RUN cd /go/src/github.com/siddontang/go-mysql-elasticsearch/ && \
-    go build -o bin/go-mysql-elasticsearch ./cmd/go-mysql-elasticsearch && \
-    cp -f ./bin/go-mysql-elasticsearch /go/bin/go-mysql-elasticsearch
-
-ENTRYPOINT ["/sbin/tini","--","go-mysql-elasticsearch"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/sync-mysql-elasticsearch"]
