@@ -38,7 +38,8 @@ func newDefaultRule(schema string, table string) *Rule {
 
 	lowerTable := strings.ToLower(table)
 	r.Index = lowerTable
-	r.Type = lowerTable
+	// Elasticsearch 7.x only accepts "_doc" as the mapping type.
+	r.Type = "_doc"
 
 	r.FieldMapping = make(map[string]string)
 

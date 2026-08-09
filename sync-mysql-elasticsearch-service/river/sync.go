@@ -92,11 +92,19 @@ func (h *eventHandler) OnRow(e *canal.RowsEvent) error {
 	return h.r.ctx.Err()
 }
 
-func (h *eventHandler) OnGTID(header *replication.EventHeader, gtid mysql.GTIDSet) error {
+func (h *eventHandler) OnGTID(header *replication.EventHeader, gtidEvent mysql.BinlogGTIDEvent) error {
 	return nil
 }
 
 func (h *eventHandler) OnPosSynced(header *replication.EventHeader, position mysql.Position, gtid mysql.GTIDSet, force bool) error {
+	return nil
+}
+
+func (h *eventHandler) OnRowsQueryEvent(e *replication.RowsQueryEvent) error {
+	return nil
+}
+
+func (h *eventHandler) OnTableNotFound(header *replication.EventHeader, e *replication.RowsEvent) error {
 	return nil
 }
 
