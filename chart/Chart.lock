@@ -116,5 +116,8 @@ dependencies:
 - name: bot-service
   repository: file://bot-service
   version: 0.1.0
-digest: sha256:13bfc283e03dc385b400b944c996ba0db29170f8e765e1cb7180a4cb0b038c49
-generated: "2026-08-09T01:43:16.802574+07:00"
+- name: calculate-service
+  repository: file://calculate-service
+  version: 0.1.0
+digest: sha256:7079fea32aeaae814966b5e0497ca6f88b4d2074480200a8bb9b2b4277e1abe6
+generated: "2026-08-09T12:46:03.945907+07:00"
