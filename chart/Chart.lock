@@ -47,6 +47,12 @@ dependencies:
 - name: kafka-ui
   repository: file://kafka-ui
   version: 0.1.0
+- name: kafka-connect
+  repository: file://kafka-connect
+  version: 0.1.0
+- name: mysql-river
+  repository: file://mysql-river
+  version: 0.1.0
 - name: rabbitmq
   repository: file://rabbitmq
   version: 0.1.0
@@ -119,5 +125,5 @@ dependencies:
 - name: calculate-service
   repository: file://calculate-service
   version: 0.1.0
-digest: sha256:7079fea32aeaae814966b5e0497ca6f88b4d2074480200a8bb9b2b4277e1abe6
-generated: "2026-08-09T12:46:03.945907+07:00"
+digest: sha256:ec146aaa57d48eb291e767b2824fb062147c160a644ebeec88af81978156ddb1
+generated: "2026-08-10T19:51:31.875934+07:00"

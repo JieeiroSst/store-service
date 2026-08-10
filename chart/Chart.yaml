@@ -71,6 +71,14 @@ dependencies:
     name: kafka-ui
     version: "0.1.0"
     repository: file://kafka-ui
+  - alias: kafkaConnect
+    name: kafka-connect
+    version: "0.1.0"
+    repository: file://kafka-connect
+  - alias: mysqlRiver
+    name: mysql-river
+    version: "0.1.0"
+    repository: file://mysql-river
   - alias: rabbitmq
     name: rabbitmq
     version: "0.1.0"
