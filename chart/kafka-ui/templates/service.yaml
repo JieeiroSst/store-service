@@ -1,23 +1,23 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-ui-service
+  name: {{ .Values.kafkaUi.service.name }}
 spec:
   ports:
-    - port: 80
-      targetPort: 8080
+    - port: {{ .Values.kafkaUi.service.port }}
+      targetPort: {{ .Values.kafkaUi.service.targetPort }}
   selector:
-    app: kafka-ui-deployment
+    app: {{ .Values.kafkaUi.name }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-ui-service-nodeport
+  name: {{ .Values.kafkaUi.service.nodeportName }}
 spec:
   type: NodePort
   ports:
-    - port: 80
-      targetPort: 8080
-      nodePort: 30001
+    - port: {{ .Values.kafkaUi.service.port }}
+      targetPort: {{ .Values.kafkaUi.service.targetPort }}
+      nodePort: {{ .Values.kafkaUi.service.nodePort }}
   selector:
-    app: kafka-ui-deployment
+    app: {{ .Values.kafkaUi.name }}

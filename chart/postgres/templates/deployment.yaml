@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgresdb
+  name: {{ .Values.postgres.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.postgres.replicas }}
   selector:
     matchLabels:
-      app: postgresdb
+      app: {{ .Values.postgres.name }}
   template:
     metadata:
       labels:
-        app: postgresdb
+        app: {{ .Values.postgres.name }}
     spec:
       containers:
-        - name: postgresdb
-          image: postgres:16
+        - name: {{ .Values.postgres.name }}
+          image: {{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}
           args:
             - -c
-            - wal_level=logical
+            - wal_level={{ .Values.postgres.walLevel }}
           ports:
-            - containerPort: 5432
+            - containerPort: {{ .Values.postgres.service.targetPort }}
           envFrom:
             - configMapRef:
                 name: db-secret-credentials

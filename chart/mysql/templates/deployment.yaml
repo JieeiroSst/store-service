@@ -23,4 +23,4 @@ spec:
               value: production
           ports:
             - containerPort: {{.Values.mysql.image.port}}
-              name: mysql   
+              name: mysql

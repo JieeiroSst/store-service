@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-river-service
+  name: {{ .Values.mysqlRiver.service.name }}
 spec:
   ports:
-    - port: 12800
-      targetPort: 12800
-      nodePort: {{ .Values.nodePort }}
+    - port: {{ .Values.mysqlRiver.service.port }}
+      targetPort: {{ .Values.mysqlRiver.service.port }}
+      nodePort: {{ .Values.mysqlRiver.service.nodePort }}
   type: NodePort
   selector:
-    app: mysql-river
+    app: {{ .Values.mysqlRiver.name }}

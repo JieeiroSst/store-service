@@ -1,35 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-ui-deployment
+  name: {{ .Values.kafkaUi.name }}
   labels:
-    app: kafka-ui-deployment
+    app: {{ .Values.kafkaUi.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.kafkaUi.replicas }}
   selector:
     matchLabels:
-      app: kafka-ui-deployment
+      app: {{ .Values.kafkaUi.name }}
   template:
     metadata:
       labels:
-        app: kafka-ui-deployment
+        app: {{ .Values.kafkaUi.name }}
     spec:
       containers:
-      - name: kafka-ui-deployment
-        image: provectuslabs/kafka-ui:latest
+      - name: {{ .Values.kafkaUi.name }}
+        image: {{ .Values.kafkaUi.image.repository }}:{{ .Values.kafkaUi.image.tag }}
         env:
         - name: KAFKA_CLUSTERS_0_NAME
-          value: "K8 Kafka Cluster"
+          value: {{ .Values.kafkaUi.clusterName | quote }}
         - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
-          value: kafka-service:9092
-        imagePullPolicy: Always
+          value: {{ .Values.kafkaUi.bootstrapServers }}
+        imagePullPolicy: {{ .Values.kafkaUi.image.pullPolicy }}
         resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "1024Mi"
-            cpu: "1000m"
+          {{- toYaml .Values.kafkaUi.resources | nindent 10 }}
         ports:
-        - containerPort: 8080
+        - containerPort: {{ .Values.kafkaUi.service.targetPort }}
           protocol: TCP

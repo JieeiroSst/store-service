@@ -10,5 +10,5 @@ grafana:
 
   service:
     name: grafana-svc
-    type: LoadBalancer 
+    type: LoadBalancer
     nodeport: 30006

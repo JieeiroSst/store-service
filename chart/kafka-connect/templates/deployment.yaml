@@ -1,48 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-connect
+  name: {{ .Values.kafkaConnect.name }}
   labels:
-    app: kafka-connect
+    app: {{ .Values.kafkaConnect.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.kafkaConnect.replicas }}
   selector:
     matchLabels:
-      app: kafka-connect
+      app: {{ .Values.kafkaConnect.name }}
   template:
     metadata:
       labels:
-        app: kafka-connect
+        app: {{ .Values.kafkaConnect.name }}
     spec:
       containers:
-        - name: kafka-connect
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Values.kafkaConnect.name }}
+          image: "{{ .Values.kafkaConnect.image.repository }}:{{ .Values.kafkaConnect.image.tag }}"
+          imagePullPolicy: {{ .Values.kafkaConnect.image.pullPolicy }}
           ports:
-            - containerPort: 8083
+            - containerPort: {{ .Values.kafkaConnect.service.port }}
           resources:
-            requests:
-              cpu: "500m"
-              memory: "1Gi"
-            limits:
-              cpu: "2000m"
-              memory: "2500Mi"
+            {{- toYaml .Values.kafkaConnect.resources | nindent 12 }}
           env:
             - name: BOOTSTRAP_SERVERS
-              value: kafka-service:9092
+              value: {{ .Values.kafkaConnect.bootstrapServers }}
             - name: GROUP_ID
-              value: "pg-es-sync"
+              value: {{ .Values.kafkaConnect.groupId | quote }}
             - name: CONFIG_STORAGE_TOPIC
-              value: pg-es-sync-connect-configs
+              value: {{ .Values.kafkaConnect.groupId }}-connect-configs
             - name: OFFSET_STORAGE_TOPIC
-              value: pg-es-sync-connect-offsets
+              value: {{ .Values.kafkaConnect.groupId }}-connect-offsets
             - name: STATUS_STORAGE_TOPIC
-              value: pg-es-sync-connect-status
+              value: {{ .Values.kafkaConnect.groupId }}-connect-status
             - name: CONNECT_ADMIN_REQUEST_TIMEOUT_MS
-              value: "90000"
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
             - name: CONNECT_PRODUCER_REQUEST_TIMEOUT_MS
-              value: "90000"
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
             - name: CONNECT_CONSUMER_REQUEST_TIMEOUT_MS
-              value: "90000"
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
             - name: CONNECT_CONSUMER_DEFAULT_API_TIMEOUT_MS
-              value: "90000"
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}

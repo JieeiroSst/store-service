@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: db-secret-credentials
   labels:
-    app: postgresdb
+    app: {{ .Values.postgres.name }}
 data:
-  POSTGRES_DB: testDB
-  POSTGRES_USER: testUser
-  POSTGRES_PASSWORD: testPassword
+  POSTGRES_DB: {{ .Values.postgres.credentials.database }}
+  POSTGRES_USER: {{ .Values.postgres.credentials.user }}
+  POSTGRES_PASSWORD: {{ .Values.postgres.credentials.password }}

@@ -1,33 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-river
+  name: {{ .Values.mysqlRiver.name }}
   labels:
-    app: mysql-river
+    app: {{ .Values.mysqlRiver.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.mysqlRiver.replicas }}
   selector:
     matchLabels:
-      app: mysql-river
+      app: {{ .Values.mysqlRiver.name }}
   template:
     metadata:
       labels:
-        app: mysql-river
+        app: {{ .Values.mysqlRiver.name }}
     spec:
       containers:
-        - name: mysql-river
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Values.mysqlRiver.name }}
+          image: "{{ .Values.mysqlRiver.image.repository }}:{{ .Values.mysqlRiver.image.tag }}"
+          imagePullPolicy: {{ .Values.mysqlRiver.image.pullPolicy }}
           args: ["-config=/etc/river/river.toml"]
           ports:
-            - containerPort: 12800
+            - containerPort: {{ .Values.mysqlRiver.service.port }}
           resources:
-            requests:
-              cpu: "200m"
-              memory: "256Mi"
-            limits:
-              cpu: "1000m"
-              memory: "768Mi"
+            {{- toYaml .Values.mysqlRiver.resources | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /etc/river
@@ -36,6 +31,6 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: mysql-river-config
+            name: {{ .Values.mysqlRiver.name }}-config
         - name: data
           emptyDir: {}

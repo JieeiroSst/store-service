@@ -1,41 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-deployment
+  name: {{ .Values.kafka.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.kafka.replicas }}
   selector:
     matchLabels:
-        app: kafka-deployment
+        app: {{ .Values.kafka.name }}
   template:
     metadata:
       labels:
-        app: kafka-deployment
+        app: {{ .Values.kafka.name }}
     spec:
       containers:
-      - name: kafka-deployment
-        image: bitnamilegacy/kafka:3.3.2
+      - name: {{ .Values.kafka.name }}
+        image: {{ .Values.kafka.image.name }}:{{ .Values.kafka.image.tag }}
         securityContext:
           runAsUser: 0
         resources:
-          requests:
-            memory: "1G"
-            cpu: "1"
-          limits:
-            memory: "2G"
-            cpu: "2"
+          {{- toYaml .Values.kafka.resources | nindent 10 }}
         ports:
-         - containerPort: 9092
+         - containerPort: {{ .Values.kafka.service.port }}
         env:
         - name: KAFKA_CFG_ZOOKEEPER_CONNECT
-          value: zookeeper-service:2181
+          value: {{ .Values.kafka.zookeeperConnect }}
         - name: ALLOW_PLAINTEXT_LISTENER
           value: "yes"
         - name: KAFKA_CFG_LISTENERS
-          value: PLAINTEXT://:9092
+          value: PLAINTEXT://:{{ .Values.kafka.service.port }}
         - name: KAFKA_CFG_ADVERTISED_LISTENERS
-          value: PLAINTEXT://kafka-service:9092
+          value: {{ .Values.kafka.advertisedListener }}
         - name: KAFKA_CFG_BROKER_ID
-          value: "1001"
+          value: {{ .Values.kafka.brokerId | quote }}
         - name: KAFKA_CFG_BROKER_ID_GENERATION_ENABLE
           value: "false"
