@@ -1,19 +1,19 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: rabbitmq-service
+  name: {{ .Values.rabbitmq.service.name }}
 spec:
   type: NodePort
   ports:
    - name: http
      protocol: TCP
-     port: 15672
-     targetPort: 15672
-     nodePort: 31673
+     port: {{ .Values.rabbitmq.service.httpPort }}
+     targetPort: {{ .Values.rabbitmq.service.httpPort }}
+     nodePort: {{ .Values.rabbitmq.service.httpNodePort }}
    - name: amqp
      protocol: TCP
-     port: 5672
-     targetPort: 5672
-     nodePort: 30673
+     port: {{ .Values.rabbitmq.service.amqpPort }}
+     targetPort: {{ .Values.rabbitmq.service.amqpPort }}
+     nodePort: {{ .Values.rabbitmq.service.amqpNodePort }}
   selector:
-    app: rabbitmq-deployment
+    app: {{ .Values.rabbitmq.name }}

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: elasticsearch
+  name: {{ .Values.elasticsearch.name }}
   labels:
-    app: elasticsearch
+    app: {{ .Values.elasticsearch.name }}
 spec:
   selector:
     matchLabels:
-      app: elasticsearch
-  replicas: 1 
-  template: 
+      app: {{ .Values.elasticsearch.name }}
+  replicas: {{ .Values.elasticsearch.replicas }}
+  template:
     metadata:
       labels:
-        app: elasticsearch
+        app: {{ .Values.elasticsearch.name }}
     spec:
       containers:
-      - name: elasticsearch
-        image: elasticsearch:7.17.5
+      - name: {{ .Values.elasticsearch.name }}
+        image: {{ .Values.elasticsearch.image.name }}:{{ .Values.elasticsearch.image.tag }}
         ports:
         - containerPort: 9200
         - containerPort: 9300
@@ -24,6 +24,6 @@ spec:
         - name: discovery.type
           value: single-node
         - name: ES_JAVA_OPTS
-          value: {{ .Values.javaOpts | quote }}
+          value: {{ .Values.elasticsearch.javaOpts | quote }}
         resources:
-          {{- toYaml .Values.resources | nindent 10 }}
+          {{- toYaml .Values.elasticsearch.resources | nindent 10 }}

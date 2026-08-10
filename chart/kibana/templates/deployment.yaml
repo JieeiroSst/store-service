@@ -1,32 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kibana-deployment
+  name: {{ .Values.kibana.name }}
   labels:
-    app: kibana-deployment
+    app: {{ .Values.kibana.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.kibana.replicas }}
   selector:
     matchLabels:
-      app: kibana-deployment
+      app: {{ .Values.kibana.name }}
   template:
     metadata:
       labels:
-        app: kibana-deployment
+        app: {{ .Values.kibana.name }}
     spec:
       containers:
-      - name: kibana-deployment
-        image: kibana:7.17.5
-        imagePullPolicy: Always
+      - name: {{ .Values.kibana.name }}
+        image: {{ .Values.kibana.image.repository }}:{{ .Values.kibana.image.tag }}
+        imagePullPolicy: {{ .Values.kibana.image.pullPolicy }}
         resources:
-          limits:
-            cpu: 2000m
-            memory: "2048Mi"
-          requests:
-            cpu: 500m
-            memory: "1024Mi"
+          {{- toYaml .Values.kibana.resources | nindent 10 }}
         env:
           - name: ELASTICSEARCH_HOSTS
-            value: http://elasticsearch-service:9200
+            value: {{ .Values.kibana.elasticsearchHosts }}
         ports:
-        - containerPort: 5601
+        - containerPort: {{ .Values.kibana.service.targetPort }}

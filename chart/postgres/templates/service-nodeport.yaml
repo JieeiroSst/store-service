@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgresdb-nodeport
+  name: {{ .Values.postgres.name }}-nodeport
   labels:
-    app: postgresdb
+    app: {{ .Values.postgres.name }}
 spec:
   type: NodePort
   ports:
-    - port: 5432
-      targetPort: 5432
-      nodePort: 31000
+    - port: {{ .Values.postgres.service.targetPort }}
+      targetPort: {{ .Values.postgres.service.targetPort }}
+      nodePort: {{ .Values.postgres.service.nodePort }}
   selector:
-    app: postgresdb
+    app: {{ .Values.postgres.name }}

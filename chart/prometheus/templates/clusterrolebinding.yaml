@@ -1,14 +1,14 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: prometheus
+  name: {{ .Values.prometheus.name }}
   labels:
-    app: prometheus
+    app: {{ .Values.prometheus.name }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus
+  name: {{ .Values.prometheus.name }}
 subjects:
   - kind: ServiceAccount
-    name: prometheus
+    name: {{ .Values.prometheus.name }}
     namespace: {{ .Release.Namespace }}

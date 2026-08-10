@@ -1,38 +1,38 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
-metadata: 
-  name: "keycloak-development"
-spec: 
-  replicas: 1
-  selector: 
-    matchLabels: 
-      app: "keycloak-development"
+metadata:
+  name: {{ .Values.keycloak.name | quote }}
+spec:
+  replicas: {{ .Values.keycloak.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.keycloak.name | quote }}
   template:
     metadata:
       labels:
-        app: "keycloak-development"
-    spec: 
-        containers: 
-          - name: "keycloak-development"
-            image: "quay.io/keycloak/keycloak:8.0.2"
-            imagePullPolicy: "Always"
-            env: 
-              - 
+        app: {{ .Values.keycloak.name | quote }}
+    spec:
+        containers:
+          - name: {{ .Values.keycloak.name | quote }}
+            image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
+            imagePullPolicy: "{{ .Values.keycloak.image.pullPolicy }}"
+            env:
+              -
                 name: "KEYCLOAK_USER"
-                value: "admin"
+                value: {{ .Values.keycloak.admin.user | quote }}
               -
                 name: "KEYCLOAK_PASSWORD"
-                value: "admin"
+                value: {{ .Values.keycloak.admin.password | quote }}
               -
                 name: "PROXY_ADDRESS_FORWARDING"
                 value: "true"
               -
                 name: "KEYCLOAK_FRONTEND_URL"
-                value: "https://keycloak-development/auth/"
+                value: {{ .Values.keycloak.frontendUrl | quote }}
               -
                 name: "KEYCLOAK_ADMIN_URL"
-                value: "https://keycloak-development/auth/realms/master/admin/"
-            ports: 
+                value: {{ .Values.keycloak.adminUrl | quote }}
+            ports:
               - name: "http"
                 containerPort: 8080
               - name: "https"

@@ -1,24 +1,24 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mysql-river-config
+  name: {{ .Values.mysqlRiver.name }}-config
 data:
   river.toml: |
-    my_addr = "mysql-svc:80"
-    my_user = "river"
-    my_pass = "riverPassword"
-    my_charset = "utf8"
+    my_addr = "{{ .Values.mysqlRiver.mysql.addr }}"
+    my_user = "{{ .Values.mysqlRiver.mysql.user }}"
+    my_pass = "{{ .Values.mysqlRiver.mysql.password }}"
+    my_charset = "{{ .Values.mysqlRiver.mysql.charset }}"
 
-    es_addr = "elasticsearch-service:9200"
+    es_addr = "{{ .Values.mysqlRiver.elasticsearch.addr }}"
     es_user = ""
     es_pass = ""
 
     data_dir = "/var/lib/river"
 
-    stat_addr = "0.0.0.0:12800"
+    stat_addr = "0.0.0.0:{{ .Values.mysqlRiver.service.port }}"
     stat_path = "/metrics"
 
-    server_id = 1001
+    server_id = {{ .Values.mysqlRiver.serverId }}
 
     flavor = "mysql"
 
@@ -31,15 +31,9 @@ data:
     flush_bulk_time = "200ms"
 
     skip_no_pk_table = true
+    {{- range .Values.mysqlRiver.sources }}
 
     [[source]]
-    schema = "banking_service"
-    tables = ["*"]
-
-    [[source]]
-    schema = "basket_service"
-    tables = ["*"]
-
-    [[source]]
-    schema = "notification_service"
-    tables = ["*"]
+    schema = "{{ .schema }}"
+    tables = [{{ range $i, $t := .tables }}{{ if $i }}, {{ end }}"{{ $t }}"{{ end }}]
+    {{- end }}

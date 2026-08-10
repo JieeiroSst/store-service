@@ -7,7 +7,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: postgresdb-init-databases
+  name: {{ .Values.postgres.name }}-init-databases
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-weight": "5"
@@ -19,12 +19,12 @@ spec:
       restartPolicy: Never
       containers:
         - name: init-databases
-          image: postgres:16
+          image: {{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}
           env:
             - name: PGHOST
-              value: postgresdb
+              value: {{ .Values.postgres.name }}
             - name: PGPORT
-              value: "80"
+              value: {{ .Values.postgres.service.port | quote }}
             - name: PGUSER
               valueFrom:
                 configMapKeyRef:
@@ -49,7 +49,7 @@ spec:
                 echo "waiting for postgresdb..."
                 sleep 2
               done
-              for db in admanagement book_store authorize automatic_payment billing bot_service account_transaction user; do
+              for db in {{ join " " .Values.postgres.initDatabases }}; do
                 exists=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname = '$db'")
                 if [ "$exists" = "1" ]; then
                   echo "database $db already exists"

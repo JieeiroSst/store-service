@@ -1,9 +1,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: prometheus
+  name: {{ .Values.prometheus.name }}
   labels:
-    app: prometheus
+    app: {{ .Values.prometheus.name }}
 rules:
   - apiGroups: [""]
     resources:

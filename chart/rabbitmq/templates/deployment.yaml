@@ -1,28 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq-deployment
+  name: {{ .Values.rabbitmq.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.rabbitmq.replicas }}
   selector:
     matchLabels:
-      app: rabbitmq-deployment
+      app: {{ .Values.rabbitmq.name }}
   template:
     metadata:
       labels:
-        app: rabbitmq-deployment
+        app: {{ .Values.rabbitmq.name }}
     spec:
       containers:
-      - name: rabbitmq-deployment
-        image: rabbitmq:3.8
+      - name: {{ .Values.rabbitmq.name }}
+        image: {{ .Values.rabbitmq.image.repository }}:{{ .Values.rabbitmq.image.tag }}
         ports:
           - name: http
             protocol: TCP
-            containerPort: 15672
+            containerPort: {{ .Values.rabbitmq.service.httpPort }}
           - name: amqp
             protocol: TCP
-            containerPort: 5672
-        imagePullPolicy: Always
+            containerPort: {{ .Values.rabbitmq.service.amqpPort }}
+        imagePullPolicy: {{ .Values.rabbitmq.image.pullPolicy }}
         env:
           - name: RABBITMQ_DEFAULT_USER
             valueFrom:

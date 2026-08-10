@@ -1,8 +1,41 @@
-# Default values for mysql-river.
+mysqlRiver:
+  name: mysql-river
+  replicas: 1
 
-image:
-  repository: sync-mysql-es
-  tag: v4
-  pullPolicy: IfNotPresent
+  image:
+    repository: sync-mysql-es
+    tag: v4
+    pullPolicy: IfNotPresent
 
-nodePort: 30084
+  service:
+    name: mysql-river-service
+    port: 12800
+    nodePort: 30084
+
+  mysql:
+    addr: mysql-svc:80
+    user: river
+    password: riverPassword
+    charset: utf8
+
+  elasticsearch:
+    addr: elasticsearch-service:9200
+
+  serverId: 1001
+
+  # Databases to sync (one Debezium-less binlog source per schema).
+  sources:
+    - schema: banking_service
+      tables: ["*"]
+    - schema: basket_service
+      tables: ["*"]
+    - schema: notification_service
+      tables: ["*"]
+
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "768Mi"

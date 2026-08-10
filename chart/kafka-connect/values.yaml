@@ -1,8 +1,26 @@
-# Default values for kafka-connect.
+kafkaConnect:
+  name: kafka-connect
+  replicas: 1
 
-image:
-  repository: debezium-jdbc-es
-  tag: v2
-  pullPolicy: IfNotPresent
+  image:
+    repository: debezium-jdbc-es
+    tag: v2
+    pullPolicy: IfNotPresent
 
-nodePort: 30083
+  service:
+    name: kafka-connect-service
+    port: 8083
+    nodePort: 30083
+
+  bootstrapServers: kafka-service:9092
+  groupId: pg-es-sync
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "2500Mi"
+
+  requestTimeoutMs: "90000"
