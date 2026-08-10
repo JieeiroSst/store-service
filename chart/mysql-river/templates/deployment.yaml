@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-river
+  labels:
+    app: mysql-river
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-river
+  template:
+    metadata:
+      labels:
+        app: mysql-river
+    spec:
+      containers:
+        - name: mysql-river
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["-config=/etc/river/river.toml"]
+          ports:
+            - containerPort: 12800
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "768Mi"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/river
+            - name: data
+              mountPath: /var/lib/river
+      volumes:
+        - name: config
+          configMap:
+            name: mysql-river-config
+        - name: data
+          emptyDir: {}

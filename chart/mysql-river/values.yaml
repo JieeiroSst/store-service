@@ -1,0 +1,8 @@
+# Default values for mysql-river.
+
+image:
+  repository: sync-mysql-es
+  tag: v4
+  pullPolicy: IfNotPresent
+
+nodePort: 30084

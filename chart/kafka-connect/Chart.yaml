@@ -1,0 +1,7 @@
+apiVersion: v2
+name: kafka-connect
+description: Kafka Connect (Debezium Postgres source + Elasticsearch sink) for syncing Postgres to Elasticsearch
+
+type: application
+version: 0.1.0
+appVersion: "2.6.0"
