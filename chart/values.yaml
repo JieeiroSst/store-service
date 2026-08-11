@@ -224,3 +224,27 @@ botService:
     host: bot-service.local
     path: /
     pathType: Prefix
+
+livestreamService:
+  image:
+    name: ghcr.io/jieeirosst/livestream-service
+    tag: latest
+    httpPort: 8080
+
+  node:
+    name: livestream-service
+    replicas: 2
+
+  edge:
+    name: livestream-service-edge
+    replicas: 3
+    service:
+      name: livestream-service-svc
+      type: ClusterIP
+    ingress:
+      enabled: false
+      className: nginx
+      annotations: {}
+      host: livestream-service.local
+      path: /
+      pathType: Prefix

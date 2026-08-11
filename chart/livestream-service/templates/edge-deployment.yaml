@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.livestreamService.edge.name }}
+spec:
+{{- if not .Values.livestreamService.edge.autoscaling.enabled }}
+  replicas: {{ .Values.livestreamService.edge.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.livestreamService.edge.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.livestreamService.edge.name }}
+    spec:
+      containers:
+      - name: {{ .Values.livestreamService.edge.name }}
+        image: "{{ .Values.livestreamService.image.name }}:{{ .Values.livestreamService.image.tag }}"
+        imagePullPolicy: Always
+        command: {{ .Values.livestreamService.edge.command | toJson }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.livestreamService.image.httpPort }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.livestreamService.image.httpPort }}"
+        resources:
+          {{- toYaml .Values.livestreamService.edge.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: livestream-service.env
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+# The public-facing service for rooms/ingest-request/viewer-heartbeat/chat.
+# This is what chart/livestream-service/templates/ingress.yaml fronts, and
+# what streamer/viewer clients actually talk to for everything except the
+# raw RTMP push (see livestream-service.yaml's headless/rtmp services).
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.livestreamService.edge.service.name }}
+spec:
+  type: {{ .Values.livestreamService.edge.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.livestreamService.image.httpPort }}
+  selector:
+    app: {{ .Values.livestreamService.edge.name }}

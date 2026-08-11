@@ -1,0 +1,134 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.livestreamService.node.name }}
+spec:
+  serviceName: {{ .Values.livestreamService.node.headlessServiceName }}
+{{- if not .Values.livestreamService.node.autoscaling.enabled }}
+  replicas: {{ .Values.livestreamService.node.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.livestreamService.node.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.livestreamService.node.name }}
+    spec:
+      containers:
+      # RTMP ingest sidecar. Lives in the same pod as the app container so
+      # SRS can forward the raw stream to this node's own ffmpeg process
+      # over localhost - see internal/adapter/secondary/transcode.
+      - name: srs
+        image: "{{ .Values.livestreamService.node.srs.image }}:{{ .Values.livestreamService.node.srs.tag }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: rtmp
+          containerPort: {{ .Values.livestreamService.node.srs.rtmpPort }}
+        - name: srs-http
+          containerPort: {{ .Values.livestreamService.node.srs.httpPort }}
+        volumeMounts:
+        - name: srs-conf
+          mountPath: /usr/local/srs/conf/srs.conf
+          subPath: srs.conf
+
+      - name: livestream-service-node
+        image: "{{ .Values.livestreamService.image.name }}:{{ .Values.livestreamService.image.tag }}"
+        imagePullPolicy: Always
+        command: {{ .Values.livestreamService.node.command | toJson }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.livestreamService.image.httpPort }}
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          # Identifies this pod as a scheduler node; must match what SRS's
+          # http_hooks send back so on_publish can confirm/claim the
+          # assignment (see internal/application/publish.go).
+          - name: NODE_ID
+            value: "$(POD_NAME)"
+          # Stable per-pod RTMP address handed to streamers by the
+          # scheduler's RequestIngestEndpoint - requires the headless
+          # service below so pod DNS survives restarts.
+          - name: NODE_RTMP_ADDR
+            value: "rtmp://$(POD_NAME).{{ .Values.livestreamService.node.headlessServiceName }}.default.svc.cluster.local:{{ .Values.livestreamService.node.srs.rtmpPort }}/live"
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.livestreamService.image.httpPort }}"
+          - name: MAX_STREAMS
+            value: "{{ .Values.livestreamService.node.maxStreams }}"
+          - name: HLS_DIR
+            value: "/var/hls"
+        resources:
+          {{- toYaml .Values.livestreamService.node.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: livestream-service.env
+        - name: hls-scratch
+          mountPath: /var/hls
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+      - name: srs-conf
+        configMap:
+          name: {{ .Values.livestreamService.node.name }}-srs-conf
+      - name: hls-scratch
+        emptyDir:
+          sizeLimit: {{ .Values.livestreamService.node.hlsScratch.sizeLimit }}
+---
+# Headless service: gives each pod stable DNS
+# (<pod>.<headlessServiceName>...) so the multi-node scheduler can hand
+# out a specific node's RTMP address that survives pod restarts. Not
+# meant for external traffic - nothing outside the pod calls the node's
+# HTTP port (SRS reaches it over 127.0.0.1); see edge-deployment.yaml for
+# the public-facing API/chat service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.livestreamService.node.headlessServiceName }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ .Values.livestreamService.node.name }}
+  ports:
+  - name: rtmp
+    port: {{ .Values.livestreamService.node.srs.rtmpPort }}
+    targetPort: {{ .Values.livestreamService.node.srs.rtmpPort }}
+  - name: http
+    port: {{ .Values.livestreamService.image.httpPort }}
+    targetPort: {{ .Values.livestreamService.image.httpPort }}
+{{- if .Values.livestreamService.node.rtmpService.enabled }}
+---
+# Cluster-internal RTMP access across all replicas (round-robin - NOT
+# sticky to a specific node). Real external streamer ingress needs a
+# TCP LoadBalancer/NodePort per replica or an L4 proxy that can route by
+# the node address the scheduler assigned; that's infra outside this
+# chart's scope.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.livestreamService.node.name }}-rtmp
+spec:
+  type: {{ .Values.livestreamService.node.rtmpService.type }}
+  ports:
+  - name: rtmp
+    port: {{ .Values.livestreamService.node.srs.rtmpPort }}
+    targetPort: {{ .Values.livestreamService.node.srs.rtmpPort }}
+  selector:
+    app: {{ .Values.livestreamService.node.name }}
+{{- end }}

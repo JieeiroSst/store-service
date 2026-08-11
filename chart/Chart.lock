@@ -122,8 +122,11 @@ dependencies:
 - name: bot-service
   repository: file://bot-service
   version: 0.1.0
+- name: livestream-service
+  repository: file://livestream-service
+  version: 0.1.0
 - name: calculate-service
   repository: file://calculate-service
   version: 0.1.0
-digest: sha256:ec146aaa57d48eb291e767b2824fb062147c160a644ebeec88af81978156ddb1
-generated: "2026-08-10T19:51:31.875934+07:00"
+digest: sha256:eb5461e82003148e89caffd6a20343a87e48a6281437bbd316762209c8c95df9
+generated: "2026-08-10T22:44:42.534429+07:00"
