@@ -20,8 +20,8 @@ type PostgresConfig struct {
 	Port     string `json:"port"`
 	User     string `json:"user"`
 	Password string `json:"password"`
-	DBName   string `json:"db_name"`
-	SSLMode  string `json:"ssl_mode"`
+	DBName   string `json:"dbName"`
+	SSLMode  string `json:"sslMode"`
 }
 
 type Dir struct {
