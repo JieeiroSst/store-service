@@ -23,13 +23,17 @@ spec:
         - name: DB_PORT
           value: "5432"
         - name: POSTGRES_USER
-          value: postgres
+          valueFrom:
+            secretKeyRef:
+              name: temporal-db-credentials
+              key: POSTGRES_USER
         - name: POSTGRES_PWD
-          value: postgres
+          valueFrom:
+            secretKeyRef:
+              name: temporal-db-credentials
+              key: POSTGRES_PWD
         - name: POSTGRES_SEEDS
-          value: postgresql-service
-        - name: POSTGRES_DB
-          value: postgres
+          value: postgresdb-nodeport
         - name: DYNAMIC_CONFIG_FILE_PATH
           value: config/dynamicconfig/development.yaml
         ports:
