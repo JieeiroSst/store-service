@@ -1,0 +1,23 @@
+{{- if .Values.livestreamService.edge.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.livestreamService.edge.name }}-ingress
+  {{- with .Values.livestreamService.edge.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.livestreamService.edge.ingress.className }}
+  rules:
+  - host: {{ .Values.livestreamService.edge.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.livestreamService.edge.ingress.path }}
+        pathType: {{ .Values.livestreamService.edge.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.livestreamService.edge.service.name }}
+            port:
+              number: 80
+{{- end }}

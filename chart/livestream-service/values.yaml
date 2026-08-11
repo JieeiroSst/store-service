@@ -1,0 +1,102 @@
+livestreamService:
+  # One image, three binaries (see livestream_service/Dockerfile) - node
+  # and edge just run a different entrypoint from the same build.
+  image:
+    name: ghcr.io/jieeirosst/livestream-service
+    tag: latest
+    # Must match config.Server.PortHttpServer as resolved from Consul, or
+    # the PORT_HTTP_SERVER env var fallback (see livestream_service/config/config.go).
+    httpPort: 8080
+
+  # Transcode node: SRS sidecar (RTMP ingest) + ffmpeg supervisor + node
+  # scheduler. CPU-bound by active stream count and physically capped by
+  # the node pool's core count - scale this by adding nodes, not by
+  # chasing viewer traffic (see edge, below, for that).
+  node:
+    name: livestream-service
+    replicas: 2
+    command: ["./livestream-service-node"]
+
+    # SRS runs as a sidecar in the same pod so it can forward the raw RTMP
+    # stream to this pod's own ffmpeg process over localhost. Its own
+    # http_server port is moved off 8080 to avoid colliding with the
+    # livestream-service container in the same pod network namespace.
+    srs:
+      image: ossrs/srs
+      tag: "5"
+      rtmpPort: 1935
+      httpPort: 8085
+
+    # Headless (clusterIP: None) so each pod gets stable DNS
+    # (<pod>.<headlessServiceName>.default.svc.cluster.local) - the
+    # multi-node scheduler hands this address out as a stream's ingest
+    # endpoint, so it must not change across restarts/reschedules.
+    headlessServiceName: livestream-service-headless
+
+    # Exposes SRS's RTMP port across all replicas (round-robin - NOT
+    # sticky to a specific node). Real external streamer ingress needs a
+    # TCP LoadBalancer/NodePort per replica or an L4 proxy that can route
+    # by the node address the scheduler assigned; that's infra outside
+    # this chart's scope.
+    rtmpService:
+      enabled: true
+      type: ClusterIP
+
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: "2"
+        memory: 2Gi
+
+    # Local scratch space for HLS segments/playlists before they're
+    # uploaded to object storage and deleted (see internal/adapter/secondary/transcode).
+    hlsScratch:
+      sizeLimit: 5Gi
+
+    maxStreams: 20
+
+    # CPU is a coarse proxy for transcode load here; a custom metric off
+    # each node's reported Redis capacity would scale more precisely if
+    # Prometheus/KEDA are added later.
+    autoscaling:
+      enabled: false
+      minReplicas: 2
+      maxReplicas: 6
+      targetCPUUtilizationPercentage: 60
+
+  # Edge: stateless rooms/ingest-request/viewer-heartbeat/chat API. No
+  # ffmpeg, no SRS, no per-pod identity - scales purely with viewer/chat
+  # connection volume, independent of how many streams are actually live.
+  # This is the tier that should absorb "millions of viewers" load.
+  edge:
+    name: livestream-service-edge
+    replicas: 3
+    command: ["./livestream-service-edge"]
+
+    service:
+      name: livestream-service-svc
+      type: ClusterIP
+
+    ingress:
+      enabled: false
+      className: nginx
+      annotations: {}
+      host: livestream-service.local
+      path: /
+      pathType: Prefix
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 30
+      targetCPUUtilizationPercentage: 65

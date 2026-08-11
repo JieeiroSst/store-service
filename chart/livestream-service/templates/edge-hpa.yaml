@@ -1,0 +1,20 @@
+{{- if .Values.livestreamService.edge.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.livestreamService.edge.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.livestreamService.edge.name }}
+  minReplicas: {{ .Values.livestreamService.edge.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.livestreamService.edge.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.livestreamService.edge.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

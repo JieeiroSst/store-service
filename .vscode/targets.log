@@ -6,11 +6,8 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # PARTICULAR PURPOSE.
 
 # This program built for i386-apple-darwin11.3.0
- 
-make: *** No rule to make target `all'.  Stop.
 
-
-# Make data base, printed on Sat Aug  1 21:54:18 2026
+# Make data base, printed on Tue Aug 11 11:07:17 2026
 
 # Variables
 
@@ -47,9 +44,13 @@ INFOPATH = /opt/homebrew/share/info:
 # environment
 VSCODE_CWD = /Users/quan/Desktop/store-service
 # environment
+GOPROXY = https://proxy.golang.org,direct
+# environment
 PATH = /opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin
 # environment
 FPATH = /opt/homebrew/share/zsh/site-functions:/usr/local/share/zsh/site-functions:/usr/share/zsh/site-functions:/usr/share/zsh/5.9/functions
+# environment
+GOPATH = /Users/quan/go
 # environment
 LaunchInstanceID = D348735A-137D-4CD3-BC87-70CB0586289A
 # environment
@@ -69,6 +70,8 @@ OSLogRateLimit = 64
 # environment
 MANPATH = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man:/Library/Developer/CommandLineTools/usr/share/man:/Library/Developer/CommandLineTools/Toolchains/XcodeDefault.xctoolchain/usr/share/man:
 # environment
+GOMODCACHE = /Users/quan/go/pkg/mod
+# environment
 HOME = /Users/quan
 # default
 MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
@@ -78,6 +81,8 @@ VSCODE_CLI = 1
 VSCODE_CODE_CACHE_PATH = /Users/quan/Library/Application Support/Code/CachedData/1b6a188127eeaf9194f945eb6eb89a657e93c54c
 # environment
 LOGNAME = quan
+# environment
+GOTELEMETRY_GOPLS_CLIENT_START_TIME = 1785005092
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # automatic
@@ -136,6 +141,8 @@ XPC_SERVICE_NAME = application.com.microsoft.VSCode.276152.276158.0AA09127-96A9-
 HOMEBREW_PREFIX = /opt/homebrew
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
+# environment
+GOTELEMETRY_GOPLS_CLIENT_TOKEN = 474
 # automatic
 +F = $(notdir $+)
 # environment
@@ -165,7 +172,7 @@ TERM = xterm-256color
 # environment
 VSCODE_PID = 627
 # variable set hash-table stats:
-# Load=75/1024=7%, Rehash=0, Collisions=1/97=1%
+# Load=80/1024=8%, Rehash=0, Collisions=1/102=1%
 
 # Pattern-specific Variable Values
 
@@ -226,6 +233,8 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sat Aug  1 21:54:18 2026
+# Finished Make data base on Tue Aug 11 11:07:17 2026
 
  
+make: *** No rule to make target `all'.  Stop.
+

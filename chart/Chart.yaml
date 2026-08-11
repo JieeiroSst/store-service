@@ -171,6 +171,10 @@ dependencies:
     name: bot-service
     version: "0.1.0"
     repository: file://bot-service
+  - alias: livestreamService
+    name: livestream-service
+    version: "0.1.0"
+    repository: file://livestream-service
   - alias: calculate
     name: calculate-service
     version: "0.1.0"
