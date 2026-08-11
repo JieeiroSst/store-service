@@ -22,6 +22,11 @@ spec:
       - name: srs
         image: "{{ .Values.livestreamService.node.srs.image }}:{{ .Values.livestreamService.node.srs.tag }}"
         imagePullPolicy: IfNotPresent
+        # The image's default CMD loads its own baked-in conf/docker.conf
+        # (http_server on 8080 by default), ignoring the srs-conf volume
+        # mounted below - which collides with the app container's own
+        # port 8080. Must explicitly point at the mounted conf.
+        command: ["./objs/srs", "-c", "/usr/local/srs/conf/srs.conf"]
         ports:
         - name: rtmp
           containerPort: {{ .Values.livestreamService.node.srs.rtmpPort }}

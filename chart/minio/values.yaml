@@ -1,0 +1,28 @@
+minio:
+  name: minio
+  replicas: 1
+
+  image:
+    repository: minio/minio
+    tag: latest
+
+  credentials:
+    rootUser: minioadmin
+    rootPassword: minioadmin123
+
+  # Buckets created on install/upgrade by the bucket-provisioner job below.
+  # Every service currently sharing this MinIO deployment uses the shared
+  # root credentials above (no per-service IAM policies yet, unlike the
+  # dedicated-role-per-service pattern in chart/postgres) - add an entry
+  # here to onboard a new service's bucket.
+  buckets:
+    - livestream-hls
+
+  storage:
+    size: 5Gi
+    hostPath: /data/minio
+
+  service:
+    name: minio-svc
+    apiPort: 9000
+    consolePort: 9001

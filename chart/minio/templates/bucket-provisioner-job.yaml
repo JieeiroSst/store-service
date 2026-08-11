@@ -1,0 +1,45 @@
+# Creates every bucket in minio.buckets on install/upgrade. mc mb
+# --ignore-existing makes this idempotent, safe to run on every upgrade -
+# same shape as chart/postgres's service-db-provisioner job.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-bucket-provisioner
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: provision-buckets
+          image: minio/mc:latest
+          env:
+            - name: MINIO_ADDR
+              value: "http://{{ .Values.minio.service.name }}:{{ .Values.minio.service.apiPort }}"
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: minio-credentials
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: minio-credentials
+                  key: MINIO_ROOT_PASSWORD
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              until mc alias set local "$MINIO_ADDR" "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"; do
+                echo "waiting for minio..."
+                sleep 2
+              done
+              {{- range .Values.minio.buckets }}
+              mc mb --ignore-existing "local/{{ . }}"
+              {{- end }}
+              echo "all buckets provisioned"

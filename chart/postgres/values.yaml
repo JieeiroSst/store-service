@@ -77,3 +77,9 @@ postgres:
       consulKey: user_service
       userField: .postgres.PostgresqlUser
       passwordField: .postgres.PostgresqlPassword
+    - name: livestream-service
+      database: livestream
+      role: livestream_svc
+      consulKey: livestream_service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword
