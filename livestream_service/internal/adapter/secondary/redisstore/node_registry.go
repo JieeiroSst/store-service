@@ -31,6 +31,7 @@ func (r *nodeRegistry) Heartbeat(ctx context.Context, node model.TranscodeNode, 
 	pipe.HSet(ctx, key, map[string]any{
 		"id":          node.ID,
 		"addr":        node.Addr,
+		"httpAddr":    node.HTTPAddr,
 		"active":      node.ActiveStreams,
 		"max":         node.MaxStreams,
 		"capacity":    node.Capacity,
@@ -59,6 +60,7 @@ func (r *nodeRegistry) GetNode(ctx context.Context, nodeID string) (*model.Trans
 	node := &model.TranscodeNode{
 		ID:            fields["id"],
 		Addr:          fields["addr"],
+		HTTPAddr:      fields["httpAddr"],
 		ActiveStreams: atoiDefault(fields["active"], 0),
 		MaxStreams:    atoiDefault(fields["max"], 0),
 		Capacity:      atoiDefault(fields["capacity"], 0),

@@ -100,3 +100,10 @@ livestreamService:
       minReplicas: 3
       maxReplicas: 30
       targetCPUUtilizationPercentage: 65
+
+  # Signed playback URLs (see internal/application/playback.go). The
+  # signing secret (PLAYBACK_SIGNING_SECRET) is not set here - it lives in
+  # the service-env-files secret alongside JWT_SECRET and
+  # INTERNAL_SHARED_SECRET, same as every other credential this chart uses.
+  playback:
+    cdnBaseURL: "https://cdn.example.com"

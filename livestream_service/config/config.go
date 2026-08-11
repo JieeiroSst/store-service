@@ -14,6 +14,9 @@ type Config struct {
 	Node      NodeConfig
 	Transcode TranscodeConfig
 	Viewer    ViewerConfig
+	Auth      AuthConfig
+	Internal  InternalConfig
+	Playback  PlaybackConfig
 }
 
 type ServerConfig struct {
@@ -46,6 +49,7 @@ type StorageConfig struct {
 type NodeConfig struct {
 	ID         string
 	RTMPAddr   string // e.g. rtmp://livestream-service-0.livestream-service-headless:1935/live
+	HTTPAddr   string // e.g. http://livestream-service-0.livestream-service-headless:8080 - lets the edge role reach this specific node for admin actions (force-unpublish)
 	LocalRTMP  string // e.g. rtmp://127.0.0.1:1935/live (SRS sidecar, same pod)
 	MaxStreams int
 }
@@ -96,6 +100,34 @@ func (v ViewerConfig) HeartbeatWindowDuration() time.Duration {
 	return parseDurationOr(v.HeartbeatWindow, 40*time.Second)
 }
 
+// AuthConfig signs/verifies the JWTs this service accepts on protected
+// routes. This service is a resource server, not an identity provider -
+// tokens are issued elsewhere (e.g. user_service) and just need to share
+// this secret.
+type AuthConfig struct {
+	JWTSecret string
+}
+
+// InternalConfig guards service-to-service routes (edge calling a specific
+// node's HTTP port) that must never be reachable from outside the cluster.
+type InternalConfig struct {
+	SharedSecret string
+}
+
+// PlaybackConfig signs time-limited playback URLs (HMAC "token
+// authentication", the scheme BunnyCDN/Cloudflare's built-in token-auth
+// features expect) so raw HLS links can't be hotlinked/shared indefinitely.
+// Wiring the CDN itself to validate these tokens is outside this service.
+type PlaybackConfig struct {
+	SigningSecret string
+	CDNBaseURL    string
+	TokenTTL      string
+}
+
+func (p PlaybackConfig) TokenTTLDuration() time.Duration {
+	return parseDurationOr(p.TokenTTL, 6*time.Hour)
+}
+
 func FromEnv() *Config {
 	return &Config{
 		Server: ServerConfig{
@@ -124,6 +156,7 @@ func FromEnv() *Config {
 		Node: NodeConfig{
 			ID:         getEnv("NODE_ID", hostnameFallback()),
 			RTMPAddr:   getEnv("NODE_RTMP_ADDR", ""),
+			HTTPAddr:   getEnv("NODE_HTTP_ADDR", ""),
 			LocalRTMP:  getEnv("NODE_LOCAL_RTMP", "rtmp://127.0.0.1:1935/live"),
 			MaxStreams: getEnvInt("MAX_STREAMS", 20),
 		},
@@ -142,6 +175,17 @@ func FromEnv() *Config {
 		},
 		Viewer: ViewerConfig{
 			HeartbeatWindow: getEnv("VIEWER_HEARTBEAT_WINDOW", "40s"),
+		},
+		Auth: AuthConfig{
+			JWTSecret: getEnv("JWT_SECRET", ""),
+		},
+		Internal: InternalConfig{
+			SharedSecret: getEnv("INTERNAL_SHARED_SECRET", ""),
+		},
+		Playback: PlaybackConfig{
+			SigningSecret: getEnv("PLAYBACK_SIGNING_SECRET", ""),
+			CDNBaseURL:    getEnv("PLAYBACK_CDN_BASE_URL", ""),
+			TokenTTL:      getEnv("PLAYBACK_TOKEN_TTL", "6h"),
 		},
 	}
 }

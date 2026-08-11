@@ -3,6 +3,7 @@ package infrastructure
 import (
 	httpadapter "github.com/JIeeiroSst/livestream-service/internal/adapter/primary/http"
 	schedulerAdapter "github.com/JIeeiroSst/livestream-service/internal/adapter/primary/scheduler"
+	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/nodecall"
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/redisstore"
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/repository"
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/storage"
@@ -22,9 +23,10 @@ var Module = fx.Options(
 	redis.Module,    // *redis.Client
 
 	repository.Module, // port.RoomRepository, port.StreamRepository, port.VODRepository
-	redisstore.Module, // port.NodeRegistry, port.ViewerCounter, port.ChatBroadcaster
+	redisstore.Module, // port.NodeRegistry, port.ViewerCounter, port.ChatBroadcaster, port.ModerationStore
 	storage.Module,    // port.ObjectStorage
 	transcode.Module,  // port.TranscodeRunner
+	nodecall.Module,   // port.NodeCaller
 
 	application.Module, // port.RoomUsecase, port.NodeSchedulerUsecase, port.StreamLifecycleUsecase, port.ViewerUsecase, port.ChatUsecase
 

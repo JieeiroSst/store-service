@@ -9,4 +9,5 @@ var Module = fx.Options(
 	fx.Provide(NewPublishUsecase),
 	fx.Provide(NewViewerUsecase),
 	fx.Provide(NewChatUsecase),
+	fx.Provide(NewModerationUsecase),
 )

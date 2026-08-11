@@ -15,6 +15,7 @@ type RoomRepository interface {
 	List(ctx context.Context, live bool) ([]model.Room, error)
 	UpdateStatus(ctx context.Context, id string, status model.RoomStatus) error
 	UpdateStreamKey(ctx context.Context, id, streamKey string) error
+	Delete(ctx context.Context, id string) error
 }
 
 type StreamRepository interface {
@@ -54,6 +55,21 @@ type ViewerCounter interface {
 type ChatBroadcaster interface {
 	Publish(ctx context.Context, msg model.ChatMessage) error
 	Subscribe(ctx context.Context, roomID string) (<-chan model.ChatMessage, func(), error)
+}
+
+// ModerationStore tracks per-room chat bans. A ban is a plain TTL'd key -
+// it lapses on its own, no explicit cleanup job needed.
+type ModerationStore interface {
+	Ban(ctx context.Context, roomID, userID string, ttl time.Duration) error
+	Unban(ctx context.Context, roomID, userID string) error
+	IsBanned(ctx context.Context, roomID, userID string) (bool, error)
+}
+
+// NodeCaller lets the edge role reach a specific transcode node's
+// internal HTTP surface (see internal_handler.go on the node role) -
+// currently only used to force-stop a stream from an admin/owner action.
+type NodeCaller interface {
+	ForceUnpublish(ctx context.Context, nodeHTTPAddr, streamKey string) error
 }
 
 // ObjectStorage is the S3/MinIO-compatible sink for HLS segments,

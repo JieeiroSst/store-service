@@ -6,6 +6,7 @@ import (
 
 	"github.com/JIeeiroSst/livestream-service/config"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/port"
+	"github.com/JIeeiroSst/livestream-service/internal/infrastructure/metrics"
 )
 
 type viewerUsecase struct {
@@ -21,6 +22,7 @@ func (u *viewerUsecase) Heartbeat(ctx context.Context, roomID, sessionID string)
 	if err := u.counters.Heartbeat(ctx, roomID, sessionID, u.cfg.Viewer.HeartbeatWindowDuration()); err != nil {
 		return fmt.Errorf("viewer heartbeat: %w", err)
 	}
+	metrics.ViewerHeartbeatsTotal.Inc()
 	return nil
 }
 
