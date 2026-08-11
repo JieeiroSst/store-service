@@ -60,3 +60,7 @@ func (r *roomRepository) UpdateStreamKey(ctx context.Context, id, streamKey stri
 		Where("id = ?", id).
 		Updates(map[string]any{"stream_key": streamKey, "updated_at": time.Now()}).Error
 }
+
+func (r *roomRepository) Delete(ctx context.Context, id string) error {
+	return r.db.WithContext(ctx).Delete(&model.Room{}, "id = ?", id).Error
+}

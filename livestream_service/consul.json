@@ -25,6 +25,7 @@
     "node": {
         "id": "",
         "rtmpAddr": "",
+        "httpAddr": "",
         "localRTMP": "rtmp://127.0.0.1:1935/live",
         "maxStreams": 20
     },
@@ -43,5 +44,16 @@
     },
     "viewer": {
         "heartbeatWindow": "40s"
+    },
+    "auth": {
+        "jwtSecret": "testJwtSecret"
+    },
+    "internal": {
+        "sharedSecret": "testInternalSharedSecret"
+    },
+    "playback": {
+        "signingSecret": "testPlaybackSigningSecret",
+        "cdnBaseURL": "https://cdn.example.com",
+        "tokenTTL": "6h"
     }
 }

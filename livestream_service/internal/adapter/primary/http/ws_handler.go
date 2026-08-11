@@ -2,11 +2,13 @@ package http
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/JIeeiroSst/livestream-service/internal/domain/model"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/port"
+	"github.com/JIeeiroSst/livestream-service/internal/infrastructure/metrics"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -50,13 +52,12 @@ func (h *WSHandler) ChatRoom(c *gin.Context) {
 	}
 	defer conn.Close()
 
+	metrics.WebsocketConnections.Inc()
+	defer metrics.WebsocketConnections.Dec()
+
 	ctx, cancel := context.WithCancel(c.Request.Context())
 	defer cancel()
 
-	// Without this, a client that vanishes without sending a close frame
-	// (phone locks, wifi drops, tab killed) never triggers ReadJSON's
-	// error path - its goroutine, Redis-hub registration, and local
-	// output channel leak forever. At scale that's a slow OOM.
 	_ = conn.SetReadDeadline(time.Now().Add(wsPongWait))
 	conn.SetPongHandler(func(string) error {
 		return conn.SetReadDeadline(time.Now().Add(wsPongWait))
@@ -68,6 +69,8 @@ func (h *WSHandler) ChatRoom(c *gin.Context) {
 		return
 	}
 	defer unsub()
+
+	localErrors := make(chan string, 4)
 
 	go func() {
 		ticker := time.NewTicker(wsPingInterval)
@@ -82,6 +85,11 @@ func (h *WSHandler) ChatRoom(c *gin.Context) {
 					return
 				}
 				if err := conn.WriteJSON(msg); err != nil {
+					cancel()
+					return
+				}
+			case errMsg := <-localErrors:
+				if err := conn.WriteJSON(gin.H{"error": errMsg}); err != nil {
 					cancel()
 					return
 				}
@@ -107,6 +115,13 @@ func (h *WSHandler) ChatRoom(c *gin.Context) {
 			SentAt:   time.Now(),
 		}
 		if err := h.chat.Publish(ctx, msg); err != nil {
+			if errors.Is(err, port.ErrBanned) {
+				select {
+				case localErrors <- "you are banned from this room's chat":
+				default:
+				}
+				continue
+			}
 			logger.WithContext(ctx).Warn("chat publish failed", zap.String("roomId", roomID), zap.Error(err))
 		}
 	}

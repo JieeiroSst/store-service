@@ -14,6 +14,7 @@ import (
 
 	"github.com/JIeeiroSst/livestream-service/config"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/port"
+	"github.com/JIeeiroSst/livestream-service/internal/infrastructure/metrics"
 	"github.com/JIeeiroSst/utils/logger"
 	"go.uber.org/zap"
 )
@@ -147,6 +148,7 @@ func (r *ffmpegRunner) scheduleRestart(j *job) bool {
 		return false
 	}
 	j.restartTimestamps = append(j.restartTimestamps, now)
+	metrics.FFmpegRestartsTotal.Inc()
 	return true
 }
 

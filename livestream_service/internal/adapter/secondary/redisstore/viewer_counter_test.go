@@ -11,6 +11,15 @@ import (
 
 func newTestRedisClient(t *testing.T) *redis.Client {
 	t.Helper()
+	_, client := newTestRedisServer(t)
+	return client
+}
+
+// newTestRedisServer also returns the underlying miniredis instance, for
+// tests that need to advance its virtual clock (miniredis doesn't expire
+// TTL'd keys just because real time passes - see mr.FastForward).
+func newTestRedisServer(t *testing.T) (*miniredis.Miniredis, *redis.Client) {
+	t.Helper()
 	mr, err := miniredis.Run()
 	if err != nil {
 		t.Fatalf("start miniredis: %v", err)
@@ -19,7 +28,7 @@ func newTestRedisClient(t *testing.T) *redis.Client {
 
 	client := redis.NewClient(&redis.Options{Addr: mr.Addr()})
 	t.Cleanup(func() { _ = client.Close() })
-	return client
+	return mr, client
 }
 
 func TestViewerCounterCountsDistinctSessions(t *testing.T) {

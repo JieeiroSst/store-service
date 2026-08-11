@@ -57,7 +57,15 @@ func (u *roomUsecase) ListRooms(ctx context.Context, live bool) ([]model.Room, e
 	return u.rooms.List(ctx, live)
 }
 
-func (u *roomUsecase) RegenerateStreamKey(ctx context.Context, roomID string) (string, error) {
+func (u *roomUsecase) RegenerateStreamKey(ctx context.Context, roomID, callerUserID string, callerIsAdmin bool) (string, error) {
+	room, err := u.rooms.GetByID(ctx, roomID)
+	if err != nil {
+		return "", fmt.Errorf("get room: %w", err)
+	}
+	if room.OwnerUserID != callerUserID && !callerIsAdmin {
+		return "", ErrForbidden
+	}
+
 	key, err := generateStreamKey()
 	if err != nil {
 		return "", fmt.Errorf("generate stream key: %w", err)

@@ -33,18 +33,19 @@ func serve(lc fx.Lifecycle, cfg *config.Config, engine http.Handler) {
 	})
 }
 
-// NewNodeHTTPServer serves only the SRS http_hooks contract - see
-// httpadapter.NewNodeRouter.
+// NewNodeHTTPServer serves the SRS http_hooks contract plus the internal
+// force-unpublish route - see httpadapter.NewNodeRouter.
 type NodeHTTPParams struct {
 	fx.In
 
-	LC     fx.Lifecycle
-	SRS    *httpadapter.SRSWebhookHandler
-	Config *config.Config
+	LC       fx.Lifecycle
+	SRS      *httpadapter.SRSWebhookHandler
+	Internal *httpadapter.InternalHandler
+	Config   *config.Config
 }
 
 func NewNodeHTTPServer(p NodeHTTPParams) {
-	serve(p.LC, p.Config, httpadapter.NewNodeRouter(p.SRS))
+	serve(p.LC, p.Config, httpadapter.NewNodeRouter(p.SRS, p.Internal, p.Config))
 }
 
 // NewEdgeHTTPServer serves rooms/ingest/viewers/chat - see
@@ -59,7 +60,7 @@ type EdgeHTTPParams struct {
 }
 
 func NewEdgeHTTPServer(p EdgeHTTPParams) {
-	serve(p.LC, p.Config, httpadapter.NewEdgeRouter(p.Handler, p.WS))
+	serve(p.LC, p.Config, httpadapter.NewEdgeRouter(p.Handler, p.WS, p.Config))
 }
 
 // NewHTTPServer serves every route on one port - only used by the
@@ -67,13 +68,14 @@ func NewEdgeHTTPServer(p EdgeHTTPParams) {
 type HTTPParams struct {
 	fx.In
 
-	LC      fx.Lifecycle
-	Handler *httpadapter.Handler
-	SRS     *httpadapter.SRSWebhookHandler
-	WS      *httpadapter.WSHandler
-	Config  *config.Config
+	LC       fx.Lifecycle
+	Handler  *httpadapter.Handler
+	SRS      *httpadapter.SRSWebhookHandler
+	Internal *httpadapter.InternalHandler
+	WS       *httpadapter.WSHandler
+	Config   *config.Config
 }
 
 func NewHTTPServer(p HTTPParams) {
-	serve(p.LC, p.Config, httpadapter.NewAllInOneRouter(p.Handler, p.SRS, p.WS))
+	serve(p.LC, p.Config, httpadapter.NewAllInOneRouter(p.Handler, p.SRS, p.Internal, p.WS, p.Config))
 }

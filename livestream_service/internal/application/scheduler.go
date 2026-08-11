@@ -7,6 +7,7 @@ import (
 	"github.com/JIeeiroSst/livestream-service/config"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/model"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/port"
+	"github.com/JIeeiroSst/livestream-service/internal/infrastructure/metrics"
 )
 
 type nodeSchedulerUsecase struct {
@@ -30,11 +31,16 @@ func (s *nodeSchedulerUsecase) Heartbeat(ctx context.Context) error {
 	node := model.TranscodeNode{
 		ID:            s.cfg.Node.ID,
 		Addr:          s.cfg.Node.RTMPAddr,
+		HTTPAddr:      s.cfg.Node.HTTPAddr,
 		ActiveStreams: active,
 		MaxStreams:    max,
 		Capacity:      capacity,
 		LoadPerCore:   float64(active) / float64(max),
 	}
+
+	metrics.ActiveStreams.Set(float64(active))
+	metrics.NodeCapacity.Set(float64(capacity))
+
 	return s.assigner.nodes.Heartbeat(ctx, node, s.cfg.Transcode.HeartbeatTTLDuration())
 }
 

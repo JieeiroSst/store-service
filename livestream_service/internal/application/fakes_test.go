@@ -84,6 +84,16 @@ func (f *fakeRoomRepository) UpdateStreamKey(ctx context.Context, id, streamKey 
 	return nil
 }
 
+func (f *fakeRoomRepository) Delete(ctx context.Context, id string) error {
+	r, ok := f.byID[id]
+	if !ok {
+		return fmt.Errorf("room %q not found", id)
+	}
+	delete(f.byStreamKey, r.StreamKey)
+	delete(f.byID, id)
+	return nil
+}
+
 // --- fakeStreamRepository ---
 
 type fakeStreamRepository struct {
@@ -252,4 +262,59 @@ func (f *fakeNodeRegistry) SetAssignment(ctx context.Context, streamKey, nodeID 
 func (f *fakeNodeRegistry) ClearAssignment(ctx context.Context, streamKey string) error {
 	delete(f.assignments, streamKey)
 	return nil
+}
+
+// --- fakeModerationStore ---
+
+type fakeModerationStore struct {
+	banned map[string]bool // "roomID:userID" -> banned
+}
+
+func newFakeModerationStore() *fakeModerationStore {
+	return &fakeModerationStore{banned: make(map[string]bool)}
+}
+
+func (f *fakeModerationStore) Ban(ctx context.Context, roomID, userID string, ttl time.Duration) error {
+	f.banned[roomID+":"+userID] = true
+	return nil
+}
+
+func (f *fakeModerationStore) Unban(ctx context.Context, roomID, userID string) error {
+	delete(f.banned, roomID+":"+userID)
+	return nil
+}
+
+func (f *fakeModerationStore) IsBanned(ctx context.Context, roomID, userID string) (bool, error) {
+	return f.banned[roomID+":"+userID], nil
+}
+
+// --- fakeNodeCaller ---
+
+type fakeNodeCaller struct {
+	forceUnpublished []string // nodeHTTPAddr values called
+	err              error
+}
+
+func (f *fakeNodeCaller) ForceUnpublish(ctx context.Context, nodeHTTPAddr, streamKey string) error {
+	if f.err != nil {
+		return f.err
+	}
+	f.forceUnpublished = append(f.forceUnpublished, nodeHTTPAddr)
+	return nil
+}
+
+// --- fakeChatBroadcaster ---
+
+type fakeChatBroadcaster struct {
+	published []model.ChatMessage
+}
+
+func (f *fakeChatBroadcaster) Publish(ctx context.Context, msg model.ChatMessage) error {
+	f.published = append(f.published, msg)
+	return nil
+}
+
+func (f *fakeChatBroadcaster) Subscribe(ctx context.Context, roomID string) (<-chan model.ChatMessage, func(), error) {
+	ch := make(chan model.ChatMessage)
+	return ch, func() {}, nil
 }

@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	httpadapter "github.com/JIeeiroSst/livestream-service/internal/adapter/primary/http"
+	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/nodecall"
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/redisstore"
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/repository"
 	"github.com/JIeeiroSst/livestream-service/internal/application"
@@ -20,6 +21,7 @@ var EdgeModule = fx.Options(
 
 	repository.Module,
 	redisstore.Module,
+	nodecall.Module, // port.NodeCaller - edge -> node admin calls (force-unpublish)
 
 	application.Module,
 

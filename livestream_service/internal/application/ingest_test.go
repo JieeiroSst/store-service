@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/JIeeiroSst/livestream-service/config"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/model"
 )
 
@@ -15,15 +16,21 @@ func newTestIngest(t *testing.T) (*ingestUsecase, *fakeRoomRepository, *fakeStre
 	nodes := newFakeNodeRegistry()
 	nodes.nodes["node-1"] = &model.TranscodeNode{ID: "node-1", Addr: "rtmp://node-1:1935/live", Capacity: 5}
 
-	u := &ingestUsecase{rooms: rooms, streams: streams, vods: vods, assigner: newNodeAssigner(nodes)}
+	u := &ingestUsecase{rooms: rooms, streams: streams, vods: vods, assigner: newNodeAssigner(nodes), cfg: &config.Config{}}
 	return u, rooms, streams, vods, nodes
 }
 
-func TestRequestIngestEndpointAssignsANode(t *testing.T) {
-	u, rooms, _, _, nodes := newTestIngest(t)
-	seedRoom(rooms, "room-1", "sk_test")
+func seedOwnedRoom(rooms *fakeRoomRepository, id, streamKey, ownerUserID string) {
+	_ = rooms.Create(context.Background(), &model.Room{
+		ID: id, StreamKey: streamKey, OwnerUserID: ownerUserID, Status: model.RoomStatusOffline,
+	})
+}
 
-	endpoint, err := u.RequestIngestEndpoint(context.Background(), "room-1")
+func TestRequestIngestEndpointAssignsANodeForTheOwner(t *testing.T) {
+	u, rooms, _, _, nodes := newTestIngest(t)
+	seedOwnedRoom(rooms, "room-1", "sk_test", "owner-1")
+
+	endpoint, err := u.RequestIngestEndpoint(context.Background(), "room-1", "owner-1", false)
 	if err != nil {
 		t.Fatalf("RequestIngestEndpoint() error = %v", err)
 	}
@@ -35,10 +42,28 @@ func TestRequestIngestEndpointAssignsANode(t *testing.T) {
 	}
 }
 
+func TestRequestIngestEndpointRejectsNonOwner(t *testing.T) {
+	u, rooms, _, _, _ := newTestIngest(t)
+	seedOwnedRoom(rooms, "room-1", "sk_test", "owner-1")
+
+	if _, err := u.RequestIngestEndpoint(context.Background(), "room-1", "someone-else", false); err != ErrForbidden {
+		t.Fatalf("RequestIngestEndpoint() error = %v, want ErrForbidden", err)
+	}
+}
+
+func TestRequestIngestEndpointAllowsAdminForAnyRoom(t *testing.T) {
+	u, rooms, _, _, _ := newTestIngest(t)
+	seedOwnedRoom(rooms, "room-1", "sk_test", "owner-1")
+
+	if _, err := u.RequestIngestEndpoint(context.Background(), "room-1", "admin-user", true); err != nil {
+		t.Fatalf("RequestIngestEndpoint() as admin, error = %v", err)
+	}
+}
+
 func TestRequestIngestEndpointErrorsForUnknownRoom(t *testing.T) {
 	u, _, _, _, _ := newTestIngest(t)
 
-	if _, err := u.RequestIngestEndpoint(context.Background(), "does-not-exist"); err == nil {
+	if _, err := u.RequestIngestEndpoint(context.Background(), "does-not-exist", "owner-1", false); err == nil {
 		t.Fatal("expected an error for an unknown room")
 	}
 }

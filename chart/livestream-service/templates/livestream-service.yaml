@@ -54,6 +54,11 @@ spec:
           # service below so pod DNS survives restarts.
           - name: NODE_RTMP_ADDR
             value: "rtmp://$(POD_NAME).{{ .Values.livestreamService.node.headlessServiceName }}.default.svc.cluster.local:{{ .Values.livestreamService.node.srs.rtmpPort }}/live"
+          # Lets the edge role reach this specific node's HTTP port for
+          # admin actions (force-unpublish) - see
+          # internal/adapter/secondary/nodecall and internal_handler.go.
+          - name: NODE_HTTP_ADDR
+            value: "http://$(POD_NAME).{{ .Values.livestreamService.node.headlessServiceName }}.default.svc.cluster.local:{{ .Values.livestreamService.image.httpPort }}"
           - name: PORT_HTTP_SERVER
             value: "{{ .Values.livestreamService.image.httpPort }}"
           - name: MAX_STREAMS

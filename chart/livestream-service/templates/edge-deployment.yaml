@@ -25,6 +25,13 @@ spec:
         env:
           - name: PORT_HTTP_SERVER
             value: "{{ .Values.livestreamService.image.httpPort }}"
+          # Public CDN base URL for signed playback links (see
+          # internal/application/playback.go). Not secret - the signing
+          # key that actually protects these links is
+          # PLAYBACK_SIGNING_SECRET, delivered via the env-file secret
+          # below alongside JWT_SECRET/INTERNAL_SHARED_SECRET.
+          - name: PLAYBACK_CDN_BASE_URL
+            value: "{{ .Values.livestreamService.playback.cdnBaseURL }}"
         resources:
           {{- toYaml .Values.livestreamService.edge.resources | nindent 10 }}
         volumeMounts:
