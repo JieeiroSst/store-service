@@ -1,0 +1,20 @@
+{{- if .Values.livestreamWeb.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.livestreamWeb.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.livestreamWeb.name }}-deployment
+  minReplicas: {{ .Values.livestreamWeb.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.livestreamWeb.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.livestreamWeb.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

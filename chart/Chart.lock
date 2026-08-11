@@ -125,8 +125,11 @@ dependencies:
 - name: livestream-service
   repository: file://livestream-service
   version: 0.1.0
+- name: livestream-web
+  repository: file://livestream-web
+  version: 0.1.0
 - name: calculate-service
   repository: file://calculate-service
   version: 0.1.0
-digest: sha256:eb5461e82003148e89caffd6a20343a87e48a6281437bbd316762209c8c95df9
-generated: "2026-08-10T22:44:42.534429+07:00"
+digest: sha256:9ffc997351760566035dc4b76e659afe06426d221847ca797b26600d40fd5da2
+generated: "2026-08-11T14:59:00.063387+07:00"

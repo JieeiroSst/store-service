@@ -20,11 +20,12 @@ func New(secretKey string, accessTokenTTL time.Duration) *Generator {
 	return &Generator{secretKey: secretKey, accessTokenTTL: accessTokenTTL}
 }
 
-func (g *Generator) GenerateAccessToken(ctx context.Context, userID int, username string) (string, error) {
+func (g *Generator) GenerateAccessToken(ctx context.Context, userID int, username, role string) (string, error) {
 	claims := jwt.MapClaims{
 		"authorized": true,
 		"sub":        strconv.Itoa(userID),
 		"username":   username,
+		"role":       role,
 		"exp":        time.Now().Add(g.accessTokenTTL).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -54,10 +55,11 @@ func (g *Generator) ParseAccessToken(ctx context.Context, tokenStr string) (doma
 
 	sub, _ := claims["sub"].(string)
 	username, _ := claims["username"].(string)
+	role, _ := claims["role"].(string)
 	userID, err := strconv.Atoi(sub)
 	if err != nil {
 		return domain.AccessClaims{}, domain.ErrFailedToken
 	}
 
-	return domain.AccessClaims{UserID: userID, Username: username}, nil
+	return domain.AccessClaims{UserID: userID, Username: username, Role: role}, nil
 }

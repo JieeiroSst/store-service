@@ -175,6 +175,10 @@ dependencies:
     name: livestream-service
     version: "0.1.0"
     repository: file://livestream-service
+  - alias: livestreamWeb
+    name: livestream-web
+    version: "0.1.0"
+    repository: file://livestream-web
   - alias: calculate
     name: calculate-service
     version: "0.1.0"

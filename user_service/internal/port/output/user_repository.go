@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	CheckAccount(ctx context.Context, user domain.User) (int, string, error)
+	CheckAccount(ctx context.Context, user domain.User) (int, string, string, error)
 	CheckAccountExists(ctx context.Context, user domain.User) error
 	CreateAccount(ctx context.Context, user domain.User) (domain.User, error)
 	FindUser(ctx context.Context, userID int) (domain.User, error)

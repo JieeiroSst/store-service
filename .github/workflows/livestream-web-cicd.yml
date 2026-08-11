@@ -1,0 +1,101 @@
+name: Livestream Web CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'livestream-web/**'
+      - 'chart/livestream-web/**'
+      - '.github/workflows/livestream-web-cicd.yml'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/jieeirosst/livestream-web
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: livestream-web
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: livestream-web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_LIVESTREAM_WS_URL: wss://livestream.example.com
+
+  build-and-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./livestream-web
+          push: true
+          platforms: linux/amd64,linux/arm64
+          # NEXT_PUBLIC_* vars are inlined into the client bundle at build
+          # time (see livestream-web/Dockerfile) - this must come from a
+          # repo/org variable, not a runtime Deployment env var, and
+          # changing it means rebuilding this image.
+          build-args: |
+            NEXT_PUBLIC_LIVESTREAM_WS_URL=${{ vars.LIVESTREAM_WS_URL }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy livestream-web
+        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
+        # not a standalone release - render+apply directly to avoid ownership conflicts.
+        run: |
+          helm template ./chart/livestream-web \
+          --namespace default \
+          --set livestreamWeb.image.name=${{ env.IMAGE_NAME }} \
+          --set livestreamWeb.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+          | kubectl apply -n default -f -
+          kubectl rollout status deployment/livestream-web-deployment -n default --timeout=5m
