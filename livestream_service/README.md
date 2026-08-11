@@ -126,7 +126,7 @@ Schema changes live in `migrations/` as plain numbered SQL files, applied by han
 
 ### Configuration
 
-Config resolves from **Consul KV** first (bootstrapped via `HostConsul`/`KeyConsul`/`ServiceConsul` env vars, JSON shape in `consul.json`), falling back to plain env vars if Consul is unset or unreachable — see `internal/infrastructure/config_provider.go`. The Helm chart (`chart/livestream-service`) doesn't set the Consul bootstrap vars, so in that deployment config always comes from the plain env vars below (`consul.json` is a reference shape for standalone/Consul-managed deployments, not something the chart consumes).
+Config resolves from **Consul KV** first (bootstrapped via `HostConsul`/`KeyConsul`/`ServiceConsul` env vars, JSON shape in `consul.json`), falling back to plain env vars if Consul is unset or unreachable — see `internal/infrastructure/config_provider.go`. The Helm chart (`chart/livestream-service`, via `chart/templates/env-files-secret.yaml`'s `livestream-service.env`) sets `HostConsul`/`KeyConsul=livestream_service`/`ServiceConsul`, so in that deployment config is read from Consul KV once the `livestream_service` key is seeded with the shape in `consul.json`; the `POSTGRES_*` vars in the same env file are only the fallback used if Consul is unreachable. The dedicated `livestream` database and `livestream_svc` role are provisioned by `chart/postgres`'s `serviceDatabases` job, which also patches the `livestream_service` Consul KV entry with the generated credentials.
 
 | Env var | Default | Used by | Description |
 |---|---|---|---|

@@ -17,6 +17,9 @@ dependencies:
 - name: postgres
   repository: file://postgres
   version: 0.1.0
+- name: minio
+  repository: file://minio
+  version: 0.1.0
 - name: loki
   repository: file://loki
   version: 0.1.0
@@ -131,5 +134,5 @@ dependencies:
 - name: calculate-service
   repository: file://calculate-service
   version: 0.1.0
-digest: sha256:9ffc997351760566035dc4b76e659afe06426d221847ca797b26600d40fd5da2
-generated: "2026-08-11T14:59:00.063387+07:00"
+digest: sha256:8727cbb233b5dc74a19a66656b6db85ad32cedb14c4a65e8c0b820e1e720a771
+generated: "2026-08-11T20:51:56.528664+07:00"

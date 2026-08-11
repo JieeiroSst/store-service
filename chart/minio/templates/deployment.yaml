@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.minio.name }}
+spec:
+  replicas: {{ .Values.minio.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.minio.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.minio.name }}
+    spec:
+      containers:
+        - name: {{ .Values.minio.name }}
+          image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
+          args:
+            - server
+            - /data
+            - --console-address
+            - ":{{ .Values.minio.service.consolePort }}"
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: minio-credentials
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: minio-credentials
+                  key: MINIO_ROOT_PASSWORD
+          ports:
+            - name: api
+              containerPort: {{ .Values.minio.service.apiPort }}
+            - name: console
+              containerPort: {{ .Values.minio.service.consolePort }}
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: api
+            initialDelaySeconds: 10
+            periodSeconds: 15
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: minio-persistent-volume-claim
