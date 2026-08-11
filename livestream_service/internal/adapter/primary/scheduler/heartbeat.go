@@ -15,6 +15,7 @@ type Heartbeat struct {
 	usecase  port.NodeSchedulerUsecase
 	interval string
 	cron     *cron.Cron
+	cancel   context.CancelFunc
 }
 
 func NewHeartbeat(usecase port.NodeSchedulerUsecase, cfg *config.Config) *Heartbeat {
@@ -25,13 +26,17 @@ func NewHeartbeat(usecase port.NodeSchedulerUsecase, cfg *config.Config) *Heartb
 }
 
 func (h *Heartbeat) Start(ctx context.Context) error {
+	runCtx, cancel := context.WithCancel(context.Background())
+	h.cancel = cancel
+
 	c := cron.New(cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger)))
 	spec := fmt.Sprintf("@every %s", h.interval)
 	if _, err := c.AddFunc(spec, func() {
-		if err := h.usecase.Heartbeat(ctx); err != nil {
-			logger.WithContext(ctx).Error("node heartbeat failed", zap.Error(err))
+		if err := h.usecase.Heartbeat(runCtx); err != nil {
+			logger.WithContext(runCtx).Error("node heartbeat failed", zap.Error(err))
 		}
 	}); err != nil {
+		cancel()
 		return err
 	}
 	h.cron = c
@@ -44,4 +49,7 @@ func (h *Heartbeat) Stop() {
 		return
 	}
 	<-h.cron.Stop().Done()
+	if h.cancel != nil {
+		h.cancel()
+	}
 }

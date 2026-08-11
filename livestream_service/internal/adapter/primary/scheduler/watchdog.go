@@ -15,6 +15,7 @@ type Watchdog struct {
 	usecase  port.NodeSchedulerUsecase
 	interval string
 	cron     *cron.Cron
+	cancel   context.CancelFunc
 }
 
 func NewWatchdog(usecase port.NodeSchedulerUsecase, cfg *config.Config) *Watchdog {
@@ -24,14 +25,21 @@ func NewWatchdog(usecase port.NodeSchedulerUsecase, cfg *config.Config) *Watchdo
 	}
 }
 
+// Start ignores the fx lifecycle context beyond validating the initial call: that
+// context is cancelled once app startup finishes, but the cron job below runs for
+// the lifetime of the process, so it needs its own long-lived context tied to Stop.
 func (w *Watchdog) Start(ctx context.Context) error {
+	runCtx, cancel := context.WithCancel(context.Background())
+	w.cancel = cancel
+
 	c := cron.New(cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger)))
 	spec := fmt.Sprintf("@every %s", w.interval)
 	if _, err := c.AddFunc(spec, func() {
-		if err := w.usecase.CheckStale(ctx); err != nil {
-			logger.WithContext(ctx).Error("transcode watchdog check failed", zap.Error(err))
+		if err := w.usecase.CheckStale(runCtx); err != nil {
+			logger.WithContext(runCtx).Error("transcode watchdog check failed", zap.Error(err))
 		}
 	}); err != nil {
+		cancel()
 		return err
 	}
 	w.cron = c
@@ -44,4 +52,7 @@ func (w *Watchdog) Stop() {
 		return
 	}
 	<-w.cron.Stop().Done()
+	if w.cancel != nil {
+		w.cancel()
+	}
 }
