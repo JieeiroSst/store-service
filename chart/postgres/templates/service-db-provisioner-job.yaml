@@ -1,0 +1,125 @@
+# Provisions a dedicated Postgres role + database per entry in
+# postgres.serviceDatabases, and patches each service's Consul KV config
+# (identified by consulKey) so it authenticates with its own role instead of
+# the shared admin user. Adding a new entry to that list is the only step
+# needed to onboard a new service. Idempotent: safe to run on every upgrade.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-service-db-provisioner
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: provision-service-dbs
+          image: alpine:3.20
+          env:
+            - name: PGHOST
+              value: {{ .Values.postgres.name }}-nodeport
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_PASSWORD
+            - name: PGDATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_DB
+            - name: CONSUL_ADDR
+              value: "http://consul-service"
+            {{- range $i, $svc := .Values.postgres.serviceDatabases }}
+            - name: SVC_{{ $i }}_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $svc.name }}-db-credentials
+                  key: POSTGRES_USER
+            - name: SVC_{{ $i }}_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $svc.name }}-db-credentials
+                  key: POSTGRES_PASSWORD
+            {{- end }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              apk add --no-cache postgresql16-client jq curl >/dev/null
+
+              until pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER"; do
+                echo "waiting for postgresdb..."
+                sleep 2
+              done
+
+              provision_one() {
+                db="$1"; role="$2"; user="$3"; pass="$4"; consul_key="$5"; user_field="$6"; pass_field="$7"
+
+                db_ident=$(printf '%s' "$db" | sed 's/"/""/g')
+                db_lit=$(printf '%s' "$db" | sed "s/'/''/g")
+                role_ident=$(printf '%s' "$role" | sed 's/"/""/g')
+                role_lit=$(printf '%s' "$role" | sed "s/'/''/g")
+                pass_lit=$(printf '%s' "$pass" | sed "s/'/''/g")
+
+                echo "== provisioning database=$db role=$role =="
+
+                exists_db=$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='$db_lit'")
+                if [ "$exists_db" != "1" ]; then
+                  psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"$db_ident\""
+                fi
+
+                exists_role=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='$role_lit'")
+                if [ "$exists_role" = "1" ]; then
+                  psql -v ON_ERROR_STOP=1 -c "ALTER ROLE \"$role_ident\" WITH LOGIN PASSWORD '$pass_lit'"
+                else
+                  psql -v ON_ERROR_STOP=1 -c "CREATE ROLE \"$role_ident\" WITH LOGIN PASSWORD '$pass_lit'"
+                fi
+
+                psql -v ON_ERROR_STOP=1 -c "ALTER DATABASE \"$db_ident\" OWNER TO \"$role_ident\""
+                psql -v ON_ERROR_STOP=1 -d "$db" -c "ALTER SCHEMA public OWNER TO \"$role_ident\""
+
+                # Schema/database ownership only covers *new* objects going forward.
+                # Databases that pre-date this role (created by the shared admin user)
+                # still have their existing tables/sequences owned by that admin user,
+                # which hides them from information_schema for the new role and makes
+                # app-level "does this table exist" migration checks give false
+                # negatives. Grant full rights on what's already there too, and set
+                # default privileges so anything the admin user creates in the future
+                # (there shouldn't be any) is likewise covered.
+                admin_ident=$(printf '%s' "$PGUSER" | sed 's/"/""/g')
+                psql -v ON_ERROR_STOP=1 -d "$db" -c "
+                  GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO \"$role_ident\";
+                  GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO \"$role_ident\";
+                  GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO \"$role_ident\";
+                  ALTER DEFAULT PRIVILEGES FOR ROLE \"$admin_ident\" IN SCHEMA public GRANT ALL ON TABLES TO \"$role_ident\";
+                  ALTER DEFAULT PRIVILEGES FOR ROLE \"$admin_ident\" IN SCHEMA public GRANT ALL ON SEQUENCES TO \"$role_ident\";
+                "
+
+                current=$(curl -sf "$CONSUL_ADDR/v1/kv/$consul_key?raw" || true)
+                if [ -z "$current" ]; then
+                  echo "WARNING: consul key $consul_key not found or empty, skipping KV patch" >&2
+                else
+                  new=$(printf '%s' "$current" | jq --arg u "$user" --arg p "$pass" "$user_field = \$u | $pass_field = \$p")
+                  curl -sf -X PUT --data "$new" "$CONSUL_ADDR/v1/kv/$consul_key" >/dev/null
+                  echo "consul key $consul_key updated"
+                fi
+              }
+
+              {{- range $i, $svc := .Values.postgres.serviceDatabases }}
+              provision_one "{{ $svc.database }}" "{{ $svc.role }}" "$SVC_{{ $i }}_USER" "$SVC_{{ $i }}_PASS" "{{ $svc.consulKey }}" "{{ $svc.userField }}" "{{ $svc.passwordField }}"
+              {{- end }}
+
+              echo "all service databases provisioned"

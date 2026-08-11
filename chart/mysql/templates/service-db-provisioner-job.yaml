@@ -1,0 +1,94 @@
+# Provisions a dedicated MySQL user + database per entry in
+# mysql.serviceDatabases, and patches each service's Consul KV config
+# (identified by consulKey) so it authenticates with its own user instead of
+# root. Adding a new entry to that list is the only step needed to onboard a
+# new service. Idempotent: safe to run on every upgrade.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-service-db-provisioner
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: provision-service-dbs
+          image: mysql:8.0
+          env:
+            - name: MYSQLHOST
+              value: {{ .Values.mysql.service.name }}
+            - name: MYSQLPORT
+              value: "80"
+            - name: MYSQLUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-admin-credentials
+                  key: MYSQL_USER
+            - name: MYSQL_PWD
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-admin-credentials
+                  key: MYSQL_PASSWORD
+            - name: CONSUL_ADDR
+              value: "http://consul-service"
+            {{- range $i, $svc := .Values.mysql.serviceDatabases }}
+            - name: SVC_{{ $i }}_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $svc.name }}-db-credentials
+                  key: MYSQL_USER
+            - name: SVC_{{ $i }}_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $svc.name }}-db-credentials
+                  key: MYSQL_PASSWORD
+            {{- end }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              microdnf install -y jq curl >/dev/null
+
+              until mysql -h "$MYSQLHOST" -P "$MYSQLPORT" -u"$MYSQLUSER" -e "SELECT 1" >/dev/null 2>&1; do
+                echo "waiting for mysql..."
+                sleep 2
+              done
+
+              provision_one() {
+                db="$1"; user="$2"; pass="$3"; consul_key="$4"; user_field="$5"; pass_field="$6"
+
+                db_ident=$(printf '%s' "$db" | sed 's/`/``/g')
+                user_lit=$(printf '%s' "$user" | sed "s/'/''/g")
+                pass_lit=$(printf '%s' "$pass" | sed "s/'/''/g")
+
+                echo "== provisioning database=$db user=$user =="
+
+                mysql -h "$MYSQLHOST" -P "$MYSQLPORT" -u"$MYSQLUSER" -e "CREATE DATABASE IF NOT EXISTS \`$db_ident\`;"
+                mysql -h "$MYSQLHOST" -P "$MYSQLPORT" -u"$MYSQLUSER" -e "
+                  CREATE USER IF NOT EXISTS '$user_lit'@'%' IDENTIFIED BY '$pass_lit';
+                  ALTER USER '$user_lit'@'%' IDENTIFIED BY '$pass_lit';
+                  GRANT ALL PRIVILEGES ON \`$db_ident\`.* TO '$user_lit'@'%';
+                  FLUSH PRIVILEGES;
+                "
+
+                current=$(curl -sf "$CONSUL_ADDR/v1/kv/$consul_key?raw" || true)
+                if [ -z "$current" ]; then
+                  echo "WARNING: consul key $consul_key not found or empty, skipping KV patch" >&2
+                else
+                  new=$(printf '%s' "$current" | jq --arg u "$user" --arg p "$pass" "$user_field = \$u | $pass_field = \$p")
+                  curl -sf -X PUT --data "$new" "$CONSUL_ADDR/v1/kv/$consul_key" >/dev/null
+                  echo "consul key $consul_key updated"
+                fi
+              }
+
+              {{- range $i, $svc := .Values.mysql.serviceDatabases }}
+              provision_one "{{ $svc.database }}" "$SVC_{{ $i }}_USER" "$SVC_{{ $i }}_PASS" "{{ $svc.consulKey }}" "{{ $svc.userField }}" "{{ $svc.passwordField }}"
+              {{- end }}
+
+              echo "all service databases provisioned"

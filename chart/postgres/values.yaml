@@ -22,14 +22,58 @@ postgres:
     size: 8Gi
     hostPath: /data/db
 
-  # Extra per-service databases provisioned on install/upgrade, in addition
-  # to credentials.database which the postgres image creates automatically.
-  initDatabases:
-    - admanagement
-    - book_store
-    - authorize
-    - automatic_payment
-    - billing
-    - bot_service
-    - account_transaction
-    - user
+  # Per-service databases + dedicated roles provisioned on install/upgrade
+  # (in addition to credentials.database, which the postgres image creates
+  # automatically). Each entry gets its own DB, its own login role (never
+  # the shared admin user above), and has its Consul KV config patched with
+  # the generated user/password so the service actually picks it up.
+  # Add an entry here to onboard a new service.
+  serviceDatabases:
+    - name: admanagement
+      database: admanagement
+      role: admanagement_svc
+      consulKey: admanagement_service
+      userField: .postgres.user
+      passwordField: .postgres.password
+    - name: authorize-service
+      database: authorize
+      role: authorize_svc
+      consulKey: authorize_service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword
+    - name: automatic-payment-service
+      database: automatic_payment
+      role: automatic_payment_svc
+      consulKey: automatic_payment_service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword
+    - name: book-store-service
+      database: book_store
+      role: book_store_svc
+      consulKey: book-store-service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword
+    - name: billing-service
+      database: billing
+      role: billing_svc
+      consulKey: billing_service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword
+    - name: bot-service
+      database: bot_service
+      role: bot_service_svc
+      consulKey: bot_service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword
+    - name: account-transaction
+      database: account_transaction
+      role: account_transaction_svc
+      consulKey: account_transaction_service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword
+    - name: user
+      database: user
+      role: user_svc
+      consulKey: user_service
+      userField: .postgres.PostgresqlUser
+      passwordField: .postgres.PostgresqlPassword

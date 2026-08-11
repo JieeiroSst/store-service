@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-admin-credentials
+  labels:
+    app: {{ .Values.mysql.name }}
+data:
+  MYSQL_USER: root
+  MYSQL_PASSWORD: {{ .Values.mysql.env.password | quote }}
