@@ -1,0 +1,47 @@
+{
+    "server": {
+        "portHttpServer": "8080"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "5432",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
+        "postgresqlDbname": "livestream",
+        "postgresqlSSLMode": false
+    },
+    "redis": {
+        "addr": "redis:6379",
+        "password": "",
+        "db": 0
+    },
+    "storage": {
+        "endpoint": "minio:9000",
+        "bucket": "livestream-hls",
+        "accessKey": "",
+        "secretKey": "",
+        "useSSL": false
+    },
+    "node": {
+        "id": "",
+        "rtmpAddr": "",
+        "localRTMP": "rtmp://127.0.0.1:1935/live",
+        "maxStreams": 20
+    },
+    "transcode": {
+        "hlsDir": "/var/hls",
+        "ffmpegPath": "ffmpeg",
+        "segmentTime": 4,
+        "segmentListSize": 6,
+        "maxRestartsPerWindow": 5,
+        "restartWindow": "60s",
+        "restartDelay": "2s",
+        "watchdogStaleAfter": "30s",
+        "watchdogCheckInterval": "30s",
+        "heartbeatInterval": "5s",
+        "heartbeatTTL": "15s"
+    },
+    "viewer": {
+        "heartbeatWindow": "40s"
+    }
+}

@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	app := fx.New(infrastructure.Module)
+	app := fx.New(infrastructure.EdgeModule)
 	app.Run()
 }
