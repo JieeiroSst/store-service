@@ -13,3 +13,28 @@ mysql:
   service:
     name: mysql-svc
     type: LoadBalancer
+
+  # Per-service databases + dedicated users provisioned on install/upgrade.
+  # Each entry gets its own DB, its own login user (never MYSQL_ROOT_PASSWORD
+  # above), and has its Consul KV config patched with the generated
+  # user/password so the service actually picks it up. Add an entry here to
+  # onboard a new service.
+  serviceDatabases:
+    - name: banking-service
+      database: banking_service
+      user: banking_service_svc
+      consulKey: banking-service
+      userField: .mysql.mysqlUser
+      passwordField: .mysql.mysqlPassword
+    - name: basket-service
+      database: basket_service
+      user: basket_service_svc
+      consulKey: basket_service
+      userField: .mysql.mysqlUser
+      passwordField: .mysql.mysqlPassword
+    - name: notification-service
+      database: notification_service
+      user: notification_service_svc
+      consulKey: notification_service
+      userField: .mysql.mysqlUser
+      passwordField: .mysql.mysqlPassword
