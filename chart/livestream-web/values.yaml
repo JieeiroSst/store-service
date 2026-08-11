@@ -1,0 +1,46 @@
+livestreamWeb:
+  name: livestream-web
+  replicas: 2
+
+  image:
+    name: ghcr.io/jieeirosst/livestream-web
+    tag: latest
+    port: 3000
+
+  # Server-only - never reaches the browser. Base URLs this app's Route
+  # Handlers/Server Components call server-side (see livestream-web/src/lib).
+  livestreamServiceURL: http://livestream-service-svc.default.svc.cluster.local
+  userServiceURL: http://user-service-svc.default.svc.cluster.local
+
+  # NOTE: there is deliberately no NEXT_PUBLIC_LIVESTREAM_WS_URL here.
+  # Next.js inlines NEXT_PUBLIC_* vars into the client bundle at
+  # `next build` time (see livestream-web/Dockerfile) - setting it as a
+  # Deployment env var here would have no effect at all. It's supplied as
+  # a Docker build ARG in .github/workflows/livestream-web-cicd.yml
+  # instead; changing it means rebuilding the image, not just redeploying.
+
+  service:
+    name: livestream-web-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: livestream-web.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 65

@@ -7,7 +7,7 @@ import (
 )
 
 type TokenGenerator interface {
-	GenerateAccessToken(ctx context.Context, userID int, username string) (string, error)
+	GenerateAccessToken(ctx context.Context, userID int, username, role string) (string, error)
 	GenerateRefreshToken(ctx context.Context) (string, error)
 	ParseAccessToken(ctx context.Context, token string) (domain.AccessClaims, error)
 }

@@ -37,16 +37,21 @@ func (d *UserRepository) FindUser(ctx context.Context, userId int) (domain.User,
 	return user, nil
 }
 
-func (d *UserRepository) CheckAccount(ctx context.Context, user domain.User) (int, string, error) {
+func (d *UserRepository) CheckAccount(ctx context.Context, user domain.User) (int, string, string, error) {
 	var result domain.User
-	r := d.db.Where("username = ?", user.Username).Limit(1).Find(&result)
+	r := d.db.Preload("Roles").Where("username = ?", user.Username).Limit(1).Find(&result)
 	if r.Error != nil {
-		return -1, "", r.Error
+		return -1, "", "", r.Error
 	}
 	if result.Id == 0 {
-		return -1, "", domain.ErrUserNotExist
+		return -1, "", "", domain.ErrUserNotExist
 	}
-	return result.Id, result.Password, nil
+
+	role := "user"
+	if len(result.Roles) > 0 {
+		role = result.Roles[0].Name
+	}
+	return result.Id, result.Password, role, nil
 }
 
 func (d *UserRepository) CheckAccountExists(ctx context.Context, user domain.User) error {

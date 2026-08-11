@@ -3,11 +3,13 @@ package domain
 type AccessClaims struct {
 	UserID   int
 	Username string
+	Role     string
 }
 
 type Session struct {
 	UserID       int    `json:"user_id"`
 	Username     string `json:"username"`
+	Role         string `json:"role"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }

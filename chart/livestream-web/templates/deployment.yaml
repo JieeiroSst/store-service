@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.livestreamWeb.name }}-deployment
+spec:
+{{- if not .Values.livestreamWeb.autoscaling.enabled }}
+  replicas: {{ .Values.livestreamWeb.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.livestreamWeb.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.livestreamWeb.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.livestreamWeb.name }}
+        image: "{{ .Values.livestreamWeb.image.name }}:{{ .Values.livestreamWeb.image.tag }}"
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.livestreamWeb.image.port }}
+        env:
+          - name: LIVESTREAM_SERVICE_URL
+            value: "{{ .Values.livestreamWeb.livestreamServiceURL }}"
+          - name: USER_SERVICE_URL
+            value: "{{ .Values.livestreamWeb.userServiceURL }}"
+        resources:
+          {{- toYaml .Values.livestreamWeb.resources | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.livestreamWeb.service.name }}
+spec:
+  type: {{ .Values.livestreamWeb.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.livestreamWeb.image.port }}
+  selector:
+    app: {{ .Values.livestreamWeb.name }}-deployment

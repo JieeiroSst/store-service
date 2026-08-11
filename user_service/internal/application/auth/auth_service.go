@@ -41,7 +41,7 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 		return dto.LoginResponse{}, err
 	}
 
-	userID, hashedPassword, err := s.userRepo.CheckAccount(ctx, user)
+	userID, hashedPassword, role, err := s.userRepo.CheckAccount(ctx, user)
 	if err != nil {
 		return dto.LoginResponse{}, errors.New("user does not exist")
 	}
@@ -49,7 +49,7 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 		return dto.LoginResponse{}, errors.New("password entered incorrectly")
 	}
 
-	pair, err := s.issueTokenPair(ctx, userID, user.Username)
+	pair, err := s.issueTokenPair(ctx, userID, user.Username, role)
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
@@ -93,7 +93,7 @@ func (s *Service) RefreshToken(ctx context.Context, req dto.RefreshRequest) (dto
 		return dto.RefreshResponse{}, status.Errorf(codes.Unauthenticated, "refresh token is invalid or expired, please login again")
 	}
 
-	pair, err := s.issueTokenPair(ctx, session.UserID, session.Username)
+	pair, err := s.issueTokenPair(ctx, session.UserID, session.Username, session.Role)
 	if err != nil {
 		return dto.RefreshResponse{}, err
 	}
@@ -127,8 +127,8 @@ func (s *Service) Authentication(ctx context.Context, req dto.AuthenticationRequ
 	return dto.AuthenticationResponse{Valid: true, Message: "success"}, nil
 }
 
-func (s *Service) issueTokenPair(ctx context.Context, userID int, username string) (domain.TokenPair, error) {
-	accessToken, err := s.tokenGen.GenerateAccessToken(ctx, userID, username)
+func (s *Service) issueTokenPair(ctx context.Context, userID int, username, role string) (domain.TokenPair, error) {
+	accessToken, err := s.tokenGen.GenerateAccessToken(ctx, userID, username, role)
 	if err != nil {
 		return domain.TokenPair{}, err
 	}
@@ -140,6 +140,7 @@ func (s *Service) issueTokenPair(ctx context.Context, userID int, username strin
 	session := domain.Session{
 		UserID:       userID,
 		Username:     username,
+		Role:         role,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
