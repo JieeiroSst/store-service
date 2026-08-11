@@ -7,33 +7,33 @@ import (
 )
 
 type Config struct {
-	Server    ServerConfig
-	Secret    SecretConfig
-	Nats      NatsConfig
-	Cassandra CassandraConfig
-	Cache     CacheConfig
+	Server    ServerConfig    `json:"server"`
+	Secret    SecretConfig    `json:"secret"`
+	Nats      NatsConfig      `json:"nats"`
+	Cassandra CassandraConfig `json:"cassandra"`
+	Cache     CacheConfig     `json:"cache"`
 }
 
 type ServerConfig struct {
-	PortServer string
+	PortServer string `json:"port_server"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
 }
 
 type NatsConfig struct {
-	Dns string
+	Dns string `json:"dns"`
 }
 
 type CacheConfig struct {
-	Dns string
+	Dns string `json:"dns"`
 }
 
 type CassandraConfig struct {
-	Dns      string
-	Username string
-	Password string
+	Dns      string `json:"dns"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type Dir struct {

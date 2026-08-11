@@ -8,16 +8,16 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig
-	Serect SerectConfig
+	Server ServerConfig `json:"server"`
+	Serect SerectConfig `json:"serect"`
 }
 
 type ServerConfig struct {
-	ServerPort string
+	ServerPort string `json:"server_port"`
 }
 
 type SerectConfig struct {
-	Key string
+	Key string `json:"key"`
 }
 
 type Consul struct {

@@ -10,45 +10,45 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Secret   SecretConfig
-	RabbitMQ RabbitMQ
-	Redis    Redis
-	Postgres PostgresConfig
+	Server   ServerConfig   `json:"server"`
+	Secret   SecretConfig   `json:"secret"`
+	RabbitMQ RabbitMQ       `json:"rabbit_mq"`
+	Redis    Redis          `json:"redis"`
+	Postgres PostgresConfig `json:"postgres"`
 }
 
 type ServerConfig struct {
-	PortServer string
+	PortServer string `json:"port_server"`
 }
 
 type Redis struct {
-	Dns string
+	Dns string `json:"dns"`
 }
 
 type RabbitMQ struct {
-	Host           string
-	Port           string
-	User           string
-	Password       string
-	Exchange       string
-	Queue          string
-	RoutingKey     string
-	ConsumerTag    string
-	WorkerPoolSize int
+	Host           string `json:"host"`
+	Port           string `json:"port"`
+	User           string `json:"user"`
+	Password       string `json:"password"`
+	Exchange       string `json:"exchange"`
+	Queue          string `json:"queue"`
+	RoutingKey     string `json:"routing_key"`
+	ConsumerTag    string `json:"consumer_tag"`
+	WorkerPoolSize int    `json:"worker_pool_size"`
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
+	PgDriver           string `json:"pg_driver"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
 }
 
 type Consul struct {

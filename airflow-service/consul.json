@@ -1,11 +1,11 @@
 {
-    "Server": {
-        "ServerPort": "8000"
+    "server": {
+        "server_port": "8000"
     },
-    "Airflow": {
-        "Host": "airflow-webserver-svc",
-        "Scheme": "http",
-        "Username": "airflow",
-        "Password": "airflow"
+    "airflow": {
+        "host": "airflow-webserver-svc",
+        "scheme": "http",
+        "username": "airflow",
+        "password": "airflow"
     }
 }

@@ -1,19 +1,19 @@
 {
     "server": {
-        "httpPort": "8080"
+        "http_port": "8080"
     },
     "postgres": {
-        "postgresqlHost": "postgresdb",
-        "postgresqlPort": "80",
-        "postgresqlUser": "testUser",
-        "postgresqlPassword": "testPassword",
-        "postgresqlDbname": "automatic_payment",
-        "postgresqlSSLMode": false
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "automatic_payment",
+        "postgresql_ssl_mode": false
     },
     "billing": {
-        "renewalCheckInterval": 86400000000000
+        "renewal_check_interval": 86400000000000
     },
     "gateway": {
-        "integratedPaymentServiceUrl": "http://localhost:8080"
+        "integrated_payment_service_url": "http://localhost:8080"
     }
 }

@@ -1,32 +1,32 @@
 {
     "server": {
-        "serverPort": "1235"
+        "server_port": "1235"
     },
     "mysql": {
-        "mysqlHost": "mysql-svc",
-        "mysqlPort": "80",
-        "mysqlUser": "root",
-        "mysqlPassword": "password",
-        "mysqlDbname": "notification_service"
+        "mysql_host": "mysql-svc",
+        "mysql_port": "80",
+        "mysql_user": "root",
+        "mysql_password": "password",
+        "mysql_dbname": "notification_service"
     },
     "rabbit": {
         "host": "rabbitmq-service",
         "port": 5672,
         "username": "admin",
         "password": "admin",
-        "virtualHost": "/",
-        "maxRetries": 5,
-        "retryDelay": 5000000000
+        "virtual_host": "/",
+        "max_retries": 5,
+        "retry_delay": 5000000000
     },
     "firebase": {
-        "credentialsFile": ""
+        "credentials_file": ""
     },
     "email": {
-        "apiKey": "",
+        "api_key": "",
         "from": "onboarding@resend.dev"
     },
     "slack": {
-        "webhookSecret": "",
+        "webhook_secret": "",
         "channel": "#notifications"
     }
 }

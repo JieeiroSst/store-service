@@ -7,7 +7,7 @@
         "port": "80",
         "user": "testUser",
         "password": "testPassword",
-        "dbName": "admanagement",
-        "sslMode": "disable"
+        "db_name": "admanagement",
+        "ssl_mode": "disable"
     }
 }

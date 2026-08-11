@@ -7,21 +7,21 @@ import (
 )
 
 type Config struct {
-	Server        ServerConfig
-	Secret        SecretConfig
-	Elasticsearch ElasticsearchConfig
+	Server        ServerConfig        `json:"server"`
+	Secret        SecretConfig        `json:"secret"`
+	Elasticsearch ElasticsearchConfig `json:"elasticsearch"`
 }
 
 type ServerConfig struct {
-	ServerPort string
+	ServerPort string `json:"server_port"`
 }
 
 type SecretConfig struct {
-	AuthorizeKey string
+	AuthorizeKey string `json:"authorize_key"`
 }
 
 type ElasticsearchConfig struct {
-	DNS string
+	DNS string `json:"dns"`
 }
 
 type Dir struct {

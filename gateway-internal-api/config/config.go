@@ -7,11 +7,11 @@ import (
 )
 
 type ServerConfig struct {
-	PortServer string
+	PortServer string `json:"port_server"`
 }
 
 type Config struct {
-	Server ServerConfig
+	Server ServerConfig `json:"server"`
 }
 
 type Dir struct {

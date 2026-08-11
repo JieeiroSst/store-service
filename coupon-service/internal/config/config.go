@@ -9,38 +9,38 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Secret   SecretConfig
-	Postgres PostgresConfig
-	Cache    CacheConfig
-	Nats     NatsConfig
+	Server   ServerConfig   `json:"server"`
+	Secret   SecretConfig   `json:"secret"`
+	Postgres PostgresConfig `json:"postgres"`
+	Cache    CacheConfig    `json:"cache"`
+	Nats     NatsConfig     `json:"nats"`
 }
 
 type ServerConfig struct {
-	PortHttpServer string
-	PortGrpcServer string
+	PortHttpServer string `json:"port_http_server"`
+	PortGrpcServer string `json:"port_grpc_server"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
 }
 
 type CacheConfig struct {
-	URL string
+	URL string `json:"url"`
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
+	PgDriver           string `json:"pg_driver"`
 }
 
 type NatsConfig struct {
-	DNS string 
+	DNS string `json:"dns"`
 }
 
 func InitializeConfiguration(dir string) (*Config, error) {
