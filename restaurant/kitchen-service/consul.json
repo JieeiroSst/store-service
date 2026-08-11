@@ -1,20 +1,20 @@
 {
     "server": {
-        "PortServer": "1235"
+        "port_server": "1235"
     },
     "secret": {
-        "AuthorizeKey": "no_name"
+        "jwt_secret_key": "no_name"
     },
     "postgres": {
-        "PostgresqlHost": "localhost",
-        "PostgresqlPort": "31000",
-        "PostgresqlUser": "postgres",
-        "PostgresqlPassword": "postgres",
-        "PostgresqlDbname": "kitchen",
-        "PgDriver": "pgx"
+        "postgresql_host": "localhost",
+        "postgresql_port": "31000",
+        "postgresql_user": "postgres",
+        "postgresql_password": "postgres",
+        "postgresql_dbname": "kitchen",
+        "pg_driver": "pgx"
     },
     "nats": {
-        "Dns": "http://localhost:30002"
+        "dns": "http://localhost:30002"
     },
     "redis": {
         "dns": "localhost:31001"

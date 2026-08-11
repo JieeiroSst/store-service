@@ -7,25 +7,25 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig
-	Mysql  MysqlConfig
-	Cache  CacheConfig
-	Kafka  KafkaConfig
+	Server ServerConfig `json:"server"`
+	Mysql  MysqlConfig  `json:"mysql"`
+	Cache  CacheConfig  `json:"cache"`
+	Kafka  KafkaConfig  `json:"kafka"`
 }
 
 type ServerConfig struct {
-	ServerPort string
-	GRPCServer string
+	ServerPort string `json:"server_port"`
+	GRPCServer string `json:"grpc_server"`
 }
 
 type MysqlConfig struct {
-	MysqlHost     string
-	MysqlPort     string
-	MysqlUser     string
-	MysqlPassword string
-	MysqlDbname   string
-	MysqlSSLMode  bool
-	MysqlDriver   string
+	MysqlHost     string `json:"mysql_host"`
+	MysqlPort     string `json:"mysql_port"`
+	MysqlUser     string `json:"mysql_user"`
+	MysqlPassword string `json:"mysql_password"`
+	MysqlDbname   string `json:"mysql_dbname"`
+	MysqlSSLMode  bool   `json:"mysql_ssl_mode"`
+	MysqlDriver   string `json:"mysql_driver"`
 }
 
 type Consul struct {
@@ -42,14 +42,14 @@ type Dir struct {
 }
 
 type CacheConfig struct {
-	Host     string
-	Password string
+	Host     string `json:"host"`
+	Password string `json:"password"`
 }
 
 type KafkaConfig struct {
-	Brokers          []string
-	TransactionTopic string
-	ConsumerGroup    string
+	Brokers          []string `json:"brokers"`
+	TransactionTopic string   `json:"transaction_topic"`
+	ConsumerGroup    string   `json:"consumer_group"`
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {

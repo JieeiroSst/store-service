@@ -1,31 +1,31 @@
 {
     "server": {
-        "PortHttpServer": "1235",
-        "PortGrpcServer": "1236"
+        "port_http_server": "1235",
+        "port_grpc_server": "1236"
     },
     "secret": {
-        "JwtSecretKey": "secretkey",
-        "AuthorizeKey": "no_name"
+        "jwt_secret_key": "secretkey",
+        "authorize_key": "no_name"
     },
     "redis": {
         "dns": "redis-svc:80"
     },
     "email": {
-        "NameEmail": "luumanhquan7@gmail.com",
-        "PasswordEmail": "#############",
-        "Port": "587",
-        "Host": "smtp.gmail.com"
+        "name_email": "luumanhquan7@gmail.com",
+        "password_email": "#############",
+        "port": "587",
+        "host": "smtp.gmail.com"
     },
     "postgres": {
-        "PostgresqlHost": "postgresdb",
-        "PostgresqlPort": "80",
-        "PostgresqlUser": "testUser",
-        "PostgresqlPassword": "testPassword",
-        "PostgresqlDbname": "user",
-        "PgDriver": "pgx"
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "user",
+        "pg_driver": "pgx"
     },
     "token": {
-        "AccessTokenExpMinutes": 15,
-        "RefreshTokenExpHours": 168
+        "access_token_exp_minutes": 15,
+        "refresh_token_exp_hours": 168
     }
 }

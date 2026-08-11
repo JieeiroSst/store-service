@@ -1,17 +1,17 @@
 {
     "server": {
-        "serverPort": "8000"
+        "server_port": "8000"
     },
     "postgres": {
-        "postgresqlHost": "postgresdb",
-        "postgresqlPort": "80",
-        "postgresqlUser": "testUser",
-        "postgresqlPassword": "testPassword",
-        "postgresqlDbname": "billing",
-        "postgresqlSSLMode": false
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "billing",
+        "postgresql_ssl_mode": false
     },
     "secret": {
-        "jwtSecretKey": "",
-        "authorizeKey": ""
+        "jwt_secret_key": "",
+        "authorize_key": ""
     }
 }

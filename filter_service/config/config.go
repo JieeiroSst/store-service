@@ -7,12 +7,12 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig
+	Server ServerConfig `json:"server"`
 }
 
 type ServerConfig struct {
-	ServerPort string
-	GRPCServer string
+	ServerPort string `json:"server_port"`
+	GRPCServer string `json:"grpc_server"`
 }
 
 type Dir struct {

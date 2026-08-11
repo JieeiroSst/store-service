@@ -7,37 +7,37 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Secret   SecretConfig
-	Redis    Redis
-	Postgres PostgresConfig
-	Nats     NatsConfig
+	Server   ServerConfig   `json:"server"`
+	Secret   SecretConfig   `json:"secret"`
+	Redis    Redis          `json:"redis"`
+	Postgres PostgresConfig `json:"postgres"`
+	Nats     NatsConfig     `json:"nats"`
 }
 
 type ServerConfig struct {
-	PortServer string
+	PortServer string `json:"port_server"`
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
+	PgDriver           string `json:"pg_driver"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
 }
 
 type Redis struct {
-	Dns string
+	Dns string `json:"dns"`
 }
 
 type NatsConfig struct {
-	Dns string
+	Dns string `json:"dns"`
 }
 
 type Dir struct {

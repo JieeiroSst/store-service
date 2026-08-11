@@ -7,22 +7,22 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Secret   SecretConfig
-	Nats     NatsConfig
-	Postgres PostgresConfig
+	Server   ServerConfig   `json:"server"`
+	Secret   SecretConfig   `json:"secret"`
+	Nats     NatsConfig     `json:"nats"`
+	Postgres PostgresConfig `json:"postgres"`
 }
 
 type ServerConfig struct {
-	PortServer string
+	PortServer string `json:"port_server"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
 }
 
 type NatsConfig struct {
-	Dns string
+	Dns string `json:"dns"`
 }
 
 type Dir struct {
@@ -32,13 +32,13 @@ type Dir struct {
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
+	PgDriver           string `json:"pg_driver"`
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {

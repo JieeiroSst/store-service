@@ -1,20 +1,20 @@
 {
     "server": {
-        "serverPort": "8080",
-        "grpcServer": "9090"
+        "server_port": "8080",
+        "grpc_server": "9090"
     },
     "mysql": {
-        "mysqlHost": "mysql-svc",
-        "mysqlPort": "80",
-        "mysqlUser": "root",
-        "mysqlPassword": "password",
-        "mysqlDbname": "address_country",
-        "mysqlSSLMode": false,
-        "mysqlDriver": "mysql"
+        "mysql_host": "mysql-svc",
+        "mysql_port": "80",
+        "mysql_user": "root",
+        "mysql_password": "password",
+        "mysql_dbname": "address_country",
+        "mysql_ssl_mode": false,
+        "mysql_driver": "mysql"
     },
     "secret": {
-        "jwtSecretKey": "secretkey",
-        "authorizeKey": "no_name"
+        "jwt_secret_key": "secretkey",
+        "authorize_key": "no_name"
     },
     "cache": {
         "host": "redis-svc:80"

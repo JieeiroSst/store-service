@@ -1,38 +1,38 @@
 {
     "server": {
-        "portHttpServer": "8080"
+        "port_http_server": "8080"
     },
     "postgres": {
-        "postgresqlHost": "postgresdb",
-        "postgresqlPort": "80",
-        "postgresqlUser": "testUser",
-        "postgresqlPassword": "testPassword",
-        "postgresqlDbname": "bot_service",
-        "postgresqlSSLMode": false
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "bot_service",
+        "postgresql_ssl_mode": false
     },
     "scheduler": {
-        "pollInterval": "30s"
+        "poll_interval": "30s"
     },
     "telegram": {
-        "botToken": "",
+        "bot_token": "",
         "debug": false,
-        "broadcastChatID": ""
+        "broadcast_chat_id": ""
     },
     "twitter": {
         "enabled": false,
-        "userId": "",
-        "bearerToken": "",
-        "consumerKey": "",
-        "consumerSecret": "",
-        "accessToken": "",
-        "accessTokenSecret": "",
-        "pollIntervalSeconds": 60
+        "user_id": "",
+        "bearer_token": "",
+        "consumer_key": "",
+        "consumer_secret": "",
+        "access_token": "",
+        "access_token_secret": "",
+        "poll_interval_seconds": 60
     },
     "facebook": {
         "enabled": false,
-        "pageId": "",
-        "pageAccessToken": "",
-        "verifyToken": "",
-        "appSecret": ""
+        "page_id": "",
+        "page_access_token": "",
+        "verify_token": "",
+        "app_secret": ""
     }
 }

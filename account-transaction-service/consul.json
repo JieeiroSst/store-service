@@ -1,22 +1,23 @@
 {
     "server": {
-        "portHttpServer": "8080",
-        "portGrpcServer": "9090"
+        "port_http_server": "8080",
+        "port_grpc_server": "9090"
     },
     "postgres": {
-        "postgresqlHost": "postgresdb",
-        "postgresqlPort": "80",
-        "postgresqlUser": "testUser",
-        "postgresqlPassword": "testPassword",
-        "postgresqlDbname": "account_transaction",
-        "postgresqlSSLMode": false,
-        "pgDriver": "pgx"
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "account_transaction",
+        "postgresql_ssl_mode": false,
+        "pg_driver": "pgx"
     },
     "secret": {
-        "jwtSecretKey": "secretkey",
-        "authorizeKey": "no_name"
+        "jwt_secret_key": "secretkey",
+        "authorize_key": "no_name"
     },
     "cache": {
         "host": "redis-svc:80"
     }
 }
+

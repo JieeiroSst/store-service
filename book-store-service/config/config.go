@@ -7,26 +7,26 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Postgres PostgresConfig
-	Secret   SecretConfig
+	Server   ServerConfig   `json:"server"`
+	Postgres PostgresConfig `json:"postgres"`
+	Secret   SecretConfig   `json:"secret"`
 }
 
 type ServerConfig struct {
-	ServerPort string
+	ServerPort string `json:"server_port"`
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
 }
 
 type SecretConfig struct {
-	AuthorizeKey string
+	AuthorizeKey string `json:"authorize_key"`
 }
 
 type Dir struct {

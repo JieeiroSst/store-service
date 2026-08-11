@@ -9,30 +9,30 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Postgres PostgresConfig
-	Secret   SecretConfig
-	Cache    CacheConfig
+	Server   ServerConfig   `json:"server"`
+	Postgres PostgresConfig `json:"postgres"`
+	Secret   SecretConfig   `json:"secret"`
+	Cache    CacheConfig    `json:"cache"`
 }
 
 type ServerConfig struct {
-	PortHttpServer string
-	PortGrpcServer string
+	PortHttpServer string `json:"port_http_server"`
+	PortGrpcServer string `json:"port_grpc_server"`
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
+	PgDriver           string `json:"pg_driver"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
-	AuthorizeKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
+	AuthorizeKey string `json:"authorize_key"`
 }
 
 type Consul struct {
@@ -49,7 +49,7 @@ type Dir struct {
 }
 
 type CacheConfig struct {
-	Host string
+	Host string `json:"host"`
 }
 
 func InitializeConfiguration(dir string) (*Config, error) {

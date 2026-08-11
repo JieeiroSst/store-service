@@ -18,17 +18,17 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	PortHttpServer string `json:"portHttpServer"`
-	PortGrpcServer string `json:"portGrpcServer"`
+	PortHttpServer string `json:"port_http_server"`
+	PortGrpcServer string `json:"port_grpc_server"`
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string `json:"postgresqlHost"`
-	PostgresqlPort     string `json:"postgresqlPort"`
-	PostgresqlUser     string `json:"postgresqlUser"`
-	PostgresqlPassword string `json:"postgresqlPassword"`
-	PostgresqlDbname   string `json:"postgresqlDbname"`
-	PostgresqlSSLMode  bool   `json:"postgresqlSSLMode"`
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
 }
 
 type CacheConfig struct {
@@ -36,7 +36,7 @@ type CacheConfig struct {
 }
 
 type SecretConfig struct {
-	JwtSecretKey string `json:"jwtSecretKey"`
+	JwtSecretKey string `json:"jwt_secret_key"`
 }
 
 // InitializeConfiguration loads configuration exclusively from Consul KV.

@@ -7,30 +7,30 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Mysql    MysqlConfig
-	Secret   SecretConfig
-	Cache    CacheConfig
+	Server ServerConfig `json:"server"`
+	Mysql  MysqlConfig  `json:"mysql"`
+	Secret SecretConfig `json:"secret"`
+	Cache  CacheConfig  `json:"cache"`
 }
 
 type ServerConfig struct {
-	ServerPort string
-	GRPCServer string
+	ServerPort string `json:"server_port"`
+	GRPCServer string `json:"grpc_server"`
 }
 
 type MysqlConfig struct {
-	MysqlHost     string
-	MysqlPort     string
-	MysqlUser     string
-	MysqlPassword string
-	MysqlDbname   string
-	MysqlSSLMode  bool
-	MysqlDriver   string
+	MysqlHost     string `json:"mysql_host"`
+	MysqlPort     string `json:"mysql_port"`
+	MysqlUser     string `json:"mysql_user"`
+	MysqlPassword string `json:"mysql_password"`
+	MysqlDbname   string `json:"mysql_dbname"`
+	MysqlSSLMode  bool   `json:"mysql_ssl_mode"`
+	MysqlDriver   string `json:"mysql_driver"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
-	AuthorizeKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
+	AuthorizeKey string `json:"authorize_key"`
 }
 
 type Dir struct {
@@ -40,7 +40,7 @@ type Dir struct {
 }
 
 type CacheConfig struct {
-	Host string
+	Host string `json:"host"`
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {

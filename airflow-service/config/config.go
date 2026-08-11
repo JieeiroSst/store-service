@@ -7,19 +7,19 @@ import (
 )
 
 type Config struct {
-	Server  ServerConfig
-	Airflow AirflowConfig
+	Server  ServerConfig  `json:"server"`
+	Airflow AirflowConfig `json:"airflow"`
 }
 
 type ServerConfig struct {
-	ServerPort string
+	ServerPort string `json:"server_port"`
 }
 
 type AirflowConfig struct {
-	Host     string
-	Scheme   string
-	Username string
-	Password string
+	Host     string `json:"host"`
+	Scheme   string `json:"scheme"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type Dir struct {

@@ -1,21 +1,21 @@
 {
     "server": {
-        "PortServer": "1239"
+        "port_server": "1239"
     },
     "cache": {
-        "DNS": "localhost:6379"
+        "dns": "localhost:6379"
     },
     "weather": {
-        "OpenMeteoBaseURL": "https://api.open-meteo.com/v1/forecast",
-        "NoaaBaseURL": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
-        "RainViewerBaseURL": "https://api.rainviewer.com/public/weather-maps.json",
-        "RequestTimeoutSec": 10,
-        "RefreshIntervalMin": 15,
-        "Locations": [
-            { "Name": "ho-chi-minh-city", "Lat": 10.7769, "Lon": 106.7009 },
-            { "Name": "vung-tau", "Lat": 10.3460, "Lon": 107.0843 },
-            { "Name": "da-nang", "Lat": 16.0544, "Lon": 108.2022 },
-            { "Name": "new-york-the-battery", "Lat": 40.7003, "Lon": -74.0142, "TideStationID": "8518750" }
+        "open_meteo_base_url": "https://api.open-meteo.com/v1/forecast",
+        "noaa_base_url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
+        "rain_viewer_base_url": "https://api.rainviewer.com/public/weather-maps.json",
+        "request_timeout_sec": 10,
+        "refresh_interval_min": 15,
+        "locations": [
+            { "name": "ho-chi-minh-city", "lat": 10.7769, "lon": 106.7009 },
+            { "name": "vung-tau", "lat": 10.3460, "lon": 107.0843 },
+            { "name": "da-nang", "lat": 16.0544, "lon": 108.2022 },
+            { "name": "new-york-the-battery", "lat": 40.7003, "lon": -74.0142, "tide_station_id": "8518750" }
         ]
     }
 }

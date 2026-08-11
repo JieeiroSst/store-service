@@ -7,21 +7,21 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Postgres PostgresConfig
+	Server   ServerConfig   `json:"server"`
+	Postgres PostgresConfig `json:"postgres"`
 }
 
 type ServerConfig struct {
-	Port string
+	Port string `json:"port"`
 }
 
 type PostgresConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	DBName   string
-	SSLMode  string
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+	DBName   string `json:"db_name"`
+	SSLMode  string `json:"ssl_mode"`
 }
 
 type Dir struct {

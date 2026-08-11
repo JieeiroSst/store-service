@@ -7,16 +7,16 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig
-	Cache  CacheConfig
-	Mysql  MysqlConfig
-	Secret SecretConfig
-	Kafka  KafkaConfig
+	Server ServerConfig `json:"server"`
+	Cache  CacheConfig  `json:"cache"`
+	Mysql  MysqlConfig  `json:"mysql"`
+	Secret SecretConfig `json:"secret"`
+	Kafka  KafkaConfig  `json:"kafka"`
 }
 
 type ServerConfig struct {
-	ServerPort string
-	GRPCServer string
+	ServerPort string `json:"server_port"`
+	GRPCServer string `json:"grpc_server"`
 }
 
 type Consul struct {
@@ -37,26 +37,26 @@ type Kafka struct {
 }
 
 type CacheConfig struct {
-	Host string
+	Host string `json:"host"`
 }
 
 type KafkaConfig struct {
-	KafkaURL string
+	KafkaURL string `json:"kafka_url"`
 }
 
 type MysqlConfig struct {
-	MysqlHost     string
-	MysqlPort     string
-	MysqlUser     string
-	MysqlPassword string
-	MysqlDbname   string
-	MysqlSSLMode  bool
-	MysqlDriver   string
+	MysqlHost     string `json:"mysql_host"`
+	MysqlPort     string `json:"mysql_port"`
+	MysqlUser     string `json:"mysql_user"`
+	MysqlPassword string `json:"mysql_password"`
+	MysqlDbname   string `json:"mysql_dbname"`
+	MysqlSSLMode  bool   `json:"mysql_ssl_mode"`
+	MysqlDriver   string `json:"mysql_driver"`
 }
 
 type SecretConfig struct {
-	JwtSecretKey string
-	AuthorizeKey string
+	JwtSecretKey string `json:"jwt_secret_key"`
+	AuthorizeKey string `json:"authorize_key"`
 }
 
 func ReadFileEnv(dir string) (*Dir, error) {

@@ -18,27 +18,27 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	HTTPPort string `json:"httpPort"`
+	HTTPPort string `json:"http_port"`
 }
 
 type PostgresConfig struct {
-	PostgresqlHost     string `json:"postgresqlHost"`
-	PostgresqlPort     string `json:"postgresqlPort"`
-	PostgresqlUser     string `json:"postgresqlUser"`
-	PostgresqlPassword string `json:"postgresqlPassword"`
-	PostgresqlDbname   string `json:"postgresqlDbname"`
-	PostgresqlSSLMode  bool   `json:"postgresqlSSLMode"`
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
 }
 
 type BillingConfig struct {
-	RenewalCheckInterval time.Duration `json:"renewalCheckInterval"`
+	RenewalCheckInterval time.Duration `json:"renewal_check_interval"`
 }
 
 // GatewayConfig points at the outbound payment gateway. Charges are
 // delegated to integrated-payment-service over HTTP rather than integrating
 // a provider (Stripe/VNPay/...) directly in this service.
 type GatewayConfig struct {
-	IntegratedPaymentServiceURL string `json:"integratedPaymentServiceUrl"`
+	IntegratedPaymentServiceURL string `json:"integrated_payment_service_url"`
 }
 
 // InitializeConfiguration loads configuration exclusively from Consul KV.
