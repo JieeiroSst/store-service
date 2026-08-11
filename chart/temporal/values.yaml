@@ -1,0 +1,6 @@
+temporal:
+  db:
+    user: temporal_user
+    # Leave blank to auto-generate a random password on first install and
+    # keep reusing it on every subsequent upgrade. Set explicitly to pin/rotate.
+    password: ""

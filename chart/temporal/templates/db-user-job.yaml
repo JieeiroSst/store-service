@@ -1,0 +1,71 @@
+# Provisions the dedicated Postgres role Temporal connects as (see
+# db-credentials-secret.yaml), so a fresh `helm install` doesn't require the
+# manual `CREATE ROLE` step. Runs with the shared admin credentials from the
+# postgres chart's db-secret-credentials configmap, which has rights to
+# create/alter roles. Idempotent: creates the role if missing, otherwise
+# syncs its password to match the current secret.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: temporal-db-user
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: create-temporal-db-user
+          image: postgres:16
+          env:
+            - name: PGHOST
+              value: postgresdb-nodeport
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_PASSWORD
+            - name: PGDATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: db-secret-credentials
+                  key: POSTGRES_DB
+            - name: TEMPORAL_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: temporal-db-credentials
+                  key: POSTGRES_USER
+            - name: TEMPORAL_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: temporal-db-credentials
+                  key: POSTGRES_PWD
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              until pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER"; do
+                echo "waiting for postgresdb..."
+                sleep 2
+              done
+              # SQL-escape (double up embedded quotes) before interpolating into literals/identifiers below.
+              ROLE_IDENT=$(printf '%s' "$TEMPORAL_DB_USER" | sed 's/"/""/g')
+              ROLE_LIT=$(printf '%s' "$TEMPORAL_DB_USER" | sed "s/'/''/g")
+              PASS_LIT=$(printf '%s' "$TEMPORAL_DB_PASSWORD" | sed "s/'/''/g")
+              EXISTS=$(psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '$ROLE_LIT'")
+              if [ "$EXISTS" = "1" ]; then
+                psql -v ON_ERROR_STOP=1 -c "ALTER ROLE \"$ROLE_IDENT\" WITH PASSWORD '$PASS_LIT'"
+              else
+                psql -v ON_ERROR_STOP=1 -c "CREATE ROLE \"$ROLE_IDENT\" WITH LOGIN CREATEDB PASSWORD '$PASS_LIT'"
+              fi
