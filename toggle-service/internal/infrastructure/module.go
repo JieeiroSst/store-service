@@ -5,6 +5,7 @@ import (
 
 	httpadapter "github.com/JIeeiroSst/toggle-service/internal/adapter/primary/http"
 	"github.com/JIeeiroSst/toggle-service/internal/adapter/secondary/repository"
+	"github.com/JIeeiroSst/toggle-service/internal/adapter/secondary/userservice"
 	"github.com/JIeeiroSst/toggle-service/internal/application"
 	"github.com/JIeeiroSst/toggle-service/internal/infrastructure/config"
 	"github.com/JIeeiroSst/toggle-service/internal/infrastructure/database"
@@ -17,6 +18,7 @@ var Module = fx.Options(
 	logger.Module,
 	database.Module,
 	repository.Module,
+	userservice.Module,
 	application.Module,
 	httpadapter.Module,
 

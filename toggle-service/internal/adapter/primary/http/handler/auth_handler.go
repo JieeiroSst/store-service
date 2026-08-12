@@ -35,7 +35,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
-	token, u, err := h.auth.Login(r.Context(), req.Email, req.Password)
+	token, u, err := h.auth.Login(r.Context(), req.Username, req.Password)
 	if err != nil {
 		writeError(w, err)
 		return

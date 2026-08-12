@@ -4,7 +4,7 @@ CREATE TABLE projects (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name        VARCHAR(255) NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
-    created_by  UUID,
+    created_by  TEXT, -- user_service user ID (external, no local FK)
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );

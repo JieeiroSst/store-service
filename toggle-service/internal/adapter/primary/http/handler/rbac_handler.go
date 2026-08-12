@@ -53,17 +53,14 @@ func (h *RBACHandler) AddMember(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
-	userID, err := uuid.Parse(req.UserID)
-	if err != nil {
-		writeError(w, apperr.ErrValidation)
-		return
-	}
 	roleID, err := uuid.Parse(req.RoleID)
 	if err != nil {
 		writeError(w, apperr.ErrValidation)
 		return
 	}
-	m, err := h.rbac.AddMember(r.Context(), projectID, userID, roleID)
+	// req.UserID is a user_service user ID (opaque external identifier),
+	// not a local UUID — passed through as-is.
+	m, err := h.rbac.AddMember(r.Context(), projectID, req.UserID, roleID)
 	if err != nil {
 		writeError(w, err)
 		return

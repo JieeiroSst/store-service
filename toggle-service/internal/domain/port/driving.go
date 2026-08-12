@@ -9,11 +9,11 @@ import (
 )
 
 type ProjectService interface {
-	Create(ctx context.Context, name, description string, actor uuid.UUID) (*model.Project, error)
+	Create(ctx context.Context, name, description string, actor string) (*model.Project, error)
 	Get(ctx context.Context, id uuid.UUID) (*model.Project, error)
 	List(ctx context.Context) ([]model.Project, error)
-	Update(ctx context.Context, id uuid.UUID, name, description string, actor uuid.UUID) (*model.Project, error)
-	Delete(ctx context.Context, id uuid.UUID, actor uuid.UUID) error
+	Update(ctx context.Context, id uuid.UUID, name, description string, actor string) (*model.Project, error)
+	Delete(ctx context.Context, id uuid.UUID, actor string) error
 }
 
 type EnvironmentService interface {
@@ -39,12 +39,12 @@ type UpdateFlagInput struct {
 }
 
 type FeatureFlagService interface {
-	Create(ctx context.Context, in CreateFlagInput, actor uuid.UUID) (*model.FeatureFlag, error)
+	Create(ctx context.Context, in CreateFlagInput, actor string) (*model.FeatureFlag, error)
 	Get(ctx context.Context, projectID uuid.UUID, key string) (*model.FeatureFlag, error)
 	List(ctx context.Context, projectID uuid.UUID) ([]model.FeatureFlag, error)
-	Update(ctx context.Context, projectID uuid.UUID, key string, in UpdateFlagInput, actor uuid.UUID) (*model.FeatureFlag, error)
-	Archive(ctx context.Context, projectID uuid.UUID, key string, actor uuid.UUID) error
-	Toggle(ctx context.Context, projectID uuid.UUID, key, environmentName string, enabled bool, actor uuid.UUID) error
+	Update(ctx context.Context, projectID uuid.UUID, key string, in UpdateFlagInput, actor string) (*model.FeatureFlag, error)
+	Archive(ctx context.Context, projectID uuid.UUID, key string, actor string) error
+	Toggle(ctx context.Context, projectID uuid.UUID, key, environmentName string, enabled bool, actor string) error
 }
 
 type StrategyInput struct {
@@ -62,21 +62,21 @@ type ConstraintInput struct {
 }
 
 type StrategyService interface {
-	Add(ctx context.Context, projectID uuid.UUID, key, environmentName string, in StrategyInput, actor uuid.UUID) (*model.ActivationStrategy, error)
-	Update(ctx context.Context, strategyID uuid.UUID, in StrategyInput, actor uuid.UUID) (*model.ActivationStrategy, error)
-	Delete(ctx context.Context, strategyID uuid.UUID, actor uuid.UUID) error
+	Add(ctx context.Context, projectID uuid.UUID, key, environmentName string, in StrategyInput, actor string) (*model.ActivationStrategy, error)
+	Update(ctx context.Context, strategyID uuid.UUID, in StrategyInput, actor string) (*model.ActivationStrategy, error)
+	Delete(ctx context.Context, strategyID uuid.UUID, actor string) error
 	List(ctx context.Context, projectID uuid.UUID, key, environmentName string) ([]model.ActivationStrategy, error)
 }
 
 type AuthService interface {
-	Login(ctx context.Context, email, password string) (token string, user *model.User, err error)
-	VerifyToken(ctx context.Context, tokenString string) (userID uuid.UUID, isAdmin bool, err error)
+	Login(ctx context.Context, username, password string) (token string, user *model.User, err error)
+	VerifyToken(ctx context.Context, tokenString string) (userID string, isAdmin bool, err error)
 	Register(ctx context.Context, email, username, password string) (*model.User, error)
 }
 
 type RBACService interface {
-	HasPermission(ctx context.Context, userID, projectID uuid.UUID, permission string) (bool, error)
-	AddMember(ctx context.Context, projectID, userID, roleID uuid.UUID) (*model.ProjectMembership, error)
+	HasPermission(ctx context.Context, userID string, projectID uuid.UUID, permission string) (bool, error)
+	AddMember(ctx context.Context, projectID uuid.UUID, userID string, roleID uuid.UUID) (*model.ProjectMembership, error)
 	UpdateMemberRole(ctx context.Context, membershipID, roleID uuid.UUID) error
 	RemoveMember(ctx context.Context, membershipID uuid.UUID) error
 	ListMembers(ctx context.Context, projectID uuid.UUID) ([]model.ProjectMembership, error)
@@ -92,14 +92,14 @@ type CreateTokenInput struct {
 }
 
 type TokenService interface {
-	Create(ctx context.Context, in CreateTokenInput, actor uuid.UUID) (plaintext string, token *model.APIToken, err error)
+	Create(ctx context.Context, in CreateTokenInput, actor string) (plaintext string, token *model.APIToken, err error)
 	Resolve(ctx context.Context, plaintext string) (*model.APIToken, error)
 	List(ctx context.Context) ([]model.APIToken, error)
 	Revoke(ctx context.Context, id uuid.UUID) error
 }
 
 type AuditService interface {
-	Record(ctx context.Context, entityType string, entityID uuid.UUID, action model.AuditAction, projectID, environmentID *uuid.UUID, userID *uuid.UUID, before, after any) error
+	Record(ctx context.Context, entityType string, entityID uuid.UUID, action model.AuditAction, projectID, environmentID *uuid.UUID, userID *string, before, after any) error
 	List(ctx context.Context, projectID uuid.UUID, entityType string, since, until *time.Time) ([]model.AuditEvent, error)
 }
 

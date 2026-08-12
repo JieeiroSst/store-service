@@ -9,7 +9,7 @@ import (
 type ProjectMembership struct {
 	ID        uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	ProjectID uuid.UUID `gorm:"type:uuid;not null;uniqueIndex:idx_project_user" json:"projectId"`
-	UserID    uuid.UUID `gorm:"type:uuid;not null;uniqueIndex:idx_project_user" json:"userId"`
+	UserID    string    `gorm:"not null;uniqueIndex:idx_project_user" json:"userId"`
 	RoleID    uuid.UUID `gorm:"type:uuid;not null" json:"roleId"`
 	CreatedAt time.Time `json:"createdAt"`
 }

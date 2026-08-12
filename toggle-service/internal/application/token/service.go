@@ -23,7 +23,7 @@ func NewService(tokens port.TokenRepository) port.TokenService {
 	return &service{tokens: tokens}
 }
 
-func (s *service) Create(ctx context.Context, in port.CreateTokenInput, actor uuid.UUID) (string, *model.APIToken, error) {
+func (s *service) Create(ctx context.Context, in port.CreateTokenInput, actor string) (string, *model.APIToken, error) {
 	random := make([]byte, 24)
 	if _, err := rand.Read(random); err != nil {
 		return "", nil, err

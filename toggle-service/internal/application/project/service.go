@@ -19,7 +19,7 @@ func NewService(repo port.ProjectRepository, audit port.AuditService) port.Proje
 	return &service{repo: repo, audit: audit}
 }
 
-func (s *service) Create(ctx context.Context, name, description string, actor uuid.UUID) (*model.Project, error) {
+func (s *service) Create(ctx context.Context, name, description string, actor string) (*model.Project, error) {
 	p := &model.Project{Name: name, Description: description, CreatedBy: actor}
 	if err := s.repo.Create(ctx, p); err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (s *service) List(ctx context.Context) ([]model.Project, error) {
 	return s.repo.List(ctx)
 }
 
-func (s *service) Update(ctx context.Context, id uuid.UUID, name, description string, actor uuid.UUID) (*model.Project, error) {
+func (s *service) Update(ctx context.Context, id uuid.UUID, name, description string, actor string) (*model.Project, error) {
 	existing, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (s *service) Update(ctx context.Context, id uuid.UUID, name, description st
 	return existing, nil
 }
 
-func (s *service) Delete(ctx context.Context, id uuid.UUID, actor uuid.UUID) error {
+func (s *service) Delete(ctx context.Context, id uuid.UUID, actor string) error {
 	existing, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		return err

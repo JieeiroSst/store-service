@@ -24,7 +24,7 @@ type AuditEvent struct {
 	Action        AuditAction    `gorm:"not null" json:"action"`
 	ProjectID     *uuid.UUID     `gorm:"type:uuid;index" json:"projectId,omitempty"`
 	EnvironmentID *uuid.UUID     `gorm:"type:uuid" json:"environmentId,omitempty"`
-	UserID        *uuid.UUID     `gorm:"type:uuid" json:"userId,omitempty"`
+	UserID        *string        `json:"userId,omitempty"` // user_service user ID
 	BeforeJSON    datatypes.JSON `gorm:"type:jsonb" json:"before,omitempty"`
 	AfterJSON     datatypes.JSON `gorm:"type:jsonb" json:"after,omitempty"`
 	CreatedAt     time.Time      `gorm:"index" json:"createdAt"`

@@ -6,9 +6,10 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig   `json:"server"`
-	Postgres PostgresConfig `json:"postgres"`
-	JWT      JWTConfig      `json:"jwt"`
+	Server      ServerConfig      `json:"server"`
+	Postgres    PostgresConfig    `json:"postgres"`
+	JWT         JWTConfig         `json:"jwt"`
+	UserService UserServiceConfig `json:"userService"`
 }
 
 type ServerConfig struct {
@@ -44,4 +45,8 @@ func (p PostgresConfig) URL() string {
 type JWTConfig struct {
 	Secret        string `json:"secret"`
 	ExpiryMinutes int    `json:"expiryMinutes"`
+}
+
+type UserServiceConfig struct {
+	BaseURL string `json:"baseURL"`
 }

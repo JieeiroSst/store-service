@@ -1,12 +1,8 @@
-CREATE TABLE users (
-    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email         VARCHAR(255) NOT NULL UNIQUE,
-    username      VARCHAR(255) NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    is_admin      BOOLEAN NOT NULL DEFAULT false,
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
-);
+-- Identity (users) is owned by user_service, not toggle-service — see
+-- port.UserDirectory. Roles/permissions here are toggle-service's own
+-- project-scoped RBAC, keyed by user_service's opaque user ID wherever a
+-- user needs referencing (project_memberships.user_id, audit_events.user_id,
+-- api_tokens.created_by), never by a local users table.
 
 CREATE TABLE roles (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),

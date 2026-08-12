@@ -26,7 +26,7 @@ func NewService(
 	return &service{flags: flags, flagEnvs: flagEnvs, environments: environments, audit: audit}
 }
 
-func (s *service) Create(ctx context.Context, in port.CreateFlagInput, actor uuid.UUID) (*model.FeatureFlag, error) {
+func (s *service) Create(ctx context.Context, in port.CreateFlagInput, actor string) (*model.FeatureFlag, error) {
 	existing, err := s.flags.GetByProjectAndKey(ctx, in.ProjectID, in.Key)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (s *service) Create(ctx context.Context, in port.CreateFlagInput, actor uui
 	if err := s.flags.Create(ctx, f); err != nil {
 		return nil, err
 	}
-	
+
 	envs, err := s.environments.List(ctx)
 	if err == nil {
 		for _, e := range envs {
@@ -77,7 +77,7 @@ func (s *service) List(ctx context.Context, projectID uuid.UUID) ([]model.Featur
 	return s.flags.ListByProject(ctx, projectID)
 }
 
-func (s *service) Update(ctx context.Context, projectID uuid.UUID, key string, in port.UpdateFlagInput, actor uuid.UUID) (*model.FeatureFlag, error) {
+func (s *service) Update(ctx context.Context, projectID uuid.UUID, key string, in port.UpdateFlagInput, actor string) (*model.FeatureFlag, error) {
 	f, err := s.Get(ctx, projectID, key)
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ func (s *service) Update(ctx context.Context, projectID uuid.UUID, key string, i
 	return f, nil
 }
 
-func (s *service) Archive(ctx context.Context, projectID uuid.UUID, key string, actor uuid.UUID) error {
+func (s *service) Archive(ctx context.Context, projectID uuid.UUID, key string, actor string) error {
 	f, err := s.Get(ctx, projectID, key)
 	if err != nil {
 		return err
@@ -111,7 +111,7 @@ func (s *service) Archive(ctx context.Context, projectID uuid.UUID, key string, 
 	return nil
 }
 
-func (s *service) Toggle(ctx context.Context, projectID uuid.UUID, key, environmentName string, enabled bool, actor uuid.UUID) error {
+func (s *service) Toggle(ctx context.Context, projectID uuid.UUID, key, environmentName string, enabled bool, actor string) error {
 	f, err := s.Get(ctx, projectID, key)
 	if err != nil {
 		return err

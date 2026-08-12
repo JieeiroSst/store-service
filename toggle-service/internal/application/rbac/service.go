@@ -13,25 +13,13 @@ import (
 type service struct {
 	memberships port.MembershipRepository
 	roles       port.RoleRepository
-	users       port.UserRepository
 }
 
-func NewService(memberships port.MembershipRepository, roles port.RoleRepository, users port.UserRepository) port.RBACService {
-	return &service{memberships: memberships, roles: roles, users: users}
+func NewService(memberships port.MembershipRepository, roles port.RoleRepository) port.RBACService {
+	return &service{memberships: memberships, roles: roles}
 }
 
-func (s *service) HasPermission(ctx context.Context, userID, projectID uuid.UUID, permission string) (bool, error) {
-	user, err := s.users.GetByID(ctx, userID)
-	if err != nil {
-		return false, err
-	}
-	if user == nil {
-		return false, apperr.ErrUnauthorized
-	}
-	if user.IsAdmin {
-		return true, nil
-	}
-
+func (s *service) HasPermission(ctx context.Context, userID string, projectID uuid.UUID, permission string) (bool, error) {
 	membership, err := s.memberships.GetByProjectAndUser(ctx, projectID, userID)
 	if err != nil {
 		return false, err
@@ -52,7 +40,7 @@ func (s *service) HasPermission(ctx context.Context, userID, projectID uuid.UUID
 	return false, nil
 }
 
-func (s *service) AddMember(ctx context.Context, projectID, userID, roleID uuid.UUID) (*model.ProjectMembership, error) {
+func (s *service) AddMember(ctx context.Context, projectID uuid.UUID, userID string, roleID uuid.UUID) (*model.ProjectMembership, error) {
 	existing, err := s.memberships.GetByProjectAndUser(ctx, projectID, userID)
 	if err != nil {
 		return nil, err

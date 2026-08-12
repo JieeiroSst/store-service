@@ -23,7 +23,7 @@ type FeatureFlag struct {
 	Description string          `json:"description"`
 	Type        FeatureFlagType `gorm:"not null;default:release" json:"type"`
 	Archived    bool            `gorm:"default:false" json:"archived"`
-	CreatedBy   uuid.UUID       `gorm:"type:uuid" json:"createdBy"`
+	CreatedBy   string          `json:"createdBy"` // user_service user ID
 	CreatedAt   time.Time       `json:"createdAt"`
 	UpdatedAt   time.Time       `json:"updatedAt"`
 }

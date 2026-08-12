@@ -5,7 +5,7 @@ CREATE TABLE audit_events (
     action         VARCHAR(50) NOT NULL,
     project_id     UUID REFERENCES projects(id) ON DELETE SET NULL,
     environment_id UUID REFERENCES environments(id) ON DELETE SET NULL,
-    user_id        UUID REFERENCES users(id) ON DELETE SET NULL,
+    user_id        TEXT, -- user_service user ID (external, no local FK)
     before_json    JSONB,
     after_json     JSONB,
     created_at     TIMESTAMPTZ NOT NULL DEFAULT now()

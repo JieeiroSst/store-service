@@ -2,10 +2,8 @@ package middleware
 
 import (
 	"context"
-	"strings"
-
-	"github.com/google/uuid"
 	"net/http"
+	"strings"
 
 	"github.com/JIeeiroSst/toggle-service/internal/domain/model"
 )
@@ -18,13 +16,13 @@ const (
 	ctxKeyAPIToken
 )
 
-func WithUser(ctx context.Context, userID uuid.UUID, isAdmin bool) context.Context {
+func WithUser(ctx context.Context, userID string, isAdmin bool) context.Context {
 	ctx = context.WithValue(ctx, ctxKeyUserID, userID)
 	return context.WithValue(ctx, ctxKeyIsAdmin, isAdmin)
 }
 
-func UserID(ctx context.Context) (uuid.UUID, bool) {
-	v, ok := ctx.Value(ctxKeyUserID).(uuid.UUID)
+func UserID(ctx context.Context) (string, bool) {
+	v, ok := ctx.Value(ctxKeyUserID).(string)
 	return v, ok
 }
 

@@ -63,7 +63,7 @@ func (s *service) IngestMetrics(ctx context.Context, tok *model.APIToken, payloa
 			return err
 		}
 		if flag == nil {
-			continue 
+			continue
 		}
 		if err := s.metrics.IncrementCounts(ctx, flag.ID, *tok.EnvironmentID, payload.AppName,
 			payload.Bucket.Start, payload.Bucket.Stop, data.Yes, data.No); err != nil {
