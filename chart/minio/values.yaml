@@ -17,6 +17,7 @@ minio:
   # here to onboard a new service's bucket.
   buckets:
     - livestream-hls
+    - cdn-origin
 
   storage:
     size: 5Gi
@@ -26,3 +27,5 @@ minio:
     name: minio-svc
     apiPort: 9000
     consolePort: 9001
+    # UI console reachable from outside the cluster at NodeIP:30901.
+    consoleNodePort: 30901

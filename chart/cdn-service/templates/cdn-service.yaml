@@ -19,19 +19,11 @@ spec:
         image: {{ .Values.cdnService.image.name }}:{{ .Values.cdnService.image.tag }}
         imagePullPolicy: Always
         ports:
-        - name: grpc
-          containerPort: {{ .Values.cdnService.image.grpcPort }}
-        - name: http-gateway
-          containerPort: {{ .Values.cdnService.image.httpPort }}
-        - name: gin
-          containerPort: {{ .Values.cdnService.image.ginPort }}
+        - name: http
+          containerPort: {{ .Values.cdnService.image.port }}
         env:
-          - name: PORT_GRPC_SERVER
-            value: "{{ .Values.cdnService.image.grpcPort }}"
-          - name: PORT_HTTP_SERVER
-            value: "{{ .Values.cdnService.image.httpPort }}"
-          - name: PORT_GIN_SERVER
-            value: "{{ .Values.cdnService.image.ginPort }}"
+          - name: PORT_SERVER
+            value: "{{ .Values.cdnService.image.port }}"
         resources:
           {{- toYaml .Values.cdnService.resources | nindent 10 }}
         volumeMounts:
@@ -54,14 +46,8 @@ metadata:
 spec:
   type: {{ .Values.cdnService.service.type }}
   ports:
-  - name: grpc
-    port: {{ .Values.cdnService.image.grpcPort }}
-    targetPort: {{ .Values.cdnService.image.grpcPort }}
-  - name: http-gateway
-    port: {{ .Values.cdnService.image.httpPort }}
-    targetPort: {{ .Values.cdnService.image.httpPort }}
-  - name: gin
+  - name: http
     port: 80
-    targetPort: {{ .Values.cdnService.image.ginPort }}
+    targetPort: {{ .Values.cdnService.image.port }}
   selector:
     app: {{ .Values.cdnService.name }}-deployment

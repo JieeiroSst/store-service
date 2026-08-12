@@ -5,6 +5,7 @@ metadata:
   labels:
     app: {{ .Values.minio.name }}
 spec:
+  type: NodePort
   ports:
     - name: api
       port: {{ .Values.minio.service.apiPort }}
@@ -12,5 +13,6 @@ spec:
     - name: console
       port: {{ .Values.minio.service.consolePort }}
       targetPort: console
+      nodePort: {{ .Values.minio.service.consoleNodePort }}
   selector:
     app: {{ .Values.minio.name }}
