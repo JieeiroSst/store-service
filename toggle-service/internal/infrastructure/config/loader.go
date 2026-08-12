@@ -47,6 +47,9 @@ func NewConfig() (*Config, error) {
 			Secret:        v.GetString("JWT_SECRET"),
 			ExpiryMinutes: v.GetInt("JWT_EXPIRY_MINUTES"),
 		},
+		UserService: UserServiceConfig{
+			BaseURL: v.GetString("USER_SERVICE_URL"),
+		},
 	}
 	applyDefaults(&cfg)
 	return &cfg, nil
@@ -79,6 +82,9 @@ func applyDefaults(cfg *Config) {
 	}
 	if cfg.JWT.ExpiryMinutes == 0 {
 		cfg.JWT.ExpiryMinutes = 60
+	}
+	if cfg.UserService.BaseURL == "" {
+		cfg.UserService.BaseURL = "http://localhost:1235"
 	}
 }
 

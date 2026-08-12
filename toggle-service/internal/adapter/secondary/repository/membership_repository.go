@@ -23,7 +23,7 @@ func (r *membershipRepository) Create(ctx context.Context, m *model.ProjectMembe
 	return r.db.WithContext(ctx).Create(m).Error
 }
 
-func (r *membershipRepository) GetByProjectAndUser(ctx context.Context, projectID, userID uuid.UUID) (*model.ProjectMembership, error) {
+func (r *membershipRepository) GetByProjectAndUser(ctx context.Context, projectID uuid.UUID, userID string) (*model.ProjectMembership, error) {
 	var m model.ProjectMembership
 	if err := r.db.WithContext(ctx).First(&m, "project_id = ? AND user_id = ?", projectID, userID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -42,7 +42,7 @@ func (r *membershipRepository) ListByProject(ctx context.Context, projectID uuid
 	return memberships, nil
 }
 
-func (r *membershipRepository) ListByUser(ctx context.Context, userID uuid.UUID) ([]model.ProjectMembership, error) {
+func (r *membershipRepository) ListByUser(ctx context.Context, userID string) ([]model.ProjectMembership, error) {
 	var memberships []model.ProjectMembership
 	if err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&memberships).Error; err != nil {
 		return nil, err

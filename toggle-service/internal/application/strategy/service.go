@@ -57,7 +57,7 @@ func (s *service) resolveFlagEnvironment(ctx context.Context, projectID uuid.UUI
 	return flag, env, ffe, nil
 }
 
-func (s *service) Add(ctx context.Context, projectID uuid.UUID, key, environmentName string, in port.StrategyInput, actor uuid.UUID) (*model.ActivationStrategy, error) {
+func (s *service) Add(ctx context.Context, projectID uuid.UUID, key, environmentName string, in port.StrategyInput, actor string) (*model.ActivationStrategy, error) {
 	flag, env, ffe, err := s.resolveFlagEnvironment(ctx, projectID, key, environmentName)
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (s *service) createConstraint(ctx context.Context, strategyID uuid.UUID, in
 	return s.constraints.Create(ctx, c)
 }
 
-func (s *service) Update(ctx context.Context, strategyID uuid.UUID, in port.StrategyInput, actor uuid.UUID) (*model.ActivationStrategy, error) {
+func (s *service) Update(ctx context.Context, strategyID uuid.UUID, in port.StrategyInput, actor string) (*model.ActivationStrategy, error) {
 	st, err := s.strategies.GetByID(ctx, strategyID)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func (s *service) Update(ctx context.Context, strategyID uuid.UUID, in port.Stra
 	return st, nil
 }
 
-func (s *service) Delete(ctx context.Context, strategyID uuid.UUID, actor uuid.UUID) error {
+func (s *service) Delete(ctx context.Context, strategyID uuid.UUID, actor string) error {
 	st, err := s.strategies.GetByID(ctx, strategyID)
 	if err != nil {
 		return err

@@ -6,7 +6,7 @@ CREATE TABLE feature_flags (
     description TEXT NOT NULL DEFAULT '',
     type        VARCHAR(50) NOT NULL DEFAULT 'release',
     archived    BOOLEAN NOT NULL DEFAULT false,
-    created_by  UUID,
+    created_by  TEXT, -- user_service user ID (external, no local FK)
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (project_id, key)

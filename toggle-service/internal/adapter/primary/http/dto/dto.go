@@ -57,13 +57,17 @@ type RegisterRequest struct {
 	Password string `json:"password" validate:"required,min=8"`
 }
 
+// LoginRequest uses Username (not email) because that's what user_service's
+// own login endpoint accepts.
 type LoginRequest struct {
-	Email    string `json:"email" validate:"required,email"`
+	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 
 type AddMemberRequest struct {
-	UserID string `json:"userId" validate:"required,uuid"`
+	// UserID is a user_service user ID (opaque external identifier, not a
+	// local UUID).
+	UserID string `json:"userId" validate:"required"`
 	RoleID string `json:"roleId" validate:"required,uuid"`
 }
 

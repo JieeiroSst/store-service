@@ -20,7 +20,7 @@ func NewService(repo port.AuditRepository) port.AuditService {
 	return &service{repo: repo}
 }
 
-func (s *service) Record(ctx context.Context, entityType string, entityID uuid.UUID, action model.AuditAction, projectID, environmentID *uuid.UUID, userID *uuid.UUID, before, after any) error {
+func (s *service) Record(ctx context.Context, entityType string, entityID uuid.UUID, action model.AuditAction, projectID, environmentID *uuid.UUID, userID *string, before, after any) error {
 	event := &model.AuditEvent{
 		EntityType:    entityType,
 		EntityID:      entityID,

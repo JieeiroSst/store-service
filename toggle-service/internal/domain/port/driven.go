@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-
 type ProjectRepository interface {
 	Create(ctx context.Context, p *model.Project) error
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Project, error)
@@ -60,13 +59,9 @@ type ConstraintRepository interface {
 	DeleteByStrategy(ctx context.Context, strategyID uuid.UUID) error
 }
 
-type UserRepository interface {
-	Create(ctx context.Context, u *model.User) error
-	GetByID(ctx context.Context, id uuid.UUID) (*model.User, error)
-	GetByEmail(ctx context.Context, email string) (*model.User, error)
-	List(ctx context.Context) ([]model.User, error)
-	Update(ctx context.Context, u *model.User) error
-	Delete(ctx context.Context, id uuid.UUID) error
+type UserDirectory interface {
+	Register(ctx context.Context, email, username, password string) (*model.User, error)
+	Login(ctx context.Context, username, password string) (*model.User, error)
 }
 
 type RoleRepository interface {
@@ -78,9 +73,9 @@ type RoleRepository interface {
 
 type MembershipRepository interface {
 	Create(ctx context.Context, m *model.ProjectMembership) error
-	GetByProjectAndUser(ctx context.Context, projectID, userID uuid.UUID) (*model.ProjectMembership, error)
+	GetByProjectAndUser(ctx context.Context, projectID uuid.UUID, userID string) (*model.ProjectMembership, error)
 	ListByProject(ctx context.Context, projectID uuid.UUID) ([]model.ProjectMembership, error)
-	ListByUser(ctx context.Context, userID uuid.UUID) ([]model.ProjectMembership, error)
+	ListByUser(ctx context.Context, userID string) ([]model.ProjectMembership, error)
 	UpdateRole(ctx context.Context, id, roleID uuid.UUID) error
 	Delete(ctx context.Context, id uuid.UUID) error
 }

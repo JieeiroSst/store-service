@@ -12,6 +12,10 @@ import (
 func RequirePermission(rbacService port.RBACService, permission string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if IsAdmin(r.Context()) {
+				next.ServeHTTP(w, r)
+				return
+			}
 			userID, ok := UserID(r.Context())
 			if !ok {
 				http.Error(w, `{"error":"unauthenticated"}`, http.StatusUnauthorized)

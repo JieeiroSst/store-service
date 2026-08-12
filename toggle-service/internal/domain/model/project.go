@@ -10,7 +10,7 @@ type Project struct {
 	ID          uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	Name        string    `gorm:"uniqueIndex;not null" json:"name"`
 	Description string    `json:"description"`
-	CreatedBy   uuid.UUID `gorm:"type:uuid" json:"createdBy"`
+	CreatedBy   string    `json:"createdBy"` // user_service user ID
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 }

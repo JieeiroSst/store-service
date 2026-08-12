@@ -19,15 +19,18 @@ audit logging, and a client SDK API backed by a server-side evaluation engine.
 internal/
   domain/
     model/     Plain Go structs — the core business entities (Project, FeatureFlag,
-               ActivationStrategy, Constraint, User, Role, APIToken, AuditEvent, ...).
+               ActivationStrategy, Constraint, Role, APIToken, AuditEvent, ...).
                No framework dependencies; these are what every other layer works with.
+               model.User is the one exception — it's a read-only projection of an
+               identity owned by user_service (see "Identity" below), not a local table.
     port/
       driving.go  "Driving" (inbound) interfaces — what the application offers the
                   outside world (ProjectService, FeatureFlagService, ClientService, ...).
                   Implemented by internal/application, consumed by the HTTP adapter.
       driven.go   "Driven" (outbound) interfaces — what the application needs from
-                  infrastructure (ProjectRepository, TokenRepository, ...).
-                  Implemented by internal/adapter/secondary/repository.
+                  infrastructure (ProjectRepository, TokenRepository, UserDirectory, ...).
+                  Implemented by internal/adapter/secondary/repository (GORM) and
+                  internal/adapter/secondary/userservice (HTTP client to user_service).
 
   application/   The use cases / business logic. Each subpackage (project, environment,
                  featureflag, strategy, auth, rbac, token, audit, client) implements one
@@ -78,6 +81,7 @@ where Consul isn't running:
    | `DB_SSLMODE`          | `disable`       |
    | `JWT_SECRET`          | `change-me`     |
    | `JWT_EXPIRY_MINUTES`  | `60`            |
+   | `USER_SERVICE_URL`    | `http://localhost:1235` |
 
 When deploying via Consul, seed the KV value at `KeyConsul` with a JSON document shaped
 like `internal/infrastructure/config.Config` (see `config.go`), e.g.:
@@ -86,7 +90,8 @@ like `internal/infrastructure/config.Config` (see `config.go`), e.g.:
 {
   "server": { "port": "8080", "env": "production" },
   "postgres": { "host": "postgres", "port": "5432", "user": "toggle", "password": "...", "dbName": "toggle_service", "sslMode": "disable" },
-  "jwt": { "secret": "a-real-secret", "expiryMinutes": 60 }
+  "jwt": { "secret": "a-real-secret", "expiryMinutes": 60 },
+  "userService": { "baseURL": "http://user-api-svc" }
 }
 ```
 
@@ -106,14 +111,25 @@ go run ./cmd
 
 The server listens on `HTTP_PORT` (default 8080). `GET /health` is unauthenticated.
 
-### Bootstrapping the first admin user
+## Identity
 
-`POST /api/admin/auth/register` always creates a non-admin user (there's no public
-"become admin" endpoint, by design). Promote the first user manually:
+toggle-service does not own a `users` table — `POST /api/admin/auth/register` and
+`POST /api/admin/auth/login` both delegate to **user_service**
+(`USER_SERVICE_URL`, see Configuration above) via
+`internal/adapter/secondary/userservice` (`port.UserDirectory`):
 
-```sql
-UPDATE users SET is_admin = true WHERE email = 'you@example.com';
-```
+- `Register` calls user_service's `POST /user/sign-up`.
+- `Login` calls user_service's `POST /api/v1/login` to validate the password, then
+  `GET /user?username=...` to fetch the profile (id/username/email/roles) used to build
+  toggle-service's own session JWT. toggle-service mints and verifies that JWT itself
+  (`JWT_SECRET`) — it does not trust or verify tokens issued by user_service.
+- **Instance admin** (`model.User.IsAdmin`, embedded in the JWT and checked by
+  `middleware.RequirePermission`/`RequireInstanceAdmin`) is derived from whether the user
+  has a user_service role literally named `admin` (case-insensitive) — promote a user by
+  assigning them that role in user_service, not in toggle-service.
+- Everywhere toggle-service needs to reference "who did this" (`ProjectMembership.UserID`,
+  `AuditEvent.UserID`, `APIToken.CreatedBy`, `Project`/`FeatureFlag.CreatedBy`), it stores
+  user_service's user ID as an opaque string — there's no local foreign key to a users table.
 
 Instance admins bypass all per-project RBAC checks. Everyone else needs a
 `ProjectMembership` (Owner/Member/Viewer) — creating a project via

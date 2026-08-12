@@ -10,7 +10,6 @@ var Module = fx.Options(
 		NewFeatureFlagEnvironmentRepository,
 		NewStrategyRepository,
 		NewConstraintRepository,
-		NewUserRepository,
 		NewRoleRepository,
 		NewMembershipRepository,
 		NewTokenRepository,

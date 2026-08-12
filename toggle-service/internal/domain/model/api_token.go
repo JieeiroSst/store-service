@@ -22,7 +22,7 @@ type APIToken struct {
 	ProjectID     *uuid.UUID   `gorm:"type:uuid" json:"projectId,omitempty"`
 	EnvironmentID *uuid.UUID   `gorm:"type:uuid" json:"environmentId,omitempty"`
 	ExpiresAt     *time.Time   `json:"expiresAt,omitempty"`
-	CreatedBy     uuid.UUID    `gorm:"type:uuid" json:"createdBy"`
+	CreatedBy     string       `json:"createdBy"` // user_service user ID
 	CreatedAt     time.Time    `json:"createdAt"`
 }
 
