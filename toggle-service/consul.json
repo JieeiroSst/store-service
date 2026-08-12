@@ -1,0 +1,18 @@
+{
+    "server": {
+        "port": "8080",
+        "env": "production"
+    },
+    "postgres": {
+        "host": "postgresdb",
+        "port": "80",
+        "user": "testUser",
+        "password": "testPassword",
+        "dbName": "toggle_service",
+        "sslMode": "disable"
+    },
+    "jwt": {
+        "secret": "testJwtSecret",
+        "expiryMinutes": 60
+    }
+}
