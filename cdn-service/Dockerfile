@@ -17,8 +17,8 @@ WORKDIR /app
 RUN apk add --no-cache ca-certificates tzdata
 
 COPY --from=builder /app/cdn-service .
+COPY --from=builder /app/migrations ./migrations
 
-# gRPC, grpc-gateway (REST), and Gin (static/media) servers respectively.
-EXPOSE 2231 2234 2232
+EXPOSE 2232
 
 ENTRYPOINT ["./cdn-service"]

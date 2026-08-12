@@ -1,19 +1,28 @@
 {
     "server": {
-        "PortHttpServer": "2234",
-        "PortGrpcServer": "2231",
-        "PortGinServer": "2232"
+        "port": "2232"
     },
     "postgres": {
-        "PostgresqlHost": "postgresdb",
-        "PostgresqlPort": "80",
-        "PostgresqlUser": "testUser",
-        "PostgresqlPassword": "testPassword",
-        "PostgresqlDbname": "testDB",
-        "PostgresqlSSLMode": false
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "cdn_service",
+        "postgresql_ssl_mode": false
     },
-    "baseHost": {
-        "DominServiceURL": "http://localhost:2232",
-        "BaseDirUpload": "./uploads"
+    "minio": {
+        "endpoint": "minio:9000",
+        "access_key_id": "minioadmin",
+        "secret_access_key": "minioadmin",
+        "use_ssl": false,
+        "bucket_name": "cdn-origin",
+        "max_upload_size_bytes": 5368709120,
+        "presign_expiry_minutes": 15
+    },
+    "secret": {
+        "api_key": "abcwdqwdqwdqwdwq"
+    },
+    "edge": {
+        "base_url": "https://cdn.internal.company.vn"
     }
 }

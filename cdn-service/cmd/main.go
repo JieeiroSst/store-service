@@ -1,11 +1,20 @@
 package main
 
 import (
-	"github.com/JIeeiroSst/cdn-service/internal/infrastructure"
+	httpadapter "github.com/JIeeiroSst/cdn-service/internal/adapters/http"
+	"github.com/JIeeiroSst/cdn-service/internal/adapters/repository"
+	"github.com/JIeeiroSst/cdn-service/internal/adapters/storage"
+	"github.com/JIeeiroSst/cdn-service/internal/config"
+	"github.com/JIeeiroSst/cdn-service/internal/domain"
 	"go.uber.org/fx"
 )
 
 func main() {
-	app := fx.New(infrastructure.Module)
-	app.Run()
+	fx.New(
+		config.Module,
+		repository.Module,
+		storage.Module,
+		domain.Module,
+		httpadapter.Module,
+	).Run()
 }

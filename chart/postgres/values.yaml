@@ -83,3 +83,9 @@ postgres:
       consulKey: livestream_service
       userField: .postgres.postgresqlUser
       passwordField: .postgres.postgresqlPassword
+    - name: cdn-service
+      database: cdn_service
+      role: cdn_service_svc
+      consulKey: cdn_service
+      userField: .postgres.postgresql_user
+      passwordField: .postgres.postgresql_password

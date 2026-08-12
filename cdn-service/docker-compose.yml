@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: testUser
+      POSTGRES_PASSWORD: testPassword
+      POSTGRES_DB: cdn_service
+    ports:
+      - "5432:5432"
+    volumes:
+      - cdn_postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - cdn_minio_data:/data
+
+volumes:
+  cdn_postgres_data:
+  cdn_minio_data:
