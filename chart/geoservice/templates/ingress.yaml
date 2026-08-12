@@ -1,0 +1,23 @@
+{{- if .Values.geoservice.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.geoservice.name }}-ingress
+  {{- with .Values.geoservice.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.geoservice.ingress.className }}
+  rules:
+  - host: {{ .Values.geoservice.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.geoservice.ingress.path }}
+        pathType: {{ .Values.geoservice.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.geoservice.service.name }}
+            port:
+              number: 80
+{{- end }}

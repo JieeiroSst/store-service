@@ -35,7 +35,7 @@ func NewLogger(cfg *config.Config) (*zap.Logger, error) {
 }
 
 func NewPool(lc fx.Lifecycle, cfg *config.Config, log *zap.Logger) (*pgxpool.Pool, error) {
-	pool, err := pgxpool.New(context.Background(), cfg.DatabaseURL)
+	pool, err := pgxpool.New(context.Background(), cfg.DSN())
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func RunHTTPServer(lc fx.Lifecycle, cfg *config.Config, log *zap.Logger, h *hand
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			go func() {
-				addr := ":" + cfg.HTTPPort
+				addr := ":" + cfg.Server.Port
 				log.Info("http server listening", zap.String("addr", addr))
 				if err := e.Start(addr); err != nil && err != http.ErrServerClosed {
 					log.Error("server error", zap.Error(err))

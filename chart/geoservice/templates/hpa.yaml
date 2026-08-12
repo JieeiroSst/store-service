@@ -1,0 +1,20 @@
+{{- if .Values.geoservice.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.geoservice.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.geoservice.name }}-deployment
+  minReplicas: {{ .Values.geoservice.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.geoservice.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.geoservice.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

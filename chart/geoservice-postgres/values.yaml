@@ -1,0 +1,29 @@
+geoservicePostgres:
+  name: geoservice-postgres
+
+  # geoservice's migrations run `CREATE EXTENSION IF NOT EXISTS postgis`
+  # (see geoservice/internal/adapter/migration/sql/0001_init.sql), which the
+  # plain postgres:16 image used by chart/postgres does not ship - hence a
+  # dedicated single-tenant instance instead of an entry in
+  # chart/postgres's serviceDatabases.
+  image:
+    repository: postgis/postgis
+    tag: "16-3.4"
+
+  # Single app database + user, matching geoservice/docker-compose.yml.
+  # Unlike chart/postgres this instance is only ever used by geoservice, so
+  # there's no per-service role provisioning - the admin credentials here
+  # are the app's own credentials, seeded directly into
+  # chart/geoservice/files/consul.json.
+  credentials:
+    database: geo
+    user: geo
+    password: geo
+
+  service:
+    port: 5432
+    targetPort: 5432
+
+  storage:
+    size: 8Gi
+    hostPath: /data/geoservice-db

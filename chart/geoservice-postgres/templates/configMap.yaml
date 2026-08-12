@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.geoservicePostgres.name }}-credentials
+  labels:
+    app: {{ .Values.geoservicePostgres.name }}
+data:
+  POSTGRES_DB: {{ .Values.geoservicePostgres.credentials.database }}
+  POSTGRES_USER: {{ .Values.geoservicePostgres.credentials.user }}
+  POSTGRES_PASSWORD: {{ .Values.geoservicePostgres.credentials.password }}
