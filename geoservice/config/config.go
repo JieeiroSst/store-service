@@ -1,30 +1,55 @@
 package config
 
 import (
-	"strings"
+	"fmt"
+	"os"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	HTTPPort    string `mapstructure:"http_port"`
-	DatabaseURL string `mapstructure:"database_url"`
-	LogLevel    string `mapstructure:"log_level"`
+	Server   ServerConfig   `json:"server"`
+	Postgres PostgresConfig `json:"postgres"`
+	LogLevel string         `json:"log_level"`
 }
 
-func Load() (*Config, error) {
-	v := viper.New()
-	v.SetEnvPrefix("GEO")
-	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	v.AutomaticEnv()
+type ServerConfig struct {
+	Port string `json:"port"`
+}
 
-	v.SetDefault("http_port", "8081")
-	v.SetDefault("database_url", "postgres://geo:geo@localhost:5432/geo?sslmode=disable")
-	v.SetDefault("log_level", "info")
+type PostgresConfig struct {
+	PostgresqlHost     string `json:"postgresql_host"`
+	PostgresqlPort     string `json:"postgresql_port"`
+	PostgresqlUser     string `json:"postgresql_user"`
+	PostgresqlPassword string `json:"postgresql_password"`
+	PostgresqlDbname   string `json:"postgresql_dbname"`
+	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
+}
 
-	var c Config
-	if err := v.Unmarshal(&c); err != nil {
+func (c Config) DSN() string {
+	sslmode := "disable"
+	if c.Postgres.PostgresqlSSLMode {
+		sslmode = "require"
+	}
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		c.Postgres.PostgresqlUser, c.Postgres.PostgresqlPassword,
+		c.Postgres.PostgresqlHost, c.Postgres.PostgresqlPort,
+		c.Postgres.PostgresqlDbname, sslmode)
+}
+
+type Dir struct {
+	HostConsul    string
+	KeyConsul     string
+	ServiceConsul string
+}
+
+func ReadFileEnv(dir string) (*Dir, error) {
+	if err := godotenv.Load(dir); err != nil {
 		return nil, err
 	}
-	return &c, nil
+	return &Dir{
+		HostConsul:    os.Getenv("HostConsul"),
+		KeyConsul:     os.Getenv("KeyConsul"),
+		ServiceConsul: os.Getenv("ServiceConsul"),
+	}, nil
 }

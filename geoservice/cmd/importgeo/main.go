@@ -35,7 +35,7 @@ func main() {
 	log, _ := zap.NewDevelopment()
 	ctx := context.Background()
 
-	pool, err := pgxpool.New(ctx, cfg.DatabaseURL)
+	pool, err := pgxpool.New(ctx, cfg.DSN())
 	must(err)
 	defer pool.Close()
 	must(pool.Ping(ctx))

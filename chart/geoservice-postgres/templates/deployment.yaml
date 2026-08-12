@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.geoservicePostgres.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.geoservicePostgres.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.geoservicePostgres.name }}
+    spec:
+      containers:
+        - name: {{ .Values.geoservicePostgres.name }}
+          image: {{ .Values.geoservicePostgres.image.repository }}:{{ .Values.geoservicePostgres.image.tag }}
+          ports:
+            - containerPort: {{ .Values.geoservicePostgres.service.targetPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.geoservicePostgres.name }}-credentials
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-data
+      volumes:
+        - name: db-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.geoservicePostgres.name }}-pvc

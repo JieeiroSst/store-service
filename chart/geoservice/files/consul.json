@@ -1,0 +1,14 @@
+{
+    "server": {
+        "port": "8081"
+    },
+    "postgres": {
+        "postgresql_host": "geoservice-postgres",
+        "postgresql_port": "5432",
+        "postgresql_user": "geo",
+        "postgresql_password": "geo",
+        "postgresql_dbname": "geo",
+        "postgresql_ssl_mode": false
+    },
+    "log_level": "info"
+}
