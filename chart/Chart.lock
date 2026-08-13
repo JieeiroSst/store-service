@@ -140,5 +140,8 @@ dependencies:
 - name: geoservice-postgres
   repository: file://geoservice-postgres
   version: 0.1.0
-digest: sha256:d9bc5f62a639d3d7460fcd7a3026bc4e26e884b9d8a6b153039aee574f17da10
-generated: "2026-08-12T21:26:48.784997+07:00"
+- name: shortlink-service
+  repository: file://shortlink-service
+  version: 0.1.0
+digest: sha256:9b23c1b833e38c27666176a2967cd9d67a99f9c5b4f80c44ecac10a2b5bee9f9
+generated: "2026-08-13T21:18:28.489819+07:00"
