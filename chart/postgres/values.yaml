@@ -89,3 +89,9 @@ postgres:
       consulKey: cdn_service
       userField: .postgres.postgresql_user
       passwordField: .postgres.postgresql_password
+    - name: shortlink-service
+      database: shortlink
+      role: shortlink_svc
+      consulKey: shortlink_service
+      userField: .postgres.postgresqlUser
+      passwordField: .postgres.postgresqlPassword

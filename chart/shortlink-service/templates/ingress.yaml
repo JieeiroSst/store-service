@@ -1,0 +1,23 @@
+{{- if .Values.shortlinkService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.shortlinkService.name }}-ingress
+  {{- with .Values.shortlinkService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.shortlinkService.ingress.className }}
+  rules:
+  - host: {{ .Values.shortlinkService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.shortlinkService.ingress.path }}
+        pathType: {{ .Values.shortlinkService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.shortlinkService.service.name }}
+            port:
+              number: 80
+{{- end }}

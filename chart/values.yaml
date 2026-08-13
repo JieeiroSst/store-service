@@ -268,3 +268,24 @@ livestreamWeb:
     host: livestream-web.local
     path: /
     pathType: Prefix
+
+shortlinkService:
+  name: shortlink-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/shortlink-service
+    tag: latest
+    port: 3000
+
+  service:
+    name: shortlink-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: shortlink-service.local
+    path: /
+    pathType: Prefix

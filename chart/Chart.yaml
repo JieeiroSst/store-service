@@ -195,3 +195,7 @@ dependencies:
     name: geoservice-postgres
     version: "0.1.0"
     repository: file://geoservice-postgres
+  - alias: shortlinkService
+    name: shortlink-service
+    version: "0.1.0"
+    repository: file://shortlink-service
