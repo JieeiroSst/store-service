@@ -1,0 +1,86 @@
+name: Voucher Service CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'voucher-service/**'
+      - 'chart/voucher-service/**'
+      - '.github/workflows/voucher-service-cicd.yml'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/jieeirosst/voucher-service
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Build
+        run: cd voucher-service && go build -v ./...
+
+      - name: Test
+        run: cd voucher-service && go test -v ./...
+
+  build-and-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./voucher-service
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy voucher service
+        # Resources are owned by the umbrella "chart-1785009827" helm release
+        # (chart/), not a standalone release - render+apply directly to avoid
+        # ownership conflicts (see notification_service-cicd.yml).
+        run: |
+          helm template ./chart/voucher-service \
+            --namespace default \
+            --set voucherService.image.name=${{ env.IMAGE_NAME }} \
+            --set voucherService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            | kubectl apply -n default -f -
+          kubectl rollout status deployment/voucher-service-deployment -n default --timeout=5m
