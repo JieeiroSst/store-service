@@ -95,3 +95,9 @@ postgres:
       consulKey: shortlink_service
       userField: .postgres.postgresqlUser
       passwordField: .postgres.postgresqlPassword
+    - name: photo-service
+      database: photo_service
+      role: photo_service_svc
+      consulKey: photo_service
+      userField: .postgres.user
+      passwordField: .postgres.password

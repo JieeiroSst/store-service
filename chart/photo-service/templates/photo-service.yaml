@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.photoService.name }}-deployment
+spec:
+{{- if not .Values.photoService.autoscaling.enabled }}
+  replicas: {{ .Values.photoService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.photoService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.photoService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.photoService.name }}-deployment
+        image: {{ .Values.photoService.image.name }}:{{ .Values.photoService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.photoService.image.port }}
+        resources:
+          {{- toYaml .Values.photoService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: photo-service.env
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 20
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.photoService.service.name }}
+spec:
+  type: {{ .Values.photoService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.photoService.image.port }}
+  selector:
+    app: {{ .Values.photoService.name }}-deployment

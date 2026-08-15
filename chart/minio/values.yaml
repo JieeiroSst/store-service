@@ -18,6 +18,7 @@ minio:
   buckets:
     - livestream-hls
     - cdn-origin
+    - photo-service
 
   storage:
     size: 5Gi

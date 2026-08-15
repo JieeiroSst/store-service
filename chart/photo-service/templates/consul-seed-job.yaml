@@ -1,0 +1,62 @@
+# Seeds Consul KV key "photo_service" with the reference shape from
+# files/consul.json, but only if the key doesn't already exist.
+#
+# Without this, pkg/config/config.go's Consul lookup has nothing to read and
+# the service fails to start - and chart/postgres's service-db-provisioner
+# job only PATCHes an *existing* KV entry with the generated
+# photo_service_svc role/password (see
+# chart/postgres/templates/service-db-provisioner-job.yaml), so that job has
+# nothing to patch and those credentials never reach the service.
+#
+# Runs at hook-weight "1", one step before the postgres provisioner's
+# weight "2", so the key exists by the time that job tries to patch it.
+# Never overwrites an existing key - once the provisioner has patched in
+# real credentials, re-running this on upgrade must not wipe them out.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: photo-service-consul-seed
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: consul-kv-seed
+          image: alpine:3.20
+          env:
+            - name: CONSUL_ADDR
+              value: "http://consul-service"
+            - name: CONSUL_KEY
+              value: "photo_service"
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              apk add --no-cache curl >/dev/null
+
+              until curl -sf "$CONSUL_ADDR/v1/status/leader" >/dev/null; do
+                echo "waiting for consul..."
+                sleep 2
+              done
+
+              existing=$(curl -sf "$CONSUL_ADDR/v1/kv/$CONSUL_KEY?raw" || true)
+              if [ -n "$existing" ]; then
+                echo "consul key $CONSUL_KEY already present, leaving as-is"
+                exit 0
+              fi
+
+              curl -sf -X PUT --data-binary @/seed/photo_service.json "$CONSUL_ADDR/v1/kv/$CONSUL_KEY" >/dev/null
+              echo "seeded consul key $CONSUL_KEY"
+          volumeMounts:
+            - name: seed
+              mountPath: /seed
+      volumes:
+        - name: seed
+          configMap:
+            name: photo-service-consul-seed

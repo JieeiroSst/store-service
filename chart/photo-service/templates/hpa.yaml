@@ -1,0 +1,20 @@
+{{- if .Values.photoService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.photoService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.photoService.name }}-deployment
+  minReplicas: {{ .Values.photoService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.photoService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.photoService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
