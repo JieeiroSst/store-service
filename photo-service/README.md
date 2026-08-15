@@ -68,7 +68,17 @@ may show through), `stretch` (exact size, aspect ratio ignored).
 
 ### `POST /v1/compositions`
 
-`multipart/form-data`:
+The request is routed by `Content-Type`:
+
+- **`multipart/form-data`** — the classic form described below (multiple
+  files, URLs, MinIO object keys, plus a `layout` field).
+- **anything else** — the request body itself is treated as raw image bytes
+  (a single upload source), read into a `bytes.Buffer` and capped at 32 MiB.
+  Use this to push an image straight from a byte buffer without building a
+  multipart body. `layout`, when needed, is passed as JSON via the
+  `X-Layout` header instead of a form field.
+
+#### `multipart/form-data`
 
 | field         | description                                                     |
 |---------------|------------------------------------------------------------------|
@@ -79,6 +89,17 @@ may show through), `stretch` (exact size, aspect ratio ignored).
 
 Sources are ordered `images`, then `urls`, then `object_keys`, in submission
 order; that final 0-based index is what `layout.cells[].image_index` refers to.
+
+#### raw buffer body
+
+| part                | description                                                        |
+|---------------------|---------------------------------------------------------------------|
+| body                | raw image bytes (the full request body), e.g. `Content-Type: image/jpeg` or `application/octet-stream` |
+| `X-Layout` header   | optional JSON `layoutDTO` — see below                                |
+
+This path always produces exactly one source (`image_index: 0`), so it only
+makes sense with a single-cell layout (e.g. `mosaic`/`freeform` with one
+cell, or a `1x1` grid).
 
 `layout` JSON shape:
 
@@ -179,6 +200,15 @@ curl -X POST http://localhost:8080/v1/compositions \
       };type=application/json' \
   -F 'images=@back.jpg' \
   -F 'images=@front.jpg'
+```
+
+**Raw buffer body (single image, no multipart):**
+
+```sh
+curl -X POST http://localhost:8080/v1/compositions \
+  -H 'Content-Type: image/jpeg' \
+  -H 'X-Layout: {"type":"grid","rows":1,"cols":1,"width":800,"height":600,"format":"jpeg"}' \
+  --data-binary @photo.jpg
 ```
 
 **Fetch a composition's metadata/URL:**
