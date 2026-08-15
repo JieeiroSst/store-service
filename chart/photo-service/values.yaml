@@ -1,0 +1,36 @@
+photoService:
+  name: photo-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/photo-service
+    tag: latest
+    # Must match config.HTTP.Port as resolved from Consul KV (see
+    # photo-service/pkg/config/config.go).
+    port: 8080
+
+  service:
+    name: photo-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: photo-service.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

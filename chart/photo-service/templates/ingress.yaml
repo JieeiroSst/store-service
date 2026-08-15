@@ -1,0 +1,23 @@
+{{- if .Values.photoService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.photoService.name }}-ingress
+  {{- with .Values.photoService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.photoService.ingress.className }}
+  rules:
+  - host: {{ .Values.photoService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.photoService.ingress.path }}
+        pathType: {{ .Values.photoService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.photoService.service.name }}
+            port:
+              number: 80
+{{- end }}

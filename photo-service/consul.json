@@ -1,0 +1,34 @@
+{
+  "app": {
+    "env": "production",
+    "log_level": "info"
+  },
+  "http": {
+    "port": 8080,
+    "shutdown_timeout": "10s"
+  },
+  "postgres": {
+    "host": "postgresdb",
+    "port": 80,
+    "user": "testUser",
+    "password": "testPassword",
+    "dbname": "photo_service",
+    "sslmode": false,
+    "max_conns": 10,
+    "migrations_path": "migrations",
+    "connect_timeout": "5s"
+  },
+  "redis": {
+    "addr": "redis-svc:80",
+    "password": "",
+    "db": 0
+  },
+  "minio": {
+    "endpoint": "minio-svc:9000",
+    "access_key_id": "minioadmin",
+    "secret_access_key": "minioadmin123",
+    "use_ssl": false,
+    "bucket": "photo-service",
+    "presign_ttl": "1h"
+  }
+}

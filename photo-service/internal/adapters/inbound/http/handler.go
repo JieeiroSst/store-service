@@ -1,0 +1,124 @@
+package http
+
+import (
+	"encoding/json"
+	"io"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/JIeeiroSst/photo-service/internal/application/ports"
+	"github.com/JIeeiroSst/photo-service/internal/domain"
+)
+
+const maxUploadMemory = 32 << 20 // 32 MiB kept in memory before spilling to temp files
+
+type CompositionHandler struct {
+	useCase ports.ComposeImageUseCase
+}
+
+func NewCompositionHandler(useCase ports.ComposeImageUseCase) *CompositionHandler {
+	return &CompositionHandler{useCase: useCase}
+}
+
+func (h *CompositionHandler) Create(c *gin.Context) {
+	if err := c.Request.ParseMultipartForm(maxUploadMemory); err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{Error: "invalid multipart form: " + err.Error()})
+		return
+	}
+
+	var dto layoutDTO
+	if raw := c.PostForm("layout"); raw != "" {
+		if err := json.Unmarshal([]byte(raw), &dto); err != nil {
+			c.JSON(http.StatusBadRequest, errorResponse{Error: "invalid layout json: " + err.Error()})
+			return
+		}
+	}
+
+	sources, err := h.collectSources(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{Error: err.Error()})
+		return
+	}
+
+	cmd := ports.ComposeImagesCommand{
+		Sources:        sources,
+		Layout:         dto.toDomain(),
+		IdempotencyKey: c.GetHeader("Idempotency-Key"),
+	}
+
+	job, err := h.useCase.ComposeImages(c.Request.Context(), cmd)
+	if err != nil {
+		c.JSON(statusForError(err), errorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, newCompositionResponse(job))
+}
+
+// Get handles GET /v1/compositions/{id}.
+func (h *CompositionHandler) Get(c *gin.Context) {
+	id := c.Param("id")
+	job, err := h.useCase.GetComposition(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(statusForError(err), errorResponse{Error: err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, newCompositionResponse(job))
+}
+
+func (h *CompositionHandler) collectSources(c *gin.Context) ([]domain.ImageSource, error) {
+	var sources []domain.ImageSource
+	order := 0
+
+	if c.Request.MultipartForm != nil {
+		for _, fh := range c.Request.MultipartForm.File["images"] {
+			f, err := fh.Open()
+			if err != nil {
+				return nil, err
+			}
+			data, readErr := io.ReadAll(f)
+			f.Close()
+			if readErr != nil {
+				return nil, readErr
+			}
+			contentType := fh.Header.Get("Content-Type")
+			sources = append(sources, domain.ImageSource{
+				Type:        domain.ImageSourceTypeUpload,
+				Data:        data,
+				ContentType: contentType,
+				Order:       order,
+			})
+			order++
+		}
+	}
+
+	for _, u := range c.PostFormArray("urls") {
+		if u == "" {
+			continue
+		}
+		sources = append(sources, domain.ImageSource{
+			Type:  domain.ImageSourceTypeURL,
+			URL:   u,
+			Order: order,
+		})
+		order++
+	}
+
+	for _, key := range c.PostFormArray("object_keys") {
+		if key == "" {
+			continue
+		}
+		sources = append(sources, domain.ImageSource{
+			Type:      domain.ImageSourceTypeMinIO,
+			ObjectKey: key,
+			Order:     order,
+		})
+		order++
+	}
+
+	if len(sources) == 0 {
+		return nil, domain.ErrNoSources
+	}
+	return sources, nil
+}
