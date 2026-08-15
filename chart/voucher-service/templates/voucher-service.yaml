@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.voucherService.name }}-deployment
+spec:
+{{- if not .Values.voucherService.autoscaling.enabled }}
+  replicas: {{ .Values.voucherService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.voucherService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.voucherService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.voucherService.name }}-deployment
+        image: {{ .Values.voucherService.image.name }}:{{ .Values.voucherService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.voucherService.image.httpPort }}
+        env:
+          - name: PORT
+            value: "{{ .Values.voucherService.image.httpPort }}"
+        resources:
+          {{- toYaml .Values.voucherService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: voucher-service.env
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.voucherService.image.httpPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.voucherService.image.httpPort }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.voucherService.service.name }}
+spec:
+  type: {{ .Values.voucherService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.voucherService.image.httpPort }}
+  selector:
+    app: {{ .Values.voucherService.name }}-deployment
