@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"fmt"
+	"net/url"
 
 	"github.com/JIeeiroSst/admanagement-service/config"
 	"github.com/JIeeiroSst/admanagement-service/internal/domain/model"
@@ -11,15 +11,21 @@ import (
 	"gorm.io/gorm"
 )
 
+func buildDSN(cfg *config.Config) string {
+	u := url.URL{
+		Scheme: "postgres",
+		User:   url.UserPassword(cfg.Postgres.User, cfg.Postgres.Password),
+		Host:   cfg.Postgres.Host + ":" + cfg.Postgres.Port,
+		Path:   "/" + cfg.Postgres.DBName,
+	}
+	q := u.Query()
+	q.Set("sslmode", cfg.Postgres.SSLMode)
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
 func NewDatabase(cfg *config.Config) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		cfg.Postgres.Host,
-		cfg.Postgres.Port,
-		cfg.Postgres.User,
-		cfg.Postgres.Password,
-		cfg.Postgres.DBName,
-		cfg.Postgres.SSLMode,
-	)
+	dsn := buildDSN(cfg)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
