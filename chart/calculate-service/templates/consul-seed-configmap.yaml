@@ -1,0 +1,10 @@
+# Reference copy of calculate-service/consul.json, embedded so the seed
+# Job below (consul-seed-job.yaml) can PUT it into Consul KV without
+# reaching outside this chart's own file tree.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calculate-service-consul-seed
+data:
+  calculate_service.json: |-
+{{ .Files.Get "files/consul.json" | indent 4 }}

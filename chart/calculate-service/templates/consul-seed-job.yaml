@@ -1,0 +1,57 @@
+# Seeds Consul KV key "calculate_service" with the reference shape from
+# files/consul.json, but only if the key doesn't already exist.
+#
+# Without this, internal/infrastructure/config_provider.go's Consul lookup
+# fails with "consul returned no config for key ..." and the pod never
+# comes up.
+#
+# Never overwrites an existing key, so hand-rotated config survives helm
+# upgrades.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: calculate-service-consul-seed
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: consul-kv-seed
+          image: alpine:3.20
+          env:
+            - name: CONSUL_ADDR
+              value: "http://consul-service"
+            - name: CONSUL_KEY
+              value: "calculate_service"
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              apk add --no-cache curl >/dev/null
+
+              until curl -sf "$CONSUL_ADDR/v1/status/leader" >/dev/null; do
+                echo "waiting for consul..."
+                sleep 2
+              done
+
+              existing=$(curl -sf "$CONSUL_ADDR/v1/kv/$CONSUL_KEY?raw" || true)
+              if [ -n "$existing" ]; then
+                echo "consul key $CONSUL_KEY already present, leaving as-is"
+                exit 0
+              fi
+
+              curl -sf -X PUT --data-binary @/seed/calculate_service.json "$CONSUL_ADDR/v1/kv/$CONSUL_KEY" >/dev/null
+              echo "seeded consul key $CONSUL_KEY"
+          volumeMounts:
+            - name: seed
+              mountPath: /seed
+      volumes:
+        - name: seed
+          configMap:
+            name: calculate-service-consul-seed
