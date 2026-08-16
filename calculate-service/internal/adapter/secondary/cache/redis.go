@@ -18,10 +18,17 @@ type redisCache struct {
 	rdb *redis.Client
 }
 
-func NewRedisCache(dns string) port.WeatherCache {
-	return &redisCache{
-		rdb: redis.NewClient(&redis.Options{Addr: dns}),
-	}
+// NewRedisClient builds the shared Redis connection used by every cache adapter.
+func NewRedisClient(dns string) *redis.Client {
+	return redis.NewClient(&redis.Options{Addr: dns})
+}
+
+func NewRedisCache(rdb *redis.Client) port.WeatherCache {
+	return &redisCache{rdb: rdb}
+}
+
+func NewRedisMarketCache(rdb *redis.Client) port.MarketCache {
+	return &redisCache{rdb: rdb}
 }
 
 func getJSON[T any](ctx context.Context, rdb *redis.Client, key string) (*T, bool) {
@@ -81,5 +88,13 @@ func (c *redisCache) GetSnapshot(ctx context.Context, key string) (*model.Weathe
 }
 
 func (c *redisCache) SetSnapshot(ctx context.Context, key string, v *model.WeatherSnapshot, ttl time.Duration) {
+	setJSON(ctx, c.rdb, key, v, ttl)
+}
+
+func (c *redisCache) GetMarketSnapshot(ctx context.Context, key string) (*model.MarketSnapshot, bool) {
+	return getJSON[model.MarketSnapshot](ctx, c.rdb, key)
+}
+
+func (c *redisCache) SetMarketSnapshot(ctx context.Context, key string, v *model.MarketSnapshot, ttl time.Duration) {
 	setJSON(ctx, c.rdb, key, v, ttl)
 }

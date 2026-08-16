@@ -33,6 +33,12 @@ func RegisterRoutes(router *gin.Engine, h *Handler) {
 		api.GET("/locations", h.ListLocations)
 	}
 
+	market := router.Group("/api/v1/market")
+	{
+		market.GET("/snapshot", h.GetMarketSnapshot)
+		market.GET("/ws", h.MarketWS)
+	}
+
 	router.GET("/healthz", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})

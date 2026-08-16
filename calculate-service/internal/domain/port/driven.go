@@ -32,3 +32,16 @@ type WeatherCache interface {
 	GetSnapshot(ctx context.Context, key string) (*model.WeatherSnapshot, bool)
 	SetSnapshot(ctx context.Context, key string, v *model.WeatherSnapshot, ttl time.Duration)
 }
+
+type MarketProvider interface {
+	GetMarkets(ctx context.Context, vsCurrency string, perPage int) ([]model.Coin, error)
+}
+
+type MarketCache interface {
+	GetMarketSnapshot(ctx context.Context, key string) (*model.MarketSnapshot, bool)
+	SetMarketSnapshot(ctx context.Context, key string, v *model.MarketSnapshot, ttl time.Duration)
+}
+
+type MarketBroadcaster interface {
+	Broadcast(v *model.MarketSnapshot)
+}
