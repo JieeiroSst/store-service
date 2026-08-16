@@ -78,6 +78,8 @@ func respondErr(c *gin.Context, err error) {
 		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 	case errors.Is(err, common.ErrUpstreamUnavailable):
 		c.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+	case errors.Is(err, common.ErrMarketUnavailable):
+		c.JSON(http.StatusServiceUnavailable, gin.H{"message": err.Error()})
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 	}

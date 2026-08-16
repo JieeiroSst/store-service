@@ -10,6 +10,7 @@ type Config struct {
 	Server  ServerConfig  `json:"server"`
 	Cache   CacheConfig   `json:"cache"`
 	Weather WeatherConfig `json:"weather"`
+	Market  MarketConfig  `json:"market"`
 }
 
 type ServerConfig struct {
@@ -34,6 +35,14 @@ type LocationConfig struct {
 	Lat           float64 `json:"lat"`
 	Lon           float64 `json:"lon"`
 	TideStationID string  `json:"tide_station_id"`
+}
+
+type MarketConfig struct {
+	CoinGeckoBaseURL   string `json:"coingecko_base_url"`
+	VsCurrency         string `json:"vs_currency"`
+	PerPage            int    `json:"per_page"`
+	RequestTimeoutSec  int    `json:"request_timeout_sec"`
+	RefreshIntervalSec int    `json:"refresh_interval_sec"`
 }
 
 type Dir struct {

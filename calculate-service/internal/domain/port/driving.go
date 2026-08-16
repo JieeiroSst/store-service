@@ -14,3 +14,8 @@ type WeatherService interface {
 	ListTrackedLocations(ctx context.Context) []model.TrackedLocation
 	RefreshTrackedLocations(ctx context.Context) error
 }
+
+type MarketService interface {
+	GetSnapshot(ctx context.Context) (*model.MarketSnapshot, error)
+	RefreshMarkets(ctx context.Context) error
+}
