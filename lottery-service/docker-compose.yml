@@ -1,0 +1,25 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  lottery-service:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "8000:8000"
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: lottery
+      SCHEDULER_ENABLED: "true"
+      SCHEDULER_TIMEZONE: Asia/Ho_Chi_Minh
+      LOG_LEVEL: INFO
+
+volumes:
+  mongo_data:

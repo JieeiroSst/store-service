@@ -1,0 +1,30 @@
+{{- if .Values.lottery.scrapeCronJob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.lottery.name }}-scrape
+spec:
+  schedule: {{ .Values.lottery.scrapeCronJob.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: {{ .Values.lottery.name }}-scrape
+            image: {{ .Values.lottery.image.name }}:{{ .Values.lottery.image.tag }}
+            imagePullPolicy: Always
+            command: ["python", "-m", "app.cli", "scrape"]
+            volumeMounts:
+            - name: env-file
+              mountPath: /app/.env
+              subPath: lottery-service.env
+          volumes:
+          - name: env-file
+            secret:
+              secretName: service-env-files
+{{- end }}
