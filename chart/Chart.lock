@@ -143,5 +143,8 @@ dependencies:
 - name: shortlink-service
   repository: file://shortlink-service
   version: 0.1.0
-digest: sha256:9b23c1b833e38c27666176a2967cd9d67a99f9c5b4f80c44ecac10a2b5bee9f9
-generated: "2026-08-13T21:18:28.489819+07:00"
+- name: lottery-service
+  repository: file://lottery-service
+  version: 0.1.0
+digest: sha256:624874da20b1ab13a640917eb28414c52d9cd39c953791f392b30c11ba8bf0f2
+generated: "2026-08-28T15:27:11.998878+07:00"

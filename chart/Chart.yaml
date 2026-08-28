@@ -199,3 +199,7 @@ dependencies:
     name: shortlink-service
     version: "0.1.0"
     repository: file://shortlink-service
+  - alias: lottery
+    name: lottery-service
+    version: "0.1.0"
+    repository: file://lottery-service

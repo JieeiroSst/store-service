@@ -1,0 +1,45 @@
+lottery:
+  name: lottery-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/lottery-service
+    tag: latest
+    port: 8000
+
+  service:
+    name: lottery-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: lottery-service.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Việc cào dữ liệu hằng ngày chạy bằng k8s CronJob riêng (xem
+  # templates/scrape-cronjob.yaml), KHÔNG phải scheduler nội bộ (APScheduler)
+  # trong process API — nên bật/tắt/scale Deployment API thoải mái mà không lo
+  # cào trùng. SCHEDULER_ENABLED trong lottery-service.env (env-files-secret)
+  # để "false" vì lý do đó; APScheduler nội bộ chỉ dùng cho docker-compose/local.
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 60
+
+  scrapeCronJob:
+    enabled: true
+    # "0 12 * * *" theo giờ UTC của cluster = 19:00 (7h tối) giờ Việt Nam
+    # (Asia/Ho_Chi_Minh = UTC+7, không có giờ mùa hè nên lệch cố định).
+    schedule: "0 12 * * *"
