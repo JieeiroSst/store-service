@@ -468,3 +468,20 @@ jobs:
 
     - name: Test
       run: cd restaurant/delivery-service && go test -v ./...
+
+  threads_service:
+    name: threads_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.23"
+
+    - name: Build
+      run: cd threads-service && go build -v ./...
+
+    - name: Test
+      run: cd threads-service && go test -v ./...

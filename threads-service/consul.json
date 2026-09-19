@@ -1,0 +1,20 @@
+{
+    "server": {
+        "portHttpServer": "8083"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
+        "postgresqlDbname": "threads",
+        "postgresqlSSLMode": false
+    },
+    "auth": {
+        "jwtSecret": "no_name"
+    },
+    "userService": {
+        "baseURL": "http://user-service-svc",
+        "timeout": "5s"
+    }
+}

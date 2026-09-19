@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.threadsService.name }}-deployment
+spec:
+{{- if not .Values.threadsService.autoscaling.enabled }}
+  replicas: {{ .Values.threadsService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.threadsService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.threadsService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.threadsService.name }}-deployment
+        image: {{ .Values.threadsService.image.name }}:{{ .Values.threadsService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.threadsService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.threadsService.image.port }}"
+          - name: POSTGRES_HOST
+            value: {{ .Values.threadsService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.threadsService.env.postgresPort | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.threadsService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.threadsService.name }}-secret
+                key: postgresPassword
+          - name: POSTGRES_DBNAME
+            value: {{ .Values.threadsService.env.postgresDbname | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.threadsService.env.postgresSSLMode | quote }}
+          - name: REDIS_ADDR
+            value: {{ .Values.threadsService.env.redisAddr | quote }}
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.threadsService.name }}-secret
+                key: redisPassword
+          - name: REDIS_DB
+            value: {{ .Values.threadsService.env.redisDB | quote }}
+          - name: USER_SERVICE_BASE_URL
+            value: {{ .Values.threadsService.env.userServiceBaseURL | quote }}
+          - name: USER_SERVICE_TIMEOUT
+            value: {{ .Values.threadsService.env.userServiceTimeout | quote }}
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.threadsService.name }}-secret
+                key: jwtSecret
+        resources:
+          {{- toYaml .Values.threadsService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: threads-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.threadsService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.threadsService.env.postgresPassword | quote }}
+  jwtSecret: {{ .Values.threadsService.env.jwtSecret | quote }}
+  redisPassword: {{ .Values.threadsService.env.redisPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.threadsService.service.name }}
+spec:
+  type: {{ .Values.threadsService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.threadsService.image.port }}
+  selector:
+    app: {{ .Values.threadsService.name }}-deployment

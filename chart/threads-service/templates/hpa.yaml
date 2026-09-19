@@ -1,0 +1,20 @@
+{{- if .Values.threadsService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.threadsService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.threadsService.name }}-deployment
+  minReplicas: {{ .Values.threadsService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.threadsService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.threadsService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
