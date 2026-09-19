@@ -231,3 +231,7 @@ dependencies:
     name: threads-service
     version: "0.1.0"
     repository: file://threads-service
+  - alias: postService
+    name: post-service
+    version: "0.1.0"
+    repository: file://post-service

@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postService.name }}-deployment
+spec:
+{{- if not .Values.postService.autoscaling.enabled }}
+  replicas: {{ .Values.postService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.postService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.postService.name }}-deployment
+        image: {{ .Values.postService.image.name }}:{{ .Values.postService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.postService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.postService.image.port }}"
+          - name: MYSQL_HOST
+            value: {{ .Values.postService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.postService.env.mysqlPort | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.postService.env.mysqlUser | quote }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postService.name }}-secret
+                key: mysqlPassword
+          - name: MYSQL_DBNAME
+            value: {{ .Values.postService.env.mysqlDbname | quote }}
+          - name: MINIO_ENDPOINT
+            value: {{ .Values.postService.env.minioEndpoint | quote }}
+          - name: MINIO_ACCESS_KEY
+            value: {{ .Values.postService.env.minioAccessKey | quote }}
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postService.name }}-secret
+                key: minioSecretKey
+          - name: MINIO_BUCKET
+            value: {{ .Values.postService.env.minioBucket | quote }}
+          - name: MINIO_USE_SSL
+            value: {{ .Values.postService.env.minioUseSSL | quote }}
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postService.name }}-secret
+                key: jwtSecret
+        resources:
+          {{- toYaml .Values.postService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: post-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.postService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real. In production,
+  # prefer the mysql chart's provisioned post_service_svc user (see
+  # chart/mysql's serviceDatabases) over the shared root password here.
+  mysqlPassword: {{ .Values.postService.env.mysqlPassword | quote }}
+  minioSecretKey: {{ .Values.postService.env.minioSecretKey | quote }}
+  jwtSecret: {{ .Values.postService.env.jwtSecret | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.postService.service.name }}
+spec:
+  type: {{ .Values.postService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.postService.image.port }}
+  selector:
+    app: {{ .Values.postService.name }}-deployment

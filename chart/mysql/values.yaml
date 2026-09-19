@@ -38,3 +38,9 @@ mysql:
       consulKey: notification_service
       userField: .mysql.mysqlUser
       passwordField: .mysql.mysqlPassword
+    - name: post-service
+      database: post_service
+      user: post_service_svc
+      consulKey: post_service
+      userField: .mysql.user
+      passwordField: .mysql.password

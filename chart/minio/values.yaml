@@ -19,6 +19,7 @@ minio:
     - livestream-hls
     - cdn-origin
     - photo-service
+    - post-service
 
   storage:
     size: 5Gi
