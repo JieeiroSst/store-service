@@ -1,0 +1,36 @@
+orderService:
+  name: order-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/order-service
+    tag: latest
+    # Must match config.Server.PortServer as resolved from Consul (see
+    # restaurant/order-service/config/config.go and consul.json).
+    port: 1236
+
+  service:
+    name: order-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: order-service.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

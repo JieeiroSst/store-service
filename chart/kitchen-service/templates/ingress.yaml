@@ -1,0 +1,23 @@
+{{- if .Values.kitchenService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.kitchenService.name }}-ingress
+  {{- with .Values.kitchenService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.kitchenService.ingress.className }}
+  rules:
+  - host: {{ .Values.kitchenService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.kitchenService.ingress.path }}
+        pathType: {{ .Values.kitchenService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.kitchenService.service.name }}
+            port:
+              number: 80
+{{- end }}

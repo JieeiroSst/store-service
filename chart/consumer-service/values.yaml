@@ -1,0 +1,36 @@
+consumerService:
+  name: consumer-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/consumer-service
+    tag: latest
+    # Must match config.Server.PortServer as resolved from Consul (see
+    # restaurant/consumer-service/config/config.go and consul.json).
+    port: 1237
+
+  service:
+    name: consumer-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: consumer-service.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

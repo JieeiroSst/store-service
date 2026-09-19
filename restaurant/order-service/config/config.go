@@ -12,6 +12,13 @@ type Config struct {
 	Redis    Redis          `json:"redis"`
 	Postgres PostgresConfig `json:"postgres"`
 	Nats     NatsConfig     `json:"nats"`
+	Kitchen  KitchenConfig  `json:"kitchen"`
+}
+
+// KitchenConfig points at kitchen-service's food catalog, used to price
+// order line items authoritatively (see adapter/secondary/proxy).
+type KitchenConfig struct {
+	URL string `json:"url"`
 }
 
 type ServerConfig struct {

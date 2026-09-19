@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.kitchenService.name }}-deployment
+spec:
+{{- if not .Values.kitchenService.autoscaling.enabled }}
+  replicas: {{ .Values.kitchenService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.kitchenService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.kitchenService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.kitchenService.name }}-deployment
+        image: {{ .Values.kitchenService.image.name }}:{{ .Values.kitchenService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.kitchenService.image.port }}
+        resources:
+          {{- toYaml .Values.kitchenService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: kitchen-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kitchenService.service.name }}
+spec:
+  type: {{ .Values.kitchenService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.kitchenService.image.port }}
+  selector:
+    app: {{ .Values.kitchenService.name }}-deployment

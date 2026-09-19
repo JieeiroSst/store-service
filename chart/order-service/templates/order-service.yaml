@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.orderService.name }}-deployment
+spec:
+{{- if not .Values.orderService.autoscaling.enabled }}
+  replicas: {{ .Values.orderService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.orderService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.orderService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.orderService.name }}-deployment
+        image: {{ .Values.orderService.image.name }}:{{ .Values.orderService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.orderService.image.port }}
+        resources:
+          {{- toYaml .Values.orderService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: order-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.orderService.service.name }}
+spec:
+  type: {{ .Values.orderService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.orderService.image.port }}
+  selector:
+    app: {{ .Values.orderService.name }}-deployment
