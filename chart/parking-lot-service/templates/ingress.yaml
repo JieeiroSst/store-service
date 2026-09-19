@@ -1,0 +1,23 @@
+{{- if .Values.parkingLotService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.parkingLotService.name }}-ingress
+  {{- with .Values.parkingLotService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.parkingLotService.ingress.className }}
+  rules:
+  - host: {{ .Values.parkingLotService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.parkingLotService.ingress.path }}
+        pathType: {{ .Values.parkingLotService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.parkingLotService.service.name }}
+            port:
+              number: 80
+{{- end }}

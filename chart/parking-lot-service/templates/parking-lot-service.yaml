@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.parkingLotService.name }}-deployment
+spec:
+{{- if not .Values.parkingLotService.autoscaling.enabled }}
+  replicas: {{ .Values.parkingLotService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.parkingLotService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.parkingLotService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.parkingLotService.name }}-deployment
+        image: {{ .Values.parkingLotService.image.name }}:{{ .Values.parkingLotService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.parkingLotService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.parkingLotService.image.port }}"
+          - name: POSTGRES_HOST
+            value: {{ .Values.parkingLotService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.parkingLotService.env.postgresPort | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.parkingLotService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.parkingLotService.name }}-secret
+                key: postgresPassword
+          - name: POSTGRES_DBNAME
+            value: {{ .Values.parkingLotService.env.postgresDbname | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.parkingLotService.env.postgresSSLMode | quote }}
+        resources:
+          {{- toYaml .Values.parkingLotService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: parking-lot-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.parkingLotService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.parkingLotService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.parkingLotService.service.name }}
+spec:
+  type: {{ .Values.parkingLotService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.parkingLotService.image.port }}
+  selector:
+    app: {{ .Values.parkingLotService.name }}-deployment

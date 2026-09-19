@@ -1,0 +1,13 @@
+{
+    "server": {
+        "portHttpServer": "8084"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
+        "postgresqlDbname": "parking_lot",
+        "postgresqlSSLMode": false
+    }
+}
