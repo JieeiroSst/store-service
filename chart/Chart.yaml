@@ -235,3 +235,7 @@ dependencies:
     name: post-service
     version: "0.1.0"
     repository: file://post-service
+  - alias: parkingLotService
+    name: parking-lot-service
+    version: "0.1.0"
+    repository: file://parking-lot-service
