@@ -1,8 +1,24 @@
-FROM golang
+FROM golang:1.25-alpine AS builder
+
 WORKDIR /app
-COPY . .
-ENV PORT 1236
-EXPOSE 1236
+
+RUN apk add --no-cache git
+
+COPY go.mod go.sum ./
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o /out/main ./cmd/main.go
-ENTRYPOINT ["/out/main"]
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o post-service ./cmd
+
+FROM alpine:3.19
+
+WORKDIR /app
+
+RUN apk add --no-cache ca-certificates tzdata
+
+COPY --from=builder /app/post-service .
+COPY --from=builder /app/database.sql .
+
+EXPOSE 1236
+
+ENTRYPOINT ["./post-service"]

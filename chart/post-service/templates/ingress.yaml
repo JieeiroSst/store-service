@@ -1,0 +1,23 @@
+{{- if .Values.postService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.postService.name }}-ingress
+  {{- with .Values.postService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.postService.ingress.className }}
+  rules:
+  - host: {{ .Values.postService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.postService.ingress.path }}
+        pathType: {{ .Values.postService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.postService.service.name }}
+            port:
+              number: 80
+{{- end }}

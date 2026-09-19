@@ -1,78 +1,66 @@
 package config
 
-import (
-	"fmt"
-	"github.com/ghodss/yaml"
-	"io/ioutil"
-)
+import "os"
 
 type Config struct {
-	Server          ServerConfig
-	Mysql           MysqlConfig
-	Secret 		    SecretService
-	RabbitMQ        RabbitMQ
-	Redis			Redis
-	Email           Email
+	Server ServerConfig
+	MySQL  MySQLConfig
+	Auth   AuthConfig
+	Minio  MinioConfig
 }
 
 type ServerConfig struct {
-	PortServer    string
-	PprofPort     string
+	PortHttpServer string
 }
 
-type Redis struct {
-	Dns           string
+type MySQLConfig struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+	Dbname   string
 }
 
-type RabbitMQ struct {
-	Host           string
-	Port           string
-	User           string
-	Password       string
-	Exchange       string
-	Queue          string
-	RoutingKey     string
-	ConsumerTag    string
-	WorkerPoolSize int
+type AuthConfig struct {
+	JWTSecret string
 }
 
-
-type MysqlConfig struct {
-	MysqlHost     string
-	MysqlPort     string
-	MysqlUser     string
-	MysqlPassword string
-	MysqlDbname   string
-	MysqlSSLMode  bool
-	MysqlDriver   string
+type MinioConfig struct {
+	Endpoint        string
+	AccessKey       string
+	SecretAccessKey string
+	BucketName      string
+	UseSSL          bool
 }
 
-type SecretService struct {
-	JwtSecretKey string
-}
-
-type ElasticsearchConfig struct {
-	Dns string
-}
-
-type Email struct {
-	NameEmail     string
-	PasswordEmail string
-	Port          string
-	Host          string
-}
-
-func ReadConf(filename string) (*Config, error) {
-	buffer, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
+func FromEnv() *Config {
+	return &Config{
+		Server: ServerConfig{
+			PortHttpServer: getEnv("PORT_HTTP_SERVER", "1236"),
+		},
+		MySQL: MySQLConfig{
+			Host:     getEnv("MYSQL_HOST", "localhost"),
+			Port:     getEnv("MYSQL_PORT", "3306"),
+			User:     getEnv("MYSQL_USER", "root"),
+			Password: getEnv("MYSQL_PASSWORD", ""),
+			Dbname:   getEnv("MYSQL_DBNAME", "post"),
+		},
+		Auth: AuthConfig{
+			JWTSecret: getEnv("JWT_SECRET", ""),
+		},
+		Minio: MinioConfig{
+			Endpoint:        getEnv("MINIO_ENDPOINT", "localhost:9000"),
+			AccessKey:       getEnv("MINIO_ACCESS_KEY", ""),
+			SecretAccessKey: getEnv("MINIO_SECRET_KEY", ""),
+			BucketName:      getEnv("MINIO_BUCKET", "post-service"),
+			UseSSL:          getEnv("MINIO_USE_SSL", "true") == "true",
+		},
 	}
+}
 
-	config := &Config{}
-	err = yaml.Unmarshal(buffer, &config)
-	if err != nil {
-		fmt.Printf("err: %v\n", err)
-
+func getEnv(key, fallback string) string {
+	if v, ok := os.LookupEnv(key); ok {
+		return v
 	}
-	return config, nil
+	return fallback
 }

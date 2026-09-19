@@ -1,0 +1,22 @@
+{
+    "server": {
+        "portHttpServer": "1236"
+    },
+    "mysql": {
+        "host": "mysqldb",
+        "port": "3306",
+        "user": "testUser",
+        "password": "testPassword",
+        "dbname": "post"
+    },
+    "auth": {
+        "jwtSecret": "no_name"
+    },
+    "minio": {
+        "endpoint": "minio-svc:9000",
+        "accessKey": "minioadmin",
+        "secretAccessKey": "minioadmin123",
+        "bucketName": "post-service",
+        "useSSL": false
+    }
+}
