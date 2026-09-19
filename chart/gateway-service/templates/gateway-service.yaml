@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.gatewayService.name }}-deployment
+spec:
+{{- if not .Values.gatewayService.autoscaling.enabled }}
+  replicas: {{ .Values.gatewayService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.gatewayService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.gatewayService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.gatewayService.name }}-deployment
+        image: {{ .Values.gatewayService.image.name }}:{{ .Values.gatewayService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.gatewayService.image.port }}
+        resources:
+          {{- toYaml .Values.gatewayService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: gateway-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gatewayService.service.name }}
+spec:
+  type: {{ .Values.gatewayService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.gatewayService.image.port }}
+  selector:
+    app: {{ .Values.gatewayService.name }}-deployment

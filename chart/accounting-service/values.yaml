@@ -1,0 +1,36 @@
+accountingService:
+  name: accounting-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/accounting-service
+    tag: latest
+    # Must match config.Server.PortServer as resolved from Consul (see
+    # restaurant/accounting-service/config/config.go and consul.json).
+    port: 1238
+
+  service:
+    name: accounting-service-svc
+    type: LoadBalancer
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: accounting-service.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

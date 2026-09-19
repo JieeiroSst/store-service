@@ -203,3 +203,27 @@ dependencies:
     name: lottery-service
     version: "0.1.0"
     repository: file://lottery-service
+  - alias: gatewayService
+    name: gateway-service
+    version: "0.1.0"
+    repository: file://gateway-service
+  - alias: consumerService
+    name: consumer-service
+    version: "0.1.0"
+    repository: file://consumer-service
+  - alias: accountingService
+    name: accounting-service
+    version: "0.1.0"
+    repository: file://accounting-service
+  - alias: orderService
+    name: order-service
+    version: "0.1.0"
+    repository: file://order-service
+  - alias: kitchenService
+    name: kitchen-service
+    version: "0.1.0"
+    repository: file://kitchen-service
+  - alias: deliveryService
+    name: delivery-service
+    version: "0.1.0"
+    repository: file://delivery-service

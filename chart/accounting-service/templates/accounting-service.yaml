@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.accountingService.name }}-deployment
+spec:
+{{- if not .Values.accountingService.autoscaling.enabled }}
+  replicas: {{ .Values.accountingService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.accountingService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.accountingService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.accountingService.name }}-deployment
+        image: {{ .Values.accountingService.image.name }}:{{ .Values.accountingService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.accountingService.image.port }}
+        resources:
+          {{- toYaml .Values.accountingService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: accounting-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.accountingService.service.name }}
+spec:
+  type: {{ .Values.accountingService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.accountingService.image.port }}
+  selector:
+    app: {{ .Values.accountingService.name }}-deployment

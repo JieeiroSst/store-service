@@ -1,8 +1,23 @@
-FROM golang
+FROM golang:1.22-alpine AS builder
+
 WORKDIR /app
-COPY . .
-ENV PORT 1235
-EXPOSE 1235
+
+RUN apk add --no-cache git
+
+COPY go.mod go.sum ./
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o /out/main ./cmd/main.go
-ENTRYPOINT ["/out/main"]
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o kitchen-service ./cmd
+
+FROM alpine:3.19
+
+WORKDIR /app
+
+RUN apk add --no-cache ca-certificates tzdata
+
+COPY --from=builder /app/kitchen-service .
+
+EXPOSE 1235
+
+ENTRYPOINT ["./kitchen-service"]

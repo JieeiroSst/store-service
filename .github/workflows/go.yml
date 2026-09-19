@@ -366,3 +366,105 @@ jobs:
 
     - name: Test
       run: cd toggle-service && go test -v ./...
+
+  restaurant_gateway_service:
+    name: restaurant_gateway_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd restaurant/gateway-service && go build -v ./...
+
+    - name: Test
+      run: cd restaurant/gateway-service && go test -v ./...
+
+  restaurant_consumer_service:
+    name: restaurant_consumer_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd restaurant/consumer-service && go build -v ./...
+
+    - name: Test
+      run: cd restaurant/consumer-service && go test -v ./...
+
+  restaurant_accounting_service:
+    name: restaurant_accounting_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd restaurant/accounting-service && go build -v ./...
+
+    - name: Test
+      run: cd restaurant/accounting-service && go test -v ./...
+
+  restaurant_order_service:
+    name: restaurant_order_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd restaurant/order-service && go build -v ./...
+
+    - name: Test
+      run: cd restaurant/order-service && go test -v ./...
+
+  restaurant_kitchen_service:
+    name: restaurant_kitchen_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd restaurant/kitchen-service && go build -v ./...
+
+    - name: Test
+      run: cd restaurant/kitchen-service && go test -v ./...
+
+  restaurant_delivery_service:
+    name: restaurant_delivery_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd restaurant/delivery-service && go build -v ./...
+
+    - name: Test
+      run: cd restaurant/delivery-service && go test -v ./...

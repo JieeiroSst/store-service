@@ -1,0 +1,10 @@
+{
+    "server": {
+        "port_server": "1234"
+    },
+    "gateway": {
+        "consumer_url": "http://consumer-service-svc",
+        "accounting_url": "http://accounting-service-svc",
+        "delivery_url": "http://delivery-service-svc"
+    }
+}

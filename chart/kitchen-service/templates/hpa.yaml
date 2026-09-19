@@ -1,0 +1,20 @@
+{{- if .Values.kitchenService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.kitchenService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.kitchenService.name }}-deployment
+  minReplicas: {{ .Values.kitchenService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.kitchenService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.kitchenService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
