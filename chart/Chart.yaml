@@ -227,3 +227,7 @@ dependencies:
     name: delivery-service
     version: "0.1.0"
     repository: file://delivery-service
+  - alias: threadsService
+    name: threads-service
+    version: "0.1.0"
+    repository: file://threads-service

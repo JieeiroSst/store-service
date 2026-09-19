@@ -1,0 +1,23 @@
+{{- if .Values.threadsService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.threadsService.name }}-ingress
+  {{- with .Values.threadsService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.threadsService.ingress.className }}
+  rules:
+  - host: {{ .Values.threadsService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.threadsService.ingress.path }}
+        pathType: {{ .Values.threadsService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.threadsService.service.name }}
+            port:
+              number: 80
+{{- end }}
