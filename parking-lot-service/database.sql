@@ -3,14 +3,15 @@
 -- Readme.md for the system design this schema implements.
 --
 -- This file is applied automatically on startup by
--- internal/infrastructure/database.applySchema, which execs it statement
--- by statement (split on ';'). It's plain idempotent DDL (IF NOT EXISTS
--- everywhere) plus ON CONFLICT DO NOTHING seed inserts - no PL/pgSQL
--- blocks, since their internal semicolons would break that naive split -
--- so re-running it on every deploy is safe.
+-- internal/infrastructure/database.applySchema, which runs each statement
+-- separately by splitting the file on every semicolon character. It's
+-- plain idempotent DDL (IF NOT EXISTS everywhere) plus ON CONFLICT DO
+-- NOTHING seed inserts - no PL/pgSQL blocks, and no extra semicolon
+-- characters inside comments or string literals, since either would break
+-- that naive split - so re-running it on every deploy is safe.
 --
 -- Lot/floor/gate management has no CRUD API yet (see Readme.md's
--- "Hướng mở rộng" / future extensions); a single default lot is seeded
+-- "Hướng mở rộng" / future extensions), so a single default lot is seeded
 -- below so the service is usable out of the box.
 
 CREATE TABLE IF NOT EXISTS parking_lots (

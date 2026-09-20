@@ -1,0 +1,20 @@
+{{- if .Values.couponService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.couponService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.couponService.name }}-deployment
+  minReplicas: {{ .Values.couponService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.couponService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.couponService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

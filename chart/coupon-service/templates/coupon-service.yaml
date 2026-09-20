@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.couponService.name }}-deployment
+spec:
+{{- if not .Values.couponService.autoscaling.enabled }}
+  replicas: {{ .Values.couponService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.couponService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.couponService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.couponService.name }}-deployment
+        image: {{ .Values.couponService.image.name }}:{{ .Values.couponService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.couponService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.couponService.image.port }}"
+          - name: POSTGRES_HOST
+            value: {{ .Values.couponService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.couponService.env.postgresPort | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.couponService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.couponService.name }}-secret
+                key: postgresPassword
+          - name: POSTGRES_DBNAME
+            value: {{ .Values.couponService.env.postgresDbname | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.couponService.env.postgresSSLMode | quote }}
+        resources:
+          {{- toYaml .Values.couponService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: coupon-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.couponService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.couponService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.couponService.service.name }}
+spec:
+  type: {{ .Values.couponService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.couponService.image.port }}
+  selector:
+    app: {{ .Values.couponService.name }}-deployment

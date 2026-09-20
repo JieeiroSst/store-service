@@ -239,3 +239,7 @@ dependencies:
     name: parking-lot-service
     version: "0.1.0"
     repository: file://parking-lot-service
+  - alias: couponService
+    name: coupon-service
+    version: "0.1.0"
+    repository: file://coupon-service
