@@ -502,3 +502,20 @@ jobs:
 
     - name: Test
       run: cd parking-lot-service && go test -v ./...
+
+  coupon_service:
+    name: coupon_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.23"
+
+    - name: Build
+      run: cd coupon-service && go build -v ./...
+
+    - name: Test
+      run: cd coupon-service && go test -v ./...
