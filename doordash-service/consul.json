@@ -1,0 +1,29 @@
+{
+    "server": {
+        "portHttpServer": "8086"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
+        "postgresqlDbname": "doordash",
+        "postgresqlSSLMode": false
+    },
+    "userService": {
+        "baseURL": "http://user-service-svc",
+        "timeout": "5s"
+    },
+    "restaurantService": {
+        "baseURL": "http://restaurant-service-svc",
+        "timeout": "5s"
+    },
+    "paymentService": {
+        "baseURL": "http://payment-service-svc",
+        "timeout": "5s"
+    },
+    "notificationService": {
+        "baseURL": "http://notification-service-svc",
+        "timeout": "5s"
+    }
+}

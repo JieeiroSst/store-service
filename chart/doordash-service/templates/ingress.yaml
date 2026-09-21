@@ -1,0 +1,23 @@
+{{- if .Values.doordashService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.doordashService.name }}-ingress
+  {{- with .Values.doordashService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.doordashService.ingress.className }}
+  rules:
+  - host: {{ .Values.doordashService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.doordashService.ingress.path }}
+        pathType: {{ .Values.doordashService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.doordashService.service.name }}
+            port:
+              number: 80
+{{- end }}

@@ -243,3 +243,7 @@ dependencies:
     name: coupon-service
     version: "0.1.0"
     repository: file://coupon-service
+  - alias: doordashService
+    name: doordash-service
+    version: "0.1.0"
+    repository: file://doordash-service
