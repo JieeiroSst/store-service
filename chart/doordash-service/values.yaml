@@ -1,0 +1,54 @@
+doordashService:
+  name: doordash-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/doordash-service
+    tag: latest
+    # Must match config.Server.PortHttpServer as resolved from env/Consul
+    # (see doordash-service/config/config.go and consul.json).
+    port: 8086
+
+  service:
+    name: doordash-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: doordash-service.local
+    path: /
+    pathType: Prefix
+
+  # Plain env vars the container reads directly (see config.FromEnv) -
+  # works standalone even before ops has seeded this service's config into
+  # the cluster's shared Consul KV store.
+  env:
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresUser: testUser
+    postgresPassword: testPassword
+    postgresDbname: doordash
+    postgresSSLMode: "disable"
+    # Base URLs of the sibling services this service calls over HTTP to
+    # enrich orders (see Readme.md section 5) - override with the real
+    # in-cluster Service names for each once they're deployed.
+    userServiceBaseURL: http://user-service-svc
+    restaurantServiceBaseURL: http://restaurant-service-svc
+    paymentServiceBaseURL: http://payment-service-svc
+    notificationServiceBaseURL: http://notification-service-svc
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
