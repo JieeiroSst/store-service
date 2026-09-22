@@ -1,0 +1,20 @@
+{{- if .Values.ekycService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.ekycService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.ekycService.name }}-deployment
+  minReplicas: {{ .Values.ekycService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.ekycService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.ekycService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

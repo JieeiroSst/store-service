@@ -1,0 +1,23 @@
+{{- if .Values.ekycService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.ekycService.name }}-ingress
+  {{- with .Values.ekycService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ekycService.ingress.className }}
+  rules:
+  - host: {{ .Values.ekycService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.ekycService.ingress.path }}
+        pathType: {{ .Values.ekycService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.ekycService.service.name }}
+            port:
+              number: 80
+{{- end }}

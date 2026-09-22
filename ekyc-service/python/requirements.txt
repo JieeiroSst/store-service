@@ -1,0 +1,22 @@
+# DO NOT `pip install -r requirements.txt` directly - face_recognition's
+# own metadata declares a dependency on the real, source-only `dlib`
+# package, and pip's resolver has no idea dlib-bin (a different PyPI
+# project, same import name) already satisfies it; installing this file
+# naively pulls in and tries to compile real dlib from source (slow, and
+# needs cmake/a C++ toolchain this image doesn't have).
+#
+# Install in this exact order instead (see the Dockerfile, which does
+# exactly this):
+#   pip install dlib-bin==20.0.1 face-recognition-models==0.3.0
+#   pip install --no-deps face_recognition==1.3.0
+#   pip install click==8.1.7 numpy==1.26.4 pillow==10.4.0 easyocr==1.7.2
+#
+# This file exists as a single source of truth for the pinned versions
+# above, not as a directly-installable manifest.
+dlib-bin==20.0.1
+face-recognition-models==0.3.0
+face_recognition==1.3.0
+click==8.1.7
+numpy==1.26.4
+pillow==10.4.0
+easyocr==1.7.2
