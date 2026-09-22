@@ -1,1 +1,50 @@
-https://ekyc.vnpt.vn
+ekyc-service
+============
+
+Reads a Vietnamese Citizen ID card (CCCD) - printed MRZ, live face scan,
+and the card's embedded NFC chip - extracts identity/biometric data, and
+stores it keyed by user_id (validated against user-service). Hexagonal
+architecture wired with go.uber.org/fx - see internal/domain/port for the
+ports every adapter under internal/adapter implements. Static files (card
+photos, chip portraits, face-scan crops) live in MinIO (chart/minio);
+Postgres holds only their object keys, plus the extracted fields.
+
+Card/face algorithms - two selectable providers behind the same
+CardReader/FaceAnalyzer ports (CARD_READER_PROVIDER / FACE_ANALYZER_PROVIDER
+env vars, default "native"):
+  - native (default): in-house, no external runtime deps. Otsu
+    binarization + fixed-pitch glyph template-matching OCR over the MRZ,
+    checksum-validated per ICAO 9303 TD1 (internal/adapter/secondary/
+    cardreader); pigo (pure-Go) face detection + a Local Binary Pattern
+    histogram template, chi-square matched, Laplacian-variance quality
+    gating (internal/adapter/secondary/facebio). Classical CV, not deep
+    learning - accuracy depends on a well-lit, aligned capture (the same
+    assumption real eKYC capture UIs enforce client-side).
+  - python: heavier, higher-accuracy. EasyOCR (deep-learning OCR) for card
+    text, face_recognition's dlib ResNet 128-d embeddings for face
+    biometrics, invoked via subprocess (internal/adapter/secondary/
+    pyextract, python/extract_id.py). Needs the python Docker image
+    variant (~1-2GB, see Dockerfile) and PYTHON_BIN/PYTHON_EXTRACT_SCRIPT/
+    PYTHON_TIMEOUT configured.
+
+NFC chip reading (internal/adapter/secondary/nfcreader): the physical RF
+handshake (ISO 14443 + APDU + Basic Access Control) can only happen on a
+device with an NFC radio - a phone - never over the network from this
+backend, so this decodes+verifies a chip dump a client already extracted:
+BER-TLV parsing of EF.COM/DG1/DG2/EF.SOD, MRZ from DG1 (reusing the same
+domain/mrz TD1 parser/checksum logic as the OCR path), the portrait from
+DG2, and each data group's hash checked against EF.SOD's CMS-signed hash
+list (go.mozilla.org/pkcs7). EF.SOD's signature is checked for internal
+self-consistency only (content + embedded Document Signer Certificate +
+signature all agree) - NOT a full CSCA trust-chain validation, which would
+need that country's root certificate store, not available here. A BAC
+key-derivation function (ICAO 9303 Appendix D) is included as a standalone,
+independently-testable primitive for a client that wants it; there's no
+live secure-messaging session here since there's no chip to run one
+against. POST /api/v1/ekyc/:user_id/nfc-chip.
+
+Config: env vars (config.FromEnv) or Consul KV, same convention as every
+other service in this repo - see HostConsul/KeyConsul/ServiceConsul and
+internal/infrastructure/config_provider.go.
+
+API: see internal/adapter/primary/http/routes.go.

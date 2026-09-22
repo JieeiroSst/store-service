@@ -247,3 +247,7 @@ dependencies:
     name: doordash-service
     version: "0.1.0"
     repository: file://doordash-service
+  - alias: ekycService
+    name: ekyc-service
+    version: "0.1.0"
+    repository: file://ekyc-service

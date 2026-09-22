@@ -1,0 +1,68 @@
+ekycService:
+  name: ekyc-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/ekyc-service
+    tag: latest
+    # Must match config.Server.PortHttpServer (see ekyc-service/config/config.go).
+    port: 8087
+
+  service:
+    name: ekyc-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: ekyc-service.local
+    path: /
+    pathType: Prefix
+
+  # Plain env vars the container reads directly (config.FromEnv) - these
+  # are a fallback/override alongside the Consul bootstrap vars mounted
+  # from the shared service-env-files secret as /app/.env (see
+  # chart/templates/env-files-secret.yaml's ekyc-service.env block and
+  # templates/ekyc-service.yaml's volumeMount below).
+  env:
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresUser: testUser
+    postgresPassword: testPassword
+    postgresDbname: ekyc
+    postgresSSLMode: "disable"
+    userServiceBaseURL: http://user-service-svc
+    userServiceTimeout: 5s
+    # MinIO/S3 static-file storage (card photos, chip portraits, face-scan
+    # crops) - see internal/adapter/secondary/storage and chart/minio.
+    s3Endpoint: minio-svc:9000
+    s3Bucket: ekyc-service
+    s3AccessKey: minioadmin
+    s3SecretKey: minioadmin123
+    s3UseSSL: "false"
+    # Thresholds for the in-house MRZ/face algorithms - see
+    # ekyc-service/internal/adapter/secondary/{cardreader,facebio} and
+    # config.EkycConfig.
+    mrzMinConfidence: "0.85"
+    faceMatchThreshold: "0.6"
+    faceMinQuality: "15.0"
+    # "native" (in-house Go algorithms) or "python" (heavier dlib/EasyOCR
+    # subprocess adapter - see internal/adapter/secondary/pyextract). The
+    # python provider needs the python image variant; see Dockerfile.
+    cardReaderProvider: native
+    faceAnalyzerProvider: native
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

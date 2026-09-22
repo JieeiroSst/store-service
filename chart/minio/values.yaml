@@ -20,6 +20,7 @@ minio:
     - cdn-origin
     - photo-service
     - post-service
+    - ekyc-service
 
   storage:
     size: 5Gi

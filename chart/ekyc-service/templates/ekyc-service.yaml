@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ekycService.name }}-deployment
+spec:
+{{- if not .Values.ekycService.autoscaling.enabled }}
+  replicas: {{ .Values.ekycService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ekycService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ekycService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.ekycService.name }}-deployment
+        image: {{ .Values.ekycService.image.name }}:{{ .Values.ekycService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.ekycService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.ekycService.image.port }}"
+          - name: POSTGRES_HOST
+            value: {{ .Values.ekycService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.ekycService.env.postgresPort | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.ekycService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.ekycService.name }}-secret
+                key: postgresPassword
+          - name: POSTGRES_DBNAME
+            value: {{ .Values.ekycService.env.postgresDbname | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.ekycService.env.postgresSSLMode | quote }}
+          - name: USER_SERVICE_BASE_URL
+            value: {{ .Values.ekycService.env.userServiceBaseURL | quote }}
+          - name: USER_SERVICE_TIMEOUT
+            value: {{ .Values.ekycService.env.userServiceTimeout | quote }}
+          - name: EKYC_MRZ_MIN_CONFIDENCE
+            value: {{ .Values.ekycService.env.mrzMinConfidence | quote }}
+          - name: EKYC_FACE_MATCH_THRESHOLD
+            value: {{ .Values.ekycService.env.faceMatchThreshold | quote }}
+          - name: EKYC_FACE_MIN_QUALITY
+            value: {{ .Values.ekycService.env.faceMinQuality | quote }}
+          - name: S3_ENDPOINT
+            value: {{ .Values.ekycService.env.s3Endpoint | quote }}
+          - name: S3_BUCKET
+            value: {{ .Values.ekycService.env.s3Bucket | quote }}
+          - name: S3_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.ekycService.name }}-secret
+                key: s3AccessKey
+          - name: S3_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.ekycService.name }}-secret
+                key: s3SecretKey
+          - name: S3_USE_SSL
+            value: {{ .Values.ekycService.env.s3UseSSL | quote }}
+          - name: CARD_READER_PROVIDER
+            value: {{ .Values.ekycService.env.cardReaderProvider | quote }}
+          - name: FACE_ANALYZER_PROVIDER
+            value: {{ .Values.ekycService.env.faceAnalyzerProvider | quote }}
+        resources:
+          {{- toYaml .Values.ekycService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: ekyc-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.ekycService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.ekycService.env.postgresPassword | quote }}
+  s3AccessKey: {{ .Values.ekycService.env.s3AccessKey | quote }}
+  s3SecretKey: {{ .Values.ekycService.env.s3SecretKey | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.ekycService.service.name }}
+spec:
+  type: {{ .Values.ekycService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.ekycService.image.port }}
+  selector:
+    app: {{ .Values.ekycService.name }}-deployment
