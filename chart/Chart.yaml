@@ -251,3 +251,7 @@ dependencies:
     name: ekyc-service
     version: "0.1.0"
     repository: file://ekyc-service
+  - alias: partnerService
+    name: partner-service
+    version: "0.1.0"
+    repository: file://partner-service

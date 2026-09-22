@@ -10,7 +10,6 @@ type DB struct {
 	cache *cache.RedisCache
 }
 
-// new database
 func NewDB(db *gorm.DB, cache *cache.RedisCache) *DB {
 	return &DB{
 		db:    db,

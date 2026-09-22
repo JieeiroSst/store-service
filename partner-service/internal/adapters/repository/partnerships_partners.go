@@ -38,11 +38,23 @@ func (m *DB) ReadPartnershipsPartners(pagination domain.Pagination) (*domain.Pag
 }
 
 func (m *DB) UpdatePartnershipsPartner(id string, partnershipsPartner domain.PartnershipsPartner) error {
+	existing := &domain.PartnershipsPartner{}
+	if err := m.db.First(existing, "id = ?", id).Error; err != nil {
+		return errors.New("partnershipsPartner not found")
+	}
+
 	partnershipsPartner.CreatedAt = int(time.Now().Unix())
 	req := m.db.Model(&partnershipsPartner).Where("id = ?", id).Updates(partnershipsPartner)
 	if req.RowsAffected == 0 {
 		return errors.New("partnershipsPartner not found")
 	}
+
+	if existing.LeftOn == 0 && partnershipsPartner.LeftOn != 0 {
+		if _, err := m.AdjustPartnerScore(existing.PartnerId, domain.PartnerScorePartnershipComplete); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
