@@ -570,3 +570,20 @@ jobs:
 
     - name: Test
       run: cd partner-service && go test -v ./...
+
+  payment_wallet_service:
+    name: payment_wallet_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.22"
+
+    - name: Build
+      run: cd payment-wallet-service && go build -v ./...
+
+    - name: Test
+      run: cd payment-wallet-service && go test -v ./...

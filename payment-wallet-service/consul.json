@@ -1,0 +1,13 @@
+{
+    "server": {
+        "portHttpServer": "8088"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
+        "postgresqlDbname": "payment_wallet",
+        "postgresqlSSLMode": false
+    }
+}
