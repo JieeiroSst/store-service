@@ -1,6 +1,6 @@
 module github.com/JIeeiroSst/partner-service
 
-go 1.17
+go 1.22
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
@@ -9,7 +9,9 @@ require (
 	github.com/golang/protobuf v1.5.2
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/joho/godotenv v1.5.1
+	github.com/robfig/cron v1.2.0
 	github.com/sirupsen/logrus v1.9.3
+	go.uber.org/fx v1.24.0
 	gorm.io/driver/postgres v1.5.3
 	gorm.io/gorm v1.25.4
 )
@@ -53,6 +55,9 @@ require (
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
+	go.uber.org/dig v1.19.0 // indirect
+	go.uber.org/multierr v1.10.0 // indirect
+	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect

@@ -38,16 +38,30 @@ type PartnerRepository interface {
 	CreatePartner(userID string, Partner domain.Partner) error
 	ReadPartner(id string) (*domain.Partner, error)
 	ReadPartners(pagination domain.Pagination) (*domain.Pagination, error)
+	SearchPartners(filter domain.PartnerFilter, pagination domain.Pagination) (*domain.Pagination, error)
 	UpdatePartner(id string, Partner domain.Partner) error
+	UpdatePartnerStatus(id string, status string) error
 	DeletePartner(id string) error
+	RestorePartner(id string) error
+	GetPartnerStatistics() (*domain.PartnerStatistics, error)
+	CheckPartnerActivity(id string) (*domain.PartnerActivity, error)
+	CloseInactivePartners() (int64, error)
+	AdjustPartnerScore(id string, delta int) (*domain.Partner, error)
 }
 
 type PartnerService interface {
 	CreatePartner(userID string, Partner domain.Partner) error
 	ReadPartner(id string) (*domain.Partner, error)
 	ReadPartners(pagination domain.Pagination) (*domain.Pagination, error)
+	SearchPartners(filter domain.PartnerFilter, pagination domain.Pagination) (*domain.Pagination, error)
 	UpdatePartner(id string, Partner domain.Partner) error
+	UpdatePartnerStatus(id string, status string) error
 	DeletePartner(id string) error
+	RestorePartner(id string) error
+	GetPartnerStatistics() (*domain.PartnerStatistics, error)
+	CheckPartnerActivity(id string) (*domain.PartnerActivity, error)
+	CloseInactivePartners() (int64, error)
+	AdjustPartnerScore(id string, delta int) (*domain.Partner, error)
 }
 
 type ProjectRepository interface {

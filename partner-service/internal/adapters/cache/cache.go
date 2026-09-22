@@ -17,7 +17,7 @@ func NewRedisCache(addr, password string) (*RedisCache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: password,
-		DB:       0, // use default DB
+		DB:       0,
 	})
 
 	_, err := client.Ping(context.Background()).Result()

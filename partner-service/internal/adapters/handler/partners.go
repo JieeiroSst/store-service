@@ -68,6 +68,58 @@ func (h *PartnerHandler) ReadPartners(c *gin.Context) {
 	c.JSON(200, partners)
 }
 
+func (h *PartnerHandler) SearchPartners(c *gin.Context) {
+	limmit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
+	pagination := domain.Pagination{
+		Limit: limmit,
+		Page:  page,
+		Sort:  c.Query("sort"),
+	}
+
+	var filter domain.PartnerFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(400, "")
+		return
+	}
+
+	partners, err := h.svc.SearchPartners(filter, pagination)
+	if err != nil {
+		c.JSON(500, err)
+		return
+	}
+	c.JSON(200, partners)
+}
+
+func (h *PartnerHandler) UpdatePartnerStatus(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		c.JSON(400, "")
+		return
+	}
+
+	var body struct {
+		Status string `json:"status"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, "")
+		return
+	}
+
+	switch body.Status {
+	case domain.PartnerStatusActive, domain.PartnerStatusInactive, domain.PartnerStatusPending:
+	default:
+		c.JSON(400, "invalid status")
+		return
+	}
+
+	if err := h.svc.UpdatePartnerStatus(id, body.Status); err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, "update status success")
+}
+
 func (h *PartnerHandler) UpdatePartner(c *gin.Context) {
 	id := c.Query("id")
 	if id == "" {
@@ -99,4 +151,74 @@ func (h *PartnerHandler) DeletePartner(c *gin.Context) {
 		return
 	}
 	c.JSON(200, "delete success")
+}
+
+func (h *PartnerHandler) RestorePartner(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		c.JSON(400, "")
+		return
+	}
+
+	if err := h.svc.RestorePartner(id); err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, "restore success")
+}
+
+func (h *PartnerHandler) GetPartnerStatistics(c *gin.Context) {
+	stats, err := h.svc.GetPartnerStatistics()
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, stats)
+}
+
+func (h *PartnerHandler) CheckPartnerActivity(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		c.JSON(400, "")
+		return
+	}
+
+	activity, err := h.svc.CheckPartnerActivity(id)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, activity)
+}
+
+func (h *PartnerHandler) CloseInactivePartners(c *gin.Context) {
+	closed, err := h.svc.CloseInactivePartners()
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, gin.H{"closed": closed})
+}
+
+func (h *PartnerHandler) AdjustPartnerScore(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		c.JSON(400, "")
+		return
+	}
+
+	var body struct {
+		Points int `json:"points"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(400, "")
+		return
+	}
+
+	partner, err := h.svc.AdjustPartnerScore(id, body.Points)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.JSON(200, partner)
 }

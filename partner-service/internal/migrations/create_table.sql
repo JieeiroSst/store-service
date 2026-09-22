@@ -18,6 +18,16 @@ create table partnerships_partners (
 create table partners (
     id int NOT NULL PRIMARY KEY,
     type varchar(255),
+    name varchar(255),
+    email varchar(255),
+    phone varchar(255),
+    address varchar(255),
+    status varchar(50) DEFAULT 'active',
+    score int DEFAULT 0,
+    user_id int,
+    created_at int,
+    updated_at int,
+    deleted_at int DEFAULT 0
 );
 
 create table projects (

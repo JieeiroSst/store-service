@@ -1,0 +1,18 @@
+{
+    "server": {
+        "server_port": ":8088",
+        "grpc_server": ""
+    },
+    "mysql": {
+        "mysql_host": "postgresdb",
+        "mysql_port": "80",
+        "mysql_user": "testUser",
+        "mysql_password": "testPassword",
+        "mysql_dbname": "partner",
+        "mysql_ssl_mode": false,
+        "mysql_driver": "postgres"
+    },
+    "cache": {
+        "host": "redis-svc:80"
+    }
+}
