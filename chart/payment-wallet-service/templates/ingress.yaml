@@ -1,0 +1,23 @@
+{{- if .Values.paymentWalletService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.paymentWalletService.name }}-ingress
+  {{- with .Values.paymentWalletService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.paymentWalletService.ingress.className }}
+  rules:
+  - host: {{ .Values.paymentWalletService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.paymentWalletService.ingress.path }}
+        pathType: {{ .Values.paymentWalletService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.paymentWalletService.service.name }}
+            port:
+              number: 80
+{{- end }}

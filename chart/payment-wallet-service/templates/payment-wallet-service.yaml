@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.paymentWalletService.name }}-deployment
+spec:
+{{- if not .Values.paymentWalletService.autoscaling.enabled }}
+  replicas: {{ .Values.paymentWalletService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.paymentWalletService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.paymentWalletService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.paymentWalletService.name }}-deployment
+        image: {{ .Values.paymentWalletService.image.name }}:{{ .Values.paymentWalletService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.paymentWalletService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.paymentWalletService.image.port }}"
+          - name: POSTGRES_HOST
+            value: {{ .Values.paymentWalletService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.paymentWalletService.env.postgresPort | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.paymentWalletService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentWalletService.name }}-secret
+                key: postgresPassword
+          - name: POSTGRES_DBNAME
+            value: {{ .Values.paymentWalletService.env.postgresDbname | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.paymentWalletService.env.postgresSSLMode | quote }}
+        resources:
+          {{- toYaml .Values.paymentWalletService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: payment-wallet-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.paymentWalletService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.paymentWalletService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.paymentWalletService.service.name }}
+spec:
+  type: {{ .Values.paymentWalletService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.paymentWalletService.image.port }}
+  selector:
+    app: {{ .Values.paymentWalletService.name }}-deployment
