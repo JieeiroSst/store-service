@@ -7,16 +7,16 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/JIeeiroSst/car-rental-servcie/config"
-	"github.com/JIeeiroSst/car-rental-servcie/internal/repository"
-	"github.com/JIeeiroSst/car-rental-servcie/internal/usecase"
+	"github.com/JIeeiroSst/car-rental-service/config"
+	"github.com/JIeeiroSst/car-rental-service/internal/repository"
+	"github.com/JIeeiroSst/car-rental-service/internal/usecase"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	serverHttp "github.com/JIeeiroSst/car-rental-servcie/internal/delivery/http"
+	serverHttp "github.com/JIeeiroSst/car-rental-service/internal/delivery/http"
 	pb "github.com/JIeeiroSst/lib-gateway/car-rental-servcie/gateway/car-rental-servcie"
 )
 
@@ -28,7 +28,7 @@ func runAPI() {
 	logger.InitDefault(logger.Config{
 		Level:      "info",
 		JSONFormat: true,
-		AppName:    "car-rental-servcie",
+		AppName:    "car-rental-service",
 	})
 	ctx := context.Background()
 	mux := runtime.NewServeMux()

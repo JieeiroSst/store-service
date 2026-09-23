@@ -1,4 +1,4 @@
-module github.com/JIeeiroSst/car-rental-servcie
+module github.com/JIeeiroSst/car-rental-service
 
 go 1.23.0
 
