@@ -255,6 +255,10 @@ dependencies:
     name: partner-service
     version: "0.1.0"
     repository: file://partner-service
+  - alias: paymentService
+    name: payment-service
+    version: "0.1.0"
+    repository: file://payment-service
   - alias: paymentWalletService
     name: payment-wallet-service
     version: "0.1.0"
