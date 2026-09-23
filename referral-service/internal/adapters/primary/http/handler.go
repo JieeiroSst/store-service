@@ -245,6 +245,14 @@ func (h *Handler) ActivateReferral(c *gin.Context) {
 			respBadRequest(c, codeAlreadyReferred, err.Error())
 			return
 		}
+		if errors.Is(err, domain.ErrNotFound) {
+			respNotFound(c, "link not found")
+			return
+		}
+		if errors.Is(err, domain.ErrLinkNotActive) {
+			respUnprocessable(c, codeLinkNotActive, err.Error())
+			return
+		}
 		h.log.Error("activate referral failed", zap.Error(err))
 		respInternal(c)
 		return

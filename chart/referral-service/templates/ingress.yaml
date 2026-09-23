@@ -1,0 +1,23 @@
+{{- if .Values.referralService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.referralService.name }}-ingress
+  {{- with .Values.referralService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.referralService.ingress.className }}
+  rules:
+  - host: {{ .Values.referralService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.referralService.ingress.path }}
+        pathType: {{ .Values.referralService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.referralService.service.name }}
+            port:
+              number: 80
+{{- end }}

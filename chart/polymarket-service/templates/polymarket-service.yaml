@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.polymarketService.name }}-deployment
+spec:
+{{- if not .Values.polymarketService.autoscaling.enabled }}
+  replicas: {{ .Values.polymarketService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.polymarketService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.polymarketService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.polymarketService.name }}-deployment
+        image: {{ .Values.polymarketService.image.name }}:{{ .Values.polymarketService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.polymarketService.image.port }}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.polymarketService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.polymarketService.image.port }}"
+          - name: MYSQL_HOST
+            value: {{ .Values.polymarketService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.polymarketService.env.mysqlPort | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.polymarketService.env.mysqlUser | quote }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.polymarketService.name }}-secret
+                key: mysqlPassword
+          - name: MYSQL_DBNAME
+            value: {{ .Values.polymarketService.env.mysqlDbname | quote }}
+          - name: WALLET_BASE_URL
+            value: {{ .Values.polymarketService.env.walletBaseURL | quote }}
+          - name: TREASURY_WALLET_ID
+            value: {{ .Values.polymarketService.env.treasuryWalletID | quote }}
+          - name: NOTIFICATION_BASE_URL
+            value: {{ .Values.polymarketService.env.notificationBaseURL | quote }}
+          - name: EXCHANGE_CURRENCY
+            value: {{ .Values.polymarketService.env.exchangeCurrency | quote }}
+          - name: SHARE_VALUE
+            value: {{ .Values.polymarketService.env.shareValue | quote }}
+          - name: MIN_ORDER_SIZE
+            value: {{ .Values.polymarketService.env.minOrderSize | quote }}
+          - name: DISPUTE_WINDOW
+            value: {{ .Values.polymarketService.env.disputeWindow | quote }}
+          - name: DISPUTE_BOND
+            value: {{ .Values.polymarketService.env.disputeBond | quote }}
+          - name: REWARD_EPOCH
+            value: {{ .Values.polymarketService.env.rewardEpoch | quote }}
+          - name: TAKER_FEE_BPS
+            value: {{ .Values.polymarketService.env.takerFeeBps | quote }}
+          - name: MAKER_REBATE_BPS
+            value: {{ .Values.polymarketService.env.makerRebateBps | quote }}
+          - name: REFERRAL_BPS
+            value: {{ .Values.polymarketService.env.referralBps | quote }}
+          - name: USER_SERVICE_BASE_URL
+            value: {{ .Values.polymarketService.env.userServiceBaseURL | quote }}
+          - name: AUTH_MODE
+            value: {{ .Values.polymarketService.env.authMode | quote }}
+          - name: REFERRAL_BASE_URL
+            value: {{ .Values.polymarketService.env.referralBaseURL | quote }}
+          - name: REDIS_ADDR
+            value: {{ .Values.polymarketService.env.redisAddr | quote }}
+          - name: REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.polymarketService.name }}-secret
+                key: redisPassword
+          - name: ADMIN_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.polymarketService.name }}-secret
+                key: adminToken
+        resources:
+          {{- toYaml .Values.polymarketService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: polymarket-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.polymarketService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  mysqlPassword: {{ .Values.polymarketService.env.mysqlPassword | quote }}
+  adminToken: {{ .Values.polymarketService.env.adminToken | quote }}
+  redisPassword: {{ .Values.polymarketService.env.redisPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.polymarketService.service.name }}
+spec:
+  type: {{ .Values.polymarketService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.polymarketService.image.port }}
+  selector:
+    app: {{ .Values.polymarketService.name }}-deployment
