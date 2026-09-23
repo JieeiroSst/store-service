@@ -1,0 +1,36 @@
+.home {
+  padding: 0 24px 32px;
+}
+
+.chips {
+  position: sticky;
+  top: 56px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  background: var(--bg);
+  overflow-x: auto;
+}
+
+.results-for {
+  margin-left: 8px;
+  color: var(--text-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px 16px;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .home {
+    padding: 0 12px 24px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

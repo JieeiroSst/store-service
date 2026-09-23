@@ -1,0 +1,23 @@
+{{- if .Values.videoWeb.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.videoWeb.name }}-ingress
+  {{- with .Values.videoWeb.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.videoWeb.ingress.className }}
+  rules:
+  - host: {{ .Values.videoWeb.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.videoWeb.ingress.path }}
+        pathType: {{ .Values.videoWeb.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.videoWeb.service.name }}
+            port:
+              number: 80
+{{- end }}

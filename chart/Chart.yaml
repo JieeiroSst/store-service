@@ -271,3 +271,11 @@ dependencies:
     name: payment-wallet-service
     version: "0.1.0"
     repository: file://payment-wallet-service
+  - alias: videoService
+    name: video-service
+    version: "0.1.0"
+    repository: file://video-service
+  - alias: videoWeb
+    name: video-web
+    version: "0.1.0"
+    repository: file://video-web

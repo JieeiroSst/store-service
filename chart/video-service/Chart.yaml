@@ -1,0 +1,8 @@
+apiVersion: v2
+name: video-service
+description: A Helm chart for video-service
+
+type: application
+
+version: 0.1.0
+appVersion: "1.0.0"

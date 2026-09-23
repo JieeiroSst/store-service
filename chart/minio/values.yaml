@@ -21,6 +21,7 @@ minio:
     - photo-service
     - post-service
     - ekyc-service
+    - video-service
 
   storage:
     size: 5Gi

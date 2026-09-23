@@ -1,0 +1,97 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 16px;
+  background: var(--bg);
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.header-right {
+  justify-content: flex-end;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 21px;
+  border-radius: 6px;
+  background: #f00;
+  color: #fff;
+  font-size: 11px;
+}
+
+.search {
+  display: flex;
+  flex: 0 1 640px;
+  min-width: 0;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-right: 0;
+  border-radius: 20px 0 0 20px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+}
+
+.search input:focus {
+  border-color: var(--accent);
+}
+
+.search button {
+  width: 64px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 0 20px 20px 0;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.search button:hover {
+  background: var(--surface-2);
+}
+
+@media (max-width: 720px) {
+  .logo-text,
+  .create span {
+    display: none;
+  }
+  .create {
+    padding: 0 10px;
+  }
+  .search button {
+    width: 48px;
+  }
+}

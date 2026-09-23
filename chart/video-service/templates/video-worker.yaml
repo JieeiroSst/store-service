@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.videoWorker.name }}-deployment
+spec:
+  replicas: {{ .Values.videoWorker.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.videoWorker.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.videoWorker.name }}-deployment
+    spec:
+      # A transcode can take many minutes. Give the worker time to stop
+      # cleanly; an interrupted job is retried by another worker regardless.
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: {{ .Values.videoWorker.name }}-deployment
+        image: {{ .Values.videoService.image.name }}:{{ .Values.videoService.image.tag }}
+        imagePullPolicy: Always
+        env:
+          - name: ROLE
+            value: worker
+          - name: MINIO_ENDPOINT
+            value: {{ .Values.videoService.env.minioEndpoint | quote }}
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.videoService.name }}-secret
+                key: minioAccessKey
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.videoService.name }}-secret
+                key: minioSecretKey
+          - name: MINIO_BUCKET
+            value: {{ .Values.videoService.env.minioBucket | quote }}
+          - name: MINIO_USE_SSL
+            value: {{ .Values.videoService.env.minioUseSSL | quote }}
+          - name: REDIS_ADDR
+            value: {{ .Values.videoService.env.redisAddr | quote }}
+          - name: WORKER_CONCURRENCY
+            value: {{ .Values.videoWorker.concurrency | quote }}
+          - name: TRANSCODE_TIMEOUT_MINUTES
+            value: {{ .Values.videoWorker.jobTimeoutMinutes | quote }}
+        resources:
+          {{- toYaml .Values.videoWorker.resources | nindent 10 }}
+        volumeMounts:
+        - name: scratch
+          mountPath: /tmp
+      volumes:
+      - name: scratch
+        emptyDir:
+          sizeLimit: {{ .Values.videoWorker.scratchSize }}
