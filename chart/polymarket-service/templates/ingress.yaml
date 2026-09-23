@@ -1,0 +1,23 @@
+{{- if .Values.polymarketService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.polymarketService.name }}-ingress
+  {{- with .Values.polymarketService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.polymarketService.ingress.className }}
+  rules:
+  - host: {{ .Values.polymarketService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.polymarketService.ingress.path }}
+        pathType: {{ .Values.polymarketService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.polymarketService.service.name }}
+            port:
+              number: 80
+{{- end }}

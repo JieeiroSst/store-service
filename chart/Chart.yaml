@@ -259,6 +259,14 @@ dependencies:
     name: payment-service
     version: "0.1.0"
     repository: file://payment-service
+  - alias: polymarketService
+    name: polymarket-service
+    version: "0.1.0"
+    repository: file://polymarket-service
+  - alias: referralService
+    name: referral-service
+    version: "0.1.0"
+    repository: file://referral-service
   - alias: paymentWalletService
     name: payment-wallet-service
     version: "0.1.0"

@@ -141,8 +141,8 @@ func Load() (*Config, error) {
 		Redis: RedisConfig{
 			Endpoint:      getEnv("COM_REDIS_ENDPOINT", "localhost"),
 			Port:          getEnv("COM_REDIS_PORT", "6379"),
-			Username:      getEnv("COM_REDIS_USERNAME", "myadmin"),
-			Password:      getEnv("COM_REDIS_PASSWORD", "MyAdm1nP455w0rd"),
+			Username:      getEnvAllowEmpty("COM_REDIS_USERNAME", "myadmin"),
+			Password:      getEnvAllowEmpty("COM_REDIS_PASSWORD", "MyAdm1nP455w0rd"),
 			Database:      getEnvAsInt("COM_REDIS_DATABASE", 0),
 			PoolSize:      getEnvAsInt("COM_REDIS_POOL_SIZE", 10),
 			MinConnection: getEnvAsInt("COM_REDIS_MIN_CONNECTION", 1),
@@ -156,6 +156,16 @@ func Load() (*Config, error) {
 
 func getEnv(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
+// getEnvAllowEmpty treats a variable that is set but empty as a deliberate
+// empty value, so Redis with no authentication can be configured; unset still
+// falls back to the default.
+func getEnvAllowEmpty(key, fallback string) string {
+	if v, ok := os.LookupEnv(key); ok {
 		return v
 	}
 	return fallback

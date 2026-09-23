@@ -1,0 +1,94 @@
+polymarketService:
+  name: polymarket-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/polymarket-service
+    tag: latest
+    # Must match config.Server.PortHttpServer as resolved from env/Consul
+    # (see polymarket-service/config/config.go).
+    port: 8091
+
+  service:
+    name: polymarket-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: polymarket-service.local
+    path: /
+    pathType: Prefix
+
+  # Plain env vars the container reads directly (see config.FromEnv) - works
+  # standalone even before ops has seeded this service's config into the
+  # cluster's shared Consul KV store. Dev defaults only: override secrets with
+  # --set or a values-prod.yaml before deploying anywhere real.
+  env:
+    mysqlHost: mysql-svc
+    mysqlPort: "80"
+    mysqlUser: root
+    mysqlPassword: password
+    mysqlDbname: polymarket_service
+
+    # payment-wallet-service: collateral moves between user wallets and the
+    # treasury wallet through its /api/v1/transfers endpoint.
+    walletBaseURL: http://payment-wallet-service-svc
+    # Wallet id (from POST /api/v1/wallets on payment-wallet-service) that
+    # holds market collateral. Must be created and funded before first trade -
+    # the service refuses to start without it.
+    treasuryWalletID: ""
+
+    notificationBaseURL: http://notification-service-svc
+
+    # Trading rules new markets inherit. A winning share pays shareValue minor
+    # units, so 100 means one-cent price ticks. Users' wallets must hold
+    # exchangeCurrency. disputeWindow is how long a proposed resolution can be
+    # challenged before anyone may finalize it.
+    exchangeCurrency: USD
+    shareValue: "100"
+    minOrderSize: "1"
+    disputeWindow: 2h
+    # Cash a disputer must put up. Refunded if they are right, kept by the
+    # exchange if not. 0 turns bonds off.
+    disputeBond: "0"
+    # How often liquidity rewards are sampled and paid out of exchange revenue.
+    rewardEpoch: 1m
+
+    # Trading fee: takerFeeBps of the taker's cash side, of which
+    # makerRebateBps and referralBps (basis points of the FEE) go to the maker
+    # and to the taker's referrer. The rest is exchange revenue.
+    takerFeeBps: "0"
+    makerRebateBps: "2000"
+    referralBps: "1000"
+
+    # user-service validates bearer tokens. With authMode "token" every request
+    # acting as a user must carry one and X-User-Id is ignored. With "gateway"
+    # the API gateway authenticates and sets X-User-Id.
+    userServiceBaseURL: http://user-api-svc
+    authMode: gateway
+    # referral-service issues share codes and records who referred whom.
+    referralBaseURL: http://referral-service-svc
+    # Live order-book/trade streams go through Redis pub/sub so that every
+    # replica sees every event. Required while autoscaling can run more than one
+    # replica; leave empty only for a single replica.
+    redisAddr: redis-svc:80
+    # Guards market creation/resolution via the X-Admin-Token header. Empty
+    # disables those endpoints.
+    adminToken: ""
+    redisPassword: ""
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.referralService.name }}-deployment
+spec:
+{{- if not .Values.referralService.autoscaling.enabled }}
+  replicas: {{ .Values.referralService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.referralService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.referralService.name }}-deployment
+    spec:
+      {{- if .Values.referralService.migrations.enabled }}
+      initContainers:
+      - name: create-database
+        image: {{ .Values.referralService.migrations.mysqlClientImage }}
+        env:
+          - name: MYSQL_PWD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.referralService.name }}-secret
+                key: mysqlPassword
+        command:
+          - sh
+          - -c
+          - >-
+            until mysql -h {{ .Values.referralService.env.mysqlHost }} -P {{ .Values.referralService.env.mysqlPort }}
+            -u {{ .Values.referralService.env.mysqlUser | quote }} -e "CREATE DATABASE IF NOT EXISTS {{ .Values.referralService.env.mysqlDatabase }}";
+            do echo "waiting for mysql"; sleep 3; done
+      - name: migrate
+        image: {{ .Values.referralService.image.name }}:{{ .Values.referralService.image.tag }}
+        imagePullPolicy: Always
+        env:
+          - name: COM_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.referralService.name }}-secret
+                key: mysqlPassword
+        command:
+          - sh
+          - -c
+          - >-
+            migrate -path /app/migrations
+            -database "mysql://{{ .Values.referralService.env.mysqlUser }}:${COM_MYSQL_PASSWORD}@tcp({{ .Values.referralService.env.mysqlHost }}:{{ .Values.referralService.env.mysqlPort }})/{{ .Values.referralService.env.mysqlDatabase }}"
+            up
+      {{- end }}
+      containers:
+      - name: {{ .Values.referralService.name }}-deployment
+        image: {{ .Values.referralService.image.name }}:{{ .Values.referralService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.referralService.image.port }}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.referralService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: APP_ENV
+            value: {{ .Values.referralService.env.appEnv | quote }}
+          - name: APP_PORT
+            value: "{{ .Values.referralService.image.port }}"
+          - name: LOG_LEVEL
+            value: {{ .Values.referralService.env.logLevel | quote }}
+          - name: APP_PUBLIC_URL
+            value: {{ .Values.referralService.env.publicURL | quote }}
+          - name: APP_STORE_URL
+            value: {{ .Values.referralService.env.appStoreURL | quote }}
+          - name: PLAY_STORE_URL
+            value: {{ .Values.referralService.env.playStoreURL | quote }}
+          - name: REFERRAL_TTL_DAYS
+            value: {{ .Values.referralService.env.referralTTLDays | quote }}
+          - name: MAX_REFERRAL_PER_DAY
+            value: {{ .Values.referralService.env.maxReferralPerDay | quote }}
+          - name: MYSQL_HOST
+            value: {{ .Values.referralService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.referralService.env.mysqlPort | quote }}
+          - name: MYSQL_DATABASE
+            value: {{ .Values.referralService.env.mysqlDatabase | quote }}
+          - name: COM_MYSQL_USERNAME
+            value: {{ .Values.referralService.env.mysqlUser | quote }}
+          - name: COM_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.referralService.name }}-secret
+                key: mysqlPassword
+          - name: COM_REDIS_ENDPOINT
+            value: {{ .Values.referralService.env.redisEndpoint | quote }}
+          - name: COM_REDIS_PORT
+            value: {{ .Values.referralService.env.redisPort | quote }}
+          - name: COM_REDIS_USERNAME
+            value: {{ .Values.referralService.env.redisUsername | quote }}
+          - name: COM_REDIS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.referralService.name }}-secret
+                key: redisPassword
+        resources:
+          {{- toYaml .Values.referralService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.referralService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  mysqlPassword: {{ .Values.referralService.env.mysqlPassword | quote }}
+  redisPassword: {{ .Values.referralService.env.redisPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.referralService.service.name }}
+spec:
+  type: {{ .Values.referralService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.referralService.image.port }}
+  selector:
+    app: {{ .Values.referralService.name }}-deployment

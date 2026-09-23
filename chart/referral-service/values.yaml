@@ -1,0 +1,70 @@
+referralService:
+  name: referral-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/referral-service
+    tag: latest
+    # Must match APP_PORT (see referral-service/internal/config/config.go).
+    port: 8080
+
+  service:
+    # polymarket-service and other callers reach it at http://referral-service-svc
+    name: referral-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: referral-service.local
+    path: /
+    pathType: Prefix
+
+  # The service reads plain environment variables. Dev defaults - override the
+  # secrets with --set or a values-prod.yaml before deploying anywhere real.
+  env:
+    appEnv: production
+    logLevel: info
+
+    # Public URL used to build share links and QR codes, and the store links
+    # people land on when the app is not installed.
+    publicURL: http://referral-service.local
+    appStoreURL: ""
+    playStoreURL: ""
+    referralTTLDays: "30"
+    maxReferralPerDay: "50"
+
+    mysqlHost: mysql-svc
+    mysqlPort: "80"
+    mysqlDatabase: referral_service
+    mysqlUser: root
+    mysqlPassword: password
+
+    # The umbrella chart's redis has no authentication, hence the empty
+    # username and password. Set both if you point this at a secured Redis.
+    redisEndpoint: redis-svc
+    redisPort: "80"
+    redisUsername: ""
+    redisPassword: ""
+
+  # Before the server starts: create the database if missing, then apply
+  # migrations/ with golang-migrate (which locks, so replicas starting together
+  # cannot apply them twice).
+  migrations:
+    enabled: true
+    mysqlClientImage: mysql:8.0
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
