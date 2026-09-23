@@ -1,0 +1,20 @@
+{{- if .Values.videoWeb.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.videoWeb.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.videoWeb.name }}-deployment
+  minReplicas: {{ .Values.videoWeb.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.videoWeb.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.videoWeb.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

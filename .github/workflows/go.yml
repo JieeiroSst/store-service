@@ -622,3 +622,20 @@ jobs:
     # The mysql adapter's verification test needs a live MySQL, so it is left out here.
     - name: Test
       run: cd referral-service && go test -v $(go list ./... | grep -v /adapters/secondary/mysql)
+
+  video_service:
+    name: video_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.25"
+
+    - name: Build
+      run: cd video-service/BE && go build -v ./...
+
+    - name: Test
+      run: cd video-service/BE && go test -v ./...

@@ -1,0 +1,91 @@
+videoService:
+  name: video-service
+  replicas: 2
+
+  image:
+    name: ghcr.io/jieeirosst/video-service
+    tag: latest
+    # Must match PORT_HTTP_SERVER (see video-service/BE/config/config.go).
+    port: 8080
+
+  service:
+    name: video-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    # Videos are large: let uploads stream through to the pod instead of being
+    # buffered by nginx, and don't buffer the (Range) responses either.
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "2g"
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # Shares the host with chart/video-web, which serves "/".
+    host: video-service.local
+    path: /api
+    pathType: Prefix
+
+  # Env the container reads directly (see video-service/BE/config/config.go).
+  # MinIO defaults match chart/minio; override the credentials with --set or a
+  # values-prod.yaml before deploying anywhere real. Add the bucket to
+  # minio.buckets in chart/minio/values.yaml (it is also created on startup).
+  env:
+    minioEndpoint: minio-svc:9000
+    minioAccessKey: minioadmin
+    minioSecretKey: minioadmin123
+    minioBucket: video-service
+    minioUseSSL: "false"
+    redisAddr: redis-svc:80
+    allowedOrigins: "*"
+    maxUploadMB: "2048"
+
+    # Read buffer: chunks of this size are fetched from MinIO once and served
+    # to every viewer from memory. cacheSizeMB must stay well under the
+    # memory limit below (Go heap + cache + in-flight responses).
+    chunkSizeKB: "1024"
+    cacheSizeMB: "512"
+    prefetchChunks: "2"
+    # Metadata changes are pushed to every replica over Redis pub/sub; these
+    # TTLs are only a safety net if a message is missed.
+    metaTTLSeconds: "300"
+    listTTLSeconds: "30"
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 768Mi
+    limits:
+      cpu: "2"
+      memory: 1280Mi
+
+  # Streaming is CPU/network bound and the pods are stateless, so scale wide.
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 30
+    targetCPUUtilizationPercentage: 60
+
+# Transcoding workers (same image, ROLE=worker): turn each upload into an HLS
+# ladder (1080p/720p/480p/360p, capped at the source height) and a thumbnail.
+# They pull jobs from a Redis stream, so add replicas to process uploads in
+# parallel; a job whose worker dies is picked up by another after
+# claimIdleMinutes. Kept off the API pods so ffmpeg can't starve viewers.
+videoWorker:
+  name: video-worker
+  replicas: 2
+  concurrency: "1"          # videos per worker at once; ffmpeg already uses all cores
+  jobTimeoutMinutes: "60"
+
+  resources:
+    requests:
+      cpu: "1"
+      memory: 1Gi
+    limits:
+      cpu: "4"
+      memory: 3Gi
+
+  # Scratch space for the downloaded original + rendered segments.
+  scratchSize: 20Gi

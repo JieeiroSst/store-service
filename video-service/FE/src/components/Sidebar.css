@@ -1,0 +1,50 @@
+.sidebar {
+  position: sticky;
+  top: 56px;
+  flex: 0 0 220px;
+  height: calc(100vh - 56px);
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.sidebar.overlay {
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 240px;
+  padding-top: 68px;
+  background: var(--bg);
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.side-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+}
+
+.side-item:hover {
+  background: var(--hover);
+}
+
+.side-item.active {
+  background: var(--surface);
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .sidebar:not(.overlay) {
+    display: none;
+  }
+}

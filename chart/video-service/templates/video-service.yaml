@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.videoService.name }}-deployment
+spec:
+{{- if not .Values.videoService.autoscaling.enabled }}
+  replicas: {{ .Values.videoService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.videoService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.videoService.name }}-deployment
+    spec:
+      terminationGracePeriodSeconds: 45
+      # Spread replicas across nodes so one node's NIC isn't the bottleneck
+      # for a popular video.
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: {{ .Values.videoService.name }}-deployment
+      containers:
+      - name: {{ .Values.videoService.name }}-deployment
+        image: {{ .Values.videoService.image.name }}:{{ .Values.videoService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.videoService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.videoService.image.port }}"
+          - name: MINIO_ENDPOINT
+            value: {{ .Values.videoService.env.minioEndpoint | quote }}
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.videoService.name }}-secret
+                key: minioAccessKey
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.videoService.name }}-secret
+                key: minioSecretKey
+          - name: MINIO_BUCKET
+            value: {{ .Values.videoService.env.minioBucket | quote }}
+          - name: MINIO_USE_SSL
+            value: {{ .Values.videoService.env.minioUseSSL | quote }}
+          - name: REDIS_ADDR
+            value: {{ .Values.videoService.env.redisAddr | quote }}
+          - name: ALLOWED_ORIGINS
+            value: {{ .Values.videoService.env.allowedOrigins | quote }}
+          - name: MAX_UPLOAD_MB
+            value: {{ .Values.videoService.env.maxUploadMB | quote }}
+          - name: CHUNK_SIZE_KB
+            value: {{ .Values.videoService.env.chunkSizeKB | quote }}
+          - name: CACHE_SIZE_MB
+            value: {{ .Values.videoService.env.cacheSizeMB | quote }}
+          - name: PREFETCH_CHUNKS
+            value: {{ .Values.videoService.env.prefetchChunks | quote }}
+          - name: META_TTL_SECONDS
+            value: {{ .Values.videoService.env.metaTTLSeconds | quote }}
+          - name: LIST_TTL_SECONDS
+            value: {{ .Values.videoService.env.listTTLSeconds | quote }}
+          # Make the Go GC respect the container limit alongside the chunk cache.
+          - name: GOMEMLIMIT
+            value: {{ .Values.videoService.resources.limits.memory | replace "Mi" "MiB" | replace "Gi" "GiB" | quote }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.videoService.image.port }}
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.videoService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              # Give the endpoint controller time to drop this pod before
+              # shutdown starts refusing new connections.
+              command: ["sh", "-c", "sleep 5"]
+        resources:
+          {{- toYaml .Values.videoService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.videoService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  minioAccessKey: {{ .Values.videoService.env.minioAccessKey | quote }}
+  minioSecretKey: {{ .Values.videoService.env.minioSecretKey | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.videoService.service.name }}
+spec:
+  type: {{ .Values.videoService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.videoService.image.port }}
+  selector:
+    app: {{ .Values.videoService.name }}-deployment
