@@ -1,4 +1,4 @@
-module github.com/JIeeroSst/hospital-patientm-anagement-service
+module github.com/JIeeroSst/hospital-patient-management-service
 
 go 1.23.0
 

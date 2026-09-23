@@ -3,7 +3,7 @@ package http
 import (
 	"context"
 
-	"github.com/JIeeiroSst/car-rental-servcie/internal/usecase"
+	"github.com/JIeeiroSst/car-rental-service/internal/usecase"
 	pb "github.com/JIeeiroSst/lib-gateway/car-rental-servcie/gateway/car-rental-servcie"
 )
 

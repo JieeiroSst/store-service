@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"github.com/JIeeiroSst/car-rental-servcie/internal/repository"
+	"github.com/JIeeiroSst/car-rental-service/internal/repository"
 )
 
 type Usecase struct {
