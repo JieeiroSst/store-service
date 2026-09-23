@@ -1,5 +1,11 @@
 package main
 
-func main() {
+import (
+	"github.com/JIeeiroSst/payment-service/internal/infrastructure"
+	"go.uber.org/fx"
+)
 
+func main() {
+	app := fx.New(infrastructure.Module)
+	app.Run()
 }

@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.paymentService.name }}-deployment
+spec:
+{{- if not .Values.paymentService.autoscaling.enabled }}
+  replicas: {{ .Values.paymentService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.paymentService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.paymentService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.paymentService.name }}-deployment
+        image: {{ .Values.paymentService.image.name }}:{{ .Values.paymentService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.paymentService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.paymentService.image.port }}"
+          - name: MYSQL_HOST
+            value: {{ .Values.paymentService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.paymentService.env.mysqlPort | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.paymentService.env.mysqlUser | quote }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: mysqlPassword
+          - name: MYSQL_DBNAME
+            value: {{ .Values.paymentService.env.mysqlDbname | quote }}
+          - name: PAYPAL_BASE_URL
+            value: {{ .Values.paymentService.env.paypalBaseURL | quote }}
+          - name: PAYPAL_CLIENT_ID
+            value: {{ .Values.paymentService.env.paypalClientID | quote }}
+          - name: PAYPAL_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: paypalClientSecret
+          - name: PAYPAL_WEBHOOK_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: paypalWebhookID
+          - name: PAYONEER_BASE_URL
+            value: {{ .Values.paymentService.env.payoneerBaseURL | quote }}
+          - name: PAYONEER_PROGRAM_ID
+            value: {{ .Values.paymentService.env.payoneerProgramID | quote }}
+          - name: PAYONEER_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: payoneerAPIKey
+          - name: PAYONEER_WEBHOOK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: payoneerWebhookSecret
+          - name: STRIPE_BASE_URL
+            value: {{ .Values.paymentService.env.stripeBaseURL | quote }}
+          - name: STRIPE_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: stripeSecretKey
+          - name: STRIPE_WEBHOOK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: stripeWebhookSecret
+          - name: WISE_BASE_URL
+            value: {{ .Values.paymentService.env.wiseBaseURL | quote }}
+          - name: WISE_PROFILE_ID
+            value: {{ .Values.paymentService.env.wiseProfileID | quote }}
+          - name: WISE_API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: wiseAPIToken
+          - name: WISE_WEBHOOK_PUBLIC_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.paymentService.name }}-secret
+                key: wiseWebhookPublicKey
+        resources:
+          {{- toYaml .Values.paymentService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: payment-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.paymentService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  mysqlPassword: {{ .Values.paymentService.env.mysqlPassword | quote }}
+  paypalClientSecret: {{ .Values.paymentService.env.paypalClientSecret | quote }}
+  paypalWebhookID: {{ .Values.paymentService.env.paypalWebhookID | quote }}
+  payoneerAPIKey: {{ .Values.paymentService.env.payoneerAPIKey | quote }}
+  payoneerWebhookSecret: {{ .Values.paymentService.env.payoneerWebhookSecret | quote }}
+  stripeSecretKey: {{ .Values.paymentService.env.stripeSecretKey | quote }}
+  stripeWebhookSecret: {{ .Values.paymentService.env.stripeWebhookSecret | quote }}
+  wiseAPIToken: {{ .Values.paymentService.env.wiseAPIToken | quote }}
+  wiseWebhookPublicKey: {{ .Values.paymentService.env.wiseWebhookPublicKey | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.paymentService.service.name }}
+spec:
+  type: {{ .Values.paymentService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.paymentService.image.port }}
+  selector:
+    app: {{ .Values.paymentService.name }}-deployment

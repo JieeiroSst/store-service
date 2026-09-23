@@ -1,0 +1,39 @@
+{
+    "server": {
+        "portHttpServer": "8090"
+    },
+    "mysql": {
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
+        "mysqlUser": "root",
+        "mysqlPassword": "password",
+        "mysqlDbname": "payment_service"
+    },
+    "payPal": {
+        "baseURL": "https://api-m.sandbox.paypal.com",
+        "clientID": "",
+        "clientSecret": "",
+        "timeout": "10s",
+        "webhookID": ""
+    },
+    "payoneer": {
+        "baseURL": "https://api.sandbox.payoneer.com",
+        "apiKey": "",
+        "programID": "",
+        "timeout": "10s",
+        "webhookSecret": ""
+    },
+    "stripe": {
+        "baseURL": "https://api.stripe.com",
+        "secretKey": "",
+        "timeout": "10s",
+        "webhookSecret": ""
+    },
+    "wise": {
+        "baseURL": "https://api.sandbox.transferwise.tech",
+        "apiToken": "",
+        "profileID": "",
+        "timeout": "10s",
+        "webhookPublicKey": ""
+    }
+}
