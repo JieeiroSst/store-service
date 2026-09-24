@@ -311,3 +311,7 @@ dependencies:
     name: car-rental-service
     version: "0.1.0"
     repository: file://car-rental-service
+  - alias: cataloguesService
+    name: catalogues-service
+    version: "0.1.0"
+    repository: file://catalogues-service
