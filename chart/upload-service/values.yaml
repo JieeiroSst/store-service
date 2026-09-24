@@ -1,0 +1,64 @@
+uploadService:
+  name: upload-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/upload-service
+    tag: latest
+    # Must match PORT (see upload_service/config/config.go).
+    port: 8080
+
+  service:
+    name: upload-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: upload-service.local
+    path: /
+    pathType: Prefix
+
+  # The service reads plain environment variables. Dev defaults - override the
+  # secrets with --set or a values-prod.yaml before deploying anywhere real.
+  env:
+    # File metadata.
+    mongoURI: mongodb://mongo-svc:80
+    mongoDatabase: upload
+
+    # File bytes live in a private bucket of the shared MinIO (chart/minio),
+    # created on startup, and are only served through this service.
+    minioEndpoint: minio-svc:9000
+    minioBucket: upload-service
+    minioUseSSL: false
+    minioAccessKey: minioadmin
+    minioSecretKey: minioadmin123
+
+    # Every route needs a user-service bearer token. With authMode "token" the
+    # service refuses to start without userServiceBaseURL.
+    authMode: token
+    userServiceBaseURL: http://user-api-svc
+    authCacheTTL: 5s
+
+    # The type is detected from the file's bytes, not its name.
+    maxUploadMB: "20"
+    allowedTypes: application/pdf,image/jpeg,image/png,image/webp,image/gif
+
+    # Browser origins allowed to call the API; empty allows none.
+    corsAllowOrigins: ""
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      # An upload is held in memory while it is validated and stored.
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

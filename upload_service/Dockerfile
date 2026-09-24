@@ -1,9 +1,26 @@
-FROM golang
+FROM golang:1.26-alpine AS builder
+
 WORKDIR /app
-COPY . .
-ENV PORT 1985
-ENV PORT 1986
-EXPOSE 1234
+
+RUN apk add --no-cache git
+
+COPY go.mod go.sum ./
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o /out/main ./cmd/main.go
-ENTRYPOINT ["/out/main"]
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o upload-service ./cmd
+
+FROM alpine:3.19
+
+WORKDIR /app
+
+RUN apk add --no-cache ca-certificates tzdata
+
+RUN adduser -D -u 10001 app
+USER app
+
+COPY --from=builder /app/upload-service .
+
+EXPOSE 8080
+
+ENTRYPOINT ["./upload-service"]

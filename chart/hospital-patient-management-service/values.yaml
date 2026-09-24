@@ -1,0 +1,90 @@
+hospitalPatientManagementService:
+  name: hospital-patient-management-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/hospital-patient-management-service
+    tag: latest
+    # REST gateway and /health. Must match PORT
+    # (see hospital-patient-management-service/config/config.go).
+    port: 8080
+    # gRPC. Must match GRPC_PORT.
+    grpcPort: 9090
+
+  service:
+    name: hospital-patient-management-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: hospital-patient-management-service.local
+    path: /
+    pathType: Prefix
+
+  # The service reads plain environment variables. Dev defaults - override the
+  # password with --set or a values-prod.yaml before deploying anywhere real.
+  # The database is created and the schema migrated on startup; concurrent
+  # replicas are serialized with a Postgres advisory lock.
+  env:
+    # Points at the umbrella chart's postgres (admin credentials from chart/postgres).
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresDatabase: hospital_patient_management_service
+    postgresUser: testUser
+    postgresPassword: testPassword
+    postgresSSLMode: disable
+
+    # user-service validates the bearer token of every request. With authMode
+    # "token" the service refuses to start without userServiceBaseURL; use
+    # "off" only when a trusted gateway in front authenticates callers.
+    authMode: token
+    userServiceBaseURL: http://user-api-svc
+    # How long a validated token is trusted before user-service is asked again,
+    # i.e. how long a revoked token keeps working. "0" checks every request.
+    authCacheTTL: 5s
+
+    # billing-service: every bill's patient share becomes an invoice there
+    # (customer + subscription are created per patient on first use). Empty
+    # disables the integration.
+    billingBaseURL: http://billing-service-svc
+    billingPlanName: Hospital services
+
+    # payment-wallet-service: marking a bill Paid without a paid_date charges
+    # the patient's wallet (user_id = walletUserPrefix + patient id) and pays
+    # the hospital wallet below. Create and fund that wallet first; leaving
+    # the id empty disables wallet payments.
+    walletBaseURL: http://payment-wallet-service-svc
+    walletHospitalID: ""
+    # Minor units per major unit: 100 for cents, 1 for VND.
+    walletMinorUnit: "100"
+    walletUserPrefix: patient-
+
+    # notification_service: appointment, lab result, bill and payment messages
+    # to patients. Empty disables notifications.
+    notificationBaseURL: http://notification-service-svc
+
+    # ekyc-service verifies patients' citizen ID and face. A patient must first
+    # be linked to a user-service account (PUT /v1/patients/{id}/user). Empty
+    # disables the identity endpoints.
+    ekycBaseURL: http://ekyc-service-svc
+
+    # upload-service stores files attached to patients (scans, reports) in a
+    # private bucket. The caller's own token is forwarded, so upload-service
+    # must trust the same user-service. Empty disables the document endpoints.
+    uploadBaseURL: http://upload-service-svc
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
