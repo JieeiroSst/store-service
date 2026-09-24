@@ -267,6 +267,10 @@ dependencies:
     name: referral-service
     version: "0.1.0"
     repository: file://referral-service
+  - alias: bonuslinkService
+    name: bonuslink-service
+    version: "0.1.0"
+    repository: file://bonuslink-service
   - alias: paymentWalletService
     name: payment-wallet-service
     version: "0.1.0"

@@ -116,6 +116,30 @@ func (r *rewardRepo) FindByOwnerAndRefCode(ctx context.Context, ownerUserID, ref
 	return &reward, nil
 }
 
+func (r *rewardRepo) FindUnpublished(ctx context.Context, olderThanMs int64, limit int) ([]*domain.ReferralReward, error) {
+	var rewards []*domain.ReferralReward
+	err := r.db.SelectContext(ctx, &rewards,
+		`SELECT owner_user_id, ref_code, new_user_id, reward_type, reward_value, status, created_at, updated_at
+		 FROM referral_rewards WHERE published_at IS NULL AND created_at < ? ORDER BY created_at LIMIT ?`,
+		olderThanMs, limit,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("query unpublished rewards: %w", err)
+	}
+	return rewards, nil
+}
+
+func (r *rewardRepo) MarkPublished(ctx context.Context, ownerUserID, refCode string, publishedAtMs int64) error {
+	_, err := r.db.ExecContext(ctx,
+		`UPDATE referral_rewards SET published_at = ? WHERE owner_user_id = ? AND ref_code = ?`,
+		publishedAtMs, ownerUserID, refCode,
+	)
+	if err != nil {
+		return fmt.Errorf("mark reward %s/%s published: %w", ownerUserID, refCode, err)
+	}
+	return nil
+}
+
 func (r *rewardRepo) FindByOwnerUserID(ctx context.Context, ownerUserID string) ([]*domain.ReferralReward, error) {
 	var rewards []*domain.ReferralReward
 	err := r.db.SelectContext(ctx, &rewards,

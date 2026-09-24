@@ -31,6 +31,7 @@ type referralService struct {
 	programRepo     ports.RewardProgramRepository
 	attributionRepo ports.ReferralAttributionRepository
 	cache           ports.Cache
+	publisher       ports.RewardPublisher
 	cfg             *config.Config
 	log             *zap.Logger
 }
@@ -45,6 +46,7 @@ type Params struct {
 	ProgramRepo     ports.RewardProgramRepository
 	AttributionRepo ports.ReferralAttributionRepository
 	Cache           ports.Cache
+	Publisher       ports.RewardPublisher
 	Config          *config.Config
 	Logger          *zap.Logger
 }
@@ -58,6 +60,7 @@ func NewReferralService(p Params) ports.ReferralService {
 		programRepo:     p.ProgramRepo,
 		attributionRepo: p.AttributionRepo,
 		cache:           p.Cache,
+		publisher:       p.Publisher,
 		cfg:             p.Config,
 		log:             p.Logger.Named("referral-service"),
 	}
@@ -410,6 +413,7 @@ func (s *referralService) ConfirmInstall(ctx context.Context, req ports.ConfirmI
 		} else {
 			rewardedDelta = 1
 			rewardAmtDelta = rewardValue
+			s.publishReward(ctx, reward)
 			if err := s.eventRepo.Save(ctx, &domain.ReferralEvent{
 				RefCode:     req.RefCode,
 				EventID:     uuid.New().String(),
@@ -754,4 +758,50 @@ func (s *referralService) SetRewardProgramStatus(ctx context.Context, programID 
 		return err
 	}
 	return nil
+}
+
+// publishReward hands the reward to bonuslink-service and marks it published.
+// The reward row is already saved, so a failure is logged rather than failing
+// the install; the relay retries rows still unmarked.
+func (s *referralService) publishReward(ctx context.Context, r *domain.ReferralReward) {
+	if !s.cfg.RabbitMQ.Enabled {
+		return
+	}
+	log := s.logWithTrace(ctx)
+	if err := s.sendReward(ctx, r); err != nil {
+		log.Error("failed to publish reward event, relay will retry",
+			logger.RefCode(r.RefCode),
+			logger.OwnerUserID(r.OwnerUserID),
+			zap.Error(err),
+		)
+		return
+	}
+	if err := s.rewardRepo.MarkPublished(ctx, r.OwnerUserID, r.RefCode, time.Now().UnixMilli()); err != nil {
+		log.Warn("reward published but not marked, relay will resend (deduplicated downstream)",
+			logger.RefCode(r.RefCode),
+			zap.Error(err),
+		)
+	}
+}
+
+func (s *referralService) sendReward(ctx context.Context, r *domain.ReferralReward) error {
+	return s.publisher.PublishRewardGranted(ctx, rewardEvent(r))
+}
+
+func rewardEvent(r *domain.ReferralReward) ports.RewardGrantedEvent {
+	return ports.RewardGrantedEvent{
+		EventID:     fmt.Sprintf("referral:%s:%s", r.RefCode, r.NewUserID),
+		UserID:      r.OwnerUserID,
+		RefCode:     r.RefCode,
+		RewardType:  bonusRewardType(r.RewardType),
+		RewardValue: r.RewardValue,
+	}
+}
+
+// bonusRewardType maps referral reward types onto bonuslink-service's categories.
+func bonusRewardType(t domain.RewardType) string {
+	if t == domain.RewardCoupon {
+		return "DISCOUNT"
+	}
+	return "POINTS"
 }

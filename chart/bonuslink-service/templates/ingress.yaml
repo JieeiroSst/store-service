@@ -1,0 +1,23 @@
+{{- if .Values.bonuslinkService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.bonuslinkService.name }}-ingress
+  {{- with .Values.bonuslinkService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.bonuslinkService.ingress.className }}
+  rules:
+  - host: {{ .Values.bonuslinkService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.bonuslinkService.ingress.path }}
+        pathType: {{ .Values.bonuslinkService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.bonuslinkService.service.name }}
+            port:
+              number: 80
+{{- end }}

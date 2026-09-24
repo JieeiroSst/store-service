@@ -101,6 +101,21 @@ spec:
               secretKeyRef:
                 name: {{ .Values.referralService.name }}-secret
                 key: redisPassword
+          - name: RABBITMQ_HOST
+            value: {{ .Values.referralService.rabbitmq.host | quote }}
+          - name: RABBITMQ_PORT
+            value: {{ .Values.referralService.rabbitmq.port | quote }}
+          - name: RABBITMQ_EXCHANGE
+            value: {{ .Values.referralService.rabbitmq.exchange | quote }}
+          - name: RABBITMQ_ROUTING_KEY
+            value: {{ .Values.referralService.rabbitmq.routingKey | quote }}
+          - name: COM_RABBITMQ_USERNAME
+            value: {{ .Values.referralService.rabbitmq.user | quote }}
+          - name: COM_RABBITMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.referralService.name }}-secret
+                key: rabbitmqPassword
         resources:
           {{- toYaml .Values.referralService.resources | nindent 10 }}
 ---
@@ -114,6 +129,7 @@ stringData:
   # values-prod.yaml before deploying anywhere real.
   mysqlPassword: {{ .Values.referralService.env.mysqlPassword | quote }}
   redisPassword: {{ .Values.referralService.env.redisPassword | quote }}
+  rabbitmqPassword: {{ .Values.referralService.rabbitmq.password | quote }}
 ---
 apiVersion: v1
 kind: Service

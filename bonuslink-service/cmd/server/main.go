@@ -3,13 +3,12 @@ package main
 import (
 	"go.uber.org/fx"
 
-	"github.com/referral/service/internal/adapters/primary/http"
-	"github.com/referral/service/internal/adapters/secondary/cache"
-	"github.com/referral/service/internal/adapters/secondary/mysql"
-	"github.com/referral/service/internal/adapters/secondary/queue"
-	"github.com/referral/service/internal/config"
-	"github.com/referral/service/internal/core/services"
-	"github.com/referral/service/pkg/logger"
+	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/primary/http"
+	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/primary/queue"
+	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/secondary/postgres"
+	"github.com/JIeeiroSst/bonuslink-service/internal/config"
+	"github.com/JIeeiroSst/bonuslink-service/internal/core/services"
+	"github.com/JIeeiroSst/bonuslink-service/pkg/logger"
 )
 
 func newLoggerConfig(cfg *config.Config) *logger.Config {
@@ -26,18 +25,14 @@ func newLoggerConfig(cfg *config.Config) *logger.Config {
 }
 
 func main() {
-	app := fx.New(
+	fx.New(
 		config.Module,
 		fx.Provide(newLoggerConfig),
 		logger.Module,
-		mysql.Module,
-		cache.Module,
-		queue.Module,
+		postgres.Module,
 		services.Module,
-		services.RelayModule,
 		http.Module,
 		http.ServerModule,
-	)
-
-	app.Run()
+		queue.Module,
+	).Run()
 }
