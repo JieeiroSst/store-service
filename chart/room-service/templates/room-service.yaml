@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.roomService.name }}-deployment
+spec:
+{{- if not .Values.roomService.autoscaling.enabled }}
+  replicas: {{ .Values.roomService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.roomService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.roomService.name }}-deployment
+    spec:
+      # Open WebSockets are cut when the pod stops; clients reconnect on their own.
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: {{ .Values.roomService.name }}-deployment
+        image: {{ .Values.roomService.image.name }}:{{ .Values.roomService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.roomService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.roomService.image.port }}"
+          - name: MYSQL_HOST
+            value: {{ .Values.roomService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.roomService.env.mysqlPort | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.roomService.env.mysqlUser | quote }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.roomService.name }}-secret
+                key: mysqlPassword
+          - name: MYSQL_DATABASE
+            value: {{ .Values.roomService.env.mysqlDatabase | quote }}
+          - name: USER_SERVICE_GRPC_ADDR
+            value: {{ .Values.roomService.env.userServiceGrpcAddr | quote }}
+          - name: REDIS_ADDR
+            value: {{ .Values.roomService.env.redisAddr | quote }}
+          - name: ALLOWED_ORIGINS
+            value: {{ .Values.roomService.env.allowedOrigins | quote }}
+          - name: AUTH_CACHE_TTL_SECONDS
+            value: {{ .Values.roomService.env.authCacheTTLSeconds | quote }}
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.roomService.image.port }}
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.roomService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        lifecycle:
+          preStop:
+            exec:
+              # Give the endpoint controller time to drop this pod before
+              # shutdown starts refusing new connections.
+              command: ["sh", "-c", "sleep 5"]
+        resources:
+          {{- toYaml .Values.roomService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.roomService.name }}-secret
+type: Opaque
+stringData:
+  # Dev default from values.yaml - override with --set or a values-prod.yaml
+  # before deploying anywhere real.
+  mysqlPassword: {{ .Values.roomService.env.mysqlPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.roomService.service.name }}
+spec:
+  type: {{ .Values.roomService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.roomService.image.port }}
+  selector:
+    app: {{ .Values.roomService.name }}-deployment

@@ -1,0 +1,20 @@
+{{- if .Values.roomWeb.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.roomWeb.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.roomWeb.name }}-deployment
+  minReplicas: {{ .Values.roomWeb.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.roomWeb.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.roomWeb.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

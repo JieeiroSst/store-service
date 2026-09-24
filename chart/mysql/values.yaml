@@ -44,3 +44,11 @@ mysql:
       consulKey: post_service
       userField: .mysql.user
       passwordField: .mysql.password
+    # room-service reads plain env vars, not Consul: this entry only creates
+    # its database (the Consul patch is skipped when the key is absent).
+    - name: room-service
+      database: room_service
+      user: room_service_svc
+      consulKey: room_service
+      userField: .mysql.user
+      passwordField: .mysql.password

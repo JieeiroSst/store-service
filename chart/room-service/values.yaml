@@ -1,0 +1,58 @@
+roomService:
+  name: room-service
+  replicas: 2
+
+  image:
+    name: ghcr.io/jieeirosst/room-service
+    tag: latest
+    # Must match PORT_HTTP_SERVER (see room-service/BE/config/config.go).
+    port: 8081
+
+  service:
+    name: room-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    # Chat runs over long-lived WebSockets; nginx would otherwise close idle
+    # ones after 60s.
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # Shares the host with chart/room-web, which serves "/".
+    host: room-service.local
+    path: /api
+    pathType: Prefix
+
+  # Env the container reads directly (see room-service/BE/config/config.go).
+  # The database is created by chart/mysql's provisioner (serviceDatabases).
+  # Dev defaults - override the password with --set or a values-prod.yaml.
+  env:
+    mysqlHost: mysql-svc
+    mysqlPort: "80"
+    mysqlUser: root
+    mysqlPassword: password
+    mysqlDatabase: room_service
+    # Accounts, login and session validation live in user-service (gRPC).
+    userServiceGrpcAddr: user-grpc-svc:80
+    # Fans chat out across replicas (Redis pub/sub). Without it every replica
+    # only knows its own WebSocket clients, so keep replicas at 1.
+    redisAddr: redis-svc:80
+    allowedOrigins: "*"
+    # A logout takes up to this long to reach an already-validated token.
+    authCacheTTLSeconds: "30"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70

@@ -1,0 +1,37 @@
+roomWeb:
+  name: room-web
+  replicas: 2
+
+  image:
+    name: ghcr.io/jieeirosst/room-web
+    tag: latest
+    port: 80
+
+  service:
+    name: room-web-svc
+    type: ClusterIP
+
+  # Same host as chart/room-service's ingress: this one serves "/" and that
+  # one serves "/api", so the browser talks to the API (and WebSocket) on the
+  # same origin.
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: room-service.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 20m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 70

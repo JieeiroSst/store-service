@@ -1,0 +1,23 @@
+{{- if .Values.roomService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.roomService.name }}-ingress
+  {{- with .Values.roomService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.roomService.ingress.className }}
+  rules:
+  - host: {{ .Values.roomService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.roomService.ingress.path }}
+        pathType: {{ .Values.roomService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.roomService.service.name }}
+            port:
+              number: 80
+{{- end }}
