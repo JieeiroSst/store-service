@@ -279,3 +279,11 @@ dependencies:
     name: video-web
     version: "0.1.0"
     repository: file://video-web
+  - alias: roomService
+    name: room-service
+    version: "0.1.0"
+    repository: file://room-service
+  - alias: roomWeb
+    name: room-web
+    version: "0.1.0"
+    repository: file://room-web
