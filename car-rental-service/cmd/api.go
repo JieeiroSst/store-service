@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/JIeeiroSst/car-rental-service/config"
+	"github.com/JIeeiroSst/car-rental-service/internal/auth"
 	"github.com/JIeeiroSst/car-rental-service/internal/repository"
 	"github.com/JIeeiroSst/car-rental-service/internal/usecase"
 	"github.com/JIeeiroSst/utils/logger"
@@ -52,8 +53,18 @@ func runAPI() {
 		Repos: repository,
 	})
 
-	server := serverHttp.NewHandler(usecase)
-	grpcServer := grpc.NewServer()
+	authn, err := auth.New(auth.Config{
+		SecretKey: config.Secret.JwtSecretKey,
+		AdminRole: config.Secret.AdminRole,
+		StaffRole: config.Secret.StaffRole,
+	}, auth.MethodLevels)
+	if err != nil {
+		logger.WithContext(ctx).Error("init auth", zap.Error(err))
+		return
+	}
+
+	server := serverHttp.NewHandler(usecase, authn)
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(authn.UnaryInterceptor()))
 	pb.RegisterVehicleRentalServiceServer(grpcServer, server)
 
 	go func() {

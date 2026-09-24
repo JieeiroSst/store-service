@@ -708,3 +708,23 @@ jobs:
 
     - name: Test
       run: cd hospital-patient-management-service && go test -v ./...
+
+  car_rental_service:
+    name: car_rental_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.23"
+
+    - name: Build
+      run: cd car-rental-service && go build -v ./...
+
+    - name: Vet
+      run: cd car-rental-service && go vet ./...
+
+    - name: Test
+      run: cd car-rental-service && go test -v ./...

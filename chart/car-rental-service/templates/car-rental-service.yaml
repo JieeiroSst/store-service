@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.carRentalService.name }}-deployment
+spec:
+{{- if not .Values.carRentalService.autoscaling.enabled }}
+  replicas: {{ .Values.carRentalService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.carRentalService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.carRentalService.name }}-deployment
+    spec:
+      initContainers:
+      # Wait for postgres and create the database if it does not exist yet.
+      - name: create-database
+        image: {{ .Values.carRentalService.database.postgresClientImage }}
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.carRentalService.name }}-secret
+                key: postgresPassword
+        command:
+          - sh
+          - -c
+          - >-
+            until psql -h {{ .Values.carRentalService.database.host }} -p {{ .Values.carRentalService.database.port }}
+            -U {{ .Values.carRentalService.database.user | quote }} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '{{ .Values.carRentalService.database.name }}'" | grep -q 1
+            || psql -h {{ .Values.carRentalService.database.host }} -p {{ .Values.carRentalService.database.port }}
+            -U {{ .Values.carRentalService.database.user | quote }} -d postgres -c "CREATE DATABASE {{ .Values.carRentalService.database.name }}";
+            do echo "waiting for postgres"; sleep 3; done
+      # database.sql ships inside the app image; hand it to the postgres client.
+      - name: copy-schema
+        image: {{ .Values.carRentalService.image.name }}:{{ .Values.carRentalService.image.tag }}
+        imagePullPolicy: Always
+        command: ["cp", "/app/database.sql", "/schema/database.sql"]
+        volumeMounts:
+        - name: schema
+          mountPath: /schema
+      # Idempotent (CREATE TABLE IF NOT EXISTS), so safe on every rollout and
+      # when several replicas start together.
+      - name: apply-schema
+        image: {{ .Values.carRentalService.database.postgresClientImage }}
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.carRentalService.name }}-secret
+                key: postgresPassword
+        command:
+          - psql
+          - -v
+          - ON_ERROR_STOP=1
+          - -h
+          - {{ .Values.carRentalService.database.host | quote }}
+          - -p
+          - {{ .Values.carRentalService.database.port | quote }}
+          - -U
+          - {{ .Values.carRentalService.database.user | quote }}
+          - -d
+          - {{ .Values.carRentalService.database.name | quote }}
+          - -f
+          - /schema/database.sql
+        volumeMounts:
+        - name: schema
+          mountPath: /schema
+      containers:
+      - name: {{ .Values.carRentalService.name }}-deployment
+        image: {{ .Values.carRentalService.image.name }}:{{ .Values.carRentalService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.carRentalService.image.port }}
+        - containerPort: {{ .Values.carRentalService.image.grpcPort }}
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.carRentalService.image.grpcPort }}
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.carRentalService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          {{- toYaml .Values.carRentalService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: car-rental-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+      - name: schema
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.carRentalService.name }}-secret
+type: Opaque
+stringData:
+  postgresPassword: {{ .Values.carRentalService.database.password | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.carRentalService.service.name }}
+spec:
+  type: {{ .Values.carRentalService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.carRentalService.image.port }}
+  - name: grpc
+    port: {{ .Values.carRentalService.image.grpcPort }}
+    targetPort: {{ .Values.carRentalService.image.grpcPort }}
+  selector:
+    app: {{ .Values.carRentalService.name }}-deployment

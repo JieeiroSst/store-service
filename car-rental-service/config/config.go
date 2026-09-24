@@ -12,6 +12,7 @@ type Config struct {
 	Server   ServerConfig   `json:"server"`
 	Postgres PostgresConfig `json:"postgres"`
 	Cache    CacheConfig    `json:"cache"`
+	Secret   SecretConfig   `json:"secret"`
 }
 
 type ServerConfig struct {
@@ -27,6 +28,13 @@ type PostgresConfig struct {
 	PostgresqlDbname   string `json:"postgresql_dbname"`
 	PostgresqlSSLMode  bool   `json:"postgresql_ssl_mode"`
 	PgDriver           string `json:"pg_driver"`
+}
+
+// SecretConfig holds the JWT settings shared with user-service, which issues the tokens.
+type SecretConfig struct {
+	JwtSecretKey string `json:"jwt_secret_key"`
+	AdminRole    string `json:"admin_role"`
+	StaffRole    string `json:"staff_role"`
 }
 
 type CacheConfig struct {
