@@ -1,0 +1,28 @@
+clamav:
+  name: clamav
+  replicas: 1
+
+  image:
+    name: clamav/clamav
+    tag: stable
+    port: 3310
+
+  service:
+    name: clamav-svc
+    type: ClusterIP
+
+  # clamd refuses a stream longer than StreamMaxLength: keep it above the
+  # largest upload the services accept (CONTRACT_FILE_MAX_MB, default 25).
+  streamMaxLength: 100M
+  maxFileSize: 100M
+
+  # The image downloads the virus signatures when it starts (a few minutes,
+  # about 300 MB), so it is not ready straight away. Signatures live in an
+  # emptyDir and are fetched again after a restart.
+  resources:
+    requests:
+      cpu: 250m
+      memory: 1536Mi
+    limits:
+      cpu: "2"
+      memory: 3Gi

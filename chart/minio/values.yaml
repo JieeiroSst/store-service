@@ -22,6 +22,7 @@ minio:
     - post-service
     - ekyc-service
     - video-service
+    - customer-relationship-service
 
   storage:
     size: 5Gi

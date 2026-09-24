@@ -1,0 +1,10 @@
+package main
+
+import (
+	"github.com/JIeeiroSst/customer-relationship-service/internal/infrastructure"
+	"go.uber.org/fx"
+)
+
+func main() {
+	fx.New(infrastructure.Module).Run()
+}
