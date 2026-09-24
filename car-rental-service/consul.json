@@ -4,14 +4,19 @@
         "port_grpc_server": "2223"
     },
     "postgres": {
-        "postgresql_host": "localhost",
-        "postgresql_port": "31000",
-        "postgresql_user": "postgres",
-        "postgresql_password": "postgres",
-        "postgresql_dbname": "car-rental",
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "car_rental",
         "pg_driver": "pgx"
     },
+    "secret": {
+        "jwt_secret_key": "secretkey",
+        "admin_role": "admin",
+        "staff_role": "staff"
+    },
     "cache": {
-        "host": "localhost:30002"
+        "host": "redis-svc:80"
     }
 }

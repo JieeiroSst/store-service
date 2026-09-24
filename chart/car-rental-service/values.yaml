@@ -1,0 +1,48 @@
+carRentalService:
+  name: car-rental-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/car-rental-service
+    tag: latest
+    # Must match server.port_http_server / port_grpc_server in the Consul key
+    # "car-rental-service" (see car-rental-service/consul.json).
+    port: 2222
+    grpcPort: 2223
+
+  service:
+    name: car-rental-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: car-rental-service.local
+    path: /
+    pathType: Prefix
+
+  # Only used by the init containers that create the database and apply
+  # database.sql; the server itself reads its Postgres settings from Consul.
+  # Dev defaults - override the password with --set before deploying anywhere real.
+  database:
+    host: postgresdb
+    port: "80"
+    name: car_rental
+    user: testUser
+    password: testPassword
+    postgresClientImage: postgres:16
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

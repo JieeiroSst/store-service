@@ -307,3 +307,7 @@ dependencies:
     name: upload-service
     version: "0.1.0"
     repository: file://upload-service
+  - alias: carRentalService
+    name: car-rental-service
+    version: "0.1.0"
+    repository: file://car-rental-service

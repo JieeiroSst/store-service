@@ -1,0 +1,23 @@
+{{- if .Values.carRentalService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.carRentalService.name }}-ingress
+  {{- with .Values.carRentalService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.carRentalService.ingress.className }}
+  rules:
+  - host: {{ .Values.carRentalService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.carRentalService.ingress.path }}
+        pathType: {{ .Values.carRentalService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.carRentalService.service.name }}
+            port:
+              number: 80
+{{- end }}
