@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.clamav.name }}-deployment
+spec:
+  replicas: {{ .Values.clamav.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.clamav.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.clamav.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.clamav.name }}-deployment
+        image: {{ .Values.clamav.image.name }}:{{ .Values.clamav.image.tag }}
+        ports:
+        - containerPort: {{ .Values.clamav.image.port }}
+        env:
+          - name: CLAMD_CONF_StreamMaxLength
+            value: {{ .Values.clamav.streamMaxLength | quote }}
+          - name: CLAMD_CONF_MaxFileSize
+            value: {{ .Values.clamav.maxFileSize | quote }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.clamav.image.port }}
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          failureThreshold: 30
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.clamav.image.port }}
+          initialDelaySeconds: 600
+          periodSeconds: 30
+          failureThreshold: 5
+        resources:
+          {{- toYaml .Values.clamav.resources | nindent 10 }}
+        volumeMounts:
+        - name: signatures
+          mountPath: /var/lib/clamav
+      volumes:
+      - name: signatures
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.clamav.service.name }}
+spec:
+  type: {{ .Values.clamav.service.type }}
+  ports:
+  - port: {{ .Values.clamav.image.port }}
+    targetPort: {{ .Values.clamav.image.port }}
+  selector:
+    app: {{ .Values.clamav.name }}-deployment

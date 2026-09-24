@@ -1,0 +1,222 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.customerRelationshipService.name }}-deployment
+spec:
+{{- if not .Values.customerRelationshipService.autoscaling.enabled }}
+  replicas: {{ .Values.customerRelationshipService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.customerRelationshipService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.customerRelationshipService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.customerRelationshipService.name }}-deployment
+        image: {{ .Values.customerRelationshipService.image.name }}:{{ .Values.customerRelationshipService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.customerRelationshipService.image.port }}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.customerRelationshipService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: PORT
+            value: "{{ .Values.customerRelationshipService.image.port }}"
+          - name: MYSQL_HOST
+            value: {{ .Values.customerRelationshipService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.customerRelationshipService.env.mysqlPort | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.customerRelationshipService.env.mysqlUser | quote }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.customerRelationshipService.name }}-secret
+                key: mysqlPassword
+          - name: MYSQL_DBNAME
+            value: {{ .Values.customerRelationshipService.env.mysqlDbname | quote }}
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.customerRelationshipService.name }}-secret
+                key: apiKey
+          - name: CONTRACT_EXPIRY_CRON
+            value: {{ .Values.customerRelationshipService.env.contractExpiryCron | quote }}
+          {{- if .Values.customerRelationshipService.env.signatureTrustedRootsPEM }}
+          - name: SIGNATURE_TRUST_ROOTS_FILE
+            value: /etc/crm/trusted-roots.pem
+          {{- end }}
+          {{- if .Values.customerRelationshipService.env.signatureTSARootsPEM }}
+          - name: SIGNATURE_TSA_ROOTS_FILE
+            value: /etc/crm/tsa-roots.pem
+          {{- end }}
+          - name: SIGNATURE_ALLOW_UNTRUSTED
+            value: {{ .Values.customerRelationshipService.env.signatureAllowUntrusted | quote }}
+          - name: SIGNATURE_REVOCATION
+            value: {{ .Values.customerRelationshipService.env.signatureRevocation | quote }}
+          - name: SIGNATURE_HTTP_TIMEOUT
+            value: {{ .Values.customerRelationshipService.env.signatureHTTPTimeout | quote }}
+          - name: SIGNATURE_TSA_URL
+            value: {{ .Values.customerRelationshipService.env.signatureTSAURL | quote }}
+          - name: API_KEY_ROLE
+            value: {{ .Values.customerRelationshipService.env.apiKeyRole | quote }}
+          - name: OIDC_ISSUER
+            value: {{ .Values.customerRelationshipService.env.oidcIssuer | quote }}
+          - name: OIDC_JWKS_URL
+            value: {{ .Values.customerRelationshipService.env.oidcJWKSURL | quote }}
+          - name: OIDC_AUDIENCE
+            value: {{ .Values.customerRelationshipService.env.oidcAudience | quote }}
+          - name: OIDC_ROLES_CLAIM
+            value: {{ .Values.customerRelationshipService.env.oidcRolesClaim | quote }}
+          - name: ROLE_PREFIX
+            value: {{ .Values.customerRelationshipService.env.rolePrefix | quote }}
+          - name: CLAMAV_ADDRESS
+            value: {{ .Values.customerRelationshipService.env.clamavAddress | quote }}
+          - name: CLAMAV_REQUIRED
+            value: {{ .Values.customerRelationshipService.env.clamavRequired | quote }}
+          - name: CLAMAV_TIMEOUT
+            value: {{ .Values.customerRelationshipService.env.clamavTimeout | quote }}
+          - name: PDF_POLICY
+            value: {{ .Values.customerRelationshipService.env.pdfPolicy | quote }}
+          - name: CONTRACT_FILE_MAX_MB
+            value: {{ .Values.customerRelationshipService.env.contractFileMaxMB | quote }}
+          - name: MINIO_ENDPOINT
+            value: {{ .Values.customerRelationshipService.env.minioEndpoint | quote }}
+          - name: MINIO_BUCKET
+            value: {{ .Values.customerRelationshipService.env.minioBucket | quote }}
+          - name: MINIO_USE_SSL
+            value: {{ .Values.customerRelationshipService.env.minioUseSSL | quote }}
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.customerRelationshipService.name }}-secret
+                key: minioAccessKey
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.customerRelationshipService.name }}-secret
+                key: minioSecretKey
+          - name: TEMPORAL_ADDRESS
+            value: {{ .Values.customerRelationshipService.env.temporalAddress | quote }}
+          - name: TEMPORAL_NAMESPACE
+            value: {{ .Values.customerRelationshipService.env.temporalNamespace | quote }}
+          - name: TEMPORAL_TASK_QUEUE
+            value: {{ .Values.customerRelationshipService.env.temporalTaskQueue | quote }}
+          - name: TEMPORAL_REMINDER_DAYS
+            value: {{ .Values.customerRelationshipService.env.temporalReminderDays | quote }}
+          - name: COMPANY_NAME
+            value: {{ .Values.customerRelationshipService.env.company.name | quote }}
+          - name: COMPANY_ADDRESS
+            value: {{ .Values.customerRelationshipService.env.company.address | quote }}
+          - name: COMPANY_TAX_CODE
+            value: {{ .Values.customerRelationshipService.env.company.taxCode | quote }}
+          - name: COMPANY_PHONE
+            value: {{ .Values.customerRelationshipService.env.company.phone | quote }}
+          - name: COMPANY_REPRESENTATIVE
+            value: {{ .Values.customerRelationshipService.env.company.representative | quote }}
+          - name: COMPANY_REPRESENTATIVE_TITLE
+            value: {{ .Values.customerRelationshipService.env.company.representativeTitle | quote }}
+          {{- if and .Values.customerRelationshipService.env.company.signKeyPEM .Values.customerRelationshipService.env.company.signCertPEM }}
+          - name: COMPANY_SIGN_KEY_FILE
+            value: /etc/crm-seal/seal.key
+          - name: COMPANY_SIGN_CERT_FILE
+            value: /etc/crm-seal/seal.pem
+          {{- end }}
+          - name: COMPANY_PLACE
+            value: {{ .Values.customerRelationshipService.env.company.place | quote }}
+          - name: NOTIFICATION_SERVICE_URL
+            value: {{ .Values.customerRelationshipService.env.notificationServiceURL | quote }}
+          - name: NOTIFICATION_TYPE
+            value: {{ .Values.customerRelationshipService.env.notificationType | quote }}
+          - name: NOTIFICATION_RECIPIENT
+            value: {{ .Values.customerRelationshipService.env.notificationRecipient | quote }}
+        resources:
+          {{- toYaml .Values.customerRelationshipService.resources | nindent 10 }}
+        {{- $roots := or .Values.customerRelationshipService.env.signatureTrustedRootsPEM .Values.customerRelationshipService.env.signatureTSARootsPEM }}
+        {{- $seal := and .Values.customerRelationshipService.env.company.signKeyPEM .Values.customerRelationshipService.env.company.signCertPEM }}
+        {{- if or $roots $seal }}
+        volumeMounts:
+        {{- if $roots }}
+        - name: trusted-roots
+          mountPath: /etc/crm
+          readOnly: true
+        {{- end }}
+        {{- if $seal }}
+        - name: company-seal
+          mountPath: /etc/crm-seal
+          readOnly: true
+        {{- end }}
+      volumes:
+      {{- if $roots }}
+      - name: trusted-roots
+        configMap:
+          name: {{ .Values.customerRelationshipService.name }}-trusted-roots
+      {{- end }}
+      {{- if $seal }}
+      - name: company-seal
+        secret:
+          secretName: {{ .Values.customerRelationshipService.name }}-company-seal
+          defaultMode: 256
+      {{- end }}
+        {{- end }}
+---
+{{- if or .Values.customerRelationshipService.env.signatureTrustedRootsPEM .Values.customerRelationshipService.env.signatureTSARootsPEM }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.customerRelationshipService.name }}-trusted-roots
+data:
+  {{- if .Values.customerRelationshipService.env.signatureTrustedRootsPEM }}
+  trusted-roots.pem: |
+    {{- .Values.customerRelationshipService.env.signatureTrustedRootsPEM | nindent 4 }}
+  {{- end }}
+  {{- if .Values.customerRelationshipService.env.signatureTSARootsPEM }}
+  tsa-roots.pem: |
+    {{- .Values.customerRelationshipService.env.signatureTSARootsPEM | nindent 4 }}
+  {{- end }}
+---
+{{- end }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.customerRelationshipService.name }}-secret
+type: Opaque
+stringData:
+  # Dev default from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  mysqlPassword: {{ .Values.customerRelationshipService.env.mysqlPassword | quote }}
+  apiKey: {{ .Values.customerRelationshipService.env.apiKey | quote }}
+  minioAccessKey: {{ .Values.customerRelationshipService.env.minioAccessKey | quote }}
+  minioSecretKey: {{ .Values.customerRelationshipService.env.minioSecretKey | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.customerRelationshipService.service.name }}
+spec:
+  type: {{ .Values.customerRelationshipService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.customerRelationshipService.image.port }}
+  selector:
+    app: {{ .Values.customerRelationshipService.name }}-deployment
+{{- if and .Values.customerRelationshipService.env.company.signKeyPEM .Values.customerRelationshipService.env.company.signCertPEM }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.customerRelationshipService.name }}-company-seal
+type: Opaque
+stringData:
+  seal.key: |
+    {{- .Values.customerRelationshipService.env.company.signKeyPEM | nindent 4 }}
+  seal.pem: |
+    {{- .Values.customerRelationshipService.env.company.signCertPEM | nindent 4 }}
+{{- end }}

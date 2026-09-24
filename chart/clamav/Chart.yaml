@@ -1,0 +1,8 @@
+apiVersion: v2
+name: clamav
+description: ClamAV daemon (clamd) used to scan uploaded files
+
+type: application
+
+version: 0.1.0
+appVersion: "stable"

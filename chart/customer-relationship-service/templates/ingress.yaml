@@ -1,0 +1,23 @@
+{{- if .Values.customerRelationshipService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.customerRelationshipService.name }}-ingress
+  {{- with .Values.customerRelationshipService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.customerRelationshipService.ingress.className }}
+  rules:
+  - host: {{ .Values.customerRelationshipService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.customerRelationshipService.ingress.path }}
+        pathType: {{ .Values.customerRelationshipService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.customerRelationshipService.service.name }}
+            port:
+              number: 80
+{{- end }}

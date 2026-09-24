@@ -92,6 +92,23 @@ jobs:
     - name: Test
       run: cd notification_service && go test -v ./...
 
+  customer_relationship_service:
+    name: customer_relationship_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Build
+      run: cd customer-relationship-service && go build -v ./...
+
+    - name: Test
+      run: cd customer-relationship-service && go test -v ./...
+
   upload_service:
     name: upload_service
     runs-on: ubuntu-latest

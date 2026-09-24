@@ -267,6 +267,14 @@ dependencies:
     name: referral-service
     version: "0.1.0"
     repository: file://referral-service
+  - alias: customerRelationshipService
+    name: customer-relationship-service
+    version: "0.1.0"
+    repository: file://customer-relationship-service
+  - alias: clamav
+    name: clamav
+    version: "0.1.0"
+    repository: file://clamav
   - alias: bonuslinkService
     name: bonuslink-service
     version: "0.1.0"

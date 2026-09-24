@@ -1,0 +1,136 @@
+customerRelationshipService:
+  name: customer-relationship-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/customer-relationship-service
+    tag: latest
+    # Must match PORT (see customer-relationship-service/config/config.go).
+    port: 8080
+
+  service:
+    name: customer-relationship-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: customer-relationship-service.local
+    path: /
+    pathType: Prefix
+
+  # The service reads plain environment variables. Dev defaults - override the
+  # password with --set or a values-prod.yaml before deploying anywhere real.
+  # The database is created on startup if it does not exist.
+  env:
+    mysqlHost: mysql-svc
+    mysqlPort: "80"
+    mysqlUser: root
+    mysqlPassword: password
+    mysqlDbname: customer_relationship_service
+
+    # When set, every /api/v1 request must send it as the X-API-Key header.
+    # Empty disables the check.
+    apiKey: ""
+
+    # Cron spec (5 fields) of the job that closes contracts past their end
+    # date. "off" disables it. Safe with several replicas: the job is one
+    # idempotent UPDATE.
+    contractExpiryCron: "0 * * * *"
+
+    # Digital signatures on contract renewal. Paste the PEM bundle of the CA
+    # certificates signers must chain to. With none set, every signature is
+    # refused (unless signatureAllowUntrusted, which is for development only).
+    signatureTrustedRootsPEM: ""
+    signatureAllowUntrusted: false
+    # hard: the chain must be confirmed unrevoked over OCSP/CRL; soft: only a
+    # "revoked" answer refuses; off: no check.
+    signatureRevocation: hard
+    signatureHTTPTimeout: 10s
+    # RFC 3161 time-stamp authority. When set, every detached signature is
+    # time-stamped and the renewal fails if the authority does not answer.
+    # signatureTSARootsPEM defaults to signatureTrustedRootsPEM when empty.
+    signatureTSAURL: ""
+    signatureTSARootsPEM: ""
+
+    # Who may call the API. Every /api/v1 request must carry either the API key
+    # (X-API-Key, a service caller with role apiKeyRole) or, when oidcIssuer is
+    # set, a bearer token from that OpenID Connect provider (the keycloak chart).
+    # Roles come from the token: crm-viewer, crm-staff, crm-manager, crm-admin
+    # (prefix rolePrefix, read from rolesClaim). With neither set the API is
+    # open and every caller is an administrator.
+    apiKeyRole: admin
+    oidcIssuer: ""
+    oidcJWKSURL: ""
+    oidcAudience: ""
+    oidcRolesClaim: realm_access.roles
+    rolePrefix: "crm-"
+
+    # Uploaded files are scanned by ClamAV (the "clamav" chart). With
+    # clamavRequired, uploads are refused (502) while the scanner is down; when
+    # false they are accepted and marked as not scanned. Empty address turns
+    # scanning off. pdfPolicy: strict (also refuse PDFs that cannot be
+    # inspected), lenient (refuse only active content found) or off.
+    clamavAddress: clamav-svc:3310
+    clamavRequired: true
+    clamavTimeout: 30s
+    pdfPolicy: strict
+
+    # Largest contract file a user may upload, in MB.
+    contractFileMaxMB: 25
+
+    # Signed contract PDFs are stored in this MinIO bucket (the "minio" chart
+    # creates it; the service also creates it if missing). Empty endpoint keeps
+    # them in the database. Dev defaults are the shared MinIO root credentials
+    # from chart/minio - override them with --set or a values-prod.yaml.
+    minioEndpoint: minio-svc:9000
+    minioBucket: customer-relationship-service
+    minioUseSSL: false
+    minioAccessKey: minioadmin
+    minioSecretKey: minioadmin123
+
+    # Temporal (the "temporal" chart): a durable lifecycle workflow per
+    # contract keeps its expiry timer and reminders. Empty address turns it off.
+    temporalAddress: temporal-service:7233
+    temporalNamespace: default
+    temporalTaskQueue: crm-contract-lifecycle
+    # Days before the end date at which an approved contract triggers a reminder.
+    temporalReminderDays: "30,7,1"
+
+    # "Bên A" on generated contract documents (the party this service runs for).
+    # Empty fields print as dotted blanks.
+    company:
+      name: ""
+      address: ""
+      taxCode: ""
+      phone: ""
+      representative: ""
+      representativeTitle: ""
+      place: ""
+      # Bên A's digital signature: when both are set, every renewal PDF is
+      # countersigned by the service after Bên B signs. signKeyPEM is an
+      # unencrypted PEM private key, signCertPEM the certificate chain (leaf
+      # first). Pass them with --set-file, never commit them.
+      signKeyPEM: ""
+      signCertPEM: ""
+
+    # notification_service API, called when a lead or case is created.
+    # Set to "" to disable.
+    notificationServiceURL: http://notification-service-svc
+    notificationType: slack
+    notificationRecipient: ""
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
