@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.bonuslinkService.name }}-deployment
+spec:
+{{- if not .Values.bonuslinkService.autoscaling.enabled }}
+  replicas: {{ .Values.bonuslinkService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.bonuslinkService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.bonuslinkService.name }}-deployment
+    spec:
+      {{- if .Values.bonuslinkService.migrations.enabled }}
+      initContainers:
+      - name: create-database
+        image: {{ .Values.bonuslinkService.migrations.postgresClientImage }}
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bonuslinkService.name }}-secret
+                key: postgresPassword
+        command:
+          - sh
+          - -c
+          - >-
+            until psql -h {{ .Values.bonuslinkService.env.postgresHost }} -p {{ .Values.bonuslinkService.env.postgresPort }}
+            -U {{ .Values.bonuslinkService.env.postgresUser | quote }} -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = '{{ .Values.bonuslinkService.env.postgresDatabase }}'" | grep -q 1
+            || psql -h {{ .Values.bonuslinkService.env.postgresHost }} -p {{ .Values.bonuslinkService.env.postgresPort }}
+            -U {{ .Values.bonuslinkService.env.postgresUser | quote }} -d postgres -c "CREATE DATABASE {{ .Values.bonuslinkService.env.postgresDatabase }}";
+            do echo "waiting for postgres"; sleep 3; done
+      - name: migrate
+        image: {{ .Values.bonuslinkService.image.name }}:{{ .Values.bonuslinkService.image.tag }}
+        imagePullPolicy: Always
+        env:
+          - name: COM_POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bonuslinkService.name }}-secret
+                key: postgresPassword
+        command:
+          - sh
+          - -c
+          - >-
+            migrate -path /app/migrations
+            -database "postgres://{{ .Values.bonuslinkService.env.postgresUser }}:${COM_POSTGRES_PASSWORD}@{{ .Values.bonuslinkService.env.postgresHost }}:{{ .Values.bonuslinkService.env.postgresPort }}/{{ .Values.bonuslinkService.env.postgresDatabase }}?sslmode={{ .Values.bonuslinkService.env.postgresSSLMode }}"
+            up
+      {{- end }}
+      containers:
+      - name: {{ .Values.bonuslinkService.name }}-deployment
+        image: {{ .Values.bonuslinkService.image.name }}:{{ .Values.bonuslinkService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.bonuslinkService.image.port }}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.bonuslinkService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: APP_ENV
+            value: {{ .Values.bonuslinkService.env.appEnv | quote }}
+          - name: APP_PORT
+            value: "{{ .Values.bonuslinkService.image.port }}"
+          - name: LOG_LEVEL
+            value: {{ .Values.bonuslinkService.env.logLevel | quote }}
+          - name: POSTGRES_HOST
+            value: {{ .Values.bonuslinkService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.bonuslinkService.env.postgresPort | quote }}
+          - name: POSTGRES_DATABASE
+            value: {{ .Values.bonuslinkService.env.postgresDatabase | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.bonuslinkService.env.postgresSSLMode | quote }}
+          - name: COM_POSTGRES_USERNAME
+            value: {{ .Values.bonuslinkService.env.postgresUser | quote }}
+          - name: COM_POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bonuslinkService.name }}-secret
+                key: postgresPassword
+          - name: RABBITMQ_HOST
+            value: {{ .Values.bonuslinkService.env.rabbitmqHost | quote }}
+          - name: RABBITMQ_PORT
+            value: {{ .Values.bonuslinkService.env.rabbitmqPort | quote }}
+          - name: RABBITMQ_EXCHANGE
+            value: {{ .Values.bonuslinkService.env.rabbitmqExchange | quote }}
+          - name: RABBITMQ_QUEUE
+            value: {{ .Values.bonuslinkService.env.rabbitmqQueue | quote }}
+          - name: RABBITMQ_ROUTING_KEY
+            value: {{ .Values.bonuslinkService.env.rabbitmqRoutingKey | quote }}
+          - name: COM_RABBITMQ_USERNAME
+            value: {{ .Values.bonuslinkService.env.rabbitmqUser | quote }}
+          - name: COM_RABBITMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.bonuslinkService.name }}-secret
+                key: rabbitmqPassword
+        resources:
+          {{- toYaml .Values.bonuslinkService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.bonuslinkService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.bonuslinkService.env.postgresPassword | quote }}
+  rabbitmqPassword: {{ .Values.bonuslinkService.env.rabbitmqPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.bonuslinkService.service.name }}
+spec:
+  type: {{ .Values.bonuslinkService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.bonuslinkService.image.port }}
+  selector:
+    app: {{ .Values.bonuslinkService.name }}-deployment

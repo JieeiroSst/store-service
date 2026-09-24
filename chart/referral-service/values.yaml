@@ -48,6 +48,15 @@ referralService:
     redisUsername: ""
     redisPassword: ""
 
+  # Reward events go to this exchange; bonuslink-service consumes them.
+  rabbitmq:
+    host: rabbitmq-service
+    port: "5672"
+    user: admin
+    password: admin
+    exchange: referral.events
+    routingKey: referral.reward.granted
+
   # Before the server starts: create the database if missing, then apply
   # migrations/ with golang-migrate (which locks, so replicas starting together
   # cannot apply them twice).

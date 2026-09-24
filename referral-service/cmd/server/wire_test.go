@@ -1,6 +1,8 @@
 package main
 
 import (
+	"testing"
+
 	"go.uber.org/fx"
 
 	"github.com/referral/service/internal/adapters/primary/http"
@@ -12,21 +14,9 @@ import (
 	"github.com/referral/service/pkg/logger"
 )
 
-func newLoggerConfig(cfg *config.Config) *logger.Config {
-	return &logger.Config{
-		AppEnv:     cfg.App.Env,
-		AppName:    cfg.App.Name,
-		AppVersion: cfg.App.Version,
-		Level:      cfg.Logger.Level,
-		FilePath:   cfg.Logger.FilePath,
-		MaxSizeMB:  cfg.Logger.MaxSizeMB,
-		MaxBackups: cfg.Logger.MaxBackups,
-		MaxAgeDays: cfg.Logger.MaxAgeDays,
-	}
-}
-
-func main() {
-	app := fx.New(
+// TestDependencyGraph fails if any constructor's dependencies are unsatisfied.
+func TestDependencyGraph(t *testing.T) {
+	if err := fx.ValidateApp(
 		config.Module,
 		fx.Provide(newLoggerConfig),
 		logger.Module,
@@ -37,7 +27,7 @@ func main() {
 		services.RelayModule,
 		http.Module,
 		http.ServerModule,
-	)
-
-	app.Run()
+	); err != nil {
+		t.Fatal(err)
+	}
 }

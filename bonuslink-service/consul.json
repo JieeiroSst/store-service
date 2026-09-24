@@ -1,0 +1,28 @@
+{
+  "app": {
+    "env": "production",
+    "log_level": "info"
+  },
+  "http": {
+    "port": 8080
+  },
+  "postgres": {
+    "host": "postgresdb",
+    "port": 80,
+    "user": "testUser",
+    "password": "testPassword",
+    "dbname": "bonuslink_service",
+    "sslmode": "disable"
+  },
+  "rabbitmq": {
+    "enabled": true,
+    "host": "rabbitmq-service",
+    "port": 5672,
+    "user": "admin",
+    "password": "admin",
+    "exchange": "referral.events",
+    "queue": "bonuslink.reward",
+    "routing_key": "referral.reward.granted",
+    "prefetch": 10
+  }
+}

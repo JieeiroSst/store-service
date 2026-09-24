@@ -112,6 +112,8 @@ type RewardRepository interface {
 	Save(ctx context.Context, reward *domain.ReferralReward) error
 	FindByOwnerUserID(ctx context.Context, ownerUserID string) ([]*domain.ReferralReward, error)
 	FindByOwnerAndRefCode(ctx context.Context, ownerUserID, refCode string) (*domain.ReferralReward, error)
+	FindUnpublished(ctx context.Context, olderThanMs int64, limit int) ([]*domain.ReferralReward, error)
+	MarkPublished(ctx context.Context, ownerUserID, refCode string, publishedAtMs int64) error
 }
 
 type UserStatsRepository interface {
@@ -142,4 +144,16 @@ type CreateRewardProgramRequest struct {
 	Name     string
 	Tiers    []RewardTierInput
 	Activate bool
+}
+
+type RewardGrantedEvent struct {
+	EventID     string  `json:"event_id"`
+	UserID      string  `json:"user_id"`
+	RefCode     string  `json:"ref_code"`
+	RewardType  string  `json:"reward_type"`
+	RewardValue float64 `json:"reward_value"`
+}
+
+type RewardPublisher interface {
+	PublishRewardGranted(ctx context.Context, ev RewardGrantedEvent) error
 }

@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strconv"
 	"time"
@@ -21,6 +22,7 @@ type Config struct {
 	Referral ReferralConfig
 	Logger   LoggerConfig
 	Redis    RedisConfig
+	RabbitMQ RabbitMQConfig
 }
 
 type AppConfig struct {
@@ -50,6 +52,28 @@ type DeepLinkConfig struct {
 type ReferralConfig struct {
 	TTLDays   int
 	MaxPerDay int
+}
+
+type RabbitMQConfig struct {
+	Enabled    bool
+	Host       string
+	Port       string
+	User       string
+	Password   string
+	VHost      string
+	Exchange   string
+	RoutingKey string
+}
+
+// URL builds the AMQP connection string.
+func (c RabbitMQConfig) URL() string {
+	u := url.URL{
+		Scheme: "amqp",
+		User:   url.UserPassword(c.User, c.Password),
+		Host:   c.Host + ":" + c.Port,
+		Path:   "/" + c.VHost,
+	}
+	return u.String()
 }
 
 type LoggerConfig struct {
@@ -148,6 +172,16 @@ func Load() (*Config, error) {
 			MinConnection: getEnvAsInt("COM_REDIS_MIN_CONNECTION", 1),
 			Timeout:       getEnvAsDuration("COM_REDIS_TIMEOUT", 10*time.Second),
 			TLS:           getEnv("COM_REDIS_TLS_ENABLED", "false"),
+		},
+		RabbitMQ: RabbitMQConfig{
+			Enabled:    getEnv("RABBITMQ_ENABLED", "true") == "true",
+			Host:       getEnv("RABBITMQ_HOST", "localhost"),
+			Port:       getEnv("RABBITMQ_PORT", "5672"),
+			User:       getEnv("COM_RABBITMQ_USERNAME", "guest"),
+			Password:   getEnv("COM_RABBITMQ_PASSWORD", "guest"),
+			VHost:      getEnv("RABBITMQ_VHOST", ""),
+			Exchange:   getEnv("RABBITMQ_EXCHANGE", "referral.events"),
+			RoutingKey: getEnv("RABBITMQ_ROUTING_KEY", "referral.reward.granted"),
 		},
 	}
 
