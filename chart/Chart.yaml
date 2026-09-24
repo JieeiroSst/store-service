@@ -299,3 +299,11 @@ dependencies:
     name: room-web
     version: "0.1.0"
     repository: file://room-web
+  - alias: hospitalPatientManagementService
+    name: hospital-patient-management-service
+    version: "0.1.0"
+    repository: file://hospital-patient-management-service
+  - alias: uploadService
+    name: upload-service
+    version: "0.1.0"
+    repository: file://upload-service

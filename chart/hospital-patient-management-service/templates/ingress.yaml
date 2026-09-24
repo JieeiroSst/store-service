@@ -1,0 +1,23 @@
+{{- if .Values.hospitalPatientManagementService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.hospitalPatientManagementService.name }}-ingress
+  {{- with .Values.hospitalPatientManagementService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.hospitalPatientManagementService.ingress.className }}
+  rules:
+  - host: {{ .Values.hospitalPatientManagementService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.hospitalPatientManagementService.ingress.path }}
+        pathType: {{ .Values.hospitalPatientManagementService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.hospitalPatientManagementService.service.name }}
+            port:
+              number: 80
+{{- end }}

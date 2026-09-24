@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.hospitalPatientManagementService.name }}-deployment
+spec:
+{{- if not .Values.hospitalPatientManagementService.autoscaling.enabled }}
+  replicas: {{ .Values.hospitalPatientManagementService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.hospitalPatientManagementService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.hospitalPatientManagementService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.hospitalPatientManagementService.name }}-deployment
+        image: {{ .Values.hospitalPatientManagementService.image.name }}:{{ .Values.hospitalPatientManagementService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.hospitalPatientManagementService.image.port }}
+        - name: grpc
+          containerPort: {{ .Values.hospitalPatientManagementService.image.grpcPort }}
+        # /health pings the database, so a replica only receives traffic once
+        # it can actually serve requests.
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.hospitalPatientManagementService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: PORT
+            value: "{{ .Values.hospitalPatientManagementService.image.port }}"
+          - name: GRPC_PORT
+            value: "{{ .Values.hospitalPatientManagementService.image.grpcPort }}"
+          - name: POSTGRES_HOST
+            value: {{ .Values.hospitalPatientManagementService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.hospitalPatientManagementService.env.postgresPort | quote }}
+          - name: POSTGRES_DATABASE
+            value: {{ .Values.hospitalPatientManagementService.env.postgresDatabase | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.hospitalPatientManagementService.env.postgresSSLMode | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.hospitalPatientManagementService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.hospitalPatientManagementService.name }}-secret
+                key: postgresPassword
+          - name: AUTH_MODE
+            value: {{ .Values.hospitalPatientManagementService.env.authMode | quote }}
+          - name: USER_SERVICE_BASE_URL
+            value: {{ .Values.hospitalPatientManagementService.env.userServiceBaseURL | quote }}
+          - name: BILLING_BASE_URL
+            value: {{ .Values.hospitalPatientManagementService.env.billingBaseURL | quote }}
+          - name: BILLING_PLAN_NAME
+            value: {{ .Values.hospitalPatientManagementService.env.billingPlanName | quote }}
+          {{- /* The wallet client refuses to start half-configured, so both or neither. */}}
+          {{- if .Values.hospitalPatientManagementService.env.walletHospitalID }}
+          - name: WALLET_BASE_URL
+            value: {{ .Values.hospitalPatientManagementService.env.walletBaseURL | quote }}
+          - name: WALLET_HOSPITAL_ID
+            value: {{ .Values.hospitalPatientManagementService.env.walletHospitalID | quote }}
+          {{- end }}
+          - name: WALLET_MINOR_UNIT
+            value: {{ .Values.hospitalPatientManagementService.env.walletMinorUnit | quote }}
+          - name: WALLET_USER_PREFIX
+            value: {{ .Values.hospitalPatientManagementService.env.walletUserPrefix | quote }}
+          - name: NOTIFICATION_BASE_URL
+            value: {{ .Values.hospitalPatientManagementService.env.notificationBaseURL | quote }}
+          - name: EKYC_BASE_URL
+            value: {{ .Values.hospitalPatientManagementService.env.ekycBaseURL | quote }}
+          - name: UPLOAD_BASE_URL
+            value: {{ .Values.hospitalPatientManagementService.env.uploadBaseURL | quote }}
+          - name: AUTH_CACHE_TTL
+            value: {{ .Values.hospitalPatientManagementService.env.authCacheTTL | quote }}
+        resources:
+          {{- toYaml .Values.hospitalPatientManagementService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.hospitalPatientManagementService.name }}-secret
+type: Opaque
+stringData:
+  # Dev default from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.hospitalPatientManagementService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.hospitalPatientManagementService.service.name }}
+spec:
+  type: {{ .Values.hospitalPatientManagementService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.hospitalPatientManagementService.image.port }}
+  - name: grpc
+    port: {{ .Values.hospitalPatientManagementService.image.grpcPort }}
+    targetPort: {{ .Values.hospitalPatientManagementService.image.grpcPort }}
+  selector:
+    app: {{ .Values.hospitalPatientManagementService.name }}-deployment

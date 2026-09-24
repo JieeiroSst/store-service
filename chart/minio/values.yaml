@@ -23,6 +23,7 @@ minio:
     - ekyc-service
     - video-service
     - customer-relationship-service
+    - upload-service
 
   storage:
     size: 5Gi

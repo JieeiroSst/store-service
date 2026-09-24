@@ -118,7 +118,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.18
+        go-version: "1.26"
 
     - name: Build
       run: cd upload_service && go build -v ./...
@@ -691,3 +691,20 @@ jobs:
     # The mysql adapter's test needs a live MySQL and skips itself without one.
     - name: Test
       run: cd room-service/BE && go test -v ./...
+
+  hospital_patient_management_service:
+    name: hospital_patient_management_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Build
+      run: cd hospital-patient-management-service && go build -v ./...
+
+    - name: Test
+      run: cd hospital-patient-management-service && go test -v ./...

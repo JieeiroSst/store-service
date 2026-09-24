@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.uploadService.name }}-deployment
+spec:
+{{- if not .Values.uploadService.autoscaling.enabled }}
+  replicas: {{ .Values.uploadService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.uploadService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.uploadService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.uploadService.name }}-deployment
+        image: {{ .Values.uploadService.image.name }}:{{ .Values.uploadService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.uploadService.image.port }}
+        # /health pings Mongo, so a replica only receives traffic once it can serve.
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.uploadService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: PORT
+            value: "{{ .Values.uploadService.image.port }}"
+          - name: MONGO_URI
+            value: {{ .Values.uploadService.env.mongoURI | quote }}
+          - name: MONGO_DATABASE
+            value: {{ .Values.uploadService.env.mongoDatabase | quote }}
+          - name: MINIO_ENDPOINT
+            value: {{ .Values.uploadService.env.minioEndpoint | quote }}
+          - name: MINIO_BUCKET
+            value: {{ .Values.uploadService.env.minioBucket | quote }}
+          - name: MINIO_USE_SSL
+            value: {{ .Values.uploadService.env.minioUseSSL | quote }}
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.uploadService.name }}-secret
+                key: minioAccessKey
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.uploadService.name }}-secret
+                key: minioSecretKey
+          - name: AUTH_MODE
+            value: {{ .Values.uploadService.env.authMode | quote }}
+          - name: USER_SERVICE_BASE_URL
+            value: {{ .Values.uploadService.env.userServiceBaseURL | quote }}
+          - name: AUTH_CACHE_TTL
+            value: {{ .Values.uploadService.env.authCacheTTL | quote }}
+          - name: UPLOAD_MAX_MB
+            value: {{ .Values.uploadService.env.maxUploadMB | quote }}
+          - name: UPLOAD_ALLOWED_TYPES
+            value: {{ .Values.uploadService.env.allowedTypes | quote }}
+          - name: CORS_ALLOW_ORIGINS
+            value: {{ .Values.uploadService.env.corsAllowOrigins | quote }}
+        resources:
+          {{- toYaml .Values.uploadService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.uploadService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  minioAccessKey: {{ .Values.uploadService.env.minioAccessKey | quote }}
+  minioSecretKey: {{ .Values.uploadService.env.minioSecretKey | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.uploadService.service.name }}
+spec:
+  type: {{ .Values.uploadService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.uploadService.image.port }}
+  selector:
+    app: {{ .Values.uploadService.name }}-deployment
