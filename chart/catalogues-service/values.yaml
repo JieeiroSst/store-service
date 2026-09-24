@@ -1,0 +1,49 @@
+cataloguesService:
+  name: catalogues-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/catalogues-service
+    tag: latest
+    # REST API and /health. Must match PORT
+    # (see catalogues-service/config/config.go).
+    port: 8080
+
+  service:
+    name: catalogues-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: catalogues-service.local
+    path: /
+    pathType: Prefix
+
+  # The service reads plain environment variables. Dev defaults - override the
+  # password with --set or a values-prod.yaml before deploying anywhere real.
+  # The database is created and the schema migrated on startup; concurrent
+  # replicas are serialized with a Postgres advisory lock.
+  env:
+    # Points at the umbrella chart's postgres (admin credentials from chart/postgres).
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresDatabase: catalogues_service
+    postgresUser: testUser
+    postgresPassword: testPassword
+    postgresSSLMode: disable
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

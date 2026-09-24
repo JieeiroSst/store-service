@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.cataloguesService.name }}-deployment
+spec:
+{{- if not .Values.cataloguesService.autoscaling.enabled }}
+  replicas: {{ .Values.cataloguesService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.cataloguesService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.cataloguesService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.cataloguesService.name }}-deployment
+        image: {{ .Values.cataloguesService.image.name }}:{{ .Values.cataloguesService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.cataloguesService.image.port }}
+        # /health pings the database, so a replica only receives traffic once
+        # it can actually serve requests.
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.cataloguesService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: PORT
+            value: "{{ .Values.cataloguesService.image.port }}"
+          - name: POSTGRES_HOST
+            value: {{ .Values.cataloguesService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.cataloguesService.env.postgresPort | quote }}
+          - name: POSTGRES_DATABASE
+            value: {{ .Values.cataloguesService.env.postgresDatabase | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.cataloguesService.env.postgresSSLMode | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.cataloguesService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.cataloguesService.name }}-secret
+                key: postgresPassword
+        resources:
+          {{- toYaml .Values.cataloguesService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.cataloguesService.name }}-secret
+type: Opaque
+stringData:
+  # Dev default from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.cataloguesService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.cataloguesService.service.name }}
+spec:
+  type: {{ .Values.cataloguesService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.cataloguesService.image.port }}
+  selector:
+    app: {{ .Values.cataloguesService.name }}-deployment
