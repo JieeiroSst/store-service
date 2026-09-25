@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.rentHouseService.name }}-deployment
+spec:
+{{- if not .Values.rentHouseService.autoscaling.enabled }}
+  replicas: {{ .Values.rentHouseService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.rentHouseService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.rentHouseService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.rentHouseService.name }}-deployment
+        image: {{ .Values.rentHouseService.image.name }}:{{ .Values.rentHouseService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.rentHouseService.image.port }}
+        # /readyz pings Postgres, /healthz only proves the process is up.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.rentHouseService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.rentHouseService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 20
+        env:
+          - name: PORT
+            value: "{{ .Values.rentHouseService.image.port }}"
+          - name: HostPostgres
+            value: {{ .Values.rentHouseService.env.postgresHost | quote }}
+          - name: PortPostgres
+            value: {{ .Values.rentHouseService.env.postgresPort | quote }}
+          - name: DatabasePostgres
+            value: {{ .Values.rentHouseService.env.postgresDatabase | quote }}
+          - name: UserPostgres
+            value: {{ .Values.rentHouseService.env.postgresUser | quote }}
+          - name: PasswordPostgres
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.rentHouseService.name }}-secret
+                key: postgresPassword
+          - name: UserServiceURL
+            value: {{ .Values.rentHouseService.env.userServiceURL | quote }}
+          - name: UserServiceValidatePath
+            value: {{ .Values.rentHouseService.env.userServiceValidatePath | quote }}
+          - name: UserServiceUserPath
+            value: {{ .Values.rentHouseService.env.userServiceUserPath | quote }}
+          - name: AdminRole
+            value: {{ .Values.rentHouseService.env.adminRole | quote }}
+          - name: AuthCacheTTLSeconds
+            value: {{ .Values.rentHouseService.env.authCacheTTLSeconds | quote }}
+          {{- if .Values.rentHouseService.env.walletServiceURL }}
+          - name: WalletServiceURL
+            value: {{ .Values.rentHouseService.env.walletServiceURL | quote }}
+          {{- end }}
+          {{- if .Values.rentHouseService.env.paymentServiceURL }}
+          - name: PaymentServiceURL
+            value: {{ .Values.rentHouseService.env.paymentServiceURL | quote }}
+          {{- end }}
+          {{- if .Values.rentHouseService.env.recompenseServiceURL }}
+          - name: RecompenseServiceURL
+            value: {{ .Values.rentHouseService.env.recompenseServiceURL | quote }}
+          {{- end }}
+          - name: PaymentServiceTimeoutSeconds
+            value: {{ .Values.rentHouseService.env.paymentServiceTimeoutSeconds | quote }}
+          - name: BookingHoldMinutes
+            value: {{ .Values.rentHouseService.env.bookingHoldMinutes | quote }}
+        resources:
+          {{- toYaml .Values.rentHouseService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.rentHouseService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.rentHouseService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.rentHouseService.service.name }}
+spec:
+  type: {{ .Values.rentHouseService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.rentHouseService.image.port }}
+  selector:
+    app: {{ .Values.rentHouseService.name }}-deployment

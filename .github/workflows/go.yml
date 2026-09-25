@@ -768,3 +768,23 @@ jobs:
 
     - name: Test
       run: cd movie-recommendation-service && go test -v ./...
+
+  rent_house_service:
+    name: rent_house_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Build
+      run: cd rent_house_service && go build -v ./...
+
+    - name: Vet
+      run: cd rent_house_service && go vet ./...
+
+    - name: Test
+      run: cd rent_house_service && go test -v ./...
