@@ -1,0 +1,20 @@
+{{- if .Values.rentHouseService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.rentHouseService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.rentHouseService.name }}-deployment
+  minReplicas: {{ .Values.rentHouseService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.rentHouseService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.rentHouseService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
