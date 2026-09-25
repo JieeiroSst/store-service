@@ -1,0 +1,49 @@
+recompenseService:
+  name: recompense-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/recompense-service
+    tag: latest
+    # Must match PORT (see recompense-service/config/index.ts).
+    port: 3000
+
+  service:
+    name: recompense-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: recompense-service.local
+    path: /api/recompenses
+    pathType: Prefix
+
+  # Dev defaults - override the password with --set or a values-prod.yaml
+  # before deploying anywhere real. The database and schema are created on
+  # startup; concurrent replicas are serialized with a Postgres advisory lock.
+  env:
+    # Points at the umbrella chart's postgres / redis.
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresDatabase: recompense_service
+    postgresUser: testUser
+    postgresPassword: testPassword
+    # Empty disables the read cache.
+    redisHost: redis://redis-svc:80
+    cacheTTLSeconds: "60"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

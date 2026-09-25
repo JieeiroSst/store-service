@@ -319,3 +319,7 @@ dependencies:
     name: movie-recommendation-service
     version: "0.1.0"
     repository: file://movie-recommendation-service
+  - alias: recompenseService
+    name: recompense-service
+    version: "0.1.0"
+    repository: file://recompense-service
