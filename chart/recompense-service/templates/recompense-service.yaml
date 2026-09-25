@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.recompenseService.name }}-deployment
+spec:
+{{- if not .Values.recompenseService.autoscaling.enabled }}
+  replicas: {{ .Values.recompenseService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.recompenseService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.recompenseService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.recompenseService.name }}-deployment
+        image: {{ .Values.recompenseService.image.name }}:{{ .Values.recompenseService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.recompenseService.image.port }}
+        # /readyz pings Postgres, /healthz only proves the process is up.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.recompenseService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.recompenseService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 20
+        env:
+          - name: PORT
+            value: "{{ .Values.recompenseService.image.port }}"
+          - name: HostPostgres
+            value: {{ .Values.recompenseService.env.postgresHost | quote }}
+          - name: PortPostgres
+            value: {{ .Values.recompenseService.env.postgresPort | quote }}
+          - name: DatabasePostgres
+            value: {{ .Values.recompenseService.env.postgresDatabase | quote }}
+          - name: UserPostgres
+            value: {{ .Values.recompenseService.env.postgresUser | quote }}
+          - name: PasswordPostgres
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.recompenseService.name }}-secret
+                key: postgresPassword
+          {{- if .Values.recompenseService.env.redisHost }}
+          - name: RedisHost
+            value: {{ .Values.recompenseService.env.redisHost | quote }}
+          {{- end }}
+          - name: CacheTTLSeconds
+            value: {{ .Values.recompenseService.env.cacheTTLSeconds | quote }}
+        resources:
+          {{- toYaml .Values.recompenseService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.recompenseService.name }}-secret
+type: Opaque
+stringData:
+  # Dev default from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.recompenseService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.recompenseService.service.name }}
+spec:
+  type: {{ .Values.recompenseService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.recompenseService.image.port }}
+  selector:
+    app: {{ .Values.recompenseService.name }}-deployment

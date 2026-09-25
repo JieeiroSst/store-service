@@ -45,3 +45,14 @@ jobs:
       - run: cd keikibook && npm install
       # - run: cd keikibook && npm run build --if-present
 
+
+  recompense_service:
+    name: recompense_service
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: cd recompense-service && bun install
+      - run: cd recompense-service && bunx tsc --noEmit
+      - run: cd recompense-service && bun test
