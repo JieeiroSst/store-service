@@ -315,3 +315,7 @@ dependencies:
     name: catalogues-service
     version: "0.1.0"
     repository: file://catalogues-service
+  - alias: movieRecommendationService
+    name: movie-recommendation-service
+    version: "0.1.0"
+    repository: file://movie-recommendation-service

@@ -1,0 +1,71 @@
+movieRecommendationService:
+  name: movie-recommendation-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/movie-recommendation-service
+    tag: latest
+    # Must match PORT_HTTP_SERVER (see movie-recommendation-service/config/config.go).
+    port: 8080
+
+  service:
+    name: movie-recommendation-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: movie-recommendation-service.local
+    path: /api/recommendations
+    pathType: Prefix
+
+  # Dev defaults - override the password with --set or a values-prod.yaml
+  # before deploying anywhere real. The database is created and the schema
+  # migrated on startup; concurrent replicas are serialized with a Postgres
+  # advisory lock. Each replica keeps its own in-memory model, so scaling out
+  # needs no coordination.
+  env:
+    allowedOrigins: "*"
+    # Points at the umbrella chart's postgres (admin credentials from chart/postgres).
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresDatabase: movie_recommendation_service
+    postgresUser: testUser
+    postgresPassword: testPassword
+    postgresSSLMode: disable
+
+    # Catalog source: the videos to recommend are mirrored from video-service.
+    # Empty disables the sync (register videos with PUT /api/recommendations/videos/:id).
+    videoServiceBaseURL: http://video-service-svc
+    syncIntervalSeconds: "300"
+    # Interactions arrive continuously; retrain this often between syncs.
+    trainIntervalSeconds: "60"
+    trainWindowDays: "90"
+    # How fast an interaction stops counting toward "trending".
+    trendingHalfLifeHours: "168"
+    # How fast a new video's "fresh" bonus fades (cold start for new uploads).
+    newHalfLifeDays: "14"
+    # Penalty for near-duplicates within a feed; "0" disables re-ordering.
+    diversity: "0.25"
+    # How long a client can keep paging one ranking (?snapshot= token). The
+    # ranking is stored in Postgres, so any replica can serve the next page.
+    snapshotTTLMinutes: "15"
+    # Where those snapshots live. Empty = Postgres (one row per multi-page
+    # feed load). Set to the umbrella chart's redis (e.g. redis-svc:80) for
+    # high feed traffic: keys expire natively, nothing is written to Postgres.
+    redisAddr: ""
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

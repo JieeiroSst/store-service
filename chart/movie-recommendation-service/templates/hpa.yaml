@@ -1,0 +1,20 @@
+{{- if .Values.movieRecommendationService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.movieRecommendationService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.movieRecommendationService.name }}-deployment
+  minReplicas: {{ .Values.movieRecommendationService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.movieRecommendationService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.movieRecommendationService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
