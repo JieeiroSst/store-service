@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.movieRecommendationService.name }}-deployment
+spec:
+{{- if not .Values.movieRecommendationService.autoscaling.enabled }}
+  replicas: {{ .Values.movieRecommendationService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.movieRecommendationService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.movieRecommendationService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.movieRecommendationService.name }}-deployment
+        image: {{ .Values.movieRecommendationService.image.name }}:{{ .Values.movieRecommendationService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: {{ .Values.movieRecommendationService.image.port }}
+        # /readyz pings Postgres, /healthz only proves the process is up.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.movieRecommendationService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.movieRecommendationService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 20
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.movieRecommendationService.image.port }}"
+          - name: ALLOWED_ORIGINS
+            value: {{ .Values.movieRecommendationService.env.allowedOrigins | quote }}
+          - name: POSTGRES_HOST
+            value: {{ .Values.movieRecommendationService.env.postgresHost | quote }}
+          - name: POSTGRES_PORT
+            value: {{ .Values.movieRecommendationService.env.postgresPort | quote }}
+          - name: POSTGRES_DATABASE
+            value: {{ .Values.movieRecommendationService.env.postgresDatabase | quote }}
+          - name: POSTGRES_SSLMODE
+            value: {{ .Values.movieRecommendationService.env.postgresSSLMode | quote }}
+          - name: POSTGRES_USER
+            value: {{ .Values.movieRecommendationService.env.postgresUser | quote }}
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.movieRecommendationService.name }}-secret
+                key: postgresPassword
+          - name: VIDEO_SERVICE_BASE_URL
+            value: {{ .Values.movieRecommendationService.env.videoServiceBaseURL | quote }}
+          - name: SYNC_INTERVAL_SECONDS
+            value: {{ .Values.movieRecommendationService.env.syncIntervalSeconds | quote }}
+          - name: TRAIN_INTERVAL_SECONDS
+            value: {{ .Values.movieRecommendationService.env.trainIntervalSeconds | quote }}
+          - name: TRAIN_WINDOW_DAYS
+            value: {{ .Values.movieRecommendationService.env.trainWindowDays | quote }}
+          {{- if .Values.movieRecommendationService.env.redisAddr }}
+          - name: REDIS_ADDR
+            value: {{ .Values.movieRecommendationService.env.redisAddr | quote }}
+          {{- end }}
+          - name: NEW_HALF_LIFE_DAYS
+            value: {{ .Values.movieRecommendationService.env.newHalfLifeDays | quote }}
+          - name: DIVERSITY
+            value: {{ .Values.movieRecommendationService.env.diversity | quote }}
+          - name: SNAPSHOT_TTL_MINUTES
+            value: {{ .Values.movieRecommendationService.env.snapshotTTLMinutes | quote }}
+          - name: TRENDING_HALF_LIFE_HOURS
+            value: {{ .Values.movieRecommendationService.env.trendingHalfLifeHours | quote }}
+        resources:
+          {{- toYaml .Values.movieRecommendationService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.movieRecommendationService.name }}-secret
+type: Opaque
+stringData:
+  # Dev default from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.movieRecommendationService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.movieRecommendationService.service.name }}
+spec:
+  type: {{ .Values.movieRecommendationService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.movieRecommendationService.image.port }}
+  selector:
+    app: {{ .Values.movieRecommendationService.name }}-deployment
