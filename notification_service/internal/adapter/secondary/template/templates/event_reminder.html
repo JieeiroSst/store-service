@@ -1,0 +1,12 @@
+{{define "subject"}}Nhắc lịch: {{.EventTitle}} sắp diễn ra{{end}}
+{{define "html"}}
+<!DOCTYPE html>
+<html>
+  <body style="font-family: sans-serif; color: #1a1a1a;">
+    <h2>Xin chào {{.Name}},</h2>
+    <p><strong>{{.EventTitle}}</strong> bắt đầu lúc {{.EventDate}} tại {{.Venue}}.</p>
+    <p>Hãy chuẩn bị sẵn mã QR của bạn trong mục "Vé của tôi".</p>
+    <p style="color:#666;font-size:12px">Email tự động, vui lòng không trả lời.</p>
+  </body>
+</html>
+{{end}}

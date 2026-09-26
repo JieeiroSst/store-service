@@ -331,3 +331,7 @@ dependencies:
     name: reservation-service
     version: "0.1.0"
     repository: file://reservation-service
+  - alias: ticketService
+    name: ticket-service
+    version: "0.1.0"
+    repository: file://ticket-service

@@ -1,0 +1,20 @@
+{{- if .Values.ticketService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.ticketService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.ticketService.name }}-deployment
+  minReplicas: {{ .Values.ticketService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.ticketService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.ticketService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}

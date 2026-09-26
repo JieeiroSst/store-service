@@ -2,6 +2,7 @@ package http
 
 import (
 	"crypto/sha256"
+	"crypto/subtle"
 	"errors"
 	"net/http"
 	"strings"
@@ -16,8 +17,10 @@ import (
 )
 
 const (
-	cacheMaxSize = 10_000
-	userIDKey    = "user_id"
+	cacheMaxSize  = 10_000
+	userIDKey     = "user_id"
+	serviceKey    = "service"
+	serviceHeader = "X-Service-Key"
 )
 
 type entry struct {
@@ -27,6 +30,7 @@ type entry struct {
 
 type Authenticator struct {
 	enabled   bool
+	svcKey    string
 	validator port.TokenValidator
 	ttl       time.Duration
 	now       func() time.Time
@@ -37,13 +41,22 @@ type Authenticator struct {
 
 func NewAuthenticator(cfg *config.Config, v port.TokenValidator) *Authenticator {
 	return &Authenticator{
-		enabled: cfg.Auth.Mode == config.AuthToken, validator: v, ttl: cfg.Auth.CacheTTL,
+		enabled: cfg.Auth.Mode == config.AuthToken, svcKey: cfg.Auth.ServiceKey, validator: v, ttl: cfg.Auth.CacheTTL,
 		now: time.Now, cache: map[[32]byte]entry{},
 	}
 }
 
 func (a *Authenticator) Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if k := c.GetHeader(serviceHeader); k != "" {
+			if a.svcKey == "" || subtle.ConstantTimeCompare([]byte(k), []byte(a.svcKey)) != 1 {
+				a.reject(c, model.ErrUnauthenticated)
+				return
+			}
+			c.Set(serviceKey, true)
+			c.Next()
+			return
+		}
 		if !a.enabled {
 			c.Next()
 			return
@@ -99,4 +112,10 @@ func (a *Authenticator) store(key [32]byte, id string) {
 		clear(a.cache)
 	}
 	a.cache[key] = entry{userID: id, expiry: a.now().Add(a.ttl)}
+}
+
+func isService(c *gin.Context) bool {
+	v, _ := c.Get(serviceKey)
+	ok, _ := v.(bool)
+	return ok
 }

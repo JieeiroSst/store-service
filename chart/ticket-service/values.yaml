@@ -1,0 +1,129 @@
+ticketService:
+  name: ticket-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/ticket-service
+    tag: latest
+    # Always keeps `latest` fresh; use IfNotPresent or Never for an image built locally.
+    pullPolicy: Always
+    # Must match PORT.
+    port: 8080
+
+  service:
+    name: ticket-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: ticket-service.local
+    path: /api/v1
+    pathType: Prefix
+
+  # Dev defaults - override the secrets with --set or a values-prod.yaml
+  # before deploying anywhere real. The schema is applied on startup;
+  # concurrent replicas are serialized with a Postgres advisory lock.
+  env:
+    # Points at the umbrella chart's postgres.
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresDatabase: ticket_service
+    postgresUser: testUser
+    postgresPassword: testPassword
+    # user-service owns accounts, login, sessions and roles. Callers send its
+    # access token as a Bearer token; this service validates it there.
+    userServiceURL: http://user-api-svc:80
+    userServiceValidatePath: /api/v1/validate
+    userServiceUserPath: /user
+    # Users holding this role in user-service are admins (they approve events).
+    adminRole: admin
+    # Seconds a validated token is cached (0 disables). Logout / role changes
+    # in user-service take up to this long to be noticed.
+    authCacheTTLSeconds: "30"
+
+    # payment-wallet-service: internal e-wallets. Leave the URL empty to disable wallet
+    # payment. Each event names the wallet that receives its sales (wallet_id on the event,
+    # set by its organizer through the API), so nothing else is configured here.
+    walletServiceURL: http://payment-wallet-service-svc:80
+    # payment_service: external providers (paypal, stripe, ...). Empty disables gateway payment.
+    # At least one of the two must be set.
+    paymentServiceURL: http://payment-service-svc:80
+    paymentServiceTimeoutSeconds: "15"
+    # notification-service: delivers notifications to people's devices. Notifications are always kept in
+    # each user's inbox (GET /notifications); this only forwards them. Empty disables forwarding.
+    notificationServiceURL: http://notification-service-svc:80
+    # Key that other services of the cluster send (X-Internal-Key) to call /internal/v1: look tickets up by code, scan,
+    # revoke, invite (give free tickets), read orders and reports. Empty turns the internal API off. It is kept in the
+    # Secret <name>-secret under the key internalApiKey; a service that calls ticket-service reads it from there
+    # (secretKeyRef) and uses the Go client in ticket-service/pkg/ticketclient. Never expose /internal through an ingress
+    # (the ingress below only routes /api/v1). Dev default - override it.
+    internalApiKey: dev-internal-key
+    # Hours an offer of a ticket waits for an answer, and how many times one ticket may change hands (0 = unlimited).
+    transferTTLHours: "48"
+    maxTicketTransfers: "3"
+    # Resale market: the platform's percent of a resale price and the wallet (in payment-wallet-service) it is paid to.
+    # With no wallet there is no fee. Organizers turn resale on per event (resale_cap_percent) and set its price ceiling.
+    resaleFeePercent: "10"
+    platformWalletId: ""
+    # Invoices are issued in this name; prices include this VAT rate (0 shows no VAT line).
+    invoiceSellerName: "Ticket Service"
+    invoiceSellerTaxId: ""
+    invoiceSellerAddress: ""
+    vatPercent: "0"
+    # Zone in which dates are written in notifications and e-mails. E-mails are sent through notification-service
+    # (notificationServiceURL above): it needs the ticket_* and event_* templates that ship with it.
+    timeZone: Asia/Ho_Chi_Minh
+    # upload-service keeps the PDFs (invoice, e-tickets) of each buyer in MinIO, under receiver "ticket-user:<user id>".
+    # ticket-service calls it with the service key (X-Service-Key); upload-service must have the same key and
+    # serviceOnlyReceiverPrefixes "ticket-user:" (see chart/upload-service), so that a user's token cannot read them and
+    # downloads go through ticket-service, which checks whose they are. Empty URL: PDFs are drawn on request, not kept.
+    uploadServiceURL: http://upload-service-svc:80
+    uploadServiceKey: dev-upload-service-key
+    # Temporal runs the life of every order as a workflow: it ends the hold on the dot, makes the documents when the order is
+    # paid, and sends the reminder a day before the event. Empty address: the sweeper does that work instead (it always runs
+    # as the safety net). The task queue names this deployment: give staging and production different ones.
+    temporalAddress: temporal-service:7233
+    temporalNamespace: default
+    temporalTaskQueue: ticket-service-orders
+    # Minutes the tickets of an unpaid order stay held before being put back on sale.
+    orderHoldMinutes: "10"
+    # Seconds between sweeps: release expired holds, refund cancelled events, close unanswered transfers, expire the
+    # tickets of ended events, remind buyers, push notifications.
+    sweepIntervalSeconds: "30"
+
+    # Protection for a rush on the last tickets (a million users after one ticket: exactly one gets it, the rest are
+    # turned away cheaply, without exhausting Postgres or user-service).
+    # Postgres connections per pod. Every pod opens its own pool, so replicas x this (plus everything else on the
+    # server) must stay under Postgres max_connections (100 by default): with the autoscaler's maxReplicas of 5,
+    # 10 uses about half of it. A pod that cannot get a connection answers 429, not 500, but it cannot serve.
+    postgresMaxConns: "10"
+    # Purchase attempts per pod allowed to compete for tickets in the database at a time; others wait reserveQueueWaitMillis, then get 429.
+    reserveConcurrency: "16"
+    reserveQueueWaitMillis: "250"
+    # Seconds "sold out" is remembered per pod so later requests are refused from memory (0 disables).
+    soldOutTTLSeconds: "2"
+    # Seconds an event page and a seat map are served from memory per pod (0 disables).
+    publicCacheTTLSeconds: "2"
+    # One account: purchase attempts per second (0 disables) and burst.
+    userRatePerSecond: "2"
+    userBurst: "10"
+    # Unpaid orders one user may hold at once (0 = unlimited): stops a bot holding every ticket.
+    maxPendingPerUser: "3"
+    # Requests per pod handled at once; beyond it the pod answers 503 with Retry-After (0 disables).
+    maxInFlight: "10000"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

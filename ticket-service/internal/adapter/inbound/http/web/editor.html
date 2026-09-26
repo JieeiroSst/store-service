@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seat map editor</title>
+<style>
+  :root { --bg:#f6f7f9; --panel:#fff; --ink:#1c2230; --mute:#667085; --line:#d9dde5; --acc:#2563eb; --bad:#c62828; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12151c; --panel:#1b202b; --ink:#e7eaf0; --mute:#98a2b3; --line:#2c3444; --acc:#5b8dff; --bad:#ef7373; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.4 system-ui,sans-serif; background:var(--bg); color:var(--ink); display:grid; grid-template-columns:320px 1fr 300px; grid-template-rows:auto 1fr; height:100vh; }
+  header { grid-column:1/4; display:flex; gap:8px; align-items:center; padding:8px 12px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header h1 { font-size:15px; margin:0 8px 0 0; }
+  aside { background:var(--panel); overflow:auto; padding:12px; border-right:1px solid var(--line); }
+  aside.right { border-right:0; border-left:1px solid var(--line); }
+  main { position:relative; overflow:hidden; }
+  svg { width:100%; height:100%; display:block; touch-action:none; }
+  h2 { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--mute); margin:16px 0 6px; }
+  h2:first-child { margin-top:0; }
+  label { display:block; font-size:12px; color:var(--mute); margin:6px 0 2px; }
+  input, select, button, textarea { font:inherit; color:inherit; background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:5px 8px; }
+  input[type=text], input[type=number], input[type=password], select { width:100%; }
+  input[type=color] { padding:0; height:28px; width:100%; }
+  button { cursor:pointer; background:var(--panel); }
+  button.primary { background:var(--acc); border-color:var(--acc); color:#fff; }
+  button.danger { color:var(--bad); }
+  button:disabled { opacity:.5; cursor:default; }
+  .row { display:flex; gap:6px; } .row > * { flex:1; min-width:0; }
+  .list { display:flex; flex-direction:column; gap:4px; }
+  .item { padding:6px 8px; border:1px solid var(--line); border-radius:6px; cursor:pointer; display:flex; justify-content:space-between; gap:8px; }
+  .item.sel { border-color:var(--acc); box-shadow:0 0 0 1px var(--acc); }
+  .mute { color:var(--mute); font-size:12px; }
+  #status { margin-left:auto; font-size:12px; color:var(--mute); max-width:40ch; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #status.err { color:var(--bad); }
+  .seat { cursor:pointer; } .seat:hover { stroke:var(--ink); stroke-width:1.5; }
+  .tools button.on { background:var(--acc); color:#fff; border-color:var(--acc); }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+  @media (max-width: 900px) { body { grid-template-columns:1fr; grid-template-rows:auto auto 60vh auto; height:auto; } header { grid-column:1; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Seat map editor</h1>
+  <input id="token" type="password" placeholder="Bearer token" style="width:200px" autocomplete="off">
+  <button id="connect">Connect</button>
+  <span class="tools row" style="flex:none;gap:4px">
+    <button data-tool="move" class="on" title="Drag sections and stages">Move</button>
+    <button data-tool="skip" title="Click a seat to remove it (a pillar) or put it back">Remove seat</button>
+    <button data-tool="acc" title="Click a seat to mark it as a wheelchair place">Accessible</button>
+  </span>
+  <button id="zoomIn">＋</button><button id="zoomOut">－</button><button id="fit">Fit</button>
+  <span id="status"></span>
+</header>
+
+<aside>
+  <h2>Start from</h2>
+  <select id="template"></select>
+  <div id="tparams"></div>
+  <div class="row" style="margin-top:6px"><button id="fromTemplate">Use template</button><button id="blank">Blank</button></div>
+
+  <h2>Venues</h2>
+  <div class="row"><select id="scope"><option value="mine">Mine</option><option value="shared">Shared library</option></select><button id="reload">Load</button></div>
+  <div id="venues" class="list" style="margin-top:6px"></div>
+
+  <h2>This venue</h2>
+  <label>Name</label><input id="vname" type="text">
+  <div class="row"><div><label>City</label><input id="vcity" type="text"></div><div><label>Size (w × h)</label>
+    <div class="row"><input id="vw" type="number" min="200" step="50"><input id="vh" type="number" min="200" step="50"></div></div></div>
+  <div class="row" style="margin-top:8px"><button id="save" class="primary">Save</button><button id="saveNew">Save as new</button></div>
+  <div id="total" class="mute" style="margin-top:6px"></div>
+</aside>
+
+<main><svg id="svg" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg></main>
+
+<aside class="right">
+  <h2>Sections <button id="addSection" style="float:right;padding:1px 8px">＋</button></h2>
+  <div id="sections" class="list"></div>
+  <div id="sform"></div>
+
+  <h2>Stages <button id="addStage" style="float:right;padding:1px 8px">＋</button></h2>
+  <div id="stages" class="list"></div>
+  <div id="stform"></div>
+
+  <h2>Use for an event</h2>
+  <div class="row"><input id="eventId" type="number" placeholder="event id"><button id="loadEvent">Load types</button></div>
+  <div id="assign"></div>
+  <label><input type="checkbox" id="replace"> replace seats already made</label>
+  <button id="apply" class="primary" style="margin-top:6px;width:100%" disabled>Apply to event</button>
+</aside>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+const API = "/api/v1";
+const st = { token: sessionStorage.getItem("ticket-token") || "", map: {width:1000,height:700,stages:[],sections:[]}, venueId:0,
+  sel:{kind:null,i:-1}, tool:"move", preview:null, view:{x:0,y:0,k:1}, types:[], templates:[] };
+$("token").value = st.token;
+
+function say(msg, err) { const s = $("status"); s.textContent = msg || ""; s.className = err ? "err" : ""; s.title = msg || ""; }
+async function api(method, path, body) {
+  const r = await fetch(API + path, { method, headers: Object.assign({ "Content-Type":"application/json" }, st.token ? { Authorization:"Bearer " + st.token } : {}),
+    body: body === undefined ? undefined : JSON.stringify(body) });
+  const text = await r.text(); let data = null; try { data = text ? JSON.parse(text) : null; } catch (_) {}
+  if (!r.ok) throw new Error((data && (data.error || data.message)) || (r.status + " " + r.statusText));
+  return data;
+}
+const num = (v, d) => { const n = parseFloat(v); return isFinite(n) ? n : d; };
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+// ---------- preview (the server is the only place seats are computed) ----------
+let previewTimer = 0, previewSeq = 0;
+function schedulePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(runPreview, 250); }
+async function runPreview() {
+  if (!st.token) return draw();
+  if (!st.map.sections.length) { st.preview = null; $("total").textContent = ""; say("Add a section, or start from a template"); return draw(); }
+  const seq = ++previewSeq;
+  try {
+    const p = await api("POST", "/venues/preview?seats=true", { map: st.map });
+    if (seq !== previewSeq) return;
+    st.preview = p; $("total").textContent = p.total + " seats in " + p.sections.length + " sections"; say("");
+  } catch (e) { if (seq === previewSeq) { say(e.message, true); } } // the last good drawing stays until the blueprint is valid again
+  draw();
+}
+function changed() { renderLists(); schedulePreview(); draw(); }
+
+// ---------- drawing ----------
+const world = $("world"), svg = $("svg");
+function applyView() { world.setAttribute("transform", `translate(${st.view.x} ${st.view.y}) scale(${st.view.k})`); }
+function fit() {
+  const b = svg.getBoundingClientRect(); const k = Math.min(b.width / st.map.width, b.height / st.map.height) * 0.95 || 1;
+  st.view = { k, x:(b.width - st.map.width * k) / 2, y:(b.height - st.map.height * k) / 2 }; applyView();
+}
+function poly(pts) { return pts.map(p => p[0] + "," + p[1]).join(" "); }
+function draw() {
+  world.replaceChildren();
+  el("rect", { x:0, y:0, width:st.map.width, height:st.map.height, fill:"none", stroke:"#8a94a6", "stroke-dasharray":"6 6" }, world);
+  const lay = st.preview && st.preview.layout;
+  (st.map.stages || []).forEach((s, i) => {
+    const g = el("g", { "data-kind":"stage", "data-i":i, cursor:"move" }, world);
+    const fill = "#8a94a6", sel = st.sel.kind === "stage" && st.sel.i === i, common = { fill, opacity:.55, stroke: sel ? "#2563eb" : "none", "stroke-width":3 };
+    if (s.shape === "polygon" && s.points) el("polygon", Object.assign({ points:poly(s.points) }, common), g);
+    else if (s.shape === "ellipse") el("ellipse", Object.assign({ cx:s.x + s.w/2, cy:s.y + s.h/2, rx:s.w/2, ry:s.h/2 }, common), g);
+    else el("rect", Object.assign({ x:s.x, y:s.y, width:s.w, height:s.h, rx:4 }, common), g);
+    const t = el("text", { x:s.x + s.w/2, y:s.y + s.h/2, "text-anchor":"middle", "dominant-baseline":"middle", fill:"currentColor", "font-size":14, "pointer-events":"none" }, g);
+    t.textContent = s.label || "STAGE";
+  });
+  if (lay) (lay.sections || []).forEach(sec => {
+    const idx = st.map.sections.findIndex(x => x.key === sec.key), sel = st.sel.kind === "section" && st.sel.i === idx;
+    const g = el("g", { "data-kind":"section", "data-i":idx, cursor:"move" }, world);
+    el("polygon", { points:poly(sec.points), fill:sec.color || "#4f8cff", "fill-opacity":.12, stroke: sel ? "#2563eb" : (sec.color || "#4f8cff"), "stroke-width": sel ? 3 : 1.2 }, g);
+    if (sec.points.length) {
+      const cx = sec.points.reduce((a, p) => a + p[0], 0) / sec.points.length, cy = Math.min(...sec.points.map(p => p[1])) - 6;
+      const t = el("text", { x:cx, y:cy, "text-anchor":"middle", fill:"currentColor", "font-size":13, "font-weight":600, "pointer-events":"none" }, g); t.textContent = sec.label || sec.name || sec.key;
+    }
+  });
+  if (st.preview && st.preview.seats) {
+    const color = {}; (st.map.sections || []).forEach(s => color[s.key] = s.color || "#4f8cff");
+    const r = Math.max(4, Math.min(11, (st.map.sections[0] && (st.map.sections[0].seat_pitch || 30) * .35) || 10));
+    const g = el("g", {}, world);
+    for (const s of st.preview.seats) {
+      const c = el("circle", { cx:s.x, cy:s.y, r, class:"seat", fill: s.accessible ? "#fff" : (color[s.section] || "#4f8cff"),
+        stroke: s.accessible ? "#1d4ed8" : "none", "stroke-width": s.accessible ? 2.5 : 0, "data-sec":s.section, "data-seat":s.row + ":" + s.number }, g);
+      const t = el("title", {}, c); t.textContent = `${s.section} ${s.row}${s.number}` + (s.accessible ? " (accessible)" : "");
+    }
+  }
+  applyView();
+}
+
+// ---------- pointer: pan, zoom, drag, click seats ----------
+let drag = null;
+function toWorld(ev) { const b = svg.getBoundingClientRect(); return { x:(ev.clientX - b.left - st.view.x) / st.view.k, y:(ev.clientY - b.top - st.view.y) / st.view.k }; }
+svg.addEventListener("pointerdown", ev => {
+  const seat = ev.target.closest && ev.target.closest(".seat");
+  if (seat && st.tool !== "move") { toggleSeat(seat.dataset.sec, seat.dataset.seat, st.tool); return; }
+  const g = ev.target.closest && ev.target.closest("g[data-kind]");
+  const w = toWorld(ev);
+  if (g && g.dataset.i !== "-1") {
+    st.sel = { kind:g.dataset.kind, i:+g.dataset.i }; renderLists(); draw();
+    drag = { mode:"item", kind:g.dataset.kind, i:+g.dataset.i, last:w };
+  } else { drag = { mode:"pan", sx:ev.clientX, sy:ev.clientY, vx:st.view.x, vy:st.view.y }; }
+  svg.setPointerCapture(ev.pointerId);
+});
+svg.addEventListener("pointermove", ev => {
+  if (!drag) return;
+  if (drag.mode === "pan") { st.view.x = drag.vx + ev.clientX - drag.sx; st.view.y = drag.vy + ev.clientY - drag.sy; applyView(); return; }
+  const w = toWorld(ev), dx = w.x - drag.last.x, dy = w.y - drag.last.y; drag.last = w;
+  moveItem(drag.kind, drag.i, dx, dy); drag.moved = true; draw();
+});
+svg.addEventListener("pointerup", () => { if (drag && drag.moved) { renderForms(); schedulePreview(); } drag = null; });
+svg.addEventListener("wheel", ev => {
+  ev.preventDefault(); const b = svg.getBoundingClientRect(), f = ev.deltaY < 0 ? 1.1 : 1 / 1.1;
+  const px = ev.clientX - b.left, py = ev.clientY - b.top;
+  st.view.x = px - (px - st.view.x) * f; st.view.y = py - (py - st.view.y) * f; st.view.k *= f; applyView();
+}, { passive:false });
+function zoom(f) { const b = svg.getBoundingClientRect(), px = b.width/2, py = b.height/2; st.view.x = px - (px - st.view.x) * f; st.view.y = py - (py - st.view.y) * f; st.view.k *= f; applyView(); }
+$("zoomIn").onclick = () => zoom(1.25); $("zoomOut").onclick = () => zoom(0.8); $("fit").onclick = fit;
+
+const r1 = n => Math.round(n * 10) / 10;
+function moveItem(kind, i, dx, dy) {
+  if (kind === "stage") {
+    const s = st.map.stages[i]; s.x = r1(s.x + dx); s.y = r1(s.y + dy); if (s.points) s.points = s.points.map(p => [p[0] + dx, p[1] + dy]);
+  } else {
+    const s = st.map.sections[i]; if (!s) return;
+    if (s.layout === "arc") { s.center = { x:r1(s.center.x + dx), y:r1(s.center.y + dy) }; } else { s.origin = { x:r1(s.origin.x + dx), y:r1(s.origin.y + dy) }; }
+    if (s.outline) s.outline = s.outline.map(p => [p[0] + dx, p[1] + dy]);
+  }
+}
+function toggleSeat(sec, key, tool) {
+  const s = st.map.sections.find(x => x.key === sec); if (!s) return;
+  const field = tool === "skip" ? "skip" : "accessible"; const list = s[field] || [];
+  const at = list.indexOf(key); if (at >= 0) list.splice(at, 1); else list.push(key);
+  s[field] = list; if (!list.length) delete s[field];
+  if (tool === "acc" && s.skip) s.skip = s.skip.filter(k => k !== key);
+  schedulePreview();
+}
+document.querySelectorAll("[data-tool]").forEach(b => b.onclick = () => {
+  st.tool = b.dataset.tool; document.querySelectorAll("[data-tool]").forEach(x => x.classList.toggle("on", x === b));
+});
+
+// ---------- forms ----------
+function field(label, val, on, type) {
+  const d = document.createElement("div"), l = document.createElement("label"), i = document.createElement("input");
+  l.textContent = label; i.type = type || "text"; i.value = val === undefined || val === null ? "" : val;
+  if (type === "color") i.value = val || "#4f8cff";
+  i.oninput = () => { on(i.value); changed2(); }; d.append(l, i); return d;
+}
+function changed2() { schedulePreview(); renderListsOnly(); }
+function pair(a, b) { const r = document.createElement("div"); r.className = "row"; r.append(a, b); return r; }
+function selectField(label, val, opts, on) {
+  const d = document.createElement("div"), l = document.createElement("label"), s = document.createElement("select"); l.textContent = label;
+  for (const o of opts) { const op = document.createElement("option"); op.value = o; op.textContent = o || "(default)"; if (o === (val || "")) op.selected = true; s.append(op); }
+  s.onchange = () => { on(s.value); changed2(); }; d.append(l, s); return d;
+}
+function renderForms() {
+  const sf = $("sform"), tf = $("stform"); sf.replaceChildren(); tf.replaceChildren();
+  if (st.sel.kind === "section" && st.map.sections[st.sel.i]) {
+    const s = st.map.sections[st.sel.i];
+    const csv = a => (a || []).join(","), arr = v => v.split(",").map(x => parseInt(x, 10)).filter(n => n > 0);
+    sf.append(
+      pair(field("Key", s.key, v => s.key = v.trim()), field("Name", s.name, v => s.name = v)),
+      pair(field("Colour", s.color, v => s.color = v, "color"), selectField("Layout", s.layout, ["grid", "arc"], v => { s.layout = v; if (v === "arc" && !s.radius) { s.radius = 200; s.angle_start = -60; s.angle_end = 60; s.center = s.center && s.center.x ? s.center : { x:s.origin.x, y:s.origin.y + 200 }; } renderForms(); })),
+      pair(field("Rows", s.rows, v => { s.rows = num(v, 0) | 0; if (s.row_seats && s.rows > 0) { while (s.row_seats.length < s.rows) s.row_seats.push(s.row_seats[s.row_seats.length - 1] || 10); s.row_seats.length = s.rows; } }, "number"), field("Seats per row", s.seats_per_row, v => { s.seats_per_row = num(v, 0) | 0; if (s.seats_per_row > 0) delete s.row_seats; }, "number")),
+      field("Seats per row, row by row (optional)", csv(s.row_seats), v => { const a = arr(v); if (a.length) { s.row_seats = a; s.rows = a.length; delete s.seats_per_row; } else delete s.row_seats; }),
+      pair(field("Seat pitch", s.seat_pitch, v => s.seat_pitch = num(v, 0), "number"), field("Row pitch", s.row_pitch, v => s.row_pitch = num(v, 0), "number")),
+      pair(field("First row", s.row_start, v => s.row_start = v.toUpperCase()), selectField("Number from", s.number_from, ["", "right"], v => s.number_from = v)),
+      pair(selectField("Align", s.align, ["", "center", "left", "right"], v => s.align = v), field("Rotation °", s.rotation, v => s.rotation = num(v, 0), "number")),
+      field("Aisles after seat positions", csv(s.aisle_after), v => { const a = arr(v); if (a.length) s.aisle_after = a; else delete s.aisle_after; }));
+    if (s.layout === "arc") sf.append(
+      pair(field("Radius", s.radius, v => s.radius = num(v, 0), "number"), field("Centre x", s.center && s.center.x, v => s.center = { x:num(v, 0), y:s.center ? s.center.y : 0 }, "number")),
+      pair(field("Angle from", s.angle_start, v => s.angle_start = num(v, 0), "number"), field("Angle to", s.angle_end, v => s.angle_end = num(v, 0), "number")),
+      field("Centre y", s.center && s.center.y, v => s.center = { x:s.center ? s.center.x : 0, y:num(v, 0) }, "number"));
+    const del = document.createElement("button"); del.className = "danger"; del.textContent = "Delete section"; del.style.marginTop = "8px";
+    del.onclick = () => { st.map.sections.splice(st.sel.i, 1); st.sel = { kind:null, i:-1 }; renderForms(); changed(); }; sf.append(del);
+    const n = (s.skip || []).length + (s.accessible || []).length;
+    if (n) { const m = document.createElement("div"); m.className = "mute"; m.textContent = `${(s.skip || []).length} removed, ${(s.accessible || []).length} accessible seats`; sf.append(m); }
+  }
+  if (st.sel.kind === "stage" && st.map.stages[st.sel.i]) {
+    const s = st.map.stages[st.sel.i];
+    tf.append(field("Label", s.label, v => s.label = v),
+      selectField("Shape", s.shape, ["", "rect", "ellipse"], v => s.shape = v),
+      pair(field("x", s.x, v => s.x = num(v, 0), "number"), field("y", s.y, v => s.y = num(v, 0), "number")),
+      pair(field("width", s.w, v => s.w = num(v, 0), "number"), field("height", s.h, v => s.h = num(v, 0), "number")));
+    const del = document.createElement("button"); del.className = "danger"; del.textContent = "Delete stage"; del.style.marginTop = "8px";
+    del.onclick = () => { st.map.stages.splice(st.sel.i, 1); st.sel = { kind:null, i:-1 }; renderForms(); changed(); }; tf.append(del);
+  }
+}
+function listItem(text, sub, sel, on) {
+  const d = document.createElement("div"); d.className = "item" + (sel ? " sel" : ""); const a = document.createElement("span"), b = document.createElement("span");
+  a.textContent = text; b.textContent = sub; b.className = "mute"; d.append(a, b); d.onclick = on; return d;
+}
+function renderListsOnly() {
+  const counts = {}; if (st.preview) st.preview.sections.forEach(s => counts[s.key] = s.seats);
+  $("sections").replaceChildren(...st.map.sections.map((s, i) => listItem(`${s.key} · ${s.name || ""}`, (counts[s.key] ?? "") + " seats", st.sel.kind === "section" && st.sel.i === i, () => { st.sel = { kind:"section", i }; renderLists(); draw(); })));
+  $("stages").replaceChildren(...(st.map.stages || []).map((s, i) => listItem(s.label || "Stage " + (i + 1), s.shape || "rect", st.sel.kind === "stage" && st.sel.i === i, () => { st.sel = { kind:"stage", i }; renderLists(); draw(); })));
+  renderAssign();
+}
+function renderLists() { renderListsOnly(); renderForms(); }
+
+$("addSection").onclick = () => {
+  let n = st.map.sections.length + 1, key; do { key = "S" + n++; } while (st.map.sections.some(s => s.key === key));
+  st.map.sections.push({ key, name:"Section " + key, color:"#4f8cff", layout:"grid", rows:5, seats_per_row:10, origin:{ x:st.map.width / 2, y:st.map.height / 2 }, center:{ x:0, y:0 } });
+  st.sel = { kind:"section", i:st.map.sections.length - 1 }; changed();
+};
+$("addStage").onclick = () => {
+  st.map.stages = st.map.stages || []; st.map.stages.push({ label:"STAGE", shape:"rect", x:st.map.width / 2 - 150, y:30, w:300, h:50 });
+  st.sel = { kind:"stage", i:st.map.stages.length - 1 }; changed();
+};
+for (const id of ["vw", "vh"]) $(id).oninput = () => { st.map.width = num($("vw").value, 1000); st.map.height = num($("vh").value, 700); schedulePreview(); draw(); };
+
+// ---------- templates, venues, save ----------
+function setMap(m, id, name, city) {
+  st.map = m; st.map.stages = st.map.stages || []; st.map.sections = (st.map.sections || []).map(s => Object.assign({ origin:{ x:0, y:0 }, center:{ x:0, y:0 } }, s));
+  st.venueId = id || 0; $("vname").value = name || ""; $("vcity").value = city || ""; $("vw").value = m.width; $("vh").value = m.height;
+  st.sel = { kind:null, i:-1 }; renderLists(); fit(); runPreview();
+}
+async function loadTemplates() {
+  const r = await api("GET", "/venue-templates"); st.templates = r.items;
+  $("template").replaceChildren(...st.templates.map(t => { const o = document.createElement("option"); o.value = t.name; o.textContent = t.name + " — " + t.description; return o; }));
+  $("template").onchange = renderTParams; renderTParams();
+}
+function renderTParams() {
+  const t = st.templates.find(x => x.name === $("template").value); const box = $("tparams"); box.replaceChildren();
+  if (!t) return;
+  for (const p of t.params) {
+    const d = field(`${p.name} (${p.min}–${p.max})`, p.default, () => {}, "number"); d.querySelector("input").dataset.param = p.name; d.title = p.description; box.append(d);
+  }
+}
+$("fromTemplate").onclick = async () => {
+  try {
+    const params = {}; document.querySelectorAll("#tparams input").forEach(i => params[i.dataset.param] = num(i.value, 0) | 0);
+    // the server answers a template with the blueprint it stands for
+    const v = await api("POST", "/venues/preview?seats=false", { template:$("template").value, params });
+    if (!v.map) throw new Error("The server sent no blueprint for this template");
+    setMap(v.map, 0, $("template").value, "");
+    say("Template loaded: " + v.total + " seats");
+  } catch (e) { say(e.message, true); }
+};
+$("blank").onclick = () => setMap({ width:1000, height:700, stages:[{ label:"STAGE", shape:"rect", x:350, y:30, w:300, h:50 }], sections:[] }, 0, "", "");
+
+$("reload").onclick = async () => {
+  try {
+    const r = await api("GET", "/venues?scope=" + $("scope").value + "&limit=50");
+    $("venues").replaceChildren(...r.items.map(v => listItem(v.name, v.seats + " seats", v.id === st.venueId, async () => {
+      const d = await api("GET", "/venues/" + v.id); setMap(d.venue.map, v.id, d.venue.name, d.venue.city); say("Loaded " + v.name);
+    })));
+    if (!r.items.length) $("venues").textContent = "Nothing here yet.";
+  } catch (e) { say(e.message, true); }
+};
+async function save(asNew) {
+  try {
+    const body = { name:$("vname").value.trim(), city:$("vcity").value.trim(), map:st.map };
+    if (!body.name) throw new Error("Give the venue a name first");
+    const v = st.venueId && !asNew ? await api("PUT", "/venues/" + st.venueId, body) : await api("POST", "/venues", body);
+    st.venueId = v.id; say("Saved “" + v.name + "” (" + v.seats + " seats)"); $("reload").click();
+  } catch (e) { say(e.message, true); }
+}
+$("save").onclick = () => save(false); $("saveNew").onclick = () => save(true);
+
+// ---------- apply to an event ----------
+function renderAssign() {
+  const box = $("assign"); const prev = {}; box.querySelectorAll("select").forEach(s => prev[s.dataset.sec] = s.value); box.replaceChildren();
+  if (!st.types.length) return;
+  const seated = st.types.filter(t => t.seated);
+  if (!seated.length) { box.textContent = "This event has no seated ticket type: create one with seated = true first."; $("apply").disabled = true; return; }
+  for (const s of st.map.sections) {
+    const d = document.createElement("div"), l = document.createElement("label"), sel = document.createElement("select"); l.textContent = `${s.key} · ${s.name || ""}`; sel.dataset.sec = s.key;
+    const none = document.createElement("option"); none.value = ""; none.textContent = "— skip this section —"; sel.append(none);
+    for (const t of seated) { const o = document.createElement("option"); o.value = t.id; o.textContent = t.name + (t.session_id ? ` (showtime ${t.session_label || "#" + t.session_id})` : ""); sel.append(o); }
+    sel.value = prev[s.key] || ""; d.append(l, sel); box.append(d);
+  }
+  $("apply").disabled = false;
+}
+$("loadEvent").onclick = async () => {
+  try {
+    const e = await api("GET", "/events/" + $("eventId").value);
+    const labels = {}; (e.sessions || []).forEach(s => labels[s.id] = s.label || new Date(s.starts_at).toLocaleString());
+    st.types = (e.ticket_types || []).map(t => Object.assign({ session_label:labels[t.session_id] }, t)); renderAssign(); say(`${e.title}: ${st.types.length} ticket types`);
+  } catch (err) { say(err.message, true); }
+};
+$("apply").onclick = async () => {
+  try {
+    if (!st.venueId) throw new Error("Save the venue first: an event uses a saved venue");
+    const assignments = [...document.querySelectorAll("#assign select")].filter(s => s.value).map(s => ({ section:s.dataset.sec, ticket_type_id:+s.value }));
+    if (!assignments.length) throw new Error("Choose a ticket type for at least one section");
+    const r = await api("POST", `/events/${$("eventId").value}/seat-map/apply`, { venue_id:st.venueId, assignments, replace:$("replace").checked });
+    say(`Made ${r.seats} seats`);
+  } catch (e) { say(e.message, true); }
+};
+
+// ---------- start ----------
+async function connect() {
+  st.token = $("token").value.trim(); sessionStorage.setItem("ticket-token", st.token);
+  try { await loadTemplates(); await $("reload").onclick(); say("Connected"); runPreview(); } catch (e) { say(e.message, true); }
+}
+$("connect").onclick = connect;
+window.addEventListener("resize", fit);
+setMap(st.map, 0, "", ""); if (st.token) connect();
+</script>
+</body>
+</html>

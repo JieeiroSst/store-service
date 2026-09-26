@@ -1,0 +1,11 @@
+{{define "subject"}}Vé của bạn đã bán: {{.EventTitle}}{{end}}
+{{define "html"}}
+<!DOCTYPE html>
+<html>
+  <body style="font-family: sans-serif; color: #1a1a1a;">
+    <h2>Xin chào {{.Name}},</h2>
+    <p>Vé bạn đăng bán cho <strong>{{.EventTitle}}</strong> đã có người mua. Bạn nhận được <strong>{{.Amount}} {{.Currency}}</strong> (đã trừ phí nền tảng {{.Fee}} {{.Currency}}).</p>
+    <p style="color:#666;font-size:12px">Email tự động, vui lòng không trả lời.</p>
+  </body>
+</html>
+{{end}}

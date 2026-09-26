@@ -1,0 +1,12 @@
+{{define "subject"}}Bạn được mời tham dự {{.EventTitle}}{{end}}
+{{define "html"}}
+<!DOCTYPE html>
+<html>
+  <body style="font-family: sans-serif; color: #1a1a1a;">
+    <h2>Xin chào {{.Name}},</h2>
+    <p>Bạn được mời tham dự <strong>{{.EventTitle}}</strong> ({{.EventDate}}, {{.Venue}}): {{.TicketCount}} vé đã có trong tài khoản của bạn.</p>
+    {{if .Note}}<p>{{.Note}}</p>{{end}}
+    <p style="color:#666;font-size:12px">Email tự động, vui lòng không trả lời.</p>
+  </body>
+</html>
+{{end}}
