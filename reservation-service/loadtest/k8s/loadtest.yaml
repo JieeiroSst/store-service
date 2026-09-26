@@ -1,0 +1,56 @@
+# Postgres and a user-service stand-in for the load test. Everything lives in the namespace `rs-loadtest`, so
+# `kubectl delete namespace rs-loadtest` removes it all. Run this yourself on a cluster you can spare.
+apiVersion: v1
+kind: Namespace
+metadata: {name: rs-loadtest}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: postgres, namespace: rs-loadtest}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: postgres}}
+  template:
+    metadata: {labels: {app: postgres}}
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        env:
+        - {name: POSTGRES_USER, value: testUser}
+        - {name: POSTGRES_PASSWORD, value: testPassword}
+        - {name: POSTGRES_DB, value: reservation_service}
+        ports: [{containerPort: 5432}]
+        resources: {requests: {cpu: 250m, memory: 256Mi}, limits: {cpu: "2", memory: 1Gi}}
+        readinessProbe: {exec: {command: [pg_isready, -U, testUser]}, periodSeconds: 3}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: postgres, namespace: rs-loadtest}
+spec:
+  selector: {app: postgres}
+  ports: [{port: 5432}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: fakeus, namespace: rs-loadtest}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: fakeus}}
+  template:
+    metadata: {labels: {app: fakeus}}
+    spec:
+      containers:
+      - name: fakeus
+        image: rs-loadtest:test
+        imagePullPolicy: Never
+        command: [/fakeus]
+        ports: [{containerPort: 18999}]
+        resources: {requests: {cpu: 100m, memory: 32Mi}, limits: {cpu: "1", memory: 256Mi}}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: fakeus, namespace: rs-loadtest}
+spec:
+  selector: {app: fakeus}
+  ports: [{port: 18999}]

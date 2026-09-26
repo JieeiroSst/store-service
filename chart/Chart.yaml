@@ -327,3 +327,7 @@ dependencies:
     name: rent-house-service
     version: "0.1.0"
     repository: file://rent-house-service
+  - alias: reservationService
+    name: reservation-service
+    version: "0.1.0"
+    repository: file://reservation-service

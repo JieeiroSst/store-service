@@ -1,0 +1,23 @@
+# Values for chart/reservation-service for a load test: several replicas, no autoscaler, images built locally.
+# Postgres and the user-service stand-in come from loadtest.yaml in this folder.
+reservationService:
+  replicas: 5
+  image:
+    name: reservation-service
+    tag: test
+    pullPolicy: Never          # the image was built into the cluster's Docker; use IfNotPresent/Always with a registry
+  service:
+    type: ClusterIP
+  autoscaling:
+    enabled: false
+  resources:
+    requests: {cpu: 100m, memory: 64Mi}
+    limits: {cpu: "1", memory: 512Mi}
+  env:
+    postgresHost: postgres
+    postgresPort: "5432"
+    userServiceURL: http://fakeus:18999
+    paymentServiceURL: http://payments-not-used:1
+    recompenseServiceURL: ""
+    # 5 replicas x 10 connections = 50 of the server's 100. Raise both together, never one alone.
+    postgresMaxConns: "10"

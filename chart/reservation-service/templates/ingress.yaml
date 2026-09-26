@@ -1,0 +1,23 @@
+{{- if .Values.reservationService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.reservationService.name }}-ingress
+  {{- with .Values.reservationService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.reservationService.ingress.className }}
+  rules:
+  - host: {{ .Values.reservationService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.reservationService.ingress.path }}
+        pathType: {{ .Values.reservationService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.reservationService.service.name }}
+            port:
+              number: 80
+{{- end }}

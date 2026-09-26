@@ -106,8 +106,14 @@ CREATE TABLE IF NOT EXISTS payment_requests (
 );
 
 CREATE INDEX IF NOT EXISTS idx_transactions_wallet_created ON transactions(wallet_id, created_at);
-CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_wallet_reference ON transactions(wallet_id, reference_id) WHERE reference_id IS NOT NULL;
-CREATE UNIQUE INDEX IF NOT EXISTS idx_transfers_reference ON transfers(reference_id) WHERE reference_id IS NOT NULL;
+-- Idempotency keys. "No key" is stored as an empty string, not NULL, so the empty string must be
+-- excluded too: otherwise a wallet could have only one reversal (or one key-less transfer) ever.
+-- The v2 indexes replace the originals, which did not exclude it; dropping the old names upgrades
+-- databases that already have them.
+DROP INDEX IF EXISTS idx_transactions_wallet_reference;
+DROP INDEX IF EXISTS idx_transfers_reference;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_wallet_reference_v2 ON transactions(wallet_id, reference_id) WHERE reference_id IS NOT NULL AND reference_id <> '';
+CREATE UNIQUE INDEX IF NOT EXISTS idx_transfers_reference_v2 ON transfers(reference_id) WHERE reference_id IS NOT NULL AND reference_id <> '';
 CREATE INDEX IF NOT EXISTS idx_payment_methods_user ON payment_methods(user_id) WHERE is_active;
 CREATE INDEX IF NOT EXISTS idx_pockets_wallet ON pockets(wallet_id);
 CREATE INDEX IF NOT EXISTS idx_payment_requests_requester ON payment_requests(requester_wallet_id);
