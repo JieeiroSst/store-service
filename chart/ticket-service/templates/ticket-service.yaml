@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ticketService.name }}-deployment
+spec:
+{{- if not .Values.ticketService.autoscaling.enabled }}
+  replicas: {{ .Values.ticketService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ticketService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ticketService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.ticketService.name }}-deployment
+        image: {{ .Values.ticketService.image.name }}:{{ .Values.ticketService.image.tag }}
+        imagePullPolicy: {{ .Values.ticketService.image.pullPolicy | default "Always" }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.ticketService.image.port }}
+        # /readyz pings Postgres, /healthz only proves the process is up.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.ticketService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          # A pod flooded with requests answers probes slowly. Being marked unready for a moment is fine (the pod
+          # stops getting new connections and catches up); being restarted for it is not, so liveness is patient.
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.ticketService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 6
+        env:
+          - name: PORT
+            value: "{{ .Values.ticketService.image.port }}"
+          - name: HostPostgres
+            value: {{ .Values.ticketService.env.postgresHost | quote }}
+          - name: PortPostgres
+            value: {{ .Values.ticketService.env.postgresPort | quote }}
+          - name: DatabasePostgres
+            value: {{ .Values.ticketService.env.postgresDatabase | quote }}
+          - name: UserPostgres
+            value: {{ .Values.ticketService.env.postgresUser | quote }}
+          - name: PasswordPostgres
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.ticketService.name }}-secret
+                key: postgresPassword
+          - name: UserServiceURL
+            value: {{ .Values.ticketService.env.userServiceURL | quote }}
+          - name: UserServiceValidatePath
+            value: {{ .Values.ticketService.env.userServiceValidatePath | quote }}
+          - name: UserServiceUserPath
+            value: {{ .Values.ticketService.env.userServiceUserPath | quote }}
+          - name: AdminRole
+            value: {{ .Values.ticketService.env.adminRole | quote }}
+          - name: AuthCacheTTLSeconds
+            value: {{ .Values.ticketService.env.authCacheTTLSeconds | quote }}
+          {{- if .Values.ticketService.env.walletServiceURL }}
+          - name: WalletServiceURL
+            value: {{ .Values.ticketService.env.walletServiceURL | quote }}
+          {{- end }}
+          {{- if .Values.ticketService.env.paymentServiceURL }}
+          - name: PaymentServiceURL
+            value: {{ .Values.ticketService.env.paymentServiceURL | quote }}
+          {{- end }}
+          - name: PaymentServiceTimeoutSeconds
+            value: {{ .Values.ticketService.env.paymentServiceTimeoutSeconds | quote }}
+          {{- if .Values.ticketService.env.notificationServiceURL }}
+          - name: NotificationServiceURL
+            value: {{ .Values.ticketService.env.notificationServiceURL | quote }}
+          {{- end }}
+          - name: InternalAPIKey
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.ticketService.name }}-secret
+                key: internalApiKey
+          - name: TransferTTLHours
+            value: {{ .Values.ticketService.env.transferTTLHours | quote }}
+          - name: MaxTicketTransfers
+            value: {{ .Values.ticketService.env.maxTicketTransfers | quote }}
+          {{- if .Values.ticketService.env.uploadServiceURL }}
+          - name: UploadServiceURL
+            value: {{ .Values.ticketService.env.uploadServiceURL | quote }}
+          - name: UploadServiceKey
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.ticketService.name }}-secret
+                key: uploadServiceKey
+          {{- end }}
+          {{- if .Values.ticketService.env.temporalAddress }}
+          - name: TemporalAddress
+            value: {{ .Values.ticketService.env.temporalAddress | quote }}
+          - name: TemporalNamespace
+            value: {{ .Values.ticketService.env.temporalNamespace | quote }}
+          - name: TemporalTaskQueue
+            value: {{ .Values.ticketService.env.temporalTaskQueue | quote }}
+          {{- end }}
+          - name: ResaleFeePercent
+            value: {{ .Values.ticketService.env.resaleFeePercent | quote }}
+          - name: PlatformWalletID
+            value: {{ .Values.ticketService.env.platformWalletId | quote }}
+          - name: InvoiceSellerName
+            value: {{ .Values.ticketService.env.invoiceSellerName | quote }}
+          - name: InvoiceSellerTaxID
+            value: {{ .Values.ticketService.env.invoiceSellerTaxId | quote }}
+          - name: InvoiceSellerAddress
+            value: {{ .Values.ticketService.env.invoiceSellerAddress | quote }}
+          - name: VATPercent
+            value: {{ .Values.ticketService.env.vatPercent | quote }}
+          - name: TimeZone
+            value: {{ .Values.ticketService.env.timeZone | quote }}
+          - name: OrderHoldMinutes
+            value: {{ .Values.ticketService.env.orderHoldMinutes | quote }}
+          - name: SweepIntervalSeconds
+            value: {{ .Values.ticketService.env.sweepIntervalSeconds | quote }}
+          - name: PostgresMaxConns
+            value: {{ .Values.ticketService.env.postgresMaxConns | quote }}
+          - name: ReserveConcurrency
+            value: {{ .Values.ticketService.env.reserveConcurrency | quote }}
+          - name: ReserveQueueWaitMillis
+            value: {{ .Values.ticketService.env.reserveQueueWaitMillis | quote }}
+          - name: SoldOutTTLSeconds
+            value: {{ .Values.ticketService.env.soldOutTTLSeconds | quote }}
+          - name: PublicCacheTTLSeconds
+            value: {{ .Values.ticketService.env.publicCacheTTLSeconds | quote }}
+          - name: UserRatePerSecond
+            value: {{ .Values.ticketService.env.userRatePerSecond | quote }}
+          - name: UserBurst
+            value: {{ .Values.ticketService.env.userBurst | quote }}
+          - name: MaxPendingPerUser
+            value: {{ .Values.ticketService.env.maxPendingPerUser | quote }}
+          - name: MaxInFlight
+            value: {{ .Values.ticketService.env.maxInFlight | quote }}
+        resources:
+          {{- toYaml .Values.ticketService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.ticketService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.ticketService.env.postgresPassword | quote }}
+  internalApiKey: {{ .Values.ticketService.env.internalApiKey | quote }}
+  uploadServiceKey: {{ .Values.ticketService.env.uploadServiceKey | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.ticketService.service.name }}
+spec:
+  type: {{ .Values.ticketService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.ticketService.image.port }}
+  selector:
+    app: {{ .Values.ticketService.name }}-deployment

@@ -49,8 +49,10 @@ const (
 )
 
 type AuthConfig struct {
-	Mode     string
-	CacheTTL time.Duration
+	Mode                string
+	CacheTTL            time.Duration
+	ServiceKey          string
+	ServiceOnlyPrefixes []string
 }
 
 type UserServiceConfig struct {
@@ -84,8 +86,10 @@ func Load() *Config {
 				"application/pdf,image/jpeg,image/png,image/webp,image/gif")),
 		},
 		Auth: AuthConfig{
-			Mode:     strings.ToLower(get("AUTH_MODE", AuthToken)),
-			CacheTTL: nonNegative(get("AUTH_CACHE_TTL", "5s"), 5*time.Second),
+			Mode:                strings.ToLower(get("AUTH_MODE", AuthToken)),
+			CacheTTL:            nonNegative(get("AUTH_CACHE_TTL", "5s"), 5*time.Second),
+			ServiceKey:          get("SERVICE_API_KEY", ""),
+			ServiceOnlyPrefixes: split(get("SERVICE_ONLY_RECEIVER_PREFIXES", "")),
 		},
 		UserService: UserServiceConfig{
 			BaseURL: strings.TrimRight(get("USER_SERVICE_BASE_URL", ""), "/"),
@@ -94,7 +98,6 @@ func Load() *Config {
 	}
 }
 
-// Validate rejects configurations that would fail on the first request.
 func (c *Config) Validate() error {
 	switch c.Auth.Mode {
 	case AuthToken:
@@ -107,6 +110,9 @@ func (c *Config) Validate() error {
 	}
 	if c.Storage.Endpoint == "" || c.Storage.AccessKey == "" || c.Storage.SecretKey == "" {
 		return errors.New("MINIO_ENDPOINT, MINIO_ACCESS_KEY and MINIO_SECRET_KEY are required")
+	}
+	if len(c.Auth.ServiceOnlyPrefixes) > 0 && c.Auth.ServiceKey == "" {
+		return errors.New("SERVICE_ONLY_RECEIVER_PREFIXES needs SERVICE_API_KEY: nobody could reach those files otherwise")
 	}
 	if len(c.Upload.AllowedTypes) == 0 {
 		return errors.New("UPLOAD_ALLOWED_TYPES must list at least one type")

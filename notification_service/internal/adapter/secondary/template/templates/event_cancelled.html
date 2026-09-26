@@ -1,0 +1,12 @@
+{{define "subject"}}Sự kiện bị huỷ: {{.EventTitle}}{{end}}
+{{define "html"}}
+<!DOCTYPE html>
+<html>
+  <body style="font-family: sans-serif; color: #1a1a1a;">
+    <h2>Xin chào {{.Name}},</h2>
+    <p>Rất tiếc, <strong>{{.EventTitle}}</strong> đã bị huỷ{{if .Reason}}: {{.Reason}}{{end}}.</p>
+    <p>Đơn hàng <strong>#{{.OrderID}}</strong> sẽ được hoàn tiền về phương thức thanh toán ban đầu.</p>
+    <p style="color:#666;font-size:12px">Email tự động, vui lòng không trả lời.</p>
+  </body>
+</html>
+{{end}}

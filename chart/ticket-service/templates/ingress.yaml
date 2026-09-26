@@ -1,0 +1,23 @@
+{{- if .Values.ticketService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.ticketService.name }}-ingress
+  {{- with .Values.ticketService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ticketService.ingress.className }}
+  rules:
+  - host: {{ .Values.ticketService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.ticketService.ingress.path }}
+        pathType: {{ .Values.ticketService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.ticketService.service.name }}
+            port:
+              number: 80
+{{- end }}

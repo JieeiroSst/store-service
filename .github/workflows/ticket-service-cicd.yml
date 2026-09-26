@@ -1,0 +1,106 @@
+name: Ticket Service CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'ticket-service/**'
+      - 'chart/ticket-service/**'
+      - '.github/workflows/ticket-service-cicd.yml'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/jieeirosst/ticket-service
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    # The multi-pod tests run several replicas of the service against a real Postgres.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: pw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+
+      - name: Build
+        run: cd ticket-service && go build -v ./...
+
+      - name: Vet
+        run: cd ticket-service && go vet ./...
+
+      - name: Test
+        run: cd ticket-service && go test -v ./...
+
+  build-and-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ticket-service
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy ticket service
+        # These resources are owned by the umbrella "chart-1785009827" helm
+        # release (chart/), not a standalone release. `helm upgrade --install
+        # ticket-service ...` fails every run with an ownership
+        # conflict against that release, so render+apply directly instead -
+        # this still triggers a normal rollout since the image tag changes.
+        run: |
+          helm template ./chart/ticket-service \
+            --namespace default \
+            --set ticketService.image.name=${{ env.IMAGE_NAME }} \
+            --set ticketService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            | kubectl apply -n default -f -
+          kubectl rollout status deployment/ticket-service-deployment -n default --timeout=5m

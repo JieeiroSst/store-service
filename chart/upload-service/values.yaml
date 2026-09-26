@@ -41,6 +41,13 @@ uploadService:
     userServiceBaseURL: http://user-api-svc
     authCacheTTL: 5s
 
+    # Other services of the cluster (ticket-service keeps invoices and tickets here) call with this key instead of a user's
+    # token (X-Service-Key). Files of the receivers under serviceOnlyReceiverPrefixes can only be reached with it: a user's
+    # token cannot list or read them, so the owning service decides who sees what. Both are dev defaults - override the key.
+    # Empty prefixes leave every receiver reachable with any valid token.
+    serviceApiKey: dev-upload-service-key
+    serviceOnlyReceiverPrefixes: "ticket-user:"
+
     # The type is detected from the file's bytes, not its name.
     maxUploadMB: "20"
     allowedTypes: application/pdf,image/jpeg,image/png,image/webp,image/gif

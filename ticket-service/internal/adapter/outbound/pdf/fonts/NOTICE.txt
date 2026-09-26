@@ -1,0 +1,4 @@
+DejaVu Sans Condensed (regular and bold) is embedded in the PDFs this service makes, so that Vietnamese and other
+non-ASCII text prints correctly. DejaVu fonts are derived from Bitstream Vera and are free to use, copy, embed and
+redistribute under the Bitstream Vera / DejaVu license (https://dejavu-fonts.github.io/License.html).
+Copyright (c) 2003 Bitstream, Inc.; DejaVu changes are in the public domain.

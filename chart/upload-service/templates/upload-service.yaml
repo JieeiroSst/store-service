@@ -50,6 +50,13 @@ spec:
               secretKeyRef:
                 name: {{ .Values.uploadService.name }}-secret
                 key: minioSecretKey
+          - name: SERVICE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.uploadService.name }}-secret
+                key: serviceApiKey
+          - name: SERVICE_ONLY_RECEIVER_PREFIXES
+            value: {{ .Values.uploadService.env.serviceOnlyReceiverPrefixes | quote }}
           - name: AUTH_MODE
             value: {{ .Values.uploadService.env.authMode | quote }}
           - name: USER_SERVICE_BASE_URL
@@ -75,6 +82,7 @@ stringData:
   # values-prod.yaml before deploying anywhere real.
   minioAccessKey: {{ .Values.uploadService.env.minioAccessKey | quote }}
   minioSecretKey: {{ .Values.uploadService.env.minioSecretKey | quote }}
+  serviceApiKey: {{ .Values.uploadService.env.serviceApiKey | quote }}
 ---
 apiVersion: v1
 kind: Service

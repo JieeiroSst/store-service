@@ -204,3 +204,102 @@ func TestTokenIsCachedBriefly(t *testing.T) {
 		t.Errorf("validator called %d times, want 1", v.calls)
 	}
 }
+
+func restrictedEngine(uc *fakeUsecase) *gin.Engine {
+	gin.SetMode(gin.TestMode)
+	cfg := &config.Config{Auth: config.AuthConfig{Mode: config.AuthToken, CacheTTL: 5e9, ServiceKey: "svc-secret", ServiceOnlyPrefixes: []string{"ticket-user:"}},
+		Upload: config.UploadConfig{MaxBytes: 1 << 10}}
+	auth := NewAuthenticator(cfg, &stubValidator{})
+	h := NewHandler(uc, cfg)
+	e := gin.New()
+	up := e.Group("/api/v1/upload", auth.Middleware())
+	up.POST("", h.Create)
+	up.GET("", h.List)
+	up.GET("/:id", h.Get)
+	up.GET("/:id/content", h.Content)
+	up.PUT("/:id", h.Replace)
+	up.DELETE("/:id", h.Delete)
+	return e
+}
+
+func withKey(rec *httptest.ResponseRecorder, e *gin.Engine, method, path, key string, body io.Reader, ctype string) *httptest.ResponseRecorder {
+	req := httptest.NewRequest(method, path, body)
+	if ctype != "" {
+		req.Header.Set("Content-Type", ctype)
+	}
+	req.Header.Set("X-Service-Key", key)
+	e.ServeHTTP(rec, req)
+	return rec
+}
+
+// A service of the cluster acts with its key; a user's token cannot reach the receivers the service keeps to itself, and
+// the other receivers are unaffected.
+func TestServiceKeyAndServiceOnlyReceivers(t *testing.T) {
+	uc := newUC()
+	uc.file.ReceiverID = "ticket-user:5"
+	e := restrictedEngine(uc)
+
+	// the wrong or an unset key is refused, even with a good token
+	if rec := withKey(httptest.NewRecorder(), e, "GET", "/api/v1/upload?receiver_id=ticket-user:5", "guess", nil, ""); rec.Code != 401 {
+		t.Errorf("wrong key: %d", rec.Code)
+	}
+	// a user's token: not on a service-only receiver, in any way
+	for _, r := range [][3]string{{"GET", "?receiver_id=ticket-user:5", ""}, {"GET", "/f1", ""}, {"GET", "/f1/content", ""}, {"DELETE", "/f1", ""}} {
+		rec := call(e, r[0], "/api/v1/upload"+r[1], nil, "", "good")
+		want := 403
+		if strings.HasPrefix(r[1], "/f1") {
+			want = 404 // a file by id: its existence is not revealed
+		}
+		if rec.Code != want {
+			t.Errorf("token on %s %s: %d, want %d", r[0], r[1], rec.Code, want)
+		}
+	}
+	body, ct := form(t, "file", "inv.pdf", pdf)
+	if rec := call(e, "POST", "/api/v1/upload?receiver_id=ticket-user:5", body, ct, "good"); rec.Code != 403 {
+		t.Errorf("token uploading for a service-only receiver: %d", rec.Code)
+	}
+	// a receiver that is not restricted keeps working with a token
+	if rec := call(e, "GET", "/api/v1/upload?receiver_id=patient:1", nil, "", "good"); rec.Code != 200 {
+		t.Errorf("an ordinary receiver: %d", rec.Code)
+	}
+	uc.file.ReceiverID = "patient:1"
+	if rec := call(e, "GET", "/api/v1/upload/f1/content", nil, "", "good"); rec.Code != 200 {
+		t.Errorf("an ordinary file: %d", rec.Code)
+	}
+	uc.file.ReceiverID = "ticket-user:5"
+
+	// the service key: everything, with no token
+	if rec := withKey(httptest.NewRecorder(), e, "GET", "/api/v1/upload?receiver_id=ticket-user:5", "svc-secret", nil, ""); rec.Code != 200 {
+		t.Errorf("service list: %d", rec.Code)
+	}
+	if rec := withKey(httptest.NewRecorder(), e, "GET", "/api/v1/upload/f1/content", "svc-secret", nil, ""); rec.Code != 200 || !bytes.Equal(rec.Body.Bytes(), pdf) {
+		t.Errorf("service download: %d", rec.Code)
+	}
+	body, ct = form(t, "file", "inv.pdf", pdf)
+	if rec := withKey(httptest.NewRecorder(), e, "POST", "/api/v1/upload?receiver_id=ticket-user:5", "svc-secret", body, ct); rec.Code != 201 {
+		t.Errorf("service upload: %d %s", rec.Code, rec.Body)
+	}
+}
+
+func TestServiceKeyIsOffWithoutConfiguration(t *testing.T) {
+	e := engine(newUC(), config.AuthOff, &stubValidator{})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "/api/v1/upload/f1", nil)
+	req.Header.Set("X-Service-Key", "anything")
+	e.ServeHTTP(rec, req)
+	if rec.Code != 401 {
+		t.Fatalf("a key nobody configured must not open anything: %d", rec.Code)
+	}
+}
+
+func TestConfigNeedsAKeyForServiceOnlyReceivers(t *testing.T) {
+	c := &config.Config{Auth: config.AuthConfig{Mode: config.AuthOff, ServiceOnlyPrefixes: []string{"x:"}},
+		Storage: config.StorageConfig{Endpoint: "e", AccessKey: "a", SecretKey: "s"}, Upload: config.UploadConfig{AllowedTypes: []string{"application/pdf"}}}
+	if err := c.Validate(); err == nil {
+		t.Fatal("service-only prefixes without a key would lock the files away")
+	}
+	c.Auth.ServiceKey = "k"
+	if err := c.Validate(); err != nil {
+		t.Fatal(err)
+	}
+}

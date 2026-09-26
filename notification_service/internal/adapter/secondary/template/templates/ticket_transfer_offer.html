@@ -1,0 +1,13 @@
+{{define "subject"}}Bạn được tặng vé: {{.EventTitle}}{{end}}
+{{define "html"}}
+<!DOCTYPE html>
+<html>
+  <body style="font-family: sans-serif; color: #1a1a1a;">
+    <h2>Xin chào {{.Name}},</h2>
+    <p>Có người vừa gửi cho bạn một vé đến <strong>{{.EventTitle}}</strong> ({{.EventDate}}, {{.Venue}}).</p>
+    {{if .Message}}<p>Lời nhắn: “{{.Message}}”</p>{{end}}
+    <p>Hãy đăng nhập và chấp nhận trước <strong>{{.ExpiresAt}}</strong>, nếu không lời mời sẽ hết hạn.</p>
+    <p style="color:#666;font-size:12px">Email tự động, vui lòng không trả lời.</p>
+  </body>
+</html>
+{{end}}

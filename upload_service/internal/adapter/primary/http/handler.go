@@ -6,6 +6,7 @@ import (
 	"mime"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/JIeeiroSst/upload-service/config"
 	"github.com/JIeeiroSst/upload-service/internal/domain/model"
@@ -15,12 +16,46 @@ import (
 )
 
 type Handler struct {
-	files   port.FileUsecase
-	maxBody int64
+	files       port.FileUsecase
+	maxBody     int64
+	serviceOnly []string
 }
 
 func NewHandler(files port.FileUsecase, cfg *config.Config) *Handler {
-	return &Handler{files: files, maxBody: cfg.Upload.MaxBytes + 1<<20}
+	return &Handler{files: files, maxBody: cfg.Upload.MaxBytes + 1<<20, serviceOnly: cfg.Auth.ServiceOnlyPrefixes}
+}
+
+func (h *Handler) restricted(receiverID string) bool {
+	for _, p := range h.serviceOnly {
+		if strings.HasPrefix(receiverID, p) {
+			return true
+		}
+	}
+	return false
+}
+
+func (h *Handler) allowReceiver(c *gin.Context, receiverID string) bool {
+	if len(h.serviceOnly) == 0 || isService(c) || !h.restricted(receiverID) {
+		return true
+	}
+	c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+	return false
+}
+
+func (h *Handler) allowFile(c *gin.Context, id string) bool {
+	if len(h.serviceOnly) == 0 || isService(c) {
+		return true
+	}
+	f, err := h.files.Get(c.Request.Context(), id)
+	if err != nil {
+		writeError(c, err)
+		return false
+	}
+	if h.restricted(f.ReceiverID) {
+		writeError(c, model.ErrNotFound)
+		return false
+	}
+	return true
 }
 
 const routePrefix = "/api/v1/upload"
@@ -60,6 +95,9 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 	defer closeBody()
+	if !h.allowReceiver(c, in.ReceiverID) {
+		return
+	}
 	f, err := h.files.Create(c.Request.Context(), in)
 	if err != nil {
 		writeError(c, err)
@@ -69,6 +107,9 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 func (h *Handler) Replace(c *gin.Context) {
+	if !h.allowFile(c, c.Param("id")) {
+		return
+	}
 	in, closeBody, err := h.upload(c)
 	if err != nil {
 		writeError(c, err)
@@ -84,6 +125,9 @@ func (h *Handler) Replace(c *gin.Context) {
 }
 
 func (h *Handler) Get(c *gin.Context) {
+	if !h.allowFile(c, c.Param("id")) {
+		return
+	}
 	f, err := h.files.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		writeError(c, err)
@@ -95,6 +139,9 @@ func (h *Handler) Get(c *gin.Context) {
 func (h *Handler) List(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	offset, _ := strconv.Atoi(c.Query("offset"))
+	if !h.allowReceiver(c, c.Query("receiver_id")) {
+		return
+	}
 	files, total, err := h.files.List(c.Request.Context(), c.Query("receiver_id"), limit, offset)
 	if err != nil {
 		writeError(c, err)
@@ -108,6 +155,9 @@ func (h *Handler) List(c *gin.Context) {
 }
 
 func (h *Handler) Content(c *gin.Context) {
+	if !h.allowFile(c, c.Param("id")) {
+		return
+	}
 	d, err := h.files.Open(c.Request.Context(), c.Param("id"))
 	if err != nil {
 		writeError(c, err)
@@ -127,6 +177,9 @@ func (h *Handler) Content(c *gin.Context) {
 }
 
 func (h *Handler) Delete(c *gin.Context) {
+	if !h.allowFile(c, c.Param("id")) {
+		return
+	}
 	if err := h.files.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		writeError(c, err)
 		return
