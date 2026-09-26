@@ -1,0 +1,94 @@
+reservationService:
+  name: reservation-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/reservation-service
+    tag: latest
+    # Always keeps `latest` fresh; use IfNotPresent or Never for an image built locally.
+    pullPolicy: Always
+    # Must match PORT.
+    port: 8080
+
+  service:
+    name: reservation-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: reservation-service.local
+    path: /api/v1
+    pathType: Prefix
+
+  # Dev defaults - override the secrets with --set or a values-prod.yaml
+  # before deploying anywhere real. The schema is applied on startup;
+  # concurrent replicas are serialized with a Postgres advisory lock.
+  env:
+    # Points at the umbrella chart's postgres.
+    postgresHost: postgresdb
+    postgresPort: "80"
+    postgresDatabase: reservation_service
+    postgresUser: testUser
+    postgresPassword: testPassword
+    # user-service owns accounts, login, sessions and roles. Callers send its
+    # access token as a Bearer token; this service validates it there.
+    userServiceURL: http://user-api-svc:80
+    userServiceValidatePath: /api/v1/validate
+    userServiceUserPath: /user
+    # Users holding this role in user-service are admins.
+    adminRole: admin
+    # Seconds a validated token is cached (0 disables). Logout / role changes
+    # in user-service take up to this long to be noticed.
+    authCacheTTLSeconds: "30"
+
+    # payment-wallet-service: internal e-wallets. Leave the URL empty to disable wallet
+    # payment. Each hotel names the wallet that receives its payments (wallet_id on the hotel,
+    # set by its manager through the API), so nothing else is configured here.
+    walletServiceURL: ""
+    # payment_service: external providers (paypal, stripe, ...). Empty disables gateway payment.
+    # At least one of the two must be set.
+    paymentServiceURL: http://payment-service-svc:80
+    paymentServiceTimeoutSeconds: "15"
+    # recompense-service: points and tiers. Hotel managers earn points from good reviews and a
+    # higher tier lifts their hotels in search; guests earn points on payments. Empty disables it.
+    recompenseServiceURL: http://recompense-service-svc:80
+    # notification-service: delivers notifications to people's devices. Notifications are always kept in
+    # each user's inbox (GET /notifications); this only forwards them. Empty disables forwarding.
+    notificationServiceURL: ""
+    # Minutes the rooms of an unpaid reservation stay held before being released.
+    reservationHoldMinutes: "15"
+
+    # Protection for a rush on the last rooms (a million users after one room: exactly one gets it, the rest are
+    # turned away cheaply, without exhausting Postgres or user-service).
+    # Postgres connections per pod. Every pod opens its own pool, so replicas x this (plus everything else on the
+    # server) must stay under Postgres max_connections (100 by default): with the autoscaler's maxReplicas of 5,
+    # 10 uses about half of it. A pod that cannot get a connection answers 429, not 500, but it cannot serve.
+    postgresMaxConns: "10"
+    # Requests per pod allowed to compete for rooms in the database at a time; others wait reserveQueueWaitMillis, then get 429.
+    reserveConcurrency: "16"
+    reserveQueueWaitMillis: "250"
+    # Seconds "sold out" is remembered per pod so later requests are refused from memory (0 disables).
+    soldOutTTLSeconds: "2"
+    # One account: reservation attempts per second (0 disables) and burst.
+    userRatePerSecond: "2"
+    userBurst: "10"
+    # Unpaid reservations one guest may hold at once (0 = unlimited): stops a bot holding every room.
+    maxPendingPerGuest: "3"
+    # Requests per pod handled at once; beyond it the pod answers 503 with Retry-After (0 disables).
+    maxInFlight: "10000"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

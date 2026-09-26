@@ -1,0 +1,23 @@
+# The storm: 1,000,000 different users, 3000 in flight, from inside the cluster, at the reservation-service Service
+# (kube-proxy spreads the connections over the replicas). The Job fails unless exactly one reservation succeeded.
+# Create the hotel, room type and a one-room inventory first (see README.md), and put the same ids in BODY.
+apiVersion: batch/v1
+kind: Job
+metadata: {name: flash, namespace: rs-loadtest}
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: flash
+        image: rs-loadtest:test
+        imagePullPolicy: Never
+        command: [/flash]
+        args:
+        - -url=http://reservation-service-svc/api/v1/reservations
+        - -n=1000000
+        - -c=3000
+        - -rooms=1
+        - '-body={"hotel_id":1,"room_type_id":1,"check_in":"2030-01-01","check_out":"2030-01-02","rooms":1,"adults":2}'
+        resources: {requests: {cpu: 250m, memory: 256Mi}, limits: {cpu: "2", memory: 1Gi}}

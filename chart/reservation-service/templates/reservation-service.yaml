@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.reservationService.name }}-deployment
+spec:
+{{- if not .Values.reservationService.autoscaling.enabled }}
+  replicas: {{ .Values.reservationService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.reservationService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.reservationService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.reservationService.name }}-deployment
+        image: {{ .Values.reservationService.image.name }}:{{ .Values.reservationService.image.tag }}
+        imagePullPolicy: {{ .Values.reservationService.image.pullPolicy | default "Always" }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.reservationService.image.port }}
+        # /readyz pings Postgres, /healthz only proves the process is up.
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: {{ .Values.reservationService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          # A pod flooded with requests answers probes slowly. Being marked unready for a moment is fine (the pod
+          # stops getting new connections and catches up); being restarted for it is not, so liveness is patient.
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ .Values.reservationService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 6
+        env:
+          - name: PORT
+            value: "{{ .Values.reservationService.image.port }}"
+          - name: HostPostgres
+            value: {{ .Values.reservationService.env.postgresHost | quote }}
+          - name: PortPostgres
+            value: {{ .Values.reservationService.env.postgresPort | quote }}
+          - name: DatabasePostgres
+            value: {{ .Values.reservationService.env.postgresDatabase | quote }}
+          - name: UserPostgres
+            value: {{ .Values.reservationService.env.postgresUser | quote }}
+          - name: PasswordPostgres
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.reservationService.name }}-secret
+                key: postgresPassword
+          - name: UserServiceURL
+            value: {{ .Values.reservationService.env.userServiceURL | quote }}
+          - name: UserServiceValidatePath
+            value: {{ .Values.reservationService.env.userServiceValidatePath | quote }}
+          - name: UserServiceUserPath
+            value: {{ .Values.reservationService.env.userServiceUserPath | quote }}
+          - name: AdminRole
+            value: {{ .Values.reservationService.env.adminRole | quote }}
+          - name: AuthCacheTTLSeconds
+            value: {{ .Values.reservationService.env.authCacheTTLSeconds | quote }}
+          {{- if .Values.reservationService.env.walletServiceURL }}
+          - name: WalletServiceURL
+            value: {{ .Values.reservationService.env.walletServiceURL | quote }}
+          {{- end }}
+          {{- if .Values.reservationService.env.paymentServiceURL }}
+          - name: PaymentServiceURL
+            value: {{ .Values.reservationService.env.paymentServiceURL | quote }}
+          {{- end }}
+          {{- if .Values.reservationService.env.recompenseServiceURL }}
+          - name: RecompenseServiceURL
+            value: {{ .Values.reservationService.env.recompenseServiceURL | quote }}
+          {{- end }}
+          - name: PaymentServiceTimeoutSeconds
+            value: {{ .Values.reservationService.env.paymentServiceTimeoutSeconds | quote }}
+          {{- if .Values.reservationService.env.notificationServiceURL }}
+          - name: NotificationServiceURL
+            value: {{ .Values.reservationService.env.notificationServiceURL | quote }}
+          {{- end }}
+          - name: PostgresMaxConns
+            value: {{ .Values.reservationService.env.postgresMaxConns | quote }}
+          - name: ReserveConcurrency
+            value: {{ .Values.reservationService.env.reserveConcurrency | quote }}
+          - name: ReserveQueueWaitMillis
+            value: {{ .Values.reservationService.env.reserveQueueWaitMillis | quote }}
+          - name: SoldOutTTLSeconds
+            value: {{ .Values.reservationService.env.soldOutTTLSeconds | quote }}
+          - name: UserRatePerSecond
+            value: {{ .Values.reservationService.env.userRatePerSecond | quote }}
+          - name: UserBurst
+            value: {{ .Values.reservationService.env.userBurst | quote }}
+          - name: MaxPendingPerGuest
+            value: {{ .Values.reservationService.env.maxPendingPerGuest | quote }}
+          - name: MaxInFlight
+            value: {{ .Values.reservationService.env.maxInFlight | quote }}
+          - name: ReservationHoldMinutes
+            value: {{ .Values.reservationService.env.reservationHoldMinutes | quote }}
+        resources:
+          {{- toYaml .Values.reservationService.resources | nindent 10 }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.reservationService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  postgresPassword: {{ .Values.reservationService.env.postgresPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.reservationService.service.name }}
+spec:
+  type: {{ .Values.reservationService.service.type }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: {{ .Values.reservationService.image.port }}
+  selector:
+    app: {{ .Values.reservationService.name }}-deployment
