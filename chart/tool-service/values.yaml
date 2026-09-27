@@ -1,0 +1,69 @@
+toolService:
+  name: tool-service
+  replicas: 1 # keep 1: the experience store is a local file on a ReadWriteOnce volume
+
+  image:
+    name: ghcr.io/jieeirosst/tool-service
+    tag: latest
+    httpPort: 8080
+    pullPolicy: Always
+
+  # In-cluster Ollama from the ollama subchart: http://<release>-ollama:11434
+  ollama:
+    url: http://ollama:11434
+    model: llama3.2
+    embedModel: nomic-embed-text
+
+  # Experience memory (approved QC work, playbook) persisted here.
+  learning:
+    autoLearnInterval: 1h
+    # Independent AI generations compared before a test case can be trusted (1-5).
+    consistencyRuns: 3
+    storage: 1Gi
+
+  # Comma-separated hosts the tool may test/benchmark. Empty = any host.
+  targetAllowlist: ""
+
+  # Secret holding the shared API token CI pipelines send as "Authorization: Bearer <token>".
+  # Create it with: kubectl create secret generic tool-service-api --from-literal=token=...
+  apiTokenSecret:
+    name: tool-service-api
+    key: token
+
+  # Server-side connections used by the database and RabbitMQ checks; credentials never go through the API.
+  #   kubectl create secret generic tool-service-connections \
+  #     --from-literal=dbConnections='{"orders":{"dialect":"postgres","dsn":"postgres://..."}}' \
+  #     --from-literal=rabbitmqConnections='{"main":{"url":"http://rabbit:15672","user":"...","password":"..."}}'
+  connectionsSecret:
+    name: tool-service-connections
+    dbKey: dbConnections
+    rabbitKey: rabbitmqConnections
+
+  # Android device testing goes through an adb server (an emulator pod or a host with USB devices).
+  # Leave empty to disable. iOS simulator testing needs a macOS host and cannot run in this image.
+  android:
+    adbServerAddress: ""
+    adbServerPort: 5037
+
+  service:
+    name: tool-service-svc
+    type: ClusterIP
+
+  # Long AI runs (task analysis) can take minutes: raise proxy timeouts if you enable this.
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "1500"
+      nginx.ingress.kubernetes.io/proxy-body-size: "12m"
+    host: tool-service.local
+    path: /
+    pathType: Prefix
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 2Gi

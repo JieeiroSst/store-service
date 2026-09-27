@@ -1,0 +1,121 @@
+name: Tool Service CI/CD
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'tool-service/**'
+      - 'chart/tool-service/**'
+      - '.github/workflows/tool-service-cicd.yml'
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/jieeirosst/tool-service
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: pw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: pw
+          MYSQL_DATABASE: shop
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -uroot -ppw"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_POSTGRES_DSN: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+      TEST_MYSQL_DSN: root:pw@tcp(localhost:3306)/shop
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+
+      - name: Build
+        run: cd tool-service && go build -v ./...
+
+      - name: Vet
+        run: cd tool-service && go vet ./...
+
+      - name: Test
+        run: cd tool-service && go test -v ./...
+
+      - name: Lint Helm chart
+        run: helm lint ./chart/tool-service
+
+  build-and-push:
+    needs: build-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./tool-service
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy tool service
+        # Same approach as the other services: the resources belong to the umbrella
+        # helm release (chart/), so render and apply directly instead of installing
+        # a standalone release. The image tag change triggers the rollout.
+        # Requires the secret "tool-service-api" (key: token) in the namespace:
+        #   kubectl create secret generic tool-service-api --from-literal=token=...
+        run: |
+          helm template ./chart/tool-service \
+            --namespace default \
+            --set toolService.image.name=${{ env.IMAGE_NAME }} \
+            --set toolService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            | kubectl apply -n default -f -
+          kubectl rollout status deployment/tool-service-deployment -n default --timeout=5m

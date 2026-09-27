@@ -858,3 +858,52 @@ jobs:
 
     - name: Test
       run: cd ticket-service && go test -v ./...
+
+  tool_service:
+    name: tool_service
+    runs-on: ubuntu-latest
+    # dbcheck integration tests run against real PostgreSQL and MySQL
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: pw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: pw
+          MYSQL_DATABASE: shop
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -uroot -ppw"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_POSTGRES_DSN: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+      TEST_MYSQL_DSN: root:pw@tcp(localhost:3306)/shop
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Build
+      run: cd tool-service && go build -v ./...
+
+    - name: Vet
+      run: cd tool-service && go vet ./...
+
+    # browser tests use the Chrome preinstalled on ubuntu-latest and skip themselves without one
+    - name: Test
+      run: cd tool-service && go test -v ./...
