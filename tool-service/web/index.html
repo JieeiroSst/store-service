@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI QC Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236366f1'/%3E%3Cpath d='M9 17l5 5 9-11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="brand"><div class="logo"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5L19 7"/></svg></div>
+    <div>AI QC Studio<small>Test • Benchmark • Learn</small></div></div>
+  <nav id="nav">
+    <button data-t="task" class="on"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>Task từ file</button>
+    <button data-t="scan"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Quét sản phẩm</button>
+    <button data-t="adv"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 2l3 6 6 .9-4.5 4.4 1 6.3L12 16.8 6.5 19.6l1-6.3L3 8.9 9 8z"/></svg>Kiểm thử nâng cao</button>
+    <button data-t="suite"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Golden suite</button>
+    <button data-t="qc"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h9"/></svg>QC từ mô tả</button>
+    <button data-t="bench"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Benchmark</button>
+    <button data-t="code"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M8 8l-5 4 5 4M16 8l5 4-5 4M14 5l-4 14"/></svg>Review code</button>
+    <button data-t="learn"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>Học &amp; thống kê</button>
+  </nav>
+  <div class="side-foot"><div class="model-chip" id="modelchip">Model: <b>…</b></div></div>
+</aside>
+
+<main>
+  <div class="top">
+    <div><h1 id="title">Task từ file</h1><p class="sub" id="subtitle"></p></div>
+    <div class="tools">
+      <button class="iconbtn" id="themeBtn" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+      <button class="iconbtn" id="setBtn" title="Cài đặt API token" aria-label="Cài đặt"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
+    </div>
+  </div>
+
+  <section class="tab" id="task">
+    <div class="card">
+      <div class="field">
+        <label>File mô tả task</label>
+        <div class="drop" id="drop" tabindex="0" role="button" aria-label="Chọn file task">
+          <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M20 16v3a2 2 0 01-2 2H6a2 2 0 01-2-2v-3"/></svg>
+          <b>Kéo thả file vào đây hoặc bấm để chọn</b>
+          <small>PDF, Word (.docx), .txt, .md — tối đa 10 MB</small>
+        </div>
+        <input id="t-file" type="file" accept=".pdf,.docx,.txt,.md" aria-label="File mô tả task" hidden>
+        <div class="filechip" id="chip"><span id="chipname"></span><button class="btn sm" id="chipx" type="button">Bỏ</button></div>
+      </div>
+      <div class="grid g2">
+        <div class="field"><label for="t-url">URL đích (API đã deploy)</label><input id="t-url" placeholder="https://staging.example.com"><div class="hint">Bỏ trống = chỉ sinh kế hoạch &amp; test case, không chạy.</div></div>
+        <div class="field"><label for="t-min">Tỉ lệ pass tối thiểu (case đáng tin)</label><input id="t-min" type="number" min="0" max="1" step="0.05" value="1"></div>
+      </div>
+      <div class="grid g2">
+        <div class="field"><label for="t-suite">Golden suite (tên bộ test đã duyệt)</label><input id="t-suite" placeholder="vd: payments">
+          <div class="hint">Case đã duyệt trong suite luôn được chạy và được tin cậy. Case liên quan tiền phải được người duyệt vào đây mới chặn được build.</div></div>
+        <div class="field"><label for="t-runs">Số lần AI sinh độc lập (kiểm tra nhất quán)</label><select id="t-runs"><option>3</option><option>5</option><option>1</option></select>
+          <div class="hint">Chỉ case được đa số lần sinh đồng thuận mới đáng tin.</div></div>
+      </div>
+      <details><summary>Tuỳ chọn nâng cao</summary><div class="in">
+        <div class="grid g2">
+          <div class="field"><label for="t-bench">Benchmark hiệu năng</label><select id="t-bench"><option value="true">Bật</option><option value="false">Tắt</option></select></div>
+          <div class="field"><label for="t-e2e">Sinh script E2E (Playwright)</label><select id="t-e2e"><option value="false">Không</option><option value="true">Có (không chạy, để review)</option></select></div>
+          <div class="field"><label for="t-lang">Ngôn ngữ code</label><input id="t-lang" value="go"></div>
+        </div>
+        <div class="field"><label for="t-code">Code cần review theo task (tuỳ chọn)</label><textarea id="t-code" placeholder="Dán source code liên quan..."></textarea></div>
+      </div></details>
+      <div class="actions"><button class="btn primary" id="t-run">Phân tích &amp; test</button></div>
+    </div>
+  </section>
+
+  <section class="tab" id="adv" hidden>
+    <div class="card">
+      <div class="field"><label for="adv-kind">Loại kiểm thử</label>
+        <select id="adv-kind">
+          <option value="browser">Trình duyệt: responsive, tương phản, bàn phím, screen reader, đa ngôn ngữ, so sánh ảnh</option>
+          <option value="db">Cơ sở dữ liệu: toàn vẹn dữ liệu &amp; quy tắc nghiệp vụ SQL</option>
+          <option value="async">Luồng bất đồng bộ &amp; idempotency</option>
+          <option value="queue">Hàng đợi RabbitMQ</option>
+          <option value="active">Bảo mật chủ động &amp; exploratory (injection, fuzz, phân quyền)</option>
+          <option value="load">Stress &amp; soak (chạy dài, nền)</option>
+          <option value="mstatic">Mobile: phân tích tĩnh APK / IPA (manifest, quyền, bí mật, ATS)</option>
+          <option value="android">Mobile: chạy app Android trên thiết bị/emulator (adb)</option>
+          <option value="ios">Mobile: chạy app iOS trên simulator (macOS + Xcode)</option>
+          <option value="mdevices">Mobile: thiết bị và simulator khả dụng</option>
+          <option value="jobs">Các job đang chạy</option>
+        </select></div>
+
+      <div class="adv" data-k="browser">
+        <div class="field"><label for="br-url">URL trang web</label><input id="br-url" placeholder="https://staging.example.com"></div>
+        <div class="grid g2">
+          <div class="field"><label for="br-pages">Số trang tối đa (tự duyệt)</label><input id="br-pages" type="number" value="3" min="1" max="10"></div>
+          <div class="field"><label for="br-loc">Ngôn ngữ (cách nhau dấu phẩy)</label><input id="br-loc" placeholder="en-US, vi-VN, ar"></div>
+        </div>
+        <div class="field"><label>Kích thước màn hình</label>
+          <div class="actions"><label class="check"><input type="checkbox" class="br-vp" value="desktop" checked> Desktop</label>
+          <label class="check"><input type="checkbox" class="br-vp" value="tablet" checked> Tablet</label>
+          <label class="check"><input type="checkbox" class="br-vp" value="mobile" checked> Mobile</label></div></div>
+        <div class="grid g2">
+          <div class="field"><label for="br-name">Tên bộ ảnh chuẩn (baseline)</label><input id="br-name" value="default"><div class="hint">Lần đầu chạy tạo ảnh chuẩn; các lần sau so sánh với ảnh này.</div></div>
+          <div class="field"><label class="check" style="margin-top:26px"><input id="br-upd" type="checkbox"> Cập nhật ảnh chuẩn (chấp nhận giao diện mới)</label></div>
+        </div>
+      </div>
+
+      <div class="adv" data-k="db" hidden>
+        <div class="field"><label for="db-conn">Tên kết nối (cấu hình phía server: DB_CONNECTIONS)</label><input id="db-conn" placeholder="orders"></div>
+        <div class="field"><label for="db-asserts">Quy tắc nghiệp vụ bằng SQL (JSON, tuỳ chọn)</label>
+          <textarea id="db-asserts" style="min-height:130px" placeholder='[{"name":"tổng đơn = tổng dòng hàng","sql":"SELECT o.id FROM orders o WHERE o.total <> (SELECT SUM(price*qty) FROM items i WHERE i.order_id=o.id)"},&#10; {"name":"số user","sql":"SELECT COUNT(*) FROM users","expect":"value","value":"42"}]'></textarea>
+          <div class="hint">Chỉ chấp nhận một câu SELECT/WITH, chạy trong transaction chỉ-đọc. Mặc định kỳ vọng “không có dòng nào” (mỗi dòng trả về là một vi phạm).</div></div>
+      </div>
+
+      <div class="adv" data-k="async" hidden>
+        <div class="field"><label for="as-url">URL API</label><input id="as-url" placeholder="https://staging.example.com"></div>
+        <div class="grid g2">
+          <div class="field"><label for="as-tm">Method &amp; đường dẫn kích hoạt</label><input id="as-tm" value="POST /orders"></div>
+          <div class="field"><label for="as-body">Body kích hoạt (JSON)</label><input id="as-body" value='{"amount": 59.97}'></div>
+        </div>
+        <div class="grid g2">
+          <div class="field"><label for="as-poll">Đường dẫn kiểm tra kết quả (GET)</label><input id="as-poll" placeholder="/orders/1"></div>
+          <div class="field"><label for="as-exp">Điều kiện mong đợi (JSON)</label><input id="as-exp" value='{"status":"PAID"}'><div class="hint">Hỗ trợ <code>"calc:19.99*3"</code> cho số tiền chính xác.</div></div>
+        </div>
+        <div class="grid g2">
+          <div class="field"><label for="as-to">Chờ tối đa (giây)</label><input id="as-to" type="number" value="30"></div>
+          <div class="field"><label for="as-rep">Gửi lặp cùng Idempotency-Key</label><select id="as-rep"><option value="0">Không</option><option value="2">2 lần</option><option value="3">3 lần</option></select></div>
+        </div>
+      </div>
+
+      <div class="adv" data-k="queue" hidden>
+        <div class="grid g2">
+          <div class="field"><label for="q-broker">Tên broker (RABBITMQ_CONNECTIONS)</label><input id="q-broker" placeholder="main"></div>
+          <div class="field"><label for="q-max">Ngưỡng tồn đọng (messages)</label><input id="q-max" type="number" value="1000"></div>
+        </div>
+      </div>
+
+      <div class="adv" data-k="active" hidden>
+        <div class="banner warn" style="margin-bottom:14px"><div>Gửi lưu lượng kiểu tấn công (injection, dữ liệu sai định dạng, thử quyền). <b>Chỉ dùng trên hệ thống của bạn</b>, tốt nhất là staging. Server phải cấu hình <code>API_TOKEN</code> và <code>TARGET_ALLOWLIST</code>.</div></div>
+        <div class="field"><label for="ac-url">URL đích</label><input id="ac-url" placeholder="https://staging.example.com"></div>
+        <div class="field"><label for="ac-eps">Endpoint cần thăm dò (JSON)</label>
+          <textarea id="ac-eps" style="min-height:100px" placeholder='[{"path":"/search","params":{"q":"x"}},&#10; {"method":"POST","path":"/pay","body":{"amount":10.5}}]'></textarea></div>
+        <div class="grid g2">
+          <div class="field"><label for="ac-ids">Danh tính (JSON, cho ma trận phân quyền)</label>
+            <textarea id="ac-ids" style="min-height:80px" placeholder='[{"name":"alice","headers":{"Authorization":"Bearer ..."}},&#10; {"name":"bob","headers":{"Authorization":"Bearer ..."}}]'></textarea></div>
+          <div class="field"><label for="ac-res">Tài nguyên theo chủ sở hữu (JSON)</label>
+            <textarea id="ac-res" style="min-height:80px" placeholder='[{"path":"/orders/1","owner":"alice"}]'></textarea></div>
+        </div>
+        <div class="actions" style="margin-bottom:10px">
+          <label class="check"><input id="ac-forms" type="checkbox" checked> Thăm dò các form của website (exploratory)</label>
+          <label class="check"><input id="ac-writes" type="checkbox"> Cho phép request ghi dữ liệu (POST/PUT/DELETE)</label></div>
+        <label class="check" style="margin-bottom:10px"><input id="ac-consent" type="checkbox"> Tôi sở hữu hệ thống này và đồng ý cho quét chủ động</label>
+      </div>
+
+      <div class="adv" data-k="load" hidden>
+        <div class="grid g2">
+          <div class="field"><label for="ld-mode">Chế độ</label><select id="ld-mode"><option value="stress">Stress: tăng dần tải để tìm điểm gãy</option><option value="soak">Soak: giữ tải ổn định, phát hiện suy giảm</option></select></div>
+          <div class="field"><label for="ld-url">URL</label><input id="ld-url" placeholder="https://staging.example.com/health"></div>
+        </div>
+        <div class="grid g4">
+          <div class="field"><label for="ld-p95">Giới hạn p95 (ms)</label><input id="ld-p95" type="number" value="500"></div>
+          <div class="field"><label for="ld-conc">Concurrency (soak)</label><input id="ld-conc" type="number" value="20"></div>
+          <div class="field"><label for="ld-dur">Thời lượng soak (giây)</label><input id="ld-dur" type="number" value="300"></div>
+          <div class="field"><label for="ld-stages">Các mức tải (stress)</label><input id="ld-stages" value="5,10,25,50,100"></div>
+        </div>
+      </div>
+
+      <div class="adv" data-k="mstatic" hidden>
+        <div class="field"><label for="ms-file">File .apk hoặc .ipa</label><input id="ms-file" type="file" accept=".apk,.ipa"><div class="hint">Phân tích không cần thiết bị: manifest, quyền, component xuất ra ngoài, cờ debug, chữ ký, khoá/bí mật nhúng, Info.plist, ATS, khai báo quyền so với API thực sự dùng, provisioning. Tối đa 200 MB.</div></div>
+      </div>
+
+      <div class="adv" data-k="android" hidden>
+        <div class="field"><label for="an-file">File APK (tuỳ chọn nếu app đã cài sẵn trên thiết bị)</label><input id="an-file" type="file" accept=".apk"></div>
+        <div class="grid g2">
+          <div class="field"><label for="an-pkg">Package (tự lấy từ APK nếu để trống)</label><input id="an-pkg" placeholder="com.example.app"></div>
+          <div class="field"><label for="an-serial">Serial thiết bị (để trống = thiết bị đầu tiên)</label><input id="an-serial" placeholder="emulator-5554"></div>
+        </div>
+        <div class="grid g4">
+          <div class="field"><label for="an-monkey">Sự kiện monkey</label><input id="an-monkey" type="number" value="300" min="0" max="20000"></div>
+          <div class="field"><label for="an-seed">Seed</label><input id="an-seed" type="number" value="42"></div>
+          <div class="field"><label class="check" style="margin-top:26px"><input id="an-un" type="checkbox"> Gỡ app sau khi test</label></div>
+        </div>
+        <div class="hint">Đo thời gian khởi động nguội, bộ nhớ, giật khung hình, crash/ANR/native crash từ logcat, kiểm tra nhãn truy cập và cỡ vùng chạm, monkey test ngẫu nhiên, và các kịch bản: xoay màn hình, chữ 200%, dark mode, RTL, chạy nền. Cài đặt thiết bị được khôi phục sau đó.</div>
+      </div>
+
+      <div class="adv" data-k="ios" hidden>
+        <div class="field"><label for="io-file">File .app build cho simulator, nén zip (tuỳ chọn nếu đã cài sẵn)</label><input id="io-file" type="file" accept=".zip"></div>
+        <div class="grid g2">
+          <div class="field"><label for="io-bundle">Bundle ID (tự lấy từ Info.plist nếu để trống)</label><input id="io-bundle" placeholder="com.example.app"></div>
+          <div class="field"><label for="io-dev">Simulator (tên hoặc UDID, trống = đang chạy)</label><input id="io-dev" placeholder="iPhone 15 Pro"></div>
+        </div>
+        <div class="field"><label for="io-links">Deep link cần kiểm tra (cách nhau dấu phẩy)</label><input id="io-links" placeholder="myapp://cart/42, https://example.com/item/7"></div>
+        <div class="hint">Chỉ chạy được khi service chạy trên macOS có Xcode. Kịch bản: dark mode, Dynamic Type lớn nhất, RTL (tiếng Ả Rập), chạy lại, deep link; phát hiện crash qua báo cáo hệ thống.</div>
+      </div>
+
+      <div class="actions" id="adv-actions"><button class="btn primary" id="adv-run">Chạy</button></div>
+    </div>
+  </section>
+
+  <section class="tab" id="scan" hidden>
+    <div class="card">
+      <div class="field"><label for="sc-url">URL sản phẩm (website hoặc API đã deploy)</label><input id="sc-url" placeholder="https://staging.example.com"></div>
+      <div class="field"><label for="sc-paths">Endpoint bắt buộc đăng nhập (mỗi dòng một đường dẫn, tuỳ chọn)</label>
+        <textarea id="sc-paths" style="min-height:70px" placeholder="/api/orders/1&#10;/api/me"></textarea>
+        <div class="hint">Sẽ kiểm tra xem người chưa đăng nhập có truy cập được không.</div></div>
+      <div class="grid g2">
+        <div class="field"><label for="sc-pages">Số trang tối đa khi duyệt web</label><input id="sc-pages" type="number" value="20" min="1" max="100"></div>
+        <div class="field"><label for="sc-un">Điểm cần duyệt (medium)</label><select id="sc-un"><option value="block">Chặn build</option><option value="warn">Chỉ cảnh báo</option></select></div>
+      </div>
+      <p class="hint" style="margin-top:0">Quét thụ động, không gây hại: chỉ gửi GET/HEAD/OPTIONS/TRACE, không có payload tấn công. Không dùng AI nên kết quả xác định.</p>
+      <div class="actions"><button class="btn primary" id="sc-run">Quét bảo mật &amp; web</button></div>
+    </div>
+  </section>
+
+  <section class="tab" id="suite" hidden>
+    <div class="card">
+      <div class="grid g2">
+        <div class="field"><label for="s-name">Tên suite</label><input id="s-name" placeholder="payments"></div>
+        <div class="field"><label for="s-url">URL đích</label><input id="s-url" placeholder="https://staging.example.com"></div>
+      </div>
+      <div class="actions"><button class="btn primary" id="s-run">Chạy suite (không AI)</button><button class="btn" id="s-show">Xem nội dung &amp; độ chính xác</button></div>
+    </div>
+  </section>
+
+  <section class="tab" id="qc" hidden>
+    <div class="card">
+      <div class="field"><label for="qc-url">URL đích</label><input id="qc-url" placeholder="https://api.example.com"></div>
+      <div class="field"><label for="qc-spec">Mô tả API / OpenAPI / code handler</label><textarea id="qc-spec" style="min-height:170px" placeholder="VD: POST /orders tạo đơn, cần token, amount > 0..."></textarea></div>
+      <div class="grid g2">
+        <div class="field"><label for="qc-count">Số test case</label><input id="qc-count" type="number" value="12" min="1" max="30"></div>
+        <div class="field"><label for="qc-bench">Benchmark kèm theo</label><select id="qc-bench"><option value="false">Không</option><option value="true">Có</option></select></div>
+      </div>
+      <div class="actions"><button class="btn primary" id="qc-run">Chạy QC</button></div>
+    </div>
+  </section>
+
+  <section class="tab" id="bench" hidden>
+    <div class="card">
+      <div class="grid" style="grid-template-columns:120px 1fr">
+        <div class="field"><label for="b-method">Method</label><select id="b-method"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select></div>
+        <div class="field"><label for="b-url">URL</label><input id="b-url" placeholder="https://api.example.com/health"></div>
+      </div>
+      <div class="grid g4">
+        <div class="field"><label for="b-conc">Concurrency</label><input id="b-conc" type="number" value="10" min="1" max="200"></div>
+        <div class="field"><label for="b-req">Số request</label><input id="b-req" type="number" value="200" min="1"></div>
+        <div class="field"><label for="b-dur">Hoặc chạy (giây)</label><input id="b-dur" type="number" value="0" min="0"></div>
+      </div>
+      <div class="field"><label for="b-headers">Headers (JSON, tuỳ chọn)</label><input id="b-headers" placeholder='{"Authorization":"Bearer ..."}'></div>
+      <div class="field"><label for="b-body">Body (tuỳ chọn)</label><textarea id="b-body" style="min-height:70px"></textarea></div>
+      <div class="actions"><button class="btn primary" id="b-run">Chạy benchmark</button>
+        <label class="check"><input id="b-an" type="checkbox"> AI phân tích kết quả</label></div>
+    </div>
+  </section>
+
+  <section class="tab" id="code" hidden>
+    <div class="card">
+      <div class="grid g2">
+        <div class="field"><label for="c-lang">Ngôn ngữ</label><input id="c-lang" value="go"></div>
+        <div class="field"><label for="c-focus">Tập trung</label><select id="c-focus"><option value="">Tất cả</option><option>logic</option><option>performance</option><option>tests</option></select></div>
+      </div>
+      <div class="field"><label for="c-code">Code cần review</label><textarea id="c-code" style="min-height:260px" placeholder="Dán code..."></textarea></div>
+      <div class="actions"><button class="btn primary" id="c-run">Phân tích code</button></div>
+    </div>
+  </section>
+
+  <section class="tab" id="learn" hidden>
+    <div class="card">
+      <p class="muted" style="margin-top:0">AI judge tự duyệt kết quả; chỉ những ca AI không chắc mới cần bạn duyệt. Bạn luôn có thể ghi đè.</p>
+      <div class="actions">
+        <button class="btn primary" id="l-stats">Thống kê</button>
+        <button class="btn" id="l-hist">Đồ thị approval rate</button>
+        <button class="btn" id="l-pend">Hàng chờ duyệt</button>
+        <button class="btn" id="l-ref">Cập nhật playbook</button>
+        <button class="btn" id="l-evo">Tạo model qc-agent</button>
+        <button class="btn" id="l-exp">Tải dataset fine-tune</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="loader" id="loader"><div class="spin"></div><div><b id="loadtitle">Đang chạy…</b><div class="muted" id="loadsub">Model có thể mất vài phút.</div></div></div>
+  <div id="out"></div>
+</main>
+</div>
+
+<dialog id="dlg">
+  <h2>Cài đặt</h2>
+  <div class="field"><label for="token">API token</label><input id="token" type="password" autocomplete="off" placeholder="Chỉ cần khi service đặt API_TOKEN">
+    <div class="hint">Lưu trong tab trình duyệt này (sessionStorage), không gửi đi đâu ngoài service.</div></div>
+  <div class="actions" style="justify-content:flex-end"><button class="btn primary" id="dlgok">Lưu</button></div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="/assets/app.js"></script>
+</body>
+</html>

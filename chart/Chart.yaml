@@ -335,3 +335,7 @@ dependencies:
     name: ticket-service
     version: "0.1.0"
     repository: file://ticket-service
+  - alias: toolService
+    name: tool-service
+    version: "0.1.0"
+    repository: file://tool-service
