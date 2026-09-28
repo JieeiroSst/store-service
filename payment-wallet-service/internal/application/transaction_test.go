@@ -169,3 +169,26 @@ func TestTransfer(t *testing.T) {
 		}
 	})
 }
+
+func TestGetTransactionByReference(t *testing.T) {
+	d := newTransactionTestDeps()
+	d.seedWallet("w1", "u1", "USD", 1000)
+	txn, err := d.svc.Withdraw(context.Background(), "w1", 300, "order-1", "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	got, err := d.svc.GetTransactionByReference(context.Background(), "w1", "order-1")
+	if err != nil || got.TransactionID != txn.TransactionID {
+		t.Fatalf("got %+v, err %v", got, err)
+	}
+	if _, err := d.svc.GetTransactionByReference(context.Background(), "w1", "missing"); !errors.Is(err, port.ErrNotFound) {
+		t.Fatalf("missing reference: %v", err)
+	}
+	if _, err := d.svc.GetTransactionByReference(context.Background(), "w2", "order-1"); !errors.Is(err, port.ErrNotFound) {
+		t.Fatalf("other wallet: %v", err)
+	}
+	if _, err := d.svc.GetTransactionByReference(context.Background(), "w1", ""); !errors.Is(err, port.ErrNotFound) {
+		t.Fatalf("empty reference: %v", err)
+	}
+}

@@ -1007,3 +1007,41 @@ jobs:
 
     - name: Test
       run: cd draw-image-service && go test -v ./...
+
+  vending_machine_service:
+    name: vending_machine_service
+    runs-on: ubuntu-latest
+    # The postgres adapter tests (migrations, row locking) run against a real Postgres.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: pw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.25"
+
+    - name: Check chart consul.json is in sync
+      run: diff vending-machine-service/consul.json chart/vending-machine-service/files/consul.json
+
+    - name: Build
+      run: cd vending-machine-service && go build -v ./...
+
+    - name: Vet
+      run: cd vending-machine-service && go vet ./...
+
+    - name: Test
+      run: cd vending-machine-service && go test -v ./...

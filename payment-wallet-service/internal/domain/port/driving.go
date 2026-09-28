@@ -23,6 +23,7 @@ type TransactionUsecase interface {
 	Withdraw(ctx context.Context, walletID string, amount int64, referenceID, description string) (*model.Transaction, error)
 	Transfer(ctx context.Context, senderWalletID, receiverWalletID string, amount int64, referenceID, description string) (*model.Transfer, error)
 	GetTransaction(ctx context.Context, transactionID string) (*model.Transaction, error)
+	GetTransactionByReference(ctx context.Context, walletID, referenceID string) (*model.Transaction, error)
 	ListTransactions(ctx context.Context, walletID string, limit, offset int) ([]model.Transaction, error)
 	Statement(ctx context.Context, walletID string, from, to time.Time) ([]model.Transaction, error)
 

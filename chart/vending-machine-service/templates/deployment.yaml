@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.vendingMachineService.name }}-deployment
+  labels:
+    app: {{ .Values.vendingMachineService.name }}
+spec:
+  {{- if not .Values.vendingMachineService.autoscaling.enabled }}
+  replicas: {{ .Values.vendingMachineService.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.vendingMachineService.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.vendingMachineService.name }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+      - name: {{ .Values.vendingMachineService.name }}
+        image: "{{ .Values.vendingMachineService.image.name }}:{{ .Values.vendingMachineService.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {{ .Values.vendingMachineService.image.port }}
+        env:
+        - name: CONSUL_ADDR
+          value: {{ .Values.vendingMachineService.consul.addr | quote }}
+        - name: CONSUL_KEY
+          value: {{ .Values.vendingMachineService.consul.key | quote }}
+        - name: PORT_HTTP_SERVER
+          value: {{ .Values.vendingMachineService.image.port | quote }}
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.vendingMachineService.credentialsSecret }}
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.vendingMachineService.credentialsSecret }}
+              key: POSTGRES_PASSWORD
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: {{ .Values.vendingMachineService.image.port }}
+          initialDelaySeconds: 3
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.vendingMachineService.image.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 20
+        resources:
+          {{- toYaml .Values.vendingMachineService.resources | nindent 10 }}

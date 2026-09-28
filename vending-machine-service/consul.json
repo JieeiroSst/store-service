@@ -1,0 +1,30 @@
+{
+    "server": {
+        "portHttpServer": "8080"
+    },
+    "postgres": {
+        "host": "postgresdb",
+        "port": "80",
+        "user": "vending_machine_svc",
+        "password": "",
+        "dbname": "vending_machine",
+        "sslmode": "disable",
+        "maxConns": 10
+    },
+    "vending": {
+        "sessionTtl": "5m",
+        "reservationTtl": "2m",
+        "sweepInterval": "30s",
+        "alertInterval": "15s",
+        "reconcileInterval": "1m",
+        "reconcileAfter": "2m",
+        "currency": "USD"
+    },
+    "upstream": {
+        "serviceName": "vending-machine-service",
+        "timeout": "5s",
+        "walletServiceUrl": "http://payment-wallet-service-svc",
+        "couponServiceUrl": "http://coupon-service-svc",
+        "notificationServiceUrl": "http://notification-service-svc"
+    }
+}

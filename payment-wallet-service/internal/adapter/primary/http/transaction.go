@@ -78,6 +78,15 @@ func (h *Handler) GetTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, txn)
 }
 
+func (h *Handler) GetTransactionByReference(c *gin.Context) {
+	txn, err := h.transactions.GetTransactionByReference(c.Request.Context(), c.Param("id"), c.Param("referenceId"))
+	if err != nil {
+		writeError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, txn)
+}
+
 func (h *Handler) ListTransactions(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	offset, _ := strconv.Atoi(c.Query("offset"))
