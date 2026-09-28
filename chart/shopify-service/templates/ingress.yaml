@@ -1,0 +1,23 @@
+{{- if .Values.shopifyService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.shopifyService.name }}-ingress
+  {{- with .Values.shopifyService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.shopifyService.ingress.className }}
+  rules:
+  - host: {{ .Values.shopifyService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.shopifyService.ingress.path }}
+        pathType: {{ .Values.shopifyService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.shopifyService.service.name }}
+            port:
+              number: 80
+{{- end }}
