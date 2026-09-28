@@ -907,3 +907,43 @@ jobs:
     # browser tests use the Chrome preinstalled on ubuntu-latest and skip themselves without one
     - name: Test
       run: cd tool-service && go test -v ./...
+
+  shopify_service:
+    name: shopify_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.23"
+
+    - name: Build
+      run: cd shopify-service && go build -v ./...
+
+    - name: Vet
+      run: cd shopify-service && go vet ./...
+
+    - name: Test
+      run: cd shopify-service && go test -v ./...
+
+  medical_service:
+    name: medical_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.23"
+
+    - name: Build
+      run: cd medical-service && go build -v ./...
+
+    - name: Vet
+      run: cd medical-service && go vet ./...
+
+    - name: Test
+      run: cd medical-service && go test -v ./...

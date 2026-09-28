@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.shopifyService.name }}-deployment
+spec:
+{{- if not .Values.shopifyService.autoscaling.enabled }}
+  replicas: {{ .Values.shopifyService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.shopifyService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.shopifyService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.shopifyService.name }}-deployment
+        image: {{ .Values.shopifyService.image.name }}:{{ .Values.shopifyService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.shopifyService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.shopifyService.image.port }}"
+          - name: MYSQL_HOST
+            value: {{ .Values.shopifyService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.shopifyService.env.mysqlPort | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.shopifyService.env.mysqlUser | quote }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shopifyService.name }}-secret
+                key: mysqlPassword
+          - name: MYSQL_DBNAME
+            value: {{ .Values.shopifyService.env.mysqlDbname | quote }}
+          - name: SHOPIFY_SHOP_DOMAIN
+            value: {{ .Values.shopifyService.env.shopifyShopDomain | quote }}
+          - name: SHOPIFY_API_VERSION
+            value: {{ .Values.shopifyService.env.shopifyAPIVersion | quote }}
+          - name: SHOPIFY_TIMEOUT
+            value: {{ .Values.shopifyService.env.shopifyTimeout | quote }}
+          - name: SHOPIFY_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shopifyService.name }}-secret
+                key: shopifyAccessToken
+          - name: SHOPIFY_API_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shopifyService.name }}-secret
+                key: shopifyAPISecret
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.shopifyService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.shopifyService.image.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          {{- toYaml .Values.shopifyService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: shopify-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+          # Only used for the optional Consul settings; the pod must still
+          # start when ops has not added a shopify-service.env entry.
+          optional: true
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.shopifyService.name }}-secret
+type: Opaque
+stringData:
+  # Dev defaults from values.yaml - override with --set or a
+  # values-prod.yaml before deploying anywhere real.
+  mysqlPassword: {{ .Values.shopifyService.env.mysqlPassword | quote }}
+  shopifyAccessToken: {{ .Values.shopifyService.env.shopifyAccessToken | quote }}
+  shopifyAPISecret: {{ .Values.shopifyService.env.shopifyAPISecret | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.shopifyService.service.name }}
+spec:
+  type: {{ .Values.shopifyService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.shopifyService.image.port }}
+  selector:
+    app: {{ .Values.shopifyService.name }}-deployment

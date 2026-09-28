@@ -339,3 +339,11 @@ dependencies:
     name: tool-service
     version: "0.1.0"
     repository: file://tool-service
+  - alias: shopifyService
+    name: shopify-service
+    version: "0.1.0"
+    repository: file://shopify-service
+  - alias: medicalService
+    name: medical-service
+    version: "0.1.0"
+    repository: file://medical-service

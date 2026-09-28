@@ -1,0 +1,20 @@
+{{- if .Values.medicalService.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.medicalService.name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.medicalService.name }}-deployment
+  minReplicas: {{ .Values.medicalService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.medicalService.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.medicalService.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
