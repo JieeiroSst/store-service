@@ -22,6 +22,7 @@ func NewRouter(h *Handler) *gin.Engine {
 		api.POST("/wallets/:id/deposit", h.Deposit)
 		api.POST("/wallets/:id/withdraw", h.Withdraw)
 		api.GET("/wallets/:id/transactions", h.ListTransactions)
+		api.GET("/wallets/:id/transactions/by-reference/:referenceId", h.GetTransactionByReference)
 		api.GET("/wallets/:id/statement", h.Statement)
 		api.POST("/wallets/:id/freeze", h.FreezeWallet)
 		api.POST("/wallets/:id/unfreeze", h.UnfreezeWallet)

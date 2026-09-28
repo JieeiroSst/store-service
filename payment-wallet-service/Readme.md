@@ -119,6 +119,7 @@ Một `PaymentRequest` phục vụ cả 2 luồng bằng cùng một cơ chế:
 | POST | `/api/v1/wallets/:id/deposit` | Nạp tiền (`{"amount", "reference_id", "description"}`) |
 | POST | `/api/v1/wallets/:id/withdraw` | Rút tiền (cùng payload) |
 | GET | `/api/v1/wallets/:id/transactions?limit=&offset=` | Lịch sử giao dịch của ví |
+| GET | `/api/v1/wallets/:id/transactions/by-reference/:referenceId` | Tra giao dịch nạp/rút theo `reference_id` (404 nếu chưa có) — bên gọi dùng để biết một lệnh bị timeout đã thực sự trừ tiền hay chưa |
 | GET | `/api/v1/wallets/:id/statement?from=&to=` | Xuất sao kê CSV (`YYYY-MM-DD`, mặc định 30 ngày gần nhất) |
 | POST | `/api/v1/wallets/:id/freeze` | Đóng băng ví (`{"reason"}`) |
 | POST | `/api/v1/wallets/:id/unfreeze` | Mở lại ví đang bị đóng băng |

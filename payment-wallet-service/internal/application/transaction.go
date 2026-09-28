@@ -167,6 +167,13 @@ func (s *transactionService) GetTransaction(ctx context.Context, transactionID s
 	return s.transactions.GetByID(ctx, transactionID)
 }
 
+func (s *transactionService) GetTransactionByReference(ctx context.Context, walletID, referenceID string) (*model.Transaction, error) {
+	if referenceID == "" {
+		return nil, port.ErrNotFound
+	}
+	return s.transactions.GetByReferenceID(ctx, walletID, referenceID)
+}
+
 func (s *transactionService) ListTransactions(ctx context.Context, walletID string, limit, offset int) ([]model.Transaction, error) {
 	return s.transactions.ListByWallet(ctx, walletID, limit, offset)
 }

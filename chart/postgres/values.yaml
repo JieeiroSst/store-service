@@ -101,3 +101,12 @@ postgres:
       consulKey: photo_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # vending-machine-service reads plain env vars, not Consul: the entry
+    # creates its database and the vending-machine-service-db-credentials
+    # Secret its deployment reads (the Consul patch is skipped when the key is absent).
+    - name: vending-machine-service
+      database: vending_machine
+      role: vending_machine_svc
+      consulKey: vending_machine_service
+      userField: .postgres.user
+      passwordField: .postgres.password

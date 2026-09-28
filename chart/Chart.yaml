@@ -359,3 +359,7 @@ dependencies:
     name: draw-image-service
     version: "0.1.0"
     repository: file://draw-image-service
+  - alias: vendingMachineService
+    name: vending-machine-service
+    version: "0.1.0"
+    repository: file://vending-machine-service
