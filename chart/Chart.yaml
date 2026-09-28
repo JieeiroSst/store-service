@@ -347,3 +347,7 @@ dependencies:
     name: medical-service
     version: "0.1.0"
     repository: file://medical-service
+  - alias: shippingService
+    name: shipping-service
+    version: "0.1.0"
+    repository: file://shipping-service

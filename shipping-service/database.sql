@@ -1,0 +1,81 @@
+CREATE TABLE IF NOT EXISTS warehouses (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(64) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    ward_code VARCHAR(32) NOT NULL,
+    district_id INT NOT NULL,
+    province_id INT NOT NULL DEFAULT 0,
+    carrier_shop_id BIGINT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at DATETIME(3) NULL,
+    updated_at DATETIME(3) NULL,
+    UNIQUE KEY uk_warehouses_code (code)
+);
+
+CREATE TABLE IF NOT EXISTS shipments (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(32) NOT NULL,
+    client_service VARCHAR(64) NOT NULL,
+    client_order_code VARCHAR(64) NOT NULL,
+    status VARCHAR(32) NOT NULL,
+    carrier_status VARCHAR(64) NOT NULL DEFAULT '',
+    carrier_order_code VARCHAR(64) NOT NULL DEFAULT '',
+    warehouse_id BIGINT NOT NULL,
+    carrier_shop_id BIGINT NOT NULL,
+    service_id INT NOT NULL,
+    service_type_id INT NOT NULL DEFAULT 0,
+    service_name VARCHAR(128) NOT NULL DEFAULT '',
+    strategy VARCHAR(16) NOT NULL,
+    recipient TEXT NOT NULL,
+    parcel TEXT NOT NULL,
+    customer TEXT,
+    cod_amount BIGINT NOT NULL DEFAULT 0,
+    insurance_value BIGINT NOT NULL DEFAULT 0,
+    payment_type VARCHAR(16) NOT NULL,
+    required_note VARCHAR(32) NOT NULL,
+    note VARCHAR(500) NOT NULL DEFAULT '',
+    quoted_fee BIGINT NOT NULL DEFAULT 0,
+    shipping_fee BIGINT NOT NULL DEFAULT 0,
+    expected_delivery_at DATETIME(3) NULL,
+    delivered_at DATETIME(3) NULL,
+    callback_url VARCHAR(500) NOT NULL DEFAULT '',
+    place_attempts INT NOT NULL DEFAULT 0,
+    placing_until DATETIME(3) NULL,
+    last_error TEXT,
+    created_at DATETIME(3) NULL,
+    updated_at DATETIME(3) NULL,
+    UNIQUE KEY uk_shipments_code (code),
+    UNIQUE KEY uk_shipments_client_order (client_service, client_order_code),
+    KEY idx_shipments_carrier_order (carrier_order_code),
+    KEY idx_shipments_client_status (client_service, status, id)
+);
+
+CREATE TABLE IF NOT EXISTS shipment_events (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    shipment_id BIGINT NOT NULL,
+    source VARCHAR(16) NOT NULL,
+    from_status VARCHAR(32) NOT NULL DEFAULT '',
+    to_status VARCHAR(32) NOT NULL,
+    carrier_status VARCHAR(64) NOT NULL DEFAULT '',
+    reason TEXT,
+    applied BOOLEAN NOT NULL DEFAULT FALSE,
+    occurred_at DATETIME(3) NOT NULL,
+    created_at DATETIME(3) NULL,
+    UNIQUE KEY uk_shipment_events_dedupe (shipment_id, source, to_status, carrier_status, occurred_at)
+);
+
+CREATE TABLE IF NOT EXISTS outbox_jobs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    kind VARCHAR(16) NOT NULL,
+    shipment_id BIGINT NOT NULL,
+    payload TEXT NOT NULL,
+    state VARCHAR(16) NOT NULL,
+    attempts INT NOT NULL DEFAULT 0,
+    next_attempt_at DATETIME(3) NOT NULL,
+    last_error TEXT,
+    created_at DATETIME(3) NULL,
+    updated_at DATETIME(3) NULL,
+    KEY idx_outbox_due (state, next_attempt_at)
+);
