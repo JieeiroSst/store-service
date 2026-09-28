@@ -14,6 +14,7 @@ func (h *Handler) CreateNotification(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	notification.RequestedBy = requestedBy(c)
 	result, err := h.notification.CreateNotification(c.Request.Context(), &notification)
 	if err != nil {
 		writeError(c, err)
@@ -68,8 +69,12 @@ func (h *Handler) UpdateNotification(c *gin.Context) {
 type sendEmailRequest struct {
 	UserID       uint              `json:"user_id"`
 	Recipient    string            `json:"recipient" binding:"required,email"`
-	TemplateType string            `json:"template_type" binding:"required"`
+	TemplateType string            `json:"template_type"`
 	TemplateData map[string]string `json:"template_data"`
+	Subject      string            `json:"subject"`
+	HTML         string            `json:"html"`
+	Text         string            `json:"text"`
+	RawData      map[string]any    `json:"raw_data"`
 	Priority     int               `json:"priority"`
 }
 
@@ -84,15 +89,27 @@ func (h *Handler) SendEmail(c *gin.Context) {
 		return
 	}
 
+	if req.TemplateType != "" && (req.Subject != "" || req.HTML != "" || req.Text != "") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "use either template_type/template_data or subject/html/text, not both"})
+		return
+	}
+	body := req.HTML
+	if body == "" && req.Text != "" {
+		body = model.TextToHTML(req.Text)
+	}
 	notification := &model.Notification{
 		UserID:       req.UserID,
 		Recipient:    req.Recipient,
 		Type:         "email",
+		Title:        req.Subject,
+		Message:      body,
 		TemplateType: req.TemplateType,
 		TemplateData: req.TemplateData,
+		RawData:      req.RawData,
 		Priority:     req.Priority,
 	}
 
+	notification.RequestedBy = requestedBy(c)
 	result, err := h.notification.CreateNotification(c.Request.Context(), notification)
 	if err != nil {
 		writeError(c, err)
@@ -103,8 +120,11 @@ func (h *Handler) SendEmail(c *gin.Context) {
 
 type sendSlackRequest struct {
 	UserID       uint              `json:"user_id"`
-	TemplateType string            `json:"template_type" binding:"required"`
+	TemplateType string            `json:"template_type"`
 	TemplateData map[string]string `json:"template_data"`
+	Title        string            `json:"title"`
+	Text         string            `json:"text"`
+	RawData      map[string]any    `json:"raw_data"`
 	Priority     int               `json:"priority"`
 }
 
@@ -119,14 +139,22 @@ func (h *Handler) SendSlack(c *gin.Context) {
 		return
 	}
 
+	if req.TemplateType != "" && (req.Title != "" || req.Text != "") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "use either template_type/template_data or title/text, not both"})
+		return
+	}
 	notification := &model.Notification{
 		UserID:       req.UserID,
 		Type:         "slack",
+		Title:        req.Title,
+		Message:      req.Text,
 		TemplateType: req.TemplateType,
 		TemplateData: req.TemplateData,
+		RawData:      req.RawData,
 		Priority:     req.Priority,
 	}
 
+	notification.RequestedBy = requestedBy(c)
 	result, err := h.notification.CreateNotification(c.Request.Context(), notification)
 	if err != nil {
 		writeError(c, err)

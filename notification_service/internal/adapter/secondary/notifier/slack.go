@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/JIeeiroSst/nofitifaction-service/common"
 	"github.com/JIeeiroSst/nofitifaction-service/config"
@@ -31,9 +32,13 @@ func (s *slackSender) Send(ctx context.Context, title, message string) error {
 	if s.client == nil {
 		return common.ErrNotConfigured
 	}
+	text := message
+	if strings.TrimSpace(title) != "" {
+		text = fmt.Sprintf("*%s*\n%s", title, message)
+	}
 	return s.client.PushNoti(slack.PayloadSlack{
 		Channel:  s.channel,
 		Username: "notification-service",
-		Text:     fmt.Sprintf("*%s*\n%s", title, message),
+		Text:     text,
 	})
 }

@@ -14,6 +14,35 @@ type Config struct {
 	Firebase FirebaseConfig `json:"firebase"`
 	Email    EmailConfig    `json:"email"`
 	Slack    SlackConfig    `json:"slack"`
+	Worker   WorkerConfig   `json:"worker"`
+	Campaign CampaignConfig `json:"campaign"`
+	Push     PushConfig     `json:"push"`
+	Audit    AuditConfig    `json:"audit"`
+}
+
+type AuditConfig struct {
+	RetentionDays int `json:"retention_days"`
+}
+
+type PushConfig struct {
+	SingleDevicePerUser bool  `json:"single_device_per_user"`
+	StaleTokenDays      int   `json:"stale_token_days"`
+	ValidateOnRegister  *bool `json:"validate_on_register"`
+}
+
+type WorkerConfig struct {
+	Concurrency int `json:"concurrency"`
+	Prefetch    int `json:"prefetch"`
+}
+
+type CampaignConfig struct {
+	PushBatchSize  int     `json:"push_batch_size"`
+	EmailBatchSize int     `json:"email_batch_size"`
+	MaxRecipients  int     `json:"max_recipients"`
+	MaxAttempts    int     `json:"max_attempts"`
+	RatePerSecond  float64 `json:"rate_per_second"`
+	Concurrency    int     `json:"concurrency"`
+	Prefetch       int     `json:"prefetch"`
 }
 
 type ServerConfig struct {
@@ -71,4 +100,3 @@ func ReadFileEnv(dir string) (*Dir, error) {
 	}
 	return data, nil
 }
-

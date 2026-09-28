@@ -1,9 +1,12 @@
 package rabbitmq
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"sync"
 	"time"
 
@@ -17,11 +20,40 @@ type rabbitMQ struct {
 	mu       sync.RWMutex
 	closed   bool
 	config   config.RabbitConfig
+
+	pubMu      sync.Mutex
+	pubCh      *amqp.Channel
+	pubConfirm chan amqp.Confirmation
+
+	delaysMu sync.RWMutex
+	delays   map[string][]time.Duration
 }
+
+const (
+	QueueNotifications = "notifications"
+	QueueCampaignBatch = "notification.campaign.batch"
+
+	headerAttempt  = "x-attempt"
+	headerReason   = "x-failure-reason"
+	confirmTimeout = 10 * time.Second
+)
+
+var ErrPublishNotConfirmed = errors.New("rabbitmq did not confirm the publish")
+
+type Delivery struct {
+	Body    []byte
+	Attempt int
+}
+
+type Handler func(ctx context.Context, d Delivery) error
 
 type RabbitMQ interface {
 	PublishToQueue(notification *model.Notification) error
-	StartConsumer(fn func(notification model.Notification) error) error
+	DeclareQueue(queue string, retryDelays []time.Duration) error
+	Publish(queue string, body []byte, attempt int) error
+	Retry(queue string, body []byte, nextAttempt int) (scheduled bool, err error)
+	DeadLetter(queue string, body []byte, reason string) error
+	Consume(ctx context.Context, queue string, prefetch, workers int, handle Handler) error
 }
 
 var (
@@ -33,6 +65,7 @@ func GetInstance(config config.RabbitConfig) (RabbitMQ, error) {
 	once.Do(func() {
 		instance = &rabbitMQ{
 			config: config,
+			delays: map[string][]time.Duration{},
 		}
 		if err := instance.connect(); err != nil {
 			log.Printf("Failed to initialize RabbitMQ connection: %v", err)
@@ -132,93 +165,192 @@ func (r *rabbitMQ) CreateChannel() (*amqp.Channel, error) {
 	return rabbitmq.Channel()
 }
 
-func (s *rabbitMQ) PublishToQueue(notification *model.Notification) error {
-	ch, err := s.rabbitmq.Channel()
+func RetryQueue(queue string, tier int) string { return queue + ".retry." + strconv.Itoa(tier) }
+
+func DeadLetterQueue(queue string) string { return queue + ".dlq" }
+
+func (r *rabbitMQ) DeclareQueue(queue string, retryDelays []time.Duration) error {
+	ch, err := r.CreateChannel()
 	if err != nil {
 		return err
 	}
 	defer ch.Close()
 
-	q, err := ch.QueueDeclare(
-		"notifications",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
+	if _, err := ch.QueueDeclare(queue, true, false, false, false, nil); err != nil {
+		return err
+	}
+	for i, d := range retryDelays {
+		args := amqp.Table{
+			"x-message-ttl":             int64(d / time.Millisecond),
+			"x-dead-letter-exchange":    "",
+			"x-dead-letter-routing-key": queue,
+		}
+		if _, err := ch.QueueDeclare(RetryQueue(queue, i+1), true, false, false, false, args); err != nil {
+			return err
+		}
+	}
+	if _, err := ch.QueueDeclare(DeadLetterQueue(queue), true, false, false, false, nil); err != nil {
 		return err
 	}
 
+	r.delaysMu.Lock()
+	r.delays[queue] = retryDelays
+	r.delaysMu.Unlock()
+	return nil
+}
+
+func (r *rabbitMQ) PublishToQueue(notification *model.Notification) error {
 	body, err := json.Marshal(notification)
 	if err != nil {
 		return err
 	}
-
-	return ch.Publish(
-		"",
-		q.Name,
-		false,
-		false,
-		amqp.Publishing{
-			DeliveryMode: amqp.Persistent,
-			ContentType:  "application/json",
-			Body:         body,
-		},
-	)
+	return r.Publish(QueueNotifications, body, 1)
 }
 
-func (s *rabbitMQ) StartConsumer(fn func(notification model.Notification) error) error {
-	ch, err := s.rabbitmq.Channel()
+func (r *rabbitMQ) Publish(queue string, body []byte, attempt int) error {
+	return r.publish(queue, body, amqp.Table{headerAttempt: int64(attempt)})
+}
+
+func (r *rabbitMQ) Retry(queue string, body []byte, nextAttempt int) (bool, error) {
+	r.delaysMu.RLock()
+	delays := r.delays[queue]
+	r.delaysMu.RUnlock()
+	tier := nextAttempt - 1
+	if tier < 1 || tier > len(delays) {
+		return false, nil
+	}
+	return true, r.publish(RetryQueue(queue, tier), body, amqp.Table{headerAttempt: int64(nextAttempt)})
+}
+
+func (r *rabbitMQ) DeadLetter(queue string, body []byte, reason string) error {
+	if len(reason) > 1000 {
+		reason = reason[:1000]
+	}
+	return r.publish(DeadLetterQueue(queue), body, amqp.Table{headerReason: reason})
+}
+
+func (r *rabbitMQ) publish(queue string, body []byte, headers amqp.Table) error {
+	r.pubMu.Lock()
+	defer r.pubMu.Unlock()
+
+	if r.pubCh == nil {
+		ch, err := r.CreateChannel()
+		if err != nil {
+			return err
+		}
+		if err := ch.Confirm(false); err != nil {
+			ch.Close()
+			return err
+		}
+		r.pubCh = ch
+		r.pubConfirm = ch.NotifyPublish(make(chan amqp.Confirmation, 1))
+	}
+
+	err := r.pubCh.Publish("", queue, false, false, amqp.Publishing{
+		DeliveryMode: amqp.Persistent,
+		ContentType:  "application/json",
+		Headers:      headers,
+		Body:         body,
+	})
+	if err != nil {
+		r.resetPublisher()
+		return err
+	}
+
+	select {
+	case c, ok := <-r.pubConfirm:
+		if !ok {
+			r.resetPublisher()
+			return ErrPublishNotConfirmed
+		}
+		if !c.Ack {
+			return ErrPublishNotConfirmed
+		}
+		return nil
+	case <-time.After(confirmTimeout):
+		r.resetPublisher()
+		return ErrPublishNotConfirmed
+	}
+}
+
+func (r *rabbitMQ) resetPublisher() {
+	if r.pubCh != nil {
+		_ = r.pubCh.Close()
+	}
+	r.pubCh = nil
+	r.pubConfirm = nil
+}
+
+func attemptOf(d amqp.Delivery) int {
+	switch v := d.Headers[headerAttempt].(type) {
+	case int64:
+		return int(v)
+	case int32:
+		return int(v)
+	case int:
+		return v
+	}
+	return 1
+}
+
+func (r *rabbitMQ) Consume(ctx context.Context, queue string, prefetch, workers int, handle Handler) error {
+	prefetch, workers = max(prefetch, 1), max(workers, 1)
+	for ctx.Err() == nil {
+		if err := r.consumeOnce(ctx, queue, prefetch, workers, handle); err != nil && ctx.Err() == nil {
+			log.Printf("rabbitmq consumer %s stopped: %v, reconnecting", queue, err)
+		}
+		select {
+		case <-ctx.Done():
+		case <-time.After(2 * time.Second):
+		}
+	}
+	return nil
+}
+
+func (r *rabbitMQ) consumeOnce(ctx context.Context, queue string, prefetch, workers int, handle Handler) error {
+	ch, err := r.CreateChannel()
 	if err != nil {
 		return err
 	}
 	defer ch.Close()
 
-	q, err := ch.QueueDeclare(
-		"notifications",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
+	if err := ch.Qos(prefetch, 0, false); err != nil {
+		return err
+	}
+	tag := fmt.Sprintf("%s-%d", queue, time.Now().UnixNano())
+	msgs, err := ch.Consume(queue, tag, false, false, false, false, nil)
 	if err != nil {
 		return err
 	}
 
-	msgs, err := ch.Consume(
-		q.Name,
-		"",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		return err
+	var wg sync.WaitGroup
+	for i := 0; i < workers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for d := range msgs {
+				if err := handle(ctx, Delivery{Body: d.Body, Attempt: attemptOf(d)}); err != nil {
+					log.Printf("rabbitmq %s: handler failed, requeueing: %v", queue, err)
+					time.Sleep(time.Second)
+					_ = d.Nack(false, true)
+					continue
+				}
+				_ = d.Ack(false)
+			}
+		}()
 	}
 
-	forever := make(chan bool)
-
-	go func() {
-		for d := range msgs {
-			var notification model.Notification
-			if err := json.Unmarshal(d.Body, &notification); err != nil {
-				d.Nack(false, true)
-				continue
-			}
-			if err := fn(notification); err != nil {
-				d.Nack(false, true)
-				continue
-			}
-
-			d.Ack(false)
+	closed := ch.NotifyClose(make(chan *amqp.Error, 1))
+	select {
+	case <-ctx.Done():
+		_ = ch.Cancel(tag, false)
+		wg.Wait()
+		return nil
+	case err := <-closed:
+		wg.Wait()
+		if err != nil {
+			return err
 		}
-	}()
-
-	<-forever
-	return nil
+		return errors.New("channel closed")
+	}
 }

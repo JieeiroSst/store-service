@@ -18,6 +18,7 @@ import (
 var Module = fx.Options(
 	fx.Invoke(initLogger),
 	fx.Provide(newConfig),
+	fx.Provide(newClock),
 
 	database.Module, // *gorm.DB
 	queue.Module,    // rabbitmq.RabbitMQ
