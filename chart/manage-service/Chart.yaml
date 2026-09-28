@@ -1,0 +1,8 @@
+apiVersion: v2
+name: manage-service
+description: A Helm chart for manage-service
+
+type: application
+
+version: 0.1.0
+appVersion: "1.0.0"

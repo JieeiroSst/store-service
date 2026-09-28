@@ -2,6 +2,7 @@ package consul
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/JIeeiroSst/manage-service/config"
@@ -75,9 +76,11 @@ func (c *configConsul) ConnectConfigConsul() (config *config.Config, err error) 
 	}
 
 	redisPattern, err := c.getKvPair(consul, c.Key)
-	if err != nil || redisPattern == nil {
-		log.Error("Could not get REDISPATTERN")
+	if err != nil {
 		return nil, err
+	}
+	if redisPattern == nil {
+		return nil, fmt.Errorf("consul key %q not found", c.Key)
 	}
 
 	if err := json.Unmarshal(redisPattern.Value, &config); err != nil {
@@ -85,6 +88,5 @@ func (c *configConsul) ConnectConfigConsul() (config *config.Config, err error) 
 		return nil, err
 	}
 
-	log.Info(config)
 	return config, nil
 }

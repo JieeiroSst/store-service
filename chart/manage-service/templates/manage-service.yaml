@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.manageService.name }}-deployment
+spec:
+{{- if not .Values.manageService.autoscaling.enabled }}
+  replicas: {{ .Values.manageService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.manageService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.manageService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.manageService.name }}-deployment
+        image: {{ .Values.manageService.image.name }}:{{ .Values.manageService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.manageService.image.port }}
+        env:
+          - name: SERVER_PORT
+            value: "{{ .Values.manageService.image.port }}"
+          - name: KEYCLOAK_HOST
+            value: {{ .Values.manageService.env.keycloakHost | quote }}
+          - name: KEYCLOAK_LEGACY_WILDFLY
+            value: {{ .Values.manageService.env.keycloakLegacyWildfly | quote }}
+          - name: KEYCLOAK_ADMIN_REALM
+            value: {{ .Values.manageService.env.keycloakAdminRealm | quote }}
+          - name: KEYCLOAK_ADMIN_USER
+            value: {{ .Values.manageService.env.keycloakAdminUser | quote }}
+          - name: KEYCLOAK_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.manageService.name }}-secret
+                key: keycloakAdminPassword
+          - name: AUTHORIZE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.manageService.name }}-secret
+                key: authorizeKey
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.manageService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.manageService.image.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          {{- toYaml .Values.manageService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: manage-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+          optional: true
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.manageService.name }}-secret
+type: Opaque
+stringData:
+  keycloakAdminPassword: {{ .Values.manageService.env.keycloakAdminPassword | quote }}
+  authorizeKey: {{ .Values.manageService.env.authorizeKey | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.manageService.service.name }}
+spec:
+  type: {{ .Values.manageService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.manageService.image.port }}
+  selector:
+    app: {{ .Values.manageService.name }}-deployment
