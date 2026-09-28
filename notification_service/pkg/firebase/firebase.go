@@ -3,8 +3,8 @@ package firebase
 import (
 	"context"
 
-	firebase "firebase.google.com/go"
-	"firebase.google.com/go/messaging"
+	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/messaging"
 	"google.golang.org/api/option"
 )
 
@@ -29,14 +29,30 @@ func NewFirebaseMessaging(credentialsFile string) (*FirebaseMessaging, error) {
 	}, nil
 }
 
+func AndroidConfig() *messaging.AndroidConfig {
+	return &messaging.AndroidConfig{
+		Priority:     "high",
+		Notification: &messaging.AndroidNotification{Sound: "default"},
+	}
+}
+
+func APNSConfig() *messaging.APNSConfig {
+	return &messaging.APNSConfig{
+		Headers: map[string]string{"apns-priority": "10", "apns-push-type": "alert"},
+		Payload: &messaging.APNSPayload{Aps: &messaging.Aps{Sound: "default"}},
+	}
+}
+
 func (fm *FirebaseMessaging) SendToToken(ctx context.Context, token string, title, body string, data map[string]string) (string, error) {
 	message := &messaging.Message{
 		Notification: &messaging.Notification{
 			Title: title,
 			Body:  body,
 		},
-		Data:  data,
-		Token: token,
+		Data:    data,
+		Token:   token,
+		Android: AndroidConfig(),
+		APNS:    APNSConfig(),
 	}
 
 	return fm.client.Send(ctx, message)
@@ -48,22 +64,33 @@ func (fm *FirebaseMessaging) SendToTopic(ctx context.Context, topic string, titl
 			Title: title,
 			Body:  body,
 		},
-		Data:  data,
-		Topic: topic,
+		Data:    data,
+		Topic:   topic,
+		Android: AndroidConfig(),
+		APNS:    APNSConfig(),
 	}
 
 	return fm.client.Send(ctx, message)
 }
 
-func (fm *FirebaseMessaging) SendMulticast(ctx context.Context, tokens []string, title, body string, data map[string]string) (*messaging.BatchResponse, error) {
+func (fm *FirebaseMessaging) SendEachForMulticast(ctx context.Context, tokens []string, title, body string, data map[string]string) (*messaging.BatchResponse, error) {
 	message := &messaging.MulticastMessage{
 		Notification: &messaging.Notification{
 			Title: title,
 			Body:  body,
 		},
-		Data:   data,
-		Tokens: tokens,
+		Data:    data,
+		Tokens:  tokens,
+		Android: AndroidConfig(),
+		APNS:    APNSConfig(),
 	}
 
-	return fm.client.SendMulticast(ctx, message)
+	return fm.client.SendEachForMulticast(ctx, message)
+}
+
+func (fm *FirebaseMessaging) ValidateToken(ctx context.Context, token string) (string, error) {
+	return fm.client.SendDryRun(ctx, &messaging.Message{
+		Token:        token,
+		Notification: &messaging.Notification{Title: "validate", Body: "validate"},
+	})
 }

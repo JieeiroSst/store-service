@@ -28,5 +28,26 @@
     "slack": {
         "webhook_secret": "",
         "channel": "#notifications"
+    },
+    "worker": {
+        "concurrency": 8,
+        "prefetch": 32
+    },
+    "campaign": {
+        "push_batch_size": 500,
+        "email_batch_size": 100,
+        "max_recipients": 1000000,
+        "max_attempts": 5,
+        "rate_per_second": 0,
+        "concurrency": 4,
+        "prefetch": 8
+    },
+    "push": {
+        "single_device_per_user": false,
+        "validate_on_register": true,
+        "stale_token_days": 270
+    },
+    "audit": {
+        "retention_days": 0
     }
 }
