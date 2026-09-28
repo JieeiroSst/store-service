@@ -13,8 +13,11 @@
         "mysql_driver": "mysql"
     },
     "secret": {
-        "jwt_secret_key": "",
         "authorize_key": ""
+    },
+    "user_service": {
+        "base_url": "http://user-service:1235",
+        "timeout_seconds": 3
     },
     "cache": {
         "host": "redis-svc:80",

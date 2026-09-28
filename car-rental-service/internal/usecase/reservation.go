@@ -23,7 +23,7 @@ type CreateReservationInput struct {
 }
 
 func (u *Usecase) CreateReservation(ctx context.Context, in CreateReservationInput) (*model.Reservation, error) {
-	userID, err := parseID("user_id", in.UserID)
+	userID, err := parseUserID("user_id", in.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,10 +55,10 @@ func (u *Usecase) CreateReservation(ctx context.Context, in CreateReservationInp
 		EndTime:          in.End,
 		Status:           model.ReservationStatusConfirmed,
 	}
+	if _, err := u.users.GetUser(ctx, userID); err != nil {
+		return nil, notFoundAs(err, "user")
+	}
 	err = u.repos.Transaction(ctx, func(tx *repository.Repositories) error {
-		if _, err := tx.Users.GetByID(ctx, userID); err != nil {
-			return notFoundAs(err, "user")
-		}
 		if err := checkLocations(ctx, tx, pickupID, returnID); err != nil {
 			return err
 		}
@@ -170,7 +170,7 @@ func (u *Usecase) GetReservation(ctx context.Context, id string) (*model.Reserva
 }
 
 func (u *Usecase) ListUserReservations(ctx context.Context, userID string, status model.ReservationStatus, page Page) (*ReservationPage, error) {
-	uid, err := parseID("user_id", userID)
+	uid, err := parseUserID("user_id", userID)
 	if err != nil {
 		return nil, err
 	}

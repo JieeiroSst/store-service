@@ -7,10 +7,10 @@ import (
 )
 
 type Config struct {
-	Server      ServerConfig
-	Postgres    PostgresConfig
-	Redis       RedisConfig
-	Auth        AuthConfig
+	Server   ServerConfig
+	Postgres PostgresConfig
+	Redis    RedisConfig
+
 	UserService UserServiceConfig
 }
 
@@ -31,10 +31,6 @@ type RedisConfig struct {
 	Addr     string
 	Password string
 	DB       int
-}
-
-type AuthConfig struct {
-	JWTSecret string
 }
 
 type UserServiceConfig struct {
@@ -66,9 +62,6 @@ func FromEnv() *Config {
 			Addr:     getEnv("REDIS_ADDR", "localhost:6379"),
 			Password: getEnv("REDIS_PASSWORD", ""),
 			DB:       getEnvInt("REDIS_DB", 0),
-		},
-		Auth: AuthConfig{
-			JWTSecret: getEnv("JWT_SECRET", ""),
 		},
 		UserService: UserServiceConfig{
 			BaseURL: getEnv("USER_SERVICE_BASE_URL", "http://user-service-svc"),

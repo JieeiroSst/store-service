@@ -2,6 +2,7 @@ package module
 
 import (
 	"github.com/spf13/viper"
+	"time"
 )
 
 type Config struct {
@@ -13,9 +14,12 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Env       string `mapstructure:"env"`
-	Port      int    `mapstructure:"port"`
-	JWTSecret string `mapstructure:"jwt_secret"`
+	Env  string `mapstructure:"env"`
+	Port int    `mapstructure:"port"`
+	// UserServiceURL is user-service's HTTP gateway; it issues and
+	// validates every bearer token this service accepts.
+	UserServiceURL     string        `mapstructure:"user_service_url"`
+	UserServiceTimeout time.Duration `mapstructure:"user_service_timeout"`
 }
 
 type DatabaseConfig struct {
@@ -54,7 +58,8 @@ func LoadConfig(path string) (*Config, error) {
 
 	v.SetDefault("app.env", "development")
 	v.SetDefault("app.port", 8080)
-	v.SetDefault("app.jwt_secret", "change-me-in-production")
+	v.SetDefault("app.user_service_url", "http://user-service:1235")
+	v.SetDefault("app.user_service_timeout", "3s")
 	v.SetDefault("database.port", 5432)
 	v.SetDefault("database.ssl_mode", "disable")
 	v.SetDefault("database.max_open_conns", 25)

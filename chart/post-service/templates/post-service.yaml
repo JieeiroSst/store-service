@@ -49,11 +49,8 @@ spec:
             value: {{ .Values.postService.env.minioBucket | quote }}
           - name: MINIO_USE_SSL
             value: {{ .Values.postService.env.minioUseSSL | quote }}
-          - name: JWT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.postService.name }}-secret
-                key: jwtSecret
+          - name: USER_SERVICE_URL
+            value: {{ .Values.postService.env.userServiceURL | quote }}
         resources:
           {{- toYaml .Values.postService.resources | nindent 10 }}
         volumeMounts:
@@ -77,7 +74,6 @@ stringData:
   # chart/mysql's serviceDatabases) over the shared root password here.
   mysqlPassword: {{ .Values.postService.env.mysqlPassword | quote }}
   minioSecretKey: {{ .Values.postService.env.minioSecretKey | quote }}
-  jwtSecret: {{ .Values.postService.env.jwtSecret | quote }}
 ---
 apiVersion: v1
 kind: Service

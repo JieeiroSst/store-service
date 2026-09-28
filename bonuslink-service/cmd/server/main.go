@@ -6,6 +6,7 @@ import (
 	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/primary/http"
 	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/primary/queue"
 	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/secondary/postgres"
+	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/secondary/userservice"
 	"github.com/JIeeiroSst/bonuslink-service/internal/config"
 	"github.com/JIeeiroSst/bonuslink-service/internal/core/services"
 	"github.com/JIeeiroSst/bonuslink-service/pkg/logger"
@@ -30,6 +31,7 @@ func main() {
 		fx.Provide(newLoggerConfig),
 		logger.Module,
 		postgres.Module,
+		userservice.Module,
 		services.Module,
 		http.Module,
 		http.ServerModule,

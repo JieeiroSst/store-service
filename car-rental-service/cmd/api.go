@@ -6,11 +6,13 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/JIeeiroSst/car-rental-service/config"
 	"github.com/JIeeiroSst/car-rental-service/internal/auth"
 	"github.com/JIeeiroSst/car-rental-service/internal/repository"
 	"github.com/JIeeiroSst/car-rental-service/internal/usecase"
+	"github.com/JIeeiroSst/car-rental-service/internal/userservice"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -48,16 +50,18 @@ func runAPI() {
 		PostgresqlSSLMode:  config.Postgres.PostgresqlSSLMode,
 	})
 
+	users := userservice.New(config.UserService.BaseURL, time.Duration(config.UserService.TimeoutSeconds)*time.Second)
+
 	repository := repository.NewRepositories(db)
 	usecase := usecase.NewUsecase(usecase.Dependency{
 		Repos: repository,
+		Users: userservice.Directory{C: users},
 	})
 
 	authn, err := auth.New(auth.Config{
-		SecretKey: config.Secret.JwtSecretKey,
-		AdminRole: config.Secret.AdminRole,
-		StaffRole: config.Secret.StaffRole,
-	}, auth.MethodLevels)
+		AdminRole: config.Roles.AdminRole,
+		StaffRole: config.Roles.StaffRole,
+	}, users, auth.MethodLevels)
 	if err != nil {
 		logger.WithContext(ctx).Error("init auth", zap.Error(err))
 		return

@@ -42,14 +42,14 @@ func NewNodeRouter(srs *SRSWebhookHandler, internal *InternalHandler, cfg *confi
 // requests, viewer heartbeat/count, playback, QoE, chat, and moderation.
 // Stateless - meant to run behind a load-balanced Deployment scaled on
 // connection count, independent of transcode node capacity.
-func NewEdgeRouter(h *Handler, ws *WSHandler, cfg *config.Config) *gin.Engine {
+func NewEdgeRouter(h *Handler, ws *WSHandler, authn middleware.Authenticator) *gin.Engine {
 	engine := gin.New()
 	engine.Use(gin.Recovery(), metrics.GinMiddleware())
 
 	engine.GET("/health", getHealth)
 	engine.GET("/metrics", gin.WrapH(metrics.Handler()))
 
-	auth := middleware.RequireAuth(cfg.Auth.JWTSecret)
+	auth := middleware.RequireAuth(authn)
 
 	rooms := engine.Group("/api/v1/rooms")
 	{
@@ -87,8 +87,8 @@ func NewEdgeRouter(h *Handler, ws *WSHandler, cfg *config.Config) *gin.Engine {
 // NewAllInOneRouter mounts every route (edge + node) on a single engine -
 // used only by the monolithic dev/docker-compose entrypoint (cmd/main.go),
 // never by the split node/edge deployables the chart runs in production.
-func NewAllInOneRouter(h *Handler, srs *SRSWebhookHandler, internal *InternalHandler, ws *WSHandler, cfg *config.Config) *gin.Engine {
-	engine := NewEdgeRouter(h, ws, cfg)
+func NewAllInOneRouter(h *Handler, srs *SRSWebhookHandler, internal *InternalHandler, ws *WSHandler, authn middleware.Authenticator, cfg *config.Config) *gin.Engine {
+	engine := NewEdgeRouter(h, ws, authn)
 
 	srsHooks := engine.Group("/api/srs")
 	{

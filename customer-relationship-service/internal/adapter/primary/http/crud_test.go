@@ -35,10 +35,19 @@ func (s *stubUsecase) Update(context.Context, uint, *model.Account) (*model.Acco
 }
 func (s *stubUsecase) Delete(context.Context, uint) error { return nil }
 
-func newTestRouter(uc *stubUsecase) *gin.Engine {
+// newTestRouter serves requests as an authenticated service caller (the
+// API key, an administrator); authentication itself is tested in
+// TestAPIKey and authn_test.go.
+func newTestRouter(uc *stubUsecase) http.Handler {
 	gin.SetMode(gin.TestMode)
-	return newRouterWith(uc, "")
+	r := newRouterWith(uc, testAPIKey)
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		req.Header.Set("X-API-Key", testAPIKey)
+		r.ServeHTTP(w, req)
+	})
 }
+
+const testAPIKey = "test-key"
 
 func newRouterWith(uc *stubUsecase, apiKey string) *gin.Engine {
 	h := &crudHandler[model.Account, *model.Account]{path: "/accounts", uc: uc, filters: []string{"account_phone"}}

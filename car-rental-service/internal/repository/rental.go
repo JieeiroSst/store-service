@@ -42,7 +42,7 @@ func (r *RentalRepo) ExistsForReservation(ctx context.Context, reservationID uui
 	return n > 0, err
 }
 
-func (r *RentalRepo) ListByUser(ctx context.Context, userID uuid.UUID, status *model.RentalStatus, offset, limit int) ([]model.Rental, int64, error) {
+func (r *RentalRepo) ListByUser(ctx context.Context, userID int64, status *model.RentalStatus, offset, limit int) ([]model.Rental, int64, error) {
 	q := r.db.WithContext(ctx).Model(&model.Rental{}).Where("user_id = ?", userID)
 	if status != nil {
 		q = q.Where("status = ?", *status)

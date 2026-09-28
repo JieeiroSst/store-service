@@ -3,12 +3,12 @@ package config
 import (
 	"fmt"
 	"net/url"
+	"time"
 )
 
 type Config struct {
 	Server      ServerConfig      `json:"server"`
 	Postgres    PostgresConfig    `json:"postgres"`
-	JWT         JWTConfig         `json:"jwt"`
 	UserService UserServiceConfig `json:"userService"`
 }
 
@@ -42,11 +42,9 @@ func (p PostgresConfig) URL() string {
 	return u.String()
 }
 
-type JWTConfig struct {
-	Secret        string `json:"secret"`
-	ExpiryMinutes int    `json:"expiryMinutes"`
-}
-
+// UserServiceConfig points at user-service, which owns every user and
+// validates every bearer token.
 type UserServiceConfig struct {
-	BaseURL string `json:"baseURL"`
+	BaseURL string        `json:"baseURL"`
+	Timeout time.Duration `json:"timeout"`
 }

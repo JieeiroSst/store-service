@@ -55,16 +55,12 @@ customerRelationshipService:
     signatureTSARootsPEM: ""
 
     # Who may call the API. Every /api/v1 request must carry either the API key
-    # (X-API-Key, a service caller with role apiKeyRole) or, when oidcIssuer is
-    # set, a bearer token from that OpenID Connect provider (the keycloak chart).
-    # Roles come from the token: crm-viewer, crm-staff, crm-manager, crm-admin
-    # (prefix rolePrefix, read from rolesClaim). With neither set the API is
-    # open and every caller is an administrator.
+    # (X-API-Key, a service caller with role apiKeyRole) or a user-service
+    # bearer token, validated at userServiceURL. CRM roles come from the
+    # caller's authorize-service role: crm-viewer|staff|manager|admin (prefix
+    # rolePrefix), admin/super_admin -> admin, operator -> staff.
     apiKeyRole: admin
-    oidcIssuer: ""
-    oidcJWKSURL: ""
-    oidcAudience: ""
-    oidcRolesClaim: realm_access.roles
+    userServiceURL: http://user-api-svc
     rolePrefix: "crm-"
 
     # Uploaded files are scanned by ClamAV (the "clamav" chart). With

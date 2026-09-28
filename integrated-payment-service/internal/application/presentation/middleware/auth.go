@@ -1,44 +1,63 @@
 package middleware
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"strings"
 
+	"github.com/JIeeiroSst/integrated-payment-service/internal/infrastructure/userservice"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
-func JWTAuth(secretKey string) gin.HandlerFunc {
+type Authenticator interface {
+	Authenticate(ctx context.Context, token string) (userservice.Identity, error)
+}
+
+const (
+	contextKeyUserID = "userID"
+	contextKeyRole   = "role"
+)
+
+func RequireAuth(authn Authenticator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
-			c.Abort()
-			return
-		}
-
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		if tokenString == authHeader {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Bearer token required"})
+		if authHeader == "" || tokenString == authHeader {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "bearer token required"})
 			c.Abort()
 			return
 		}
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return []byte(secretKey), nil
-		})
-
-		if err != nil || !token.Valid {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+		id, err := authn.Authenticate(c.Request.Context(), tokenString)
+		if err != nil {
+			if errors.Is(err, userservice.ErrUpstream) {
+				c.JSON(http.StatusServiceUnavailable, gin.H{"error": "authentication service unavailable"})
+			} else {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			}
 			c.Abort()
 			return
 		}
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok {
-			c.Set("user_id", claims["user_id"])
-			c.Set("email", claims["email"])
-		}
-
+		c.Set(contextKeyUserID, id.UserID)
+		c.Set(contextKeyRole, id.Role)
 		c.Next()
 	}
+}
+
+func UserID(c *gin.Context) string {
+	v, _ := c.Get(contextKeyUserID)
+	s, _ := v.(string)
+	return s
+}
+
+func UserRole(c *gin.Context) string {
+	v, _ := c.Get(contextKeyRole)
+	s, _ := v.(string)
+	return s
+}
+
+func IsAdmin(c *gin.Context) bool {
+	return userservice.Identity{Role: UserRole(c)}.IsAdmin()
 }

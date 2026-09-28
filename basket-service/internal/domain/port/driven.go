@@ -13,6 +13,7 @@ type BasketRepository interface {
 	Update(ctx context.Context, basket *model.Basket) error
 	Delete(ctx context.Context, id int) error
 	List(ctx context.Context) ([]model.Basket, error)
+	ListByUser(ctx context.Context, userID int) ([]model.Basket, error)
 }
 
 // BasketLineRepository persists basket lines owned by this service.
@@ -38,11 +39,9 @@ type BasketLineAttributeRepository interface {
 type OrderRepository interface {
 	GetByID(ctx context.Context, id int) (*model.Order, error)
 	List(ctx context.Context) ([]model.Order, error)
+	ListByUser(ctx context.Context, userID int) ([]model.Order, error)
 }
 
-// UserRepository reads users owned by user_service; basket-service only
-// references them and must not write to this table.
-type UserRepository interface {
+type UserDirectory interface {
 	GetByID(ctx context.Context, id int) (*model.User, error)
-	List(ctx context.Context) ([]model.User, error)
 }

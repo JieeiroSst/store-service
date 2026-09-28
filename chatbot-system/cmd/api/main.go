@@ -4,12 +4,15 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"time"
 
 	"chatbot-system/internal/application"
 	"chatbot-system/internal/config"
 	"chatbot-system/internal/infrastructure/ai"
+	"chatbot-system/internal/infrastructure/auth"
 	"chatbot-system/internal/infrastructure/database"
 	httpHandler "chatbot-system/internal/infrastructure/http"
+	"chatbot-system/internal/infrastructure/userservice"
 	"chatbot-system/internal/infrastructure/websocket"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -53,9 +56,12 @@ func main() {
 	hub := websocket.NewHub()
 	go hub.Run()
 
+	// Callers are identified by user-service tokens only.
+	authn := auth.New(userservice.New(cfg.UserService.BaseURL, 3*time.Second))
+
 	// Initialize handlers
-	wsHandler := websocket.NewHandler(hub, chatUseCase)
-	chatHandler := httpHandler.NewChatHandler(chatUseCase)
+	wsHandler := websocket.NewHandler(hub, chatUseCase, authn)
+	chatHandler := httpHandler.NewChatHandler(chatUseCase, authn)
 
 	// Setup router
 	router := mux.NewRouter()

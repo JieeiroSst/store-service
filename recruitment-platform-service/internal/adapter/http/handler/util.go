@@ -2,13 +2,12 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
-func mustGetUserID(c *gin.Context) uuid.UUID {
+// mustGetUserID returns the caller's user-service id set by the auth
+// middleware (0 if the route is unauthenticated).
+func mustGetUserID(c *gin.Context) int64 {
 	raw, _ := c.Get("user_id")
-	if id, ok := raw.(uuid.UUID); ok {
-		return id
-	}
-	return uuid.Nil
+	id, _ := raw.(int64)
+	return id
 }

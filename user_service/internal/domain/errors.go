@@ -21,7 +21,10 @@ var (
 	ErrUserNotExist = errors.New("user does not exist")
 
 	ErrUserExist = errors.New("user does exist")
+
+	ErrAssignRoleFailed = errors.New("assign role in authorize service failed")
+
+	ErrRoleNotInAuthorize = errors.New("role is not defined in authorize service")
 )
 
-// UserCacheKey is the fmt.Sprintf pattern used to key a cached user by id.
 const UserCacheKey = "user_id_%d"

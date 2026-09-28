@@ -11,10 +11,15 @@ import (
 
 // Config holds all service configuration.
 type Config struct {
-	Server   ServerConfig   `json:"server"`
-	Postgres PostgresConfig `json:"postgres"`
-	Cache    CacheConfig    `json:"cache"`
-	Secret   SecretConfig   `json:"secret"`
+	Server    ServerConfig    `json:"server"`
+	Postgres  PostgresConfig  `json:"postgres"`
+	Cache     CacheConfig     `json:"cache"`
+	Secret    SecretConfig    `json:"secret"`
+	Bootstrap BootstrapConfig `json:"bootstrap"`
+}
+
+type BootstrapConfig struct {
+	SuperAdminUserIDs []string `json:"super_admin_user_ids"`
 }
 
 type ServerConfig struct {

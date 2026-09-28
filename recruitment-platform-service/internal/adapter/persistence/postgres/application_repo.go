@@ -260,7 +260,7 @@ type appRow struct {
 	ID                  uuid.UUID  `db:"id"`
 	JobID               uuid.UUID  `db:"job_id"`
 	CandidateID         uuid.UUID  `db:"candidate_id"`
-	RecruiterID         uuid.UUID  `db:"recruiter_id"`
+	RecruiterID         int64      `db:"recruiter_id"`
 	Status              string     `db:"status"`
 	CurrentStageID      *uuid.UUID `db:"current_stage_id"`
 	RejectionReason     *string    `db:"rejection_reason"`

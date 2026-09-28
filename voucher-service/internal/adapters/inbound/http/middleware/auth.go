@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -20,6 +21,10 @@ func Auth(authSvc authapp.AuthService) gin.HandlerFunc {
 		token := strings.TrimPrefix(header, "Bearer ")
 
 		claims, err := authSvc.VerifyToken(c.Request.Context(), token)
+		if err != nil && !errors.Is(err, authapp.ErrUnauthenticated) {
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{"error": gin.H{"code": "auth_unavailable", "message": "authentication service unavailable"}})
+			return
+		}
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": gin.H{"code": "invalid_token", "message": "invalid or expired token"}})
 			return

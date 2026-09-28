@@ -40,8 +40,8 @@ stripe:
   webhook_secret: "STRIPE_WEBHOOK_SECRET"
   return_url: "http://localhost:8080/payment/stripe/return"
 
-jwt:
-  secret_key: "your-super-secret-jwt-key"
-  expires_in: 3600
+user_service:
+  base_url: "http://user-service:1235"
+  timeout: "3s"
 
 log_level: "info"

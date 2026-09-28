@@ -6,9 +6,14 @@ import (
 )
 
 type Config struct {
-	Database Database
-	AI       AI
-	Server   Server
+	Database    Database
+	AI          AI
+	Server      Server
+	UserService UserService
+}
+
+type UserService struct {
+	BaseURL string
 }
 
 type Database struct {
@@ -43,6 +48,9 @@ func Load() (*Config, error) {
 		},
 		Server: Server{
 			Port: getEnv("SERVER_PORT", "8080"),
+		},
+		UserService: UserService{
+			BaseURL: getEnv("USER_SERVICE_URL", "http://user-api-svc"),
 		},
 	}
 

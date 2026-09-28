@@ -43,25 +43,14 @@ type Key struct {
 	LastRotatedAt *time.Time        `json:"last_rotated_at" db:"last_rotated_at"`
 	Status        KeyStatus         `json:"status" db:"status"`
 	Version       int               `json:"version" db:"version"`
-	CreatedBy     uuid.UUID         `json:"created_by" db:"created_by"`
+	CreatedBy     int64             `json:"created_by" db:"created_by"` 
 	Tags          map[string]string `json:"tags" db:"tags"`
 	UseCount      int64             `json:"use_count" db:"use_count"`
 }
 
-type User struct {
-	ID          uuid.UUID `json:"id" db:"id"`
-	Username    string    `json:"username" db:"username"`
-	Email       string    `json:"email" db:"email"`
-	Role        UserRole  `json:"role" db:"role"`
-	Permissions []string  `json:"permissions" db:"permissions"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
-	IsActive    bool      `json:"is_active" db:"is_active"`
-}
-
 type AuditLog struct {
 	ID         uuid.UUID              `json:"id" db:"id"`
-	ActorID    uuid.UUID              `json:"actor_id" db:"actor_id"`
+	ActorID    int64                  `json:"actor_id" db:"actor_id"` 
 	ActorName  string                 `json:"actor_name" db:"actor_name"`
 	Action     string                 `json:"action" db:"action"`
 	Resource   string                 `json:"resource" db:"resource"`

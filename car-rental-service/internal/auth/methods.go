@@ -2,9 +2,8 @@ package auth
 
 import pb "github.com/JIeeiroSst/lib-gateway/car-rental-servcie/gateway/car-rental-servcie"
 
-// MethodLevels lists the access level of every RPC that is not simply "any logged-in user".
 var MethodLevels = map[string]Level{
-	pb.VehicleRentalService_RegisterUser_FullMethodName:            Public, // staff/admin creation is gated on an admin token in the handler
+	pb.VehicleRentalService_RegisterUser_FullMethodName:            Public, // always Unimplemented: accounts are created in user-service
 	pb.VehicleRentalService_ListLocations_FullMethodName:           Public,
 	pb.VehicleRentalService_ListVehicles_FullMethodName:            Public,
 	pb.VehicleRentalService_GetVehicle_FullMethodName:              Public,

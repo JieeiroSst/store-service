@@ -10,6 +10,7 @@ type UserRepository interface {
 	CheckAccount(ctx context.Context, user domain.User) (int, string, string, error)
 	CheckAccountExists(ctx context.Context, user domain.User) error
 	CreateAccount(ctx context.Context, user domain.User) (domain.User, error)
+	DeleteAccount(ctx context.Context, id int) error
 	FindUser(ctx context.Context, userID int) (domain.User, error)
 	LockAccount(ctx context.Context, id int) error
 	UpdateProfile(ctx context.Context, user domain.User) (domain.User, error)

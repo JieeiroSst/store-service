@@ -37,12 +37,12 @@ type CommissionConfig struct {
 type Partner struct {
 	shared.BaseEntity
 
-	UserID   uuid.UUID `db:"user_id"   json:"user_id"`
-	FullName string    `db:"full_name" json:"full_name"`
-	Email    string    `db:"email"     json:"email"`
-	Phone    string    `db:"phone"     json:"phone"`
-	Company  string    `db:"company"   json:"company"`
-	Bio      string    `db:"bio"       json:"bio"`
+	UserID   int64  `db:"user_id"   json:"user_id"` // user-service user id
+	FullName string `db:"full_name" json:"full_name"`
+	Email    string `db:"email"     json:"email"`
+	Phone    string `db:"phone"     json:"phone"`
+	Company  string `db:"company"   json:"company"`
+	Bio      string `db:"bio"       json:"bio"`
 
 	ReferredByPartnerID *uuid.UUID `db:"referred_by_partner_id" json:"referred_by_partner_id,omitempty"`
 	NetworkDepth        int        `db:"network_depth"          json:"network_depth"`
@@ -61,7 +61,7 @@ type Partner struct {
 	events []shared.DomainEvent
 }
 
-func NewPartner(userID uuid.UUID, fullName, email string) (*Partner, error) {
+func NewPartner(userID int64, fullName, email string) (*Partner, error) {
 	if fullName == "" || email == "" {
 		return nil, errors.New("partner: name and email required")
 	}
@@ -182,7 +182,7 @@ type PartnerRepository interface {
 	Save(ctx context.Context, p *Partner) error
 	Update(ctx context.Context, p *Partner) error
 	FindByID(ctx context.Context, id uuid.UUID) (*Partner, error)
-	FindByUserID(ctx context.Context, userID uuid.UUID) (*Partner, error)
+	FindByUserID(ctx context.Context, userID int64) (*Partner, error)
 	FindNetwork(ctx context.Context, partnerID uuid.UUID, depth int) ([]*Partner, error)
 	FindTopPerformers(ctx context.Context, limit int) ([]*Partner, error)
 }

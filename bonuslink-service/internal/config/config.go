@@ -20,6 +20,13 @@ type Config struct {
 	Postgres PostgresConfig
 	RabbitMQ RabbitMQConfig
 	Logger   LoggerConfig
+
+	UserService UserServiceConfig
+}
+
+type UserServiceConfig struct {
+	BaseURL string
+	Timeout time.Duration
 }
 
 type AppConfig struct {
@@ -117,6 +124,10 @@ func Load() (*Config, error) {
 			MaxSizeMB:  getEnvAsInt("LOG_MAX_SIZE_MB", 100),
 			MaxBackups: getEnvAsInt("LOG_MAX_BACKUPS", 7),
 			MaxAgeDays: getEnvAsInt("LOG_MAX_AGE_DAYS", 30),
+		},
+		UserService: UserServiceConfig{
+			BaseURL: getEnv("USER_SERVICE_URL", "http://user-api-svc"),
+			Timeout: getEnvAsDuration("USER_SERVICE_TIMEOUT", 3*time.Second),
 		},
 	}, nil
 }

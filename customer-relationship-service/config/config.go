@@ -84,12 +84,10 @@ type FilesConfig struct {
 }
 
 type AuthConfig struct {
-	APIKeyRole   string
-	OIDCIssuer   string
-	OIDCJWKSURL  string
-	OIDCAudience string
-	RolesClaim   string
-	RolePrefix   string
+	APIKeyRole         string
+	UserServiceURL     string
+	UserServiceTimeout time.Duration
+	RolePrefix         string
 }
 
 type NotificationConfig struct {
@@ -115,12 +113,10 @@ func Load() *Config {
 		},
 		Scheduler: SchedulerConfig{ContractExpiryCron: get("CONTRACT_EXPIRY_CRON", "0 * * * *")},
 		Auth: AuthConfig{
-			APIKeyRole:   get("API_KEY_ROLE", "admin"),
-			OIDCIssuer:   strings.TrimRight(get("OIDC_ISSUER", ""), "/"),
-			OIDCJWKSURL:  get("OIDC_JWKS_URL", ""),
-			OIDCAudience: get("OIDC_AUDIENCE", ""),
-			RolesClaim:   get("OIDC_ROLES_CLAIM", "realm_access.roles"),
-			RolePrefix:   get("ROLE_PREFIX", "crm-"),
+			APIKeyRole:         get("API_KEY_ROLE", "admin"),
+			UserServiceURL:     get("USER_SERVICE_URL", "http://user-api-svc"),
+			UserServiceTimeout: durationOr(get("USER_SERVICE_TIMEOUT", ""), 3*time.Second),
+			RolePrefix:         get("ROLE_PREFIX", "crm-"),
 		},
 		Files: FilesConfig{
 			MaxBytes:     int64(intOr(get("CONTRACT_FILE_MAX_MB", "25"), 25)) << 20,

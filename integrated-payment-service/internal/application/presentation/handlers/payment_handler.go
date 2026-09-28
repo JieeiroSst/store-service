@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
+	"github.com/JIeeiroSst/integrated-payment-service/internal/application/presentation/middleware"
 	"github.com/JIeeiroSst/integrated-payment-service/internal/application/services"
 	"github.com/JIeeiroSst/integrated-payment-service/pkg/utils"
 	"github.com/gin-gonic/gin"
@@ -23,6 +25,8 @@ func (h *PaymentHandler) CreatePayment(c *gin.Context) {
 		return
 	}
 
+	req.UserID = middleware.UserID(c)
+
 	response, err := h.paymentService.CreatePayment(c.Request.Context(), &req)
 	if err != nil {
 		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to create payment", err)
@@ -32,8 +36,22 @@ func (h *PaymentHandler) CreatePayment(c *gin.Context) {
 	utils.SuccessResponse(c, response)
 }
 
+var errPaymentNotFound = errors.New("payment not found")
+
+func (h *PaymentHandler) authorizePayment(c *gin.Context, paymentID string) bool {
+	payment, err := h.paymentService.GetPayment(c.Request.Context(), paymentID)
+	if err != nil || (payment.UserID != middleware.UserID(c) && !middleware.IsAdmin(c)) {
+		utils.ErrorResponse(c, http.StatusNotFound, "Payment not found", errPaymentNotFound)
+		return false
+	}
+	return true
+}
+
 func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 	paymentID := c.Param("id")
+	if !h.authorizePayment(c, paymentID) {
+		return
+	}
 
 	response, err := h.paymentService.ProcessPayment(c.Request.Context(), paymentID)
 	if err != nil {
@@ -46,6 +64,9 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 
 func (h *PaymentHandler) RefundPayment(c *gin.Context) {
 	paymentID := c.Param("id")
+	if !h.authorizePayment(c, paymentID) {
+		return
+	}
 
 	var req struct {
 		Amount float64 `json:"amount" validate:"required,gt=0"`
@@ -67,6 +88,9 @@ func (h *PaymentHandler) RefundPayment(c *gin.Context) {
 
 func (h *PaymentHandler) GetPayment(c *gin.Context) {
 	paymentID := c.Param("id")
+	if !h.authorizePayment(c, paymentID) {
+		return
+	}
 
 	response, err := h.paymentService.GetPayment(c.Request.Context(), paymentID)
 	if err != nil {
@@ -79,6 +103,9 @@ func (h *PaymentHandler) GetPayment(c *gin.Context) {
 
 func (h *PaymentHandler) GetPaymentStatus(c *gin.Context) {
 	paymentID := c.Param("id")
+	if !h.authorizePayment(c, paymentID) {
+		return
+	}
 
 	response, err := h.paymentService.GetPaymentStatus(c.Request.Context(), paymentID)
 	if err != nil {

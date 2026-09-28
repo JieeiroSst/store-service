@@ -22,7 +22,7 @@ func (u *Usecase) ProcessPayment(ctx context.Context, in ProcessPaymentInput) (*
 	if err != nil {
 		return nil, err
 	}
-	userID, err := parseID("user_id", in.UserID)
+	userID, err := parseUserID("user_id", in.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (u *Usecase) SubmitReview(ctx context.Context, in SubmitReviewInput) (*mode
 	if err != nil {
 		return nil, err
 	}
-	userID, err := parseID("user_id", in.UserID)
+	userID, err := parseUserID("user_id", in.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -155,5 +155,17 @@ func (u *Usecase) ListVehicleReviews(ctx context.Context, vehicleID string, page
 	if err != nil {
 		return nil, err
 	}
+	u.attachReviewers(ctx, rs)
 	return &ReviewPage{Reviews: rs, Total: total, NextPageToken: page.NextToken(len(rs), total)}, nil
+}
+
+func (u *Usecase) attachReviewers(ctx context.Context, rs []model.Review) {
+	byID := map[int64]*model.User{}
+	for i := range rs {
+		id := rs[i].UserID
+		if _, seen := byID[id]; !seen {
+			byID[id], _ = u.users.GetUser(ctx, id)
+		}
+		rs[i].User = byID[id]
+	}
 }

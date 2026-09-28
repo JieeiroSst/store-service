@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/spf13/viper"
 )
 
@@ -12,7 +14,7 @@ type Config struct {
 	ZaloPay  ZaloPayConfig  `mapstructure:"zalopay"`
 	PayPal   PayPalConfig   `mapstructure:"paypal"`
 	Stripe   StripeConfig   `mapstructure:"stripe"`
-	JWT      JWTConfig      `mapstructure:"jwt"`
+	UserService UserServiceConfig `mapstructure:"user_service"`
 	Redis    RedisConfig    `mapstructure:"redis"`
 	LogLevel string         `mapstructure:"log_level"`
 }
@@ -63,9 +65,9 @@ type StripeConfig struct {
 	ReturnURL     string `mapstructure:"return_url"`
 }
 
-type JWTConfig struct {
-	SecretKey string `mapstructure:"secret_key"`
-	ExpiresIn int    `mapstructure:"expires_in"`
+type UserServiceConfig struct {
+	BaseURL string        `mapstructure:"base_url"`
+	Timeout time.Duration `mapstructure:"timeout"`
 }
 
 type RedisConfig struct {
@@ -81,6 +83,8 @@ func Load() (*Config, error) {
 	viper.SetDefault("server.port", "8080")
 	viper.SetDefault("server.mode", "debug")
 	viper.SetDefault("log_level", "info")
+	viper.SetDefault("user_service.base_url", "http://user-service:1235")
+	viper.SetDefault("user_service.timeout", "3s")
 
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, err

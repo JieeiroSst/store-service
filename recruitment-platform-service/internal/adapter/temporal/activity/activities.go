@@ -83,7 +83,7 @@ func (a *Activities) NotifyCandidateActivity(ctx context.Context, input NotifyCa
 	}
 	data["application_id"] = input.ApplicationID
 	return a.notificationSvc.Send(ctx, port.NotificationPayload{
-		RecipientID: input.CandidateID,
+		RecipientID: input.CandidateID.String(),
 		Channel:     "email",
 		TemplateID:  input.TemplateID,
 		Data:        data,
@@ -103,7 +103,7 @@ func (a *Activities) ComputeAIMatchScoreActivity(ctx context.Context, input AISc
 
 func (a *Activities) SendInterviewInviteActivity(ctx context.Context, input SendInterviewInviteInput) error {
 	return a.notificationSvc.Send(ctx, port.NotificationPayload{
-		RecipientID: input.CandidateID,
+		RecipientID: input.CandidateID.String(),
 		Channel:     "email",
 		TemplateID:  "interview_invite",
 		Data: map[string]any{

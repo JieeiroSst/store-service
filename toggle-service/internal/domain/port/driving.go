@@ -69,9 +69,7 @@ type StrategyService interface {
 }
 
 type AuthService interface {
-	Login(ctx context.Context, username, password string) (token string, user *model.User, err error)
 	VerifyToken(ctx context.Context, tokenString string) (userID string, isAdmin bool, err error)
-	Register(ctx context.Context, email, username, password string) (*model.User, error)
 }
 
 type RBACService interface {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/JIeeiroSst/user-service/dto"
@@ -13,16 +14,18 @@ import (
 	"github.com/JIeeiroSst/utils/cache/expire"
 	"github.com/JIeeiroSst/utils/copy"
 	"github.com/JIeeiroSst/utils/geared_id"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Service struct {
-	userRepo output.UserRepository
-	hasher   output.Hasher
-	cache    expire.CacheHelper
+	userRepo   output.UserRepository
+	hasher     output.Hasher
+	cache      expire.CacheHelper
+	authorizer output.Authorizer
 }
 
-func New(userRepo output.UserRepository, hasher output.Hasher, cache expire.CacheHelper) *Service {
-	return &Service{userRepo: userRepo, hasher: hasher, cache: cache}
+func New(userRepo output.UserRepository, hasher output.Hasher, cache expire.CacheHelper, authorizer output.Authorizer) *Service {
+	return &Service{userRepo: userRepo, hasher: hasher, cache: cache, authorizer: authorizer}
 }
 
 func (s *Service) SignUp(ctx context.Context, req dto.SignUpRequest) (dto.SignUpResponse, error) {
@@ -62,12 +65,14 @@ func (s *Service) SignUp(ctx context.Context, req dto.SignUpRequest) (dto.SignUp
 		return dto.SignUpResponse{}, err
 	}
 
-	var resp dto.SignUpResponse
-	if err := copy.CopyObject(&created, &resp.User); err != nil {
-		return dto.SignUpResponse{}, err
+	if _, err := s.authorizer.AssignRoles(ctx, created.Id, domain.DefaultRole); err != nil {
+		if delErr := s.userRepo.DeleteAccount(ctx, created.Id); delErr != nil {
+			log.Printf("SignUp: rollback account %d failed: %v", created.Id, delErr)
+		}
+		return dto.SignUpResponse{}, fmt.Errorf("%w: %v", domain.ErrAssignRoleFailed, err)
 	}
-	resp.Message = "success"
-	return resp, nil
+
+	return dto.SignUpResponse{User: toDTOUser(created), Message: "success"}, nil
 }
 
 func (s *Service) UpdateProfile(ctx context.Context, req dto.UpdateProfileRequest) (dto.UpdateProfileResponse, error) {
@@ -81,12 +86,7 @@ func (s *Service) UpdateProfile(ctx context.Context, req dto.UpdateProfileReques
 		return dto.UpdateProfileResponse{Message: "failed"}, err
 	}
 
-	var resp dto.UpdateProfileResponse
-	if err := copy.CopyObject(&updated, &resp.User); err != nil {
-		return dto.UpdateProfileResponse{Message: "failed"}, err
-	}
-	resp.Message = "success"
-	return resp, nil
+	return dto.UpdateProfileResponse{User: toDTOUser(updated), Message: "success"}, nil
 }
 
 func (s *Service) LockAccount(ctx context.Context, req dto.LockAccountRequest) (dto.LockAccountResponse, error) {
@@ -117,9 +117,26 @@ func (s *Service) FindUser(ctx context.Context, req dto.FindUserRequest) (dto.Fi
 		}
 	}
 
-	var resp dto.FindUserResponse
-	if err := copy.CopyObject(&user, &resp.User); err != nil {
-		return dto.FindUserResponse{}, err
+	return dto.FindUserResponse{User: toDTOUser(user)}, nil
+}
+
+func toDTOUser(u domain.User) *dto.User {
+	out := &dto.User{
+		Id:         int32(u.Id),
+		Username:   u.Username,
+		Email:      u.Email,
+		Name:       u.Name,
+		Phone:      u.Phone,
+		Address:    u.Address,
+		Sex:        u.Sex,
+		Checked:    u.Checked,
+		CreateTime: timestamppb.New(u.CreateTime),
 	}
-	return resp, nil
+	if !u.UpdateTime.IsZero() {
+		out.UpdateTime = timestamppb.New(u.UpdateTime)
+	}
+	for _, r := range u.Roles {
+		out.Roles = append(out.Roles, &dto.Role{Id: int32(r.Id), Name: r.Name})
+	}
+	return out
 }

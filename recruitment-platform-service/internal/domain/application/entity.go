@@ -40,7 +40,7 @@ type Interview struct {
 	ID             uuid.UUID          `json:"id"`
 	Round          int                `json:"round"`
 	Title          string             `json:"title"`
-	InterviewerIDs []uuid.UUID        `json:"interviewer_ids"`
+	InterviewerIDs []int64            `json:"interviewer_ids"` // user-service user ids
 	ScheduledAt    time.Time          `json:"scheduled_at"`
 	DurationMin    int                `json:"duration_min"`
 	MeetingURL     string             `json:"meeting_url"`
@@ -49,9 +49,9 @@ type Interview struct {
 }
 
 type InterviewFeedback struct {
-	SubmittedBy uuid.UUID `json:"submitted_by"`
-	Decision    string    `json:"decision"` // pass | fail | hold
-	Score       int       `json:"score"`    // 1–5
+	SubmittedBy int64     `json:"submitted_by"` // user-service user id
+	Decision    string    `json:"decision"`     // pass | fail | hold
+	Score       int       `json:"score"`        // 1–5
 	Strengths   string    `json:"strengths"`
 	Weaknesses  string    `json:"weaknesses"`
 	Notes       string    `json:"notes"`
@@ -75,7 +75,7 @@ type Application struct {
 
 	JobID       uuid.UUID `db:"job_id"       json:"job_id"`
 	CandidateID uuid.UUID `db:"candidate_id" json:"candidate_id"`
-	RecruiterID uuid.UUID `db:"recruiter_id" json:"recruiter_id"`
+	RecruiterID int64     `db:"recruiter_id" json:"recruiter_id"` // user-service user id
 
 	Status          Status           `db:"status"           json:"status"`
 	CurrentStageID  uuid.UUID        `db:"current_stage_id" json:"current_stage_id"`
@@ -96,7 +96,7 @@ type Application struct {
 	events []shared.DomainEvent
 }
 
-func New(jobID, candidateID, recruiterID uuid.UUID) (*Application, error) {
+func New(jobID, candidateID uuid.UUID, recruiterID int64) (*Application, error) {
 	if jobID == uuid.Nil || candidateID == uuid.Nil {
 		return nil, errors.New("application: job and candidate IDs required")
 	}
@@ -220,7 +220,7 @@ func (a *Application) record(t string, p interface{}) {
 type Filter struct {
 	JobID       *uuid.UUID `form:"job_id"`
 	CandidateID *uuid.UUID `form:"candidate_id"`
-	RecruiterID *uuid.UUID `form:"recruiter_id"`
+	RecruiterID *int64     `form:"recruiter_id"`
 	Status      *Status    `form:"status"`
 	shared.PaginationParams
 }

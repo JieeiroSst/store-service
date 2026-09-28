@@ -19,6 +19,7 @@ require (
 	go.uber.org/fx v1.23.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.71.0
+	google.golang.org/protobuf v1.36.5
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.12
@@ -79,7 +80,6 @@ require (
 	golang.org/x/text v0.22.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250219182151-9fdb1cabc7b2 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250212204824-5a70512c5d8b // indirect
-	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
 	gorm.io/driver/sqlserver v1.5.3 // indirect

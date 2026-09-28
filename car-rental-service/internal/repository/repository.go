@@ -10,7 +10,7 @@ import (
 
 type Repositories struct {
 	db           *gorm.DB
-	Users        *UserRepo
+	Profiles     *ProfileRepo
 	Locations    *LocationRepo
 	Vehicles     *VehicleRepo
 	Reservations *ReservationRepo
@@ -22,7 +22,7 @@ type Repositories struct {
 func NewRepositories(db *gorm.DB) *Repositories {
 	return &Repositories{
 		db:           db,
-		Users:        &UserRepo{db},
+		Profiles:     &ProfileRepo{db},
 		Locations:    &LocationRepo{db},
 		Vehicles:     &VehicleRepo{db},
 		Reservations: &ReservationRepo{db},

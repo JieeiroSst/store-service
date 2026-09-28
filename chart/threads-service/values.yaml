@@ -23,8 +23,8 @@ threadsService:
 
   # Plain env vars the container reads directly (see config.FromEnv) -
   # works standalone even before ops has seeded this service's config into
-  # the cluster's shared Consul KV store. jwtSecret must be the same value
-  # user_service signs its tokens with.
+  # the cluster's shared Consul KV store. Bearer tokens are validated and
+  # authors looked up through user-service at userServiceBaseURL.
   env:
     postgresHost: postgresdb
     postgresPort: "80"
@@ -42,9 +42,8 @@ threadsService:
     redisAddr: redis-svc:6379
     redisPassword: ""
     redisDB: "0"
-    userServiceBaseURL: http://user-service-svc
+    userServiceBaseURL: http://user-api-svc
     userServiceTimeout: 5s
-    jwtSecret: changeme
 
   resources:
     requests:

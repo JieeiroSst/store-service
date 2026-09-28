@@ -6,18 +6,29 @@ import (
 	"github.com/google/uuid"
 )
 
+// User is a user-service account as seen by car-rental: the profile comes
+// from user-service, DrivingLicense from the local CustomerProfile. It is
+// never stored here.
 type User struct {
-	ID             uuid.UUID `json:"id" db:"user_id" gorm:"column:user_id;primaryKey"`
-	Email          string    `json:"email" db:"email" gorm:"column:email"`
-	PasswordHash   string    `json:"-" db:"password_hash" gorm:"column:password_hash"`
-	FirstName      string    `json:"first_name" db:"first_name" gorm:"column:first_name"`
-	LastName       string    `json:"last_name" db:"last_name" gorm:"column:last_name"`
-	PhoneNumber    string    `json:"phone_number" db:"phone_number" gorm:"column:phone_number"`
-	Address        string    `json:"address" db:"address" gorm:"column:address"`
-	UserType       UserType  `json:"user_type" db:"user_type" gorm:"column:user_type"`
-	DrivingLicense string    `json:"driving_license" db:"driving_license" gorm:"column:driving_license"`
-	CreatedAt      time.Time `json:"created_at" db:"created_at" gorm:"column:created_at"`
-	UpdatedAt      time.Time `json:"updated_at" db:"updated_at" gorm:"column:updated_at"`
+	ID             int64     `json:"id"`
+	Email          string    `json:"email"`
+	FirstName      string    `json:"first_name"`
+	LastName       string    `json:"last_name"`
+	PhoneNumber    string    `json:"phone_number"`
+	Address        string    `json:"address"`
+	UserType       UserType  `json:"user_type"`
+	DrivingLicense string    `json:"driving_license"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
+}
+
+// CustomerProfile holds the rental-specific data car-rental keeps about a
+// user-service account.
+type CustomerProfile struct {
+	UserID         int64     `json:"user_id" gorm:"column:user_id;primaryKey"`
+	DrivingLicense string    `json:"driving_license" gorm:"column:driving_license"`
+	CreatedAt      time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt      time.Time `json:"updated_at" gorm:"column:updated_at"`
 }
 
 type UserType string
@@ -30,13 +41,13 @@ const (
 
 type UserDocument struct {
 	ID                 uuid.UUID          `json:"id" db:"document_id" gorm:"column:document_id;primaryKey"`
-	UserID             uuid.UUID          `json:"user_id" db:"user_id" gorm:"column:user_id"`
+	UserID             int64              `json:"user_id" db:"user_id" gorm:"column:user_id"`
 	DocumentType       DocumentType       `json:"document_type" db:"document_type" gorm:"column:document_type"`
 	DocumentNumber     string             `json:"document_number" db:"document_number" gorm:"column:document_number"`
 	ExpiryDate         time.Time          `json:"expiry_date" db:"expiry_date" gorm:"column:expiry_date"`
 	DocumentURL        string             `json:"document_url" db:"document_url" gorm:"column:document_url"`
 	VerificationStatus VerificationStatus `json:"verification_status" db:"verification_status" gorm:"column:verification_status"`
-	VerifiedBy         *uuid.UUID         `json:"verified_by" db:"verified_by" gorm:"column:verified_by"`
+	VerifiedBy         *int64             `json:"verified_by" db:"verified_by" gorm:"column:verified_by"`
 	CreatedAt          time.Time          `json:"created_at" db:"created_at" gorm:"column:created_at"`
 	UpdatedAt          time.Time          `json:"updated_at" db:"updated_at" gorm:"column:updated_at"`
 }
@@ -148,7 +159,7 @@ type Location struct {
 
 type Reservation struct {
 	ID                 uuid.UUID         `json:"id" db:"reservation_id" gorm:"column:reservation_id;primaryKey"`
-	UserID             uuid.UUID         `json:"user_id" db:"user_id" gorm:"column:user_id"`
+	UserID             int64             `json:"user_id" db:"user_id" gorm:"column:user_id"`
 	VehicleID          uuid.UUID         `json:"vehicle_id" db:"vehicle_id" gorm:"column:vehicle_id"`
 	PickupLocationID   uuid.UUID         `json:"pickup_location_id" db:"pickup_location_id" gorm:"column:pickup_location_id"`
 	ReturnLocationID   uuid.UUID         `json:"return_location_id" db:"return_location_id" gorm:"column:return_location_id"`
@@ -177,7 +188,7 @@ type Rental struct {
 	ID               uuid.UUID     `json:"id" db:"rental_id" gorm:"column:rental_id;primaryKey"`
 	ReservationID    *uuid.UUID    `json:"reservation_id" db:"reservation_id" gorm:"column:reservation_id"`
 	VehicleID        uuid.UUID     `json:"vehicle_id" db:"vehicle_id" gorm:"column:vehicle_id"`
-	UserID           uuid.UUID     `json:"user_id" db:"user_id" gorm:"column:user_id"`
+	UserID           int64         `json:"user_id" db:"user_id" gorm:"column:user_id"`
 	PickupTime       time.Time     `json:"pickup_time" db:"pickup_time" gorm:"column:pickup_time"`
 	ActualReturnTime *time.Time    `json:"actual_return_time,omitempty" db:"actual_return_time" gorm:"column:actual_return_time"`
 	PickupLocationID uuid.UUID     `json:"pickup_location_id" db:"pickup_location_id" gorm:"column:pickup_location_id"`
@@ -210,7 +221,7 @@ const (
 type Payment struct {
 	ID            uuid.UUID     `json:"id" db:"payment_id" gorm:"column:payment_id;primaryKey"`
 	RentalID      uuid.UUID     `json:"rental_id" db:"rental_id" gorm:"column:rental_id"`
-	UserID        uuid.UUID     `json:"user_id" db:"user_id" gorm:"column:user_id"`
+	UserID        int64         `json:"user_id" db:"user_id" gorm:"column:user_id"`
 	Amount        float64       `json:"amount" db:"amount" gorm:"column:amount"`
 	PaymentMethod PaymentMethod `json:"payment_method" db:"payment_method" gorm:"column:payment_method"`
 	TransactionID string        `json:"transaction_id" db:"transaction_id" gorm:"column:transaction_id"`
@@ -257,7 +268,7 @@ type MaintenanceRecord struct {
 type Review struct {
 	ID        uuid.UUID `json:"id" db:"review_id" gorm:"column:review_id;primaryKey"`
 	RentalID  uuid.UUID `json:"rental_id" db:"rental_id" gorm:"column:rental_id"`
-	UserID    uuid.UUID `json:"user_id" db:"user_id" gorm:"column:user_id"`
+	UserID    int64     `json:"user_id" db:"user_id" gorm:"column:user_id"`
 	VehicleID uuid.UUID `json:"vehicle_id" db:"vehicle_id" gorm:"column:vehicle_id"`
 	Rating    int       `json:"rating" db:"rating" gorm:"column:rating"`
 	Comment   string    `json:"comment" db:"comment" gorm:"column:comment"`
@@ -285,7 +296,7 @@ type SearchVehicleParams struct {
 	MaxDailyRate       *float64     `json:"max_daily_rate" form:"max_daily_rate"`
 }
 
-func (User) TableName() string              { return "users" }
+func (CustomerProfile) TableName() string   { return "customer_profiles" }
 func (UserDocument) TableName() string      { return "user_documents" }
 func (VehicleCategory) TableName() string   { return "vehicle_categories" }
 func (Vehicle) TableName() string           { return "vehicles" }

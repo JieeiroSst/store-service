@@ -11,7 +11,7 @@ import (
 
 func newApp(t *testing.T) *application.Application {
 	t.Helper()
-	app, err := application.New(uuid.New(), uuid.New(), uuid.New())
+	app, err := application.New(uuid.New(), uuid.New(), 42)
 	if err != nil {
 		t.Fatalf("application.New failed: %v", err)
 	}
@@ -29,7 +29,7 @@ func TestNew_Success(t *testing.T) {
 }
 
 func TestNew_MissingIDs(t *testing.T) {
-	_, err := application.New(uuid.Nil, uuid.New(), uuid.New())
+	_, err := application.New(uuid.Nil, uuid.New(), 42)
 	if err == nil {
 		t.Fatal("expected error for nil job_id")
 	}
@@ -211,7 +211,7 @@ func TestSubmitFeedback_Success(t *testing.T) {
 	app.AddInterview(interview)
 
 	feedback := application.InterviewFeedback{
-		SubmittedBy: uuid.New(),
+		SubmittedBy: 42,
 		Decision:    "pass",
 		Score:       4,
 		Strengths:   "Strong Go skills",

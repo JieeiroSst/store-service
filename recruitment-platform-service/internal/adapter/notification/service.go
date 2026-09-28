@@ -78,7 +78,7 @@ func (s *sendGridService) Send(ctx context.Context, n port.NotificationPayload) 
 
 	body, _ := json.Marshal(map[string]interface{}{
 		"personalizations": []map[string]interface{}{
-			{"to": []map[string]string{{"email": n.RecipientID.String()}}},
+			{"to": []map[string]string{{"email": n.RecipientID}}},
 		},
 		"from":    map[string]string{"email": s.cfg.FromEmail, "name": s.cfg.FromName},
 		"subject": tpl.Subject,
@@ -108,7 +108,7 @@ func (s *sendGridService) Send(ctx context.Context, n port.NotificationPayload) 
 	}
 
 	s.logger.Info("notification sent",
-		zap.String("recipient", n.RecipientID.String()),
+		zap.String("recipient", n.RecipientID),
 		zap.String("template", n.TemplateID),
 	)
 	return nil
@@ -118,7 +118,7 @@ func (s *sendGridService) SendBulk(ctx context.Context, ns []port.NotificationPa
 	for _, n := range ns {
 		if err := s.Send(ctx, n); err != nil {
 			s.logger.Error("bulk send failed for recipient",
-				zap.String("recipient", n.RecipientID.String()),
+				zap.String("recipient", n.RecipientID),
 				zap.Error(err),
 			)
 		}

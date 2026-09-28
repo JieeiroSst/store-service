@@ -89,7 +89,7 @@ func (h *AnalyticsHandler) FunnelByJob(c *gin.Context) {
 // GET /analytics/recruiter
 func (h *AnalyticsHandler) RecruiterPerformance(c *gin.Context) {
 	type RecruiterRow struct {
-		RecruiterID        uuid.UUID `db:"recruiter_id"          json:"recruiter_id"`
+		RecruiterID        int64     `db:"recruiter_id"          json:"recruiter_id"`
 		TotalManaged       int       `db:"total_managed"         json:"total_managed"`
 		Hired              int       `db:"hired"                 json:"hired"`
 		ActiveJobs         int       `db:"active_jobs"           json:"active_jobs"`
@@ -112,7 +112,7 @@ func (h *AnalyticsHandler) SLABreaches(c *gin.Context) {
 		ApplicationID uuid.UUID `db:"application_id" json:"application_id"`
 		JobID         uuid.UUID `db:"job_id"         json:"job_id"`
 		CandidateID   uuid.UUID `db:"candidate_id"   json:"candidate_id"`
-		RecruiterID   uuid.UUID `db:"recruiter_id"   json:"recruiter_id"`
+		RecruiterID   int64     `db:"recruiter_id"   json:"recruiter_id"`
 		Status        string    `db:"status"         json:"status"`
 		DaysInStage   int       `db:"days_in_stage"  json:"days_in_stage"`
 		SLADays       int       `db:"sla_days"       json:"sla_days"`

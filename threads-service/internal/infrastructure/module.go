@@ -1,12 +1,12 @@
 package infrastructure
 
 import (
-	"github.com/JIeeiroSst/threads-service/config"
 	httpadapter "github.com/JIeeiroSst/threads-service/internal/adapter/primary/http"
 	"github.com/JIeeiroSst/threads-service/internal/adapter/secondary/cache"
 	"github.com/JIeeiroSst/threads-service/internal/adapter/secondary/repository"
 	"github.com/JIeeiroSst/threads-service/internal/adapter/secondary/trending"
 	"github.com/JIeeiroSst/threads-service/internal/adapter/secondary/userclient"
+	"github.com/JIeeiroSst/threads-service/internal/adapter/secondary/userservice"
 	"github.com/JIeeiroSst/threads-service/internal/application"
 	"github.com/JIeeiroSst/threads-service/internal/domain/port"
 	"github.com/JIeeiroSst/threads-service/internal/infrastructure/database"
@@ -21,8 +21,8 @@ func newPostRepository(db *gorm.DB, redisClient *redis.Client) port.PostReposito
 	return cache.NewCachedPostRepository(repository.NewPostRepository(db), redisClient)
 }
 
-func newUserClient(cfg *config.Config, redisClient *redis.Client) port.UserClient {
-	return cache.NewCachedUserClient(userclient.NewUserClient(cfg), redisClient)
+func newUserClient(users *userservice.Client, redisClient *redis.Client) port.UserClient {
+	return cache.NewCachedUserClient(userclient.NewUserClient(users), redisClient)
 }
 
 var Module = fx.Options(
@@ -38,6 +38,7 @@ var Module = fx.Options(
 	fx.Provide(repository.NewTagRepository),
 	fx.Provide(repository.NewBookmarkRepository),
 	fx.Provide(newPostRepository), // port.PostRepository, Redis-cached (see above)
+	userservice.Module,            // *userservice.Client — token validation + user lookup
 	fx.Provide(newUserClient),     // port.UserClient, Redis-cached (see above)
 
 	trending.Module, // port.TrendingTagsStore

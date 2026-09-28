@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -17,6 +18,7 @@ import (
 
 type Service struct {
 	userRepo   output.UserRepository
+	authorizer output.Authorizer
 	hasher     output.Hasher
 	tokenGen   output.TokenGenerator
 	tokenStore output.TokenStore
@@ -24,9 +26,10 @@ type Service struct {
 	refreshTTL time.Duration
 }
 
-func New(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, accessTTL, refreshTTL time.Duration) *Service {
+func New(userRepo output.UserRepository, authorizer output.Authorizer, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, accessTTL, refreshTTL time.Duration) *Service {
 	return &Service{
 		userRepo:   userRepo,
+		authorizer: authorizer,
 		hasher:     hasher,
 		tokenGen:   tokenGen,
 		tokenStore: tokenStore,
@@ -41,7 +44,7 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 		return dto.LoginResponse{}, err
 	}
 
-	userID, hashedPassword, role, err := s.userRepo.CheckAccount(ctx, user)
+	userID, hashedPassword, _, err := s.userRepo.CheckAccount(ctx, user)
 	if err != nil {
 		return dto.LoginResponse{}, errors.New("user does not exist")
 	}
@@ -49,7 +52,7 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 		return dto.LoginResponse{}, errors.New("password entered incorrectly")
 	}
 
-	pair, err := s.issueTokenPair(ctx, userID, user.Username, role)
+	pair, err := s.issueTokenPair(ctx, userID, user.Username, s.userRoles(ctx, userID))
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
@@ -93,7 +96,8 @@ func (s *Service) RefreshToken(ctx context.Context, req dto.RefreshRequest) (dto
 		return dto.RefreshResponse{}, status.Errorf(codes.Unauthenticated, "refresh token is invalid or expired, please login again")
 	}
 
-	pair, err := s.issueTokenPair(ctx, session.UserID, session.Username, session.Role)
+	// Re-read the role so grants/revocations take effect on refresh.
+	pair, err := s.issueTokenPair(ctx, session.UserID, session.Username, s.userRoles(ctx, session.UserID))
 	if err != nil {
 		return dto.RefreshResponse{}, err
 	}
@@ -127,8 +131,22 @@ func (s *Service) Authentication(ctx context.Context, req dto.AuthenticationRequ
 	return dto.AuthenticationResponse{Valid: true, Message: "success"}, nil
 }
 
-func (s *Service) issueTokenPair(ctx context.Context, userID int, username, role string) (domain.TokenPair, error) {
-	accessToken, err := s.tokenGen.GenerateAccessToken(ctx, userID, username, role)
+// userRoles reads the user's roles from authorize-service for the token's
+// informational "role" (primary) and "roles" (every effective role) claims.
+// It fails open to no roles rather than blocking login: real access
+// decisions are made by authorize-service.
+func (s *Service) userRoles(ctx context.Context, userID int) domain.UserRoles {
+	roles, err := s.authorizer.GetUserRoles(ctx, userID)
+	if err != nil {
+		log.Printf("auth: get roles for user %d from authorize-service: %v", userID, err)
+		return domain.UserRoles{}
+	}
+	return roles
+}
+
+func (s *Service) issueTokenPair(ctx context.Context, userID int, username string, roles domain.UserRoles) (domain.TokenPair, error) {
+	role := roles.PrimaryRole
+	accessToken, err := s.tokenGen.GenerateAccessToken(ctx, userID, username, role, roles.EffectiveRoles)
 	if err != nil {
 		return domain.TokenPair{}, err
 	}

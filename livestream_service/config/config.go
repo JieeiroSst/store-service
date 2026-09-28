@@ -100,12 +100,16 @@ func (v ViewerConfig) HeartbeatWindowDuration() time.Duration {
 	return parseDurationOr(v.HeartbeatWindow, 40*time.Second)
 }
 
-// AuthConfig signs/verifies the JWTs this service accepts on protected
-// routes. This service is a resource server, not an identity provider -
-// tokens are issued elsewhere (e.g. user_service) and just need to share
-// this secret.
+// AuthConfig points at user-service, which issues and validates every
+// bearer token this service accepts. This service is a resource server,
+// not an identity provider.
 type AuthConfig struct {
-	JWTSecret string
+	UserServiceURL     string
+	UserServiceTimeout string
+}
+
+func (a AuthConfig) UserServiceTimeoutDuration() time.Duration {
+	return parseDurationOr(a.UserServiceTimeout, 3*time.Second)
 }
 
 // InternalConfig guards service-to-service routes (edge calling a specific
@@ -177,7 +181,8 @@ func FromEnv() *Config {
 			HeartbeatWindow: getEnv("VIEWER_HEARTBEAT_WINDOW", "40s"),
 		},
 		Auth: AuthConfig{
-			JWTSecret: getEnv("JWT_SECRET", ""),
+			UserServiceURL:     getEnv("USER_SERVICE_URL", "http://user-service:1235"),
+			UserServiceTimeout: getEnv("USER_SERVICE_TIMEOUT", "3s"),
 		},
 		Internal: InternalConfig{
 			SharedSecret: getEnv("INTERNAL_SHARED_SECRET", ""),

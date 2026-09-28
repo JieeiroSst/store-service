@@ -14,7 +14,7 @@ type Config struct {
 	DatabaseDSN     string
 	RedisAddr       string
 	RedisPassword   string
-	JWTSecret       string
+	UserServiceURL  string
 	MasterKeyPath   string
 	ServerPort      string
 	KeyRotationDays int
@@ -36,7 +36,7 @@ func LoadConfig() {
 		DatabaseDSN:     getEnv("POSTGRES_DSN", "postgres://user:pass@localhost:5432/kms_db?sslmode=disable"),
 		RedisAddr:       getEnv("REDIS_ADDR", "localhost:6379"),
 		RedisPassword:   getEnv("REDIS_PASSWORD", ""),
-		JWTSecret:       getEnv("JWT_SECRET", "your-jwt-secret-key"),
+		UserServiceURL:  getEnv("USER_SERVICE_URL", "http://user-service:1235"),
 		MasterKeyPath:   getEnv("MASTER_KEY_PATH", "/etc/kms/master.key"),
 		ServerPort:      getEnv("SERVER_PORT", "8080"),
 		KeyRotationDays: getEnvAsInt("KEY_ROTATION_DAYS", 365),

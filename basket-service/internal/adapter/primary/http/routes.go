@@ -1,14 +1,17 @@
 package http
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/JIeeiroSst/basket-service/internal/adapter/primary/http/middleware"
+	"github.com/gin-gonic/gin"
+)
 
-func NewRouter(h *Handler) *gin.Engine {
+func NewRouter(h *Handler, authn middleware.Authenticator) *gin.Engine {
 	engine := gin.New()
 	engine.Use(gin.Recovery(), CORSMiddleware())
 
 	engine.GET("/health", h.GetHealth)
 
-	api := engine.Group("/api/v1")
+	api := engine.Group("/api/v1", middleware.RequireAuth(authn))
 	RegisterRoutes(api, h)
 
 	return engine
@@ -42,8 +45,6 @@ func RegisterRoutes(api *gin.RouterGroup, h *Handler) {
 		basketLineAttributes.DELETE("/:id", h.DeleteBasketLineAttribute)
 	}
 
-	// Read-only: order_order and auth_user are owned by
-	// order-processing-service and user_service respectively.
 	orders := api.Group("/orders")
 	{
 		orders.GET("", h.ListOrders)
@@ -52,7 +53,6 @@ func RegisterRoutes(api *gin.RouterGroup, h *Handler) {
 
 	users := api.Group("/users")
 	{
-		users.GET("", h.ListUsers)
 		users.GET("/:id", h.GetUser)
 	}
 }

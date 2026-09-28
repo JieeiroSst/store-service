@@ -18,9 +18,8 @@ import (
 	voucherapp "github.com/JIeeiroSst/voucher-service/internal/application/voucher"
 	walletapp "github.com/JIeeiroSst/voucher-service/internal/application/wallet"
 
-	httpinbound "github.com/JIeeiroSst/voucher-service/internal/adapters/inbound/http"
 	kafkaconsumer "github.com/JIeeiroSst/voucher-service/internal/adapters/inbound/consumer"
-	"github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/authtoken"
+	httpinbound "github.com/JIeeiroSst/voucher-service/internal/adapters/inbound/http"
 	"github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/internalgateway"
 	"github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/notifier"
 	paymentgateway "github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/payment"
@@ -28,6 +27,7 @@ import (
 	"github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/provider"
 	"github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/publisher"
 	redisadapter "github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/redis"
+	"github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/userservice"
 
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
 	"github.com/JIeeiroSst/voucher-service/internal/platform/config"
@@ -90,7 +90,7 @@ var Module = fx.Options(
 	publisher.Module,
 	notifier.Module,
 	paymentgateway.Module,
-	authtoken.Module,
+	userservice.Module,
 	internalgateway.Module,
 
 	// inbound adapters

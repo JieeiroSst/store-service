@@ -5,7 +5,6 @@ import "context"
 type UserRepository interface {
 	Create(ctx context.Context, user *User) error
 	GetByID(ctx context.Context, id int64) (*User, error)
-	GetByEmail(ctx context.Context, email string) (*User, error)
 	GetManagedUsers(ctx context.Context, managerID int64) ([]*User, error)
 	GetAdvisedUser(ctx context.Context, advisorID int64) (*User, error)
 	Update(ctx context.Context, user *User) error

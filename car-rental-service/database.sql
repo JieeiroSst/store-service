@@ -1,12 +1,8 @@
-CREATE TABLE IF NOT EXISTS users (
-    user_id UUID PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(20),
-    address TEXT,
-    user_type VARCHAR(30) NOT NULL CHECK (user_type IN ('customer', 'staff', 'admin')),
+-- Accounts (credentials, name, email, phone, address) live in user-service;
+-- user_id columns hold user-service user ids. Only rental-specific data
+-- about a user is kept here.
+CREATE TABLE IF NOT EXISTS customer_profiles (
+    user_id BIGINT PRIMARY KEY,
     driving_license VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -54,7 +50,7 @@ CREATE TABLE IF NOT EXISTS vehicles (
 
 CREATE TABLE IF NOT EXISTS reservations (
     reservation_id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(user_id),
+    user_id BIGINT,
     vehicle_id UUID REFERENCES vehicles(vehicle_id),
     pickup_location_id UUID REFERENCES locations(location_id),
     return_location_id UUID REFERENCES locations(location_id),
@@ -70,7 +66,7 @@ CREATE TABLE IF NOT EXISTS rentals (
     rental_id UUID PRIMARY KEY,
     reservation_id UUID REFERENCES reservations(reservation_id),
     vehicle_id UUID REFERENCES vehicles(vehicle_id),
-    user_id UUID REFERENCES users(user_id),
+    user_id BIGINT,
     pickup_time TIMESTAMP NOT NULL,
     actual_return_time TIMESTAMP,
     pickup_location_id UUID REFERENCES locations(location_id),
@@ -102,7 +98,7 @@ CREATE TABLE IF NOT EXISTS maintenance_records (
 CREATE TABLE IF NOT EXISTS payments (
     payment_id UUID PRIMARY KEY,
     rental_id UUID REFERENCES rentals(rental_id),
-    user_id UUID REFERENCES users(user_id),
+    user_id BIGINT,
     amount DECIMAL(10, 2) NOT NULL,
     payment_method VARCHAR(30) NOT NULL CHECK (payment_method IN ('credit_card', 'debit_card', 'cash', 'online')),
     transaction_id VARCHAR(100),
@@ -115,7 +111,7 @@ CREATE TABLE IF NOT EXISTS payments (
 CREATE TABLE IF NOT EXISTS reviews (
     review_id UUID PRIMARY KEY,
     rental_id UUID REFERENCES rentals(rental_id),
-    user_id UUID REFERENCES users(user_id),
+    user_id BIGINT,
     vehicle_id UUID REFERENCES vehicles(vehicle_id),
     rating INT CHECK (rating BETWEEN 1 AND 5) NOT NULL,
     comment TEXT,
@@ -124,13 +120,13 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 CREATE TABLE IF NOT EXISTS user_documents (
     document_id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(user_id),
+    user_id BIGINT,
     document_type VARCHAR(30) NOT NULL CHECK (document_type IN ('driving_license', 'id_proof', 'passport', 'other')),
     document_number VARCHAR(100) NOT NULL,
     expiry_date DATE,
     document_url VARCHAR(255),
     verification_status VARCHAR(30) NOT NULL CHECK (verification_status IN ('pending', 'verified', 'rejected')),
-    verified_by UUID REFERENCES users(user_id),
+    verified_by BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

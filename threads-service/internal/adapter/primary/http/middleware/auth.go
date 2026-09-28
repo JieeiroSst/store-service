@@ -1,20 +1,25 @@
 package middleware
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"strings"
 
+	"github.com/JIeeiroSst/threads-service/internal/adapter/secondary/userservice"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
-type Claims struct {
-	jwt.RegisteredClaims
+type Authenticator interface {
+	Authenticate(ctx context.Context, token string) (userservice.Identity, error)
 }
 
-const contextKeyUserID = "userID"
+const (
+	contextKeyUserID = "userID"
+	contextKeyRole   = "role"
+)
 
-func RequireAuth(secret string) gin.HandlerFunc {
+func RequireAuth(authn Authenticator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
@@ -24,17 +29,19 @@ func RequireAuth(secret string) gin.HandlerFunc {
 			return
 		}
 
-		claims := &Claims{}
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
-			return []byte(secret), nil
-		})
-		if err != nil || !token.Valid || claims.Subject == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		id, err := authn.Authenticate(c.Request.Context(), tokenString)
+		if err != nil {
+			if errors.Is(err, userservice.ErrUpstream) {
+				c.JSON(http.StatusServiceUnavailable, gin.H{"error": "authentication service unavailable"})
+			} else {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			}
 			c.Abort()
 			return
 		}
 
-		c.Set(contextKeyUserID, claims.Subject)
+		c.Set(contextKeyUserID, id.UserID)
+		c.Set(contextKeyRole, id.Role)
 		c.Next()
 	}
 }

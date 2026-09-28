@@ -27,7 +27,6 @@ type RouterParams struct {
 	Environments *handler.EnvironmentHandler
 	Flags        *handler.FeatureFlagHandler
 	Strategies   *handler.StrategyHandler
-	Auth         *handler.AuthHandler
 	RBAC         *handler.RBACHandler
 	Tokens       *handler.TokenHandler
 	Audit        *handler.AuditHandler
@@ -48,9 +47,6 @@ func NewRouter(p RouterParams) chi.Router {
 	adminAuth := appmw.RequireAdminAuth(p.AuthService)
 
 	r.Route("/api/admin", func(admin chi.Router) {
-		admin.Post("/auth/register", p.Auth.Register)
-		admin.Post("/auth/login", p.Auth.Login)
-
 		admin.Group(func(protected chi.Router) {
 			protected.Use(adminAuth)
 

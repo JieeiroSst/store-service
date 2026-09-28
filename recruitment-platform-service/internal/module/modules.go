@@ -12,6 +12,7 @@ import (
 	"github.com/JIeeiroSst/recruitment-platform-service/internal/adapter/persistence/postgres"
 	temporaladapter "github.com/JIeeiroSst/recruitment-platform-service/internal/adapter/temporal"
 	"github.com/JIeeiroSst/recruitment-platform-service/internal/adapter/temporal/activity"
+	"github.com/JIeeiroSst/recruitment-platform-service/internal/adapter/userservice"
 	domainapp "github.com/JIeeiroSst/recruitment-platform-service/internal/domain/application"
 	"github.com/JIeeiroSst/recruitment-platform-service/internal/domain/candidate"
 	"github.com/JIeeiroSst/recruitment-platform-service/internal/domain/job"
@@ -172,7 +173,8 @@ func NewRouter(
 
 	r.GET("/api/v1/referrals/track/:token", referralH.TrackClick)
 
-	api := r.Group("/api/v1", middleware.JWTAuth(cfg.App.JWTSecret, logger))
+	users := userservice.New(cfg.App.UserServiceURL, cfg.App.UserServiceTimeout)
+	api := r.Group("/api/v1", middleware.UserServiceAuth(users, logger))
 	candidateH.RegisterRoutes(api)
 	jobH.RegisterRoutes(api)
 	appH.RegisterRoutes(api)

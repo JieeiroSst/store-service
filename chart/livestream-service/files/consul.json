@@ -46,7 +46,8 @@
         "heartbeatWindow": "40s"
     },
     "auth": {
-        "jwtSecret": "testJwtSecret"
+        "userServiceURL": "http://user-api-svc",
+        "userServiceTimeout": "3s"
     },
     "internal": {
         "sharedSecret": "testInternalSharedSecret"

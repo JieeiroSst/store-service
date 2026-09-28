@@ -22,3 +22,7 @@ func (s *orderService) GetOrder(ctx context.Context, id int) (*model.Order, erro
 func (s *orderService) ListOrders(ctx context.Context) ([]model.Order, error) {
 	return s.repo.List(ctx)
 }
+
+func (s *orderService) ListOrdersByUser(ctx context.Context, userID int) ([]model.Order, error) {
+	return s.repo.ListByUser(ctx, userID)
+}

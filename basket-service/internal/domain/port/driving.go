@@ -10,6 +10,7 @@ type BasketUsecase interface {
 	CreateBasket(ctx context.Context, basket *model.Basket) (*model.Basket, error)
 	GetBasket(ctx context.Context, id int) (*model.Basket, error)
 	ListBaskets(ctx context.Context) ([]model.Basket, error)
+	ListBasketsByUser(ctx context.Context, userID int) ([]model.Basket, error)
 	UpdateBasket(ctx context.Context, basket *model.Basket) (*model.Basket, error)
 	DeleteBasket(ctx context.Context, id int) error
 }
@@ -33,9 +34,9 @@ type BasketLineAttributeUsecase interface {
 type OrderUsecase interface {
 	GetOrder(ctx context.Context, id int) (*model.Order, error)
 	ListOrders(ctx context.Context) ([]model.Order, error)
+	ListOrdersByUser(ctx context.Context, userID int) ([]model.Order, error)
 }
 
 type UserUsecase interface {
 	GetUser(ctx context.Context, id int) (*model.User, error)
-	ListUsers(ctx context.Context) ([]model.User, error)
 }

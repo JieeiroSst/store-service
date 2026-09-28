@@ -1,5 +1,3 @@
-// Package auth verifies access tokens issued by user-service (HS256 JWT with
-// "sub", "username" and "role" claims) and enforces role based access on gRPC methods.
 package auth
 
 import (
@@ -7,7 +5,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/JIeeiroSst/car-rental-service/internal/userservice"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -22,7 +20,6 @@ type Claims struct {
 
 type ctxKey struct{}
 
-// FromContext returns the caller's claims, or nil for an anonymous call.
 func FromContext(ctx context.Context) *Claims {
 	c, _ := ctx.Value(ctxKey{}).(*Claims)
 	return c
@@ -39,63 +36,49 @@ const (
 )
 
 type Config struct {
-	SecretKey string
-	AdminRole string // role claim that maps to admin, default "admin"
-	StaffRole string // role claim that maps to staff, default "staff"
+	AdminRole string // authorize-service role that maps to admin; "super_admin" always counts
+	StaffRole string // authorize-service role that maps to staff, default "operator"
+}
+
+type Identities interface {
+	Authenticate(ctx context.Context, token string) (userservice.Identity, error)
 }
 
 type Authenticator struct {
-	secret []byte
-	admin  string
-	staff  string
-	// Methods maps a full gRPC method name to its level; unlisted methods
-	// require an authenticated user.
+	users   Identities
+	admin   string
+	staff   string
 	methods map[string]Level
 }
 
-func New(cfg Config, methods map[string]Level) (*Authenticator, error) {
-	if cfg.SecretKey == "" {
-		return nil, errors.New("auth: jwt secret key is empty")
+func New(cfg Config, users Identities, methods map[string]Level) (*Authenticator, error) {
+	if users == nil {
+		return nil, errors.New("auth: user-service client is required")
 	}
-	a := &Authenticator{secret: []byte(cfg.SecretKey), admin: cfg.AdminRole, staff: cfg.StaffRole, methods: methods}
+	a := &Authenticator{users: users, admin: cfg.AdminRole, staff: cfg.StaffRole, methods: methods}
 	if a.admin == "" {
 		a.admin = "admin"
 	}
 	if a.staff == "" {
-		a.staff = "staff"
+		a.staff = "operator"
 	}
 	return a, nil
 }
 
-func (a *Authenticator) IsAdmin(c *Claims) bool { return c != nil && c.Role == a.admin }
-func (a *Authenticator) IsStaff(c *Claims) bool {
-	return c != nil && (c.Role == a.staff || c.Role == a.admin)
+func (a *Authenticator) IsAdmin(c *Claims) bool {
+	return c != nil && (c.Role == a.admin || c.Role == "super_admin")
 }
 
-// Parse validates a bearer token. Only HS256 is accepted, which stops tokens
-// signed with "none" or an unexpected algorithm.
-func (a *Authenticator) Parse(token string) (*Claims, error) {
-	parsed, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if t.Method != jwt.SigningMethodHS256 {
-			return nil, errors.New("unexpected signing method")
-		}
-		return a.secret, nil
-	})
-	if err != nil || !parsed.Valid {
-		return nil, errors.New("invalid token")
+func (a *Authenticator) IsStaff(c *Claims) bool {
+	return c != nil && (c.Role == a.staff || a.IsAdmin(c))
+}
+
+func (a *Authenticator) Parse(ctx context.Context, token string) (*Claims, error) {
+	id, err := a.users.Authenticate(ctx, token)
+	if err != nil {
+		return nil, err
 	}
-	m, ok := parsed.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, errors.New("invalid token")
-	}
-	c := &Claims{}
-	c.Subject, _ = m["sub"].(string)
-	c.Username, _ = m["username"].(string)
-	c.Role, _ = m["role"].(string)
-	if c.Subject == "" {
-		return nil, errors.New("invalid token")
-	}
-	return c, nil
+	return &Claims{Subject: id.UserID, Username: id.Username, Role: id.Role}, nil
 }
 
 // UnaryInterceptor authenticates the call and applies the method's level.
@@ -108,7 +91,10 @@ func (a *Authenticator) UnaryInterceptor() grpc.UnaryServerInterceptor {
 
 		var claims *Claims
 		if tok := bearer(ctx); tok != "" {
-			c, err := a.Parse(tok)
+			c, err := a.Parse(ctx, tok)
+			if errors.Is(err, userservice.ErrUpstream) {
+				return nil, status.Error(codes.Unavailable, "authentication service unavailable")
+			}
 			if err != nil {
 				return nil, status.Error(codes.Unauthenticated, "invalid or expired token")
 			}

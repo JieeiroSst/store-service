@@ -4,6 +4,7 @@ import (
 	cronadapter "github.com/JIeeiroSst/basket-service/internal/adapter/primary/cron"
 	httpadapter "github.com/JIeeiroSst/basket-service/internal/adapter/primary/http"
 	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/repository"
+	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/userservice"
 	"github.com/JIeeiroSst/basket-service/internal/application"
 	"github.com/JIeeiroSst/basket-service/internal/infrastructure/cache"
 	"github.com/JIeeiroSst/basket-service/internal/infrastructure/database"
@@ -20,6 +21,8 @@ var Module = fx.Options(
 	cache.Module, // *redis.Client
 
 	repository.Module, // port.*Repository
+
+	userservice.Module, // *userservice.Client, port.UserDirectory
 
 	application.Module, // port.*Usecase
 

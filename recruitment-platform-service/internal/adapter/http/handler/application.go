@@ -129,13 +129,13 @@ func (h *ApplicationHandler) MoveStage(c *gin.Context) {
 func (h *ApplicationHandler) ScheduleInterview(c *gin.Context) {
 	id, _ := uuid.Parse(c.Param("id"))
 	var req struct {
-		Round          int      `json:"round"           binding:"required"`
-		Title          string   `json:"title"           binding:"required"`
-		InterviewerIDs []string `json:"interviewer_ids" binding:"required"`
-		ScheduledAt    string   `json:"scheduled_at"    binding:"required"`
-		DurationMin    int      `json:"duration_min"`
-		MeetingURL     string   `json:"meeting_url"`
-		Type           string   `json:"type"`
+		Round          int     `json:"round"           binding:"required"`
+		Title          string  `json:"title"           binding:"required"`
+		InterviewerIDs []int64 `json:"interviewer_ids" binding:"required"` // user-service user ids
+		ScheduledAt    string  `json:"scheduled_at"    binding:"required"`
+		DurationMin    int     `json:"duration_min"`
+		MeetingURL     string  `json:"meeting_url"`
+		Type           string  `json:"type"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -146,15 +146,11 @@ func (h *ApplicationHandler) ScheduleInterview(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid scheduled_at format, use RFC3339"})
 		return
 	}
-	interviewerIDs := make([]uuid.UUID, 0, len(req.InterviewerIDs))
-	for _, idStr := range req.InterviewerIDs {
-		interviewerIDs = append(interviewerIDs, uuid.MustParse(idStr))
-	}
 	app, err := h.svc.ScheduleInterview(c.Request.Context(), port.ScheduleInterviewCommand{
 		ApplicationID:  id,
 		Round:          req.Round,
 		Title:          req.Title,
-		InterviewerIDs: interviewerIDs,
+		InterviewerIDs: req.InterviewerIDs,
 		ScheduledAt:    scheduledAt,
 		DurationMin:    req.DurationMin,
 		MeetingURL:     req.MeetingURL,

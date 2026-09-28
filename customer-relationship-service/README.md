@@ -56,11 +56,13 @@ Contract expiry (reconciler): a cron job (`CONTRACT_EXPIRY_CRON`, default hourly
 
 Every `/api/v1` request is authenticated by one of:
 
-- **An OIDC bearer token** (`Authorization: Bearer ...`) from `OIDC_ISSUER` (the `keycloak` chart's realm): RS/PS/ES-signed JWTs only, checked against the provider's JWKS (`OIDC_JWKS_URL`, default `<issuer>/protocol/openid-connect/certs`; keys are cached and refreshed, a token signed with an unknown key triggers at most one refresh a minute). `iss`, `exp` and `sub` are required, `aud` is checked when `OIDC_AUDIENCE` is set, `none`/HMAC tokens are refused. The caller is the token's `sub` (display name from `preferred_username`, `name` or `email`). While the provider cannot be reached the answer is `503`, not `401`.
+- **A user-service bearer token** (`Authorization: Bearer ...`): the session token user-service issues at login. It is validated with user-service's `POST /api/v1/validate` (`USER_SERVICE_URL`), so a logged-out token stops working; successful checks are cached for 30s. The caller is the user-service user id (display name: the username). While user-service cannot be reached the answer is `503`, not `401`. This service has no sign-up or login of its own.
 - **The API key** (`X-API-Key`, constant-time comparison): a service caller (`api-key`) whose role is `API_KEY_ROLE` (default `admin`).
-- With neither `API_KEY` nor `OIDC_ISSUER` set the API is **open**, every caller is an administrator, and a warning is logged at startup.
+- A request with neither is refused (`401`); there is no open mode.
 
-Roles are read from the token at `OIDC_ROLES_CLAIM` (default `realm_access.roles`, Keycloak's realm roles) and only those starting with `ROLE_PREFIX` (default `crm-`) count: `crm-viewer`, `crm-staff`, `crm-manager`, `crm-admin`. The highest one applies. A person with none of them is authenticated but may do nothing with contract files (`403`).
+The CRM role comes from the caller's roles in authorize-service: roles starting with `ROLE_PREFIX` (default `crm-`) map one to one (`crm-viewer`, `crm-staff`, `crm-manager`, `crm-admin`), `admin`/`super_admin` are CRM admins and `operator` is staff. Anyone else is authenticated but may do nothing with contract files (`403`). A person may hold several roles (the token's `roles` claim carries every effective role); the highest CRM role applies, so an `operator` who is also `crm-manager` acts as manager. The `crm-*` roles are part of authorize-service's built-in catalog and are granted through user-service.
+
+Coming from the Keycloak setup: run `migrations/001_keycloak_subjects_to_user_service.sql` once (after filling `legacy_user_map`) so files uploaded before the switch still belong to their uploader.
 
 | | viewer | staff | manager | admin |
 | --- | --- | --- | --- | --- |

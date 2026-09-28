@@ -66,6 +66,10 @@ func (d *UserRepository) CheckAccountExists(ctx context.Context, user domain.Use
 	return nil
 }
 
+func (d *UserRepository) DeleteAccount(ctx context.Context, id int) error {
+	return d.db.Delete(&domain.User{}, "id = ?", id).Error
+}
+
 func (d *UserRepository) CreateAccount(ctx context.Context, user domain.User) (domain.User, error) {
 	if err := d.db.Create(&user).Error; err != nil {
 		return domain.User{}, err

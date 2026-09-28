@@ -8,6 +8,7 @@ import (
 
 	"github.com/JIeeiroSst/basket-service/config"
 	httpadapter "github.com/JIeeiroSst/basket-service/internal/adapter/primary/http"
+	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/userservice"
 	"go.uber.org/fx"
 )
 
@@ -17,10 +18,11 @@ type Params struct {
 	LC      fx.Lifecycle
 	Handler *httpadapter.Handler
 	Config  *config.Config
+	Users   *userservice.Client
 }
 
 func New(p Params) {
-	engine := httpadapter.NewRouter(p.Handler)
+	engine := httpadapter.NewRouter(p.Handler, p.Users)
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", p.Config.Server.ServerPort),
 		Handler: engine,

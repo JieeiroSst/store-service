@@ -58,7 +58,7 @@ func (r *partnerRepo) FindByID(ctx context.Context, id uuid.UUID) (*referral.Par
 	return partnerFromRow(&row)
 }
 
-func (r *partnerRepo) FindByUserID(ctx context.Context, userID uuid.UUID) (*referral.Partner, error) {
+func (r *partnerRepo) FindByUserID(ctx context.Context, userID int64) (*referral.Partner, error) {
 	var row partnerRow
 	if err := r.db.GetContext(ctx, &row,
 		`SELECT * FROM partners WHERE user_id = $1 AND deleted_at IS NULL`, userID,
@@ -115,7 +115,7 @@ func (r *partnerRepo) FindTopPerformers(ctx context.Context, limit int) ([]*refe
 
 type partnerRow struct {
 	ID                  uuid.UUID  `db:"id"`
-	UserID              uuid.UUID  `db:"user_id"`
+	UserID              int64      `db:"user_id"`
 	FullName            string     `db:"full_name"`
 	Email               string     `db:"email"`
 	Phone               string     `db:"phone"`

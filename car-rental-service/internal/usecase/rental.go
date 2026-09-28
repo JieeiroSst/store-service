@@ -28,9 +28,6 @@ func (u *Usecase) StartRental(ctx context.Context, in StartRentalInput) (*model.
 	if err != nil {
 		return nil, err
 	}
-	if _, err := u.requireStaff(ctx, in.StaffID); err != nil {
-		return nil, err
-	}
 	var out *model.Rental
 	err = u.repos.Transaction(ctx, func(tx *repository.Repositories) error {
 		res, err := tx.Reservations.GetByID(ctx, resID)
@@ -109,9 +106,6 @@ type CompleteRentalInput struct {
 func (u *Usecase) CompleteRental(ctx context.Context, in CompleteRentalInput) (*model.Rental, error) {
 	rentalID, err := parseID("rental_id", in.RentalID)
 	if err != nil {
-		return nil, err
-	}
-	if _, err := u.requireStaff(ctx, in.StaffID); err != nil {
 		return nil, err
 	}
 	var extra float64
@@ -204,7 +198,7 @@ func (u *Usecase) GetRental(ctx context.Context, id string) (*model.Rental, erro
 }
 
 func (u *Usecase) ListUserRentals(ctx context.Context, userID string, status model.RentalStatus, page Page) (*RentalPage, error) {
-	uid, err := parseID("user_id", userID)
+	uid, err := parseUserID("user_id", userID)
 	if err != nil {
 		return nil, err
 	}

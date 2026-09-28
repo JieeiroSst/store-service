@@ -17,7 +17,6 @@ type Handlers struct {
 	Merchant     *MerchantHandler
 	Wallet       *WalletHandler
 	Corporate    *CorporateHandler
-	Auth         *AuthHandler
 	Distribution *DistributionHandler
 	Payment      *PaymentHandler
 	Partner      *PartnerHandler
@@ -43,9 +42,6 @@ func NewRouter(deps RouterDeps) *gin.Engine {
 
 	v1 := r.Group("/api/v1")
 	{
-		v1.POST("/auth/register", deps.Handlers.Auth.Register)
-		v1.POST("/auth/login", deps.Handlers.Auth.Login)
-
 		v1.POST("/payments/:provider/webhook", deps.Handlers.Payment.Webhook)
 
 		authorized := v1.Group("")
