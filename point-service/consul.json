@@ -1,0 +1,18 @@
+{
+    "server": {
+        "server_port": "3000",
+        "grpc_server": "3001"
+    },
+    "mysql": {
+        "mysql_host": "mysql-svc",
+        "mysql_port": "80",
+        "mysql_user": "root",
+        "mysql_password": "password",
+        "mysql_dbname": "point_service",
+        "mysql_ssl_mode": false,
+        "mysql_driver": "mysql"
+    },
+    "cache": {
+        "host": "redis-svc:80"
+    }
+}

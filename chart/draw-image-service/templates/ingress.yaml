@@ -1,0 +1,23 @@
+{{- if .Values.drawImageService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.drawImageService.name }}-ingress
+  {{- with .Values.drawImageService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.drawImageService.ingress.className }}
+  rules:
+  - host: {{ .Values.drawImageService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.drawImageService.ingress.path }}
+        pathType: {{ .Values.drawImageService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.drawImageService.service.name }}
+            port:
+              number: 80
+{{- end }}

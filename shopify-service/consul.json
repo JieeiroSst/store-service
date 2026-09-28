@@ -1,0 +1,20 @@
+{
+    "server": {
+        "portHttpServer": "8092"
+    },
+    "mysql": {
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
+        "mysqlUser": "root",
+        "mysqlPassword": "password",
+        "mysqlDbname": "shopify_service"
+    },
+    "shopify": {
+        "shopDomain": "",
+        "accessToken": "",
+        "apiSecret": "",
+        "apiVersion": "2026-07",
+        "timeout": "10s",
+        "baseURL": ""
+    }
+}

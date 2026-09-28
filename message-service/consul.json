@@ -1,0 +1,25 @@
+{
+    "server": {
+        "server_port": "8080",
+        "grpc_server": "9090"
+    },
+    "cache": {
+        "host": "redis-svc:80"
+    },
+    "mysql": {
+        "mysql_host": "mysql-svc",
+        "mysql_port": "80",
+        "mysql_user": "root",
+        "mysql_password": "password",
+        "mysql_dbname": "message_service",
+        "mysql_ssl_mode": false,
+        "mysql_driver": "mysql"
+    },
+    "secret": {
+        "jwt_secret_key": "secretkey",
+        "authorize_key": "no_name"
+    },
+    "kafka": {
+        "kafka_url": "kafka-service:9092"
+    }
+}

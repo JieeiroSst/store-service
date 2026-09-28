@@ -355,3 +355,7 @@ dependencies:
     name: manage-service
     version: "0.1.0"
     repository: file://manage-service
+  - alias: drawImageService
+    name: draw-image-service
+    version: "0.1.0"
+    repository: file://draw-image-service

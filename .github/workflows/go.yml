@@ -987,3 +987,23 @@ jobs:
 
     - name: Test
       run: cd manage_service && go test -v ./...
+
+  draw_image_service:
+    name: draw_image_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.23"
+
+    - name: Build
+      run: cd draw-image-service && go build -v ./...
+
+    - name: Vet
+      run: cd draw-image-service && go vet ./...
+
+    - name: Test
+      run: cd draw-image-service && go test -v ./...

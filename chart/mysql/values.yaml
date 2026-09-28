@@ -52,3 +52,10 @@ mysql:
       consulKey: room_service
       userField: .mysql.user
       passwordField: .mysql.password
+    # draw-image-service also reads plain env vars (no Consul key).
+    - name: draw-image-service
+      database: draw_image_service
+      user: draw_image_service_svc
+      consulKey: draw_image_service
+      userField: .mysql.mysqlUser
+      passwordField: .mysql.mysqlPassword
