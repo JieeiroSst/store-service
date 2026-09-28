@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.shippingService.name }}-deployment
+spec:
+{{- if not .Values.shippingService.autoscaling.enabled }}
+  replicas: {{ .Values.shippingService.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.shippingService.name }}-deployment
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.shippingService.name }}-deployment
+    spec:
+      containers:
+      - name: {{ .Values.shippingService.name }}-deployment
+        image: {{ .Values.shippingService.image.name }}:{{ .Values.shippingService.image.tag }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.shippingService.image.port }}
+        env:
+          - name: PORT_HTTP_SERVER
+            value: "{{ .Values.shippingService.image.port }}"
+          - name: MYSQL_HOST
+            value: {{ .Values.shippingService.env.mysqlHost | quote }}
+          - name: MYSQL_PORT
+            value: {{ .Values.shippingService.env.mysqlPort | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.shippingService.env.mysqlUser | quote }}
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shippingService.name }}-secret
+                key: mysqlPassword
+          - name: MYSQL_DBNAME
+            value: {{ .Values.shippingService.env.mysqlDbname | quote }}
+          - name: GHN_BASE_URL
+            value: {{ .Values.shippingService.env.ghnBaseURL | quote }}
+          - name: GHN_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shippingService.name }}-secret
+                key: ghnToken
+          - name: GHN_WEBHOOK_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shippingService.name }}-secret
+                key: ghnWebhookToken
+          - name: NOTIFICATION_BASE_URL
+            value: {{ .Values.shippingService.env.notificationBaseURL | quote }}
+          - name: CALLBACK_ALLOWED_HOSTS
+            value: {{ .Values.shippingService.env.callbackAllowedHosts | quote }}
+          - name: CALLBACK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shippingService.name }}-secret
+                key: callbackSecret
+          - name: API_KEYS
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.shippingService.name }}-secret
+                key: apiKeys
+          - name: MAX_COD_AMOUNT
+            value: {{ .Values.shippingService.env.maxCodAmount | quote }}
+          - name: OUTBOX_INTERVAL
+            value: {{ .Values.shippingService.env.outboxInterval | quote }}
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.shippingService.image.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.shippingService.image.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          {{- toYaml .Values.shippingService.resources | nindent 10 }}
+        volumeMounts:
+        - name: env-file
+          mountPath: /app/.env
+          subPath: shipping-service.env
+      volumes:
+      - name: env-file
+        secret:
+          secretName: service-env-files
+          optional: true
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.shippingService.name }}-secret
+type: Opaque
+stringData:
+  mysqlPassword: {{ .Values.shippingService.env.mysqlPassword | quote }}
+  ghnToken: {{ .Values.shippingService.env.ghnToken | quote }}
+  ghnWebhookToken: {{ .Values.shippingService.env.ghnWebhookToken | quote }}
+  callbackSecret: {{ .Values.shippingService.env.callbackSecret | quote }}
+  apiKeys: {{ .Values.shippingService.env.apiKeys | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.shippingService.service.name }}
+spec:
+  type: {{ .Values.shippingService.service.type }}
+  ports:
+  - port: 80
+    targetPort: {{ .Values.shippingService.image.port }}
+  selector:
+    app: {{ .Values.shippingService.name }}-deployment

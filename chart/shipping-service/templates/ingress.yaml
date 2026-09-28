@@ -1,0 +1,23 @@
+{{- if .Values.shippingService.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.shippingService.name }}-ingress
+  {{- with .Values.shippingService.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.shippingService.ingress.className }}
+  rules:
+  - host: {{ .Values.shippingService.ingress.host }}
+    http:
+      paths:
+      - path: {{ .Values.shippingService.ingress.path }}
+        pathType: {{ .Values.shippingService.ingress.pathType }}
+        backend:
+          service:
+            name: {{ .Values.shippingService.service.name }}
+            port:
+              number: 80
+{{- end }}

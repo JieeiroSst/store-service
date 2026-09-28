@@ -1,0 +1,35 @@
+{
+    "server": {
+        "portHttpServer": "8094"
+    },
+    "mysql": {
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
+        "mysqlUser": "root",
+        "mysqlPassword": "password",
+        "mysqlDbname": "shipping_service"
+    },
+    "ghn": {
+        "baseURL": "https://dev-online-gateway.ghn.vn/shiip/public-api",
+        "token": "",
+        "webhookToken": "",
+        "timeout": "10s",
+        "locationCacheTTLs": "24h"
+    },
+    "notification": {
+        "baseURL": "http://notification-service-svc",
+        "timeout": "5s"
+    },
+    "callback": {
+        "secret": "",
+        "allowedHosts": ".svc.cluster.local",
+        "timeout": "5s"
+    },
+    "auth": {
+        "apiKeys": ""
+    },
+    "shipping": {
+        "maxCODAmount": "50000000",
+        "outboxInterval": "2s"
+    }
+}

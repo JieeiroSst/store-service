@@ -1,0 +1,52 @@
+shippingService:
+  name: shipping-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/shipping-service
+    tag: latest
+    port: 8094
+
+  service:
+    name: shipping-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: shipping-service.local
+    path: /
+    pathType: Prefix
+
+  env:
+    mysqlHost: mysql-svc
+    mysqlPort: "80"
+    mysqlUser: root
+    mysqlPassword: password
+    mysqlDbname: shipping_service
+
+    ghnBaseURL: https://dev-online-gateway.ghn.vn/shiip/public-api
+    ghnToken: ""
+    ghnWebhookToken: ""
+
+    notificationBaseURL: http://notification-service-svc
+    callbackAllowedHosts: .svc.cluster.local
+    callbackSecret: ""
+    apiKeys: ""
+    maxCodAmount: "50000000"
+    outboxInterval: 2s
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
