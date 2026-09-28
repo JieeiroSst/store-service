@@ -1,15 +1,39 @@
 package middleware
 
 import (
+	"context"
+	"errors"
 	"net/http"
+	"strconv"
 	"strings"
-	
-	"github.com/gin-gonic/gin"
-	"github.com/JIeeiroSst/kms/utils"
+
 	"github.com/JIeeiroSst/kms/models"
+	"github.com/JIeeiroSst/kms/userservice"
+	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware() gin.HandlerFunc {
+type Authenticator interface {
+	Authenticate(ctx context.Context, token string) (userservice.Identity, error)
+}
+
+var rolePermissions = map[models.UserRole][]string{
+	models.RoleAdmin:   {"*"},
+	models.RoleAuditor: {"key:list", "key:read", "audit:read"},
+	models.RoleUser:    {"key:create", "key:list", "key:read", "key:use", "key:rotate", "key:delete", "audit:read"},
+}
+
+func kmsRole(id userservice.Identity) models.UserRole {
+	switch {
+	case id.IsAdmin():
+		return models.RoleAdmin
+	case id.Role == string(models.RoleAuditor):
+		return models.RoleAuditor
+	default:
+		return models.RoleUser
+	}
+}
+
+func AuthMiddleware(authn Authenticator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -17,26 +41,38 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		
+
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == authHeader {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Bearer token required"})
 			c.Abort()
 			return
 		}
-		
-		claims, err := utils.ValidateJWT(tokenString)
+
+		id, err := authn.Authenticate(c.Request.Context(), tokenString)
+		if errors.Is(err, userservice.ErrUpstream) {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Authentication service unavailable"})
+			c.Abort()
+			return
+		}
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
-		
-		c.Set("user_id", claims.UserID)
-		c.Set("username", claims.Username)
-		c.Set("role", claims.Role)
-		c.Set("permissions", claims.Permissions)
-		
+		userID, err := strconv.ParseInt(id.UserID, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+
+		role := kmsRole(id)
+		c.Set("user_id", userID)
+		c.Set("username", id.Username)
+		c.Set("role", role)
+		c.Set("permissions", rolePermissions[role])
+
 		c.Next()
 	}
 }
@@ -49,7 +85,7 @@ func RequireRole(roles ...models.UserRole) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		
+
 		role := userRole.(models.UserRole)
 		for _, requiredRole := range roles {
 			if role == requiredRole || role == models.RoleAdmin {
@@ -57,7 +93,7 @@ func RequireRole(roles ...models.UserRole) gin.HandlerFunc {
 				return
 			}
 		}
-		
+
 		c.JSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
 		c.Abort()
 	}
@@ -71,7 +107,7 @@ func RequirePermission(permission string) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		
+
 		perms := permissions.([]string)
 		for _, perm := range perms {
 			if perm == permission || perm == "*" {
@@ -79,7 +115,7 @@ func RequirePermission(permission string) gin.HandlerFunc {
 				return
 			}
 		}
-		
+
 		c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
 		c.Abort()
 	}

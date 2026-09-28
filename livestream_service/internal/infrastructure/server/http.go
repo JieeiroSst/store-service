@@ -7,6 +7,7 @@ import (
 
 	"github.com/JIeeiroSst/livestream-service/config"
 	httpadapter "github.com/JIeeiroSst/livestream-service/internal/adapter/primary/http"
+	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/userservice"
 	"github.com/JIeeiroSst/utils/logger"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -56,11 +57,12 @@ type EdgeHTTPParams struct {
 	LC      fx.Lifecycle
 	Handler *httpadapter.Handler
 	WS      *httpadapter.WSHandler
+	Users   *userservice.Client
 	Config  *config.Config
 }
 
 func NewEdgeHTTPServer(p EdgeHTTPParams) {
-	serve(p.LC, p.Config, httpadapter.NewEdgeRouter(p.Handler, p.WS, p.Config))
+	serve(p.LC, p.Config, httpadapter.NewEdgeRouter(p.Handler, p.WS, p.Users))
 }
 
 // NewHTTPServer serves every route on one port - only used by the
@@ -73,9 +75,10 @@ type HTTPParams struct {
 	SRS      *httpadapter.SRSWebhookHandler
 	Internal *httpadapter.InternalHandler
 	WS       *httpadapter.WSHandler
+	Users    *userservice.Client
 	Config   *config.Config
 }
 
 func NewHTTPServer(p HTTPParams) {
-	serve(p.LC, p.Config, httpadapter.NewAllInOneRouter(p.Handler, p.SRS, p.Internal, p.WS, p.Config))
+	serve(p.LC, p.Config, httpadapter.NewAllInOneRouter(p.Handler, p.SRS, p.Internal, p.WS, p.Users, p.Config))
 }

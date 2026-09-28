@@ -20,12 +20,16 @@ func New(secretKey string, accessTokenTTL time.Duration) *Generator {
 	return &Generator{secretKey: secretKey, accessTokenTTL: accessTokenTTL}
 }
 
-func (g *Generator) GenerateAccessToken(ctx context.Context, userID int, username, role string) (string, error) {
+func (g *Generator) GenerateAccessToken(ctx context.Context, userID int, username, role string, roles []string) (string, error) {
+	if roles == nil {
+		roles = []string{}
+	}
 	claims := jwt.MapClaims{
 		"authorized": true,
 		"sub":        strconv.Itoa(userID),
 		"username":   username,
 		"role":       role,
+		"roles":      roles,
 		"exp":        time.Now().Add(g.accessTokenTTL).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

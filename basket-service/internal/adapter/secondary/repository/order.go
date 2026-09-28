@@ -37,3 +37,11 @@ func (r *orderRepository) List(ctx context.Context) ([]model.Order, error) {
 	}
 	return orders, nil
 }
+
+func (r *orderRepository) ListByUser(ctx context.Context, userID int) ([]model.Order, error) {
+	var orders []model.Order
+	if err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&orders).Error; err != nil {
+		return nil, common.ErrDBFailed
+	}
+	return orders, nil
+}

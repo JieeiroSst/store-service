@@ -39,7 +39,7 @@ func (r *ReservationRepo) HasOverlap(ctx context.Context, vehicleID uuid.UUID, s
 	return n > 0, err
 }
 
-func (r *ReservationRepo) ListByUser(ctx context.Context, userID uuid.UUID, status *model.ReservationStatus, offset, limit int) ([]model.Reservation, int64, error) {
+func (r *ReservationRepo) ListByUser(ctx context.Context, userID int64, status *model.ReservationStatus, offset, limit int) ([]model.Reservation, int64, error) {
 	q := r.db.WithContext(ctx).Model(&model.Reservation{}).Where("user_id = ?", userID)
 	if status != nil {
 		q = q.Where("status = ?", *status)

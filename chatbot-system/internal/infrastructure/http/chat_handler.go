@@ -6,17 +6,20 @@ import (
 	"strconv"
 
 	"chatbot-system/internal/application"
+	"chatbot-system/internal/infrastructure/auth"
 
 	"github.com/gorilla/mux"
 )
 
 type ChatHandler struct {
 	chatUseCase *application.ChatUseCase
+	authn       *auth.Authenticator
 }
 
-func NewChatHandler(chatUseCase *application.ChatUseCase) *ChatHandler {
+func NewChatHandler(chatUseCase *application.ChatUseCase, authn *auth.Authenticator) *ChatHandler {
 	return &ChatHandler{
 		chatUseCase: chatUseCase,
+		authn:       authn,
 	}
 }
 
@@ -35,13 +38,7 @@ func (h *ChatHandler) GetConversationHistory(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	// In production, get userID from authentication
-	userIDStr := r.URL.Query().Get("user_id")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
-	}
+	userID := auth.UserID(r.Context())
 
 	limit := 50
 	if l := r.URL.Query().Get("limit"); l != "" {
@@ -71,13 +68,7 @@ func (h *ChatHandler) GetConversationHistory(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *ChatHandler) GetUserConversations(w http.ResponseWriter, r *http.Request) {
-	// In production, get userID from authentication
-	userIDStr := r.URL.Query().Get("user_id")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
-	}
+	userID := auth.UserID(r.Context())
 
 	conversations, err := h.chatUseCase.GetUserConversations(r.Context(), userID)
 	if err != nil {
@@ -92,7 +83,11 @@ func (h *ChatHandler) GetUserConversations(w http.ResponseWriter, r *http.Reques
 	})
 }
 
+// RegisterRoutes mounts the API; every call acts as the user-service
+// account behind its bearer token.
 func (h *ChatHandler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/api/conversations/{conversation_id}/history", h.GetConversationHistory).Methods("GET")
-	router.HandleFunc("/api/conversations", h.GetUserConversations).Methods("GET")
+	api := router.PathPrefix("/api").Subrouter()
+	api.Use(h.authn.Middleware)
+	api.HandleFunc("/conversations/{conversation_id}/history", h.GetConversationHistory).Methods("GET")
+	api.HandleFunc("/conversations", h.GetUserConversations).Methods("GET")
 }

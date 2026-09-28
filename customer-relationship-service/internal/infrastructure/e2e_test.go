@@ -29,7 +29,7 @@ import (
 // env is the real fx graph (use cases, workflows, router) on an in-memory
 // SQLite database, with a test CA, OCSP responder and time-stamp authority.
 type env struct {
-	idp    *testsupport.IDP
+	users  *testsupport.UserService
 	engine *gin.Engine
 	expiry port.ContractExpiryUsecase
 	ca     *testsupport.CA
@@ -67,14 +67,11 @@ func newApp(t *testing.T, opts ...fx.Option) *env {
 		TSAURL:         tsa.URL(),
 	}}
 
-	idp := testsupport.NewIDP(t, "https://sso.test/realms/crm", "crm-api")
+	users := testsupport.NewUserService(t)
 	cfg.Server.APIKey = apiKey
-	cfg.Auth = config.AuthConfig{
-		APIKeyRole: "admin", OIDCIssuer: idp.Issuer, OIDCJWKSURL: idp.JWKSURL(), OIDCAudience: idp.Audience,
-		RolesClaim: "realm_access.roles", RolePrefix: "crm-",
-	}
+	cfg.Auth = config.AuthConfig{APIKeyRole: "admin", UserServiceURL: users.URL(), RolePrefix: "crm-"}
 
-	e := &env{ca: ca, rev: rev, tsa: tsa, idp: idp}
+	e := &env{ca: ca, rev: rev, tsa: tsa, users: users}
 	app := fx.New(append([]fx.Option{
 		fx.NopLogger,
 		fx.Provide(func() *config.Config { return cfg }),
@@ -454,11 +451,11 @@ type people struct{ alice, bob, vera, max, nia string }
 
 func newPeople(t *testing.T, e *env) people {
 	return people{
-		alice: e.idp.Token(t, "u-alice", "alice", "crm-staff", "offline_access"),
-		bob:   e.idp.Token(t, "u-bob", "bob", "crm-staff"),
-		vera:  e.idp.Token(t, "u-vera", "vera", "crm-viewer"),
-		max:   e.idp.Token(t, "u-max", "max", "crm-manager"),
-		nia:   e.idp.Token(t, "u-nia", "nia", "unrelated-role"),
+		alice: e.users.Token(t, "101", "alice", "crm-staff"),
+		bob:   e.users.Token(t, "102", "bob", "crm-staff"),
+		vera:  e.users.Token(t, "103", "vera", "crm-viewer"),
+		max:   e.users.Token(t, "104", "max", "crm-manager"),
+		nia:   e.users.Token(t, "105", "nia", "user"),
 	}
 }
 
@@ -502,7 +499,7 @@ func TestContractFiles(t *testing.T) {
 	up := alice.upload(1, map[string]string{"kind": "contract", "description": "Bản chính", "uploaded_by": "someone else"}, "Hợp đồng số 01.pdf", pdf, 201)
 	if up["name"] != "Hợp đồng số 01.pdf" || up["kind"] != "contract" || up["content_type"] != "application/pdf" || up["size"] != float64(len(pdf)) ||
 		up["source"] != "upload" || up["object_key"] != nil || len(up["sha256"].(string)) != 64 ||
-		up["uploaded_by"] != "alice" || up["uploader_id"] != "u-alice" || up["version"] != float64(1) || up["latest"] != true || up["scan_status"] != "skipped" {
+		up["uploaded_by"] != "alice" || up["uploader_id"] != "101" || up["version"] != float64(1) || up["latest"] != true || up["scan_status"] != "skipped" {
 		t.Fatalf("uploaded = %v", up)
 	}
 	alice.upload(1, map[string]string{"kind": "scan"}, "scan.png", []byte("\x89PNG\r\n\x1a\n"), 415) // not a real PNG
@@ -632,7 +629,7 @@ func TestContractFileVersionsAndHistory(t *testing.T) {
 	if strings.Join(actions, ",") != want {
 		t.Fatalf("events = %v\nwant   %s", actions, want)
 	}
-	if first := events[0].(map[string]any); first["actor_id"] != "u-alice" || first["actor_roles"] != "staff" || first["actor_service"] != false || first["ip"] == "" {
+	if first := events[0].(map[string]any); first["actor_id"] != "101" || first["actor_roles"] != "staff" || first["actor_service"] != false || first["ip"] == "" {
 		t.Fatalf("first event = %v", first)
 	}
 

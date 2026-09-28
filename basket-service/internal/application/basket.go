@@ -30,6 +30,10 @@ func (s *basketService) ListBaskets(ctx context.Context) ([]model.Basket, error)
 	return s.repo.List(ctx)
 }
 
+func (s *basketService) ListBasketsByUser(ctx context.Context, userID int) ([]model.Basket, error) {
+	return s.repo.ListByUser(ctx, userID)
+}
+
 func (s *basketService) UpdateBasket(ctx context.Context, basket *model.Basket) (*model.Basket, error) {
 	if _, err := s.repo.GetByID(ctx, basket.ID); err != nil {
 		return nil, err

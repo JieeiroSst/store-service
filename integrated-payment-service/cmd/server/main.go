@@ -11,6 +11,7 @@ import (
 	"github.com/JIeeiroSst/integrated-payment-service/internal/domain/interfaces"
 	"github.com/JIeeiroSst/integrated-payment-service/internal/infrastructure/database"
 	"github.com/JIeeiroSst/integrated-payment-service/internal/infrastructure/payments"
+	"github.com/JIeeiroSst/integrated-payment-service/internal/infrastructure/userservice"
 	"github.com/JIeeiroSst/integrated-payment-service/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +29,7 @@ func main() {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
-	db.AutoMigrate(&entities.Payment{}, &entities.User{}, &entities.Transaction{})
+	db.AutoMigrate(&entities.Payment{}, &entities.Transaction{})
 
 	paymentRepo := database.NewPaymentRepository(db)
 
@@ -41,7 +42,8 @@ func main() {
 	paymentHandler := handlers.NewPaymentHandler(paymentService)
 
 	r := gin.Default()
-	routes.SetupRoutes(r, paymentHandler)
+	users := userservice.New(cfg.UserService.BaseURL, cfg.UserService.Timeout)
+	routes.SetupRoutes(r, paymentHandler, users)
 
 	log.Printf("Server starting on port %s", cfg.Server.Port)
 	if err := r.Run(":" + cfg.Server.Port); err != nil {

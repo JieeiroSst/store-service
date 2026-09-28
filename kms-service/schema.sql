@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS keys (
 -- Bảng lưu nhật ký kiểm toán các thao tác trên khóa
 CREATE TABLE IF NOT EXISTS audit_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    actor_id UUID NOT NULL,
+    actor_id BIGINT NOT NULL,             -- user-service user id
     action VARCHAR(255) NOT NULL,         -- e.g., create, delete, rotate
     key_id UUID NOT NULL REFERENCES keys(id) ON DELETE CASCADE,
     timestamp TIMESTAMP NOT NULL DEFAULT NOW(),

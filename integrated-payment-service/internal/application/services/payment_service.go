@@ -150,7 +150,7 @@ func (s *PaymentService) HandleStripeWebhook(ctx context.Context, req *StripeWeb
 }
 
 type CreatePaymentRequest struct {
-	UserID        string                 `json:"user_id" validate:"required"`
+	UserID        string                 `json:"-"`
 	Amount        float64                `json:"amount" validate:"required,gt=0"`
 	Currency      string                 `json:"currency" validate:"required"`
 	PaymentMethod entities.PaymentMethod `json:"payment_method" validate:"required"`

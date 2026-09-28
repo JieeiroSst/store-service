@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/JIeeiroSst/basket-service/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,16 +14,11 @@ func (h *Handler) GetUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
-	result, err := h.user.GetUser(c.Request.Context(), id)
-	if err != nil {
-		writeError(c, err)
+	if !isOwner(c, id) {
+		writeError(c, common.ErrNotFound)
 		return
 	}
-	c.JSON(http.StatusOK, result)
-}
-
-func (h *Handler) ListUsers(c *gin.Context) {
-	result, err := h.user.ListUsers(c.Request.Context())
+	result, err := h.user.GetUser(c.Request.Context(), id)
 	if err != nil {
 		writeError(c, err)
 		return

@@ -1,7 +1,8 @@
 app:
   env: development
   port: 8080
-  jwt_secret: ${JWT_SECRET}
+  user_service_url: ${USER_SERVICE_URL}
+  user_service_timeout: 3s
 
 database:
   host: localhost

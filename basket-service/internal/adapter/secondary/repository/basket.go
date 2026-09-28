@@ -50,6 +50,14 @@ func (r *basketRepository) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
+func (r *basketRepository) ListByUser(ctx context.Context, userID int) ([]model.Basket, error) {
+	var baskets []model.Basket
+	if err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&baskets).Error; err != nil {
+		return nil, common.ErrDBFailed
+	}
+	return baskets, nil
+}
+
 func (r *basketRepository) List(ctx context.Context) ([]model.Basket, error) {
 	var baskets []model.Basket
 	if err := r.db.WithContext(ctx).Find(&baskets).Error; err != nil {

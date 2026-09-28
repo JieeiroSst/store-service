@@ -12,8 +12,6 @@ const (
 
 type User struct {
 	ID        int64     `json:"id"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
 	Role      UserRole  `json:"role"`
 	ManagerID *int64    `json:"manager_id,omitempty"` // For users managed by a manager
 	AdvisorID *int64    `json:"advisor_id,omitempty"` // For users assigned to an advisor

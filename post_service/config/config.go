@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"os"
+	"time"
+)
 
 type Config struct {
 	Server ServerConfig
@@ -21,8 +24,10 @@ type MySQLConfig struct {
 	Dbname   string
 }
 
+// AuthConfig points at user-service, which validates every bearer token.
 type AuthConfig struct {
-	JWTSecret string
+	UserServiceURL     string
+	UserServiceTimeout time.Duration
 }
 
 type MinioConfig struct {
@@ -46,7 +51,8 @@ func FromEnv() *Config {
 			Dbname:   getEnv("MYSQL_DBNAME", "post"),
 		},
 		Auth: AuthConfig{
-			JWTSecret: getEnv("JWT_SECRET", ""),
+			UserServiceURL:     getEnv("USER_SERVICE_URL", "http://user-service:1235"),
+			UserServiceTimeout: getDuration("USER_SERVICE_TIMEOUT", 3*time.Second),
 		},
 		Minio: MinioConfig{
 			Endpoint:        getEnv("MINIO_ENDPOINT", "localhost:9000"),
@@ -56,6 +62,13 @@ func FromEnv() *Config {
 			UseSSL:          getEnv("MINIO_USE_SSL", "true") == "true",
 		},
 	}
+}
+
+func getDuration(key string, fallback time.Duration) time.Duration {
+	if d, err := time.ParseDuration(os.Getenv(key)); err == nil && d > 0 {
+		return d
+	}
+	return fallback
 }
 
 func getEnv(key, fallback string) string {

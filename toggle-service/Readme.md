@@ -11,7 +11,7 @@ audit logging, and a client SDK API backed by a server-side evaluation engine.
 - GORM (`gorm.io/driver/postgres`) + PostgreSQL
 - [golang-migrate](https://github.com/golang-migrate/migrate) for versioned SQL migrations
 - zap (structured logging), go-playground/validator (request validation)
-- JWT (human/admin auth) + sha256-hashed API tokens (SDK/client + admin-API auth)
+- user_service bearer tokens (human/admin auth) + sha256-hashed API tokens (SDK/client + admin-API auth)
 
 ## Architecture — Hexagonal (Ports & Adapters)
 
@@ -39,7 +39,7 @@ internal/
                  engine used by both the client API and (indirectly) by tests.
 
   adapter/
-    primary/http/    The "driving" adapter: chi router, middleware (JWT auth, API-token
+    primary/http/    The "driving" adapter: chi router, middleware (user_service token auth, API-token
                       auth, RBAC permission checks), HTTP handlers, and request/response
                       DTOs. Translates HTTP <-> application service calls.
     secondary/repository/  The "driven" adapter: GORM implementations of every
@@ -79,9 +79,8 @@ where Consul isn't running:
    | `DB_PASSWORD`         | (empty)         |
    | `DB_NAME`             | `toggle_service`|
    | `DB_SSLMODE`          | `disable`       |
-   | `JWT_SECRET`          | `change-me`     |
-   | `JWT_EXPIRY_MINUTES`  | `60`            |
    | `USER_SERVICE_URL`    | `http://localhost:1235` |
+   | `USER_SERVICE_TIMEOUT`| `3s`            |
 
 When deploying via Consul, seed the KV value at `KeyConsul` with a JSON document shaped
 like `internal/infrastructure/config.Config` (see `config.go`), e.g.:
@@ -90,8 +89,7 @@ like `internal/infrastructure/config.Config` (see `config.go`), e.g.:
 {
   "server": { "port": "8080", "env": "production" },
   "postgres": { "host": "postgres", "port": "5432", "user": "toggle", "password": "...", "dbName": "toggle_service", "sslMode": "disable" },
-  "jwt": { "secret": "a-real-secret", "expiryMinutes": 60 },
-  "userService": { "baseURL": "http://user-api-svc" }
+  "userService": { "baseURL": "http://user-api-svc", "timeout": 3000000000 }
 }
 ```
 
@@ -113,20 +111,17 @@ The server listens on `HTTP_PORT` (default 8080). `GET /health` is unauthenticat
 
 ## Identity
 
-toggle-service does not own a `users` table — `POST /api/admin/auth/register` and
-`POST /api/admin/auth/login` both delegate to **user_service**
-(`USER_SERVICE_URL`, see Configuration above) via
-`internal/adapter/secondary/userservice` (`port.UserDirectory`):
+toggle-service does not own a `users` table and has no sign-up or login endpoints: users
+sign up and log in through **user_service**, and the bearer token user_service issues is
+what `/api/admin/*` accepts. `internal/adapter/secondary/userservice` (`port.UserDirectory`,
+`USER_SERVICE_URL`) validates every token with user_service's `POST /api/v1/validate`
+(successful checks are cached for 30s, so a logged-out token stops working within that
+window). If user_service is unreachable, admin routes return 503.
 
-- `Register` calls user_service's `POST /user/sign-up`.
-- `Login` calls user_service's `POST /api/v1/login` to validate the password, then
-  `GET /user?username=...` to fetch the profile (id/username/email/roles) used to build
-  toggle-service's own session JWT. toggle-service mints and verifies that JWT itself
-  (`JWT_SECRET`) — it does not trust or verify tokens issued by user_service.
-- **Instance admin** (`model.User.IsAdmin`, embedded in the JWT and checked by
-  `middleware.RequirePermission`/`RequireInstanceAdmin`) is derived from whether the user
-  has a user_service role literally named `admin` (case-insensitive) — promote a user by
-  assigning them that role in user_service, not in toggle-service.
+- **Instance admin** (`model.User.IsAdmin`, checked by
+  `middleware.RequirePermission`/`RequireInstanceAdmin`) is true when the user's primary
+  role in authorize-service is `admin` or `super_admin` — grant it through
+  user_service/authorize-service, not in toggle-service.
 - Everywhere toggle-service needs to reference "who did this" (`ProjectMembership.UserID`,
   `AuditEvent.UserID`, `APIToken.CreatedBy`, `Project`/`FeatureFlag.CreatedBy`), it stores
   user_service's user ID as an opaque string — there's no local foreign key to a users table.
@@ -137,7 +132,7 @@ Instance admins bypass all per-project RBAC checks. Everyone else needs a
 
 ## API surface
 
-- **Admin/management API** (`/api/admin/*`) — JWT bearer auth (`POST /api/admin/auth/login`),
+- **Admin/management API** (`/api/admin/*`) — user_service bearer token,
   per-project RBAC via `RequirePermission` middleware. Projects, environments (instance
   admin only), feature flags, activation strategies + constraints, project members/roles,
   API tokens (instance admin only), and audit log queries.

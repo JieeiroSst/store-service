@@ -9,6 +9,7 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 
+	"github.com/JIeeiroSst/bonuslink-service/internal/adapters/secondary/userservice"
 	"github.com/JIeeiroSst/bonuslink-service/internal/core/domain"
 	"github.com/JIeeiroSst/bonuslink-service/internal/core/ports"
 )
@@ -18,19 +19,20 @@ var Module = fx.Options(
 )
 
 type Handler struct {
-	svc ports.BonusService
-	log *zap.Logger
+	svc   ports.BonusService
+	authn Authenticator
+	log   *zap.Logger
 }
 
-func NewHandler(svc ports.BonusService, log *zap.Logger) *Handler {
-	return &Handler{svc: svc, log: log.Named("http-handler")}
+func NewHandler(svc ports.BonusService, users *userservice.Client, log *zap.Logger) *Handler {
+	return &Handler{svc: svc, authn: users, log: log.Named("http-handler")}
 }
 
 func (h *Handler) Register(r *gin.Engine) {
-	v1 := r.Group("/api/v1/bonus")
-	v1.POST("/rewards", h.RecordReward)
-	v1.GET("/users/:user_id/rewards", h.ListUserRewards)
-	v1.GET("/users/:user_id/balances", h.GetUserBalances)
+	v1 := r.Group("/api/v1/bonus", requireAuth(h.authn))
+	v1.POST("/rewards", requireStaff(), h.RecordReward)
+	v1.GET("/users/:user_id/rewards", requireSelfOrStaff(), h.ListUserRewards)
+	v1.GET("/users/:user_id/balances", requireSelfOrStaff(), h.GetUserBalances)
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
@@ -46,7 +48,6 @@ type recordRewardRequest struct {
 	RewardValue float64 `json:"reward_value" binding:"required"`
 }
 
-// RecordReward POST /api/v1/bonus/rewards — 201 when recorded, 200 for a duplicate event_id.
 func (h *Handler) RecordReward(c *gin.Context) {
 	var req recordRewardRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

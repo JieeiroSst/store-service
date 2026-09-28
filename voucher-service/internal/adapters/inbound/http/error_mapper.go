@@ -8,7 +8,6 @@ import (
 	merchantdomain "github.com/JIeeiroSst/voucher-service/internal/domain/merchant"
 	orderdomain "github.com/JIeeiroSst/voucher-service/internal/domain/order"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
-	userdomain "github.com/JIeeiroSst/voucher-service/internal/domain/user"
 	voucherdomain "github.com/JIeeiroSst/voucher-service/internal/domain/voucher"
 	walletdomain "github.com/JIeeiroSst/voucher-service/internal/domain/wallet"
 
@@ -36,8 +35,7 @@ func classify(err error) (status int, code, msg string) {
 		errors.Is(err, orderdomain.ErrOrderNotFound),
 		errors.Is(err, merchantdomain.ErrMerchantNotFound),
 		errors.Is(err, walletdomain.ErrWalletNotFound),
-		errors.Is(err, corporatedomain.ErrCorporateNotFound),
-		errors.Is(err, userdomain.ErrUserNotFound):
+		errors.Is(err, corporatedomain.ErrCorporateNotFound):
 		return http.StatusNotFound, "not_found", "resource not found"
 
 	case errors.Is(err, voucherdomain.ErrVoucherExpired):
@@ -76,11 +74,6 @@ func classify(err error) (status int, code, msg string) {
 		return http.StatusUnprocessableEntity, "budget_exceeded", err.Error()
 	case errors.Is(err, merchantdomain.ErrMerchantInactive):
 		return http.StatusUnprocessableEntity, "merchant_inactive", err.Error()
-	case errors.Is(err, userdomain.ErrInvalidCredentials):
-		return http.StatusUnauthorized, "invalid_credentials", "invalid email or password"
-	case errors.Is(err, userdomain.ErrUserInactive):
-		return http.StatusForbidden, "user_inactive", err.Error()
-
 	default:
 		return http.StatusInternalServerError, "internal_error", "an unexpected error occurred"
 	}

@@ -51,19 +51,6 @@ type StrategyRequest struct {
 	Constraints  []ConstraintRequest `json:"constraints"`
 }
 
-type RegisterRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Username string `json:"username" validate:"required,min=3"`
-	Password string `json:"password" validate:"required,min=8"`
-}
-
-// LoginRequest uses Username (not email) because that's what user_service's
-// own login endpoint accepts.
-type LoginRequest struct {
-	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"required"`
-}
-
 type AddMemberRequest struct {
 	// UserID is a user_service user ID (opaque external identifier, not a
 	// local UUID).

@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"strconv"
 
 	"github.com/JIeeiroSst/recruitment-platform-service/internal/domain/referral"
 	"github.com/JIeeiroSst/recruitment-platform-service/internal/domain/shared"
@@ -74,7 +75,7 @@ func (s *service) RegisterPartner(ctx context.Context, cmd port.RegisterPartnerC
 
 	// Welcome notification
 	_ = s.notifySvc.Send(ctx, port.NotificationPayload{
-		RecipientID: p.UserID,
+		RecipientID: strconv.FormatInt(p.UserID, 10),
 		Channel:     "email",
 		TemplateID:  "partner_welcome",
 		Data:        map[string]any{"full_name": p.FullName, "tier": p.Tier},
@@ -164,7 +165,7 @@ func (s *service) TrackHire(ctx context.Context, applicationID uuid.UUID) error 
 	}
 
 	_ = s.notifySvc.Send(ctx, port.NotificationPayload{
-		RecipientID: partner.UserID,
+		RecipientID: strconv.FormatInt(partner.UserID, 10),
 		Channel:     "email",
 		TemplateID:  "referral_hire_confirmed",
 		Data: map[string]any{
@@ -237,7 +238,7 @@ func (s *service) RequestPayout(ctx context.Context, partnerID uuid.UUID) (*refe
 	}
 
 	_ = s.notifySvc.Send(ctx, port.NotificationPayload{
-		RecipientID: partner.UserID,
+		RecipientID: strconv.FormatInt(partner.UserID, 10),
 		Channel:     "email",
 		TemplateID:  "payout_requested",
 		Data:        map[string]any{"amount": payout.Amount.Amount, "currency": payout.Amount.Currency},

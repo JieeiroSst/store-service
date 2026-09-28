@@ -14,7 +14,6 @@ var Module = fx.Options(
 		handler.NewEnvironmentHandler,
 		handler.NewFeatureFlagHandler,
 		handler.NewStrategyHandler,
-		handler.NewAuthHandler,
 		handler.NewRBACHandler,
 		handler.NewTokenHandler,
 		handler.NewAuditHandler,

@@ -3,20 +3,19 @@ package http
 import (
 	"net/http"
 
-	"github.com/JIeeiroSst/threads-service/config"
 	"github.com/JIeeiroSst/threads-service/internal/adapter/primary/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func getHealth(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"ok": true}) }
 
-func NewRouter(h *Handler, cfg *config.Config) *gin.Engine {
+func NewRouter(h *Handler, authn middleware.Authenticator) *gin.Engine {
 	engine := gin.New()
 	engine.Use(gin.Recovery())
 
 	engine.GET("/health", getHealth)
 
-	auth := middleware.RequireAuth(cfg.Auth.JWTSecret)
+	auth := middleware.RequireAuth(authn)
 
 	api := engine.Group("/api/v1")
 	{

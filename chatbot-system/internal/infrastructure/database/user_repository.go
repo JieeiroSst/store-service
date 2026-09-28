@@ -17,62 +17,26 @@ func NewMySQLUserRepository(db *sql.DB) *MySQLUserRepository {
 }
 
 func (r *MySQLUserRepository) Create(ctx context.Context, user *domain.User) error {
+	// user.ID is the user-service id of the account joining the chat.
 	query := `
-		INSERT INTO users (username, email, role, manager_id, advisor_id, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+		INSERT INTO users (id, role, manager_id, advisor_id, created_at, updated_at)
+		VALUES (?, ?, ?, ?, NOW(), NOW())
 	`
-	result, err := r.db.ExecContext(ctx, query, user.Username, user.Email, user.Role, user.ManagerID, user.AdvisorID)
-	if err != nil {
+	if _, err := r.db.ExecContext(ctx, query, user.ID, user.Role, user.ManagerID, user.AdvisorID); err != nil {
 		return fmt.Errorf("failed to create user: %w", err)
 	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return fmt.Errorf("failed to get last insert id: %w", err)
-	}
-
-	user.ID = id
 	return nil
 }
 
 func (r *MySQLUserRepository) GetByID(ctx context.Context, id int64) (*domain.User, error) {
 	query := `
-		SELECT id, username, email, role, manager_id, advisor_id, created_at, updated_at
+		SELECT id, role, manager_id, advisor_id, created_at, updated_at
 		FROM users
 		WHERE id = ?
 	`
 	user := &domain.User{}
 	err := r.db.QueryRowContext(ctx, query, id).Scan(
 		&user.ID,
-		&user.Username,
-		&user.Email,
-		&user.Role,
-		&user.ManagerID,
-		&user.AdvisorID,
-		&user.CreatedAt,
-		&user.UpdatedAt,
-	)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("user not found")
-	}
-	if err != nil {
-		return nil, fmt.Errorf("failed to get user: %w", err)
-	}
-
-	return user, nil
-}
-
-func (r *MySQLUserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	query := `
-		SELECT id, username, email, role, manager_id, advisor_id, created_at, updated_at
-		FROM users
-		WHERE email = ?
-	`
-	user := &domain.User{}
-	err := r.db.QueryRowContext(ctx, query, email).Scan(
-		&user.ID,
-		&user.Username,
-		&user.Email,
 		&user.Role,
 		&user.ManagerID,
 		&user.AdvisorID,
@@ -91,7 +55,7 @@ func (r *MySQLUserRepository) GetByEmail(ctx context.Context, email string) (*do
 
 func (r *MySQLUserRepository) GetManagedUsers(ctx context.Context, managerID int64) ([]*domain.User, error) {
 	query := `
-		SELECT id, username, email, role, manager_id, advisor_id, created_at, updated_at
+		SELECT id, role, manager_id, advisor_id, created_at, updated_at
 		FROM users
 		WHERE manager_id = ?
 	`
@@ -106,8 +70,6 @@ func (r *MySQLUserRepository) GetManagedUsers(ctx context.Context, managerID int
 		user := &domain.User{}
 		if err := rows.Scan(
 			&user.ID,
-			&user.Username,
-			&user.Email,
 			&user.Role,
 			&user.ManagerID,
 			&user.AdvisorID,
@@ -124,7 +86,7 @@ func (r *MySQLUserRepository) GetManagedUsers(ctx context.Context, managerID int
 
 func (r *MySQLUserRepository) GetAdvisedUser(ctx context.Context, advisorID int64) (*domain.User, error) {
 	query := `
-		SELECT id, username, email, role, manager_id, advisor_id, created_at, updated_at
+		SELECT id, role, manager_id, advisor_id, created_at, updated_at
 		FROM users
 		WHERE advisor_id = ?
 		LIMIT 1
@@ -132,8 +94,6 @@ func (r *MySQLUserRepository) GetAdvisedUser(ctx context.Context, advisorID int6
 	user := &domain.User{}
 	err := r.db.QueryRowContext(ctx, query, advisorID).Scan(
 		&user.ID,
-		&user.Username,
-		&user.Email,
 		&user.Role,
 		&user.ManagerID,
 		&user.AdvisorID,
@@ -153,10 +113,10 @@ func (r *MySQLUserRepository) GetAdvisedUser(ctx context.Context, advisorID int6
 func (r *MySQLUserRepository) Update(ctx context.Context, user *domain.User) error {
 	query := `
 		UPDATE users
-		SET username = ?, email = ?, role = ?, manager_id = ?, advisor_id = ?, updated_at = NOW()
+		SET role = ?, manager_id = ?, advisor_id = ?, updated_at = NOW()
 		WHERE id = ?
 	`
-	_, err := r.db.ExecContext(ctx, query, user.Username, user.Email, user.Role, user.ManagerID, user.AdvisorID, user.ID)
+	_, err := r.db.ExecContext(ctx, query, user.Role, user.ManagerID, user.AdvisorID, user.ID)
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
 	}

@@ -25,8 +25,8 @@ type Config struct {
 
 	KafkaBrokers []string
 
-	JWTSecret     string
-	JWTExpiration time.Duration
+	UserServiceURL     string
+	UserServiceTimeout time.Duration
 
 	PartnerHMACEncKey []byte
 
@@ -58,8 +58,8 @@ func Load() (*Config, error) {
 
 		KafkaBrokers: []string{getEnv("KAFKA_BROKERS", "localhost:9092")},
 
-		JWTSecret:     getEnv("JWT_SECRET", "dev-secret-change-me"),
-		JWTExpiration: time.Duration(getEnvInt("JWT_EXPIRATION_MINUTES", 60)) * time.Minute,
+		UserServiceURL:     getEnv("USER_SERVICE_URL", "http://user-service:1235"),
+		UserServiceTimeout: time.Duration(getEnvInt("USER_SERVICE_TIMEOUT_MS", 3000)) * time.Millisecond,
 
 		PartnerHMACEncKey: derivePartnerEncKey(getEnv("PARTNER_HMAC_ENC_KEY", "dev-partner-hmac-key-change-me")),
 

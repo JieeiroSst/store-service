@@ -39,5 +39,4 @@ type Payment struct {
 	ProcessorResponse string        `json:"processor_response"`
 	CreatedAt         time.Time     `json:"created_at"`
 	UpdatedAt         time.Time     `json:"updated_at"`
-	User              User          `json:"user" gorm:"foreignKey:UserID"`
 }

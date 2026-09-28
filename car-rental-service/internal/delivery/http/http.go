@@ -7,6 +7,8 @@ import (
 	"github.com/JIeeiroSst/car-rental-service/internal/usecase"
 	"github.com/JIeeiroSst/car-rental-service/model"
 	pb "github.com/JIeeiroSst/lib-gateway/car-rental-servcie/gateway/car-rental-servcie"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Handler struct {
@@ -22,20 +24,18 @@ func NewHandler(usecase *usecase.Usecase, authn *auth.Authenticator) *Handler {
 	}
 }
 
-func (h *Handler) RegisterUser(ctx context.Context, in *pb.RegisterUserRequest) (*pb.UserResponse, error) {
-	u, err := h.usecase.RegisterUser(ctx, usecase.RegisterUserInput{
-		Email: in.Email, Password: in.Password, FirstName: in.FirstName, LastName: in.LastName,
-		PhoneNumber: in.PhoneNumber, Address: in.Address, DrivingLicense: in.DrivingLicense,
-		UserType: userTypes.model(in.UserType), AllowPrivileged: h.auth.IsAdmin(auth.FromContext(ctx)),
-	})
-	if err != nil {
-		return nil, grpcError(err)
-	}
-	return userResponse(u), nil
+// RegisterUser is gone: accounts are created through user-service's
+// sign-up, and car-rental only keeps rental data (driving license) about them.
+func (h *Handler) RegisterUser(context.Context, *pb.RegisterUserRequest) (*pb.UserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "sign up through user-service (POST /user/sign-up)")
 }
 
 func (h *Handler) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.UserResponse, error) {
-	u, err := h.usecase.GetUser(ctx, in.UserId)
+	userID, err := h.actingUser(ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	u, err := h.usecase.GetUser(ctx, userID)
 	if err != nil {
 		return nil, grpcError(err)
 	}
@@ -43,8 +43,12 @@ func (h *Handler) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.UserR
 }
 
 func (h *Handler) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb.UserResponse, error) {
+	userID, err := h.actingUser(ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 	u, err := h.usecase.UpdateUser(ctx, usecase.UpdateUserInput{
-		UserID: in.UserId, Email: in.Email, FirstName: in.FirstName, LastName: in.LastName,
+		UserID: userID, Email: in.Email, FirstName: in.FirstName, LastName: in.LastName,
 		PhoneNumber: in.PhoneNumber, Address: in.Address, DrivingLicense: in.DrivingLicense,
 	})
 	if err != nil {
@@ -149,8 +153,12 @@ func (h *Handler) SearchAvailableVehicles(ctx context.Context, in *pb.SearchVehi
 }
 
 func (h *Handler) CreateReservation(ctx context.Context, in *pb.CreateReservationRequest) (*pb.ReservationResponse, error) {
+	userID, err := h.actingUser(ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 	r, err := h.usecase.CreateReservation(ctx, usecase.CreateReservationInput{
-		UserID: in.UserId, VehicleID: in.VehicleId,
+		UserID: userID, VehicleID: in.VehicleId,
 		PickupLocationID: in.PickupLocationId, ReturnLocationID: in.ReturnLocationId,
 		Start: toTime(in.StartTime), End: toTime(in.EndTime),
 	})
@@ -165,10 +173,16 @@ func (h *Handler) GetReservation(ctx context.Context, in *pb.GetReservationReque
 	if err != nil {
 		return nil, grpcError(err)
 	}
+	if !h.canAccess(ctx, r.UserID) {
+		return nil, grpcError(model.ErrNotFound)
+	}
 	return reservationResponse(r), nil
 }
 
 func (h *Handler) UpdateReservation(ctx context.Context, in *pb.UpdateReservationRequest) (*pb.ReservationResponse, error) {
+	if err := h.authorizeReservation(ctx, in.ReservationId); err != nil {
+		return nil, err
+	}
 	r, err := h.usecase.UpdateReservation(ctx, usecase.UpdateReservationInput{
 		ReservationID: in.ReservationId, PickupLocationID: in.PickupLocationId, ReturnLocationID: in.ReturnLocationId,
 		Start: toTime(in.StartTime), End: toTime(in.EndTime),
@@ -180,6 +194,9 @@ func (h *Handler) UpdateReservation(ctx context.Context, in *pb.UpdateReservatio
 }
 
 func (h *Handler) CancelReservation(ctx context.Context, in *pb.CancelReservationRequest) (*pb.ReservationResponse, error) {
+	if err := h.authorizeReservation(ctx, in.ReservationId); err != nil {
+		return nil, err
+	}
 	r, err := h.usecase.CancelReservation(ctx, in.ReservationId, in.CancellationReason)
 	if err != nil {
 		return nil, grpcError(err)
@@ -192,7 +209,11 @@ func (h *Handler) ListUserReservations(ctx context.Context, in *pb.ListUserReser
 	if err != nil {
 		return nil, grpcError(err)
 	}
-	res, err := h.usecase.ListUserReservations(ctx, in.UserId, reservationStatuses.model(in.Status), page)
+	userID, err := h.actingUser(ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	res, err := h.usecase.ListUserReservations(ctx, userID, reservationStatuses.model(in.Status), page)
 	if err != nil {
 		return nil, grpcError(err)
 	}
@@ -206,7 +227,7 @@ func (h *Handler) ListUserReservations(ctx context.Context, in *pb.ListUserReser
 func (h *Handler) StartRental(ctx context.Context, in *pb.StartRentalRequest) (*pb.RentalResponse, error) {
 	r, err := h.usecase.StartRental(ctx, usecase.StartRentalInput{
 		ReservationID: in.ReservationId, PickupMileage: in.PickupMileage,
-		StaffID: in.StaffId, PickupLocationID: in.PickupLocationId,
+		StaffID: staffID(ctx), PickupLocationID: in.PickupLocationId,
 	})
 	if err != nil {
 		return nil, grpcError(err)
@@ -216,7 +237,7 @@ func (h *Handler) StartRental(ctx context.Context, in *pb.StartRentalRequest) (*
 
 func (h *Handler) CompleteRental(ctx context.Context, in *pb.CompleteRentalRequest) (*pb.RentalResponse, error) {
 	r, err := h.usecase.CompleteRental(ctx, usecase.CompleteRentalInput{
-		RentalID: in.RentalId, ReturnMileage: in.ReturnMileage, StaffID: in.StaffId,
+		RentalID: in.RentalId, ReturnMileage: in.ReturnMileage, StaffID: staffID(ctx),
 		ReturnLocationID: in.ReturnLocationId, AdditionalFees: in.AdditionalFees, Notes: in.Notes,
 	})
 	if err != nil {
@@ -230,6 +251,9 @@ func (h *Handler) GetRental(ctx context.Context, in *pb.GetRentalRequest) (*pb.R
 	if err != nil {
 		return nil, grpcError(err)
 	}
+	if !h.canAccess(ctx, r.UserID) {
+		return nil, grpcError(model.ErrNotFound)
+	}
 	return rentalResponse(r), nil
 }
 
@@ -238,7 +262,11 @@ func (h *Handler) ListUserRentals(ctx context.Context, in *pb.ListUserRentalsReq
 	if err != nil {
 		return nil, grpcError(err)
 	}
-	res, err := h.usecase.ListUserRentals(ctx, in.UserId, rentalStatuses.model(in.Status), page)
+	userID, err := h.actingUser(ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	res, err := h.usecase.ListUserRentals(ctx, userID, rentalStatuses.model(in.Status), page)
 	if err != nil {
 		return nil, grpcError(err)
 	}
@@ -250,8 +278,12 @@ func (h *Handler) ListUserRentals(ctx context.Context, in *pb.ListUserRentalsReq
 }
 
 func (h *Handler) ProcessPayment(ctx context.Context, in *pb.ProcessPaymentRequest) (*pb.PaymentResponse, error) {
+	userID, err := h.actingUser(ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 	p, err := h.usecase.ProcessPayment(ctx, usecase.ProcessPaymentInput{
-		RentalID: in.RentalId, UserID: in.UserId, Amount: in.Amount,
+		RentalID: in.RentalId, UserID: userID, Amount: in.Amount,
 		Method: paymentMethods.model(in.PaymentMethod), TransactionID: in.TransactionId,
 	})
 	if err != nil {
@@ -261,8 +293,12 @@ func (h *Handler) ProcessPayment(ctx context.Context, in *pb.ProcessPaymentReque
 }
 
 func (h *Handler) SubmitReview(ctx context.Context, in *pb.SubmitReviewRequest) (*pb.ReviewResponse, error) {
+	userID, err := h.actingUser(ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
 	r, err := h.usecase.SubmitReview(ctx, usecase.SubmitReviewInput{
-		RentalID: in.RentalId, UserID: in.UserId, VehicleID: in.VehicleId, Rating: int(in.Rating), Comment: in.Comment,
+		RentalID: in.RentalId, UserID: userID, VehicleID: in.VehicleId, Rating: int(in.Rating), Comment: in.Comment,
 	})
 	if err != nil {
 		return nil, grpcError(err)

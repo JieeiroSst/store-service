@@ -146,7 +146,8 @@ Config resolves from **Consul KV** first (bootstrapped via `HostConsul`/`KeyCons
 | `HEARTBEAT_INTERVAL`, `HEARTBEAT_TTL` | `5s`, `15s` | node | How often this node reports capacity to Redis, and how long that report is trusted before the node is considered dead |
 | `NODE_HTTP_ADDR` | `` | node | This node's HTTP address, handed out via the node registry so the edge role can reach *this specific* node for admin actions (force-unpublish) - the chart derives it the same way as `NODE_RTMP_ADDR` |
 | `VIEWER_HEARTBEAT_WINDOW` | `40s` | edge | Sliding-window size for the online-viewer count - should be roughly 2.5x the player's heartbeat interval (~15s recommended) |
-| `JWT_SECRET` | `` | both | HS256 secret for verifying caller JWTs. This service is a resource server, not an identity provider - tokens are issued elsewhere (e.g. `user_service`) and just need to share this secret |
+| `USER_SERVICE_URL` | `http://user-service:1235` | both | user-service HTTP gateway. Every bearer token is validated there (`POST /api/v1/validate`), so logged-out tokens stop working here too. This service never issues tokens |
+| `USER_SERVICE_TIMEOUT` | `3s` | both | Timeout for user-service calls |
 | `INTERNAL_SHARED_SECRET` | `` | both | Guards the node's `/internal/*` routes (edge -> node service calls) - never a user JWT, just a shared secret both roles hold |
 | `PLAYBACK_SIGNING_SECRET` | `` | edge | HMAC key for signed playback URLs (see "Playback / DRM" below) |
 | `PLAYBACK_CDN_BASE_URL` | `` | edge | Public CDN base URL playback links are built against |
@@ -162,7 +163,7 @@ GET /health
 
 ### Auth
 
-`Authorization: Bearer <JWT>` (HS256, `JWT_SECRET`), verified by `RequireAuth` (`internal/adapter/primary/http/middleware/auth.go`). The caller's user ID comes from the standard `sub` claim, matching the shape this repo's other JWT-issuing services already use (e.g. `user_service`) - **this service never issues tokens itself**, it only validates ones minted elsewhere. A `role` claim of `"admin"` bypasses every ownership check below.
+`Authorization: Bearer <token>` issued by `user_service`, validated by `RequireAuth` (`internal/adapter/primary/http/middleware/auth.go`) through user-service's `POST /api/v1/validate`; successful validations are cached for 30s. The caller's user ID is the one user-service returns. A primary role of `"admin"` or `"super_admin"` (from authorize-service) bypasses every ownership check below. If user-service is unreachable, protected routes return 503.
 
 Reads (list/get room, stream status, recordings, viewer count/heartbeat, playback, QoE reporting, chat) are public - watching shouldn't require an account. Every write that targets a specific room enforces ownership *inside the usecase*, not just at the middleware layer: `RequireAuth` only proves who's calling, the usecase checks whether they're allowed to touch *that room*.
 

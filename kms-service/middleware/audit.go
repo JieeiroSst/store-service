@@ -42,11 +42,11 @@ func AuditMiddleware() gin.HandlerFunc {
 		userID, _ := c.Get("user_id")
 		username, _ := c.Get("username")
 
-		var actorID uuid.UUID
+		var actorID int64
 		var actorName string
 
 		if userID != nil {
-			actorID = userID.(uuid.UUID)
+			actorID = userID.(int64)
 		}
 		if username != nil {
 			actorName = username.(string)

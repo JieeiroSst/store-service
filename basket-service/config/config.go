@@ -11,6 +11,13 @@ type Config struct {
 	Mysql  MysqlConfig  `json:"mysql"`
 	Secret SecretConfig `json:"secret"`
 	Cache  CacheConfig  `json:"cache"`
+
+	UserService UserServiceConfig `json:"user_service"`
+}
+
+type UserServiceConfig struct {
+	BaseURL        string `json:"base_url"`
+	TimeoutSeconds int    `json:"timeout_seconds"`
 }
 
 type ServerConfig struct {
@@ -29,7 +36,6 @@ type MysqlConfig struct {
 }
 
 type SecretConfig struct {
-	JwtSecretKey string `json:"jwt_secret_key"`
 	AuthorizeKey string `json:"authorize_key"`
 }
 

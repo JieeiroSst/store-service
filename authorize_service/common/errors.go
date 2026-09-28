@@ -4,11 +4,15 @@ import "errors"
 
 // Domain errors — use errors.Is() for comparison, never string matching.
 var (
-	ErrNotFound        = errors.New("record not found")
-	ErrDBFailed        = errors.New("database operation failed")
-	ErrEnforcerFailed  = errors.New("casbin enforcer failed")
-	ErrNotAllowed      = errors.New("access denied")
-	ErrOTPFailed       = errors.New("OTP authorization failed")
-	ErrOTPLimit        = errors.New("OTP creation limit exceeded")
-	ErrInvalidField    = errors.New("invalid update field")
+	ErrNotFound       = errors.New("record not found")
+	ErrDBFailed       = errors.New("database operation failed")
+	ErrEnforcerFailed = errors.New("casbin enforcer failed")
+	ErrNotAllowed     = errors.New("access denied")
+	ErrOTPFailed      = errors.New("OTP authorization failed")
+	ErrOTPLimit       = errors.New("OTP creation limit exceeded")
+	ErrInvalidField   = errors.New("invalid update field")
+
+	ErrInvalidUserID     = errors.New("user_id is required")
+	ErrUnknownRole       = errors.New("unknown role")
+	ErrRoleNotAssignable = errors.New("role can only be granted through bootstrap config")
 )

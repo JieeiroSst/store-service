@@ -34,8 +34,8 @@ type CreateJobCommand struct {
 	Title           string
 	Code            string
 	DepartmentID    uuid.UUID
-	HiringManagerID uuid.UUID
-	RecruiterIDs    []uuid.UUID
+	HiringManagerID int64
+	RecruiterIDs    []int64
 	Description     string
 	Requirements    []string
 	Skills          []string
@@ -61,7 +61,7 @@ type JobService interface {
 type ApplyCommand struct {
 	JobID               uuid.UUID
 	CandidateID         uuid.UUID
-	RecruiterID         uuid.UUID
+	RecruiterID         int64
 	ReferredByPartnerID *uuid.UUID
 	CoverLetter         string
 }
@@ -76,7 +76,7 @@ type ScheduleInterviewCommand struct {
 	ApplicationID  uuid.UUID
 	Round          int
 	Title          string
-	InterviewerIDs []uuid.UUID
+	InterviewerIDs []int64
 	ScheduledAt    time.Time
 	DurationMin    int
 	MeetingURL     string
@@ -86,7 +86,7 @@ type ScheduleInterviewCommand struct {
 type SubmitFeedbackCommand struct {
 	ApplicationID uuid.UUID
 	InterviewID   uuid.UUID
-	SubmittedBy   uuid.UUID
+	SubmittedBy   int64
 	Decision      string
 	Score         int
 	Strengths     string
@@ -121,7 +121,7 @@ type ApplicationService interface {
 }
 
 type RegisterPartnerCommand struct {
-	UserID          uuid.UUID
+	UserID          int64
 	FullName        string
 	Email           string
 	Phone           string
@@ -190,7 +190,7 @@ type EventBus interface {
 }
 
 type NotificationPayload struct {
-	RecipientID uuid.UUID
+	RecipientID string // candidate UUID or user-service user id
 	Channel     string // "email" | "sms" | "push"
 	TemplateID  string
 	Data        map[string]any

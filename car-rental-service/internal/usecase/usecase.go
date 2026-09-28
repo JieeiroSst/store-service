@@ -16,12 +16,14 @@ const (
 
 type Usecase struct {
 	repos   *repository.Repositories
+	users   UserDirectory
 	gateway PaymentGateway
 	pricing PricingPolicy
 }
 
 type Dependency struct {
 	Repos   *repository.Repositories
+	Users   UserDirectory
 	Gateway PaymentGateway
 	Pricing PricingPolicy
 }
@@ -30,7 +32,7 @@ func NewUsecase(deps Dependency) *Usecase {
 	if deps.Gateway == nil {
 		deps.Gateway = ManualGateway{}
 	}
-	return &Usecase{repos: deps.Repos, gateway: deps.Gateway, pricing: deps.Pricing.withDefaults()}
+	return &Usecase{repos: deps.Repos, users: deps.Users, gateway: deps.Gateway, pricing: deps.Pricing.withDefaults()}
 }
 
 type Page struct {
@@ -67,6 +69,15 @@ func parseID(field, s string) (uuid.UUID, error) {
 	id, err := uuid.Parse(s)
 	if err != nil {
 		return uuid.Nil, fmt.Errorf("%w: %s must be a valid UUID", model.ErrInvalidArgument, field)
+	}
+	return id, nil
+}
+
+// parseUserID parses a user-service user id.
+func parseUserID(field, s string) (int64, error) {
+	id, err := strconv.ParseInt(s, 10, 64)
+	if err != nil || id <= 0 {
+		return 0, fmt.Errorf("%w: %s must be a user-service user id", model.ErrInvalidArgument, field)
 	}
 	return id, nil
 }

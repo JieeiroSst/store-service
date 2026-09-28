@@ -91,7 +91,7 @@ func (r *jobRepo) FindAll(ctx context.Context, f job.Filter) (shared.PaginatedRe
 	}
 	if f.RecruiterID != nil {
 		conds = append(conds, fmt.Sprintf("recruiter_ids @> $%d", idx))
-		args = append(args, fmt.Sprintf(`["%s"]`, f.RecruiterID))
+		args = append(args, fmt.Sprintf("[%d]", *f.RecruiterID))
 		idx++
 	}
 	if f.WorkMode != nil {
@@ -151,10 +151,10 @@ func (r *jobRepo) FindAll(ctx context.Context, f job.Filter) (shared.PaginatedRe
 	}, nil
 }
 
-func (r *jobRepo) FindByRecruiter(ctx context.Context, recruiterID uuid.UUID) ([]*job.Job, error) {
+func (r *jobRepo) FindByRecruiter(ctx context.Context, recruiterID int64) ([]*job.Job, error) {
 	rows := []jobRow{}
-	q := fmt.Sprintf(`SELECT * FROM jobs WHERE recruiter_ids @> '["%s"]' AND deleted_at IS NULL ORDER BY created_at DESC`, recruiterID)
-	if err := r.db.SelectContext(ctx, &rows, q); err != nil {
+	q := `SELECT * FROM jobs WHERE recruiter_ids @> $1 AND deleted_at IS NULL ORDER BY created_at DESC`
+	if err := r.db.SelectContext(ctx, &rows, q, fmt.Sprintf("[%d]", recruiterID)); err != nil {
 		return nil, err
 	}
 	result := make([]*job.Job, 0, len(rows))
@@ -175,7 +175,7 @@ type jobRow struct {
 	Title             string    `db:"title"`
 	Code              string    `db:"code"`
 	DepartmentID      uuid.UUID `db:"department_id"`
-	HiringManagerID   uuid.UUID `db:"hiring_manager_id"`
+	HiringManagerID   int64     `db:"hiring_manager_id"`
 	RecruiterIDsJSON  []byte    `db:"recruiter_ids"`
 	Description       string    `db:"description"`
 	RequirementsJSON  []byte    `db:"requirements"`

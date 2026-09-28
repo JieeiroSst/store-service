@@ -8,7 +8,6 @@ import (
 
 	"github.com/JIeeiroSst/kms/config"
 	"github.com/JIeeiroSst/kms/models"
-	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 )
 
@@ -18,7 +17,7 @@ type Database interface {
 	UpdateKey(*models.Key) error
 	MarkKeyDeleted(string) error
 	ListKeys() ([]models.Key, error)
-	ListKeysByUser(uuid.UUID) ([]models.Key, error)
+	ListKeysByUser(userID int64) ([]models.Key, error)
 	IncrementKeyUseCount(string) error
 
 	SaveAuditLog(models.AuditLog) error
@@ -71,28 +70,15 @@ func (p *PostgresDB) initSchema() error {
 		last_rotated_at TIMESTAMP WITH TIME ZONE,
 		status VARCHAR(20) NOT NULL DEFAULT 'active',
 		version INTEGER NOT NULL DEFAULT 1,
-		created_by UUID NOT NULL,
+		created_by BIGINT NOT NULL, -- user-service user id
 		tags JSONB,
 		use_count BIGINT NOT NULL DEFAULT 0
-	);
-	
-	-- Users table
-	CREATE TABLE IF NOT EXISTS users (
-		id UUID PRIMARY KEY,
-		username VARCHAR(100) NOT NULL UNIQUE,
-		email VARCHAR(255) NOT NULL UNIQUE,
-		password_hash VARCHAR(255) NOT NULL,
-		role VARCHAR(20) NOT NULL DEFAULT 'user',
-		permissions TEXT[] NOT NULL DEFAULT '{}',
-		created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-		updated_at TIMESTAMP WITH TIME ZONE NOT NULL,
-		is_active BOOLEAN NOT NULL DEFAULT true
 	);
 	
 	-- Audit logs table
 	CREATE TABLE IF NOT EXISTS audit_logs (
 		id UUID PRIMARY KEY,
-		actor_id UUID,
+		actor_id BIGINT, -- user-service user id
 		actor_name VARCHAR(255),
 		action VARCHAR(255) NOT NULL,
 		resource VARCHAR(100) NOT NULL,
@@ -186,7 +172,7 @@ func (p *PostgresDB) ListKeys() ([]models.Key, error) {
 	return keys, nil
 }
 
-func (p *PostgresDB) ListKeysByUser(userID uuid.UUID) ([]models.Key, error) {
+func (p *PostgresDB) ListKeysByUser(userID int64) ([]models.Key, error) {
 	rows, err := p.db.Query(`
 		SELECT id, alias, algorithm, key_length, created_at, updated_at, expires_at, last_rotated_at, status, version, created_by, use_count
 		FROM keys WHERE created_by=$1 AND status != 'deleted' ORDER BY created_at DESC`, userID)

@@ -18,12 +18,12 @@ import (
 
 func newHandlers(
 	voucher *VoucherHandler, order *OrderHandler, merchant *MerchantHandler, wallet *WalletHandler,
-	corporate *CorporateHandler, auth *AuthHandler, distribution *DistributionHandler,
+	corporate *CorporateHandler, distribution *DistributionHandler,
 	payment *PaymentHandler, partner *PartnerHandler, file *FileHandler, reporting *ReportingHandler,
 ) Handlers {
 	return Handlers{
 		Voucher: voucher, Order: order, Merchant: merchant, Wallet: wallet, Corporate: corporate,
-		Auth: auth, Distribution: distribution, Payment: payment, Partner: partner, File: file, Reporting: reporting,
+		Distribution: distribution, Payment: payment, Partner: partner, File: file, Reporting: reporting,
 	}
 }
 
@@ -47,7 +47,7 @@ func newHTTPServer(cfg *config.Config, engine *gin.Engine) *stdhttp.Server {
 var Module = fx.Module("http-inbound",
 	fx.Provide(
 		NewVoucherHandler, NewOrderHandler, NewMerchantHandler, NewWalletHandler,
-		NewCorporateHandler, NewAuthHandler, NewDistributionHandler, NewPaymentHandler,
+		NewCorporateHandler, NewDistributionHandler, NewPaymentHandler,
 		NewPartnerHandler, NewFileHandler, NewReportingHandler,
 		newHandlers, newEngine, newHTTPServer,
 	),

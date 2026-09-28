@@ -3,7 +3,6 @@ module github.com/JIeeiroSst/customer-relationship-service
 go 1.26.0
 
 require (
-	github.com/MicahParks/keyfunc/v3 v3.8.2
 	github.com/digitorus/pdf v0.1.2
 	github.com/digitorus/pdfsign v0.9.0
 	github.com/digitorus/pkcs7 v0.0.0-20230818184609-3a137a874352
@@ -11,7 +10,6 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/glebarez/sqlite v1.11.0
 	github.com/go-pdf/fpdf v0.9.0
-	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1
 	github.com/minio/minio-go/v7 v7.0.83
 	github.com/robfig/cron/v3 v3.0.1
@@ -19,13 +17,11 @@ require (
 	go.temporal.io/sdk v1.33.1
 	go.uber.org/fx v1.22.1
 	golang.org/x/crypto v0.57.0
-	golang.org/x/time v0.15.0
 	gorm.io/driver/mysql v1.5.4
 	gorm.io/gorm v1.25.7
 )
 
 require (
-	github.com/MicahParks/jwkset v0.11.3 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -76,6 +72,7 @@ require (
 	golang.org/x/sync v0.23.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/time v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240827150818-7e3bb234dfed // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240827150818-7e3bb234dfed // indirect
 	google.golang.org/grpc v1.66.0 // indirect

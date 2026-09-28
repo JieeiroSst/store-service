@@ -7,7 +7,8 @@ import (
 )
 
 type TokenGenerator interface {
-	GenerateAccessToken(ctx context.Context, userID int, username, role string) (string, error)
+	// role is the primary role; roles are all effective roles.
+	GenerateAccessToken(ctx context.Context, userID int, username, role string, roles []string) (string, error)
 	GenerateRefreshToken(ctx context.Context) (string, error)
 	ParseAccessToken(ctx context.Context, token string) (domain.AccessClaims, error)
 }

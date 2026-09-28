@@ -8,6 +8,7 @@ import (
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/repository"
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/storage"
 	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/transcode"
+	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/userservice"
 	"github.com/JIeeiroSst/livestream-service/internal/application"
 	"github.com/JIeeiroSst/livestream-service/internal/infrastructure/database"
 	"github.com/JIeeiroSst/livestream-service/internal/infrastructure/redis"
@@ -22,11 +23,12 @@ var Module = fx.Options(
 	database.Module, // *gorm.DB
 	redis.Module,    // *redis.Client
 
-	repository.Module, // port.RoomRepository, port.StreamRepository, port.VODRepository
-	redisstore.Module, // port.NodeRegistry, port.ViewerCounter, port.ChatBroadcaster, port.ModerationStore
-	storage.Module,    // port.ObjectStorage
-	transcode.Module,  // port.TranscodeRunner
-	nodecall.Module,   // port.NodeCaller
+	repository.Module,  // port.RoomRepository, port.StreamRepository, port.VODRepository
+	redisstore.Module,  // port.NodeRegistry, port.ViewerCounter, port.ChatBroadcaster, port.ModerationStore
+	storage.Module,     // port.ObjectStorage
+	transcode.Module,   // port.TranscodeRunner
+	nodecall.Module,    // port.NodeCaller
+	userservice.Module, // *userservice.Client — token validation
 
 	application.Module, // port.RoomUsecase, port.NodeSchedulerUsecase, port.StreamLifecycleUsecase, port.ViewerUsecase, port.ChatUsecase
 

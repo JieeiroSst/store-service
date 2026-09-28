@@ -30,22 +30,5 @@ func (r *ReviewRepo) ListByVehicle(ctx context.Context, vehicleID uuid.UUID, off
 	if err := q.Order("created_at DESC, review_id").Offset(offset).Limit(limit).Find(&out).Error; err != nil {
 		return nil, 0, err
 	}
-	ids := make([]uuid.UUID, 0, len(out))
-	for _, rv := range out {
-		ids = append(ids, rv.UserID)
-	}
-	if len(ids) > 0 {
-		var users []model.User
-		if err := r.db.WithContext(ctx).Find(&users, "user_id IN ?", ids).Error; err != nil {
-			return nil, 0, err
-		}
-		byID := make(map[uuid.UUID]*model.User, len(users))
-		for i := range users {
-			byID[users[i].ID] = &users[i]
-		}
-		for i := range out {
-			out[i].User = byID[out[i].UserID]
-		}
-	}
 	return out, total, nil
 }

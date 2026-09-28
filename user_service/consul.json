@@ -27,5 +27,9 @@
     "token": {
         "access_token_exp_minutes": 15,
         "refresh_token_exp_hours": 168
+    },
+    "authorize_service": {
+        "grpc_address": "authorize-service:9090",
+        "timeout_seconds": 3
     }
 }

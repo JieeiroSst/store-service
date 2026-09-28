@@ -2,7 +2,6 @@ package postgres
 
 import (
 	auditapp "github.com/JIeeiroSst/voucher-service/internal/application/audit"
-	authapp "github.com/JIeeiroSst/voucher-service/internal/application/auth"
 	corporateapp "github.com/JIeeiroSst/voucher-service/internal/application/corporate"
 	distributionapp "github.com/JIeeiroSst/voucher-service/internal/application/distribution"
 	inventoryapp "github.com/JIeeiroSst/voucher-service/internal/application/inventory"
@@ -41,6 +40,5 @@ var Module = fx.Module("postgres-adapters",
 		fx.Annotate(NewClaimRepository, fx.As(new(distributionapp.ClaimRepository))),
 		fx.Annotate(NewRunRepository, fx.As(new(reconciliationapp.RunRepository))),
 		fx.Annotate(NewReportingRepository, fx.As(new(reportingapp.ReportingRepository))),
-		fx.Annotate(NewUserRepository, fx.As(new(authapp.UserRepository))),
 	),
 )

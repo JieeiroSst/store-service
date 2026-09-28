@@ -3,7 +3,6 @@ package services
 import (
 	"github.com/JIeeiroSst/kms/models"
 	"github.com/JIeeiroSst/kms/storage"
-	"github.com/google/uuid"
 )
 
 type AuditService struct {
@@ -40,7 +39,7 @@ func InitServices(db storage.Database, cache storage.Cache) {
 	auditService = NewAuditService(db)
 }
 
-func CreateKey(req models.CreateKeyRequest, userID uuid.UUID) (*models.Key, error) {
+func CreateKey(req models.CreateKeyRequest, userID int64) (*models.Key, error) {
 	return keyService.CreateKey(req, userID)
 }
 
@@ -56,8 +55,11 @@ func DeleteKey(keyID string) error {
 	return keyService.DeleteKey(keyID)
 }
 
-func ListKeys() ([]models.Key, error) {
-	return keyService.db.ListKeys()
+func ListKeys(userID int64, role models.UserRole) ([]models.Key, error) {
+	if role == models.RoleAuditor {
+		return keyService.db.ListKeys()
+	}
+	return keyService.ListKeys(userID, role)
 }
 
 func ListAuditLogs() ([]models.AuditLog, error) {

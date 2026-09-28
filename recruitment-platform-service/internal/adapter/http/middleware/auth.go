@@ -1,22 +1,29 @@
 package middleware
 
 import (
+	"context"
+	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+
+	"github.com/JIeeiroSst/recruitment-platform-service/internal/adapter/userservice"
 )
 
-type Claims struct {
-	UserID uuid.UUID `json:"user_id"`
-	Role   string    `json:"role"`
-	jwt.RegisteredClaims
+// Authenticator resolves a bearer token to a user through user-service,
+// which issues every token; this service keeps no credentials.
+type Authenticator interface {
+	Authenticate(ctx context.Context, token string) (userservice.Identity, error)
 }
 
-func JWTAuth(jwtSecret string, logger *zap.Logger) gin.HandlerFunc {
+// UserServiceAuth accepts only tokens user-service confirms are live
+// sessions. It sets "user_id" (int64 user-service id) and "role" (primary
+// role from authorize-service).
+func UserServiceAuth(authn Authenticator, logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -30,23 +37,21 @@ func JWTAuth(jwtSecret string, logger *zap.Logger) gin.HandlerFunc {
 			return
 		}
 
-		tokenStr := parts[1]
-		claims := &Claims{}
-
-		token, err := jwt.ParseWithClaims(tokenStr, claims, func(t *jwt.Token) (interface{}, error) {
-			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, jwt.ErrSignatureInvalid
-			}
-			return []byte(jwtSecret), nil
-		})
-		if err != nil || !token.Valid {
+		id, err := authn.Authenticate(c.Request.Context(), parts[1])
+		if errors.Is(err, userservice.ErrUpstream) {
+			logger.Warn("user-service unavailable", zap.Error(err))
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{"error": "authentication service unavailable"})
+			return
+		}
+		userID, convErr := strconv.ParseInt(id.UserID, 10, 64)
+		if err != nil || convErr != nil {
 			logger.Debug("invalid token", zap.Error(err))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired token"})
 			return
 		}
 
-		c.Set("user_id", claims.UserID)
-		c.Set("role", claims.Role)
+		c.Set("user_id", userID)
+		c.Set("role", id.Role)
 		c.Next()
 	}
 }

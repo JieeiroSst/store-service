@@ -8,17 +8,13 @@ import (
 )
 
 type userService struct {
-	repo port.UserRepository
+	users port.UserDirectory
 }
 
-func NewUserService(repo port.UserRepository) port.UserUsecase {
-	return &userService{repo: repo}
+func NewUserService(users port.UserDirectory) port.UserUsecase {
+	return &userService{users: users}
 }
 
 func (s *userService) GetUser(ctx context.Context, id int) (*model.User, error) {
-	return s.repo.GetByID(ctx, id)
-}
-
-func (s *userService) ListUsers(ctx context.Context) ([]model.User, error) {
-	return s.repo.List(ctx)
+	return s.users.GetByID(ctx, id)
 }

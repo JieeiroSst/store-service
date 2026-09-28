@@ -1,8 +1,11 @@
 package di
 
 import (
+	"context"
+
 	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
+	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/authorizeclient"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/jwttoken"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/pg"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/pwhash"
@@ -49,8 +52,13 @@ func newUserRepository(db *gorm.DB) output.UserRepository { return pg.NewUserRep
 
 func newRoleRepository(db *gorm.DB) output.RoleRepository { return pg.NewRoleRepository(db) }
 
-func newRoleItemRepository(db *gorm.DB) output.RoleItemRepository {
-	return pg.NewRoleItemRepository(db)
+func newAuthorizer(lc fx.Lifecycle, cfg *config.Config) (output.Authorizer, error) {
+	client, err := authorizeclient.New(cfg.AuthorizeService.GrpcAddress, cfg.AuthorizeService.Timeout())
+	if err != nil {
+		return nil, err
+	}
+	lc.Append(fx.Hook{OnStop: func(context.Context) error { return client.Close() }})
+	return client, nil
 }
 
 func newHasher() output.Hasher { return pwhash.New() }
@@ -63,18 +71,20 @@ func newTokenStore(cache expire.CacheHelper) output.TokenStore {
 	return sessionstore.New(cache)
 }
 
-func newAuthService(cfg *config.Config, userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore) input.AuthService {
-	return auth.New(userRepo, hasher, tokenGen, tokenStore, cfg.Token.AccessTokenTTL(), cfg.Token.RefreshTokenTTL())
+func newAuthService(cfg *config.Config, userRepo output.UserRepository, authorizer output.Authorizer, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore) input.AuthService {
+	return auth.New(userRepo, authorizer, hasher, tokenGen, tokenStore, cfg.Token.AccessTokenTTL(), cfg.Token.RefreshTokenTTL())
 }
 
-func newUserService(userRepo output.UserRepository, hasher output.Hasher, cache expire.CacheHelper) input.UserService {
-	return user.New(userRepo, hasher, cache)
+func newUserService(userRepo output.UserRepository, hasher output.Hasher, cache expire.CacheHelper, authorizer output.Authorizer) input.UserService {
+	return user.New(userRepo, hasher, cache, authorizer)
 }
 
-func newRoleService(roleRepo output.RoleRepository) input.RoleService { return role.New(roleRepo) }
+func newRoleService(roleRepo output.RoleRepository, authorizer output.Authorizer) input.RoleService {
+	return role.New(roleRepo, authorizer)
+}
 
-func newRoleItemService(roleItemRepo output.RoleItemRepository) input.RoleItemService {
-	return roleitem.New(roleItemRepo)
+func newRoleItemService(roleRepo output.RoleRepository, authorizer output.Authorizer) input.RoleItemService {
+	return roleitem.New(roleRepo, authorizer)
 }
 
 func newGRPCHandler(authSvc input.AuthService, userSvc input.UserService, roleSvc input.RoleService, roleItemSvc input.RoleItemService) *grpcadapter.Handler {
@@ -88,7 +98,7 @@ var Module = fx.Options(
 		newCache,
 		newUserRepository,
 		newRoleRepository,
-		newRoleItemRepository,
+		newAuthorizer,
 		newHasher,
 		newTokenGenerator,
 		newTokenStore,

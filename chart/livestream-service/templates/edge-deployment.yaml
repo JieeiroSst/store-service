@@ -29,9 +29,13 @@ spec:
           # internal/application/playback.go). Not secret - the signing
           # key that actually protects these links is
           # PLAYBACK_SIGNING_SECRET, delivered via the env-file secret
-          # below alongside JWT_SECRET/INTERNAL_SHARED_SECRET.
+          # below alongside INTERNAL_SHARED_SECRET.
           - name: PLAYBACK_CDN_BASE_URL
             value: "{{ .Values.livestreamService.playback.cdnBaseURL }}"
+          # Bearer tokens are validated by user-service; this service
+          # issues none.
+          - name: USER_SERVICE_URL
+            value: {{ .Values.livestreamService.userServiceURL | default "http://user-api-svc" | quote }}
         resources:
           {{- toYaml .Values.livestreamService.edge.resources | nindent 10 }}
         volumeMounts:

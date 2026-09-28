@@ -43,12 +43,9 @@ func NewConfig() (*Config, error) {
 			DBName:   v.GetString("DB_NAME"),
 			SSLMode:  v.GetString("DB_SSLMODE"),
 		},
-		JWT: JWTConfig{
-			Secret:        v.GetString("JWT_SECRET"),
-			ExpiryMinutes: v.GetInt("JWT_EXPIRY_MINUTES"),
-		},
 		UserService: UserServiceConfig{
 			BaseURL: v.GetString("USER_SERVICE_URL"),
+			Timeout: v.GetDuration("USER_SERVICE_TIMEOUT"),
 		},
 	}
 	applyDefaults(&cfg)
@@ -76,12 +73,6 @@ func applyDefaults(cfg *Config) {
 	}
 	if cfg.Postgres.SSLMode == "" {
 		cfg.Postgres.SSLMode = "disable"
-	}
-	if cfg.JWT.Secret == "" {
-		cfg.JWT.Secret = "change-me"
-	}
-	if cfg.JWT.ExpiryMinutes == 0 {
-		cfg.JWT.ExpiryMinutes = 60
 	}
 	if cfg.UserService.BaseURL == "" {
 		cfg.UserService.BaseURL = "http://localhost:1235"

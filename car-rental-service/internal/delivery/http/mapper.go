@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/JIeeiroSst/car-rental-service/model"
@@ -115,7 +116,7 @@ func grpcError(err error) error {
 
 func userResponse(u *model.User) *pb.UserResponse {
 	return &pb.UserResponse{
-		UserId:         u.ID.String(),
+		UserId:         strconv.FormatInt(u.ID, 10),
 		Email:          u.Email,
 		FirstName:      u.FirstName,
 		LastName:       u.LastName,
@@ -181,7 +182,7 @@ func vehicleResponses(vs []model.Vehicle) []*pb.VehicleResponse {
 func reservationResponse(r *model.Reservation) *pb.ReservationResponse {
 	resp := &pb.ReservationResponse{
 		ReservationId:    r.ID.String(),
-		UserId:           r.UserID.String(),
+		UserId:           strconv.FormatInt(r.UserID, 10),
 		VehicleId:        r.VehicleID.String(),
 		PickupLocationId: r.PickupLocationID.String(),
 		ReturnLocationId: r.ReturnLocationID.String(),
@@ -201,7 +202,7 @@ func rentalResponse(r *model.Rental) *pb.RentalResponse {
 	resp := &pb.RentalResponse{
 		RentalId:         r.ID.String(),
 		VehicleId:        r.VehicleID.String(),
-		UserId:           r.UserID.String(),
+		UserId:           strconv.FormatInt(r.UserID, 10),
 		PickupTime:       ts(r.PickupTime),
 		ActualReturnTime: tsPtr(r.ActualReturnTime),
 		PickupLocationId: r.PickupLocationID.String(),
@@ -231,7 +232,7 @@ func paymentResponse(p *model.Payment) *pb.PaymentResponse {
 	return &pb.PaymentResponse{
 		PaymentId:     p.ID.String(),
 		RentalId:      p.RentalID.String(),
-		UserId:        p.UserID.String(),
+		UserId:        strconv.FormatInt(p.UserID, 10),
 		Amount:        p.Amount,
 		PaymentMethod: paymentMethods.pb(p.PaymentMethod),
 		TransactionId: p.TransactionID,
@@ -244,7 +245,7 @@ func reviewResponse(r *model.Review) *pb.ReviewResponse {
 	resp := &pb.ReviewResponse{
 		ReviewId:  r.ID.String(),
 		RentalId:  r.RentalID.String(),
-		UserId:    r.UserID.String(),
+		UserId:    strconv.FormatInt(r.UserID, 10),
 		VehicleId: r.VehicleID.String(),
 		Rating:    int32(r.Rating),
 		Comment:   r.Comment,

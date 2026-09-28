@@ -3,7 +3,6 @@ package application
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/JIeeiroSst/utils/geared_id"
@@ -12,72 +11,25 @@ import (
 	"github.com/JieeiroSst/authorize-service/internal/domain/model"
 	"github.com/JieeiroSst/authorize-service/internal/domain/port"
 	"github.com/JieeiroSst/authorize-service/pkg/pagination"
-	"github.com/casbin/casbin/v2"
-	casbinpersist "github.com/casbin/casbin/v2/persist"
 	"go.uber.org/zap"
 )
 
 type casbinService struct {
-	repo    port.CasbinRepository
-	adapter casbinpersist.Adapter
-	cache   port.CachePort
-
-	mu          sync.RWMutex
-	enforcer    *casbin.Enforcer
-	enforcerExp time.Time
+	repo      port.CasbinRepository
+	enforcers *EnforcerProvider
+	cache     port.CachePort
 }
 
 func NewCasbinService(
 	repo port.CasbinRepository,
-	adapter casbinpersist.Adapter,
+	enforcers *EnforcerProvider,
 	cache port.CachePort,
 ) port.CasbinUsecase {
 	return &casbinService{
-		repo:    repo,
-		adapter: adapter,
-		cache:   cache,
+		repo:      repo,
+		enforcers: enforcers,
+		cache:     cache,
 	}
-}
-
-// ─── enforcer lifecycle ───────────────────────────────────────────────────────
-
-func (s *casbinService) getEnforcer(ctx context.Context) (*casbin.Enforcer, error) {
-	lg := logger.WithContext(ctx)
-
-	s.mu.RLock()
-	if s.enforcer != nil && time.Now().Before(s.enforcerExp) {
-		defer s.mu.RUnlock()
-		return s.enforcer, nil
-	}
-	s.mu.RUnlock()
-
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	// Double-check after acquiring write lock.
-	if s.enforcer != nil && time.Now().Before(s.enforcerExp) {
-		return s.enforcer, nil
-	}
-
-	e, err := casbin.NewEnforcer(common.RBACModelPath, s.adapter)
-	if err != nil {
-		lg.Error("getEnforcer: NewEnforcer failed", zap.Error(err))
-		return nil, common.ErrEnforcerFailed
-	}
-	if err := e.LoadPolicy(); err != nil {
-		lg.Error("getEnforcer: LoadPolicy failed", zap.Error(err))
-		return nil, common.ErrDBFailed
-	}
-
-	s.enforcer = e
-	s.enforcerExp = time.Now().Add(common.CacheTTLEnforcer * time.Second)
-	return e, nil
-}
-
-func (s *casbinService) invalidateEnforcer() {
-	s.mu.Lock()
-	s.enforcerExp = time.Time{}
-	s.mu.Unlock()
 }
 
 // ─── port.CasbinUsecase implementation ───────────────────────────────────────
@@ -85,7 +37,7 @@ func (s *casbinService) invalidateEnforcer() {
 func (s *casbinService) Enforce(ctx context.Context, auth model.CasbinAuth) error {
 	lg := logger.WithContext(ctx)
 
-	e, err := s.getEnforcer(ctx)
+	e, err := s.enforcers.Get(ctx)
 	if err != nil {
 		return err
 	}
@@ -135,7 +87,7 @@ func (s *casbinService) CreateRule(ctx context.Context, rule model.CasbinRule) e
 		lg.Error("CreateRule", zap.Error(err))
 		return err
 	}
-	s.invalidateEnforcer()
+	s.enforcers.Invalidate()
 	return nil
 }
 
@@ -146,7 +98,7 @@ func (s *casbinService) DeleteRule(ctx context.Context, id int) error {
 		lg.Error("DeleteRule", zap.Error(err))
 		return err
 	}
-	s.invalidateEnforcer()
+	s.enforcers.Invalidate()
 	return nil
 }
 
@@ -161,6 +113,6 @@ func (s *casbinService) UpdateRuleField(ctx context.Context, id int, field model
 		lg.Error("UpdateRuleField", zap.Error(err))
 		return err
 	}
-	s.invalidateEnforcer()
+	s.enforcers.Invalidate()
 	return nil
 }

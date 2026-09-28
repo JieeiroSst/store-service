@@ -51,11 +51,6 @@ spec:
             value: {{ .Values.threadsService.env.userServiceBaseURL | quote }}
           - name: USER_SERVICE_TIMEOUT
             value: {{ .Values.threadsService.env.userServiceTimeout | quote }}
-          - name: JWT_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.threadsService.name }}-secret
-                key: jwtSecret
         resources:
           {{- toYaml .Values.threadsService.resources | nindent 10 }}
         volumeMounts:
@@ -76,7 +71,6 @@ stringData:
   # Dev defaults from values.yaml - override with --set or a
   # values-prod.yaml before deploying anywhere real.
   postgresPassword: {{ .Values.threadsService.env.postgresPassword | quote }}
-  jwtSecret: {{ .Values.threadsService.env.jwtSecret | quote }}
   redisPassword: {{ .Values.threadsService.env.redisPassword | quote }}
 ---
 apiVersion: v1

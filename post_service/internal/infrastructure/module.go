@@ -5,6 +5,7 @@ import (
 	"github.com/JIeeiroSst/post-service/internal/adapter/secondary/idgen"
 	"github.com/JIeeiroSst/post-service/internal/adapter/secondary/objectstorage"
 	"github.com/JIeeiroSst/post-service/internal/adapter/secondary/repository"
+	"github.com/JIeeiroSst/post-service/internal/adapter/secondary/userservice"
 	"github.com/JIeeiroSst/post-service/internal/application"
 	"github.com/JIeeiroSst/post-service/internal/infrastructure/database"
 	"github.com/JIeeiroSst/post-service/internal/infrastructure/server"
@@ -20,6 +21,7 @@ var Module = fx.Options(
 	repository.Module,    // port.PostRepository, port.CategoryRepository, port.MediaRepository
 	objectstorage.Module, // port.ObjectStorage
 	idgen.Module,         // port.IDGenerator
+	userservice.Module,   // *userservice.Client — token validation
 
 	application.Module, // port.PostUsecase, port.CategoryUsecase
 

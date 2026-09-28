@@ -24,7 +24,7 @@ func NewKeyService(db storage.Database, cache storage.Cache) *KeyService {
 	}
 }
 
-func (s *KeyService) CreateKey(req models.CreateKeyRequest, userID uuid.UUID) (*models.Key, error) {
+func (s *KeyService) CreateKey(req models.CreateKeyRequest, userID int64) (*models.Key, error) {
 	var plainKey []byte
 	var keyLength int
 	var err error
@@ -186,7 +186,7 @@ func (s *KeyService) DeleteKey(keyID string) error {
 	return nil
 }
 
-func (s *KeyService) ListKeys(userID uuid.UUID, role models.UserRole) ([]models.Key, error) {
+func (s *KeyService) ListKeys(userID int64, role models.UserRole) ([]models.Key, error) {
 	if role == models.RoleAdmin {
 		return s.db.ListKeys()
 	}

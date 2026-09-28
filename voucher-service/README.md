@@ -22,7 +22,7 @@ A UrBox-style Voucher Platform in Go: B2C retail + B2B corporate bulk gifting, v
     /outbound/payment/              VNPay, Momo gateways
     /outbound/notifier/             email (real SMTP), SMS (logging stand-in)
     /outbound/publisher/            Kafka producer for the outbox relay
-    /outbound/authtoken/            JWT issuer
+    /outbound/userservice/          user-service client (token validation)
     /outbound/internalgateway/      cross-context translator adapters (see below)
   /platform/                     config, logger, db, redis, kafka, tracing, txmanager,
                                   lock, idempotency, outbox, consul, server, scheduler
@@ -102,8 +102,9 @@ The server listens on `PORT` (default `3000`). Health check: `GET /health`.
 
 ```bash
 # Register + login
-curl -X POST localhost:3000/api/v1/auth/register -d '{"email":"a@b.com","password":"secret123"}'
-TOKEN=$(curl -X POST localhost:3000/api/v1/auth/login -d '{"email":"a@b.com","password":"secret123"}' | jq -r .token)
+# Accounts live in user-service: sign up and log in there, then use its token.
+curl -X POST localhost:1235/user/sign-up -d '{"username":"alice","email":"alice.demo@mail.com","password":"Secret123"}'
+TOKEN=$(curl -X POST localhost:1235/api/v1/login -d '{"username":"alice","password":"Secret123"}' | jq -r .sessionToken)
 
 # Register a self-issued merchant
 MID=$(curl -X POST localhost:3000/api/v1/merchants -H "Authorization: Bearer $TOKEN" \
@@ -138,7 +139,7 @@ All env vars are in `.env` with local defaults. Notable ones:
 | Var | Purpose |
 |---|---|
 | `POSTGRES_*`, `REDIS_*`, `KAFKA_BROKERS` | Infra connection settings |
-| `JWT_SECRET`, `JWT_EXPIRATION_MINUTES` | Auth token signing |
+| `USER_SERVICE_URL`, `USER_SERVICE_TIMEOUT_MS` | user-service gateway that validates every bearer token (this service issues none) |
 | `PARTNER_HMAC_ENC_KEY` | Encrypts partner API-key secrets at rest (AES-GCM) so HMAC verification can decrypt and recompute the signature — a one-way hash can't be used here, unlike password auth |
 | `OUTBOX_RELAY_INTERVAL_MS` | How often the outbox relay polls for unpublished events |
 | `VOUCHER_EXPIRY_SWEEP_MINUTES` | Not directly used by the scheduler's cron spec (fixed at `*/5 * * * *`) — reserved for a future configurable schedule |

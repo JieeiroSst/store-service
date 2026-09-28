@@ -20,9 +20,9 @@ var Module = fx.Options(
 	otp.Module,        // port.OTPPort
 	repository.Module, // port.CasbinRepository
 
-	application.Module, // port.CasbinUsecase, port.OTPUsecase
+	application.Module, // port.CasbinUsecase, port.PermissionUsecase, port.OTPUsecase; seeds roles
 
-	grpc.Module, // *grpc.Handler
+	grpc.Module, // *grpc.Handler, *grpc.PermissionHandler
 
 	fx.Invoke(server.New),
 )

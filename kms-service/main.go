@@ -14,6 +14,7 @@ import (
 	"github.com/JIeeiroSst/kms/models"
 	"github.com/JIeeiroSst/kms/services"
 	"github.com/JIeeiroSst/kms/storage"
+	"github.com/JIeeiroSst/kms/userservice"
 	"github.com/JIeeiroSst/kms/utils"
 )
 
@@ -66,7 +67,7 @@ func main() {
 
 	// Protected routes
 	api := r.Group("/api/v1")
-	api.Use(middleware.AuthMiddleware())
+	api.Use(middleware.AuthMiddleware(userservice.New(config.AppConfig.UserServiceURL, 3*time.Second)))
 
 	// Key management routes
 	keys := api.Group("/keys")

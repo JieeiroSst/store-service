@@ -18,6 +18,20 @@ type Config struct {
 	Email    Email          `json:"email"`
 	Postgres PostgresConfig `json:"postgres"`
 	Token    TokenPolicy    `json:"token"`
+
+	AuthorizeService AuthorizeServiceConfig `json:"authorize_service"`
+}
+
+type AuthorizeServiceConfig struct {
+	GrpcAddress    string `json:"grpc_address"`
+	TimeoutSeconds int    `json:"timeout_seconds"`
+}
+
+func (a AuthorizeServiceConfig) Timeout() time.Duration {
+	if a.TimeoutSeconds <= 0 {
+		return 3 * time.Second
+	}
+	return time.Duration(a.TimeoutSeconds) * time.Second
 }
 
 type TokenPolicy struct {

@@ -42,8 +42,8 @@ type Job struct {
 	Title           string      `db:"title"             json:"title"`
 	Code            string      `db:"code"              json:"code"`
 	DepartmentID    uuid.UUID   `db:"department_id"     json:"department_id"`
-	HiringManagerID uuid.UUID   `db:"hiring_manager_id" json:"hiring_manager_id"`
-	RecruiterIDs    []uuid.UUID `db:"recruiter_ids"     json:"recruiter_ids"`
+	HiringManagerID int64       `db:"hiring_manager_id" json:"hiring_manager_id"` // user-service user id
+	RecruiterIDs    []int64     `db:"recruiter_ids"     json:"recruiter_ids"` // user-service user ids
 
 	Description   string         `db:"description"    json:"description"`
 	Requirements  []string       `db:"requirements"   json:"requirements"`
@@ -77,7 +77,7 @@ type PipelineStage struct {
 	IsSystem bool      `json:"is_system"`
 }
 
-func New(title, code string, deptID, hiringManagerID uuid.UUID) (*Job, error) {
+func New(title, code string, deptID uuid.UUID, hiringManagerID int64) (*Job, error) {
 	if title == "" {
 		return nil, errors.New("job: title required")
 	}
@@ -148,7 +148,7 @@ func (j *Job) record(t string, p interface{}) {
 type Filter struct {
 	Status       *Status    `form:"status"`
 	DepartmentID *uuid.UUID `form:"department_id"`
-	RecruiterID  *uuid.UUID `form:"recruiter_id"`
+	RecruiterID  *int64     `form:"recruiter_id"`
 	WorkMode     *WorkMode  `form:"work_mode"`
 	Skills       []string   `form:"skills"`
 	Search       string     `form:"search"`
@@ -161,5 +161,5 @@ type Repository interface {
 	Update(ctx context.Context, j *Job) error
 	FindByID(ctx context.Context, id uuid.UUID) (*Job, error)
 	FindAll(ctx context.Context, filter Filter) (shared.PaginatedResult[*Job], error)
-	FindByRecruiter(ctx context.Context, recruiterID uuid.UUID) ([]*Job, error)
+	FindByRecruiter(ctx context.Context, recruiterID int64) ([]*Job, error)
 }

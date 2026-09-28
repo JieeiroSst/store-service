@@ -5,18 +5,20 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"sync"
 	"time"
 
+	"github.com/JIeeiroSst/ollama-service/internal/userservice"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq"
-	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -28,8 +30,6 @@ const (
 )
 
 var db *sql.DB
-
-var jwtSecret = []byte("your-secret-key")
 
 type Message struct {
 	ID          int64  `json:"id,omitempty"`
@@ -64,14 +64,6 @@ type StreamResponse struct {
 	Done bool `json:"done"`
 }
 
-type User struct {
-	ID        int64     `json:"id"`
-	Username  string    `json:"username"`
-	Password  string    `json:"-"` 
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
 type Group struct {
 	ID          int64     `json:"id"`
 	Name        string    `json:"name"`
@@ -100,17 +92,6 @@ type ChatServer struct {
 	Register   chan *Client
 	Unregister chan *Client
 	Mutex      sync.RWMutex
-}
-
-type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
-type RegisterRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required"`
 }
 
 type CreateGroupRequest struct {
@@ -156,58 +137,51 @@ func InitDB() (*sql.DB, error) {
 	return db, nil
 }
 
+// createTables creates the chat schema. Users live in user-service, so user
+// ids are plain BIGINT references (user-service ids) with no local FK.
 func createTables(db *sql.DB) error {
- 	_, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS users (
-		id SERIAL PRIMARY KEY,
-		username VARCHAR(100) UNIQUE NOT NULL,
-		password VARCHAR(255) NOT NULL,
-		email VARCHAR(255) UNIQUE NOT NULL,
-		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-	)`)
-	if err != nil {
-		return err
+	stmts := []string{
+		`CREATE TABLE IF NOT EXISTS groups (
+			id SERIAL PRIMARY KEY,
+			name VARCHAR(100) NOT NULL,
+			description TEXT,
+			creator_id BIGINT,
+			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		)`,
+		`CREATE TABLE IF NOT EXISTS group_members (
+			group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,
+			user_id BIGINT NOT NULL,
+			role VARCHAR(50) NOT NULL,
+			joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (group_id, user_id)
+		)`,
+		`CREATE TABLE IF NOT EXISTS messages (
+			id SERIAL PRIMARY KEY,
+			message_type VARCHAR(50) NOT NULL,
+			sender_id BIGINT,
+			recipient_id BIGINT NULL,
+			group_id INTEGER REFERENCES groups(id) NULL,
+			content TEXT NOT NULL,
+			url TEXT,
+			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		)`,
+		// Databases created before users moved to user-service: drop the FKs
+		// to the old local users table and widen ids to user-service's range.
+		// The old users table itself is left for a manual cleanup.
+		`ALTER TABLE groups DROP CONSTRAINT IF EXISTS groups_creator_id_fkey`,
+		`ALTER TABLE groups ALTER COLUMN creator_id TYPE BIGINT`,
+		`ALTER TABLE group_members DROP CONSTRAINT IF EXISTS group_members_user_id_fkey`,
+		`ALTER TABLE group_members ALTER COLUMN user_id TYPE BIGINT`,
+		`ALTER TABLE messages DROP CONSTRAINT IF EXISTS messages_sender_id_fkey`,
+		`ALTER TABLE messages DROP CONSTRAINT IF EXISTS messages_recipient_id_fkey`,
+		`ALTER TABLE messages ALTER COLUMN sender_id TYPE BIGINT`,
+		`ALTER TABLE messages ALTER COLUMN recipient_id TYPE BIGINT`,
 	}
-
-	_, err = db.Exec(`
-	CREATE TABLE IF NOT EXISTS groups (
-		id SERIAL PRIMARY KEY,
-		name VARCHAR(100) NOT NULL,
-		description TEXT,
-		creator_id INTEGER REFERENCES users(id),
-		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-	)`)
-	if err != nil {
-		return err
+	for _, stmt := range stmts {
+		if _, err := db.Exec(stmt); err != nil {
+			return err
+		}
 	}
-
-	_, err = db.Exec(`
-	CREATE TABLE IF NOT EXISTS group_members (
-		group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE,
-		user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-		role VARCHAR(50) NOT NULL,
-		joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-		PRIMARY KEY (group_id, user_id)
-	)`)
-	if err != nil {
-		return err
-	}
-
-	_, err = db.Exec(`
-	CREATE TABLE IF NOT EXISTS messages (
-		id SERIAL PRIMARY KEY,
-		message_type VARCHAR(50) NOT NULL,
-		sender_id INTEGER REFERENCES users(id),
-		recipient_id INTEGER REFERENCES users(id) NULL,
-		group_id INTEGER REFERENCES groups(id) NULL,
-		content TEXT NOT NULL,
-		url TEXT,
-		created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-	)`)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -364,17 +338,8 @@ func (server *ChatServer) HandleWebSocket(c *gin.Context) {
 		WriteBufferSize: 1024,
 	}
 
-	userIDStr := c.Query("user_id")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	var exists bool
-	err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", userID).Scan(&exists)
-	if err != nil || !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+	userID, ok := authenticate(c.Writer, c.Request)
+	if !ok {
 		return
 	}
 
@@ -536,96 +501,8 @@ func fetchOllamaResponse(message string) (string, error) {
 	return fullResponse, nil
 }
 
-func RegisterHandler(c *gin.Context) {
-	var req RegisterRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	var exists bool
-	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)", req.Username).Scan(&exists)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		return
-	}
-	if exists {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Username already exists"})
-		return
-	}
-
-	err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)", req.Email).Scan(&exists)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		return
-	}
-	if exists {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Email already exists"})
-		return
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Password hashing error"})
-		return
-	}
-
-	var userID int64
-	err = db.QueryRow(
-		"INSERT INTO users (username, password, email) VALUES ($1, $2, $3) RETURNING id",
-		req.Username, hashedPassword, req.Email,
-	).Scan(&userID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"user_id":  userID,
-		"username": req.Username,
-		"email":    req.Email,
-		"message":  "User registered successfully",
-	})
-}
-
-func LoginHandler(c *gin.Context) {
-	var req LoginRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	var user User
-	var hashedPassword string
-	err := db.QueryRow(
-		"SELECT id, username, password, email FROM users WHERE username = $1",
-		req.Username,
-	).Scan(&user.ID, &user.Username, &hashedPassword, &user.Email)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		return
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(req.Password))
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"user_id":  user.ID,
-		"username": user.Username,
-		"email":    user.Email,
-		"message":  "Login successful",
-	})
-}
-
 func CreateGroupHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	userID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -681,7 +558,7 @@ func CreateGroupHandler(c *gin.Context) {
 }
 
 func InviteToGroupHandler(c *gin.Context) {
-	inviterID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	inviterID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -707,14 +584,12 @@ func InviteToGroupHandler(c *gin.Context) {
 		return
 	}
 
-	var userExists bool
-	err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", req.UserID).Scan(&userExists)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		return
-	}
-	if !userExists {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User to invite does not exist"})
+	if _, err := users.GetUser(c.Request.Context(), strconv.FormatInt(req.UserID, 10)); err != nil {
+		if errors.Is(err, userservice.ErrUserNotFound) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User to invite does not exist"})
+		} else {
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "User service unavailable"})
+		}
 		return
 	}
 
@@ -750,7 +625,7 @@ func InviteToGroupHandler(c *gin.Context) {
 }
 
 func GetGroupsHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	userID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -792,7 +667,7 @@ func GetGroupsHandler(c *gin.Context) {
 }
 
 func GetGroupMembersHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	userID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -819,10 +694,9 @@ func GetGroupMembersHandler(c *gin.Context) {
 	}
 
 	rows, err := db.Query(`
-		SELECT u.id, u.username, u.email, gm.role, gm.joined_at
-		FROM users u
-		JOIN group_members gm ON u.id = gm.user_id
-		WHERE gm.group_id = $1
+		SELECT user_id, role, joined_at
+		FROM group_members
+		WHERE group_id = $1
 	`, groupID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
@@ -830,21 +704,32 @@ func GetGroupMembersHandler(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	members := []map[string]interface{}{}
+	type member struct {
+		id       int64
+		role     string
+		joinedAt time.Time
+	}
+	var found []member
+	var ids []int64
 	for rows.Next() {
-		var user User
-		var role string
-		var joinedAt time.Time
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &role, &joinedAt); err != nil {
+		var m member
+		if err := rows.Scan(&m.id, &m.role, &m.joinedAt); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Scan error"})
 			return
 		}
+		found = append(found, m)
+		ids = append(ids, m.id)
+	}
+
+	profiles := lookupProfiles(c.Request.Context(), ids)
+	members := []map[string]interface{}{}
+	for _, m := range found {
 		members = append(members, map[string]interface{}{
-			"id":        user.ID,
-			"username":  user.Username,
-			"email":     user.Email,
-			"role":      role,
-			"joined_at": joinedAt,
+			"id":        m.id,
+			"username":  profiles[m.id].Username,
+			"email":     profiles[m.id].Email,
+			"role":      m.role,
+			"joined_at": m.joinedAt,
 		})
 	}
 
@@ -855,7 +740,7 @@ func GetGroupMembersHandler(c *gin.Context) {
 }
 
 func GetChatHistoryHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	userID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -886,9 +771,8 @@ func GetChatHistoryHandler(c *gin.Context) {
 
 	query := `
 		SELECT m.id, m.message_type, m.sender_id, m.recipient_id, m.group_id, 
-			   m.content, m.url, m.created_at, u.username as sender_name
+			   m.content, m.url, m.created_at
 		FROM messages m
-		LEFT JOIN users u ON m.sender_id = u.id
 	`
 	var args []interface{}
 
@@ -948,6 +832,7 @@ func GetChatHistoryHandler(c *gin.Context) {
 	defer rows.Close()
 
 	messages := []map[string]interface{}{}
+	var senderIDs []int64
 	for rows.Next() {
 		var id int64
 		var messageType string
@@ -957,9 +842,8 @@ func GetChatHistoryHandler(c *gin.Context) {
 		var content string
 		var url sql.NullString
 		var createdAt time.Time
-		var senderName sql.NullString
 
-		if err := rows.Scan(&id, &messageType, &senderID, &recipientID, &groupID, &content, &url, &createdAt, &senderName); err != nil {
+		if err := rows.Scan(&id, &messageType, &senderID, &recipientID, &groupID, &content, &url, &createdAt); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Scan error: " + err.Error()})
 			return
 		}
@@ -973,9 +857,7 @@ func GetChatHistoryHandler(c *gin.Context) {
 
 		if senderID.Valid {
 			message["sender_id"] = senderID.Int64
-		}
-		if senderName.Valid {
-			message["sender_name"] = senderName.String
+			senderIDs = append(senderIDs, senderID.Int64)
 		}
 		if recipientID.Valid {
 			message["recipient_id"] = recipientID.Int64
@@ -990,6 +872,15 @@ func GetChatHistoryHandler(c *gin.Context) {
 		messages = append(messages, message)
 	}
 
+	names := lookupProfiles(c.Request.Context(), senderIDs)
+	for _, m := range messages {
+		if id, ok := m["sender_id"].(int64); ok {
+			if p, ok := names[id]; ok {
+				m["sender_name"] = p.Username
+			}
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"messages": messages,
 		"count":    len(messages),
@@ -999,7 +890,7 @@ func GetChatHistoryHandler(c *gin.Context) {
 }
 
 func LeaveGroupHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	userID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -1109,18 +1000,16 @@ func removeUserFromGroup(groupID, userID int64) error {
 }
 
 func GetUserContactsHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	userID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
 	rows, err := db.Query(`
-		SELECT DISTINCT u.id, u.username, u.email
-		FROM users u
-		JOIN messages m ON (u.id = m.sender_id AND m.recipient_id = $1) OR (u.id = m.recipient_id AND m.sender_id = $1)
-		WHERE u.id != $1
-		ORDER BY u.username
+		SELECT DISTINCT CASE WHEN sender_id = $1 THEN recipient_id ELSE sender_id END
+		FROM messages
+		WHERE (sender_id = $1 AND recipient_id IS NOT NULL) OR recipient_id = $1
 	`, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
@@ -1128,19 +1017,34 @@ func GetUserContactsHandler(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	contacts := []map[string]interface{}{}
+	var ids []int64
 	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email); err != nil {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Scan error"})
 			return
 		}
+		if id != userID {
+			ids = append(ids, id)
+		}
+	}
+
+	profiles := lookupProfiles(c.Request.Context(), ids)
+	contacts := []map[string]interface{}{}
+	for _, id := range ids {
+		p, ok := profiles[id]
+		if !ok {
+			continue // account no longer exists in user-service
+		}
 		contacts = append(contacts, map[string]interface{}{
-			"id":       user.ID,
-			"username": user.Username,
-			"email":    user.Email,
+			"id":       id,
+			"username": p.Username,
+			"email":    p.Email,
 		})
 	}
+	sort.Slice(contacts, func(i, j int) bool {
+		return contacts[i]["username"].(string) < contacts[j]["username"].(string)
+	})
 
 	c.JSON(http.StatusOK, gin.H{
 		"contacts": contacts,
@@ -1148,7 +1052,7 @@ func GetUserContactsHandler(c *gin.Context) {
 }
 
 func PromoteGroupMemberHandler(c *gin.Context) {
-	adminID, err := parseUserID(c.GetHeader("User-ID"))
+	adminID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -1227,7 +1131,7 @@ func promoteUserToAdmin(groupID, userID int64) error {
 }
 
 func RemoveGroupMemberHandler(c *gin.Context) {
-	adminID, err := parseUserID(c.GetHeader("User-ID"))
+	adminID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -1276,47 +1180,8 @@ func isGroupCreator(groupID, userID int64) bool {
 	return err == nil && isCreator
 }
 
-func GetAllUsersHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	rows, err := db.Query(`
-		SELECT id, username, email, created_at
-		FROM users
-		WHERE id != $1
-		ORDER BY username
-	`, userID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		return
-	}
-	defer rows.Close()
-
-	users := []map[string]interface{}{}
-	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.CreatedAt); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Scan error"})
-			return
-		}
-		users = append(users, map[string]interface{}{
-			"id":         user.ID,
-			"username":   user.Username,
-			"email":      user.Email,
-			"created_at": user.CreatedAt,
-		})
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"users": users,
-	})
-}
-
 func SearchHandler(c *gin.Context) {
-	userID, err := strconv.ParseInt(c.GetHeader("User-ID"), 10, 64)
+	userID, err := callerID(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
 		return
@@ -1328,12 +1193,6 @@ func SearchHandler(c *gin.Context) {
 		return
 	}
 
-	users, err := searchUsers(userID, query)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error searching users"})
-		return
-	}
-
 	groups, err := searchGroups(userID, query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error searching groups"})
@@ -1341,38 +1200,8 @@ func SearchHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"users":  users,
 		"groups": groups,
 	})
-}
-
-func searchUsers(userID int64, query string) ([]map[string]interface{}, error) {
-	rows, err := db.Query(`
-		SELECT id, username, email
-		FROM users
-		WHERE id != $1 AND (username ILIKE $2 OR email ILIKE $2)
-		ORDER BY username
-		LIMIT 20
-	`, userID, "%"+query+"%")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var users []map[string]interface{}
-	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email); err != nil {
-			return nil, err
-		}
-		users = append(users, map[string]interface{}{
-			"id":       user.ID,
-			"username": user.Username,
-			"email":    user.Email,
-			"type":     "user",
-		})
-	}
-	return users, nil
 }
 
 func searchGroups(userID int64, query string) ([]map[string]interface{}, error) {
@@ -1445,20 +1274,16 @@ func setupRouter(chatServer *ChatServer) *gin.Engine {
 
 	router.Use(corsMiddleware())
 
-	auth := router.Group("/auth")
+	// Sign-up and login happen in user-service; every route below takes its
+	// bearer token. Searching all users isn't offered: user data belongs to
+	// user-service.
+	userRoutes := router.Group("/users", requireAuth())
 	{
-		auth.POST("/register", RegisterHandler)
-		auth.POST("/login", LoginHandler)
+		userRoutes.GET("/contacts", GetUserContactsHandler)
+		userRoutes.GET("/search", SearchHandler)
 	}
 
-	users := router.Group("/users")
-	{
-		users.GET("/all", GetAllUsersHandler)
-		users.GET("/contacts", GetUserContactsHandler)
-		users.GET("/search", SearchHandler)
-	}
-
-	groups := router.Group("/groups")
+	groups := router.Group("/groups", requireAuth())
 	{
 		groups.POST("/create", CreateGroupHandler)
 		groups.POST("/invite", InviteToGroupHandler)
@@ -1469,7 +1294,7 @@ func setupRouter(chatServer *ChatServer) *gin.Engine {
 		groups.DELETE("/:groupId/members/:userId", RemoveGroupMemberHandler)
 	}
 
-	chat := router.Group("/chat")
+	chat := router.Group("/chat", requireAuth())
 	{
 		chat.GET("/history", GetChatHistoryHandler)
 	}
@@ -1485,7 +1310,7 @@ func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, User-ID")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
@@ -1513,10 +1338,8 @@ func handleWebSocketConnection(chatServer *ChatServer, w http.ResponseWriter, r 
 		WriteBufferSize: 1024,
 	}
 
-	userIDStr := r.URL.Query().Get("user_id")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+	userID, ok := authenticate(w, r)
+	if !ok {
 		return
 	}
 

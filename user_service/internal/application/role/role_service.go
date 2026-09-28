@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/JIeeiroSst/user-service/dto"
 	"github.com/JIeeiroSst/user-service/internal/domain"
@@ -12,14 +13,31 @@ import (
 )
 
 type Service struct {
-	roleRepo output.RoleRepository
+	roleRepo   output.RoleRepository
+	authorizer output.Authorizer
 }
 
-func New(roleRepo output.RoleRepository) *Service {
-	return &Service{roleRepo: roleRepo}
+func New(roleRepo output.RoleRepository, authorizer output.Authorizer) *Service {
+	return &Service{roleRepo: roleRepo, authorizer: authorizer}
+}
+
+// ensureRoleDefined rejects role names authorize-service doesn't know, since
+// assigning them would fail and they would carry no permissions.
+func (s *Service) ensureRoleDefined(ctx context.Context, name string) error {
+	ok, err := s.authorizer.RoleExists(ctx, name)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return fmt.Errorf("%w: %q", domain.ErrRoleNotInAuthorize, name)
+	}
+	return nil
 }
 
 func (s *Service) CreateRole(ctx context.Context, in dto.CreateRoleResquest) (dto.CreateRoleResponse, error) {
+	if err := s.ensureRoleDefined(ctx, in.Name); err != nil {
+		return dto.CreateRoleResponse{}, err
+	}
 	role := domain.Role{
 		Id:   geared_id.GearedIntID(),
 		Name: in.Name,
@@ -31,6 +49,9 @@ func (s *Service) CreateRole(ctx context.Context, in dto.CreateRoleResquest) (dt
 }
 
 func (s *Service) UpdateRole(ctx context.Context, in dto.UpdateRoleRequest) (dto.UpdateRoleResponse, error) {
+	if err := s.ensureRoleDefined(ctx, in.Name); err != nil {
+		return dto.UpdateRoleResponse{}, err
+	}
 	if err := s.roleRepo.Update(ctx, int(in.Id), in.Name); err != nil {
 		return dto.UpdateRoleResponse{}, err
 	}

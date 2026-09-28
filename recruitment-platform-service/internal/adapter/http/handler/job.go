@@ -38,8 +38,8 @@ func (h *JobHandler) Create(c *gin.Context) {
 		Title           string   `json:"title"             binding:"required"`
 		Code            string   `json:"code"              binding:"required"`
 		DepartmentID    string   `json:"department_id"     binding:"required,uuid"`
-		HiringManagerID string   `json:"hiring_manager_id" binding:"required,uuid"`
-		RecruiterIDs    []string `json:"recruiter_ids"`
+		HiringManagerID int64    `json:"hiring_manager_id" binding:"required"` // user-service user id
+		RecruiterIDs    []int64  `json:"recruiter_ids"`                        // user-service user ids
 		Description     string   `json:"description"`
 		Requirements    []string `json:"requirements"`
 		Skills          []string `json:"skills"`
@@ -57,17 +57,12 @@ func (h *JobHandler) Create(c *gin.Context) {
 		return
 	}
 
-	recruiterIDs := make([]uuid.UUID, 0, len(req.RecruiterIDs))
-	for _, rid := range req.RecruiterIDs {
-		recruiterIDs = append(recruiterIDs, uuid.MustParse(rid))
-	}
-
 	cmd := port.CreateJobCommand{
 		Title:           req.Title,
 		Code:            req.Code,
 		DepartmentID:    uuid.MustParse(req.DepartmentID),
-		HiringManagerID: uuid.MustParse(req.HiringManagerID),
-		RecruiterIDs:    recruiterIDs,
+		HiringManagerID: req.HiringManagerID,
+		RecruiterIDs:    req.RecruiterIDs,
 		Description:     req.Description,
 		Requirements:    req.Requirements,
 		Skills:          req.Skills,

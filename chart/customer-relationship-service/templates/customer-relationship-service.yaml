@@ -67,14 +67,8 @@ spec:
             value: {{ .Values.customerRelationshipService.env.signatureTSAURL | quote }}
           - name: API_KEY_ROLE
             value: {{ .Values.customerRelationshipService.env.apiKeyRole | quote }}
-          - name: OIDC_ISSUER
-            value: {{ .Values.customerRelationshipService.env.oidcIssuer | quote }}
-          - name: OIDC_JWKS_URL
-            value: {{ .Values.customerRelationshipService.env.oidcJWKSURL | quote }}
-          - name: OIDC_AUDIENCE
-            value: {{ .Values.customerRelationshipService.env.oidcAudience | quote }}
-          - name: OIDC_ROLES_CLAIM
-            value: {{ .Values.customerRelationshipService.env.oidcRolesClaim | quote }}
+          - name: USER_SERVICE_URL
+            value: {{ .Values.customerRelationshipService.env.userServiceURL | quote }}
           - name: ROLE_PREFIX
             value: {{ .Values.customerRelationshipService.env.rolePrefix | quote }}
           - name: CLAMAV_ADDRESS

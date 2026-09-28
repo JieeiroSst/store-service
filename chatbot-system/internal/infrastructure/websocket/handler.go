@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"chatbot-system/internal/application"
+	"chatbot-system/internal/infrastructure/auth"
 
 	"github.com/gorilla/websocket"
 )
@@ -23,12 +24,14 @@ var upgrader = websocket.Upgrader{
 type Handler struct {
 	hub         *Hub
 	chatUseCase *application.ChatUseCase
+	authn       *auth.Authenticator
 }
 
-func NewHandler(hub *Hub, chatUseCase *application.ChatUseCase) *Handler {
+func NewHandler(hub *Hub, chatUseCase *application.ChatUseCase, authn *auth.Authenticator) *Handler {
 	return &Handler{
 		hub:         hub,
 		chatUseCase: chatUseCase,
+		authn:       authn,
 	}
 }
 
@@ -49,16 +52,10 @@ func (g *gorillаConnection) Close() error {
 }
 
 func (h *Handler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-	// In production, implement proper authentication
-	userIDStr := r.URL.Query().Get("user_id")
-	if userIDStr == "" {
-		http.Error(w, "Missing user_id", http.StatusBadRequest)
-		return
-	}
-
-	var userID int64
-	if _, err := fmt.Sscanf(userIDStr, "%d", &userID); err != nil {
-		http.Error(w, "Invalid user_id", http.StatusBadRequest)
+	// Browsers can't set headers on WebSocket upgrades, so the user-service
+	// token may come as ?token=.
+	userID, ok := h.authn.Authenticate(w, r)
+	if !ok {
 		return
 	}
 

@@ -1,0 +1,108 @@
+// Copy of authorize_service/api/permission/permission.proto — keep in sync.
+syntax = "proto3";
+
+package authorize.permission.v1;
+
+option go_package = "github.com/JIeeiroSst/user-service/internal/adapter/outbound/authorizeclient/pb;permissionpb";
+
+// PermissionService is the single source of truth for who may do what.
+// Other services (user-service, gateways) must go through it to grant,
+// revoke or check a user's roles and permissions.
+//
+// Subjects: a user is addressed by its user_id; authorize-service stores it
+// internally as "user:<user_id>". Roles are plain names (user, operator,
+// admin, super_admin, or any custom role created via the casbin CRUD API).
+service PermissionService {
+    // AssignRoles adds roles to a user, keeping the roles it already has.
+    rpc AssignRoles(AssignRolesRequest) returns (UserRolesResponse);
+    // RevokeRoles removes the given roles from a user.
+    rpc RevokeRoles(RevokeRolesRequest) returns (UserRolesResponse);
+    // SetUserRoles replaces all of a user's roles with the given list.
+    rpc SetUserRoles(SetUserRolesRequest) returns (UserRolesResponse);
+    // RemoveUser drops every role of a user (e.g. account deletion).
+    rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse);
+
+    rpc GetUserRoles(GetUserRolesRequest) returns (UserRolesResponse);
+    rpc GetUserPermissions(GetUserPermissionsRequest) returns (GetUserPermissionsResponse);
+    rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
+    rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+}
+
+message AssignRolesRequest {
+    string user_id = 1;
+    repeated string roles = 2;
+}
+
+message RevokeRolesRequest {
+    string user_id = 1;
+    repeated string roles = 2;
+}
+
+message SetUserRolesRequest {
+    string user_id = 1;
+    repeated string roles = 2;
+}
+
+message RemoveUserRequest {
+    string user_id = 1;
+}
+
+message RemoveUserResponse {
+    bool success = 1;
+}
+
+message GetUserRolesRequest {
+    string user_id = 1;
+}
+
+message UserRolesResponse {
+    string user_id = 1;
+    // Roles assigned directly to the user.
+    repeated string roles = 2;
+    // Direct roles plus every role they inherit.
+    repeated string effective_roles = 3;
+    // Highest-ranked direct role; empty when the user has no role.
+    string primary_role = 4;
+}
+
+message GetUserPermissionsRequest {
+    string user_id = 1;
+}
+
+message Permission {
+    string object = 1;     // keyMatch pattern, e.g. "/admin/orders*"
+    string action = 2;     // regex over HTTP methods, e.g. "^(GET|PUT)$"
+    string granted_by = 3; // role that grants it
+}
+
+message GetUserPermissionsResponse {
+    string user_id = 1;
+    repeated Permission permissions = 2;
+}
+
+message CheckPermissionRequest {
+    string user_id = 1;
+    string object = 2; // request path, e.g. "/admin/orders/42"
+    string action = 3; // HTTP method, e.g. "PUT"
+}
+
+message CheckPermissionResponse {
+    bool allowed = 1;
+}
+
+message ListRolesRequest {}
+
+message Role {
+    string name = 1;
+    string description = 2;
+    int32 rank = 3;
+    repeated string inherits = 4;
+    // Permissions granted directly to this role (not inherited ones).
+    repeated Permission permissions = 5;
+    // False for roles that can only be granted through bootstrap config.
+    bool assignable = 6;
+}
+
+message ListRolesResponse {
+    repeated Role roles = 1;
+}

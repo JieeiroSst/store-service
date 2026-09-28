@@ -4,40 +4,49 @@ import (
 	"context"
 
 	"github.com/JIeeiroSst/user-service/dto"
-	"github.com/JIeeiroSst/user-service/internal/domain"
 	"github.com/JIeeiroSst/user-service/internal/port/output"
-	"github.com/JIeeiroSst/utils/copy"
 )
 
 type Service struct {
-	roleItemRepo output.RoleItemRepository
+	roleRepo   output.RoleRepository
+	authorizer output.Authorizer
 }
 
-func New(roleItemRepo output.RoleItemRepository) *Service {
-	return &Service{roleItemRepo: roleItemRepo}
+func New(roleRepo output.RoleRepository, authorizer output.Authorizer) *Service {
+	return &Service{roleRepo: roleRepo, authorizer: authorizer}
 }
 
 func (s *Service) AddRoleItem(ctx context.Context, in dto.AddRoleItemRequest) (dto.AddRoleItemResponse, error) {
-	var roleItem domain.RoleItem
-	if err := copy.CopyObject(&in, &roleItem); err != nil {
-		return dto.AddRoleItemResponse{}, err
+	role, err := s.roleRepo.Role(ctx, int(in.RoleId))
+	if err != nil {
+		return dto.AddRoleItemResponse{Message: "failed"}, err
 	}
-	if err := s.roleItemRepo.AddRoleItem(ctx, roleItem); err != nil {
-		return dto.AddRoleItemResponse{}, err
+	if _, err := s.authorizer.AssignRoles(ctx, int(in.UserId), role.Name); err != nil {
+		return dto.AddRoleItemResponse{Message: "failed"}, err
 	}
-	return dto.AddRoleItemResponse{Message: "success"}, nil
+	return dto.AddRoleItemResponse{
+		Role:    &dto.Role{Id: int32(role.Id), Name: role.Name},
+		Message: "success",
+	}, nil
 }
 
 func (s *Service) RemoveRoleItem(ctx context.Context, in dto.RemoveRoleItemRequest) (dto.RemoveRoleItemResponse, error) {
-	if err := s.roleItemRepo.RemoveRoleItem(ctx, int(in.UserId)); err != nil {
+	if err := s.authorizer.RemoveUser(ctx, int(in.UserId)); err != nil {
 		return dto.RemoveRoleItemResponse{Message: "failed"}, err
 	}
 	return dto.RemoveRoleItemResponse{Message: "success"}, nil
 }
 
 func (s *Service) UpdateItemRole(ctx context.Context, in dto.UpdateRoleItemRequest) (dto.UpdateRoleItemResponse, error) {
-	if err := s.roleItemRepo.UpdateRoleItem(ctx, int(in.UserId), int(in.RoleId)); err != nil {
+	role, err := s.roleRepo.Role(ctx, int(in.RoleId))
+	if err != nil {
 		return dto.UpdateRoleItemResponse{Message: "failed"}, err
 	}
-	return dto.UpdateRoleItemResponse{Message: "success"}, nil
+	if _, err := s.authorizer.SetUserRoles(ctx, int(in.UserId), role.Name); err != nil {
+		return dto.UpdateRoleItemResponse{Message: "failed"}, err
+	}
+	return dto.UpdateRoleItemResponse{
+		Role:    &dto.Role{Id: int32(role.Id), Name: role.Name},
+		Message: "success",
+	}, nil
 }

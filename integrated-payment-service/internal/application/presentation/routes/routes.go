@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine, paymentHandler *handlers.PaymentHandler) {
+func SetupRoutes(r *gin.Engine, paymentHandler *handlers.PaymentHandler, authn middleware.Authenticator) {
 	r.Use(middleware.CORS())
 	r.Use(middleware.Logger())
 	r.Use(gin.Recovery())
@@ -17,7 +17,7 @@ func SetupRoutes(r *gin.Engine, paymentHandler *handlers.PaymentHandler) {
 
 	api := r.Group("/api/v1")
 	{
-		payments := api.Group("/payments")
+		payments := api.Group("/payments", middleware.RequireAuth(authn))
 		{
 			payments.POST("/", paymentHandler.CreatePayment)
 			payments.GET("/:id", paymentHandler.GetPayment)

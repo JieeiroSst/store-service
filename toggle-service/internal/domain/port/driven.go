@@ -59,9 +59,9 @@ type ConstraintRepository interface {
 	DeleteByStrategy(ctx context.Context, strategyID uuid.UUID) error
 }
 
+// UserDirectory resolves user-service bearer tokens to users.
 type UserDirectory interface {
-	Register(ctx context.Context, email, username, password string) (*model.User, error)
-	Login(ctx context.Context, username, password string) (*model.User, error)
+	Authenticate(ctx context.Context, token string) (*model.User, error)
 }
 
 type RoleRepository interface {

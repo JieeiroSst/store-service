@@ -12,7 +12,14 @@ type Config struct {
 	Server   ServerConfig   `json:"server"`
 	Postgres PostgresConfig `json:"postgres"`
 	Cache    CacheConfig    `json:"cache"`
-	Secret   SecretConfig   `json:"secret"`
+	Roles    RolesConfig    `json:"roles"`
+
+	UserService UserServiceConfig `json:"user_service"`
+}
+
+type UserServiceConfig struct {
+	BaseURL        string `json:"base_url"`
+	TimeoutSeconds int    `json:"timeout_seconds"`
 }
 
 type ServerConfig struct {
@@ -30,11 +37,11 @@ type PostgresConfig struct {
 	PgDriver           string `json:"pg_driver"`
 }
 
-// SecretConfig holds the JWT settings shared with user-service, which issues the tokens.
-type SecretConfig struct {
-	JwtSecretKey string `json:"jwt_secret_key"`
-	AdminRole    string `json:"admin_role"`
-	StaffRole    string `json:"staff_role"`
+// RolesConfig maps authorize-service roles onto car-rental's admin and staff
+// levels (defaults: "admin" and "operator"; "super_admin" is always admin).
+type RolesConfig struct {
+	AdminRole string `json:"admin_role"`
+	StaffRole string `json:"staff_role"`
 }
 
 type CacheConfig struct {
