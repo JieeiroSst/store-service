@@ -1,0 +1,30 @@
+{
+    "server": {
+        "portHttpServer": "8080",
+        "maxUploadBytes": 104857600
+    },
+    "collage": {
+        "cellWidth": 100,
+        "cellHeight": 100,
+        "columns": 2,
+        "maxImages": 50,
+        "maxPixels": 50000000,
+        "jpegQuality": 95,
+        "centerWidth": 800,
+        "centerHeight": 800
+    },
+    "minio": {
+        "endpoint": "minio-svc:9000",
+        "accessKey": "minioadmin",
+        "secretKey": "minioadmin123",
+        "bucket": "draw-image-service",
+        "useSSL": false
+    },
+    "mysql": {
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
+        "mysqlUser": "root",
+        "mysqlPassword": "password",
+        "mysqlDbname": "draw_image_service"
+    }
+}
