@@ -1,0 +1,11 @@
+{
+    "server": {
+        "server_port": "8080"
+    },
+    "secret": {
+        "authorize_key": "no_name"
+    },
+    "elasticsearch": {
+        "dns": "http://elasticsearch-service:9200"
+    }
+}

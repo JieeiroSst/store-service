@@ -24,6 +24,7 @@ minio:
     - video-service
     - customer-relationship-service
     - upload-service
+    - draw-image-service
 
   storage:
     size: 5Gi

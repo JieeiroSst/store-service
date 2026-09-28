@@ -1,0 +1,48 @@
+{{- $kc := .Values.kafkaConnect }}
+{{- $secretDir := "/opt/kafka/external-configuration/postgres" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $kc.name }}-connectors
+  labels:
+    app: {{ $kc.name }}
+data:
+  {{- range $kc.connectors }}
+  {{- $slot := .name | replace "-" "_" }}
+  {{ .name }}-source.json: |
+    {{- dict
+      "connector.class" "io.debezium.connector.postgresql.PostgresConnector"
+      "plugin.name" "pgoutput"
+      "database.hostname" $kc.postgres.host
+      "database.port" ($kc.postgres.port | toString)
+      "database.user" (printf "${dir:%s:POSTGRES_USER}" $secretDir)
+      "database.password" (printf "${dir:%s:POSTGRES_PASSWORD}" $secretDir)
+      "database.dbname" .database
+      "topic.prefix" .name
+      "table.include.list" (join "," .tables)
+      "slot.name" (printf "dbz_%s" $slot)
+      "publication.name" (printf "dbz_%s" $slot)
+      "publication.autocreate.mode" "filtered"
+      "snapshot.mode" "initial"
+      "decimal.handling.mode" "double"
+      "time.precision.mode" "connect"
+      "transforms" "unwrap"
+      "transforms.unwrap.type" "io.debezium.transforms.ExtractNewRecordState"
+      "transforms.unwrap.delete.tombstone.handling.mode" "tombstone"
+      | toPrettyJson | nindent 4 }}
+  {{ .name }}-sink.json: |
+    {{- dict
+      "connector.class" "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector"
+      "topics.regex" (printf "^%s\\..*" (regexQuoteMeta .name))
+      "connection.url" $kc.elasticsearch.url
+      "key.ignore" "false"
+      "schema.ignore" "true"
+      "write.method" "upsert"
+      "behavior.on.null.values" "delete"
+      "transforms" "extractKey"
+      "transforms.extractKey.type" "org.apache.kafka.connect.transforms.ExtractField$Key"
+      "transforms.extractKey.field" (.keyField | default "id")
+      "errors.tolerance" "none"
+      "consumer.override.metadata.max.age.ms" "30000"
+      | toPrettyJson | nindent 4 }}
+  {{- end }}

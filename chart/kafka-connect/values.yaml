@@ -24,3 +24,29 @@ kafkaConnect:
       memory: "2500Mi"
 
   requestTimeoutMs: "90000"
+
+  # Source database. Credentials are mounted from the postgres chart's
+  # ConfigMap and resolved at runtime by Kafka's DirectoryConfigProvider, so
+  # they never appear in the connector configs stored in Kafka.
+  # Debezium needs a role with REPLICATION and CREATE PUBLICATION rights; the
+  # postgres image's admin user has both. The server must run wal_level=logical
+  # (postgres.walLevel in the postgres chart).
+  postgres:
+    host: postgresdb-nodeport
+    port: 5432
+    credentialsConfigMap: db-secret-credentials
+
+  elasticsearch:
+    url: http://elasticsearch-service:9200
+
+  # One Debezium source + one Elasticsearch sink per entry. Each table is
+  # written to the Kafka topic "<name>.<schema>.<table>", and the sink indexes
+  # it into an Elasticsearch index of the same name, using keyField as the
+  # document _id. Inserts/updates upsert the document; deletes remove it.
+  # name must be lowercase (it becomes part of the ES index name).
+  connectors:
+    - name: book-store
+      database: book_store
+      keyField: id
+      tables:
+        - public.book_store_book

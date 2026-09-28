@@ -41,3 +41,23 @@ spec:
               value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
             - name: CONNECT_CONSUMER_DEFAULT_API_TIMEOUT_MS
               value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
+            # Lets connector configs reference ${dir:<path>:<file>} so DB
+            # credentials are read from the mounted volume, not stored in Kafka.
+            - name: CONNECT_CONFIG_PROVIDERS
+              value: dir
+            - name: CONNECT_CONFIG_PROVIDERS_DIR_CLASS
+              value: org.apache.kafka.common.config.provider.DirectoryConfigProvider
+          readinessProbe:
+            httpGet:
+              path: /connectors
+              port: {{ .Values.kafkaConnect.service.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          volumeMounts:
+            - name: postgres-credentials
+              mountPath: /opt/kafka/external-configuration/postgres
+              readOnly: true
+      volumes:
+        - name: postgres-credentials
+          configMap:
+            name: {{ .Values.kafkaConnect.postgres.credentialsConfigMap }}

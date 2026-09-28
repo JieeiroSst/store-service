@@ -1,0 +1,38 @@
+{
+    "server": {
+        "portHttpServer": "8087"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
+        "postgresqlDbname": "ekyc",
+        "postgresqlSSLMode": false
+    },
+    "userService": {
+        "baseURL": "http://user-service-svc",
+        "timeout": "5s"
+    },
+    "storage": {
+        "endpoint": "minio-svc:9000",
+        "bucket": "ekyc-service",
+        "accessKey": "minioadmin",
+        "secretKey": "minioadmin123",
+        "useSSL": false
+    },
+    "ekyc": {
+        "mrzMinConfidence": 0.85,
+        "faceMatchThreshold": 0.6,
+        "faceMinQuality": 15.0
+    },
+    "providers": {
+        "cardReader": "native",
+        "faceAnalyzer": "native"
+    },
+    "python": {
+        "bin": "python3",
+        "scriptPath": "python/extract_id.py",
+        "timeoutString": "30s"
+    }
+}

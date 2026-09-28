@@ -1,0 +1,31 @@
+{
+    "server": {
+        "port_server": "8080"
+    },
+    "secret": {
+        "jwt_secret_key": "secretkey"
+    },
+    "rabbit_mq": {
+        "host": "rabbitmq-service",
+        "port": "5672",
+        "user": "guest",
+        "password": "guest",
+        "exchange": "offer_range",
+        "queue": "offer_range_queue",
+        "routing_key": "offer_range",
+        "consumer_tag": "offer_range_consumer",
+        "worker_pool_size": 5
+    },
+    "redis": {
+        "dns": "redis-svc:80"
+    },
+    "postgres": {
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "offer_range_service",
+        "postgresql_ssl_mode": false,
+        "pg_driver": "pgx"
+    }
+}

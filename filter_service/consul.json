@@ -1,0 +1,6 @@
+{
+    "server": {
+        "server_port": "8080",
+        "grpc_server": "9090"
+    }
+}
