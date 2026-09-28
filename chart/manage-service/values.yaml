@@ -1,0 +1,42 @@
+manageService:
+  name: manage-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/manage-service
+    tag: latest
+    port: 3031
+
+  service:
+    name: manage-service-svc
+    type: ClusterIP
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: manage-service.local
+    path: /
+    pathType: Prefix
+
+  env:
+    keycloakHost: http://keycloak-service
+    keycloakLegacyWildfly: "true"
+    keycloakAdminRealm: master
+    keycloakAdminUser: admin
+    keycloakAdminPassword: admin
+    authorizeKey: ""
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60

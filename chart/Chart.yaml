@@ -351,3 +351,7 @@ dependencies:
     name: shipping-service
     version: "0.1.0"
     repository: file://shipping-service
+  - alias: manageService
+    name: manage-service
+    version: "0.1.0"
+    repository: file://manage-service
