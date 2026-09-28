@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Face Tracking</title>
+  <script src="https://cdn.jsdelivr.net/npm/tracking@1.1.3/build/tracking-min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tracking@1.1.3/build/data/face-min.js"></script>
+  <style>
+    :root {
+      --bg: #f4f5f7;
+      --surface: #ffffff;
+      --surface-2: #f0f1f4;
+      --border: #e2e4e9;
+      --text: #16181d;
+      --muted: #6b7180;
+      --accent: #0f9d6b;
+      --accent-soft: rgba(15, 157, 107, 0.12);
+      --warn: #c77700;
+      --danger: #d03a3a;
+      --stage-bg: #0d0f12;
+      --radius: 14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0e1013;
+        --surface: #171a1f;
+        --surface-2: #1f2329;
+        --border: #2a2f37;
+        --text: #eceef2;
+        --muted: #9097a3;
+        --accent: #2fd48f;
+        --accent-soft: rgba(47, 212, 143, 0.14);
+        --warn: #f0a93b;
+        --danger: #ff6b6b;
+        --stage-bg: #000;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 20px 16px 8px;
+    }
+    h1 { margin: 0; font-size: 18px; font-weight: 650; letter-spacing: -0.01em; }
+    .subtitle { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+    .pill[data-state="live"] .dot { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+    .pill[data-state="idle"] .dot { background: var(--warn); }
+    .pill[data-state="error"] .dot { background: var(--danger); }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 16px;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 8px 16px 24px;
+    }
+    @media (max-width: 860px) {
+      main { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .stage {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--stage-bg);
+      border: 1px solid var(--border);
+      align-self: start;
+    }
+    .stage video, .stage canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .stage.mirror video { transform: scaleX(-1); }
+    .placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #9097a3;
+      text-align: center;
+      padding: 16px;
+    }
+    .placeholder[hidden] { display: none; }
+    aside { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .stat { background: var(--surface-2); border-radius: 10px; padding: 10px; }
+    .stat .value { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .stat .label { font-size: 12px; color: var(--muted); }
+
+    .targets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; max-height: 240px; overflow-y: auto; }
+    .targets li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: var(--surface-2);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .targets .tag {
+      flex: none;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .swatch {
+      flex: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    .empty { color: var(--muted); font-size: 13px; margin: 0; }
+
+    .controls { display: flex; flex-direction: column; gap: 12px; }
+    .btn {
+      width: 100%;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn.secondary { background: var(--surface-2); color: var(--text); }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 3px;
+      border-radius: 10px;
+      background: var(--surface-2);
+    }
+    .segmented button {
+      padding: 7px 4px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .segmented button[aria-pressed="true"] {
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .toggle input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
+    .toggle .name { display: inline-flex; align-items: center; gap: 8px; }
+
+    .color-options { display: flex; flex-direction: column; gap: 10px; }
+    .color-options[hidden] { display: none; }
+    .range { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+    .range input { flex: 1; accent-color: var(--accent); }
+    .range output { width: 28px; text-align: right; font-variant-numeric: tabular-nums; color: var(--text); }
+    .divider { height: 1px; background: var(--border); margin: 2px 0; }
+    .meta { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Face &amp; Color Tracking</h1>
+      <p class="subtitle">Theo dõi khuôn mặt và màu sắc realtime bằng tracking.js</p>
+    </div>
+    <span class="pill" id="pill" data-state="idle"><span class="dot"></span><span id="pillText">Đang mở camera...</span></span>
+  </header>
+
+  <main>
+    <div class="stage mirror" id="stage">
+      <!-- width/height attributes are the coordinate space tracking.js reports in -->
+      <video id="video" width="640" height="480" autoplay muted playsinline></video>
+      <canvas id="canvas" width="640" height="480"></canvas>
+      <div class="placeholder" id="placeholder">Đang mở camera...</div>
+    </div>
+
+    <aside>
+      <section class="card">
+        <h2>Tổng quan</h2>
+        <div class="stats">
+          <div class="stat"><div class="value" id="faceCount">0</div><div class="label">Khuôn mặt</div></div>
+          <div class="stat"><div class="value" id="colorCount">0</div><div class="label">Vùng màu</div></div>
+          <div class="stat"><div class="value" id="fps">0</div><div class="label">FPS</div></div>
+          <div class="stat"><div class="value" id="sentCount">0</div><div class="label">Đã gửi</div></div>
+        </div>
+        <p class="meta" id="backendStatus">Backend: chưa gửi</p>
+      </section>
+
+      <section class="card">
+        <h2>Vị trí</h2>
+        <ul class="targets" id="targetList"></ul>
+        <p class="empty" id="targetEmpty">Chưa phát hiện đối tượng</p>
+      </section>
+
+      <section class="card controls">
+        <h2>Điều khiển</h2>
+        <button class="btn" id="cameraBtn" type="button">Tắt camera</button>
+
+        <div class="segmented" id="modeGroup" role="group" aria-label="Chế độ theo dõi">
+          <button type="button" data-mode="face" aria-pressed="true">Khuôn mặt</button>
+          <button type="button" data-mode="color" aria-pressed="false">Màu sắc</button>
+          <button type="button" data-mode="both" aria-pressed="false">Cả hai</button>
+        </div>
+
+        <div class="color-options" id="colorOptions" hidden>
+          <label class="toggle"><span class="name"><span class="swatch" style="background:#ffd600"></span>Vàng</span><input type="checkbox" data-color="yellow" checked></label>
+          <label class="toggle"><span class="name"><span class="swatch" style="background:#e53935"></span>Đỏ</span><input type="checkbox" data-color="red" checked></label>
+          <label class="toggle"><span class="name"><span class="swatch" style="background:#1e63e9"></span>Xanh nước biển</span><input type="checkbox" data-color="blue" checked></label>
+          <label class="toggle"><span class="name"><span class="swatch" style="background:#2e9e44"></span>Xanh lá cây</span><input type="checkbox" data-color="green" checked></label>
+          <label class="toggle"><span class="name"><span class="swatch" style="background:#111111"></span>Đen</span><input type="checkbox" data-color="black" checked></label>
+          <label class="range">Độ nhạy <input type="range" id="sensitivity" min="0" max="100" value="50"><output id="sensitivityValue">50</output></label>
+        </div>
+
+        <div class="divider"></div>
+        <label class="toggle">Gửi tọa độ về backend <input type="checkbox" id="sendToggle" checked></label>
+        <label class="toggle">Lật gương <input type="checkbox" id="mirrorToggle" checked></label>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const video = $('video');
+    const canvas = $('canvas');
+    const context = canvas.getContext('2d');
+    const stage = $('stage');
+
+    const COLORS = {
+      yellow: { label: 'Vàng', hex: '#ffd600', text: '#000' },
+      red: { label: 'Đỏ', hex: '#e53935', text: '#fff' },
+      blue: { label: 'Xanh nước biển', hex: '#1e63e9', text: '#fff' },
+      green: { label: 'Xanh lá cây', hex: '#2e9e44', text: '#fff' },
+      black: { label: 'Đen', hex: '#111111', text: '#fff' },
+    };
+
+    // Thresholds derived from the sensitivity slider (0 = strict, 1 = loose)
+    let sMin, vMin, blackMax;
+    function setSensitivity(value) {
+      const k = value / 100;
+      sMin = 0.65 - 0.35 * k;       // min saturation for colored targets
+      vMin = 0.45 - 0.25 * k;       // min brightness for colored targets
+      blackMax = 0.12 + 0.13 * k;   // max brightness counted as black
+    }
+    setSensitivity(Number($('sensitivity').value));
+
+    // Returns [hue 0-360, saturation 0-1, value 0-1]
+    function rgbToHsv(r, g, b) {
+      const max = Math.max(r, g, b);
+      const d = max - Math.min(r, g, b);
+      if (max === 0) return [0, 0, 0];
+      let h = 0;
+      if (d !== 0) {
+        if (max === r) h = ((g - b) / d) % 6;
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        h *= 60;
+        if (h < 0) h += 360;
+      }
+      return [h, d / max, max / 255];
+    }
+
+    const inHue = (from, to) => (r, g, b) => {
+      const [h, sat, val] = rgbToHsv(r, g, b);
+      if (sat < sMin || val < vMin) return false;
+      return from <= to ? h >= from && h <= to : h >= from || h <= to;
+    };
+
+    tracking.ColorTracker.registerColor('red', inHue(340, 12));
+    tracking.ColorTracker.registerColor('yellow', inHue(45, 70));
+    tracking.ColorTracker.registerColor('green', inHue(85, 160));
+    tracking.ColorTracker.registerColor('blue', inHue(195, 250));
+    tracking.ColorTracker.registerColor('black', (r, g, b) => Math.max(r, g, b) / 255 < blackMax);
+
+    const faceTracker = new tracking.ObjectTracker('face');
+    faceTracker.setInitialScale(4);
+    faceTracker.setStepSize(2);
+    faceTracker.setEdgesDensity(0.1);
+
+    const colorTracker = new tracking.ColorTracker(selectedColors());
+
+    const SEND_INTERVAL_MS = 500;
+    let lastSentAt = 0;
+    let pending = false;
+    let sentCount = 0;
+    let stream = null;
+    let frames = 0;
+    let mirror = true;
+    let mode = 'face';
+
+    const tasks = { face: null, color: null };
+    let faces = [];
+    let colors = [];
+
+    function selectedColors() {
+      return [...document.querySelectorAll('[data-color]')].filter((el) => el.checked).map((el) => el.dataset.color);
+    }
+
+    function setPill(state, text) {
+      $('pill').dataset.state = state;
+      $('pillText').textContent = text;
+    }
+
+    const faceOn = () => mode === 'face' || mode === 'both';
+    const colorOn = () => mode === 'color' || mode === 'both';
+
+    function sendPositions() {
+      pending = true;
+      lastSentAt = Date.now();
+      fetch('/api/face/position', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          faces: faces.map(({ x, y, width, height }) => ({ x, y, width, height })),
+          colors: colors.map(({ color, x, y, width, height }) => ({ color, x, y, width, height })),
+          frame: { width: video.width, height: video.height },
+        }),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          sentCount++;
+          $('sentCount').textContent = sentCount;
+          $('backendStatus').textContent = `Backend: đã gửi lúc ${new Date().toLocaleTimeString()}`;
+        })
+        .catch((err) => {
+          $('backendStatus').textContent = `Backend: lỗi (${err.message})`;
+        })
+        .finally(() => { pending = false; });
+    }
+
+    // When mirrored, only x is flipped so label text stays readable
+    const screenX = (rect) => (mirror ? canvas.width - rect.x - rect.width : rect.x);
+
+    function drawLabel(text, x, y, bg, fg) {
+      context.font = '600 13px system-ui, sans-serif';
+      const tw = context.measureText(text).width + 12;
+      const ly = y - 24 < 0 ? y + 4 : y - 24;
+      context.fillStyle = bg;
+      context.fillRect(x, ly, tw, 20);
+      context.fillStyle = fg;
+      context.fillText(text, x + 6, ly + 15);
+    }
+
+    function drawFace(rect, index) {
+      const x = screenX(rect);
+      const { y, width: w, height: h } = rect;
+      const c = Math.min(w, h) * 0.25;
+      const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+
+      context.strokeStyle = color;
+      context.lineWidth = 3;
+      context.lineCap = 'round';
+      context.beginPath();
+      [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([cx, cy, dx, dy]) => {
+        context.moveTo(cx + dx * c, cy);
+        context.lineTo(cx, cy);
+        context.lineTo(cx, cy + dy * c);
+      });
+      context.stroke();
+      drawLabel(`Face ${index + 1}`, x, y, color, '#fff');
+    }
+
+    function drawColor(rect) {
+      const x = screenX(rect);
+      const c = COLORS[rect.color];
+      context.setLineDash([6, 4]);
+      // light halo under the dashed box so dark colors stay visible on dark backgrounds
+      context.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+      context.lineWidth = 4;
+      context.strokeRect(x, rect.y, rect.width, rect.height);
+      context.strokeStyle = c.hex;
+      context.lineWidth = 2;
+      context.strokeRect(x, rect.y, rect.width, rect.height);
+      context.setLineDash([]);
+      drawLabel(c.label, x, rect.y, c.hex, c.text);
+    }
+
+    function render() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      colors.forEach(drawColor);
+      faces.forEach(drawFace);
+
+      $('faceCount').textContent = faces.length;
+      $('colorCount').textContent = colors.length;
+      const items = [
+        ...faces.map((r, i) => `<li><span class="tag">Face ${i + 1}</span>x ${r.x} · y ${r.y} · ${r.width}×${r.height}</li>`),
+        ...colors.map((r) => `<li><span class="swatch" style="background:${COLORS[r.color].hex}"></span>x ${r.x} · y ${r.y} · ${r.width}×${r.height}</li>`),
+      ];
+      $('targetList').innerHTML = items.join('');
+      $('targetEmpty').hidden = items.length > 0;
+
+      if (!stream) return;
+      const total = faces.length + colors.length;
+      if (total === 0) {
+        setPill('idle', 'Đang tìm đối tượng');
+        return;
+      }
+      const parts = [];
+      if (faces.length) parts.push(`${faces.length} khuôn mặt`);
+      if (colors.length) parts.push(`${colors.length} vùng màu`);
+      setPill('live', `Đang theo dõi ${parts.join(', ')}`);
+
+      if ($('sendToggle').checked && !pending && Date.now() - lastSentAt > SEND_INTERVAL_MS) {
+        sendPositions();
+      }
+    }
+
+    faceTracker.on('track', (event) => {
+      frames++;
+      faces = event.data;
+      render();
+    });
+
+    colorTracker.on('track', (event) => {
+      if (!faceOn()) frames++;
+      colors = event.data;
+      render();
+    });
+
+    setInterval(() => {
+      $('fps').textContent = frames;
+      frames = 0;
+    }, 1000);
+
+    // Start/stop each tracker task according to the current mode and camera state
+    function applyMode() {
+      const want = { face: stream && faceOn(), color: stream && colorOn() };
+      const trackers = { face: faceTracker, color: colorTracker };
+      Object.keys(tasks).forEach((kind) => {
+        if (want[kind]) {
+          if (tasks[kind]) tasks[kind].run();
+          else tasks[kind] = tracking.track('#video', trackers[kind]);
+        } else if (tasks[kind]) {
+          tasks[kind].stop();
+        }
+      });
+      if (!want.face) faces = [];
+      if (!want.color) colors = [];
+      render();
+    }
+
+    // tracking.track(..., { camera: true }) uses the deprecated getUserMedia API,
+    // so open the camera ourselves and let tracking.js read frames from the <video>.
+    function startCamera() {
+      setPill('idle', 'Đang mở camera...');
+      $('placeholder').hidden = false;
+      $('placeholder').textContent = 'Đang mở camera...';
+      navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false })
+        .then((s) => {
+          stream = s;
+          video.srcObject = s;
+          video.onloadedmetadata = () => {
+            video.play();
+            $('placeholder').hidden = true;
+            $('cameraBtn').textContent = 'Tắt camera';
+            $('cameraBtn').classList.remove('secondary');
+            applyMode();
+          };
+        })
+        .catch((err) => {
+          setPill('error', 'Không thể mở camera');
+          $('placeholder').textContent = `Không thể mở camera: ${err.message}`;
+        });
+    }
+
+    function stopCamera() {
+      if (stream) stream.getTracks().forEach((t) => t.stop());
+      stream = null;
+      video.srcObject = null;
+      applyMode();
+      setPill('idle', 'Camera đã tắt');
+      $('placeholder').hidden = false;
+      $('placeholder').textContent = 'Camera đã tắt';
+      $('cameraBtn').textContent = 'Bật camera';
+      $('cameraBtn').classList.add('secondary');
+    }
+
+    $('cameraBtn').addEventListener('click', () => (stream ? stopCamera() : startCamera()));
+
+    $('modeGroup').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-mode]');
+      if (!btn) return;
+      mode = btn.dataset.mode;
+      $('modeGroup').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      $('colorOptions').hidden = !colorOn();
+      applyMode();
+    });
+
+    document.querySelectorAll('[data-color]').forEach((el) =>
+      el.addEventListener('change', () => colorTracker.setColors(selectedColors())));
+
+    $('sensitivity').addEventListener('input', (e) => {
+      setSensitivity(Number(e.target.value));
+      $('sensitivityValue').textContent = e.target.value;
+    });
+
+    $('mirrorToggle').addEventListener('change', (e) => {
+      mirror = e.target.checked;
+      stage.classList.toggle('mirror', mirror);
+      render();
+    });
+
+    startCamera();
+  </script>
+</body>
+</html>
