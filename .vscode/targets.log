@@ -6,11 +6,8 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # PARTICULAR PURPOSE.
 
 # This program built for i386-apple-darwin11.3.0
- 
-make: *** No rule to make target `all'.  Stop.
 
-
-# Make data base, printed on Sun Sep 27 01:53:05 2026
+# Make data base, printed on Mon Sep 28 14:45:01 2026
 
 # Variables
 
@@ -92,6 +89,8 @@ MAKE_VERSION := 3.81
 USER = quan
 # makefile
 .DEFAULT_GOAL := 
+# environment
+NoDefaultCurrentDirectoryInExePath = 1
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # environment
@@ -120,6 +119,8 @@ XPC_SERVICE_NAME = application.com.microsoft.VSCode.6901974.6901980
 HOMEBREW_PREFIX = /opt/homebrew
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
+# environment
+VSCODE_L10N_BUNDLE_LOCATION = 
 # automatic
 +F = $(notdir $+)
 # environment
@@ -147,7 +148,7 @@ LANG = C
 # environment
 VSCODE_PID = 654
 # variable set hash-table stats:
-# Load=66/1024=6%, Rehash=0, Collisions=1/88=1%
+# Load=68/1024=7%, Rehash=0, Collisions=1/90=1%
 
 # Pattern-specific Variable Values
 
@@ -155,9 +156,9 @@ VSCODE_PID = 654
 
 # Directories
 
-# . (device 16777229, inode 307903): 119 files, no impossibilities.
+# . (device 16777229, inode 307903): 118 files, no impossibilities.
 
-# 119 files, no impossibilities in 1 directories.
+# 118 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -208,6 +209,8 @@ Makefile:
 # strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
 # strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# Finished Make data base on Sun Sep 27 01:53:05 2026
+# Finished Make data base on Mon Sep 28 14:45:01 2026
 
  
+make: *** No rule to make target `all'.  Stop.
+
