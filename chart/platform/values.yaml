@@ -1,0 +1,105 @@
+# Defaults are the production posture; values-dev.yaml / values-staging.yaml
+# relax them. The release namespace IS the environment namespace
+# (store-dev, store-staging, store-prod).
+environment: prod
+
+podSecurity:
+  enforce: restricted
+
+resourceQuota:
+  enabled: true
+  # Sized from the rendered charts: HPA max replicas x requests, with headroom.
+  # Limits are not quota'd - they are per-pod ceilings and overcommit by design.
+  hard:
+    requests.cpu: "64"
+    requests.memory: 96Gi
+    pods: "800"
+    persistentvolumeclaims: "20"
+    requests.storage: 1Ti
+    services.loadbalancers: "0"
+    services.nodeports: "0"
+
+limitRange:
+  enabled: true
+  default:
+    cpu: 500m
+    memory: 256Mi
+  defaultRequest:
+    cpu: 50m
+    memory: 64Mi
+  max:
+    cpu: "4"
+    memory: 4Gi
+
+priorityClasses:
+  create: false
+  items:
+    - name: store-critical
+      value: 100000
+      description: Revenue path services (payment, order, vending). Preempts standard workloads.
+    - name: store-standard
+      value: 10000
+      description: Default for store-service workloads.
+    - name: store-batch
+      value: 1000
+      preemptionPolicy: Never
+      description: Jobs and workers that can wait for capacity.
+
+networkPolicies:
+  defaultDeny: true
+  consul:
+    enabled: true
+    namespace: consul
+    podLabels:
+      app: consul-deployment
+    port: 8500
+  ingressController:
+    enabled: true
+    namespace: ingress-nginx
+  monitoring:
+    enabled: true
+    namespace: monitoring
+  intraNamespace: true
+  infraEgress:
+    enabled: true
+    namespaces: []
+    # Managed datastores' private range.
+    cidrs:
+      - 10.20.0.0/16
+  internetEgress:
+    enabled: true
+    ports: [443]
+
+# Bare-name -> target. A bare target resolves in infraAliases.namespace, a
+# dotted one is used as the DNS name as-is.
+infraAliases:
+  namespace: consul
+  services:
+    consul-service: consul-service.consul.svc.cluster.local
+    postgresdb: store-postgres.prod.internal.example.com
+    mysql-svc: store-mysql.prod.internal.example.com
+    redis-svc: store-redis.prod.internal.example.com
+    mongo-svc: store-mongo.prod.internal.example.com
+    minio-svc: store-objects.prod.internal.example.com
+    kafka-service: store-kafka.prod.internal.example.com
+    rabbitmq-service: store-rabbitmq.prod.internal.example.com
+    elasticsearch-service: store-search.prod.internal.example.com
+
+secretStore:
+  enabled: true
+  name: store-secrets
+  # "kubernetes" mirrors Secrets from another namespace (non-prod);
+  # anything else renders providerSpec verbatim.
+  provider: vault
+  kubernetes:
+    remoteNamespace: default
+    secretNames: []
+  providerSpec:
+    vault:
+      server: https://vault.store.example.com
+      path: secret
+      version: v2
+      auth:
+        kubernetes:
+          mountPath: kubernetes
+          role: store-prod

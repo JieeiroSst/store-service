@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 videoService:
   name: video-service
+  selectorApp: video-service-deployment
+  containerName: video-service-deployment
   replicas: 2
 
   image:
@@ -7,11 +13,12 @@ videoService:
     tag: latest
     # Must match PORT_HTTP_SERVER (see video-service/BE/config/config.go).
     port: 8080
+    pullPolicy: Always
 
   service:
     name: video-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -27,6 +34,9 @@ videoService:
     host: video-service.local
     path: /api
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Env the container reads directly (see video-service/BE/config/config.go).
   # MinIO defaults match chart/minio; override the credentials with --set or a
@@ -67,6 +77,115 @@ videoService:
     minReplicas: 2
     maxReplicas: 30
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.videoService.image.port }}'
+    - name: MINIO_ENDPOINT
+      value: '{{ .Values.videoService.env.minioEndpoint }}'
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: video-service-secret
+          key: minioAccessKey
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: video-service-secret
+          key: minioSecretKey
+    - name: MINIO_BUCKET
+      value: '{{ .Values.videoService.env.minioBucket }}'
+    - name: MINIO_USE_SSL
+      value: '{{ .Values.videoService.env.minioUseSSL }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.videoService.env.redisAddr }}'
+    - name: ALLOWED_ORIGINS
+      value: '{{ .Values.videoService.env.allowedOrigins }}'
+    - name: MAX_UPLOAD_MB
+      value: '{{ .Values.videoService.env.maxUploadMB }}'
+    - name: CHUNK_SIZE_KB
+      value: '{{ .Values.videoService.env.chunkSizeKB }}'
+    - name: CACHE_SIZE_MB
+      value: '{{ .Values.videoService.env.cacheSizeMB }}'
+    - name: PREFETCH_CHUNKS
+      value: '{{ .Values.videoService.env.prefetchChunks }}'
+    - name: META_TTL_SECONDS
+      value: '{{ .Values.videoService.env.metaTTLSeconds }}'
+    - name: LIST_TTL_SECONDS
+      value: '{{ .Values.videoService.env.listTTLSeconds }}'
+    - name: GOMEMLIMIT
+      value: '{{ .Values.videoService.resources.limits.memory | replace "Mi" "MiB" | replace "Gi" "GiB" }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /healthz
+        port: 8080
+      periodSeconds: 5
+    liveness:
+      httpGet:
+        path: /healthz
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 10
+  lifecycle:
+    preStop:
+      exec:
+        command:
+          - sh
+          - -c
+          - sleep 5
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 45
+  preStopSleepSeconds: 0
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
 
 # Transcoding workers (same image, ROLE=worker): turn each upload into an HLS
 # ladder (1080p/720p/480p/360p, capped at the source height) and a thumbnail.
@@ -75,6 +194,10 @@ videoService:
 # claimIdleMinutes. Kept off the API pods so ffmpeg can't starve viewers.
 videoWorker:
   name: video-worker
+  # Image (name/tag/pullPolicy) is taken from videoService.image in
+  # templates/app.yaml, so API and worker always ship the same build.
+  selectorApp: video-worker-deployment
+  containerName: video-worker-deployment
   replicas: 2
   concurrency: "1"          # videos per worker at once; ffmpeg already uses all cores
   jobTimeoutMinutes: "60"
@@ -89,3 +212,94 @@ videoWorker:
 
   # Scratch space for the downloaded original + rendered segments.
   scratchSize: 20Gi
+  containerEnv:
+    - name: ROLE
+      value: worker
+    - name: MINIO_ENDPOINT
+      value: '{{ .Values.videoService.env.minioEndpoint }}'
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.videoService.name }}-secret'
+          key: minioAccessKey
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.videoService.name }}-secret'
+          key: minioSecretKey
+    - name: MINIO_BUCKET
+      value: '{{ .Values.videoService.env.minioBucket }}'
+    - name: MINIO_USE_SSL
+      value: '{{ .Values.videoService.env.minioUseSSL }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.videoService.env.redisAddr }}'
+    - name: WORKER_CONCURRENCY
+      value: '{{ .Values.videoWorker.concurrency }}'
+    - name: TRANSCODE_TIMEOUT_MINUTES
+      value: '{{ .Values.videoWorker.jobTimeoutMinutes }}'
+  volumes:
+    - name: scratch
+      emptyDir:
+        sizeLimit: '{{ .Values.videoWorker.scratchSize }}'
+  volumeMounts:
+    - name: scratch
+      mountPath: /tmp
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 60 # transcodes are long; an interrupted job is retried elsewhere
+  preStopSleepSeconds: 0
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 80
+  probes: {}

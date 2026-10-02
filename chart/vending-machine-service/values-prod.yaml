@@ -1,0 +1,78 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through
+# a reviewed PR opened by the "Promote image" workflow.
+global:
+  environment: prod
+
+vendingMachineService:
+  image:
+    # Immutable tag promoted from staging; never `latest` in prod.
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  consul:
+    addr: http://consul-service.consul.svc.cluster.local
+
+  ingress:
+    enabled: true
+    host: vending.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/limit-rps: "100"
+      nginx.ingress.kubernetes.io/proxy-body-size: 1m
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    tls:
+      enabled: true
+
+  priorityClassName: store-critical
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 128Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 65
+    targetMemoryUtilizationPercentage: 80
+
+  pdb:
+    enabled: true
+    minAvailable: 2
+
+  topologySpread:
+    enabled: true
+    hostnameWhenUnsatisfiable: DoNotSchedule
+
+  terminationGracePeriodSeconds: 45
+  preStopSleepSeconds: 10
+
+  networkPolicy:
+    enabled: true
+    # Managed Postgres outside the cluster (e.g. RDS / Cloud SQL private range).
+    egress:
+      - to:
+          - ipBlock:
+              cidr: 10.20.0.0/16
+        ports:
+          - port: 5432
+            protocol: TCP
+    allowToApps:
+      - { name: payment-wallet-service-deployment, port: 8088 }
+      - { name: coupon-service-deployment, port: 8085 }
+      - { name: notification-service-deployment, port: 1235 }
+
+  externalSecret:
+    enabled: true
+    refreshInterval: 15m
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: store/prod/vending-machine-service/postgres
+        property: username
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: store/prod/vending-machine-service/postgres
+        property: password

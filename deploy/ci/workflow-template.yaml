@@ -1,0 +1,236 @@
+# The CI pipeline. Started every minute by cron-workflow.yaml; a run that
+# finds no new commit finishes after the detect step.
+#
+#   detect  -> sync the git mirror, diff against the last processed commit,
+#              export the build context of every changed service
+#   service -> per changed service (2 at a time):
+#                test   go vet + go test (Go services; Postgres/MySQL sidecars
+#                       when services.yaml lists testServices)
+#                image  docker build + push to localhost:5000/<image>:<tag>
+#
+# Argo CD Image Updater (image-updater.yaml) then rolls the new tag out to
+# store-dev. Manual run of selected services:
+#   argo -n ci submit --from workflowtemplate/store-ci -p force=vending-machine-service
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: store-ci
+  namespace: ci
+spec:
+  entrypoint: pipeline
+  serviceAccountName: ci-runner
+  arguments:
+    parameters:
+      # "" = only what changed, "all", or a comma-separated list of services.
+      - name: force
+        value: ""
+  podGC:
+    strategy: OnPodSuccess
+  ttlStrategy:
+    secondsAfterSuccess: 3600
+    secondsAfterFailure: 86400
+  onExit: cleanup
+  volumes:
+    - name: workspace
+      persistentVolumeClaim:
+        claimName: ci-workspace
+    - name: scripts
+      configMap:
+        name: ci-scripts
+        defaultMode: 0755
+    - name: docker-sock
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket
+
+  templates:
+    - name: pipeline
+      # Builds share one laptop: two services at a time.
+      parallelism: 2
+      steps:
+        - - name: detect
+            template: detect
+        - - name: service
+            template: service
+            withParam: "{{steps.detect.outputs.parameters.builds}}"
+            arguments:
+              parameters:
+                - { name: name, value: "{{item.name}}" }
+                - { name: image, value: "{{item.image}}" }
+                - { name: tag, value: "{{item.tag}}" }
+                - { name: src, value: "{{item.src}}" }
+                - { name: lang, value: "{{item.lang}}" }
+                - { name: goVersion, value: "{{item.goVersion}}" }
+                - { name: testEnv, value: "{{item.testEnv}}" }
+                - { name: db, value: "{{item.db}}" }
+                - { name: buildArgs, value: "{{item.buildArgs}}" }
+
+    - name: detect
+      container:
+        image: localhost:5000/ci-tools:1
+        command: [python3, /scripts/detect.py]
+        env:
+          - { name: REPO_URL, value: "https://github.com/JieeiroSst/store-service.git" }
+          - { name: BRANCH, value: master }
+          - { name: WORKSPACE, value: /workspace }
+          - { name: RUN_ID, value: "{{workflow.name}}" }
+          - { name: FORCE, value: "{{workflow.parameters.force}}" }
+        resources:
+          requests: { cpu: 50m, memory: 128Mi }
+          limits: { cpu: "1", memory: 1Gi }
+        volumeMounts:
+          - { name: workspace, mountPath: /workspace }
+          - { name: scripts, mountPath: /scripts }
+      outputs:
+        parameters:
+          - name: builds
+            valueFrom:
+              path: /tmp/builds.json
+
+    - name: service
+      inputs:
+        parameters:
+          - name: name
+          - name: image
+          - name: tag
+          - name: src
+          - name: lang
+          - name: goVersion
+          - name: testEnv
+          - name: db
+          - name: buildArgs
+      steps:
+        - - name: test
+            template: go-test
+            when: "'{{inputs.parameters.lang}}' == 'go' && '{{inputs.parameters.db}}' == 'false'"
+            arguments:
+              parameters:
+                - { name: src, value: "{{inputs.parameters.src}}" }
+                - { name: goVersion, value: "{{inputs.parameters.goVersion}}" }
+                - { name: testEnv, value: "{{inputs.parameters.testEnv}}" }
+          - name: test-with-db
+            template: go-test-db
+            when: "'{{inputs.parameters.lang}}' == 'go' && '{{inputs.parameters.db}}' == 'true'"
+            arguments:
+              parameters:
+                - { name: src, value: "{{inputs.parameters.src}}" }
+                - { name: goVersion, value: "{{inputs.parameters.goVersion}}" }
+                - { name: testEnv, value: "{{inputs.parameters.testEnv}}" }
+        - - name: image
+            template: image
+            arguments:
+              parameters:
+                - { name: image, value: "{{inputs.parameters.image}}" }
+                - { name: tag, value: "{{inputs.parameters.tag}}" }
+                - { name: src, value: "{{inputs.parameters.src}}" }
+                - { name: buildArgs, value: "{{inputs.parameters.buildArgs}}" }
+
+    - name: go-test
+      inputs:
+        parameters: [{ name: src }, { name: goVersion }, { name: testEnv }]
+      script:
+        image: "golang:{{inputs.parameters.goVersion}}"
+        command: [bash]
+        env:
+          - { name: TEST_ENV, value: "{{inputs.parameters.testEnv}}" }
+          - { name: GOMODCACHE, value: /workspace/cache/gomod }
+          - { name: GOCACHE, value: /workspace/cache/gobuild }
+          - { name: GOFLAGS, value: -buildvcs=false }
+          - { name: GOTOOLCHAIN, value: auto }
+        source: |
+          set -euo pipefail
+          cd "{{inputs.parameters.src}}"
+          if [ -n "$TEST_ENV" ]; then export $TEST_ENV; fi
+          for port in 5432 3306; do
+            # Database sidecars (go-test-db) need a moment to start listening.
+            if [ -n "${WAIT_FOR_DB:-}" ]; then
+              for i in $(seq 1 90); do (echo > /dev/tcp/127.0.0.1/$port) 2>/dev/null && break; sleep 2; done
+            fi
+          done
+          go vet ./...
+          go test ./...
+        resources:
+          requests: { cpu: 100m, memory: 256Mi }
+          limits: { cpu: "2", memory: 3Gi }
+        volumeMounts:
+          - { name: workspace, mountPath: /workspace }
+
+    - name: go-test-db
+      inputs:
+        parameters: [{ name: src }, { name: goVersion }, { name: testEnv }]
+      script:
+        image: "golang:{{inputs.parameters.goVersion}}"
+        command: [bash]
+        env:
+          - { name: TEST_ENV, value: "{{inputs.parameters.testEnv}}" }
+          - { name: GOMODCACHE, value: /workspace/cache/gomod }
+          - { name: GOCACHE, value: /workspace/cache/gobuild }
+          - { name: GOFLAGS, value: -buildvcs=false }
+          - { name: GOTOOLCHAIN, value: auto }
+          - { name: WAIT_FOR_DB, value: "1" }
+        source: |
+          set -euo pipefail
+          cd "{{inputs.parameters.src}}"
+          if [ -n "$TEST_ENV" ]; then export $TEST_ENV; fi
+          for port in 5432 3306; do
+            # Database sidecars (go-test-db) need a moment to start listening.
+            if [ -n "${WAIT_FOR_DB:-}" ]; then
+              for i in $(seq 1 90); do (echo > /dev/tcp/127.0.0.1/$port) 2>/dev/null && break; sleep 2; done
+            fi
+          done
+          go vet ./...
+          go test ./...
+        resources:
+          requests: { cpu: 100m, memory: 256Mi }
+          limits: { cpu: "2", memory: 3Gi }
+        volumeMounts:
+          - { name: workspace, mountPath: /workspace }
+
+      # Same databases the GitHub workflows started as job services.
+      sidecars:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - { name: POSTGRES_PASSWORD, value: pw }
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+        - name: mysql
+          image: mysql:8
+          env:
+            - { name: MYSQL_ROOT_PASSWORD, value: pw }
+            - { name: MYSQL_DATABASE, value: shop }
+          resources:
+            requests: { cpu: 50m, memory: 256Mi }
+
+    - name: image
+      inputs:
+        parameters: [{ name: image }, { name: tag }, { name: src }, { name: buildArgs }]
+      container:
+        image: localhost:5000/ci-tools:1
+        command: [sh, -c]
+        args:
+          - |
+            set -eu
+            # Builds run on the node's Docker daemon, so layer and base-image
+            # caches persist between runs.
+            docker build {{inputs.parameters.buildArgs}} \
+              --label org.opencontainers.image.revision={{inputs.parameters.tag}} \
+              -t {{inputs.parameters.image}}:{{inputs.parameters.tag}} \
+              {{inputs.parameters.src}}
+            docker push {{inputs.parameters.image}}:{{inputs.parameters.tag}}
+            docker rmi {{inputs.parameters.image}}:{{inputs.parameters.tag}} >/dev/null || true
+        resources:
+          requests: { cpu: 10m, memory: 32Mi }
+        volumeMounts:
+          - { name: workspace, mountPath: /workspace }
+          - { name: docker-sock, mountPath: /var/run/docker.sock }
+
+    - name: cleanup
+      container:
+        image: localhost:5000/ci-tools:1
+        command: [sh, -c]
+        args: ["rm -rf /workspace/src/{{workflow.name}}"]
+        resources:
+          requests: { cpu: 10m, memory: 16Mi }
+        volumeMounts:
+          - { name: workspace, mountPath: /workspace }

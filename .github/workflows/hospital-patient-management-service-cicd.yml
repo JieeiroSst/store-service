@@ -1,12 +1,10 @@
 name: Hospital Patient Management Service CI/CD
 
+# Day-to-day builds run in the local cluster (deploy/ci): every push to
+# master is built there and rolled out to store-dev. This workflow only
+# publishes a release image to ghcr.io for staging/prod - run it by hand
+# (Actions -> Run workflow), then promote the tag with promote.yml.
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - 'hospital-patient-management-service/**'
-      - 'chart/hospital-patient-management-service/**'
-      - '.github/workflows/hospital-patient-management-service-cicd.yml'
   workflow_dispatch:
 
 env:
@@ -62,28 +60,19 @@ jobs:
         with:
           context: ./hospital-patient-management-service
           push: true
+          provenance: mode=max
+          sbom: true
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
             ${{ env.IMAGE_NAME }}:latest
 
-  deploy:
-    needs: build-and-push
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
+      # Block the rollout on fixable critical CVEs in the pushed image.
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
 
-      - name: Deploy hospital-patient-management service
-        # These resources are owned by the umbrella "chart-1785009827" helm
-        # release (chart/), not a standalone release. `helm upgrade --install
-        # hospital-patient-management-service ...` fails every run with an ownership
-        # conflict against that release, so render+apply directly instead -
-        # this still triggers a normal rollout since the image tag changes.
-        run: |
-          helm template ./chart/hospital-patient-management-service \
-            --namespace default \
-            --set hospitalPatientManagementService.image.name=${{ env.IMAGE_NAME }} \
-            --set hospitalPatientManagementService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --set hospitalPatientManagementService.env.walletHospitalID=${{ vars.HOSPITAL_WALLET_ID }} \
-            | kubectl apply -n default -f -
-          kubectl rollout status deployment/hospital-patient-management-service-deployment -n default --timeout=5m

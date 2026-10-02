@@ -1,0 +1,35 @@
+# Argo CD: namespace store-staging, auto-synced.
+global:
+  environment: staging
+
+geoservicePostgres:
+  podSecurityContext:
+    # postgres user of the official image; fsGroup makes the volume writable.
+    runAsNonRoot: true
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+  # initdb needs an empty directory it owns; a volume's root has lost+found
+  # and the wrong mode, so keep the cluster in a subdirectory.
+  containerEnv:
+    - name: PGDATA
+      value: /var/lib/postgresql/data/pgdata
+  storage:
+    size: 20Gi
+    hostPath: ""
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+  # Only geoservice talks to its database.
+  networkPolicy:
+    enabled: true
+    allowFromApps:
+      - name: geoservice-deployment

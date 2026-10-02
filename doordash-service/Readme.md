@@ -70,7 +70,7 @@ doordash-service chủ động gọi 4 service khác qua HTTP để lấy dữ l
 | `paymentclient` | `PaymentClient` | payment service (`PAYMENT_SERVICE_BASE_URL`) | Giữ tiền (`AuthorizePayment`) cho tổng đơn trước khi lưu đơn |
 | `notifierclient` | `NotifierClient` | notification service (`NOTIFICATION_SERVICE_BASE_URL`) | Báo khách khi đơn được tạo/đổi trạng thái/huỷ — best-effort, lỗi chỉ log |
 
-Mỗi client có timeout riêng (`*_TIMEOUT`, mặc định `5s`) và base URL riêng, cấu hình qua env hoặc Consul (`config.ExternalServiceConfig`, xem mục 8). Base URL mặc định trỏ tới tên Service Kubernetes theo quy ước đã dùng trong repo (vd. `http://user-service-svc`, giống `threads-service`) — cần override bằng giá trị thật của từng service khi triển khai.
+Mỗi client có timeout riêng (`*_TIMEOUT`, mặc định `5s`) và base URL riêng, cấu hình qua env hoặc Consul (`config.ExternalServiceConfig`, xem mục 8). Base URL mặc định trỏ tới tên Service Kubernetes theo quy ước đã dùng trong repo (vd. `http://user-api-svc`, REST API của chart `user`) — cần override bằng giá trị thật của từng service khi triển khai.
 
 ## 6. Luồng nghiệp vụ chính
 
@@ -146,7 +146,7 @@ POST /api/v1/orders
 |---|---|---|
 | `PORT_HTTP_SERVER` | `8086` | Cổng HTTP |
 | `POSTGRES_HOST`/`PORT`/`USER`/`PASSWORD`/`DBNAME`/`SSLMODE` | `localhost`/`5432`/`postgres`/``/`doordash`/`disable` | Kết nối Postgres |
-| `USER_SERVICE_BASE_URL` / `USER_SERVICE_TIMEOUT` | `http://user-service-svc` / `5s` | user_service |
+| `USER_SERVICE_BASE_URL` / `USER_SERVICE_TIMEOUT` | `http://user-api-svc` / `5s` | user_service |
 | `RESTAURANT_SERVICE_BASE_URL` / `RESTAURANT_SERVICE_TIMEOUT` | `http://restaurant-service-svc` / `5s` | Restaurant/menu catalog service |
 | `PAYMENT_SERVICE_BASE_URL` / `PAYMENT_SERVICE_TIMEOUT` | `http://payment-service-svc` / `5s` | Payment service |
 | `NOTIFICATION_SERVICE_BASE_URL` / `NOTIFICATION_SERVICE_TIMEOUT` | `http://notification-service-svc` / `5s` | Notification service |

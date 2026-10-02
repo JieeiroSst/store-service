@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 polymarketService:
   name: polymarket-service
+  selectorApp: polymarket-service-deployment
+  containerName: polymarket-service-deployment
   replicas: 1
 
   image:
@@ -8,11 +14,12 @@ polymarketService:
     # Must match config.Server.PortHttpServer as resolved from env/Consul
     # (see polymarket-service/config/config.go).
     port: 8091
+    pullPolicy: Always
 
   service:
     name: polymarket-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ polymarketService:
     host: polymarket-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Plain env vars the container reads directly (see config.FromEnv) - works
   # standalone even before ops has seeded this service's config into the
@@ -92,3 +102,132 @@ polymarketService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.polymarketService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.polymarketService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.polymarketService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.polymarketService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: polymarket-service-secret
+          key: mysqlPassword
+    - name: MYSQL_DBNAME
+      value: '{{ .Values.polymarketService.env.mysqlDbname }}'
+    - name: WALLET_BASE_URL
+      value: '{{ .Values.polymarketService.env.walletBaseURL }}'
+    - name: TREASURY_WALLET_ID
+      value: '{{ .Values.polymarketService.env.treasuryWalletID }}'
+    - name: NOTIFICATION_BASE_URL
+      value: '{{ .Values.polymarketService.env.notificationBaseURL }}'
+    - name: EXCHANGE_CURRENCY
+      value: '{{ .Values.polymarketService.env.exchangeCurrency }}'
+    - name: SHARE_VALUE
+      value: '{{ .Values.polymarketService.env.shareValue }}'
+    - name: MIN_ORDER_SIZE
+      value: '{{ .Values.polymarketService.env.minOrderSize }}'
+    - name: DISPUTE_WINDOW
+      value: '{{ .Values.polymarketService.env.disputeWindow }}'
+    - name: DISPUTE_BOND
+      value: '{{ .Values.polymarketService.env.disputeBond }}'
+    - name: REWARD_EPOCH
+      value: '{{ .Values.polymarketService.env.rewardEpoch }}'
+    - name: TAKER_FEE_BPS
+      value: '{{ .Values.polymarketService.env.takerFeeBps }}'
+    - name: MAKER_REBATE_BPS
+      value: '{{ .Values.polymarketService.env.makerRebateBps }}'
+    - name: REFERRAL_BPS
+      value: '{{ .Values.polymarketService.env.referralBps }}'
+    - name: USER_SERVICE_BASE_URL
+      value: '{{ .Values.polymarketService.env.userServiceBaseURL }}'
+    - name: AUTH_MODE
+      value: '{{ .Values.polymarketService.env.authMode }}'
+    - name: REFERRAL_BASE_URL
+      value: '{{ .Values.polymarketService.env.referralBaseURL }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.polymarketService.env.redisAddr }}'
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: polymarket-service-secret
+          key: redisPassword
+    - name: ADMIN_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: polymarket-service-secret
+          key: adminToken
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="polymarket_service"
+      ServiceConsul="consul"
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: polymarket_service

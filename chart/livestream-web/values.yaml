@@ -1,16 +1,26 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 livestreamWeb:
   name: livestream-web
+  selectorApp: livestream-web-deployment
+  containerName: livestream-web
   replicas: 2
 
   image:
     name: ghcr.io/jieeirosst/livestream-web
     tag: latest
     port: 3000
+    pullPolicy: Always
 
   # Server-only - never reaches the browser. Base URLs this app's Route
   # Handlers/Server Components call server-side (see livestream-web/src/lib).
-  livestreamServiceURL: http://livestream-service-svc.default.svc.cluster.local
-  userServiceURL: http://user-service-svc.default.svc.cluster.local
+  # Bare Service names: resolved in whatever namespace this release runs in.
+  livestreamServiceURL: http://livestream-service-svc
+  # REST API (/api/v1/login) of chart/user's userApi (port 80 -> 1235); the
+  # user chart has no "user-service-svc".
+  userServiceURL: http://user-api-svc
 
   # NOTE: there is deliberately no NEXT_PUBLIC_LIVESTREAM_WS_URL here.
   # Next.js inlines NEXT_PUBLIC_* vars into the client bundle at
@@ -22,7 +32,7 @@ livestreamWeb:
   service:
     name: livestream-web-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -31,6 +41,9 @@ livestreamWeb:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   resources:
     requests:
       cpu: 100m
@@ -44,3 +57,74 @@ livestreamWeb:
     minReplicas: 2
     maxReplicas: 10
     targetCPUUtilizationPercentage: 65
+  containerEnv:
+    - name: LIVESTREAM_SERVICE_URL
+      value: '{{ .Values.livestreamWeb.livestreamServiceURL }}'
+    - name: USER_SERVICE_URL
+      value: '{{ .Values.livestreamWeb.userServiceURL }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 5
+    liveness:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

@@ -1,12 +1,10 @@
 name: Customer Relationship Service CI/CD
 
+# Day-to-day builds run in the local cluster (deploy/ci): every push to
+# master is built there and rolled out to store-dev. This workflow only
+# publishes a release image to ghcr.io for staging/prod - run it by hand
+# (Actions -> Run workflow), then promote the tag with promote.yml.
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - 'customer-relationship-service/**'
-      - 'chart/customer-relationship-service/**'
-      - '.github/workflows/customer-relationship-service-cicd.yml'
   workflow_dispatch:
 
 env:
@@ -62,27 +60,19 @@ jobs:
         with:
           context: ./customer-relationship-service
           push: true
+          provenance: mode=max
+          sbom: true
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
             ${{ env.IMAGE_NAME }}:latest
 
-  deploy:
-    needs: build-and-push
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
+      # Block the rollout on fixable critical CVEs in the pushed image.
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
 
-      - name: Deploy customer-relationship service
-        # These resources are owned by the umbrella "chart-1785009827" helm
-        # release (chart/), not a standalone release. `helm upgrade --install
-        # customer-relationship-service ...` fails every run with an ownership
-        # conflict against that release, so render+apply directly instead -
-        # this still triggers a normal rollout since the image tag changes.
-        run: |
-          helm template ./chart/customer-relationship-service \
-            --namespace default \
-            --set customerRelationshipService.image.name=${{ env.IMAGE_NAME }} \
-            --set customerRelationshipService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            | kubectl apply -n default -f -
-          kubectl rollout status deployment/customer-relationship-service-deployment -n default --timeout=5m

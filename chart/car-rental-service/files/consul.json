@@ -1,0 +1,25 @@
+{
+    "server": {
+        "port_http_server": "2222",
+        "port_grpc_server": "2223"
+    },
+    "postgres": {
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "car_rental",
+        "pg_driver": "pgx"
+    },
+    "roles": {
+        "admin_role": "admin",
+        "staff_role": "operator"
+    },
+    "user_service": {
+        "base_url": "http://user-service:1235",
+        "timeout_seconds": 3
+    },
+    "cache": {
+        "host": "redis-svc:80"
+    }
+}

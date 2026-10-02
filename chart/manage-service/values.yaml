@@ -1,16 +1,23 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 manageService:
   name: manage-service
+  selectorApp: manage-service-deployment
+  containerName: manage-service-deployment
   replicas: 1
 
   image:
     name: ghcr.io/jieeirosst/manage-service
     tag: latest
     port: 3031
+    pullPolicy: Always
 
   service:
     name: manage-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ manageService:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   env:
     keycloakHost: http://keycloak-service
     keycloakLegacyWildfly: "true"
@@ -40,3 +50,101 @@ manageService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: SERVER_PORT
+      value: '{{ .Values.manageService.image.port }}'
+    - name: KEYCLOAK_HOST
+      value: '{{ .Values.manageService.env.keycloakHost }}'
+    - name: KEYCLOAK_LEGACY_WILDFLY
+      value: '{{ .Values.manageService.env.keycloakLegacyWildfly }}'
+    - name: KEYCLOAK_ADMIN_REALM
+      value: '{{ .Values.manageService.env.keycloakAdminRealm }}'
+    - name: KEYCLOAK_ADMIN_USER
+      value: '{{ .Values.manageService.env.keycloakAdminUser }}'
+    - name: KEYCLOAK_ADMIN_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: manage-service-secret
+          key: keycloakAdminPassword
+    - name: AUTHORIZE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: manage-service-secret
+          key: authorizeKey
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 15
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="manage_service"
+      ServiceConsul="consul"
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: manage_service

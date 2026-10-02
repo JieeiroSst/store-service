@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 shopifyService:
   name: shopify-service
+  selectorApp: shopify-service-deployment
+  containerName: shopify-service-deployment
   replicas: 1
 
   image:
@@ -8,13 +14,12 @@ shopifyService:
     # Must match config.Server.PortHttpServer as resolved from env/Consul
     # (see shopify-service/config/config.go).
     port: 8092
+    pullPolicy: Always
 
   service:
     name: shopify-service-svc
     type: ClusterIP
-
-  # Shopify must reach POST /api/v1/webhooks over public HTTPS, so enable
-  # this (or expose the service another way) before registering webhooks.
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -22,6 +27,9 @@ shopifyService:
     host: shopify-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Plain env vars the container reads directly (see config.FromEnv) - works
   # standalone even before ops has seeded this service's config into the
@@ -57,3 +65,112 @@ shopifyService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.shopifyService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.shopifyService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.shopifyService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.shopifyService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: shopify-service-secret
+          key: mysqlPassword
+    - name: MYSQL_DBNAME
+      value: '{{ .Values.shopifyService.env.mysqlDbname }}'
+    - name: SHOPIFY_SHOP_DOMAIN
+      value: '{{ .Values.shopifyService.env.shopifyShopDomain }}'
+    - name: SHOPIFY_API_VERSION
+      value: '{{ .Values.shopifyService.env.shopifyAPIVersion }}'
+    - name: SHOPIFY_TIMEOUT
+      value: '{{ .Values.shopifyService.env.shopifyTimeout }}'
+    - name: SHOPIFY_ACCESS_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: shopify-service-secret
+          key: shopifyAccessToken
+    - name: SHOPIFY_API_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: shopify-service-secret
+          key: shopifyAPISecret
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 15
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="shopify_service"
+      ServiceConsul="consul"
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: shopify_service

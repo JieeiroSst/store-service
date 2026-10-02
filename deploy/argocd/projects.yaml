@@ -1,0 +1,114 @@
+# Two projects so prod gets its own RBAC, destinations and change windows.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: store-nonprod
+  namespace: argocd
+spec:
+  description: store-service dev and staging
+  sourceRepos:
+    - https://github.com/JieeiroSst/store-service.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: store-dev
+    - server: https://kubernetes.default.svc
+      namespace: store-staging
+    # The non-prod SecretStore reads the umbrella chart's Secrets here.
+    - server: https://kubernetes.default.svc
+      namespace: default
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  orphanedResources:
+    warn: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: store-prod
+  namespace: argocd
+spec:
+  description: store-service production
+  sourceRepos:
+    - https://github.com/JieeiroSst/store-service.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: store-prod
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: scheduling.k8s.io
+      kind: PriorityClass
+  orphanedResources:
+    warn: true
+  # Change freeze: no syncs Friday 12:00 UTC through Monday 00:00 UTC.
+  # manualSync lets on-call still push a hotfix by hand.
+  syncWindows:
+    - kind: deny
+      schedule: "0 12 * * 5"
+      duration: 60h
+      applications: ["*"]
+      manualSync: true
+  roles:
+    - name: release-managers
+      description: May sync production
+      policies:
+        - p, proj:store-prod:release-managers, applications, get, store-prod/*, allow
+        - p, proj:store-prod:release-managers, applications, sync, store-prod/*, allow
+      groups:
+        - store-release-managers
+---
+# Cluster add-ons (ingress controller, External Secrets, metrics-server,
+# cert-manager): third-party Helm charts with cluster-scoped resources.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: store-addons
+  namespace: argocd
+spec:
+  description: Cluster add-ons the store environments depend on
+  sourceRepos:
+    - https://kubernetes.github.io/ingress-nginx
+    - https://charts.external-secrets.io
+    - https://kubernetes-sigs.github.io/metrics-server/
+    - https://charts.jetstack.io
+    - https://argoproj.github.io/argo-helm
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: ingress-nginx
+    - server: https://kubernetes.default.svc
+      namespace: external-secrets
+    - server: https://kubernetes.default.svc
+      namespace: cert-manager
+    - server: https://kubernetes.default.svc
+      namespace: kube-system
+    - server: https://kubernetes.default.svc
+      namespace: argo
+    - server: https://kubernetes.default.svc
+      namespace: argocd
+    # Argo Workflows puts its executor RBAC into the namespace it serves.
+    - server: https://kubernetes.default.svc
+      namespace: ci
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+---
+# In-cluster CI for laptop clusters (deploy/ci): registry, Argo Workflows
+# pipeline, Image Updater rules. Never synced to a shared cluster.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: store-ci
+  namespace: argocd
+spec:
+  description: Local build pipeline
+  sourceRepos:
+    - https://github.com/JieeiroSst/store-service.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: ci
+    - server: https://kubernetes.default.svc
+      namespace: argocd
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace

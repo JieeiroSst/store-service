@@ -1,0 +1,2 @@
+{{- include "common.app" (dict "root" $ "svc" .Values.userApi) }}
+{{- include "common.app" (dict "root" $ "svc" .Values.userGrpc) }}

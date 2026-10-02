@@ -1,0 +1,5 @@
+environment: prod
+
+# PriorityClasses are cluster-scoped; prod owns them.
+priorityClasses:
+  create: true

@@ -1,0 +1,80 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
+# reviewed PR opened by the "Promote image" workflow.
+# The .env (Postgres/S3 credentials, PLAYBACK_SIGNING_SECRET,
+# INTERNAL_SHARED_SECRET) comes from store/prod/livestream-service/env-file.
+global:
+  environment: prod
+
+livestreamService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  node:
+    # StatefulSet: scaled by node capacity (streams), not by HPA.
+    replicas: 3
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 10001
+      runAsGroup: 10001
+      fsGroup: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    pdb:
+      enabled: true
+      maxUnavailable: 1
+    topologySpread:
+      enabled: true
+    priorityClassName: store-standard
+    envFile:
+      externalSecret:
+        remoteKey: store/prod/livestream-service/env-file
+        property: env
+
+  edge:
+    # Browsers talk to the edge directly (rooms, viewer heartbeat, chat).
+    ingress:
+      enabled: true
+      host: live-api.store.example.com
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        # Chat is a long-lived WebSocket.
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+        nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+      tls:
+        enabled: true
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 10001
+      runAsGroup: 10001
+      fsGroup: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 30
+      targetCPUUtilizationPercentage: 65
+    pdb:
+      enabled: true
+      maxUnavailable: 1
+    topologySpread:
+      enabled: true
+    priorityClassName: store-standard
+    envFile:
+      externalSecret:
+        remoteKey: store/prod/livestream-service/env-file
+        property: env

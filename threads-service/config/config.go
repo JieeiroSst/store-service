@@ -64,7 +64,7 @@ func FromEnv() *Config {
 			DB:       getEnvInt("REDIS_DB", 0),
 		},
 		UserService: UserServiceConfig{
-			BaseURL: getEnv("USER_SERVICE_BASE_URL", "http://user-service-svc"),
+			BaseURL: getEnv("USER_SERVICE_BASE_URL", "http://user-api-svc"),
 			Timeout: getEnv("USER_SERVICE_TIMEOUT", "5s"),
 		},
 	}

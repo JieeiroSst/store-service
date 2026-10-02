@@ -1,3 +1,7 @@
+{{- /* Local clusters only: a hostPath volume bound to the claim below. Real
+       clusters leave storage.hostPath empty and get a dynamically
+       provisioned volume from storage.storageClass. */}}
+{{- if .Values.geoservicePostgres.storage.hostPath }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -10,6 +14,7 @@ spec:
   capacity:
     storage: {{ .Values.geoservicePostgres.storage.size }}
   accessModes:
-    - ReadWriteMany
+    {{- toYaml .Values.geoservicePostgres.storage.accessModes | nindent 4 }}
   hostPath:
     path: {{ .Values.geoservicePostgres.storage.hostPath | quote }}
+{{- end }}

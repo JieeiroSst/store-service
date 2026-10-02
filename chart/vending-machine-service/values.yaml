@@ -1,3 +1,10 @@
+# Base values: what `helm install` of the umbrella chart runs on a local
+# cluster. Environment overlays (values-dev.yaml, values-staging.yaml,
+# values-prod.yaml) are layered on top by Argo CD - see deploy/argocd.
+
+global:
+  environment: local
+
 vendingMachineService:
   name: vending-machine-service
   replicas: 1
@@ -5,11 +12,17 @@ vendingMachineService:
   image:
     name: ghcr.io/jieeirosst/vending-machine-service
     tag: latest
+    # Set to a sha256 digest to pin the exact scanned image (wins over tag).
+    digest: ""
+    pullPolicy: IfNotPresent
     port: 8080
+
+  imagePullSecrets: []
 
   service:
     name: vending-machine-service-svc
     type: ClusterIP
+    port: 80
 
   ingress:
     enabled: false
@@ -18,12 +31,100 @@ vendingMachineService:
     host: vending-machine-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ""
 
   consul:
     addr: http://consul-service
     key: vending_machine_service
 
+  # Created by the postgres chart locally, by an ExternalSecret elsewhere.
   credentialsSecret: vending-machine-service-db-credentials
+
+  # Rendered through `tpl`, so values may reference other values.
+  containerEnv:
+    - name: CONSUL_ADDR
+      value: "{{ .Values.vendingMachineService.consul.addr }}"
+    - name: CONSUL_KEY
+      value: "{{ .Values.vendingMachineService.consul.key }}"
+    - name: PORT_HTTP_SERVER
+      value: "{{ .Values.vendingMachineService.image.port }}"
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.vendingMachineService.credentialsSecret }}"
+          key: POSTGRES_USER
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.vendingMachineService.credentialsSecret }}"
+          key: POSTGRES_PASSWORD
+
+  probes:
+    # Holds off liveness until the first successful start, so a slow
+    # migration on boot doesn't get the pod killed.
+    startup:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 5
+      failureThreshold: 24
+    readiness:
+      httpGet:
+        path: /health/ready
+        port: http
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 20
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+    automountToken: false
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+
+  podAnnotations: {}
+  podLabels: {}
+
+  # Labels the platform chart's shared NetworkPolicies select on.
+  networkLabels:
+    consulClient: true
+
+  priorityClassName: ""
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
 
   resources:
     requests:
@@ -38,3 +139,37 @@ vendingMachineService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 70
+
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+
+  # The service has no /metrics endpoint yet; flip on once it does.
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ""
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+
+  externalSecret:
+    enabled: false
+    targetName: vending-machine-service-db-credentials
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+
+  consulSeed:
+    image: curlimages/curl:8.10.1
+    enabled: true
+    key: vending_machine_service

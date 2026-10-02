@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 movieRecommendationService:
   name: movie-recommendation-service
+  selectorApp: movie-recommendation-service-deployment
+  containerName: movie-recommendation-service-deployment
   replicas: 1
 
   image:
@@ -7,11 +13,12 @@ movieRecommendationService:
     tag: latest
     # Must match PORT_HTTP_SERVER (see movie-recommendation-service/config/config.go).
     port: 8080
+    pullPolicy: Always
 
   service:
     name: movie-recommendation-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ movieRecommendationService:
     host: movie-recommendation-service.local
     path: /api/recommendations
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Dev defaults - override the password with --set or a values-prod.yaml
   # before deploying anywhere real. The database is created and the schema
@@ -69,3 +79,108 @@ movieRecommendationService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.movieRecommendationService.image.port }}'
+    - name: ALLOWED_ORIGINS
+      value: '{{ .Values.movieRecommendationService.env.allowedOrigins }}'
+    - name: POSTGRES_HOST
+      value: '{{ .Values.movieRecommendationService.env.postgresHost }}'
+    - name: POSTGRES_PORT
+      value: '{{ .Values.movieRecommendationService.env.postgresPort }}'
+    - name: POSTGRES_DATABASE
+      value: '{{ .Values.movieRecommendationService.env.postgresDatabase }}'
+    - name: POSTGRES_SSLMODE
+      value: '{{ .Values.movieRecommendationService.env.postgresSSLMode }}'
+    - name: POSTGRES_USER
+      value: '{{ .Values.movieRecommendationService.env.postgresUser }}'
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: movie-recommendation-service-secret
+          key: postgresPassword
+    - name: VIDEO_SERVICE_BASE_URL
+      value: '{{ .Values.movieRecommendationService.env.videoServiceBaseURL }}'
+    - name: SYNC_INTERVAL_SECONDS
+      value: '{{ .Values.movieRecommendationService.env.syncIntervalSeconds }}'
+    - name: TRAIN_INTERVAL_SECONDS
+      value: '{{ .Values.movieRecommendationService.env.trainIntervalSeconds }}'
+    - name: TRAIN_WINDOW_DAYS
+      value: '{{ .Values.movieRecommendationService.env.trainWindowDays }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.movieRecommendationService.env.redisAddr }}'
+      when: '{{ .Values.movieRecommendationService.env.redisAddr }}'
+    - name: NEW_HALF_LIFE_DAYS
+      value: '{{ .Values.movieRecommendationService.env.newHalfLifeDays }}'
+    - name: DIVERSITY
+      value: '{{ .Values.movieRecommendationService.env.diversity }}'
+    - name: SNAPSHOT_TTL_MINUTES
+      value: '{{ .Values.movieRecommendationService.env.snapshotTTLMinutes }}'
+    - name: TRENDING_HALF_LIFE_HOURS
+      value: '{{ .Values.movieRecommendationService.env.trendingHalfLifeHours }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /readyz
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /healthz
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

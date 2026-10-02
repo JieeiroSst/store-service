@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 referralService:
   name: referral-service
+  selectorApp: referral-service-deployment
+  containerName: referral-service-deployment
   replicas: 1
 
   image:
@@ -7,12 +13,13 @@ referralService:
     tag: latest
     # Must match APP_PORT (see referral-service/internal/config/config.go).
     port: 8080
+    pullPolicy: Always
 
   service:
     # polymarket-service and other callers reach it at http://referral-service-svc
     name: referral-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ referralService:
     host: referral-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # The service reads plain environment variables. Dev defaults - override the
   # secrets with --set or a values-prod.yaml before deploying anywhere real.
@@ -77,3 +87,120 @@ referralService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  initContainersTemplate: referral-service.initContainers
+  containerEnv:
+    - name: APP_ENV
+      value: '{{ .Values.referralService.env.appEnv }}'
+    - name: APP_PORT
+      value: '{{ .Values.referralService.image.port }}'
+    - name: LOG_LEVEL
+      value: '{{ .Values.referralService.env.logLevel }}'
+    - name: APP_PUBLIC_URL
+      value: '{{ .Values.referralService.env.publicURL }}'
+    - name: APP_STORE_URL
+      value: '{{ .Values.referralService.env.appStoreURL }}'
+    - name: PLAY_STORE_URL
+      value: '{{ .Values.referralService.env.playStoreURL }}'
+    - name: REFERRAL_TTL_DAYS
+      value: '{{ .Values.referralService.env.referralTTLDays }}'
+    - name: MAX_REFERRAL_PER_DAY
+      value: '{{ .Values.referralService.env.maxReferralPerDay }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.referralService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.referralService.env.mysqlPort }}'
+    - name: MYSQL_DATABASE
+      value: '{{ .Values.referralService.env.mysqlDatabase }}'
+    - name: COM_MYSQL_USERNAME
+      value: '{{ .Values.referralService.env.mysqlUser }}'
+    - name: COM_MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: referral-service-secret
+          key: mysqlPassword
+    - name: COM_REDIS_ENDPOINT
+      value: '{{ .Values.referralService.env.redisEndpoint }}'
+    - name: COM_REDIS_PORT
+      value: '{{ .Values.referralService.env.redisPort }}'
+    - name: COM_REDIS_USERNAME
+      value: '{{ .Values.referralService.env.redisUsername }}'
+    - name: COM_REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: referral-service-secret
+          key: redisPassword
+    - name: RABBITMQ_HOST
+      value: '{{ .Values.referralService.rabbitmq.host }}'
+    - name: RABBITMQ_PORT
+      value: '{{ .Values.referralService.rabbitmq.port }}'
+    - name: RABBITMQ_EXCHANGE
+      value: '{{ .Values.referralService.rabbitmq.exchange }}'
+    - name: RABBITMQ_ROUTING_KEY
+      value: '{{ .Values.referralService.rabbitmq.routingKey }}'
+    - name: COM_RABBITMQ_USERNAME
+      value: '{{ .Values.referralService.rabbitmq.user }}'
+    - name: COM_RABBITMQ_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: referral-service-secret
+          key: rabbitmqPassword
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

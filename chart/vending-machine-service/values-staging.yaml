@@ -1,0 +1,61 @@
+# Argo CD: namespace store-staging, auto-synced. Promoted from dev with the
+# "Promote image" workflow; mirrors prod topology at smaller scale.
+global:
+  environment: staging
+
+vendingMachineService:
+  image:
+    tag: latest
+
+  consul:
+    addr: http://consul-service.default.svc.cluster.local
+
+  ingress:
+    enabled: true
+    host: vending.staging.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/limit-rps: "50"
+    tls:
+      enabled: true
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+
+  topologySpread:
+    enabled: true
+
+  networkPolicy:
+    enabled: true
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+    allowToApps:
+      - { name: payment-wallet-service-deployment, namespace: default, port: 8088 }
+      - { name: coupon-service-deployment, namespace: default, port: 8085 }
+      - { name: notification-service-deployment, namespace: default, port: 1235 }
+
+  # Staging shares the non-prod Postgres, so it reads the same Secret as dev.
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: vending-machine-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: vending-machine-service-db-credentials
+        property: POSTGRES_PASSWORD

@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 paymentService:
   name: payment-service
+  selectorApp: payment-service-deployment
+  containerName: payment-service-deployment
   replicas: 1
 
   image:
@@ -8,11 +14,12 @@ paymentService:
     # Must match config.Server.PortHttpServer as resolved from env/Consul
     # (see payment_service/config/config.go).
     port: 8090
+    pullPolicy: Always
 
   service:
     name: payment-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ paymentService:
     host: payment-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Plain env vars the container reads directly (see config.FromEnv) - works
   # standalone even before ops has seeded this service's config into the
@@ -74,3 +84,155 @@ paymentService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.paymentService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.paymentService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.paymentService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.paymentService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: mysqlPassword
+    - name: MYSQL_DBNAME
+      value: '{{ .Values.paymentService.env.mysqlDbname }}'
+    - name: PAYPAL_BASE_URL
+      value: '{{ .Values.paymentService.env.paypalBaseURL }}'
+    - name: PAYPAL_CLIENT_ID
+      value: '{{ .Values.paymentService.env.paypalClientID }}'
+    - name: PAYPAL_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: paypalClientSecret
+    - name: PAYPAL_WEBHOOK_ID
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: paypalWebhookID
+    - name: PAYONEER_BASE_URL
+      value: '{{ .Values.paymentService.env.payoneerBaseURL }}'
+    - name: PAYONEER_PROGRAM_ID
+      value: '{{ .Values.paymentService.env.payoneerProgramID }}'
+    - name: PAYONEER_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: payoneerAPIKey
+    - name: PAYONEER_WEBHOOK_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: payoneerWebhookSecret
+    - name: STRIPE_BASE_URL
+      value: '{{ .Values.paymentService.env.stripeBaseURL }}'
+    - name: STRIPE_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: stripeSecretKey
+    - name: STRIPE_WEBHOOK_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: stripeWebhookSecret
+    - name: WISE_BASE_URL
+      value: '{{ .Values.paymentService.env.wiseBaseURL }}'
+    - name: WISE_PROFILE_ID
+      value: '{{ .Values.paymentService.env.wiseProfileID }}'
+    - name: WISE_API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: wiseAPIToken
+    - name: WISE_WEBHOOK_PUBLIC_KEY
+      valueFrom:
+        secretKeyRef:
+          name: payment-service-secret
+          key: wiseWebhookPublicKey
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="payment_service"
+      ServiceConsul="consul"
+  # No health endpoint known for this service: TCP checks on the http port.
+  # Swap for httpGet once the service exposes /health.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: payment_service

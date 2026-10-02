@@ -1,0 +1,36 @@
+# Argo CD: namespace store-dev, auto-synced. CI bumps image.tag on every merge to master.
+global:
+  environment: dev
+threadsService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: true
+    internet: false
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 60
+    # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+    # limits from values.yaml still cap each pod.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi

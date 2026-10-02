@@ -1,0 +1,33 @@
+# chart/platform for store-staging: namespace, quotas, baseline NetworkPolicies,
+# SecretStore, infra aliases.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-staging
+  namespace: argocd
+  labels:
+    environment: staging
+    layer: platform
+  annotations:
+    # Namespace and SecretStore exist before the services that use them.
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  project: store-nonprod
+  source:
+    repoURL: https://github.com/JieeiroSst/store-service.git
+    targetRevision: master
+    path: chart/platform
+    helm:
+      releaseName: platform
+      valueFiles:
+        - values.yaml
+        - values-staging.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: store-staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

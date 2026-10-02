@@ -1,0 +1,51 @@
+{
+    "server": {
+        "portHttpServer": "8091"
+    },
+    "mysql": {
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
+        "mysqlUser": "root",
+        "mysqlPassword": "password",
+        "mysqlDbname": "polymarket_service"
+    },
+    "wallet": {
+        "baseURL": "http://payment-wallet-service-svc",
+        "timeout": "10s",
+        "treasuryWalletID": ""
+    },
+    "notification": {
+        "baseURL": "http://notification-service-svc",
+        "timeout": "5s"
+    },
+    "exchange": {
+        "currency": "USD",
+        "shareValue": 100,
+        "minOrderSize": 1,
+        "disputeWindow": "2h",
+        "disputeBond": 0,
+        "rewardEpoch": "1m"
+    },
+    "userService": {
+        "baseURL": "http://user-api-svc",
+        "timeout": "5s",
+        "authMode": "gateway"
+    },
+    "referral": {
+        "baseURL": "http://referral-service-svc",
+        "timeout": "5s"
+    },
+    "redis": {
+        "addr": "redis-svc:80",
+        "password": "",
+        "db": 0
+    },
+    "fees": {
+        "takerFeeBps": 0,
+        "makerRebateBps": 2000,
+        "referralBps": 1000
+    },
+    "admin": {
+        "token": ""
+    }
+}

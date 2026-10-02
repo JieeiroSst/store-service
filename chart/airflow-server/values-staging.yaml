@@ -1,0 +1,66 @@
+# Argo CD: namespace store-staging, auto-synced.
+global:
+  environment: staging
+
+airflowServer:
+  webserver:
+    replicas: 2
+    service:
+      type: ClusterIP
+    # airflow image user: uid 50000, group 0.
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 50000
+      runAsGroup: 0
+      fsGroup: 0
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    pdb:
+      enabled: true
+      maxUnavailable: 1
+    topologySpread:
+      enabled: true
+  scheduler:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 50000
+      runAsGroup: 0
+      fsGroup: 0
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+  postgres:
+    persistence:
+      enabled: true
+      size: 10Gi
+    # postgres image user.
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    # Only Airflow's own components reach the metadata database.
+    networkPolicy:
+      enabled: true
+      allowFromApps:
+        - name: airflow-server-webserver
+        - name: airflow-server-scheduler

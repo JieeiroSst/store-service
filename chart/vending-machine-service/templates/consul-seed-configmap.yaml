@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Values.vendingMachineService.name }}-consul-seed
-data:
-  {{ .Values.vendingMachineService.consul.key }}.json: |-
-{{ .Files.Get "files/consul.json" | indent 4 }}

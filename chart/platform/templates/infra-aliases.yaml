@@ -1,0 +1,22 @@
+{{/*
+Short-name aliases for shared infrastructure. Service config (Consul KV,
+.env files) addresses dependencies by bare Service name (postgresdb,
+mysql-svc, consul-service, ...). An ExternalName Service with the same name
+in each environment namespace points that name at wherever the dependency
+really lives: the umbrella chart's namespace on non-prod clusters, managed
+endpoints (RDS, ElastiCache, ...) in prod. Ports are not remapped, so the
+target must listen on the port clients already use.
+*/}}
+{{- range $name, $target := .Values.infraAliases.services }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    app.kubernetes.io/part-of: store-service
+    app.kubernetes.io/component: infra-alias
+spec:
+  type: ExternalName
+  externalName: {{ if contains "." $target }}{{ $target }}{{ else }}{{ printf "%s.%s.svc.cluster.local" $target $.Values.infraAliases.namespace }}{{ end }}
+{{- end }}

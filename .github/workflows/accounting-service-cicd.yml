@@ -1,12 +1,10 @@
 name: Restaurant Accounting Service CI/CD
 
+# Day-to-day builds run in the local cluster (deploy/ci): every push to
+# master is built there and rolled out to store-dev. This workflow only
+# publishes a release image to ghcr.io for staging/prod - run it by hand
+# (Actions -> Run workflow), then promote the tag with promote.yml.
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - 'restaurant/accounting-service/**'
-      - 'chart/accounting-service/**'
-      - '.github/workflows/accounting-service-cicd.yml'
   workflow_dispatch:
 
 env:
@@ -62,24 +60,19 @@ jobs:
         with:
           context: ./restaurant/accounting-service
           push: true
+          provenance: mode=max
+          sbom: true
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
             ${{ env.IMAGE_NAME }}:latest
 
-  deploy:
-    needs: build-and-push
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
+      # Block the rollout on fixable critical CVEs in the pushed image.
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
 
-      - name: Deploy accounting service
-        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
-        # not a standalone release - render+apply directly to avoid ownership conflicts.
-        run: |
-          helm template ./chart/accounting-service \
-          --namespace default \
-          --set accountingService.image.name=${{ env.IMAGE_NAME }} \
-          --set accountingService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-          | kubectl apply -n default -f -
-          kubectl rollout status deployment/accounting-service-deployment -n default --timeout=5m

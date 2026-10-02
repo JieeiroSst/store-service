@@ -1,16 +1,23 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 addressCountry:
   name: address-country
+  selectorApp: address-country-deployment
+  containerName: address-country-deployment
   replicas: 1
 
   image:
     name: ghcr.io/jieeirosst/address-country-service
     tag: latest
     port: 8000
+    pullPolicy: Always
 
   service:
     name: address-country-svc
     type: LoadBalancer
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ addressCountry:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   resources:
     requests:
       cpu: 50m
@@ -32,3 +42,85 @@ addressCountry:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="address_country_service"
+      ServiceConsul="consul"
+  # No health endpoint known for this service: TCP checks on the http port.
+  # Swap for httpGet once the service exposes /health.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: address_country_service

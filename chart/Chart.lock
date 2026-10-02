@@ -76,75 +76,195 @@ dependencies:
   version: 0.1.0
 - name: admanagement
   repository: file://admanagement
-  version: 0.1.0
+  version: 0.2.0
 - name: account-transaction
   repository: file://account-transaction
-  version: 0.1.0
+  version: 0.2.0
 - name: user
   repository: file://user
-  version: 0.1.0
+  version: 0.2.0
 - name: address-country
   repository: file://address-country
-  version: 0.1.0
+  version: 0.2.0
 - name: airflow-service
   repository: file://airflow-service
-  version: 0.1.0
+  version: 0.2.0
 - name: airflow-server
   repository: file://airflow-server
-  version: 0.1.0
+  version: 0.2.0
 - name: arrange-service
   repository: file://arrange-service
-  version: 0.1.0
+  version: 0.2.0
 - name: authorize-service
   repository: file://authorize-service
-  version: 0.1.0
+  version: 0.2.0
 - name: automatic-payment-service
   repository: file://automatic-payment-service
-  version: 0.1.0
+  version: 0.2.0
 - name: banking-service
   repository: file://banking-service
-  version: 0.1.0
+  version: 0.2.0
 - name: basket-service
   repository: file://basket-service
-  version: 0.1.0
+  version: 0.2.0
 - name: billing-service
   repository: file://billing-service
-  version: 0.1.0
+  version: 0.2.0
 - name: notification-service
   repository: file://notification-service
-  version: 0.1.0
+  version: 0.2.0
 - name: booking-mini-service
   repository: file://booking-mini-service
-  version: 0.1.0
+  version: 0.2.0
 - name: book-store-service
   repository: file://book-store-service
-  version: 0.1.0
+  version: 0.2.0
 - name: cdn-service
   repository: file://cdn-service
-  version: 0.1.0
+  version: 0.2.0
 - name: bot-service
   repository: file://bot-service
-  version: 0.1.0
+  version: 0.2.0
 - name: livestream-service
   repository: file://livestream-service
-  version: 0.1.0
+  version: 0.2.0
 - name: livestream-web
   repository: file://livestream-web
-  version: 0.1.1
+  version: 0.2.0
 - name: calculate-service
   repository: file://calculate-service
-  version: 0.1.0
+  version: 0.2.0
 - name: geoservice
   repository: file://geoservice
-  version: 0.1.0
+  version: 0.2.0
 - name: geoservice-postgres
   repository: file://geoservice-postgres
-  version: 0.1.0
+  version: 0.2.0
 - name: shortlink-service
   repository: file://shortlink-service
-  version: 0.1.0
+  version: 0.2.0
 - name: lottery-service
   repository: file://lottery-service
+  version: 0.2.0
+- name: gateway-service
+  repository: file://gateway-service
+  version: 0.2.0
+- name: consumer-service
+  repository: file://consumer-service
+  version: 0.2.0
+- name: accounting-service
+  repository: file://accounting-service
+  version: 0.2.0
+- name: order-service
+  repository: file://order-service
+  version: 0.2.0
+- name: kitchen-service
+  repository: file://kitchen-service
+  version: 0.2.0
+- name: delivery-service
+  repository: file://delivery-service
+  version: 0.2.0
+- name: threads-service
+  repository: file://threads-service
+  version: 0.2.0
+- name: post-service
+  repository: file://post-service
+  version: 0.2.0
+- name: parking-lot-service
+  repository: file://parking-lot-service
+  version: 0.2.0
+- name: coupon-service
+  repository: file://coupon-service
+  version: 0.2.0
+- name: doordash-service
+  repository: file://doordash-service
+  version: 0.2.0
+- name: ekyc-service
+  repository: file://ekyc-service
+  version: 0.2.0
+- name: partner-service
+  repository: file://partner-service
+  version: 0.2.0
+- name: payment-service
+  repository: file://payment-service
+  version: 0.2.0
+- name: polymarket-service
+  repository: file://polymarket-service
+  version: 0.2.0
+- name: referral-service
+  repository: file://referral-service
+  version: 0.2.0
+- name: customer-relationship-service
+  repository: file://customer-relationship-service
+  version: 0.2.0
+- name: clamav
+  repository: file://clamav
   version: 0.1.0
-digest: sha256:624874da20b1ab13a640917eb28414c52d9cd39c953791f392b30c11ba8bf0f2
-generated: "2026-08-28T15:27:11.998878+07:00"
+- name: bonuslink-service
+  repository: file://bonuslink-service
+  version: 0.2.0
+- name: payment-wallet-service
+  repository: file://payment-wallet-service
+  version: 0.2.0
+- name: video-service
+  repository: file://video-service
+  version: 0.2.0
+- name: video-web
+  repository: file://video-web
+  version: 0.2.0
+- name: room-service
+  repository: file://room-service
+  version: 0.2.0
+- name: room-web
+  repository: file://room-web
+  version: 0.2.0
+- name: hospital-patient-management-service
+  repository: file://hospital-patient-management-service
+  version: 0.2.0
+- name: upload-service
+  repository: file://upload-service
+  version: 0.2.0
+- name: car-rental-service
+  repository: file://car-rental-service
+  version: 0.2.0
+- name: catalogues-service
+  repository: file://catalogues-service
+  version: 0.2.0
+- name: movie-recommendation-service
+  repository: file://movie-recommendation-service
+  version: 0.2.0
+- name: recompense-service
+  repository: file://recompense-service
+  version: 0.2.0
+- name: rent-house-service
+  repository: file://rent-house-service
+  version: 0.2.0
+- name: reservation-service
+  repository: file://reservation-service
+  version: 0.2.0
+- name: ticket-service
+  repository: file://ticket-service
+  version: 0.2.0
+- name: tool-service
+  repository: file://tool-service
+  version: 0.2.0
+- name: shopify-service
+  repository: file://shopify-service
+  version: 0.2.0
+- name: medical-service
+  repository: file://medical-service
+  version: 0.2.0
+- name: shipping-service
+  repository: file://shipping-service
+  version: 0.2.0
+- name: manage-service
+  repository: file://manage-service
+  version: 0.2.0
+- name: draw-image-service
+  repository: file://draw-image-service
+  version: 0.2.0
+- name: vending-machine-service
+  repository: file://vending-machine-service
+  version: 0.2.0
+digest: sha256:824645be7ca29755c015a4b68bd950bd7284afb4f5f05136522a80ea0ae90913
+generated: "2026-10-02T21:57:32.594399+07:00"

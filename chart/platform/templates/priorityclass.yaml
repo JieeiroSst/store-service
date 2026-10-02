@@ -1,0 +1,14 @@
+{{/* Cluster-scoped: enable in exactly one environment per cluster. */}}
+{{- if .Values.priorityClasses.create }}
+{{- range .Values.priorityClasses.items }}
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ .name }}
+value: {{ .value }}
+globalDefault: false
+preemptionPolicy: {{ .preemptionPolicy | default "PreemptLowerPriority" }}
+description: {{ .description | quote }}
+{{- end }}
+{{- end }}

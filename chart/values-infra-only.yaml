@@ -1,0 +1,132 @@
+# Umbrella install on a cluster where Argo CD runs the services (store-dev):
+# only shared infrastructure stays in `default`.
+#   helm template chart-1785009827 ./chart -n default -f chart/values-infra-only.yaml | kubectl apply -n default -f -
+# Every chart listed here is deployed from chart/<name>/values-dev.yaml by
+# deploy/argocd/applicationsets/services-dev.yaml instead.
+
+account-transaction:
+  enabled: false
+accountingService:
+  enabled: false
+address-country:
+  enabled: false
+admanagement:
+  enabled: false
+airflow-service:
+  enabled: false
+airflowServer:
+  enabled: false
+arrange:
+  enabled: false
+authorize:
+  enabled: false
+automaticPayment:
+  enabled: false
+bankingService:
+  enabled: false
+basketService:
+  enabled: false
+billingService:
+  enabled: false
+bonuslinkService:
+  enabled: false
+bookStoreService:
+  enabled: false
+bookingMiniService:
+  enabled: false
+botService:
+  enabled: false
+calculate:
+  enabled: false
+carRentalService:
+  enabled: false
+cataloguesService:
+  enabled: false
+cdnService:
+  enabled: false
+consumerService:
+  enabled: false
+couponService:
+  enabled: false
+customerRelationshipService:
+  enabled: false
+deliveryService:
+  enabled: false
+doordashService:
+  enabled: false
+drawImageService:
+  enabled: false
+ekycService:
+  enabled: false
+gatewayService:
+  enabled: false
+geoservice:
+  enabled: false
+geoservicePostgres:
+  enabled: false
+hospitalPatientManagementService:
+  enabled: false
+kitchenService:
+  enabled: false
+livestreamService:
+  enabled: false
+livestreamWeb:
+  enabled: false
+lottery:
+  enabled: false
+manageService:
+  enabled: false
+medicalService:
+  enabled: false
+movieRecommendationService:
+  enabled: false
+notificationService:
+  enabled: false
+orderService:
+  enabled: false
+parkingLotService:
+  enabled: false
+partnerService:
+  enabled: false
+paymentService:
+  enabled: false
+paymentWalletService:
+  enabled: false
+polymarketService:
+  enabled: false
+postService:
+  enabled: false
+recompenseService:
+  enabled: false
+referralService:
+  enabled: false
+rentHouseService:
+  enabled: false
+reservationService:
+  enabled: false
+roomService:
+  enabled: false
+roomWeb:
+  enabled: false
+shippingService:
+  enabled: false
+shopifyService:
+  enabled: false
+shortlinkService:
+  enabled: false
+threadsService:
+  enabled: false
+ticketService:
+  enabled: false
+toolService:
+  enabled: false
+uploadService:
+  enabled: false
+user:
+  enabled: false
+vendingMachineService:
+  enabled: false
+videoService:
+  enabled: false
+videoWeb:
+  enabled: false

@@ -1,0 +1,25 @@
+# App-of-apps for the production cluster (store-staging + store-prod).
+# Bootstrap once by hand after installing Argo CD:
+#   kubectl apply -n argocd -f deploy/argocd/projects.yaml -f deploy/argocd/root.yaml
+# Everything it includes is then reconciled from git.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: store-root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/JieeiroSst/store-service.git
+    targetRevision: master
+    path: deploy/argocd
+    directory:
+      recurse: true
+      include: "{projects.yaml,applicationsets/*-staging.yaml,applicationsets/*-prod.yaml,addons/production/*.yaml}"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

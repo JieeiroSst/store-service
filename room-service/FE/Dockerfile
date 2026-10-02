@@ -10,7 +10,9 @@ ARG REACT_APP_API_URL=""
 ENV REACT_APP_API_URL=${REACT_APP_API_URL}
 RUN npm run build
 
-FROM nginx:1.27-alpine
+# Runs as uid 101 and listens on 8080, so the pod passes the "restricted"
+# Pod Security Standard (no root, no NET_BIND_SERVICE).
+FROM nginxinc/nginx-unprivileged:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080

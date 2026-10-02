@@ -1,0 +1,9 @@
+apiVersion: v2
+name: common
+description: >-
+  Library chart with production-grade building blocks (Deployment, Service,
+  Ingress, HPA, PDB, NetworkPolicy, ServiceAccount, ServiceMonitor,
+  ExternalSecret) shared by the store-service application charts.
+
+type: library
+version: 0.1.0

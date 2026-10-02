@@ -1,0 +1,38 @@
+{
+    "server": {
+        "port_http_server": "8080"
+    },
+    "postgres": {
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "bot_service",
+        "postgresql_ssl_mode": false
+    },
+    "scheduler": {
+        "poll_interval": "30s"
+    },
+    "telegram": {
+        "bot_token": "",
+        "debug": false,
+        "broadcast_chat_id": ""
+    },
+    "twitter": {
+        "enabled": false,
+        "user_id": "",
+        "bearer_token": "",
+        "consumer_key": "",
+        "consumer_secret": "",
+        "access_token": "",
+        "access_token_secret": "",
+        "poll_interval_seconds": 60
+    },
+    "facebook": {
+        "enabled": false,
+        "page_id": "",
+        "page_access_token": "",
+        "verify_token": "",
+        "app_secret": ""
+    }
+}

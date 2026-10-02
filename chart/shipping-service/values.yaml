@@ -1,16 +1,23 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 shippingService:
   name: shipping-service
+  selectorApp: shipping-service-deployment
+  containerName: shipping-service-deployment
   replicas: 1
 
   image:
     name: ghcr.io/jieeirosst/shipping-service
     tag: latest
     port: 8094
+    pullPolicy: Always
 
   service:
     name: shipping-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ shippingService:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   env:
     mysqlHost: mysql-svc
     mysqlPort: "80"
@@ -50,3 +60,126 @@ shippingService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.shippingService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.shippingService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.shippingService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.shippingService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: shipping-service-secret
+          key: mysqlPassword
+    - name: MYSQL_DBNAME
+      value: '{{ .Values.shippingService.env.mysqlDbname }}'
+    - name: GHN_BASE_URL
+      value: '{{ .Values.shippingService.env.ghnBaseURL }}'
+    - name: GHN_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: shipping-service-secret
+          key: ghnToken
+    - name: GHN_WEBHOOK_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: shipping-service-secret
+          key: ghnWebhookToken
+    - name: NOTIFICATION_BASE_URL
+      value: '{{ .Values.shippingService.env.notificationBaseURL }}'
+    - name: CALLBACK_ALLOWED_HOSTS
+      value: '{{ .Values.shippingService.env.callbackAllowedHosts }}'
+    - name: CALLBACK_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: shipping-service-secret
+          key: callbackSecret
+    - name: API_KEYS
+      valueFrom:
+        secretKeyRef:
+          name: shipping-service-secret
+          key: apiKeys
+    - name: MAX_COD_AMOUNT
+      value: '{{ .Values.shippingService.env.maxCodAmount }}'
+    - name: OUTBOX_INTERVAL
+      value: '{{ .Values.shippingService.env.outboxInterval }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 15
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="shipping_service"
+      ServiceConsul="consul"
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: shipping_service

@@ -1,0 +1,22 @@
+{
+    "server": {
+        "server_port": "8080",
+        "grpc_server": "9090"
+    },
+    "mysql": {
+        "mysql_host": "mysql-svc",
+        "mysql_port": "80",
+        "mysql_user": "root",
+        "mysql_password": "password",
+        "mysql_dbname": "address_country",
+        "mysql_ssl_mode": false,
+        "mysql_driver": "mysql"
+    },
+    "secret": {
+        "jwt_secret_key": "secretkey",
+        "authorize_key": "no_name"
+    },
+    "cache": {
+        "host": "redis-svc:80"
+    }
+}

@@ -1,0 +1,63 @@
+# Argo CD: namespace store-dev, auto-synced. CI bumps image.tag on every
+# merge to master (.github/workflows/vending-machine-service-cicd.yml).
+global:
+  environment: dev
+
+vendingMachineService:
+  image:
+    tag: latest
+
+  # Shared infra (Consul, Postgres) still runs from the umbrella chart in the
+  # `default` namespace on non-prod clusters.
+  consul:
+    addr: http://consul-service.default.svc.cluster.local
+
+  ingress:
+    enabled: true
+    host: vending.dev.store.local
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    tls:
+      enabled: true
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+
+  # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+  # limits from values.yaml still cap each pod.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  networkPolicy:
+    enabled: true
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+    allowToApps:
+      - { name: payment-wallet-service-deployment, namespace: default, port: 8088 }
+      - { name: coupon-service-deployment, namespace: default, port: 8085 }
+      - { name: notification-service-deployment, namespace: default, port: 1235 }
+
+  # Copies the Secret the postgres chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-dev.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: vending-machine-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: vending-machine-service-db-credentials
+        property: POSTGRES_PASSWORD

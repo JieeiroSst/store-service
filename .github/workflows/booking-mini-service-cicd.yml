@@ -1,12 +1,10 @@
 name: Booking Mini Service CI/CD
 
+# Day-to-day builds run in the local cluster (deploy/ci): every push to
+# master is built there and rolled out to store-dev. This workflow only
+# publishes a release image to ghcr.io for staging/prod - run it by hand
+# (Actions -> Run workflow), then promote the tag with promote.yml.
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - 'booking-mini-service/**'
-      - 'chart/booking-mini-service/**'
-      - '.github/workflows/booking-mini-service-cicd.yml'
   workflow_dispatch:
 
 env:
@@ -72,24 +70,19 @@ jobs:
         with:
           context: ./booking-mini-service
           push: true
+          provenance: mode=max
+          sbom: true
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
             ${{ env.IMAGE_NAME }}:latest
 
-  deploy:
-    needs: build-and-push
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
+      # Block the rollout on fixable critical CVEs in the pushed image.
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
 
-      - name: Deploy booking mini service
-        # Resources are owned by the umbrella "chart-1785009827" helm release (chart/),
-        # not a standalone release - render+apply directly to avoid ownership conflicts.
-        run: |
-          helm template ./chart/booking-mini-service \
-          --namespace default \
-          --set bookingMiniService.image.name=${{ env.IMAGE_NAME }} \
-          --set bookingMiniService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-          | kubectl apply -n default -f -
-          kubectl rollout status deployment/booking-mini-service-deployment -n default --timeout=5m

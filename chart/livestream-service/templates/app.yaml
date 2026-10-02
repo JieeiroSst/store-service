@@ -1,0 +1,7 @@
+{{- /* One image, two roles: node and edge run different entrypoints from the
+       same build, so both take livestreamService.image. */}}
+{{- $image := .Values.livestreamService.image }}
+{{- $node := mergeOverwrite (deepCopy .Values.livestreamService.node) (dict "image" (deepCopy $image)) }}
+{{- $edge := mergeOverwrite (deepCopy .Values.livestreamService.edge) (dict "image" (deepCopy $image)) }}
+{{- include "common.workload" (dict "root" $ "svc" $node) }}
+{{- include "common.app" (dict "root" $ "svc" $edge) }}

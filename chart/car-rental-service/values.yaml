@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 carRentalService:
   name: car-rental-service
+  selectorApp: car-rental-service-deployment
+  containerName: car-rental-service-deployment
   replicas: 1
 
   image:
@@ -8,12 +14,18 @@ carRentalService:
     # Must match server.port_http_server / port_grpc_server in the Consul key
     # "car-rental-service" (see car-rental-service/consul.json).
     port: 2222
-    grpcPort: 2223
-
+    pullPolicy: Always
+  extraPorts:
+    - name: port-1
+      containerPort: 2223
   service:
     name: car-rental-service-svc
     type: ClusterIP
-
+    port: 80
+    extraPorts:
+      - name: grpc
+        port: 2223
+        targetPort: port-1
   ingress:
     enabled: false
     className: nginx
@@ -21,6 +33,9 @@ carRentalService:
     host: car-rental-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Only used by the init containers that create the database and apply
   # database.sql; the server itself reads its Postgres settings from Consul.
@@ -46,3 +61,82 @@ carRentalService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  initContainersTemplate: car-rental-service.initContainers
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="car-rental-service"
+      ServiceConsul="consul"
+  volumes:
+    - name: schema
+      emptyDir: {}
+  probes:
+    readiness:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      tcpSocket:
+        port: port-1
+      initialDelaySeconds: 10
+      periodSeconds: 15
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: car-rental-service

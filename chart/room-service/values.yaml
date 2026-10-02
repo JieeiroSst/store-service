@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 roomService:
   name: room-service
+  selectorApp: room-service-deployment
+  containerName: room-service-deployment
   replicas: 2
 
   image:
@@ -7,11 +13,12 @@ roomService:
     tag: latest
     # Must match PORT_HTTP_SERVER (see room-service/BE/config/config.go).
     port: 8081
+    pullPolicy: Always
 
   service:
     name: room-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -24,6 +31,9 @@ roomService:
     host: room-service.local
     path: /api
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Env the container reads directly (see room-service/BE/config/config.go).
   # The database is created by chart/mysql's provisioner (serviceDatabases).
@@ -56,3 +66,99 @@ roomService:
     minReplicas: 2
     maxReplicas: 10
     targetCPUUtilizationPercentage: 70
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.roomService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.roomService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.roomService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.roomService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: room-service-secret
+          key: mysqlPassword
+    - name: MYSQL_DATABASE
+      value: '{{ .Values.roomService.env.mysqlDatabase }}'
+    - name: USER_SERVICE_GRPC_ADDR
+      value: '{{ .Values.roomService.env.userServiceGrpcAddr }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.roomService.env.redisAddr }}'
+    - name: ALLOWED_ORIGINS
+      value: '{{ .Values.roomService.env.allowedOrigins }}'
+    - name: AUTH_CACHE_TTL_SECONDS
+      value: '{{ .Values.roomService.env.authCacheTTLSeconds }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /healthz
+        port: http
+      periodSeconds: 5
+    liveness:
+      httpGet:
+        path: /healthz
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+  lifecycle:
+    preStop:
+      exec:
+        command:
+          - sh
+          - -c
+          - sleep 5
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 0
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 customerRelationshipService:
   name: customer-relationship-service
+  selectorApp: customer-relationship-service-deployment
+  containerName: customer-relationship-service-deployment
   replicas: 1
 
   image:
@@ -7,11 +13,12 @@ customerRelationshipService:
     tag: latest
     # Must match PORT (see customer-relationship-service/config/config.go).
     port: 8080
+    pullPolicy: Always
 
   service:
     name: customer-relationship-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ customerRelationshipService:
     host: customer-relationship-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # The service reads plain environment variables. Dev defaults - override the
   # password with --set or a values-prod.yaml before deploying anywhere real.
@@ -130,3 +140,185 @@ customerRelationshipService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.customerRelationshipService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.customerRelationshipService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.customerRelationshipService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.customerRelationshipService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: customer-relationship-service-secret
+          key: mysqlPassword
+    - name: MYSQL_DBNAME
+      value: '{{ .Values.customerRelationshipService.env.mysqlDbname }}'
+    - name: API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: customer-relationship-service-secret
+          key: apiKey
+    - name: CONTRACT_EXPIRY_CRON
+      value: '{{ .Values.customerRelationshipService.env.contractExpiryCron }}'
+    - name: SIGNATURE_TRUST_ROOTS_FILE
+      value: /etc/crm/trusted-roots.pem
+      when: '{{ if .Values.customerRelationshipService.env.signatureTrustedRootsPEM }}true{{ end }}'
+    - name: SIGNATURE_TSA_ROOTS_FILE
+      value: /etc/crm/tsa-roots.pem
+      when: '{{ if .Values.customerRelationshipService.env.signatureTSARootsPEM }}true{{ end }}'
+    - name: SIGNATURE_ALLOW_UNTRUSTED
+      value: '{{ .Values.customerRelationshipService.env.signatureAllowUntrusted }}'
+    - name: SIGNATURE_REVOCATION
+      value: '{{ .Values.customerRelationshipService.env.signatureRevocation }}'
+    - name: SIGNATURE_HTTP_TIMEOUT
+      value: '{{ .Values.customerRelationshipService.env.signatureHTTPTimeout }}'
+    - name: SIGNATURE_TSA_URL
+      value: '{{ .Values.customerRelationshipService.env.signatureTSAURL }}'
+    - name: API_KEY_ROLE
+      value: '{{ .Values.customerRelationshipService.env.apiKeyRole }}'
+    - name: USER_SERVICE_URL
+      value: '{{ .Values.customerRelationshipService.env.userServiceURL }}'
+    - name: ROLE_PREFIX
+      value: '{{ .Values.customerRelationshipService.env.rolePrefix }}'
+    - name: CLAMAV_ADDRESS
+      value: '{{ .Values.customerRelationshipService.env.clamavAddress }}'
+    - name: CLAMAV_REQUIRED
+      value: '{{ .Values.customerRelationshipService.env.clamavRequired }}'
+    - name: CLAMAV_TIMEOUT
+      value: '{{ .Values.customerRelationshipService.env.clamavTimeout }}'
+    - name: PDF_POLICY
+      value: '{{ .Values.customerRelationshipService.env.pdfPolicy }}'
+    - name: CONTRACT_FILE_MAX_MB
+      value: '{{ .Values.customerRelationshipService.env.contractFileMaxMB }}'
+    - name: MINIO_ENDPOINT
+      value: '{{ .Values.customerRelationshipService.env.minioEndpoint }}'
+    - name: MINIO_BUCKET
+      value: '{{ .Values.customerRelationshipService.env.minioBucket }}'
+    - name: MINIO_USE_SSL
+      value: '{{ .Values.customerRelationshipService.env.minioUseSSL }}'
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: customer-relationship-service-secret
+          key: minioAccessKey
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: customer-relationship-service-secret
+          key: minioSecretKey
+    - name: TEMPORAL_ADDRESS
+      value: '{{ .Values.customerRelationshipService.env.temporalAddress }}'
+    - name: TEMPORAL_NAMESPACE
+      value: '{{ .Values.customerRelationshipService.env.temporalNamespace }}'
+    - name: TEMPORAL_TASK_QUEUE
+      value: '{{ .Values.customerRelationshipService.env.temporalTaskQueue }}'
+    - name: TEMPORAL_REMINDER_DAYS
+      value: '{{ .Values.customerRelationshipService.env.temporalReminderDays }}'
+    - name: COMPANY_NAME
+      value: '{{ .Values.customerRelationshipService.env.company.name }}'
+    - name: COMPANY_ADDRESS
+      value: '{{ .Values.customerRelationshipService.env.company.address }}'
+    - name: COMPANY_TAX_CODE
+      value: '{{ .Values.customerRelationshipService.env.company.taxCode }}'
+    - name: COMPANY_PHONE
+      value: '{{ .Values.customerRelationshipService.env.company.phone }}'
+    - name: COMPANY_REPRESENTATIVE
+      value: '{{ .Values.customerRelationshipService.env.company.representative }}'
+    - name: COMPANY_REPRESENTATIVE_TITLE
+      value: '{{ .Values.customerRelationshipService.env.company.representativeTitle }}'
+    - name: COMPANY_SIGN_KEY_FILE
+      value: /etc/crm-seal/seal.key
+      when: '{{ if and .Values.customerRelationshipService.env.company.signKeyPEM .Values.customerRelationshipService.env.company.signCertPEM }}true{{ end }}'
+    - name: COMPANY_SIGN_CERT_FILE
+      value: /etc/crm-seal/seal.pem
+      when: '{{ if and .Values.customerRelationshipService.env.company.signKeyPEM .Values.customerRelationshipService.env.company.signCertPEM }}true{{ end }}'
+    - name: COMPANY_PLACE
+      value: '{{ .Values.customerRelationshipService.env.company.place }}'
+    - name: NOTIFICATION_SERVICE_URL
+      value: '{{ .Values.customerRelationshipService.env.notificationServiceURL }}'
+    - name: NOTIFICATION_TYPE
+      value: '{{ .Values.customerRelationshipService.env.notificationType }}'
+    - name: NOTIFICATION_RECIPIENT
+      value: '{{ .Values.customerRelationshipService.env.notificationRecipient }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  volumeMounts:
+    - name: trusted-roots
+      mountPath: /etc/crm
+      readOnly: true
+      when: '{{ if or .Values.customerRelationshipService.env.signatureTrustedRootsPEM .Values.customerRelationshipService.env.signatureTSARootsPEM }}true{{ end }}'
+    - name: company-seal
+      mountPath: /etc/crm-seal
+      readOnly: true
+      when: '{{ if and .Values.customerRelationshipService.env.company.signKeyPEM .Values.customerRelationshipService.env.company.signCertPEM }}true{{ end }}'
+  volumes:
+    - name: trusted-roots
+      configMap:
+        name: '{{ .Values.customerRelationshipService.name }}-trusted-roots'
+      when: '{{ if or .Values.customerRelationshipService.env.signatureTrustedRootsPEM .Values.customerRelationshipService.env.signatureTSARootsPEM }}true{{ end }}'
+    - name: company-seal
+      secret:
+        secretName: '{{ .Values.customerRelationshipService.name }}-company-seal'
+        defaultMode: 256
+      when: '{{ if and .Values.customerRelationshipService.env.company.signKeyPEM .Values.customerRelationshipService.env.company.signCertPEM }}true{{ end }}'

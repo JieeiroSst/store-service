@@ -1,0 +1,87 @@
+# Argo CD: namespace store-prod, MANUAL sync.
+# Credentials come from the secret manager (store/prod/airflow-server):
+# sql-alchemy-conn, admin-password, postgres-password, fernet-key.
+global:
+  environment: prod
+
+airflowServer:
+  externalSecret:
+    enabled: true
+    refreshInterval: 15m
+    data:
+      - secretKey: sql-alchemy-conn
+        remoteKey: store/prod/airflow-server
+        property: sql-alchemy-conn
+      - secretKey: admin-password
+        remoteKey: store/prod/airflow-server
+        property: admin-password
+      - secretKey: postgres-password
+        remoteKey: store/prod/airflow-server
+        property: postgres-password
+      - secretKey: fernet-key
+        remoteKey: store/prod/airflow-server
+        property: fernet-key
+  webserver:
+    replicas: 2
+    service:
+      type: ClusterIP
+    # airflow image user: uid 50000, group 0.
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 50000
+      runAsGroup: 0
+      fsGroup: 0
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    pdb:
+      enabled: true
+      maxUnavailable: 1
+    topologySpread:
+      enabled: true
+    priorityClassName: store-standard
+  scheduler:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 50000
+      runAsGroup: 0
+      fsGroup: 0
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    priorityClassName: store-standard
+  postgres:
+    persistence:
+      enabled: true
+      size: 50Gi
+    # postgres image user.
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    # Only Airflow's own components reach the metadata database.
+    networkPolicy:
+      enabled: true
+      allowFromApps:
+        - name: airflow-server-webserver
+        - name: airflow-server-scheduler
+    priorityClassName: store-standard
