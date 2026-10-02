@@ -2,9 +2,13 @@ minio:
   name: minio
   replicas: 1
 
+  # MinIO stopped publishing images (minio/minio, quay.io/minio/minio and
+  # minio/mc are gone). Chainguard builds the same server from source; its
+  # free tier only has `latest`, so pin the digest that was verified.
+  # Runs as uid 65532 (see podSecurityContext).
   image:
-    repository: minio/minio
-    tag: latest
+    repository: cgr.dev/chainguard/minio
+    tag: latest@sha256:0f95aa412a12351a95bb43c3b54b66440eb0aa022bb3f3458942678a489e915b
 
   credentials:
     rootUser: minioadmin

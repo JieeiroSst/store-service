@@ -16,7 +16,9 @@ spec:
       restartPolicy: Never
       containers:
         - name: provision-buckets
-          image: minio/mc:latest
+          # minio/mc is no longer published; S3 CreateBucket is a single
+          # SigV4-signed PUT, which curl signs itself (--aws-sigv4).
+          image: curlimages/curl:8.10.1
           env:
             - name: MINIO_ADDR
               value: "http://{{ .Values.minio.service.name }}:{{ .Values.minio.service.apiPort }}"
@@ -35,11 +37,22 @@ spec:
             - -c
             - |
               set -e
-              until mc alias set local "$MINIO_ADDR" "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"; do
+              until curl -sf "$MINIO_ADDR/minio/health/ready" >/dev/null; do
                 echo "waiting for minio..."
                 sleep 2
               done
+              create() {
+                code=$(curl -s -o /tmp/resp -w '%{http_code}' -X PUT \
+                  --aws-sigv4 "aws:amz:us-east-1:s3" \
+                  --user "$MINIO_ROOT_USER:$MINIO_ROOT_PASSWORD" \
+                  "$MINIO_ADDR/$1")
+                case "$code" in
+                  200) echo "created $1" ;;
+                  409) echo "exists  $1" ;;
+                  *) echo "failed  $1 ($code)"; cat /tmp/resp; return 1 ;;
+                esac
+              }
               {{- range .Values.minio.buckets }}
-              mc mb --ignore-existing "local/{{ . }}"
+              create "{{ . }}"
               {{- end }}
               echo "all buckets provisioned"

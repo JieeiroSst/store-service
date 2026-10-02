@@ -30,6 +30,7 @@ secretStore:
       - vending-machine-service-db-credentials
 
 # Non-prod shares the infra the umbrella chart runs in `default`.
+      - voucher-service-db-credentials
 infraAliases:
   namespace: default
   services:

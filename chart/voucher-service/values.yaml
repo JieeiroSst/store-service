@@ -48,17 +48,16 @@ voucherService:
   containerEnv:
     - name: PORT
       value: '{{ .Values.voucherService.image.httpPort }}'
-  volumes:
-    # Shared umbrella Secret has no entry for this service; optional so the pod
-    # also starts in namespaces where that Secret does not exist.
-    - name: env-file
-      secret:
-        secretName: service-env-files
-        optional: true
-  volumeMounts:
-    - name: env-file
-      mountPath: /app/.env
-      subPath: voucher-service.env
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.voucherService.credentialsSecret }}'
+          key: POSTGRES_USER
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.voucherService.credentialsSecret }}'
+          key: POSTGRES_PASSWORD
   probes:
     readiness:
       httpGet:
@@ -119,9 +118,30 @@ voucherService:
       interval: 30s
   externalSecret:
     enabled: false
-    targetName: ''
+    targetName: 'voucher-service-db-credentials'
     refreshInterval: 1h
     secretStoreRef:
       kind: SecretStore
       name: store-secrets
     data: []
+  # No Consul config (CONSUL_ENABLED=false): settings come from this .env and
+  # the database login from the postgres-provisioned Secret below.
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      # Read through godotenv (internal/platform/config); container env wins.
+      CONSUL_ENABLED=false
+      POSTGRES_HOST=postgresdb
+      POSTGRES_PORT=80
+      POSTGRES_DBNAME=voucher
+      POSTGRES_SSL_MODE=disable
+      REDIS_HOST=redis-svc
+      REDIS_PORT=80
+      REDIS_DB=0
+      KAFKA_BROKERS=kafka-service:9092
+      USER_SERVICE_URL=http://user-api-svc
+      USER_SERVICE_TIMEOUT_MS=3000
+      OUTBOX_RELAY_INTERVAL_MS=500
+      VOUCHER_EXPIRY_SWEEP_MINUTES=5
+  credentialsSecret: voucher-service-db-credentials

@@ -110,3 +110,11 @@ postgres:
       consulKey: vending_machine_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # voucher-service also reads plain env vars (CONSUL_ENABLED=false); its
+    # chart takes POSTGRES_USER/PASSWORD from voucher-service-db-credentials.
+    - name: voucher-service
+      database: voucher
+      role: voucher_svc
+      consulKey: voucher_service
+      userField: .postgres.user
+      passwordField: .postgres.password

@@ -35,3 +35,13 @@ voucherService:
   topologySpread:
     enabled: true
   priorityClassName: store-critical
+  externalSecret:
+    enabled: true
+    data:
+      - property: username
+        remoteKey: store/prod/voucher-service/postgres
+        secretKey: POSTGRES_USER
+      - property: password
+        remoteKey: store/prod/voucher-service/postgres
+        secretKey: POSTGRES_PASSWORD
+    refreshInterval: 15m

@@ -4,6 +4,9 @@ metadata:
   name: {{ .Values.minio.name }}
 spec:
   replicas: {{ .Values.minio.replicas }}
+  # One server per data directory.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: {{ .Values.minio.name }}
@@ -12,6 +15,24 @@ spec:
       labels:
         app: {{ .Values.minio.name }}
     spec:
+      # The image runs as uid 65532; fsGroup makes the data volume writable.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+      initContainers:
+        # The data volume is a hostPath PersistentVolume (persistent-volume.yaml),
+        # which ignores fsGroup: hand the directory to the minio user once.
+        - name: data-permissions
+          image: busybox:1.37
+          command: ["sh", "-c", "chown -R 65532:65532 /data"]
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
       containers:
         - name: {{ .Values.minio.name }}
           image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
