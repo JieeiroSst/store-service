@@ -10,6 +10,12 @@ mysql:
     tag: 8.0
     port: 3306
 
+  # Without a volume the image's anonymous VOLUME was replaced on every
+  # container restart and all databases were lost.
+  persistence:
+    size: 10Gi
+    storageClass: ""
+
   service:
     name: mysql-svc
     type: LoadBalancer

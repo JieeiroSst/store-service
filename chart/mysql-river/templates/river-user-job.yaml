@@ -1,0 +1,56 @@
+# Creates the MySQL login the binlog syncer uses (mysqlRiver.mysql.user) with
+# the privileges canal needs: read every synced table, read the binlog as a
+# replica, and FLUSH for the initial dump. Nothing else created this user, so
+# the syncer crash-looped on "Access denied for user 'river'". Idempotent:
+# re-applies the password from values on every run.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.mysqlRiver.name }}-mysql-user
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  activeDeadlineSeconds: 600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: create-river-user
+          image: mysql:8
+          env:
+            - name: MYSQL_HOST
+              value: {{ (split ":" .Values.mysqlRiver.mysql.addr)._0 | quote }}
+            - name: MYSQL_TCP_PORT
+              value: {{ (split ":" .Values.mysqlRiver.mysql.addr)._1 | quote }}
+            - name: MYSQL_PWD
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-admin-credentials
+                  key: MYSQL_PASSWORD
+            - name: RIVER_USER
+              value: {{ .Values.mysqlRiver.mysql.user | quote }}
+            - name: RIVER_PASSWORD
+              value: {{ .Values.mysqlRiver.mysql.password | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              until mysqladmin -h "$MYSQL_HOST" -P "$MYSQL_TCP_PORT" -uroot ping >/dev/null 2>&1; do
+                echo "waiting for mysql..."
+                sleep 2
+              done
+              pass=$(printf '%s' "$RIVER_PASSWORD" | sed "s/'/''/g")
+              mysql -h "$MYSQL_HOST" -P "$MYSQL_TCP_PORT" -uroot <<SQL
+              CREATE USER IF NOT EXISTS '${RIVER_USER}'@'%' IDENTIFIED BY '${pass}';
+              ALTER USER '${RIVER_USER}'@'%' IDENTIFIED BY '${pass}';
+              GRANT SELECT, RELOAD, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO '${RIVER_USER}'@'%';
+              FLUSH PRIVILEGES;
+              SQL
+              echo "mysql user ${RIVER_USER} ready"
+          resources:
+            requests: { cpu: 10m, memory: 64Mi }
+            limits: { cpu: 200m, memory: 256Mi }

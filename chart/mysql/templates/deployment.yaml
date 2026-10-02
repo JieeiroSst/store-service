@@ -24,3 +24,10 @@ spec:
           ports:
             - containerPort: {{.Values.mysql.image.port}}
               name: mysql
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.mysql.name }}-data
