@@ -1,12 +1,45 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+
 livestreamService:
   # One image, three binaries (see livestream_service/Dockerfile) - node
   # and edge just run a different entrypoint from the same build.
   image:
     name: ghcr.io/jieeirosst/livestream-service
     tag: latest
+    pullPolicy: Always
     # Must match config.Server.PortHttpServer as resolved from Consul, or
     # the PORT_HTTP_SERVER env var fallback (see livestream_service/config/config.go).
-    httpPort: 8080
+    port: 8080
+
+  # .env both roles load at startup (mounted at /app/.env).
+  envFileContent: |
+    HostConsul="http://consul-service"
+    KeyConsul="livestream_service"
+    ServiceConsul="consul"
+    POSTGRES_HOST=postgresdb
+    POSTGRES_PORT=80
+    POSTGRES_USER=testUser
+    POSTGRES_PASSWORD=testPassword
+    POSTGRES_DBNAME=livestream
+    POSTGRES_SSLMODE=disable
+    S3_ENDPOINT=minio-svc:9000
+    S3_BUCKET=livestream-hls
+    S3_ACCESS_KEY=minioadmin
+    S3_SECRET_KEY=minioadmin123
+    S3_USE_SSL=false
+
+  # Bearer tokens are validated by user-service; this service issues none.
+  userServiceURL: http://user-api-svc
+
+  # Signed playback URLs (see internal/application/playback.go). The
+  # signing secret (PLAYBACK_SIGNING_SECRET) is not set here - it belongs in
+  # the .env above alongside INTERNAL_SHARED_SECRET, same as every other
+  # credential this chart uses.
+  playback:
+    cdnBaseURL: "https://cdn.example.com"
 
   # Transcode node: SRS sidecar (RTMP ingest) + ffmpeg supervisor + node
   # scheduler. CPU-bound by active stream count and physically capped by
@@ -14,8 +47,19 @@ livestreamService:
   # chasing viewer traffic (see edge, below, for that).
   node:
     name: livestream-service
+    # Existing StatefulSet name and selector; both are kept so upgrades
+    # replace pods in place.
+    deploymentName: livestream-service
+    containerName: livestream-service-node
     replicas: 2
     command: ["./livestream-service-node"]
+
+    # Headless (clusterIP: None) so each pod gets stable DNS
+    # (<pod>.<serviceName>.<namespace>.svc.cluster.local) - the multi-node
+    # scheduler hands this address out as a stream's ingest endpoint, so it
+    # must not change across restarts/reschedules.
+    statefulSet:
+      serviceName: livestream-service-headless
 
     # SRS runs as a sidecar in the same pod so it can forward the raw RTMP
     # stream to this pod's own ffmpeg process over localhost. Its own
@@ -27,12 +71,6 @@ livestreamService:
       rtmpPort: 1935
       httpPort: 8085
 
-    # Headless (clusterIP: None) so each pod gets stable DNS
-    # (<pod>.<headlessServiceName>.default.svc.cluster.local) - the
-    # multi-node scheduler hands this address out as a stream's ingest
-    # endpoint, so it must not change across restarts/reschedules.
-    headlessServiceName: livestream-service-headless
-
     # Exposes SRS's RTMP port across all replicas (round-robin - NOT
     # sticky to a specific node). Real external streamer ingress needs a
     # TCP LoadBalancer/NodePort per replica or an L4 proxy that can route
@@ -42,6 +80,73 @@ livestreamService:
       enabled: true
       type: ClusterIP
 
+    # Local scratch space for HLS segments/playlists before they're
+    # uploaded to object storage and deleted (see internal/adapter/secondary/transcode).
+    hlsScratch:
+      sizeLimit: 5Gi
+
+    maxStreams: 20
+
+    # SRS sidecar, templates/_sidecars.tpl.
+    sidecarsTemplate: livestream-service.sidecars
+
+    containerEnv:
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      # Identifies this pod as a scheduler node; must match what SRS's
+      # http_hooks send back so on_publish can confirm/claim the
+      # assignment (see internal/application/publish.go).
+      - name: NODE_ID
+        value: "$(POD_NAME)"
+      # Stable per-pod RTMP address handed to streamers by the scheduler's
+      # RequestIngestEndpoint - requires the headless service so pod DNS
+      # survives restarts.
+      - name: NODE_RTMP_ADDR
+        value: "rtmp://$(POD_NAME).{{ .Values.livestreamService.node.statefulSet.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.livestreamService.node.srs.rtmpPort }}/live"
+      # Lets the edge role reach this specific node's HTTP port for admin
+      # actions (force-unpublish) - see internal/adapter/secondary/nodecall
+      # and internal_handler.go.
+      - name: NODE_HTTP_ADDR
+        value: "http://$(POD_NAME).{{ .Values.livestreamService.node.statefulSet.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.livestreamService.image.port }}"
+      - name: PORT_HTTP_SERVER
+        value: "{{ .Values.livestreamService.image.port }}"
+      - name: MAX_STREAMS
+        value: "{{ .Values.livestreamService.node.maxStreams }}"
+      - name: HLS_DIR
+        value: /var/hls
+
+    envFile:
+      enabled: true
+      mountPath: /app/.env
+      content: "{{ .Values.livestreamService.envFileContent }}"
+
+    volumes:
+      - name: srs-conf
+        configMap:
+          name: "{{ .Values.livestreamService.node.name }}-srs-conf"
+      - name: hls-scratch
+        emptyDir:
+          sizeLimit: "{{ .Values.livestreamService.node.hlsScratch.sizeLimit }}"
+    volumeMounts:
+      - name: hls-scratch
+        mountPath: /var/hls
+
+    probes:
+      readiness:
+        httpGet:
+          path: /health
+          port: http
+        initialDelaySeconds: 3
+        periodSeconds: 5
+      liveness:
+        httpGet:
+          path: /health
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 10
+
     resources:
       requests:
         cpu: 200m
@@ -49,13 +154,6 @@ livestreamService:
       limits:
         cpu: "2"
         memory: 2Gi
-
-    # Local scratch space for HLS segments/playlists before they're
-    # uploaded to object storage and deleted (see internal/adapter/secondary/transcode).
-    hlsScratch:
-      sizeLimit: 5Gi
-
-    maxStreams: 20
 
     # CPU is a coarse proxy for transcode load here; a custom metric off
     # each node's reported Redis capacity would scale more precisely if
@@ -66,18 +164,47 @@ livestreamService:
       maxReplicas: 6
       targetCPUUtilizationPercentage: 60
 
+    # Production contract, see chart/common/templates
+    # Live streams are cut when a node goes away; give ffmpeg time to flush
+    # the last HLS segments.
+    terminationGracePeriodSeconds: 60
+    preStopSleepSeconds: 5
+    serviceAccount:
+      create: true
+      automountToken: false
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+    networkLabels:
+      consulClient: true
+      internet: false
+    topologySpread:
+      enabled: false
+    pdb:
+      enabled: false
+      maxUnavailable: 1
+    networkPolicy:
+      enabled: false
+
   # Edge: stateless rooms/ingest-request/viewer-heartbeat/chat API. No
   # ffmpeg, no SRS, no per-pod identity - scales purely with viewer/chat
   # connection volume, independent of how many streams are actually live.
   # This is the tier that should absorb "millions of viewers" load.
   edge:
     name: livestream-service-edge
+    deploymentName: livestream-service-edge
     replicas: 3
     command: ["./livestream-service-edge"]
 
+    # The public-facing service for rooms/ingest-request/viewer-heartbeat/
+    # chat, and what streamer/viewer clients talk to for everything except
+    # the raw RTMP push (see templates/services.yaml).
     service:
       name: livestream-service-svc
       type: ClusterIP
+      port: 80
 
     ingress:
       enabled: false
@@ -86,6 +213,39 @@ livestreamService:
       host: livestream-service.local
       path: /
       pathType: Prefix
+      tls:
+        enabled: false
+        secretName: ''
+
+    containerEnv:
+      - name: PORT_HTTP_SERVER
+        value: "{{ .Values.livestreamService.image.port }}"
+      # Public CDN base URL for signed playback links (see
+      # internal/application/playback.go). Not secret - the signing key
+      # that actually protects these links is PLAYBACK_SIGNING_SECRET.
+      - name: PLAYBACK_CDN_BASE_URL
+        value: "{{ .Values.livestreamService.playback.cdnBaseURL }}"
+      - name: USER_SERVICE_URL
+        value: "{{ .Values.livestreamService.userServiceURL }}"
+
+    envFile:
+      enabled: true
+      mountPath: /app/.env
+      content: "{{ .Values.livestreamService.envFileContent }}"
+
+    probes:
+      readiness:
+        httpGet:
+          path: /health
+          port: http
+        initialDelaySeconds: 3
+        periodSeconds: 5
+      liveness:
+        httpGet:
+          path: /health
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 10
 
     resources:
       requests:
@@ -101,9 +261,31 @@ livestreamService:
       maxReplicas: 30
       targetCPUUtilizationPercentage: 65
 
-  # Signed playback URLs (see internal/application/playback.go). The
-  # signing secret (PLAYBACK_SIGNING_SECRET) is not set here - it lives in
-  # the service-env-files secret alongside INTERNAL_SHARED_SECRET, same as
-  # every other credential this chart uses.
-  playback:
-    cdnBaseURL: "https://cdn.example.com"
+    # Production contract, see chart/common/templates
+    strategy:
+      maxSurge: 25%
+      maxUnavailable: 0
+    terminationGracePeriodSeconds: 30
+    preStopSleepSeconds: 5
+    serviceAccount:
+      create: true
+      automountToken: false
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+    networkLabels:
+      consulClient: true
+      internet: false
+    topologySpread:
+      enabled: false
+    pdb:
+      enabled: false
+      maxUnavailable: 1
+    networkPolicy:
+      enabled: false
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: livestream_service

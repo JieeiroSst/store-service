@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: addon-metrics-server
+  namespace: argocd
+  annotations:
+    # Add-ons (CRDs, ingress controller) come up before the store apps.
+    argocd.argoproj.io/sync-wave: "-20"
+spec:
+  project: store-addons
+  source:
+    repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    chart: metrics-server
+    targetRevision: 3.14.0
+    helm:
+      releaseName: metrics-server
+      valuesObject:
+        # docker-desktop's kubelet serves a self-signed certificate.
+        args:
+          - --kubelet-insecure-tls
+        resources:
+          requests: { cpu: 25m, memory: 64Mi }
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

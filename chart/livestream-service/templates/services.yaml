@@ -1,0 +1,42 @@
+{{- $node := .Values.livestreamService.node }}
+# Headless service: gives each node pod stable DNS
+# (<pod>.<headlessServiceName>.<namespace>.svc) so the multi-node scheduler
+# can hand out a specific node's RTMP address that survives pod restarts.
+# Not meant for external traffic - nothing outside the pod calls the node's
+# HTTP port (SRS reaches it over 127.0.0.1); the edge Service (app.yaml) is
+# the public-facing API/chat service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $node.statefulSet.serviceName }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ $node.name }}
+  ports:
+  - name: rtmp
+    port: {{ $node.srs.rtmpPort }}
+    targetPort: {{ $node.srs.rtmpPort }}
+  - name: http
+    port: {{ .Values.livestreamService.image.port }}
+    targetPort: {{ .Values.livestreamService.image.port }}
+{{- if $node.rtmpService.enabled }}
+---
+# Cluster-internal RTMP access across all replicas (round-robin - NOT
+# sticky to a specific node). Real external streamer ingress needs a
+# TCP LoadBalancer/NodePort per replica or an L4 proxy that can route by
+# the node address the scheduler assigned; that's infra outside this
+# chart's scope.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $node.name }}-rtmp
+spec:
+  type: {{ $node.rtmpService.type }}
+  ports:
+  - name: rtmp
+    port: {{ $node.srs.rtmpPort }}
+    targetPort: {{ $node.srs.rtmpPort }}
+  selector:
+    app: {{ $node.name }}
+{{- end }}

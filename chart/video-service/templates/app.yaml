@@ -1,0 +1,3 @@
+{{- include "common.app" (dict "root" $ "svc" .Values.videoService) }}
+{{- $worker := mergeOverwrite (deepCopy .Values.videoWorker) (dict "image" (pick .Values.videoService.image "name" "tag" "digest" "pullPolicy")) }}
+{{- include "common.workload" (dict "root" $ "svc" $worker) }}

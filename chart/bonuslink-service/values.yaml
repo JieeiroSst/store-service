@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 bonuslinkService:
   name: bonuslink-service
+  selectorApp: bonuslink-service-deployment
+  containerName: bonuslink-service-deployment
   replicas: 1
 
   image:
@@ -7,11 +13,12 @@ bonuslinkService:
     tag: latest
     # Must match APP_PORT (see bonuslink-service/internal/config/config.go).
     port: 8080
+    pullPolicy: Always
 
   service:
     name: bonuslink-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ bonuslinkService:
     host: bonuslink-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # The service reads plain environment variables. Dev defaults - override the
   # secrets with --set or a values-prod.yaml before deploying anywhere real.
@@ -64,3 +74,103 @@ bonuslinkService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  initContainersTemplate: bonuslink-service.initContainers
+  containerEnv:
+    - name: APP_ENV
+      value: '{{ .Values.bonuslinkService.env.appEnv }}'
+    - name: APP_PORT
+      value: '{{ .Values.bonuslinkService.image.port }}'
+    - name: LOG_LEVEL
+      value: '{{ .Values.bonuslinkService.env.logLevel }}'
+    - name: POSTGRES_HOST
+      value: '{{ .Values.bonuslinkService.env.postgresHost }}'
+    - name: POSTGRES_PORT
+      value: '{{ .Values.bonuslinkService.env.postgresPort }}'
+    - name: POSTGRES_DATABASE
+      value: '{{ .Values.bonuslinkService.env.postgresDatabase }}'
+    - name: POSTGRES_SSLMODE
+      value: '{{ .Values.bonuslinkService.env.postgresSSLMode }}'
+    - name: COM_POSTGRES_USERNAME
+      value: '{{ .Values.bonuslinkService.env.postgresUser }}'
+    - name: COM_POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: bonuslink-service-secret
+          key: postgresPassword
+    - name: RABBITMQ_HOST
+      value: '{{ .Values.bonuslinkService.env.rabbitmqHost }}'
+    - name: RABBITMQ_PORT
+      value: '{{ .Values.bonuslinkService.env.rabbitmqPort }}'
+    - name: RABBITMQ_EXCHANGE
+      value: '{{ .Values.bonuslinkService.env.rabbitmqExchange }}'
+    - name: RABBITMQ_QUEUE
+      value: '{{ .Values.bonuslinkService.env.rabbitmqQueue }}'
+    - name: RABBITMQ_ROUTING_KEY
+      value: '{{ .Values.bonuslinkService.env.rabbitmqRoutingKey }}'
+    - name: COM_RABBITMQ_USERNAME
+      value: '{{ .Values.bonuslinkService.env.rabbitmqUser }}'
+    - name: COM_RABBITMQ_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: bonuslink-service-secret
+          key: rabbitmqPassword
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

@@ -1,11 +1,20 @@
+{{- $storage := .Values.geoservicePostgres.storage }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.geoservicePostgres.name }}-pvc
+  annotations:
+    # Never let a sync or uninstall take the database's data with it.
+    helm.sh/resource-policy: keep
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
+  {{- if $storage.hostPath }}
   storageClassName: manual
+  {{- else if $storage.storageClass }}
+  storageClassName: {{ $storage.storageClass }}
+  {{- end }}
   accessModes:
-    - ReadWriteMany
+    {{- toYaml $storage.accessModes | nindent 4 }}
   resources:
     requests:
-      storage: {{ .Values.geoservicePostgres.storage.size }}
+      storage: {{ $storage.size }}

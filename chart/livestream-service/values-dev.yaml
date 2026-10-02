@@ -1,0 +1,68 @@
+# Argo CD: namespace store-dev, auto-synced. CI bumps image.tag on every merge to master.
+global:
+  environment: dev
+
+livestreamService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  node:
+    # StatefulSet: scaled by node capacity (streams), not by HPA.
+    replicas: 1
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 10001
+      runAsGroup: 10001
+      fsGroup: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+
+    # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+    # limits from values.yaml still cap each pod.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+  edge:
+    # Browsers talk to the edge directly (rooms, viewer heartbeat, chat).
+    ingress:
+      enabled: true
+      host: live-api.dev.store.example.com
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-staging
+        # Chat is a long-lived WebSocket.
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+      tls:
+        enabled: true
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 10001
+      runAsGroup: 10001
+      fsGroup: 10001
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 65
+    # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+    # limits from values.yaml still cap each pod.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi

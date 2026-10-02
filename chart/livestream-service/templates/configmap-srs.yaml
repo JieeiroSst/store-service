@@ -7,6 +7,9 @@ data:
     listen              {{ .Values.livestreamService.node.srs.rtmpPort }};
     max_connections     2000;
     daemon              off;
+    # Default is ./objs/srs.pid, inside the root-owned image directory; /tmp
+    # stays writable when the pod runs as a non-root user.
+    pid                 /tmp/srs.pid;
     srs_log_tank        console;
 
     http_server {
@@ -23,7 +26,7 @@ data:
         # own heartbeat against the edge role's /viewers/heartbeat.
         http_hooks {
             enabled         on;
-            on_publish      http://127.0.0.1:{{ .Values.livestreamService.image.httpPort }}/api/srs/on_publish;
-            on_unpublish    http://127.0.0.1:{{ .Values.livestreamService.image.httpPort }}/api/srs/on_unpublish;
+            on_publish      http://127.0.0.1:{{ .Values.livestreamService.image.port }}/api/srs/on_publish;
+            on_unpublish    http://127.0.0.1:{{ .Values.livestreamService.image.port }}/api/srs/on_unpublish;
         }
     }

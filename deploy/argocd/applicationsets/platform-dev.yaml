@@ -1,0 +1,33 @@
+# chart/platform for store-dev: namespace, quotas, baseline NetworkPolicies,
+# SecretStore, infra aliases.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-dev
+  namespace: argocd
+  labels:
+    environment: dev
+    layer: platform
+  annotations:
+    # Namespace and SecretStore exist before the services that use them.
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  project: store-nonprod
+  source:
+    repoURL: https://github.com/JieeiroSst/store-service.git
+    targetRevision: master
+    path: chart/platform
+    helm:
+      releaseName: platform
+      valueFiles:
+        - values.yaml
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: store-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

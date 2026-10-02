@@ -1,0 +1,16 @@
+{
+    "server": {
+        "portHttpServer": "8085"
+    },
+    "postgres": {
+        "postgresqlHost": "postgresdb",
+        "postgresqlPort": "80",
+        "postgresqlUser": "testUser",
+        "postgresqlPassword": "testPassword",
+        "postgresqlDbname": "coupon",
+        "postgresqlSSLMode": false
+    },
+    "cron": {
+        "deactivateStaleSchedule": "@every 5m"
+    }
+}

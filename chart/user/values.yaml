@@ -1,16 +1,23 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 userApi:
   name: user-api
+  selectorApp: user-api-deployment
+  containerName: user-api-deployment
   replicas: 1
 
   image:
     name: ghcr.io/jieeirosst/user-service
     tag: latest
     port: 1235
+    pullPolicy: Always
 
   service:
     name: user-api-svc
-    type: LoadBalancer
-
+    type: ClusterIP
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ userApi:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   resources:
     requests:
       cpu: 50m
@@ -33,19 +43,100 @@ userApi:
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
 
+  envFrom:
+    - secretRef:
+        name: user-service-config
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="user_service"
+      ServiceConsul="consul"
+  probes:
+    readiness:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 15
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: user_service
 userGrpc:
   name: user-grpc
+  selectorApp: user-grpc-deployment
+  containerName: user-grpc-deployment
   replicas: 1
 
   image:
     name: ghcr.io/jieeirosst/user-service
     tag: latest
     port: 1236
+    pullPolicy: Always
 
   service:
     name: user-grpc-svc
-    type: LoadBalancer
-
+    type: ClusterIP
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -55,6 +146,9 @@ userGrpc:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   resources:
     requests:
       cpu: 50m
@@ -68,6 +162,80 @@ userGrpc:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  envFrom:
+    - secretRef:
+        name: user-service-config
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="user_service"
+      ServiceConsul="consul"
+  probes:
+    readiness:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      tcpSocket:
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 15
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
 
 # Consul + JWT settings user_service reads from its environment
 # (github.com/JIeeiroSst/user-service/config.InitializeConfiguration),

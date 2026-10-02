@@ -109,257 +109,320 @@ dependencies:
     repository: file://temporal
   - alias: admanagement
     name: admanagement
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://admanagement
+    condition: admanagement.enabled
   - alias: account-transaction
     name: account-transaction
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://account-transaction
+    condition: account-transaction.enabled
   - alias: user
     name: user
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://user
+    condition: user.enabled
   - alias: address-country
     name: address-country
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://address-country
+    condition: address-country.enabled
   - alias: airflow-service
     name: airflow-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://airflow-service
+    condition: airflow-service.enabled
   - alias: airflowServer
     name: airflow-server
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://airflow-server
+    condition: airflowServer.enabled
   - alias: arrange
     name: arrange-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://arrange-service
+    condition: arrange.enabled
   - alias: authorize
     name: authorize-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://authorize-service
+    condition: authorize.enabled
   - alias: automaticPayment
     name: automatic-payment-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://automatic-payment-service
+    condition: automaticPayment.enabled
   - alias: bankingService
     name: banking-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://banking-service
+    condition: bankingService.enabled
   - alias: basketService
     name: basket-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://basket-service
+    condition: basketService.enabled
   - alias: billingService
     name: billing-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://billing-service
+    condition: billingService.enabled
   - alias: notificationService
     name: notification-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://notification-service
+    condition: notificationService.enabled
   - alias: bookingMiniService
     name: booking-mini-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://booking-mini-service
+    condition: bookingMiniService.enabled
   - alias: bookStoreService
     name: book-store-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://book-store-service
+    condition: bookStoreService.enabled
   - alias: cdnService
     name: cdn-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://cdn-service
+    condition: cdnService.enabled
   - alias: botService
     name: bot-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://bot-service
+    condition: botService.enabled
   - alias: livestreamService
     name: livestream-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://livestream-service
+    condition: livestreamService.enabled
   - alias: livestreamWeb
     name: livestream-web
-    version: "0.1.1"
+    version: "0.2.0"
     repository: file://livestream-web
+    condition: livestreamWeb.enabled
   - alias: calculate
     name: calculate-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://calculate-service
+    condition: calculate.enabled
   - alias: geoservice
     name: geoservice
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://geoservice
+    condition: geoservice.enabled
   - alias: geoservicePostgres
     name: geoservice-postgres
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://geoservice-postgres
+    condition: geoservicePostgres.enabled
   - alias: shortlinkService
     name: shortlink-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://shortlink-service
+    condition: shortlinkService.enabled
   - alias: lottery
     name: lottery-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://lottery-service
+    condition: lottery.enabled
   - alias: gatewayService
     name: gateway-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://gateway-service
+    condition: gatewayService.enabled
   - alias: consumerService
     name: consumer-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://consumer-service
+    condition: consumerService.enabled
   - alias: accountingService
     name: accounting-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://accounting-service
+    condition: accountingService.enabled
   - alias: orderService
     name: order-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://order-service
+    condition: orderService.enabled
   - alias: kitchenService
     name: kitchen-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://kitchen-service
+    condition: kitchenService.enabled
   - alias: deliveryService
     name: delivery-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://delivery-service
+    condition: deliveryService.enabled
   - alias: threadsService
     name: threads-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://threads-service
+    condition: threadsService.enabled
   - alias: postService
     name: post-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://post-service
+    condition: postService.enabled
   - alias: parkingLotService
     name: parking-lot-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://parking-lot-service
+    condition: parkingLotService.enabled
   - alias: couponService
     name: coupon-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://coupon-service
+    condition: couponService.enabled
   - alias: doordashService
     name: doordash-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://doordash-service
+    condition: doordashService.enabled
   - alias: ekycService
     name: ekyc-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://ekyc-service
+    condition: ekycService.enabled
   - alias: partnerService
     name: partner-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://partner-service
+    condition: partnerService.enabled
   - alias: paymentService
     name: payment-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://payment-service
+    condition: paymentService.enabled
   - alias: polymarketService
     name: polymarket-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://polymarket-service
+    condition: polymarketService.enabled
   - alias: referralService
     name: referral-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://referral-service
+    condition: referralService.enabled
   - alias: customerRelationshipService
     name: customer-relationship-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://customer-relationship-service
+    condition: customerRelationshipService.enabled
   - alias: clamav
     name: clamav
     version: "0.1.0"
     repository: file://clamav
   - alias: bonuslinkService
     name: bonuslink-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://bonuslink-service
+    condition: bonuslinkService.enabled
   - alias: paymentWalletService
     name: payment-wallet-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://payment-wallet-service
+    condition: paymentWalletService.enabled
   - alias: videoService
     name: video-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://video-service
+    condition: videoService.enabled
   - alias: videoWeb
     name: video-web
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://video-web
+    condition: videoWeb.enabled
   - alias: roomService
     name: room-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://room-service
+    condition: roomService.enabled
   - alias: roomWeb
     name: room-web
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://room-web
+    condition: roomWeb.enabled
   - alias: hospitalPatientManagementService
     name: hospital-patient-management-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://hospital-patient-management-service
+    condition: hospitalPatientManagementService.enabled
   - alias: uploadService
     name: upload-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://upload-service
+    condition: uploadService.enabled
   - alias: carRentalService
     name: car-rental-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://car-rental-service
+    condition: carRentalService.enabled
   - alias: cataloguesService
     name: catalogues-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://catalogues-service
+    condition: cataloguesService.enabled
   - alias: movieRecommendationService
     name: movie-recommendation-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://movie-recommendation-service
+    condition: movieRecommendationService.enabled
   - alias: recompenseService
     name: recompense-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://recompense-service
+    condition: recompenseService.enabled
   - alias: rentHouseService
     name: rent-house-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://rent-house-service
+    condition: rentHouseService.enabled
   - alias: reservationService
     name: reservation-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://reservation-service
+    condition: reservationService.enabled
   - alias: ticketService
     name: ticket-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://ticket-service
+    condition: ticketService.enabled
   - alias: toolService
     name: tool-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://tool-service
+    condition: toolService.enabled
   - alias: shopifyService
     name: shopify-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://shopify-service
+    condition: shopifyService.enabled
   - alias: medicalService
     name: medical-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://medical-service
+    condition: medicalService.enabled
   - alias: shippingService
     name: shipping-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://shipping-service
+    condition: shippingService.enabled
   - alias: manageService
     name: manage-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://manage-service
+    condition: manageService.enabled
   - alias: drawImageService
     name: draw-image-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://draw-image-service
+    condition: drawImageService.enabled
   - alias: vendingMachineService
     name: vending-machine-service
-    version: "0.1.0"
+    version: "0.2.0"
     repository: file://vending-machine-service
+    condition: vendingMachineService.enabled

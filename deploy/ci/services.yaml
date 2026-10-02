@@ -1,0 +1,470 @@
+# Services the in-cluster CI (deploy/ci) builds. Generated from
+# .github/workflows/*-cicd.yml; one entry per chart.
+#   context      Docker build context (repo-relative); a push touching it rebuilds the service
+#   image        repository name in the local registry (localhost:5000/<image>)
+#   helmKeys     values keys whose image.name/tag Argo CD Image Updater overrides in store-dev
+#   lang/goVersion, testEnv, testServices   how the test step runs (Go only; others build-only)
+services:
+- name: account-transaction
+  context: account-transaction-service
+  image: account-transaction-service
+  helmKeys:
+  - accountTransaction
+  lang: go
+  goVersion: '1.23'
+- name: accounting-service
+  context: restaurant/accounting-service
+  image: accounting-service
+  helmKeys:
+  - accountingService
+  lang: go
+  goVersion: '1.22'
+- name: address-country
+  context: address-country-service
+  image: address-country-service
+  helmKeys:
+  - addressCountry
+  lang: go
+  goVersion: '1.22'
+- name: admanagement
+  context: admanagement-service
+  image: admanagement-service
+  helmKeys:
+  - admanagement
+  lang: go
+  goVersion: '1.23'
+- name: airflow-service
+  context: airflow-service
+  image: airflow-service
+  helmKeys:
+  - airflow
+  lang: go
+  goVersion: '1.22'
+- name: arrange-service
+  context: arrange-service
+  image: arrange-service
+  helmKeys:
+  - arrange
+  lang: other
+- name: authorize-service
+  context: authorize_service
+  image: authorize-service
+  helmKeys:
+  - authorize
+  lang: go
+  goVersion: '1.23'
+- name: automatic-payment-service
+  context: automatic-payment-service
+  image: automatic-payment-service
+  helmKeys:
+  - automaticPayment
+  lang: go
+  goVersion: '1.22'
+- name: banking-service
+  context: banking-service
+  image: banking-service
+  helmKeys:
+  - bankingService
+  lang: go
+  goVersion: '1.22'
+- name: basket-service
+  context: basket-service
+  image: basket-service
+  helmKeys:
+  - basketService
+  lang: go
+  goVersion: '1.22'
+- name: billing-service
+  context: billing-service
+  image: billing-service
+  helmKeys:
+  - billing
+  lang: go
+  goVersion: '1.22'
+- name: bonuslink-service
+  context: bonuslink-service
+  image: bonuslink-service
+  helmKeys:
+  - bonuslinkService
+  lang: go
+  goVersion: '1.25'
+- name: book-store-service
+  context: book-store-service
+  image: book-store-service
+  helmKeys:
+  - bookStoreService
+  lang: go
+  goVersion: '1.22'
+- name: booking-mini-service
+  context: booking-mini-service
+  image: booking-mini-service
+  helmKeys:
+  - bookingMiniService
+  lang: other
+- name: bot-service
+  context: bot-service
+  image: bot-service
+  helmKeys:
+  - botService
+  lang: go
+  goVersion: '1.23'
+- name: calculate-service
+  context: calculate-service
+  image: calculate-service
+  helmKeys:
+  - calculate
+  lang: go
+  goVersion: '1.22'
+- name: car-rental-service
+  context: car-rental-service
+  image: car-rental-service
+  helmKeys:
+  - carRentalService
+  lang: go
+  goVersion: '1.23'
+- name: catalogues-service
+  context: catalogues-service
+  image: catalogues-service
+  helmKeys:
+  - cataloguesService
+  lang: go
+  goVersion: '1.26'
+- name: cdn-service
+  context: cdn-service
+  image: cdn-service
+  helmKeys:
+  - cdnService
+  lang: go
+  goVersion: '1.23'
+- name: consumer-service
+  context: restaurant/consumer-service
+  image: consumer-service
+  helmKeys:
+  - consumerService
+  lang: go
+  goVersion: '1.22'
+- name: coupon-service
+  context: coupon-service
+  image: coupon-service
+  helmKeys:
+  - couponService
+  lang: go
+  goVersion: '1.23'
+- name: customer-relationship-service
+  context: customer-relationship-service
+  image: customer-relationship-service
+  helmKeys:
+  - customerRelationshipService
+  lang: go
+  goVersion: '1.26'
+- name: delivery-service
+  context: restaurant/delivery-service
+  image: delivery-service
+  helmKeys:
+  - deliveryService
+  lang: go
+  goVersion: '1.22'
+- name: doordash-service
+  context: doordash-service
+  image: doordash-service
+  helmKeys:
+  - doordashService
+  lang: go
+  goVersion: '1.23'
+- name: draw-image-service
+  context: draw-image-service
+  image: draw-image-service
+  helmKeys:
+  - drawImageService
+  lang: go
+  goVersion: '1.23'
+- name: ekyc-service
+  context: ekyc-service
+  image: ekyc-service
+  helmKeys:
+  - ekycService
+  lang: go
+  goVersion: '1.23'
+- name: gateway-service
+  context: restaurant/gateway-service
+  image: gateway-service
+  helmKeys:
+  - gatewayService
+  lang: go
+  goVersion: '1.22'
+- name: geoservice
+  context: geoservice
+  image: geoservice
+  helmKeys:
+  - geoservice
+  lang: go
+  goVersion: '1.22'
+- name: hospital-patient-management-service
+  context: hospital-patient-management-service
+  image: hospital-patient-management-service
+  helmKeys:
+  - hospitalPatientManagementService
+  lang: go
+  goVersion: '1.26'
+- name: kitchen-service
+  context: restaurant/kitchen-service
+  image: kitchen-service
+  helmKeys:
+  - kitchenService
+  lang: go
+  goVersion: '1.22'
+- name: livestream-web
+  context: livestream-web
+  image: livestream-web
+  helmKeys:
+  - livestreamWeb
+  lang: other
+  buildArgs:
+    # Inlined at `next build`; the store-dev edge ingress on the local cluster.
+    NEXT_PUBLIC_LIVESTREAM_WS_URL: ws://live-api.dev.store.example.com:8081
+- name: livestream-service
+  context: livestream_service
+  image: livestream-service
+  helmKeys:
+  - livestreamService
+  lang: go
+  goVersion: '1.25'
+- name: lottery-service
+  context: lottery-service
+  image: lottery-service
+  helmKeys:
+  - lottery
+  lang: other
+- name: manage-service
+  context: manage_service
+  image: manage-service
+  helmKeys:
+  - manageService
+  lang: go
+  goVersion: '1.23'
+- name: medical-service
+  context: medical-service
+  image: medical-service
+  helmKeys:
+  - medicalService
+  lang: go
+  goVersion: '1.23'
+- name: movie-recommendation-service
+  context: movie-recommendation-service
+  image: movie-recommendation-service
+  helmKeys:
+  - movieRecommendationService
+  lang: go
+  goVersion: '1.25'
+- name: notification-service
+  context: notification_service
+  image: notification-service
+  helmKeys:
+  - notificationService
+  lang: go
+  goVersion: '1.24'
+- name: order-service
+  context: restaurant/order-service
+  image: order-service
+  helmKeys:
+  - orderService
+  lang: go
+  goVersion: '1.22'
+- name: parking-lot-service
+  context: parking-lot-service
+  image: parking-lot-service
+  helmKeys:
+  - parkingLotService
+  lang: go
+  goVersion: '1.22'
+- name: partner-service
+  context: partner-service
+  image: partner-service
+  helmKeys:
+  - partnerService
+  lang: go
+  goVersion: '1.23'
+- name: payment-wallet-service
+  context: payment-wallet-service
+  image: payment-wallet-service
+  helmKeys:
+  - paymentWalletService
+  lang: go
+  goVersion: '1.22'
+- name: payment-service
+  context: payment_service
+  image: payment-service
+  helmKeys:
+  - paymentService
+  lang: go
+  goVersion: '1.23'
+- name: photo-service
+  context: photo-service
+  image: photo-service
+  helmKeys:
+  - photoService
+  lang: go
+  goVersion: '1.23'
+- name: polymarket-service
+  context: polymarket-service
+  image: polymarket-service
+  helmKeys:
+  - polymarketService
+  lang: go
+  goVersion: '1.24'
+- name: post-service
+  context: post_service
+  image: post-service
+  helmKeys:
+  - postService
+  lang: go
+  goVersion: '1.25'
+- name: recompense-service
+  context: recompense-service
+  image: recompense-service
+  helmKeys:
+  - recompenseService
+  lang: other
+- name: referral-service
+  context: referral-service
+  image: referral-service
+  helmKeys:
+  - referralService
+  lang: go
+  goVersion: '1.25'
+- name: rent-house-service
+  context: rent_house_service
+  image: rent-house-service
+  helmKeys:
+  - rentHouseService
+  lang: go
+  goVersion: '1.26'
+- name: reservation-service
+  context: reservation-service
+  image: reservation-service
+  helmKeys:
+  - reservationService
+  lang: go
+  goVersion: '1.26'
+  testEnv:
+    TEST_DATABASE_URL: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+  testServices:
+  - postgres
+- name: room-service
+  context: room-service/BE
+  image: room-service
+  helmKeys:
+  - roomService
+  lang: go
+  goVersion: '1.25'
+- name: room-web
+  context: room-service/FE
+  image: room-web
+  helmKeys:
+  - roomWeb
+  lang: other
+- name: shipping-service
+  context: shipping-service
+  image: shipping-service
+  helmKeys:
+  - shippingService
+  lang: go
+  goVersion: '1.23'
+- name: shopify-service
+  context: shopify-service
+  image: shopify-service
+  helmKeys:
+  - shopifyService
+  lang: go
+  goVersion: '1.23'
+- name: shortlink-service
+  context: shortlink-service
+  image: shortlink-service
+  helmKeys:
+  - shortlinkService
+  lang: go
+  goVersion: '1.25'
+- name: threads-service
+  context: threads-service
+  image: threads-service
+  helmKeys:
+  - threadsService
+  lang: go
+  goVersion: '1.23'
+- name: ticket-service
+  context: ticket-service
+  image: ticket-service
+  helmKeys:
+  - ticketService
+  lang: go
+  goVersion: '1.26'
+  testEnv:
+    TEST_DATABASE_URL: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+  testServices:
+  - postgres
+- name: toggle-service
+  context: toggle-service
+  image: toggle-service
+  helmKeys:
+  - toggleService
+  lang: go
+  goVersion: '1.24'
+- name: tool-service
+  context: tool-service
+  image: tool-service
+  helmKeys:
+  - toolService
+  lang: go
+  goVersion: '1.26'
+  testEnv:
+    TEST_POSTGRES_DSN: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+    TEST_MYSQL_DSN: root:pw@tcp(localhost:3306)/shop
+  testServices:
+  - mysql
+  - postgres
+- name: upload-service
+  context: upload_service
+  image: upload-service
+  helmKeys:
+  - uploadService
+  lang: go
+  goVersion: '1.26'
+- name: user
+  context: user_service
+  image: user-service
+  helmKeys:
+  - userApi
+  - userGrpc
+  lang: go
+  goVersion: '1.23'
+- name: vending-machine-service
+  context: vending-machine-service
+  image: vending-machine-service
+  helmKeys:
+  - vendingMachineService
+  lang: go
+  goVersion: '1.25'
+  testEnv:
+    TEST_DATABASE_URL: postgres://postgres:pw@localhost:5432/postgres?sslmode=disable
+  testServices:
+  - postgres
+- name: video-service
+  context: video-service/BE
+  image: video-service
+  helmKeys:
+  - videoService
+  lang: go
+  goVersion: '1.25'
+- name: video-web
+  context: video-service/FE
+  image: video-web
+  helmKeys:
+  - videoWeb
+  lang: other
+- name: voucher-service
+  context: voucher-service
+  image: voucher-service
+  helmKeys:
+  - voucherService
+  lang: go
+  goVersion: '1.25'

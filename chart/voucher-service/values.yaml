@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 voucherService:
   name: voucher-service
+  selectorApp: voucher-service-deployment
+  containerName: voucher-service-deployment
   replicas: 1
 
   image:
@@ -7,12 +13,14 @@ voucherService:
     tag: latest
     # Must match the PORT env var voucher-service reads (see
     # internal/platform/config), default 3000.
+    port: 3000
+    pullPolicy: Always
     httpPort: 3000
 
   service:
     name: voucher-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -21,6 +29,9 @@ voucherService:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   resources:
     requests:
       cpu: 50m
@@ -34,3 +45,83 @@ voucherService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.voucherService.image.httpPort }}'
+  volumes:
+    # Shared umbrella Secret has no entry for this service; optional so the pod
+    # also starts in namespaces where that Secret does not exist.
+    - name: env-file
+      secret:
+        secretName: service-env-files
+        optional: true
+  volumeMounts:
+    - name: env-file
+      mountPath: /app/.env
+      subPath: voucher-service.env
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

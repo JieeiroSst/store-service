@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 threadsService:
   name: threads-service
+  selectorApp: threads-service-deployment
+  containerName: threads-service-deployment
   replicas: 1
 
   image:
@@ -8,11 +14,12 @@ threadsService:
     # Must match config.Server.PortHttpServer as resolved from env/Consul
     # (see threads-service/config/config.go and consul.json).
     port: 8083
+    pullPolicy: Always
 
   service:
     name: threads-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ threadsService:
     host: threads-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Plain env vars the container reads directly (see config.FromEnv) -
   # works standalone even before ops has seeded this service's config into
@@ -58,3 +68,114 @@ threadsService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.threadsService.image.port }}'
+    - name: POSTGRES_HOST
+      value: '{{ .Values.threadsService.env.postgresHost }}'
+    - name: POSTGRES_PORT
+      value: '{{ .Values.threadsService.env.postgresPort }}'
+    - name: POSTGRES_USER
+      value: '{{ .Values.threadsService.env.postgresUser }}'
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: threads-service-secret
+          key: postgresPassword
+    - name: POSTGRES_DBNAME
+      value: '{{ .Values.threadsService.env.postgresDbname }}'
+    - name: POSTGRES_SSLMODE
+      value: '{{ .Values.threadsService.env.postgresSSLMode }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.threadsService.env.redisAddr }}'
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: threads-service-secret
+          key: redisPassword
+    - name: REDIS_DB
+      value: '{{ .Values.threadsService.env.redisDB }}'
+    - name: USER_SERVICE_BASE_URL
+      value: '{{ .Values.threadsService.env.userServiceBaseURL }}'
+    - name: USER_SERVICE_TIMEOUT
+      value: '{{ .Values.threadsService.env.userServiceTimeout }}'
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="threads_service"
+      ServiceConsul="consul"
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: threads_service

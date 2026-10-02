@@ -1,0 +1,15 @@
+{{- if or .Values.customerRelationshipService.env.signatureTrustedRootsPEM .Values.customerRelationshipService.env.signatureTSARootsPEM }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.customerRelationshipService.name }}-trusted-roots
+data:
+  {{- if .Values.customerRelationshipService.env.signatureTrustedRootsPEM }}
+  trusted-roots.pem: |
+    {{- .Values.customerRelationshipService.env.signatureTrustedRootsPEM | nindent 4 }}
+  {{- end }}
+  {{- if .Values.customerRelationshipService.env.signatureTSARootsPEM }}
+  tsa-roots.pem: |
+    {{- .Values.customerRelationshipService.env.signatureTSARootsPEM | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,14 @@
+# Git mirror of the repository (~5 GB), exported build contexts and the Go
+# module/build caches shared by test steps.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ci-workspace
+  namespace: ci
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 40Gi

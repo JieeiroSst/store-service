@@ -1,0 +1,30 @@
+# The local build pipeline itself (deploy/ci, kustomize).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: store-ci
+  namespace: argocd
+  annotations:
+    # After Argo Workflows and Image Updater have installed their CRDs.
+    argocd.argoproj.io/sync-wave: "-5"
+spec:
+  project: store-ci
+  source:
+    repoURL: https://github.com/JieeiroSst/store-service.git
+    targetRevision: master
+    path: deploy/ci
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ci
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 15s
+        factor: 2
+        maxDuration: 5m

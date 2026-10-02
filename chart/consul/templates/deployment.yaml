@@ -4,6 +4,9 @@ metadata:
   name: {{.Values.consul.name}}-deployment
 spec:
   replicas: {{.Values.consul.replicas}}
+  # One server owns the data directory; never run two side by side.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: {{.Values.consul.name}}-deployment
@@ -15,11 +18,26 @@ spec:
       containers:
       - name: {{.Values.consul.name}}-deployment
         image: {{.Values.consul.image.name}}:{{.Values.consul.image.tag}}
+        # Without args the image runs `consul agent -dev`, which keeps KV in
+        # memory: every restart wiped all service configs and the PVC mounted
+        # below was never used. A single-node server persists to /consul/data
+        # (the image's entrypoint adds -data-dir and -config-dir).
+        args:
+          - agent
+          - -server
+          - -bootstrap-expect=1
+          - -ui
+          - -client=0.0.0.0
         ports:
         - containerPort: {{.Values.consul.image.port}}
         env:
             - name: NODE_ENV
               value: production
+        readinessProbe:
+          httpGet:
+            path: /v1/status/leader
+            port: {{.Values.consul.image.port}}
+          periodSeconds: 10
         volumeMounts:
         - name: {{.Values.consul.name}}-data
           mountPath: /consul/data

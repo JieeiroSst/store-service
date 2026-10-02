@@ -1,0 +1,32 @@
+{
+    "server": {
+        "serverPort": "3031",
+        "grpcServer": "3032"
+    },
+    "mysql": {
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
+        "mysqlUser": "root",
+        "mysqlPassword": "password",
+        "mysqlDbname": "manage_service",
+        "mysqlSSLMode": false,
+        "mysqlDriver": "mysql"
+    },
+    "secret": {
+        "jwtSecretKey": "secretkey",
+        "authorizeKey": ""
+    },
+    "constant": {
+        "rbac": ""
+    },
+    "cache": {
+        "host": "redis-svc:80"
+    },
+    "keycloak": {
+        "host": "http://keycloak-service",
+        "adminUser": "admin",
+        "adminPassword": "admin",
+        "adminRealm": "master",
+        "legacyWildfly": true
+    }
+}

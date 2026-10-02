@@ -1,16 +1,23 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 lottery:
   name: lottery-service
+  selectorApp: lottery-service-deployment
+  containerName: lottery-service-deployment
   replicas: 1
 
   image:
     name: ghcr.io/jieeirosst/lottery-service
     tag: latest
     port: 8000
+    pullPolicy: Always
 
   service:
     name: lottery-service-svc
     type: LoadBalancer
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ lottery:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   resources:
     requests:
       cpu: 100m
@@ -43,3 +53,80 @@ lottery:
     # "0 12 * * *" theo giờ UTC của cluster = 19:00 (7h tối) giờ Việt Nam
     # (Asia/Ho_Chi_Minh = UTC+7, không có giờ mùa hè nên lệch cố định).
     schedule: "0 12 * * *"
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      MONGO_URI=mongodb://mongo-svc:80
+      MONGO_DB=lottery
+      # Cào dữ liệu hằng ngày chạy bằng k8s CronJob riêng (scrape-cronjob.yaml,
+      # 19h VN mỗi ngày) nên tắt scheduler nội bộ ở đây để không cào trùng.
+      SCHEDULER_ENABLED=false
+      SCHEDULER_TIMEZONE=Asia/Ho_Chi_Minh
+      LOG_LEVEL=INFO
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

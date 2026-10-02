@@ -1,16 +1,23 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 drawImageService:
   name: draw-image-service
+  selectorApp: draw-image-service
+  containerName: draw-image-service
   replicas: 1
 
   image:
     name: ghcr.io/jieeirosst/draw-image-service
     tag: latest
     port: 8080
+    pullPolicy: IfNotPresent
 
   service:
     name: draw-image-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ drawImageService:
     host: draw-image-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Dev defaults - override passwords with --set or a values-prod.yaml.
   # The database is created by chart/mysql's provisioner (serviceDatabases)
@@ -60,3 +70,110 @@ drawImageService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.drawImageService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.drawImageService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.drawImageService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.drawImageService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      value: '{{ .Values.drawImageService.env.mysqlPassword }}'
+    - name: MYSQL_DBNAME
+      value: '{{ .Values.drawImageService.env.mysqlDbname }}'
+    - name: MINIO_ENDPOINT
+      value: '{{ .Values.drawImageService.env.minioEndpoint }}'
+    - name: MINIO_ACCESS_KEY
+      value: '{{ .Values.drawImageService.env.minioAccessKey }}'
+    - name: MINIO_SECRET_KEY
+      value: '{{ .Values.drawImageService.env.minioSecretKey }}'
+    - name: MINIO_BUCKET
+      value: '{{ .Values.drawImageService.env.minioBucket }}'
+    - name: MINIO_USE_SSL
+      value: '{{ .Values.drawImageService.env.minioUseSsl }}'
+    - name: MAX_UPLOAD_MB
+      value: '{{ .Values.drawImageService.env.maxUploadMb }}'
+    - name: CELL_WIDTH
+      value: '{{ .Values.drawImageService.env.cellWidth }}'
+    - name: CELL_HEIGHT
+      value: '{{ .Values.drawImageService.env.cellHeight }}'
+    - name: DEFAULT_COLUMNS
+      value: '{{ .Values.drawImageService.env.defaultColumns }}'
+    - name: MAX_IMAGES
+      value: '{{ .Values.drawImageService.env.maxImages }}'
+    - name: MAX_PIXELS
+      value: '{{ .Values.drawImageService.env.maxPixels }}'
+    - name: JPEG_QUALITY
+      value: '{{ .Values.drawImageService.env.jpegQuality }}'
+    - name: CENTER_WIDTH
+      value: '{{ .Values.drawImageService.env.centerWidth }}'
+    - name: CENTER_HEIGHT
+      value: '{{ .Values.drawImageService.env.centerHeight }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

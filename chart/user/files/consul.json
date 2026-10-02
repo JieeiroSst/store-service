@@ -1,0 +1,35 @@
+{
+    "server": {
+        "port_http_server": "1235",
+        "port_grpc_server": "1236"
+    },
+    "secret": {
+        "jwt_secret_key": "secretkey",
+        "authorize_key": "no_name"
+    },
+    "redis": {
+        "dns": "redis-svc:80"
+    },
+    "email": {
+        "name_email": "luumanhquan7@gmail.com",
+        "password_email": "#############",
+        "port": "587",
+        "host": "smtp.gmail.com"
+    },
+    "postgres": {
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "user",
+        "pg_driver": "pgx"
+    },
+    "token": {
+        "access_token_exp_minutes": 15,
+        "refresh_token_exp_hours": 168
+    },
+    "authorize_service": {
+        "grpc_address": "authorize-service:9090",
+        "timeout_seconds": 3
+    }
+}

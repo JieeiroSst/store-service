@@ -1,0 +1,19 @@
+# In-cluster CI for the local cluster (Application "store-ci" in
+# deploy/argocd/addons/local/ci.yaml).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - registry.yaml
+  - workspace.yaml
+  - rbac.yaml
+  - workflow-template.yaml
+  - cron-workflow.yaml
+  - image-updater.yaml
+configMapGenerator:
+  - name: ci-scripts
+    namespace: ci
+    files:
+      - scripts/detect.py
+generatorOptions:
+  disableNameSuffixHash: true

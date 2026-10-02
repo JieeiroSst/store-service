@@ -1,0 +1,80 @@
+# Argo CD: namespace store-dev, auto-synced. Airflow UI is internal:
+#   kubectl -n store-dev port-forward svc/airflow-webserver-svc 8080:80
+global:
+  environment: dev
+
+airflowServer:
+  webserver:
+    replicas: 1
+    service:
+      type: ClusterIP
+    # airflow image user: uid 50000, group 0.
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 50000
+      runAsGroup: 0
+      fsGroup: 0
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+    # limits from values.yaml still cap each pod.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+  scheduler:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 50000
+      runAsGroup: 0
+      fsGroup: 0
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+    # limits from values.yaml still cap each pod.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+  postgres:
+    persistence:
+      enabled: true
+      size: 5Gi
+    # postgres image user.
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: false
+      capabilities:
+        drop:
+          - ALL
+    # Only Airflow's own components reach the metadata database.
+    networkPolicy:
+      enabled: true
+      allowFromApps:
+        - name: airflow-server-webserver
+        - name: airflow-server-scheduler
+    # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+    # limits from values.yaml still cap each pod.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi

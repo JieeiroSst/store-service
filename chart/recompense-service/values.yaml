@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 recompenseService:
   name: recompense-service
+  selectorApp: recompense-service-deployment
+  containerName: recompense-service-deployment
   replicas: 1
 
   image:
@@ -7,11 +13,12 @@ recompenseService:
     tag: latest
     # Must match PORT (see recompense-service/config/index.ts).
     port: 3000
+    pullPolicy: Always
 
   service:
     name: recompense-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ recompenseService:
     host: recompense-service.local
     path: /api/recompenses
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Dev defaults - override the password with --set or a values-prod.yaml
   # before deploying anywhere real. The database and schema are created on
@@ -47,3 +57,90 @@ recompenseService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.recompenseService.image.port }}'
+    - name: HostPostgres
+      value: '{{ .Values.recompenseService.env.postgresHost }}'
+    - name: PortPostgres
+      value: '{{ .Values.recompenseService.env.postgresPort }}'
+    - name: DatabasePostgres
+      value: '{{ .Values.recompenseService.env.postgresDatabase }}'
+    - name: UserPostgres
+      value: '{{ .Values.recompenseService.env.postgresUser }}'
+    - name: PasswordPostgres
+      valueFrom:
+        secretKeyRef:
+          name: recompense-service-secret
+          key: postgresPassword
+    - name: RedisHost
+      value: '{{ .Values.recompenseService.env.redisHost }}'
+      when: '{{ .Values.recompenseService.env.redisHost }}'
+    - name: CacheTTLSeconds
+      value: '{{ .Values.recompenseService.env.cacheTTLSeconds }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /readyz
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /healthz
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

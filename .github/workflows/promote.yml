@@ -1,0 +1,85 @@
+name: Promote image
+
+# Writes a released ghcr.io image tag into a service's staging or prod overlay
+# and opens a PR. Merging the PR is the approval: Argo CD auto-syncs staging,
+# and a release manager syncs prod by hand (deploy/argocd/applicationsets).
+#
+# The tag comes from the service's "<Service> CI/CD" workflow run (the short
+# commit SHA it pushed to ghcr.io). store-dev is not involved: it runs images
+# built by the local cluster's CI (deploy/ci).
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: Chart directory under chart/ (e.g. vending-machine-service)
+        required: true
+      tag:
+        description: ghcr.io image tag to release (e.g. 9c24595)
+        required: true
+      to:
+        description: Target environment
+        type: choice
+        options: [staging, prod]
+        default: staging
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate inputs
+        env:
+          SERVICE: ${{ inputs.service }}
+          TAG: ${{ inputs.tag }}
+          TO: ${{ inputs.to }}
+        run: |
+          FILE="chart/$SERVICE/values-$TO.yaml"
+          [ -f "$FILE" ] || { echo "::error::$FILE not found"; exit 1; }
+          if ! printf '%s' "$TAG" | grep -Eq '^[0-9A-Za-z._-]{1,128}$' || [ "$TAG" = "latest" ]; then
+            echo "::error::'$TAG' is not an immutable image tag"
+            exit 1
+          fi
+          if [ "$TO" = "prod" ]; then
+            STAGING=$(yq '[.[] | select(has("image")) | .image.tag] | .[0]' "chart/$SERVICE/values-staging.yaml")
+            if [ "$STAGING" != "$TAG" ]; then
+              echo "::error::prod only takes what staging runs (staging has '$STAGING')"
+              exit 1
+            fi
+          fi
+
+      - name: Set image tag
+        env:
+          SERVICE: ${{ inputs.service }}
+          TAG: ${{ inputs.tag }}
+          TO: ${{ inputs.to }}
+        run: |
+          yq -i 'with(.[] | select(has("image")); .image.tag = strenv(TAG))' "chart/$SERVICE/values-$TO.yaml"
+
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SERVICE: ${{ inputs.service }}
+          TAG: ${{ inputs.tag }}
+          TO: ${{ inputs.to }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          if git diff --quiet; then
+            echo "$TO already runs $TAG"
+            exit 0
+          fi
+          BRANCH="promote/$SERVICE-$TO-$TAG"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git commit -am "chore($SERVICE): promote $TAG to $TO"
+          git push origin "$BRANCH"
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "Promote $SERVICE $TAG to $TO" \
+            --body "Promotes \`$SERVICE\` image \`$TAG\` to **$TO**. Requested by @$ACTOR. After merge, Argo CD picks up \`chart/$SERVICE/values-$TO.yaml\`."

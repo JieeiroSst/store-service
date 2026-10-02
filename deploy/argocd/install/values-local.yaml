@@ -1,0 +1,77 @@
+# Argo CD itself, installed by deploy/bootstrap-local.sh:
+#   helm upgrade --install argocd argo/argo-cd --version 10.9.6 \
+#     -n argocd -f deploy/argocd/install/values-local.yaml
+# Sized for a single-node laptop cluster (docker-desktop).
+
+configs:
+  cm:
+    # No webhook can reach a laptop, so poll GitHub every minute instead of
+    # the default 3: a merged tag bump shows up in store-dev within ~1-2 min.
+    timeout.reconciliation: 60s
+    timeout.reconciliation.jitter: 10s
+    # Health of ExternalSecrets / SecretStores in the UI.
+    resource.customizations.health.external-secrets.io_ExternalSecret: |
+      hs = {}
+      if obj.status ~= nil and obj.status.conditions ~= nil then
+        for _, c in ipairs(obj.status.conditions) do
+          if c.type == "Ready" and c.status == "True" then
+            hs.status = "Healthy"; hs.message = c.message; return hs
+          end
+          if c.type == "Ready" and c.status == "False" then
+            hs.status = "Degraded"; hs.message = c.message; return hs
+          end
+        end
+      end
+      hs.status = "Progressing"; hs.message = "Waiting for secret sync"
+      return hs
+  params:
+    # TLS terminates at ingress-nginx (or use port-forward).
+    server.insecure: true
+    # This repository is ~5 GB (every service's source lives next to the
+    # charts). The first clone takes minutes, and ~70 Applications ask for
+    # the same revision at once, so give git and the repo-server room.
+    # A dedicated, small GitOps config repo would avoid this altogether.
+    reposerver.git.request.timeout: 15m
+    reposerver.revision.cache.lock.timeout: 15m
+    controller.repo.server.timeout.seconds: "900"
+    server.repo.server.timeout.seconds: "900"
+    applicationsetcontroller.repo.server.timeout.seconds: "900"
+
+dex:
+  enabled: false
+
+notifications:
+  enabled: false
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: argocd.store.local
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 512Mi }
+
+controller:
+  resources:
+    requests: { cpu: 200m, memory: 512Mi }
+    limits: { cpu: "2", memory: 2Gi }
+
+repoServer:
+  env:
+    # Timeout for git/helm commands the repo-server runs (default 90s).
+    - name: ARGOCD_EXEC_TIMEOUT
+      value: 15m
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { cpu: "2", memory: 2Gi }
+
+applicationSet:
+  resources:
+    requests: { cpu: 25m, memory: 64Mi }
+    limits: { cpu: 500m, memory: 256Mi }
+
+redis:
+  resources:
+    requests: { cpu: 25m, memory: 64Mi }
+    limits: { cpu: 250m, memory: 256Mi }

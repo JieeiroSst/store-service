@@ -1,0 +1,56 @@
+# One Application per chart that has chart/<service>/values-staging.yaml.
+# A chart opts in by adding that file; nothing here changes per service.
+# Auto-synced: a merged change (e.g. CI's image tag bump) rolls out on its own.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: store-services-staging
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/JieeiroSst/store-service.git
+        revision: master
+        files:
+          - path: "chart/*/values-staging.yaml"
+          # chart/platform has its own Application.
+          - path: "chart/platform/values-staging.yaml"
+            exclude: true
+  template:
+    metadata:
+      name: "{{.path.basename}}-staging"
+      labels:
+        environment: staging
+        layer: service
+        service: "{{.path.basename}}"
+    spec:
+      project: store-nonprod
+      source:
+        repoURL: https://github.com/JieeiroSst/store-service.git
+        targetRevision: master
+        path: "{{.path.path}}"
+        helm:
+          releaseName: "{{.path.basename}}"
+          valueFiles:
+            - values.yaml
+            - values-staging.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: store-staging
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
+          - PruneLast=true
+          - CreateNamespace=false
+        retry:
+          limit: 10
+          backoff:
+            duration: 15s
+            factor: 2
+            maxDuration: 5m
+      revisionHistoryLimit: 10

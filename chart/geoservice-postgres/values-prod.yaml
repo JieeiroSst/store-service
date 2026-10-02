@@ -1,0 +1,61 @@
+# Argo CD: namespace store-prod, MANUAL sync. Prefer a managed PostGIS (RDS /
+# Cloud SQL both ship the extension) and point the geoservice-postgres alias
+# in chart/platform at it; this in-cluster instance is the fallback.
+# Credentials come from the secret manager (store/prod/geoservice-postgres).
+global:
+  environment: prod
+
+geoservicePostgres:
+  podSecurityContext:
+    # postgres user of the official image; fsGroup makes the volume writable.
+    runAsNonRoot: true
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+  # initdb needs an empty directory it owns; a volume's root has lost+found
+  # and the wrong mode, so keep the cluster in a subdirectory.
+  containerEnv:
+    - name: PGDATA
+      value: /var/lib/postgresql/data/pgdata
+  storage:
+    size: 100Gi
+    hostPath: ""
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+  # Only geoservice talks to its database.
+  networkPolicy:
+    enabled: true
+    allowFromApps:
+      - name: geoservice-deployment
+  priorityClassName: store-critical
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+  secret:
+    create: false
+  externalSecret:
+    enabled: true
+    refreshInterval: 15m
+    data:
+      - secretKey: POSTGRES_DB
+        remoteKey: store/prod/geoservice-postgres
+        property: database
+      - secretKey: POSTGRES_USER
+        remoteKey: store/prod/geoservice-postgres
+        property: username
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: store/prod/geoservice-postgres
+        property: password

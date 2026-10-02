@@ -58,7 +58,7 @@ func FromEnv() *Config {
 			PostgresqlSSLMode:  getEnv("POSTGRES_SSLMODE", "disable") == "require",
 		},
 		UserService: ExternalServiceConfig{
-			BaseURL: getEnv("USER_SERVICE_BASE_URL", "http://user-service-svc"),
+			BaseURL: getEnv("USER_SERVICE_BASE_URL", "http://user-api-svc"),
 			Timeout: getEnv("USER_SERVICE_TIMEOUT", "5s"),
 		},
 		RestaurantService: ExternalServiceConfig{

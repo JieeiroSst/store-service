@@ -1,0 +1,31 @@
+{{- with .Values.resourceQuota }}
+{{- if .enabled }}
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: store-quota
+spec:
+  hard:
+    {{- toYaml .hard | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- with .Values.limitRange }}
+{{- if .enabled }}
+---
+# Defaults for containers that don't declare resources, so one forgotten
+# chart can't starve the namespace or dodge the quota.
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: store-limits
+spec:
+  limits:
+    - type: Container
+      default:
+        {{- toYaml .default | nindent 8 }}
+      defaultRequest:
+        {{- toYaml .defaultRequest | nindent 8 }}
+      max:
+        {{- toYaml .max | nindent 8 }}
+{{- end }}
+{{- end }}

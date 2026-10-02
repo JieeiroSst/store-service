@@ -1,0 +1,9 @@
+apiVersion: v2
+name: platform
+description: >-
+  Per-environment namespace guardrails for store-service: Namespace with Pod
+  Security Admission, ResourceQuota, LimitRange, PriorityClasses, baseline
+  NetworkPolicies and the SecretStore that service ExternalSecrets read from.
+
+type: application
+version: 0.1.0

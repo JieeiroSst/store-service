@@ -1,0 +1,19 @@
+# GitHub cannot call a webhook on a laptop, so the pipeline polls: every
+# minute it fetches master and builds whatever changed since the last run.
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: store-ci-poll
+  namespace: ci
+spec:
+  schedules:
+    - "* * * * *"
+  # A long build is never overlapped by the next poll; commits pushed in the
+  # meantime are picked up by the run after it.
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 30
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 10
+  workflowSpec:
+    workflowTemplateRef:
+      name: store-ci

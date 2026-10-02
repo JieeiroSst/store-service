@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 cataloguesService:
   name: catalogues-service
+  selectorApp: catalogues-service-deployment
+  containerName: catalogues-service-deployment
   replicas: 1
 
   image:
@@ -8,11 +14,12 @@ cataloguesService:
     # REST API and /health. Must match PORT
     # (see catalogues-service/config/config.go).
     port: 8080
+    pullPolicy: Always
 
   service:
     name: catalogues-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ cataloguesService:
     host: catalogues-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # The service reads plain environment variables. Dev defaults - override the
   # password with --set or a values-prod.yaml before deploying anywhere real.
@@ -47,3 +57,81 @@ cataloguesService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.cataloguesService.image.port }}'
+    - name: POSTGRES_HOST
+      value: '{{ .Values.cataloguesService.env.postgresHost }}'
+    - name: POSTGRES_PORT
+      value: '{{ .Values.cataloguesService.env.postgresPort }}'
+    - name: POSTGRES_DATABASE
+      value: '{{ .Values.cataloguesService.env.postgresDatabase }}'
+    - name: POSTGRES_SSLMODE
+      value: '{{ .Values.cataloguesService.env.postgresSSLMode }}'
+    - name: POSTGRES_USER
+      value: '{{ .Values.cataloguesService.env.postgresUser }}'
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: catalogues-service-secret
+          key: postgresPassword
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

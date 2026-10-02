@@ -1,5 +1,15 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+
 geoservicePostgres:
   name: geoservice-postgres
+  # The Deployment predates chart/common and is not called "<name>-deployment".
+  # Keeping its name means an upgrade replaces the pod in place; a new name
+  # would briefly run two postgres processes on the same data directory.
+  deploymentName: geoservice-postgres
+  replicas: 1
 
   # geoservice's migrations run `CREATE EXTENSION IF NOT EXISTS postgis`
   # (see geoservice/internal/adapter/migration/sql/0001_init.sql), which the
@@ -7,8 +17,15 @@ geoservicePostgres:
   # dedicated single-tenant instance instead of an entry in
   # chart/postgres's serviceDatabases.
   image:
-    repository: postgis/postgis
+    name: postgis/postgis
     tag: "16-3.4"
+    pullPolicy: IfNotPresent
+    port: 5432
+
+  service:
+    name: geoservice-postgres
+    type: ClusterIP
+    port: 5432
 
   # Single app database + user, matching geoservice/docker-compose.yml.
   # Unlike chart/postgres this instance is only ever used by geoservice, so
@@ -20,10 +37,113 @@ geoservicePostgres:
     user: geo
     password: geo
 
-  service:
-    port: 5432
-    targetPort: 5432
+  # Rendered into the <name>-credentials Secret (prod syncs it from the
+  # secret manager instead, see values-prod.yaml).
+  secret:
+    create: true
+    name: geoservice-postgres-credentials
+    stringData:
+      POSTGRES_DB: "{{ .Values.geoservicePostgres.credentials.database }}"
+      POSTGRES_USER: "{{ .Values.geoservicePostgres.credentials.user }}"
+      POSTGRES_PASSWORD: "{{ .Values.geoservicePostgres.credentials.password }}"
+
+  envFrom:
+    - secretRef:
+        name: geoservice-postgres-credentials
 
   storage:
     size: 8Gi
+    # Local clusters: bind to a hostPath PersistentVolume. Leave empty to get
+    # a dynamically provisioned volume from storageClass ("" = cluster default).
     hostPath: /data/geoservice-db
+    storageClass: ""
+    accessModes:
+      - ReadWriteMany
+
+  volumes:
+    - name: db-data
+      persistentVolumeClaim:
+        claimName: geoservice-postgres-pvc
+  volumeMounts:
+    - name: db-data
+      mountPath: /var/lib/postgresql/data
+
+  probes:
+    startup:
+      exec:
+        command: ["sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+      periodSeconds: 5
+      failureThreshold: 60
+    readiness:
+      exec:
+        command: ["sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+      periodSeconds: 10
+      timeoutSeconds: 5
+    liveness:
+      exec:
+        command: ["sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 6
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  autoscaling:
+    enabled: false
+
+  # Production contract, see chart/common/templates
+  # One writer per data directory: stop the old pod before starting the new one.
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 5
+  # Lets postgres finish a fast shutdown (checkpoint) before SIGKILL.
+  terminationGracePeriodSeconds: 60
+  preStopSleepSeconds: 0
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+    # Only callers listed in networkPolicy.allowFromApps may connect (prod/staging/dev).
+    isolated: true
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  # Single replica: a PDB would only block node drains.
+  pdb:
+    enabled: false
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+  externalSecret:
+    enabled: false
+    targetName: geoservice-postgres-credentials
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

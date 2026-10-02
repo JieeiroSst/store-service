@@ -1,0 +1,15 @@
+{
+    "server": {
+        "portHttpServer": "8093"
+    },
+    "mysql": {
+        "mysqlHost": "mysql-svc",
+        "mysqlPort": "80",
+        "mysqlUser": "root",
+        "mysqlPassword": "password",
+        "mysqlDbname": "medical_service"
+    },
+    "pharmacy": {
+        "timeZone": "Asia/Ho_Chi_Minh"
+    }
+}

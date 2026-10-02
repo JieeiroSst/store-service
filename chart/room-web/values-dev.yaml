@@ -1,0 +1,43 @@
+# Argo CD: namespace store-dev, auto-synced. CI bumps image.tag on every merge to master.
+global:
+  environment: dev
+roomWeb:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    host: rooms.dev.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    tls:
+      enabled: true
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+    runAsGroup: 101
+    fsGroup: 101
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: true
+    internet: false
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
+    # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+    # limits from values.yaml still cap each pod.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi

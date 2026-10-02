@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 postService:
   name: post-service
+  selectorApp: post-service-deployment
+  containerName: post-service-deployment
   replicas: 1
 
   image:
@@ -8,11 +14,12 @@ postService:
     # Must match config.Server.PortHttpServer as resolved from env/Consul
     # (see post_service/config/config.go and consul.json).
     port: 1236
+    pullPolicy: Always
 
   service:
     name: post-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ postService:
     host: post-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Plain env vars the container reads directly (see config.FromEnv) -
   # works standalone even before ops has seeded this service's config into
@@ -53,3 +63,114 @@ postService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.postService.image.port }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.postService.env.mysqlHost }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.postService.env.mysqlPort }}'
+    - name: MYSQL_USER
+      value: '{{ .Values.postService.env.mysqlUser }}'
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: post-service-secret
+          key: mysqlPassword
+    - name: MYSQL_DBNAME
+      value: '{{ .Values.postService.env.mysqlDbname }}'
+    - name: MINIO_ENDPOINT
+      value: '{{ .Values.postService.env.minioEndpoint }}'
+    - name: MINIO_ACCESS_KEY
+      value: '{{ .Values.postService.env.minioAccessKey }}'
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: post-service-secret
+          key: minioSecretKey
+    - name: MINIO_BUCKET
+      value: '{{ .Values.postService.env.minioBucket }}'
+    - name: MINIO_USE_SSL
+      value: '{{ .Values.postService.env.minioUseSSL }}'
+    - name: USER_SERVICE_URL
+      value: '{{ .Values.postService.env.userServiceURL }}'
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="post_service"
+      ServiceConsul="consul"
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: post_service

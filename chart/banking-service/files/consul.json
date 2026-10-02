@@ -1,0 +1,26 @@
+{
+    "server": {
+        "server_port": "3000",
+        "grpc_server": ""
+    },
+    "mysql": {
+        "mysql_host": "mysql-svc",
+        "mysql_port": "80",
+        "mysql_user": "root",
+        "mysql_password": "password",
+        "mysql_dbname": "banking_service",
+        "mysql_ssl_mode": false,
+        "mysql_driver": "mysql"
+    },
+    "cache": {
+        "host": "redis-svc:80",
+        "password": ""
+    },
+    "kafka": {
+        "brokers": [
+            "kafka-service:9092"
+        ],
+        "transaction_topic": "banking.transactions",
+        "consumer_group": "banking-service"
+    }
+}

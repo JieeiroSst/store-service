@@ -1,0 +1,54 @@
+# One Application per chart that has chart/<service>/values-prod.yaml.
+# A chart opts in by adding that file; nothing here changes per service.
+# Never auto-synced: a release manager presses Sync after the promotion PR
+# merges (and outside the change-freeze window in projects.yaml).
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: store-services-prod
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/JieeiroSst/store-service.git
+        revision: master
+        files:
+          - path: "chart/*/values-prod.yaml"
+          # chart/platform has its own Application.
+          - path: "chart/platform/values-prod.yaml"
+            exclude: true
+  template:
+    metadata:
+      name: "{{.path.basename}}-prod"
+      labels:
+        environment: prod
+        layer: service
+        service: "{{.path.basename}}"
+    spec:
+      project: store-prod
+      source:
+        repoURL: https://github.com/JieeiroSst/store-service.git
+        targetRevision: master
+        path: "{{.path.path}}"
+        helm:
+          releaseName: "{{.path.basename}}"
+          valueFiles:
+            - values.yaml
+            - values-prod.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: store-prod
+      syncPolicy:
+        syncOptions:
+          - ServerSideApply=true
+          - PruneLast=true
+          - CreateNamespace=false
+        retry:
+          limit: 10
+          backoff:
+            duration: 15s
+            factor: 2
+            maxDuration: 5m
+      revisionHistoryLimit: 10

@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 rentHouseService:
   name: rent-house-service
+  selectorApp: rent-house-service-deployment
+  containerName: rent-house-service-deployment
   replicas: 1
 
   image:
@@ -7,11 +13,12 @@ rentHouseService:
     tag: latest
     # Must match PORT.
     port: 8080
+    pullPolicy: Always
 
   service:
     name: rent-house-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -19,6 +26,9 @@ rentHouseService:
     host: rent-house-service.local
     path: /api/v1
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Dev defaults - override the secrets with --set or a values-prod.yaml
   # before deploying anywhere real. The schema is applied on startup;
@@ -68,3 +78,108 @@ rentHouseService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.rentHouseService.image.port }}'
+    - name: HostPostgres
+      value: '{{ .Values.rentHouseService.env.postgresHost }}'
+    - name: PortPostgres
+      value: '{{ .Values.rentHouseService.env.postgresPort }}'
+    - name: DatabasePostgres
+      value: '{{ .Values.rentHouseService.env.postgresDatabase }}'
+    - name: UserPostgres
+      value: '{{ .Values.rentHouseService.env.postgresUser }}'
+    - name: PasswordPostgres
+      valueFrom:
+        secretKeyRef:
+          name: rent-house-service-secret
+          key: postgresPassword
+    - name: UserServiceURL
+      value: '{{ .Values.rentHouseService.env.userServiceURL }}'
+    - name: UserServiceValidatePath
+      value: '{{ .Values.rentHouseService.env.userServiceValidatePath }}'
+    - name: UserServiceUserPath
+      value: '{{ .Values.rentHouseService.env.userServiceUserPath }}'
+    - name: AdminRole
+      value: '{{ .Values.rentHouseService.env.adminRole }}'
+    - name: AuthCacheTTLSeconds
+      value: '{{ .Values.rentHouseService.env.authCacheTTLSeconds }}'
+    - name: WalletServiceURL
+      value: '{{ .Values.rentHouseService.env.walletServiceURL }}'
+      when: '{{ .Values.rentHouseService.env.walletServiceURL }}'
+    - name: PaymentServiceURL
+      value: '{{ .Values.rentHouseService.env.paymentServiceURL }}'
+      when: '{{ .Values.rentHouseService.env.paymentServiceURL }}'
+    - name: RecompenseServiceURL
+      value: '{{ .Values.rentHouseService.env.recompenseServiceURL }}'
+      when: '{{ .Values.rentHouseService.env.recompenseServiceURL }}'
+    - name: PaymentServiceTimeoutSeconds
+      value: '{{ .Values.rentHouseService.env.paymentServiceTimeoutSeconds }}'
+    - name: BookingHoldMinutes
+      value: '{{ .Values.rentHouseService.env.bookingHoldMinutes }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /readyz
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /healthz
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

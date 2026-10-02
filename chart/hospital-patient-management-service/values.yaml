@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 hospitalPatientManagementService:
   name: hospital-patient-management-service
+  selectorApp: hospital-patient-management-service-deployment
+  containerName: hospital-patient-management-service-deployment
   replicas: 1
 
   image:
@@ -9,12 +15,19 @@ hospitalPatientManagementService:
     # (see hospital-patient-management-service/config/config.go).
     port: 8080
     # gRPC. Must match GRPC_PORT.
-    grpcPort: 9090
-
+    pullPolicy: Always
+    grpcPort: 9090  # keep in sync with extraPorts / service.extraPorts
+  extraPorts:
+    - name: grpc
+      containerPort: 9090
   service:
     name: hospital-patient-management-service-svc
     type: ClusterIP
-
+    port: 80
+    extraPorts:
+      - name: grpc
+        port: 9090
+        targetPort: grpc
   ingress:
     enabled: false
     className: nginx
@@ -22,6 +35,9 @@ hospitalPatientManagementService:
     host: hospital-patient-management-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # The service reads plain environment variables. Dev defaults - override the
   # password with --set or a values-prod.yaml before deploying anywhere real.
@@ -88,3 +104,109 @@ hospitalPatientManagementService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.hospitalPatientManagementService.image.port }}'
+    - name: GRPC_PORT
+      value: '{{ .Values.hospitalPatientManagementService.image.grpcPort }}'
+    - name: POSTGRES_HOST
+      value: '{{ .Values.hospitalPatientManagementService.env.postgresHost }}'
+    - name: POSTGRES_PORT
+      value: '{{ .Values.hospitalPatientManagementService.env.postgresPort }}'
+    - name: POSTGRES_DATABASE
+      value: '{{ .Values.hospitalPatientManagementService.env.postgresDatabase }}'
+    - name: POSTGRES_SSLMODE
+      value: '{{ .Values.hospitalPatientManagementService.env.postgresSSLMode }}'
+    - name: POSTGRES_USER
+      value: '{{ .Values.hospitalPatientManagementService.env.postgresUser }}'
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: hospital-patient-management-service-secret
+          key: postgresPassword
+    - name: AUTH_MODE
+      value: '{{ .Values.hospitalPatientManagementService.env.authMode }}'
+    - name: USER_SERVICE_BASE_URL
+      value: '{{ .Values.hospitalPatientManagementService.env.userServiceBaseURL }}'
+    - name: BILLING_BASE_URL
+      value: '{{ .Values.hospitalPatientManagementService.env.billingBaseURL }}'
+    - name: BILLING_PLAN_NAME
+      value: '{{ .Values.hospitalPatientManagementService.env.billingPlanName }}'
+    - name: WALLET_BASE_URL
+      value: '{{ .Values.hospitalPatientManagementService.env.walletBaseURL }}'
+      when: '{{ .Values.hospitalPatientManagementService.env.walletHospitalID }}'
+    - name: WALLET_HOSPITAL_ID
+      value: '{{ .Values.hospitalPatientManagementService.env.walletHospitalID }}'
+      when: '{{ .Values.hospitalPatientManagementService.env.walletHospitalID }}'
+    - name: WALLET_MINOR_UNIT
+      value: '{{ .Values.hospitalPatientManagementService.env.walletMinorUnit }}'
+    - name: WALLET_USER_PREFIX
+      value: '{{ .Values.hospitalPatientManagementService.env.walletUserPrefix }}'
+    - name: NOTIFICATION_BASE_URL
+      value: '{{ .Values.hospitalPatientManagementService.env.notificationBaseURL }}'
+    - name: EKYC_BASE_URL
+      value: '{{ .Values.hospitalPatientManagementService.env.ekycBaseURL }}'
+    - name: UPLOAD_BASE_URL
+      value: '{{ .Values.hospitalPatientManagementService.env.uploadBaseURL }}'
+    - name: AUTH_CACHE_TTL
+      value: '{{ .Values.hospitalPatientManagementService.env.authCacheTTL }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

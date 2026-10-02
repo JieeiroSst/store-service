@@ -1,0 +1,50 @@
+environment: dev
+
+podSecurity:
+  enforce: baseline
+
+resourceQuota:
+  # Sized from the rendered charts: HPA max replicas x requests, with headroom.
+  # Limits are not quota'd - they are per-pod ceilings and overcommit by design.
+  hard:
+    requests.cpu: "4"
+    requests.memory: 16Gi
+    pods: "250"
+    persistentvolumeclaims: "10"
+    requests.storage: 100Gi
+    services.loadbalancers: "0"
+    services.nodeports: "0"
+
+networkPolicies:
+  consul:
+    namespace: default
+  infraEgress:
+    namespaces: [default]
+    cidrs: []
+
+secretStore:
+  provider: kubernetes
+  kubernetes:
+    remoteNamespace: default
+    secretNames:
+      - vending-machine-service-db-credentials
+
+# Non-prod shares the infra the umbrella chart runs in `default`.
+infraAliases:
+  namespace: default
+  services:
+    consul-service: consul-service
+    postgresdb: postgresdb
+    mysql-svc: mysql-svc
+    redis-svc: redis-svc
+    mongo-svc: mongo-svc
+    minio-svc: minio-svc
+    kafka-service: kafka-service
+    rabbitmq-service: rabbitmq-service
+    nats: nats
+    elasticsearch-service: elasticsearch-service
+    cassandra-service: cassandra-service
+    clamav-svc: clamav-svc
+    keycloak-service: keycloak-service
+    qdrant-service: qdrant-service
+    temporal-service: temporal-service

@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 doordashService:
   name: doordash-service
+  selectorApp: doordash-service-deployment
+  containerName: doordash-service-deployment
   replicas: 1
 
   image:
@@ -8,11 +14,12 @@ doordashService:
     # Must match config.Server.PortHttpServer as resolved from env/Consul
     # (see doordash-service/config/config.go and consul.json).
     port: 8086
+    pullPolicy: Always
 
   service:
     name: doordash-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ doordashService:
     host: doordash-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Plain env vars the container reads directly (see config.FromEnv) -
   # works standalone even before ops has seeded this service's config into
@@ -34,7 +44,7 @@ doordashService:
     # Base URLs of the sibling services this service calls over HTTP to
     # enrich orders (see Readme.md section 5) - override with the real
     # in-cluster Service names for each once they're deployed.
-    userServiceBaseURL: http://user-service-svc
+    userServiceBaseURL: http://user-api-svc
     restaurantServiceBaseURL: http://restaurant-service-svc
     paymentServiceBaseURL: http://payment-service-svc
     notificationServiceBaseURL: http://notification-service-svc
@@ -52,3 +62,111 @@ doordashService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.doordashService.image.port }}'
+    - name: POSTGRES_HOST
+      value: '{{ .Values.doordashService.env.postgresHost }}'
+    - name: POSTGRES_PORT
+      value: '{{ .Values.doordashService.env.postgresPort }}'
+    - name: POSTGRES_USER
+      value: '{{ .Values.doordashService.env.postgresUser }}'
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: doordash-service-secret
+          key: postgresPassword
+    - name: POSTGRES_DBNAME
+      value: '{{ .Values.doordashService.env.postgresDbname }}'
+    - name: POSTGRES_SSLMODE
+      value: '{{ .Values.doordashService.env.postgresSSLMode }}'
+    - name: USER_SERVICE_BASE_URL
+      value: '{{ .Values.doordashService.env.userServiceBaseURL }}'
+    - name: RESTAURANT_SERVICE_BASE_URL
+      value: '{{ .Values.doordashService.env.restaurantServiceBaseURL }}'
+    - name: PAYMENT_SERVICE_BASE_URL
+      value: '{{ .Values.doordashService.env.paymentServiceBaseURL }}'
+    - name: NOTIFICATION_SERVICE_BASE_URL
+      value: '{{ .Values.doordashService.env.notificationServiceBaseURL }}'
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="doordash_service"
+      ServiceConsul="consul"
+  # No health endpoint known for this service: TCP checks on the http port.
+  # Swap for httpGet once the service exposes /health.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: doordash_service

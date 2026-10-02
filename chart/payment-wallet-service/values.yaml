@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 paymentWalletService:
   name: payment-wallet-service
+  selectorApp: payment-wallet-service-deployment
+  containerName: payment-wallet-service-deployment
   replicas: 1
 
   image:
@@ -8,11 +14,12 @@ paymentWalletService:
     # Must match config.Server.PortHttpServer as resolved from env/Consul
     # (see payment-wallet-service/config/config.go and consul.json).
     port: 8088
+    pullPolicy: Always
 
   service:
     name: payment-wallet-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -20,6 +27,9 @@ paymentWalletService:
     host: payment-wallet-service.local
     path: /
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Plain env vars the container reads directly (see config.FromEnv) -
   # works standalone even before ops has seeded this service's config into
@@ -45,3 +55,101 @@ paymentWalletService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.paymentWalletService.image.port }}'
+    - name: POSTGRES_HOST
+      value: '{{ .Values.paymentWalletService.env.postgresHost }}'
+    - name: POSTGRES_PORT
+      value: '{{ .Values.paymentWalletService.env.postgresPort }}'
+    - name: POSTGRES_USER
+      value: '{{ .Values.paymentWalletService.env.postgresUser }}'
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: payment-wallet-service-secret
+          key: postgresPassword
+    - name: POSTGRES_DBNAME
+      value: '{{ .Values.paymentWalletService.env.postgresDbname }}'
+    - name: POSTGRES_SSLMODE
+      value: '{{ .Values.paymentWalletService.env.postgresSSLMode }}'
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="payment_wallet_service"
+      ServiceConsul="consul"
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: payment_wallet_service

@@ -1,0 +1,5 @@
+{{- $web := fromYaml (include "airflow-server.component" (dict "root" $ "component" .Values.airflowServer.webserver)) }}
+{{- $scheduler := fromYaml (include "airflow-server.component" (dict "root" $ "component" .Values.airflowServer.scheduler)) }}
+{{- include "common.app" (dict "root" $ "svc" $web) }}
+{{- include "common.workload" (dict "root" $ "svc" $scheduler) }}
+{{- include "common.app" (dict "root" $ "svc" .Values.airflowServer.postgres) }}

@@ -1,9 +1,16 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+
 airflowServer:
   name: airflow-server
 
+  # Shared by webserver and scheduler (templates/_helpers.tpl).
   image:
     name: apache/airflow
     tag: 2.8.1-python3.11
+    pullPolicy: IfNotPresent
 
   # LocalExecutor keeps this to a single-node deployment: no Celery/Redis broker needed.
   executor: LocalExecutor
@@ -22,33 +29,305 @@ airflowServer:
   # before running this anywhere shared.
   fernetKey: ""
 
+  # Passwords, the metadata DB URL and the fernet key live in the
+  # <name>-secrets Secret (templates/secret.yaml); prod syncs it from the
+  # secret manager instead.
+  externalSecret:
+    enabled: false
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+
+  # Env both processes need, prepended to each component's containerEnv.
+  sharedEnv:
+    - name: AIRFLOW__CORE__EXECUTOR
+      value: "{{ .Values.airflowServer.executor }}"
+    - name: AIRFLOW__DATABASE__SQL_ALCHEMY_CONN
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.airflowServer.name }}-secrets"
+          key: sql-alchemy-conn
+    - name: AIRFLOW__API__AUTH_BACKENDS
+      value: airflow.api.auth.backend.basic_auth
+    - name: AIRFLOW__CORE__FERNET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.airflowServer.name }}-secrets"
+          key: fernet-key
+      when: "{{ if or .Values.airflowServer.fernetKey .Values.airflowServer.externalSecret.enabled }}true{{ end }}"
+
   webserver:
+    name: airflow-server-webserver
+    # Existing object names predate chart/common; keep them so upgrades
+    # replace pods in place.
+    deploymentName: airflow-server-webserver
     replicas: 1
     port: 8080
+
     service:
       name: airflow-webserver-svc
       type: LoadBalancer
+      port: 80
+
+    ingress:
+      enabled: false
+      className: nginx
+      annotations: {}
+      host: airflow.local
+      path: /
+      pathType: Prefix
+      tls:
+        enabled: false
+        secretName: ''
+
+    command: ["/bin/bash", "-c"]
+    args:
+      - |
+        airflow db migrate
+        airflow users create \
+          --username "$AIRFLOW_ADMIN_USERNAME" \
+          --password "$AIRFLOW_ADMIN_PASSWORD" \
+          --firstname "$AIRFLOW_ADMIN_FIRSTNAME" \
+          --lastname "$AIRFLOW_ADMIN_LASTNAME" \
+          --role Admin \
+          --email "$AIRFLOW_ADMIN_EMAIL" || true
+        exec airflow webserver
+    containerEnv:
+      - name: AIRFLOW_ADMIN_USERNAME
+        value: "{{ .Values.airflowServer.auth.username }}"
+      - name: AIRFLOW_ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: "{{ .Values.airflowServer.name }}-secrets"
+            key: admin-password
+      - name: AIRFLOW_ADMIN_FIRSTNAME
+        value: "{{ .Values.airflowServer.auth.firstName }}"
+      - name: AIRFLOW_ADMIN_LASTNAME
+        value: "{{ .Values.airflowServer.auth.lastName }}"
+      - name: AIRFLOW_ADMIN_EMAIL
+        value: "{{ .Values.airflowServer.auth.email }}"
+
+    probes:
+      # `airflow db migrate` runs before the webserver starts listening.
+      startup:
+        httpGet:
+          path: /health
+          port: http
+        periodSeconds: 10
+        failureThreshold: 60
+      readiness:
+        httpGet:
+          path: /health
+          port: http
+        periodSeconds: 10
+        timeoutSeconds: 5
+      liveness:
+        httpGet:
+          path: /health
+          port: http
+        periodSeconds: 30
+        timeoutSeconds: 10
+        failureThreshold: 5
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        cpu: "1"
+        memory: 2Gi
+
+    autoscaling:
+      enabled: false
+
+    # Production contract, see chart/common/templates
+    strategy:
+      maxSurge: 25%
+      maxUnavailable: 0
+    terminationGracePeriodSeconds: 30
+    preStopSleepSeconds: 5
+    serviceAccount:
+      create: true
+      automountToken: false
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+    networkLabels:
+      consulClient: false
+      internet: false
+    topologySpread:
+      enabled: false
+    pdb:
+      enabled: false
+      maxUnavailable: 1
+    networkPolicy:
+      enabled: false
 
   scheduler:
+    name: airflow-server-scheduler
+    deploymentName: airflow-server-scheduler
+    # LocalExecutor runs tasks inside the scheduler: one replica.
     replicas: 1
+
+    command: ["/bin/bash", "-c"]
+    args:
+      - |
+        airflow db migrate
+        exec airflow scheduler
+
+    probes:
+      startup:
+        exec:
+          command: ["sh", "-c", 'airflow jobs check --job-type SchedulerJob --hostname "$(hostname)"']
+        periodSeconds: 30
+        timeoutSeconds: 60
+        failureThreshold: 20
+      liveness:
+        exec:
+          command: ["sh", "-c", 'airflow jobs check --job-type SchedulerJob --hostname "$(hostname)"']
+        periodSeconds: 60
+        timeoutSeconds: 60
+        failureThreshold: 3
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        cpu: "2"
+        memory: 3Gi
+
+    autoscaling:
+      enabled: false
+
+    # Production contract, see chart/common/templates
+    # Let running LocalExecutor tasks finish before the pod is killed.
+    terminationGracePeriodSeconds: 120
+    preStopSleepSeconds: 0
+    serviceAccount:
+      create: true
+      automountToken: false
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+    networkLabels:
+      consulClient: false
+      internet: false
+    topologySpread:
+      enabled: false
+    pdb:
+      enabled: false
+    networkPolicy:
+      enabled: false
 
   # Dedicated metadata database for this Airflow instance.
   postgres:
     name: airflow-postgres
+    # Selector of the existing Deployment (immutable).
+    selectorApp: airflow-postgres-deployment
+    containerName: airflow-postgres-deployment
     db: airflow
     user: airflow
     password: airflow
-    port: 5432
+    replicas: 1
     image:
       name: postgres
       tag: "13"
+      pullPolicy: IfNotPresent
+      port: 5432
     service:
       name: airflow-postgres-svc
+      type: ClusterIP
+      port: 5432
 
-  ingress:
-    enabled: false
-    className: nginx
-    annotations: {}
-    host: airflow.local
-    path: /
-    pathType: Prefix
+    # Off locally (matches the previous chart: metadata is lost when the pod
+    # is replaced). Every Argo CD environment turns it on.
+    persistence:
+      enabled: false
+      size: 10Gi
+      storageClass: ""
+
+    containerEnv:
+      - name: POSTGRES_DB
+        value: "{{ .Values.airflowServer.postgres.db }}"
+      - name: POSTGRES_USER
+        value: "{{ .Values.airflowServer.postgres.user }}"
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: "{{ .Values.airflowServer.name }}-secrets"
+            key: postgres-password
+      # initdb needs an empty directory it owns, not the volume root.
+      - name: PGDATA
+        value: /var/lib/postgresql/data/pgdata
+        when: "{{ if .Values.airflowServer.postgres.persistence.enabled }}true{{ end }}"
+    volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: "{{ .Values.airflowServer.postgres.name }}-data"
+        when: "{{ if .Values.airflowServer.postgres.persistence.enabled }}true{{ end }}"
+    volumeMounts:
+      - name: data
+        mountPath: /var/lib/postgresql/data
+        when: "{{ if .Values.airflowServer.postgres.persistence.enabled }}true{{ end }}"
+
+    probes:
+      startup:
+        exec:
+          command: ["sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+        periodSeconds: 5
+        failureThreshold: 60
+      readiness:
+        exec:
+          command: ["sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+        periodSeconds: 10
+        timeoutSeconds: 5
+      liveness:
+        exec:
+          command: ["sh", "-c", 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"']
+        periodSeconds: 20
+        timeoutSeconds: 5
+        failureThreshold: 6
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+
+    autoscaling:
+      enabled: false
+
+    # Production contract, see chart/common/templates
+    # One writer per data directory: stop the old pod before starting the new one.
+    strategy:
+      type: Recreate
+    terminationGracePeriodSeconds: 60
+    preStopSleepSeconds: 0
+    serviceAccount:
+      create: true
+      automountToken: false
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+    networkLabels:
+      consulClient: false
+      internet: false
+      # Only webserver/scheduler may connect (see networkPolicy in the overlays).
+      isolated: true
+    topologySpread:
+      enabled: false
+    pdb:
+      enabled: false
+    networkPolicy:
+      enabled: false

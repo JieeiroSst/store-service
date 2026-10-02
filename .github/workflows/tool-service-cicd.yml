@@ -1,12 +1,10 @@
 name: Tool Service CI/CD
 
+# Day-to-day builds run in the local cluster (deploy/ci): every push to
+# master is built there and rolled out to store-dev. This workflow only
+# publishes a release image to ghcr.io for staging/prod - run it by hand
+# (Actions -> Run workflow), then promote the tag with promote.yml.
 on:
-  push:
-    branches: [ master ]
-    paths:
-      - 'tool-service/**'
-      - 'chart/tool-service/**'
-      - '.github/workflows/tool-service-cicd.yml'
   workflow_dispatch:
 
 env:
@@ -95,27 +93,19 @@ jobs:
         with:
           context: ./tool-service
           push: true
+          provenance: mode=max
+          sbom: true
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
             ${{ env.IMAGE_NAME }}:latest
 
-  deploy:
-    needs: build-and-push
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v4
+      # Block the rollout on fixable critical CVEs in the pushed image.
+      - name: Scan image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tag }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
 
-      - name: Deploy tool service
-        # Same approach as the other services: the resources belong to the umbrella
-        # helm release (chart/), so render and apply directly instead of installing
-        # a standalone release. The image tag change triggers the rollout.
-        # Requires the secret "tool-service-api" (key: token) in the namespace:
-        #   kubectl create secret generic tool-service-api --from-literal=token=...
-        run: |
-          helm template ./chart/tool-service \
-            --namespace default \
-            --set toolService.image.name=${{ env.IMAGE_NAME }} \
-            --set toolService.image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            | kubectl apply -n default -f -
-          kubectl rollout status deployment/tool-service-deployment -n default --timeout=5m

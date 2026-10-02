@@ -1,0 +1,50 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
+# reviewed PR opened by the "Promote image" workflow.
+# Credentials come from the secret manager (SecretStore store-secrets);
+# create the store/prod/... keys before the first sync.
+global:
+  environment: prod
+threadsService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: true
+    internet: false
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 60
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  topologySpread:
+    enabled: true
+  priorityClassName: store-standard
+  externalSecret:
+    enabled: true
+    targetName: threads-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: postgresPassword
+        remoteKey: store/prod/threads-service
+        property: postgresPassword
+      - secretKey: redisPassword
+        remoteKey: store/prod/threads-service
+        property: redisPassword

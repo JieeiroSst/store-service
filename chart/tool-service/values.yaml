@@ -1,10 +1,17 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 toolService:
   name: tool-service
+  selectorApp: tool-service-deployment
+  containerName: tool-service-deployment
   replicas: 1 # keep 1: the experience store is a local file on a ReadWriteOnce volume
 
   image:
     name: ghcr.io/jieeirosst/tool-service
     tag: latest
+    port: 8080
     httpPort: 8080
     pullPolicy: Always
 
@@ -48,8 +55,7 @@ toolService:
   service:
     name: tool-service-svc
     type: ClusterIP
-
-  # Long AI runs (task analysis) can take minutes: raise proxy timeouts if you enable this.
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -60,6 +66,9 @@ toolService:
     path: /
     pathType: Prefix
 
+    tls:
+      enabled: false
+      secretName: ''
   resources:
     requests:
       cpu: 200m
@@ -67,3 +76,131 @@ toolService:
     limits:
       cpu: "1"
       memory: 2Gi
+  containerEnv:
+    - name: HTTP_PORT
+      value: '{{ .Values.toolService.image.httpPort }}'
+    - name: OLLAMA_URL
+      value: '{{ .Values.toolService.ollama.url }}'
+    - name: OLLAMA_MODEL
+      value: '{{ .Values.toolService.ollama.model }}'
+    - name: OLLAMA_EMBED_MODEL
+      value: '{{ .Values.toolService.ollama.embedModel }}'
+    - name: CONSISTENCY_RUNS
+      value: '{{ .Values.toolService.learning.consistencyRuns }}'
+    - name: AUTO_LEARN_INTERVAL
+      value: '{{ .Values.toolService.learning.autoLearnInterval }}'
+    - name: LEARNING_DATA_DIR
+      value: /data
+    - name: ANDROID_ADB_SERVER_ADDRESS
+      value: '{{ .Values.toolService.android.adbServerAddress }}'
+      when: '{{ .Values.toolService.android.adbServerAddress }}'
+    - name: ANDROID_ADB_SERVER_PORT
+      value: '{{ .Values.toolService.android.adbServerPort }}'
+      when: '{{ .Values.toolService.android.adbServerAddress }}'
+    - name: CHROME_PATH
+      value: /headless-shell/headless-shell
+    - name: CHROME_NO_SANDBOX
+      value: 'true'
+    - name: DB_CONNECTIONS
+      valueFrom:
+        secretKeyRef:
+          name: tool-service-connections
+          key: dbConnections
+          optional: true
+    - name: RABBITMQ_CONNECTIONS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.toolService.connectionsSecret.name }}'
+          key: '{{ .Values.toolService.connectionsSecret.rabbitKey }}'
+          optional: true
+    - name: API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.toolService.apiTokenSecret.name }}'
+          key: '{{ .Values.toolService.apiTokenSecret.key }}'
+          optional: true
+    - name: TARGET_ALLOWLIST
+      value: '{{ .Values.toolService.targetAllowlist }}'
+  volumes:
+    - name: dshm
+      emptyDir:
+        medium: Memory
+        sizeLimit: 512Mi
+    - name: learning-data
+      persistentVolumeClaim:
+        claimName: tool-service-data
+  volumeMounts:
+    - name: learning-data
+      mountPath: /data
+    - name: dshm
+      mountPath: /dev/shm
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+  # Production contract, see chart/common/templates
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

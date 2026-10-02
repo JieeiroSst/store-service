@@ -1,0 +1,44 @@
+{{- if .Values.lottery.scrapeCronJob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.lottery.name }}-scrape
+spec:
+  schedule: {{ .Values.lottery.scrapeCronJob.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      activeDeadlineSeconds: 1800
+      template:
+        metadata:
+          labels:
+            app: {{ .Values.lottery.name }}-scrape
+            network.store.io/consul-client: "true"
+        spec:
+          restartPolicy: OnFailure
+          automountServiceAccountToken: false
+          securityContext:
+            {{- toYaml .Values.lottery.podSecurityContext | nindent 12 }}
+          containers:
+          - name: {{ .Values.lottery.name }}-scrape
+            image: {{ .Values.lottery.image.name }}:{{ .Values.lottery.image.tag }}
+            imagePullPolicy: Always
+            command: ["python", "-m", "app.cli", "scrape"]
+            securityContext:
+              {{- toYaml .Values.lottery.securityContext | nindent 14 }}
+            resources:
+              {{- toYaml .Values.lottery.resources | nindent 14 }}
+            volumeMounts:
+            - name: env-file
+              mountPath: {{ .Values.lottery.envFile.mountPath }}
+              subPath: .env
+              readOnly: true
+          volumes:
+          # Same .env the API pods mount (rendered by chart/common).
+          - name: env-file
+            secret:
+              secretName: {{ .Values.lottery.name }}-env-file
+{{- end }}

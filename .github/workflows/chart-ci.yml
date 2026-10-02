@@ -1,0 +1,11 @@
+name: Chart CI
+
+# Renders every chart that opted into GitOps (has values-<env>.yaml) for every
+# environment and validates the output against the Kubernetes schemas, so a
+# broken overlay fails here instead of in Argo CD.
+on:
+  pull_request:
+    paths:
+      - 'chart/**'
+      - 'deploy/argocd/**'
+      - '.github/workflows/chart-ci.yml'

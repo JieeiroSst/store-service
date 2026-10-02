@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 accountTransaction:
   name: account-transaction
+  selectorApp: account-transaction-deployment
+  containerName: account-transaction-deployment
   replicas: 1
 
   image:
@@ -7,28 +13,46 @@ accountTransaction:
     tag: latest
     # Must match config.Server.PortHttpServer / PortGrpcServer as resolved
     # from Consul at startup (see account-transaction-service/config/config.go).
-    httpPort: 8081
-    grpcPort: 9091
-
+    port: 8081
+    pullPolicy: Always
+  extraPorts:
+    - name: grpc
+      containerPort: 9091
   service:
-    httpName: account-transaction-api-svc
-    grpcName: account-transaction-grpc-svc
+    name: account-transaction-api-svc
     type: LoadBalancer
-
+    port: 80
+  extraServices:
+    - name: account-transaction-grpc-svc
+      type: LoadBalancer
+      ports:
+        - name: grpc
+          port: 90
+          targetPort: grpc
   ingress:
     enabled: false
     className: nginx
     annotations: {}
-    http:
-      host: account-transaction.local
-      path: /
-      pathType: Prefix
-    grpc:
+    host: account-transaction.local
+    path: /
+    pathType: Prefix
+    tls:
       enabled: false
+      secretName: ''
+  extraIngresses:
+    - name: account-transaction-grpc-ingress
+      enabled: false
+      className: nginx
+      annotations:
+        nginx.ingress.kubernetes.io/backend-protocol: GRPC
       host: account-transaction-grpc.local
       path: /
       pathType: Prefix
-      annotations: {}
+      serviceName: account-transaction-grpc-svc
+      servicePort: grpc
+      tls:
+        enabled: false
+        secretName: ''
 
   resources:
     requests:
@@ -43,3 +67,85 @@ accountTransaction:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="http://consul-service"
+      KeyConsul="account_transaction_service"
+      ServiceConsul="consul"
+  # No health endpoint known for this service: TCP checks on the http port.
+  # Swap for httpGet once the service exposes /health.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  # Seeds Consul KV `key` from files/consul.json when missing (chart/common).
+  consulSeed:
+    enabled: true
+    key: account_transaction_service

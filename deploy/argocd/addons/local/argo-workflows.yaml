@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: addon-argo-workflows
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-20"
+spec:
+  project: store-addons
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-workflows
+    targetRevision: 2.0.9
+    helm:
+      releaseName: argo-workflows
+      valuesObject:
+        crds:
+          install: true
+          keep: true
+        controller:
+          # The CI pipeline (deploy/ci) is the only workflow user.
+          workflowNamespaces:
+            - ci
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits: { cpu: "1", memory: 512Mi }
+        executor:
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+        server:
+          # Local UI without login: http://workflows.store.local:8081
+          authModes:
+            - server
+          secure: false
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts:
+              - workflows.store.local
+          resources:
+            requests: { cpu: 20m, memory: 64Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

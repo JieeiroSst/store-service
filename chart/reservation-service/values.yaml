@@ -1,5 +1,11 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
 reservationService:
   name: reservation-service
+  selectorApp: reservation-service-deployment
+  containerName: reservation-service-deployment
   replicas: 1
 
   image:
@@ -13,7 +19,7 @@ reservationService:
   service:
     name: reservation-service-svc
     type: ClusterIP
-
+    port: 80
   ingress:
     enabled: false
     className: nginx
@@ -21,6 +27,9 @@ reservationService:
     host: reservation-service.local
     path: /api/v1
     pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
 
   # Dev defaults - override the secrets with --set or a values-prod.yaml
   # before deploying anywhere real. The schema is applied on startup;
@@ -92,3 +101,131 @@ reservationService:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.reservationService.image.port }}'
+    - name: HostPostgres
+      value: '{{ .Values.reservationService.env.postgresHost }}'
+    - name: PortPostgres
+      value: '{{ .Values.reservationService.env.postgresPort }}'
+    - name: DatabasePostgres
+      value: '{{ .Values.reservationService.env.postgresDatabase }}'
+    - name: UserPostgres
+      value: '{{ .Values.reservationService.env.postgresUser }}'
+    - name: PasswordPostgres
+      valueFrom:
+        secretKeyRef:
+          name: reservation-service-secret
+          key: postgresPassword
+    - name: UserServiceURL
+      value: '{{ .Values.reservationService.env.userServiceURL }}'
+    - name: UserServiceValidatePath
+      value: '{{ .Values.reservationService.env.userServiceValidatePath }}'
+    - name: UserServiceUserPath
+      value: '{{ .Values.reservationService.env.userServiceUserPath }}'
+    - name: AdminRole
+      value: '{{ .Values.reservationService.env.adminRole }}'
+    - name: AuthCacheTTLSeconds
+      value: '{{ .Values.reservationService.env.authCacheTTLSeconds }}'
+    - name: WalletServiceURL
+      value: '{{ .Values.reservationService.env.walletServiceURL }}'
+      when: '{{ .Values.reservationService.env.walletServiceURL }}'
+    - name: PaymentServiceURL
+      value: '{{ .Values.reservationService.env.paymentServiceURL }}'
+      when: '{{ .Values.reservationService.env.paymentServiceURL }}'
+    - name: RecompenseServiceURL
+      value: '{{ .Values.reservationService.env.recompenseServiceURL }}'
+      when: '{{ .Values.reservationService.env.recompenseServiceURL }}'
+    - name: PaymentServiceTimeoutSeconds
+      value: '{{ .Values.reservationService.env.paymentServiceTimeoutSeconds }}'
+    - name: NotificationServiceURL
+      value: '{{ .Values.reservationService.env.notificationServiceURL }}'
+      when: '{{ .Values.reservationService.env.notificationServiceURL }}'
+    - name: PostgresMaxConns
+      value: '{{ .Values.reservationService.env.postgresMaxConns }}'
+    - name: ReserveConcurrency
+      value: '{{ .Values.reservationService.env.reserveConcurrency }}'
+    - name: ReserveQueueWaitMillis
+      value: '{{ .Values.reservationService.env.reserveQueueWaitMillis }}'
+    - name: SoldOutTTLSeconds
+      value: '{{ .Values.reservationService.env.soldOutTTLSeconds }}'
+    - name: UserRatePerSecond
+      value: '{{ .Values.reservationService.env.userRatePerSecond }}'
+    - name: UserBurst
+      value: '{{ .Values.reservationService.env.userBurst }}'
+    - name: MaxPendingPerGuest
+      value: '{{ .Values.reservationService.env.maxPendingPerGuest }}'
+    - name: MaxInFlight
+      value: '{{ .Values.reservationService.env.maxInFlight }}'
+    - name: ReservationHoldMinutes
+      value: '{{ .Values.reservationService.env.reservationHoldMinutes }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /readyz
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+    liveness:
+      httpGet:
+        path: /healthz
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+      timeoutSeconds: 5
+      failureThreshold: 6
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

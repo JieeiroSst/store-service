@@ -1,0 +1,62 @@
+# One Application per chart that has chart/<service>/values-dev.yaml.
+# A chart opts in by adding that file; nothing here changes per service.
+# Auto-synced: a merged change (e.g. CI's image tag bump) rolls out on its own.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: store-services-dev
+  namespace: argocd
+spec:
+  goTemplate: true
+  # Argo CD Image Updater (deploy/ci/image-updater.yaml) sets the image of
+  # each dev Application as Helm parameters; keep the ApplicationSet from
+  # reverting them.
+  ignoreApplicationDifferences:
+    - jsonPointers:
+        - /spec/source/helm/parameters
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/JieeiroSst/store-service.git
+        revision: master
+        files:
+          - path: "chart/*/values-dev.yaml"
+          # chart/platform has its own Application.
+          - path: "chart/platform/values-dev.yaml"
+            exclude: true
+  template:
+    metadata:
+      name: "{{.path.basename}}-dev"
+      labels:
+        environment: dev
+        layer: service
+        service: "{{.path.basename}}"
+    spec:
+      project: store-nonprod
+      source:
+        repoURL: https://github.com/JieeiroSst/store-service.git
+        targetRevision: master
+        path: "{{.path.path}}"
+        helm:
+          releaseName: "{{.path.basename}}"
+          valueFiles:
+            - values.yaml
+            - values-dev.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: store-dev
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
+          - PruneLast=true
+          - CreateNamespace=false
+        retry:
+          limit: 10
+          backoff:
+            duration: 15s
+            factor: 2
+            maxDuration: 5m
+      revisionHistoryLimit: 10
