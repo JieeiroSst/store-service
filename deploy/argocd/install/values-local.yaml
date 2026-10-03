@@ -62,6 +62,19 @@ repoServer:
     # Timeout for git/helm commands the repo-server runs (default 90s).
     - name: ARGOCD_EXEC_TIMEOUT
       value: 15m
+  # The laptop node is CPU-saturated: with the chart defaults (1s timeout,
+  # 3 failures) the liveness probe killed repo-server mid `git checkout`,
+  # leaving a stale .git/index.lock that failed every later checkout, so new
+  # commits never reached Argo CD. Tolerate ~5 minutes of slow answers.
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 10
+  readinessProbe:
+    periodSeconds: 15
+    timeoutSeconds: 10
+    failureThreshold: 6
   resources:
     requests: { cpu: 100m, memory: 256Mi }
     limits: { cpu: "2", memory: 2Gi }
