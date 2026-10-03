@@ -1,0 +1,50 @@
+extend type Query {
+  """GET endpoints of wallet-service"""
+  walletService: WalletSvcQuery!
+}
+
+type WalletSvcQuery {
+  """
+  GET /api/v1/wallets/{id}
+  """
+  wallet(id: String!): WalletSvcWallet
+
+  """
+  GET /api/v1/transactions/{id}
+  """
+  transaction(id: String!): WalletSvcTransaction
+}
+
+type WalletSvcWallet {
+  id: String
+  user_id: String
+  balance: String
+  frozen_amount: String
+  currency: String
+  status: String
+  version: Int
+  created_at: String
+  updated_at: String
+}
+
+type WalletSvcTransaction {
+  id: String
+  idempotency_key: String
+  wallet_id: String
+  merchant_id: String
+  acquirer_bank_id: String
+  issuer_bank_id: String
+  card_id: String
+  card_network: String
+  amount: String
+  currency: String
+  fee: String
+  type: String
+  status: String
+  description: String
+  authorization_code: String
+  batch_id: String
+  metadata: Map
+  created_at: String
+  updated_at: String
+}

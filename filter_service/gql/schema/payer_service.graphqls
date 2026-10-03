@@ -1,0 +1,42 @@
+extend type Query {
+  """GET endpoints of payer-service"""
+  payerService: PayerQuery!
+}
+
+type PayerQuery {
+  """
+  GET /api/v1/transaction
+  """
+  transaction(transaction_id: Int!): PayerTransactionResponse
+}
+
+type PayerTransactionResponse {
+  transaction: PayerTransactions
+  payers: PayerPayers
+  buyers: PayerBuyers
+}
+
+type PayerTransactions {
+  transaction_id: Int
+  payer_id: Int
+  buyer_id: Int
+  amount: Float
+  transaction_date: String
+  transaction_type: Int
+  description: String
+  status: Int
+}
+
+type PayerPayers {
+  payer_id: Int
+  name: String
+  email: String
+  phone_number: String
+}
+
+type PayerBuyers {
+  buyer_id: Int
+  name: String
+  email: String
+  phone_number: String
+}

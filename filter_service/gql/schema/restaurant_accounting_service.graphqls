@@ -1,0 +1,19 @@
+extend type Query {
+  """GET endpoints of restaurant-accounting-service"""
+  restaurantAccountingService: RAccountingQuery!
+}
+
+type RAccountingQuery {
+  """
+  GET /api/v1/payments/{orderID}
+  """
+  payment(orderID: Int!): RAccountingPayment
+}
+
+type RAccountingPayment {
+  id: Int
+  order_id: Int
+  amount: Float
+  method: String
+  status: String
+}

@@ -550,3 +550,11 @@ spec:
         helm:
           name: webrtcService.image.name
           tag: webrtcService.image.tag
+  - namePattern: filter-service-dev
+    images:
+    - alias: filterService
+      imageName: localhost:5000/filter-service
+      manifestTargets:
+        helm:
+          name: filterService.image.name
+          tag: filterService.image.tag

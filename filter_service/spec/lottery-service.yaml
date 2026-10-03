@@ -1,0 +1,21 @@
+service: lottery-service
+source: lottery-service/app/adapters/inbound/api/routes.py
+namespace: lotteryService
+prefix: Lottery
+baseURL: http://lottery-service-svc
+endpoints:
+  - field: results
+    path: /api/v1/results
+    query: { date: String!, province: String! }
+    returns: LotteryResult
+    doc: Full lottery result of one province on one day (date is YYYY-MM-DD).
+types: |
+  type LotteryResult {
+    date: String
+    region: String
+    province: String
+    province_code: String
+    """Prize name -> winning numbers."""
+    prizes: Map
+    source: String
+  }

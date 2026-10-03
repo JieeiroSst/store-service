@@ -1,0 +1,158 @@
+service: notification_service
+source: notification_service/internal/adapter/primary/http/routes.go
+namespace: notificationService
+prefix: Notif
+baseURL: http://notification-service-svc
+endpoints:
+  - field: notifications
+    path: /api/v1/notifications
+    returns: "[NotifNotification!]"
+  - field: notification
+    path: /api/v1/notifications/{id}
+    params: { id: Int! }
+    returns: NotifNotification
+  - field: campaigns
+    path: /api/v1/campaigns
+    query: { limit: Int, offset: Int }
+    returns: "[NotifCampaign!]"
+    unwrap: items
+  - field: campaign
+    path: /api/v1/campaigns/{id}
+    params: { id: Int! }
+    returns: NotifCampaignView
+  - field: auditDeliveries
+    path: /api/v1/audit/deliveries
+    query: { email: String, phone: String, channel: String, status: String, source_type: String, requested_by: String, user_id: Int, source_id: Int, before_id: Int, limit: Int, from: String, to: String }
+    returns: NotifAuditPage
+    doc: from/to are RFC3339; page with before_id from the previous page.
+  - field: auditContent
+    path: /api/v1/audit/contents/{id}
+    params: { id: Int! }
+    returns: NotifAuditContent
+  - field: userContact
+    path: /api/v1/users/{id}/contact
+    params: { id: Int! }
+    returns: NotifUserContact
+  - field: devices
+    path: /api/v1/devices
+    query: { user_id: Int! }
+    returns: "[NotifDevice!]"
+  - field: device
+    path: /api/v1/devices/{id}
+    params: { id: Int! }
+    returns: NotifDevice
+types: |
+  type NotifNotification {
+    id: Int
+    user_id: Int
+    recipient: String
+    email: String
+    phone: String
+    data: Map
+    raw_data: Map
+    title: String
+    message: String
+    type: String
+    status: String
+    priority: Int
+    created_at: String
+    sent_at: String
+    retry_count: Int
+    last_error: String
+    requested_by: String
+    template_type: String
+    template_data: Map
+  }
+
+  type NotifCampaign {
+    id: Int
+    channel: String
+    audience: String
+    topic: String
+    title: String
+    message: String
+    data: Map
+    template_type: String
+    template_data: Map
+    status: String
+    recipients: Int
+    batches_planned: Int
+    last_error: String
+    requested_by: String
+    created_at: String
+    updated_at: String
+    started_at: String
+    completed_at: String
+  }
+
+  type NotifCampaignView {
+    campaign: NotifCampaign
+    progress: NotifCampaignProgress
+  }
+
+  type NotifAuditPage {
+    items: [NotifAuditDelivery!]
+    contents: Map
+    next_before_id: Int
+  }
+
+  type NotifAuditContent {
+    id: Int
+    channel: String
+    title: String
+    body: String
+    data: Map
+    template_type: String
+    created_at: String
+  }
+
+  type NotifUserContact {
+    user_id: Int
+    email: String
+    phone: String
+    updated_at: String
+  }
+
+  type NotifDevice {
+    id: Int
+    user_id: Int
+    device_id: String
+    device_type: String
+    is_active: Boolean
+    last_used_at: String
+    created_at: String
+    token_preview: String
+  }
+
+  type NotifCampaignProgress {
+    batches_queued: Int
+    batches_sending: Int
+    batches_sent: Int
+    batches_failed: Int
+    batches_cancelled: Int
+    targets: Int
+    sent: Int
+    failed: Int
+    invalid_tokens: Int
+  }
+
+  type NotifAuditDelivery {
+    id: Int
+    content_id: Int
+    source_type: String
+    source_id: Int
+    batch_id: Int
+    attempt: Int
+    channel: String
+    user_id: Int
+    recipient: String
+    device_id: Int
+    device_type: String
+    token_hash: String
+    status: String
+    message_id: String
+    error: String
+    requested_by: String
+    created_at: String
+  }
+

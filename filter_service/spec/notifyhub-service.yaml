@@ -1,0 +1,149 @@
+service: notifyhub-service
+source: notifyhub-service/internal/adapter/primary/http/routes.go
+namespace: notifyhubService
+prefix: Hub
+baseURL: http://notifyhub-service:8095
+forwardHeaders: [X-API-Key]
+endpoints:
+  - field: channels
+    path: /api/v1/channels
+    query: { type: String, active: Boolean }
+    returns: "[HubChannel!]"
+    unwrap: data
+  - field: channel
+    path: /api/v1/channels/{id}
+    returns: HubChannel
+    unwrap: data
+  - field: dataSources
+    path: /api/v1/data-sources
+    returns: "[HubDataSource!]"
+    unwrap: data
+  - field: dataSource
+    path: /api/v1/data-sources/{id}
+    returns: HubDataSource
+    unwrap: data
+  - field: templates
+    path: /api/v1/templates
+    query: { channel: String }
+    returns: "[HubTemplate!]"
+    unwrap: data
+  - field: template
+    path: /api/v1/templates/{id}
+    returns: HubTemplate
+    unwrap: data
+  - field: jobs
+    path: /api/v1/jobs
+    query: { status: String, page: Int, page_size: Int }
+    returns: HubJobPage
+  - field: job
+    path: /api/v1/jobs/{id}
+    returns: HubNotifyJob
+    unwrap: data
+  - field: history
+    path: /api/v1/history
+    query: { job_id: String, status: String, page: Int, page_size: Int }
+    returns: HubHistoryPage
+  - field: schedulerStatus
+    path: /api/v1/scheduler/status
+    returns: HubSchedulerStatus
+types: |
+  type HubJobPage {
+    data: [HubNotifyJob!]
+    total: Int
+    page: Int
+    page_size: Int
+    ts: Int
+    request_id: String
+  }
+
+  type HubHistoryPage {
+    data: [HubNotifyHistory!]
+    total: Int
+    page: Int
+    page_size: Int
+    ts: Int
+    request_id: String
+  }
+
+  type HubSchedulerStatus {
+    scheduled_jobs: [String!]
+    count: Int
+    ts: Int
+  }
+
+  type HubChannel {
+    id: String
+    name: String
+    type: String
+    is_active: Boolean
+    created_at: String
+    updated_at: String
+  }
+
+  type HubDataSource {
+    id: String
+    name: String
+    url: String
+    method: String
+    headers: Map
+    body: String
+    auth_type: String
+    json_path: String
+    is_active: Boolean
+    created_at: String
+    updated_at: String
+  }
+
+  type HubTemplate {
+    id: String
+    name: String
+    channel: String
+    subject: String
+    body: String
+    variables: [String!]
+    is_active: Boolean
+    created_at: String
+    updated_at: String
+  }
+
+  type HubNotifyJob {
+    id: String
+    name: String
+    description: String
+    channel_id: String
+    template_id: String
+    data_source_id: String
+    schedule_type: String
+    cron_expr: String
+    run_at: String
+    interval_sec: Int
+    recipients: [String!]
+    static_payload: Map
+    status: String
+    last_run_at: String
+    next_run_at: String
+    run_count: Int
+    fail_count: Int
+    max_runs: Int
+    created_at: String
+    updated_at: String
+    channel: HubChannel
+    template: HubTemplate
+    data_source: HubDataSource
+  }
+
+  type HubNotifyHistory {
+    id: String
+    job_id: String
+    channel_type: String
+    recipient: String
+    subject: String
+    body: String
+    status: String
+    retry_count: Int
+    error: String
+    sent_at: String
+    created_at: String
+    updated_at: String
+  }
+

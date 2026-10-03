@@ -1,0 +1,91 @@
+service: book-service
+source: book-service/conf/routes
+namespace: bookService
+prefix: BookSvc
+baseURL: http://book-service-svc
+endpoints:
+  - field: books
+    path: /api/v1/books
+    query: { cursor: String, limit: Int, q: String, author: String, year: Int, category: String }
+    returns: BookSvcBookPage
+  - field: book
+    path: /api/v1/books/{id}
+    params: { id: Int! }
+    returns: BookSvcBookDetail
+  - field: chapters
+    path: /api/v1/books/{id}/chapters
+    params: { id: Int! }
+    query: { cursor: String, limit: Int }
+    returns: BookSvcChapterPage
+  - field: chapter
+    path: /api/v1/books/{id}/chapters/{number}
+    params: { id: Int!, number: Int! }
+    returns: BookSvcChapter
+  - field: categories
+    path: /api/v1/categories
+    returns: "[BookSvcCategory!]"
+    unwrap: data
+  - field: category
+    path: /api/v1/categories/{slug}
+    returns: BookSvcCategory
+  - field: categoryBooks
+    path: /api/v1/categories/{slug}/books
+    query: { cursor: String, limit: Int, q: String }
+    returns: BookSvcBookPage
+types: |
+  type BookSvcCategory {
+    slug: String
+    name: String
+  }
+
+  type BookSvcBook {
+    id: Int
+    title: String
+    author: String
+    isbn: String
+    description: String
+    publishedYear: Int
+    categories: [BookSvcCategory!]
+    coverUrl: String
+    createdAt: String
+    updatedAt: String
+  }
+
+  type BookSvcBookDetail {
+    id: Int
+    title: String
+    author: String
+    isbn: String
+    description: String
+    publishedYear: Int
+    categories: [BookSvcCategory!]
+    coverUrl: String
+    createdAt: String
+    updatedAt: String
+    chapterCount: Int
+  }
+
+  type BookSvcChapter {
+    bookId: Int
+    number: Int
+    title: String
+    contentType: String
+    sizeBytes: Int
+    content: String
+  }
+
+  type BookSvcPagination {
+    limit: Int
+    nextCursor: String
+    hasMore: Boolean
+  }
+
+  type BookSvcBookPage {
+    data: [BookSvcBook!]
+    pagination: BookSvcPagination
+  }
+
+  type BookSvcChapterPage {
+    data: [BookSvcChapter!]
+    pagination: BookSvcPagination
+  }

@@ -1,0 +1,170 @@
+service: medical-service
+source: medical-service/internal/adapter/primary/http/routes.go
+namespace: medicalService
+prefix: Medical
+baseURL: http://medical-service-svc
+endpoints:
+  - field: medicines
+    path: /api/v1/medicines
+    query: { q: String, limit: Int, offset: Int }
+    returns: MedicalMedicineList
+  - field: medicine
+    path: /api/v1/medicines/{id}
+    params: { id: Int! }
+    returns: MedicalMedicine
+  - field: stock
+    path: /api/v1/medicines/{id}/stock
+    params: { id: Int! }
+    returns: MedicalStockSummary
+  - field: movements
+    path: /api/v1/medicines/{id}/movements
+    params: { id: Int! }
+    query: { limit: Int, offset: Int }
+    returns: "[MedicalStockMovement!]"
+    unwrap: items
+  - field: expiring
+    path: /api/v1/inventory/expiring
+    query: { days: Int }
+    returns: "[MedicalBatch!]"
+    unwrap: items
+  - field: lowStock
+    path: /api/v1/inventory/low-stock
+    returns: "[MedicalLowStockItem!]"
+    unwrap: items
+  - field: interactions
+    path: /api/v1/interactions
+    query: { limit: Int, offset: Int }
+    returns: "[MedicalInteractionRule!]"
+    unwrap: items
+  - field: terminology
+    path: /api/v1/terminology
+    returns: MedicalTerminologyList
+  - field: dispenses
+    path: /api/v1/dispenses
+    query: { patient_ref: String, limit: Int, offset: Int }
+    returns: "[MedicalDispense!]"
+    unwrap: items
+  - field: dispense
+    path: /api/v1/dispenses/{id}
+    params: { id: Int! }
+    returns: MedicalDispense
+types: |
+  type MedicalMedicineList {
+    items: [MedicalMedicine!]
+    total: Int
+  }
+
+  type MedicalMedicine {
+    id: Int
+    code: String
+    name: String
+    ingredients: [String!]
+    allergen_groups: [String!]
+    dosage_form: String
+    strength: String
+    unit: String
+    requires_prescription: Boolean
+    reorder_level: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type MedicalStockSummary {
+    medicine_id: Int
+    available: Int
+    expired: Int
+    batches: [MedicalBatch!]
+  }
+
+  type MedicalStockMovement {
+    id: Int
+    medicine_id: Int
+    batch_id: Int
+    type: String
+    quantity: Int
+    reason: String
+    reference: String
+    created_by: String
+    created_at: String
+  }
+
+  type MedicalBatch {
+    id: Int
+    medicine_id: Int
+    batch_number: String
+    expiry_date: String
+    quantity: Int
+    received_quantity: Int
+    unit_cost: Int
+    supplier: String
+    received_at: String
+    created_at: String
+    updated_at: String
+  }
+
+  type MedicalLowStockItem {
+    medicine: MedicalMedicine
+    available: Int
+  }
+
+  type MedicalInteractionRule {
+    id: Int
+    ingredient_a: String
+    ingredient_b: String
+    severity: String
+    description: String
+    source: String
+    created_at: String
+    updated_at: String
+  }
+
+  type MedicalTerminologyList {
+    aliases: [MedicalIngredientAlias!]
+    allergen_groups: [MedicalIngredientAllergenGroup!]
+  }
+
+  type MedicalDispense {
+    id: Int
+    patient_ref: String
+    prescription_ref: String
+    dispensed_by: String
+    override_reason: String
+    warnings: [MedicalWarning!]
+    items: [MedicalDispenseItem!]
+    created_at: String
+  }
+
+  type MedicalIngredientAlias {
+    id: Int
+    alias: String
+    canonical: String
+    source: String
+    created_at: String
+  }
+
+  type MedicalIngredientAllergenGroup {
+    id: Int
+    ingredient: String
+    allergen_group: String
+    source: String
+    created_at: String
+  }
+
+  type MedicalWarning {
+    type: String
+    severity: String
+    medicines: [String!]
+    ingredients: [String!]
+    description: String
+  }
+
+  type MedicalDispenseItem {
+    id: Int
+    dispense_id: Int
+    medicine_id: Int
+    batch_id: Int
+    batch_number: String
+    expiry_date: String
+    quantity: Int
+  }
+

@@ -1,0 +1,240 @@
+extend type Query {
+  """GET endpoints of rent_house_service"""
+  rentHouseService: RentQuery!
+}
+
+type RentQuery {
+  """
+  GET /api/v1/homestays/{id}
+  """
+  homestay(id: Int!): RentHomestay
+
+  """
+  GET /api/v1/homestays
+  
+  amenity_ids is comma separated; checkin/checkout are YYYY-MM-DD.
+  """
+  homestays(province_id: Int, district_id: Int, ward_id: Int, type: Int, guests: Int, q: String, model: String, min_price: String, max_price: String, sort: String, limit: Int, cursor: String, amenity_ids: String, checkin: String, checkout: String): RentHomestayPage
+
+  """
+  GET /api/v1/homestays/{id}/availability
+  """
+  availability(id: Int!, from: String, to: String): [RentSlot!]
+
+  """
+  GET /api/v1/amenities
+  """
+  amenities: [RentAmenity!]
+
+  """
+  GET /api/v1/my/homestays
+  """
+  myHomestays(limit: Int, offset: Int): [RentHomestay!]
+
+  """
+  GET /api/v1/admin/homestays
+  """
+  homestayReviewQueue(status: String, limit: Int, offset: Int): [RentHomestay!]
+
+  """
+  GET /api/v1/bookings
+  """
+  bookings(user_id: Int, as: String, limit: Int, offset: Int): [RentBooking!]
+
+  """
+  GET /api/v1/bookings/{id}
+  """
+  booking(id: Int!): RentBooking
+
+  """
+  GET /api/v1/homestays/{id}/rates
+  """
+  rates(id: Int!): [RentRate!]
+
+  """
+  GET /api/v1/leases
+  """
+  leases(user_id: Int, as: String, limit: Int, offset: Int): [RentLease!]
+
+  """
+  GET /api/v1/leases/{id}
+  """
+  lease(id: Int!): RentLease
+
+  """
+  GET /api/v1/invoices
+  """
+  invoices(limit: Int, offset: Int, status: String, due_before: String): [RentInvoice!]
+
+  """
+  GET /api/v1/homestays/{id}/reviews
+  """
+  reviews(id: Int!, limit: Int, offset: Int): [RentReview!]
+
+  """
+  GET /api/v1/wishlist
+  """
+  wishlist(limit: Int, offset: Int): [RentHomestay!]
+
+  """
+  GET /api/v1/loyalty
+  """
+  loyalty: RentLoyalty
+
+  """
+  GET /api/v1/wallet
+  """
+  wallet: RentWallet
+
+  """
+  GET /api/v1/wallet/transactions
+  """
+  walletTransactions(limit: Int, offset: Int): [RentWalletTxn!]
+}
+
+type RentHomestay {
+  id: Int
+  name: String
+  description: String
+  type: Int
+  type_name: String
+  status: Int
+  status_name: String
+  review_note: String
+  phone_number: String
+  address: String
+  ward_id: Int
+  district_id: Int
+  province_id: Int
+  images: [String!]
+  guests: Int
+  bedrooms: Int
+  bathrooms: Int
+  amenity_ids: [Int!]
+  version: Int
+  created_at: String
+  updated_at: String
+  host_id: Int
+  accepts_wallet_payment: Boolean
+  rating: Float
+  review_count: Int
+  rates: [RentRate!]
+}
+
+type RentHomestayPage {
+  items: [RentHomestay!]
+  has_more: Boolean
+  next_cursor: String
+}
+
+type RentSlot {
+  date: String
+  price: String
+  status: Int
+}
+
+type RentAmenity {
+  id: Int
+  name: String
+  icon: String
+}
+
+type RentBooking {
+  id: Int
+  user_id: Int
+  homestay_id: Int
+  checkin_date: String
+  checkout_date: String
+  nights: Int
+  guests: Int
+  status: Int
+  currency: String
+  subtotal: String
+  discount: String
+  total_amount: String
+  note: String
+  request_id: String
+  created_at: String
+  payment_method: String
+  payment_ref: String
+  paid_at: String
+  expires_at: String
+}
+
+type RentRate {
+  model: String
+  price: String
+  currency: String
+  min_periods: Int
+  active: Boolean
+}
+
+type RentLease {
+  id: Int
+  user_id: Int
+  homestay_id: Int
+  model: String
+  start_date: String
+  end_date: String
+  periods: Int
+  billing_day: Int
+  currency: String
+  rent: String
+  status: String
+  note: String
+  expires_at: String
+  created_at: String
+  invoices: [RentInvoice!]
+}
+
+type RentInvoice {
+  id: Int
+  lease_id: Int
+  user_id: Int
+  homestay_id: Int
+  period: Int
+  period_start: String
+  period_end: String
+  due_date: String
+  amount: String
+  status: String
+  overdue: Boolean
+  payment_method: String
+  payment_ref: String
+  paid_at: String
+}
+
+type RentReview {
+  id: Int
+  homestay_id: Int
+  user_id: Int
+  booking_id: Int
+  lease_id: Int
+  rating: Int
+  comment: String
+  created_at: String
+}
+
+type RentLoyalty {
+  points: Int
+  tier: Int
+  tier_name: String
+}
+
+type RentWallet {
+  wallet_id: String
+  balance: Int
+  currency: String
+  status: String
+}
+
+type RentWalletTxn {
+  transaction_id: String
+  type: String
+  amount: Int
+  currency: String
+  status: String
+  reference_id: String
+  description: String
+  created_at: String
+}

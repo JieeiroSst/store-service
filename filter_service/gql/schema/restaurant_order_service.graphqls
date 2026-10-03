@@ -1,0 +1,76 @@
+extend type Query {
+  """GET endpoints of restaurant-order-service"""
+  restaurantOrderService: ROrderQuery!
+}
+
+type ROrderQuery {
+  """
+  GET /api/v1/order/{id}
+  """
+  order(id: Int!): ROrderOrder
+
+  """
+  GET /api/v1/order
+  
+  Query keys are Limit/Page/Sort (gin binds the Go field names).
+  """
+  orders(Limit: Int, Page: Int, Sort: String): ROrderOrderPage
+
+  """
+  GET /api/v1/reservations
+  """
+  reservations(Limit: Int, Page: Int, Sort: String): ROrderReservationPage
+
+  """
+  GET /api/v1/reservations/{id}
+  """
+  reservation(id: Int!): ROrderReservation
+}
+
+type ROrderOrderPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [ROrderOrder!]
+}
+
+type ROrderReservationPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [ROrderReservation!]
+}
+
+type ROrderOrder {
+  id: Int
+  table_name: String
+  status: String
+  kitchen_id: Int
+  total_amount: Float
+  items: [ROrderOrderItem!]
+  created_date: String
+  updated_time: String
+}
+
+type ROrderReservation {
+  id: Int
+  table_name: String
+  customer_name: String
+  party_size: Int
+  reserved_at: String
+  status: String
+  created_date: String
+}
+
+type ROrderOrderItem {
+  id: Int
+  order_id: Int
+  food_id: Int
+  food_name: String
+  quantity: Int
+  unit_price: Float
+}

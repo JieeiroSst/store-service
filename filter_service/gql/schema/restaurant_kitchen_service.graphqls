@@ -1,0 +1,71 @@
+extend type Query {
+  """GET endpoints of restaurant-kitchen-service"""
+  restaurantKitchenService: RKitchenQuery!
+}
+
+type RKitchenQuery {
+  """
+  GET /api/v1/category
+  """
+  categories: [RKitchenCategory!]
+
+  """
+  GET /api/v1/food
+  
+  Query keys are Limit/Page/Sort (gin binds the Go field names).
+  """
+  foods(Limit: Int, Page: Int, Sort: String): RKitchenFoodPage
+
+  """
+  GET /api/v1/food/batch
+  
+  ids is comma separated.
+  """
+  foodsByIDs(ids: String!): [RKitchenFood!]
+
+  """
+  GET /api/v1/kitchen
+  
+  Query keys are Limit/Page/Sort (gin binds the Go field names).
+  """
+  kitchens(Limit: Int, Page: Int, Sort: String): RKitchenKitchenPage
+}
+
+type RKitchenFoodPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RKitchenFood!]
+}
+
+type RKitchenKitchenPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RKitchenKitchen!]
+}
+
+type RKitchenCategory {
+  id: Int
+  name: String
+}
+
+type RKitchenFood {
+  id: Int
+  name: String
+  category_id: Int
+  price: Float
+  status: Int
+  category: RKitchenCategory
+}
+
+type RKitchenKitchen {
+  id: Int
+  name: String
+  status: String
+  foods: [RKitchenFood!]
+}

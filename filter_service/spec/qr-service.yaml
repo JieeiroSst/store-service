@@ -1,0 +1,86 @@
+service: qr-service
+source: qr-service/internal/infrastructure/http/router/router.go
+namespace: qrService
+prefix: Qr
+baseURL: http://qr-service:8080
+unwrap: data
+endpoints:
+  - field: qrCodes
+    path: /api/v1/qr
+    query: { page: Int, limit: Int, status: String, type: String, search: String, created_by: String }
+    returns: QrQRListResponse
+  - field: qrCode
+    path: /api/v1/qr/{id}
+    returns: QrQRCode
+  - field: scanHistory
+    path: /api/v1/qr/{id}/history
+    query: { page: Int, limit: Int }
+    returns: QrScanHistoryResponse
+  - field: scanStats
+    path: /api/v1/qr/{id}/stats
+    returns: QrScanStats
+types: |
+  type QrQRListResponse {
+    data: [QrQRCode!]
+    total: Int
+    page: Int
+    limit: Int
+    total_pages: Int
+  }
+
+  type QrQRCode {
+    id: String
+    short_code: String
+    title: String
+    type: String
+    content: String
+    redirect_url: String
+    image_base64: String
+    image_url: String
+    status: String
+    scan_count: Int
+    size: Int
+    fore_color: String
+    back_color: String
+    expires_at: String
+    created_at: String
+    updated_at: String
+    created_by: String
+  }
+
+  type QrScanHistoryResponse {
+    data: [QrScanHistory!]
+    total: Int
+    page: Int
+    limit: Int
+    total_pages: Int
+  }
+
+  type QrScanStats {
+    total_scans: Int
+    unique_ips: Int
+    device_breakdown: Map
+    os_breakdown: Map
+    daily_scans: [QrDailyScan!]
+  }
+
+  type QrScanHistory {
+    id: String
+    qr_code_id: String
+    short_code: String
+    ip_address: String
+    user_agent: String
+    referer: String
+    country: String
+    city: String
+    device_type: String
+    os: String
+    browser: String
+    scanned_at: String
+  }
+
+  type QrDailyScan {
+    date: String
+    count: Int
+  }
+

@@ -1,0 +1,35 @@
+extend type Query {
+  """GET endpoints of ollama-model-py"""
+  ollamaModelPy: OllamaPyQuery!
+}
+
+type OllamaPyQuery {
+  """
+  GET /api/tags
+  
+  Ollama-compatible model list.
+  """
+  tags: OllamaPyTags
+}
+
+type OllamaPyTags {
+  models: [OllamaPyTagsModel!]
+}
+
+type OllamaPyTagsModel {
+  name: String
+  model: String
+  modified_at: String
+  size: Int
+  digest: String
+  details: OllamaPyModelDetails
+}
+
+type OllamaPyModelDetails {
+  parent_model: String
+  format: String
+  family: String
+  families: [String!]
+  parameter_size: String
+  quantization_level: String
+}

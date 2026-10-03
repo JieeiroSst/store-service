@@ -1,0 +1,118 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+filterService:
+  name: filter-service
+  selectorApp: filter-service
+  containerName: filter-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/filter-service
+    tag: latest
+    port: 8080
+    pullPolicy: IfNotPresent
+
+  service:
+    name: filter-service-svc
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: filter-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
+  # Downstream base URLs default to each service's in-cluster Service (see
+  # filter_service/README.md). Override one by adding its <SERVICE>_URL, e.g.
+  #   - name: USER_SERVICE_URL
+  #     value: http://user-api-svc.store-dev
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.filterService.image.port }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  # Calls every other service in the namespace; no Consul, no internet.
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

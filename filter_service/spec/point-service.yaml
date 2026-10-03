@@ -1,0 +1,89 @@
+service: point-service
+source: point-service/application
+namespace: pointService
+prefix: Point
+baseURL: http://point-service:3000
+endpoints:
+  - field: rewardPoints
+    path: /api/v1/reward-points
+    query: { per_page: Int, sort_order: String, cursor: String }
+    returns: PointRewardPointPage
+  - field: rewardPoint
+    path: /api/v1/reward-points/{id}
+    returns: PointRewardPoint
+  - field: rewardDiscounts
+    path: /api/v1/reward-discounts
+    query: { per_page: Int, sort_order: String, cursor: String }
+    returns: PointRewardDiscountPage
+  - field: rewardDiscount
+    path: /api/v1/reward-discounts/{id}
+    returns: PointRewardDiscount
+  - field: convertedRewardPoints
+    path: /api/v1/converted-reward-points
+    query: { per_page: Int, sort_order: String, cursor: String }
+    returns: PointConvertedRewardPointPage
+  - field: convertedRewardPoint
+    path: /api/v1/converted-reward-points/{id}
+    returns: PointConvertedRewardPoint
+types: |
+  type PointPaginationInfo {
+    next_cursor: String
+    prev_cursor: String
+  }
+
+  type PointRewardPointPage {
+    success: Boolean
+    data: [PointRewardPoint!]
+    pagination: PointPaginationInfo
+  }
+
+  type PointRewardDiscountPage {
+    success: Boolean
+    data: [PointRewardDiscount!]
+    pagination: PointPaginationInfo
+  }
+
+  type PointConvertedRewardPointPage {
+    success: Boolean
+    data: [PointConvertedRewardPoint!]
+    pagination: PointPaginationInfo
+  }
+
+  type PointRewardPoint {
+    reward_points_id: String
+    total_points: Int
+    points_pending: Int
+    points_active: Int
+    points_expired: Int
+    points_converted: Int
+    points_cancelled: Int
+    activate_date: Int
+    expire_date: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type PointRewardDiscount {
+    reward_discount_id: String
+    total_points: Int
+    points_pending: Int
+    points_active: Int
+    points_expired: Int
+    points_converted: Int
+    points_cancelled: Int
+    activate_date: Int
+    expire_date: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type PointConvertedRewardPoint {
+    rew_convert_id: String
+    rew_convert_ord_detail_id: String
+    rew_convert_discount_id: String
+    rew_convert_points: Int
+    rew_convert_date: Int
+    created_at: String
+    updated_at: String
+  }
+

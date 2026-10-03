@@ -1,0 +1,53 @@
+service: payment_service
+source: payment_service/internal/adapter/primary/http/routes.go
+namespace: paymentService
+prefix: Payment
+baseURL: http://payment-service-svc
+endpoints:
+  - field: payments
+    path: /api/v1/payments
+    query: { provider: String, status: String, from: String, to: String, limit: Int, offset: Int }
+    returns: PaymentPaymentList
+    doc: from/to are RFC3339.
+  - field: payment
+    path: /api/v1/payments/{id}
+    params: { id: Int! }
+    returns: PaymentPayment
+  - field: transactions
+    path: /api/v1/payments/{id}/transactions
+    params: { id: Int! }
+    returns: "[PaymentTransaction!]"
+types: |
+  type PaymentPaymentList {
+    Items: [PaymentPayment!]
+    Total: Int
+  }
+
+  type PaymentPayment {
+    ID: Int
+    Provider: String
+    ExternalID: String
+    Amount: Int
+    Currency: String
+    Status: String
+    PayerEmail: String
+    Description: String
+    FailureReason: String
+    IdempotencyKey: String
+    RefundedAmount: Int
+    CreatedAt: String
+    UpdatedAt: String
+  }
+
+  type PaymentTransaction {
+    ID: Int
+    PaymentID: Int
+    Type: String
+    Status: String
+    Amount: Int
+    ExternalID: String
+    RawStatus: String
+    ErrorMessage: String
+    CreatedAt: String
+  }
+

@@ -1,0 +1,99 @@
+service: book-store-service
+source: book-store-service/internal/adapter/primary/http/routes.go
+namespace: bookStoreService
+prefix: BookStore
+baseURL: http://book-store-service-svc
+endpoints:
+  - field: books
+    path: /api/v1/books
+    returns: "[BookStoreBook!]"
+  - field: highestPriceBook
+    path: /api/v1/books/highest-price
+    returns: BookStoreBook
+  - field: mostPurchasedBook
+    path: /api/v1/books/most-purchased
+    returns: BookStoreBook
+  - field: book
+    path: /api/v1/books/{id}
+    params: { id: Int! }
+    returns: BookStoreBook
+  - field: authors
+    path: /api/v1/authors
+    returns: "[BookStoreAuthor!]"
+  - field: mostReadAuthor
+    path: /api/v1/authors/most-read
+    returns: BookStoreAuthorStat
+  - field: mostPurchasedAuthor
+    path: /api/v1/authors/most-purchased
+    returns: BookStoreAuthorStat
+  - field: author
+    path: /api/v1/authors/{id}
+    params: { id: Int! }
+    returns: BookStoreAuthor
+  - field: publishers
+    path: /api/v1/publishers
+    returns: "[BookStorePublisher!]"
+  - field: publisher
+    path: /api/v1/publishers/{id}
+    params: { id: Int! }
+    returns: BookStorePublisher
+  - field: categories
+    path: /api/v1/categories
+    returns: "[BookStoreCategory!]"
+  - field: categoryPriceStats
+    path: /api/v1/categories/price-stats
+    returns: "[BookStoreCategoryPriceStat!]"
+  - field: category
+    path: /api/v1/categories/{id}
+    params: { id: Int! }
+    returns: BookStoreCategory
+types: |
+  type BookStoreBook {
+    id: Int
+    name: String
+    author_id: Int
+    author: BookStoreAuthor
+    publisher_id: Int
+    publisher: BookStorePublisher
+    category_id: Int
+    category: BookStoreCategory
+    price: Float
+    quantity: Int
+    unit_of_measurement: String
+    purchase_count: Int
+    read_count: Int
+  }
+
+  type BookStoreAuthor {
+    id: Int
+    name: String
+    bio: String
+  }
+
+  type BookStoreAuthorStat {
+    author_id: Int
+    author_name: String
+    total_reads: Int
+    total_purchases: Int
+  }
+
+  type BookStorePublisher {
+    id: Int
+    name: String
+    address: String
+  }
+
+  type BookStoreCategory {
+    id: Int
+    name: String
+  }
+
+  type BookStoreCategoryPriceStat {
+    category_id: Int
+    category_name: String
+    min_price: Float
+    max_price: Float
+    avg_price: Float
+    book_count: Int
+  }
+

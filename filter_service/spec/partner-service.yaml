@@ -1,0 +1,144 @@
+service: partner-service
+source: partner-service/internal/adapters/router/router.go
+namespace: partnerService
+prefix: Partner
+baseURL: http://partner-service-svc
+endpoints:
+  - field: partners
+    path: /v1/partner/
+    query: { limit: Int, page: Int, sort: String }
+    returns: PartnerPartnerPage
+  - field: searchPartners
+    path: /v1/partner/search
+    query: { limit: Int, page: Int, sort: String, type: String, status: String, name: String, user_id: String }
+    returns: PartnerPartnerPage
+  - field: statistics
+    path: /v1/partner/statistics
+    returns: PartnerPartnerStatistics
+  - field: activity
+    path: /v1/partner/active
+    query: { id: String! }
+    returns: PartnerPartnerActivity
+  - field: partner
+    path: /v1/partner/{id}
+    returns: PartnerPartner
+  - field: partnership
+    path: /v1/partnership/{id}
+    returns: PartnerPartnership
+  - field: partnerships
+    path: /v1/partnership/
+    query: { limit: Int, page: Int, sort: String }
+    returns: PartnerPartnershipPage
+  - field: partnershipsPartner
+    path: /v1/partnerships-partner/{id}
+    returns: PartnerPartnershipsPartner
+  - field: partnershipsPartners
+    path: /v1/partnerships-partner/
+    query: { limit: Int, page: Int, sort: String }
+    returns: PartnerPartnershipsPartnerPage
+  - field: projects
+    path: /v1/project/
+    query: { limit: Int, page: Int, sort: String }
+    returns: PartnerProjectPage
+  - field: project
+    path: /v1/project/{id}
+    returns: PartnerProject
+types: |
+  type PartnerPartnerPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [PartnerPartner!]
+  }
+
+  type PartnerPartnershipPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [PartnerPartnership!]
+  }
+
+  type PartnerPartnershipsPartnerPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [PartnerPartnershipsPartner!]
+  }
+
+  type PartnerProjectPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [PartnerProject!]
+  }
+
+  type PartnerPartner {
+    id: String
+    type: String
+    name: String
+    email: String
+    phone: String
+    address: String
+    status: String
+    score: Int
+    user_id: String
+    created_at: Int
+    updated_at: Int
+    deleted_at: Int
+  }
+
+  type PartnerPartnership {
+    id: String
+    project_id: String
+    description: String
+    started_on: Int
+    expires_on: Int
+    projects: [PartnerProject!]
+    user_id: String
+    created_at: Int
+  }
+
+  type PartnerPartnershipsPartner {
+    id: String
+    partner_id: String
+    partnership_id: String
+    content: String
+    joined_on: Int
+    left_on: Int
+    partners: [PartnerPartner!]
+    partnerships: [PartnerPartnership!]
+    user_id: String
+    created_at: Int
+  }
+
+  type PartnerProject {
+    id: String
+    name: String
+    user_id: String
+    created_at: Int
+  }
+
+  type PartnerPartnerStatistics {
+    total: Int
+    by_status: Map
+    by_type: Map
+  }
+
+  type PartnerPartnerActivity {
+    partner_id: String
+    status: String
+    score: Int
+    has_open_partnership: Boolean
+    last_activity_at: Int
+    eligible_for_closure: Boolean
+    is_active: Boolean
+  }
+

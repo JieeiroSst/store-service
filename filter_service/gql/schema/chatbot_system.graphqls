@@ -1,0 +1,48 @@
+extend type Query {
+  """GET endpoints of chatbot-system"""
+  chatbotSystem: ChatbotQuery!
+}
+
+type ChatbotQuery {
+  """
+  GET /api/conversations/{conversation_id}/history
+  """
+  conversationHistory(conversation_id: Int!, limit: Int, offset: Int): ChatbotMessageList
+
+  """
+  GET /api/conversations
+  
+  Conversations of the caller (bearer token).
+  """
+  conversations: ChatbotConversationList
+}
+
+type ChatbotMessageList {
+  messages: [ChatbotMessage!]
+  count: Int
+}
+
+type ChatbotConversationList {
+  conversations: [ChatbotConversation!]
+  count: Int
+}
+
+type ChatbotMessage {
+  id: Int
+  conversation_id: Int
+  sender_id: Int
+  content: String
+  message_type: String
+  ai_model: String
+  created_at: String
+}
+
+type ChatbotConversation {
+  id: Int
+  user1_id: Int
+  user2_id: Int
+  is_ai_chat: Boolean
+  active_ai_model: String
+  created_at: String
+  updated_at: String
+}

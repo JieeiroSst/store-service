@@ -1,0 +1,34 @@
+service: reward-service
+source: reward-service/src/api/resources/reward/routes
+namespace: rewardService
+prefix: Reward
+baseURL: http://reward-service:8080
+endpoints:
+  - field: rewards
+    path: /reward
+    query: { name: String, page: Int, page_size: Int }
+    returns: RewardPage
+  - field: reward
+    path: /reward/{reward_id}
+    returns: RewardPage
+    doc: The service wraps the single reward in the same records/meta envelope.
+types: |
+  type RewardMeta {
+    count: Int
+    page: Int
+    pages: Int
+  }
+
+  type RewardReward {
+    id: String
+    name: String
+    description: String
+    points: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type RewardPage {
+    meta: RewardMeta
+    records: [RewardReward!]
+  }

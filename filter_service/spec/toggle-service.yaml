@@ -1,0 +1,146 @@
+service: toggle-service
+source: toggle-service/internal/adapter/primary/http/router.go
+namespace: toggleService
+prefix: Toggle
+baseURL: http://toggle-service-svc
+endpoints:
+  - field: roles
+    path: /api/admin/roles
+    returns: "[ToggleRole!]"
+  - field: environments
+    path: /api/admin/environments/
+    returns: "[ToggleEnvironment!]"
+  - field: tokens
+    path: /api/admin/tokens/
+    returns: "[ToggleAPIToken!]"
+  - field: projects
+    path: /api/admin/projects/
+    returns: "[ToggleProject!]"
+  - field: project
+    path: /api/admin/projects/{projectId}/
+    returns: ToggleProject
+  - field: projectMembers
+    path: /api/admin/projects/{projectId}/members
+    returns: "[ToggleProjectMembership!]"
+  - field: audit
+    path: /api/admin/projects/{projectId}/audit
+    query: { entityType: String, since: String, until: String }
+    returns: "[ToggleAuditEvent!]"
+    doc: since/until are RFC3339.
+  - field: flags
+    path: /api/admin/projects/{projectId}/flags
+    returns: "[ToggleFeatureFlag!]"
+  - field: flag
+    path: /api/admin/projects/{projectId}/flags/{key}/
+    returns: ToggleFeatureFlag
+  - field: strategies
+    path: /api/admin/projects/{projectId}/flags/{key}/environments/{envName}/strategies
+    returns: "[ToggleActivationStrategy!]"
+  - field: clientFeatures
+    path: /api/client/features
+    returns: ToggleClientFeaturesResponse
+    doc: Flag configuration for an SDK, authorised by its client API token.
+types: |
+  type ToggleRole {
+    id: String
+    name: String
+    description: String
+  }
+
+  type ToggleEnvironment {
+    id: String
+    name: String
+    type: String
+    sortOrder: Int
+    enabled: Boolean
+    createdAt: String
+  }
+
+  type ToggleAPIToken {
+    id: String
+    name: String
+    tokenPrefix: String
+    type: String
+    projectId: String
+    environmentId: String
+    expiresAt: String
+    createdBy: String
+    createdAt: String
+  }
+
+  type ToggleProject {
+    id: String
+    name: String
+    description: String
+    createdBy: String
+    createdAt: String
+    updatedAt: String
+  }
+
+  type ToggleProjectMembership {
+    id: String
+    projectId: String
+    userId: String
+    roleId: String
+    createdAt: String
+  }
+
+  type ToggleAuditEvent {
+    id: String
+    entityType: String
+    entityId: String
+    action: String
+    projectId: String
+    environmentId: String
+    userId: String
+    before: Any
+    after: Any
+    createdAt: String
+  }
+
+  type ToggleFeatureFlag {
+    id: String
+    projectId: String
+    key: String
+    name: String
+    description: String
+    type: String
+    archived: Boolean
+    createdBy: String
+    createdAt: String
+    updatedAt: String
+  }
+
+  type ToggleActivationStrategy {
+    id: String
+    featureFlagEnvironmentId: String
+    strategyType: String
+    parameters: Any
+    sortOrder: Int
+    constraints: [ToggleConstraint!]
+    createdAt: String
+    updatedAt: String
+  }
+
+  type ToggleClientFeaturesResponse {
+    version: Int
+    features: [ToggleClientFeature!]
+  }
+
+  type ToggleConstraint {
+    id: String
+    strategyId: String
+    contextField: String
+    operator: String
+    values: Any
+    caseInsensitive: Boolean
+  }
+
+  type ToggleClientFeature {
+    name: String
+    description: String
+    type: String
+    enabled: Boolean
+    strategies: [ToggleActivationStrategy!]
+  }
+

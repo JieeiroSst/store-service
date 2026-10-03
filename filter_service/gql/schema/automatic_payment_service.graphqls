@@ -1,0 +1,92 @@
+extend type Query {
+  """GET endpoints of automatic-payment-service"""
+  automaticPaymentService: AutoPayQuery!
+}
+
+type AutoPayQuery {
+  """
+  GET /subscriptions/{id}
+  """
+  subscription(id: String!): AutoPaySubscription
+
+  """
+  GET /subscriptions/{id}/transactions
+  """
+  subscriptionTransactions(id: String!): [AutoPayTransaction!]
+
+  """
+  GET /subscriptions/{id}/invoices
+  """
+  subscriptionInvoices(id: String!): [AutoPayInvoice!]
+
+  """
+  GET /payment-methods
+  """
+  paymentMethods(userId: String!): [AutoPayPaymentMethod!]
+
+  """
+  GET /invoices
+  """
+  invoices(userId: String!): [AutoPayInvoice!]
+
+  """
+  GET /invoices/{id}
+  """
+  invoice(id: String!): AutoPayInvoice
+}
+
+type AutoPaySubscription {
+  subscriptionId: String
+  userId: String
+  planId: String
+  status: String
+  amount: Float
+  currency: String
+  startDate: String
+  endDate: String
+  autoRenewal: Boolean
+  trialEndDate: String
+  nextBillingDate: String
+  paymentFailureCount: Int
+  createdAt: String
+  updatedAt: String
+}
+
+type AutoPayTransaction {
+  transactionId: String
+  subscriptionId: String
+  paymentMethodId: String
+  amount: Float
+  currency: String
+  status: String
+  gatewayTransactionId: String
+  errorMessage: String
+  createdAt: String
+}
+
+type AutoPayInvoice {
+  invoiceId: String
+  transactionId: String
+  subscriptionId: String
+  userId: String
+  amount: Float
+  taxAmount: Float
+  totalAmount: Float
+  status: String
+  dueDate: String
+  paidDate: String
+  invoiceNumber: String
+  createdAt: String
+}
+
+type AutoPayPaymentMethod {
+  paymentMethodId: String
+  userId: String
+  provider: String
+  tokenId: String
+  lastFourDigits: String
+  expiryDate: String
+  isDefault: Boolean
+  createdAt: String
+  updatedAt: String
+}

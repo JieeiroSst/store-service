@@ -1,0 +1,59 @@
+extend type Query {
+  """GET endpoints of room-service"""
+  roomService: RoomQuery!
+}
+
+type RoomQuery {
+  """
+  GET /api/me
+  """
+  me: RoomUser
+
+  """
+  GET /api/rooms
+  """
+  rooms: [RoomRoom!]
+
+  """
+  GET /api/rooms/{id}
+  """
+  room(id: Int!): RoomRoom
+
+  """
+  GET /api/rooms/{id}/members
+  """
+  members(id: Int!): [RoomMember!]
+
+  """
+  GET /api/rooms/{id}/messages
+  """
+  messages(id: Int!, before: Int, limit: Int): [RoomMessage!]
+}
+
+type RoomUser {
+  id: Int
+  username: String
+}
+
+type RoomRoom {
+  id: Int
+  name: String
+  owner: String
+  member_count: Int
+  created_at: String
+}
+
+type RoomMember {
+  room_id: Int
+  username: String
+  role: String
+  joined_at: String
+}
+
+type RoomMessage {
+  id: Int
+  room_id: Int
+  username: String
+  content: String
+  created_at: String
+}

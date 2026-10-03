@@ -1,0 +1,32 @@
+service: upload_service
+source: upload_service/internal/adapter/primary/http/router.go
+namespace: uploadService
+prefix: Upload
+baseURL: http://upload-service-svc
+endpoints:
+  - field: files
+    path: /api/v1/upload
+    query: { receiver_id: String, limit: Int, offset: Int }
+    returns: UploadFileList
+  - field: file
+    path: /api/v1/upload/{id}
+    returns: UploadFile
+    doc: Metadata; the bytes are served at the returned url.
+types: |
+  type UploadFileList {
+    files: [UploadFile!]
+    total_count: Int
+  }
+
+  type UploadFile {
+    id: String
+    receiver_id: String
+    file_name: String
+    content_type: String
+    size: Int
+    sha256: String
+    created_at: String
+    updated_at: String
+    url: String
+  }
+

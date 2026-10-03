@@ -1,0 +1,73 @@
+service: restaurant-order-service
+source: restaurant/order-service/internal/adapter/primary/http/routes.go
+namespace: restaurantOrderService
+prefix: ROrder
+baseURL: http://order-service-svc
+unwrap: data
+endpoints:
+  - field: order
+    path: /api/v1/order/{id}
+    params: { id: Int! }
+    returns: ROrderOrder
+  - field: orders
+    path: /api/v1/order
+    query: { Limit: Int, Page: Int, Sort: String }
+    returns: ROrderOrderPage
+    doc: Query keys are Limit/Page/Sort (gin binds the Go field names).
+  - field: reservations
+    path: /api/v1/reservations
+    query: { Limit: Int, Page: Int, Sort: String }
+    returns: ROrderReservationPage
+  - field: reservation
+    path: /api/v1/reservations/{id}
+    params: { id: Int! }
+    returns: ROrderReservation
+types: |
+  type ROrderOrderPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [ROrderOrder!]
+  }
+
+  type ROrderReservationPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [ROrderReservation!]
+  }
+
+  type ROrderOrder {
+    id: Int
+    table_name: String
+    status: String
+    kitchen_id: Int
+    total_amount: Float
+    items: [ROrderOrderItem!]
+    created_date: String
+    updated_time: String
+  }
+
+  type ROrderReservation {
+    id: Int
+    table_name: String
+    customer_name: String
+    party_size: Int
+    reserved_at: String
+    status: String
+    created_date: String
+  }
+
+  type ROrderOrderItem {
+    id: Int
+    order_id: Int
+    food_id: Int
+    food_name: String
+    quantity: Int
+    unit_price: Float
+  }
+

@@ -1,0 +1,20 @@
+service: restaurant-accounting-service
+source: restaurant/accounting-service/internal/adapter/primary/http/routes.go
+namespace: restaurantAccountingService
+prefix: RAccounting
+baseURL: http://accounting-service-svc
+unwrap: data
+endpoints:
+  - field: payment
+    path: /api/v1/payments/{orderID}
+    params: { orderID: Int! }
+    returns: RAccountingPayment
+types: |
+  type RAccountingPayment {
+    id: Int
+    order_id: Int
+    amount: Float
+    method: String
+    status: String
+  }
+

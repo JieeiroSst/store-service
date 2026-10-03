@@ -37,7 +37,7 @@ func (h *PartnershipHandler) CreatePartnership(c *gin.Context) {
 }
 
 func (h *PartnershipHandler) ReadPartnership(c *gin.Context) {
-	id := c.Query("id")
+	id := c.Param("id")
 	if id == "" {
 		c.JSON(400, "")
 		return

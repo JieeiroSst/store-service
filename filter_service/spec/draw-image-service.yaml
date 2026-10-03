@@ -1,0 +1,26 @@
+service: draw-image-service
+source: draw-image-service/internal/adapter/primary/http/router.go
+namespace: drawImageService
+prefix: DrawImage
+baseURL: http://draw-image-service-svc
+endpoints:
+  - field: imageInfo
+    path: /images/{id}/info
+    returns: DrawImageCollage
+    doc: Metadata of a collage; the JPEG itself is at the returned url.
+types: |
+  type DrawImageCollage {
+    id: String
+    url: String
+    bucket: String
+    object_key: String
+    content_type: String
+    size: Int
+    width: Int
+    height: Int
+    image_count: Int
+    layout: String
+    columns: Int
+    created_at: String
+  }
+

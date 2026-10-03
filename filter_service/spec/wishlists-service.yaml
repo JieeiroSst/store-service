@@ -1,0 +1,19 @@
+service: wishlists-service
+source: wishlists-service/cmd/main.go
+namespace: wishlistsService
+prefix: Wishlist
+baseURL: http://wishlists-service:8000
+unwrap: data
+endpoints:
+  - field: greet
+    path: /greet
+    returns: String
+    doc: Greeting stored in Redis (gofr sample endpoint).
+  - field: customers
+    path: /customer
+    returns: "[WishlistCustomer!]"
+types: |
+  type WishlistCustomer {
+    id: Int
+    name: String
+  }

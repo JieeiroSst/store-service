@@ -1,0 +1,66 @@
+extend type Query {
+  """GET endpoints of recompense-service"""
+  recompenseService: RecompQuery!
+}
+
+type RecompQuery {
+  """
+  GET /api/recompenses
+  """
+  recompenses(page: Int, limit: Int): [RecompRecompense!]
+
+  """
+  GET /api/recompenses/{id}
+  """
+  recompense(id: String!): RecompRecompense
+
+  """
+  GET /api/recompenses/member/{memberId}
+  """
+  memberRecompenses(memberId: Int!, page: Int, limit: Int): [RecompRecompense!]
+
+  """
+  GET /api/members/{memberId}/points
+  """
+  memberPoints(memberId: Int!): RecompMemberStatus
+
+  """
+  GET /api/members/{memberId}/recompenses/best
+  
+  The best usable recompense for an order amount.
+  """
+  bestRecompense(memberId: Int!, amount: Float!): RecompRedemption
+}
+
+type RecompRecompense {
+  ID: String
+  MemberID: Int
+  Source: String
+  SourceID: String
+  Tier: Int
+  PointsPerPurchase: Int
+  MinimumPoints: Int
+  CodeDeReduction: String
+  ReductionDescription: String
+  """fixed or percent."""
+  ReductionType: String
+  ReductionValue: Float
+  MaxReduction: Float
+  ExpiryDate: Float
+}
+
+type RecompMemberStatus {
+  MemberID: Int
+  Points: Int
+  Tier: Int
+  TierName: String
+  NextTier: Int
+  PointsToNextTier: Int
+}
+
+type RecompRedemption {
+  Recompense: RecompRecompense
+  Amount: Float
+  Discount: Float
+  Total: Float
+}

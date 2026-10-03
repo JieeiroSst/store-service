@@ -1,0 +1,105 @@
+extend type Query {
+  """GET endpoints of threads-service"""
+  threadsService: ThreadsQuery!
+}
+
+type ThreadsQuery {
+  """
+  GET /api/v1/posts
+  """
+  posts(author_id: String, cursor: String, limit: Int): ThreadsPostPage
+
+  """
+  GET /api/v1/posts/{id}
+  """
+  post(id: String!): ThreadsPost
+
+  """
+  GET /api/v1/posts/{id}/comments
+  """
+  comments(id: String!, cursor: String, limit: Int): ThreadsCommentPage
+
+  """
+  GET /api/v1/users/{id}/followers
+  """
+  followers(id: String!, cursor: String, limit: Int): ThreadsAuthorPage
+
+  """
+  GET /api/v1/users/{id}/following
+  """
+  following(id: String!, cursor: String, limit: Int): ThreadsAuthorPage
+
+  """
+  GET /api/v1/feed
+  
+  Posts from authors the caller follows (bearer token).
+  """
+  homeFeed(cursor: String, limit: Int): ThreadsPostPage
+
+  """
+  GET /api/v1/bookmarks
+  """
+  bookmarks(cursor: String, limit: Int): ThreadsPostPage
+
+  """
+  GET /api/v1/tags/trending
+  """
+  trendingTags(limit: Int): [ThreadsTagCount!]
+}
+
+type ThreadsPostPage {
+  rows: [ThreadsPost!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type ThreadsCommentPage {
+  rows: [ThreadsComment!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type ThreadsAuthorPage {
+  rows: [ThreadsAuthor!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type ThreadsPost {
+  id: String
+  user_id: String
+  content: String
+  media_urls: [String!]
+  like_count: Int
+  comment_count: Int
+  repost_of_id: String
+  repost_count: Int
+  created_at: String
+  updated_at: String
+  author: ThreadsAuthor
+  tags: [String!]
+  original_post: ThreadsPost
+}
+
+type ThreadsComment {
+  id: String
+  post_id: String
+  user_id: String
+  parent_comment_id: String
+  content: String
+  media_urls: [String!]
+  created_at: String
+  updated_at: String
+  author: ThreadsAuthor
+}
+
+type ThreadsAuthor {
+  id: String
+  username: String
+  profile_image_url: String
+}
+
+type ThreadsTagCount {
+  name: String
+  count: Int
+}

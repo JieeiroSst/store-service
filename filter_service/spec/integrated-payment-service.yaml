@@ -1,0 +1,29 @@
+service: integrated-payment-service
+source: integrated-payment-service/internal/application/presentation/routes/routes.go
+namespace: integratedPaymentService
+prefix: IntPay
+baseURL: http://integrated-payment-service:8080
+unwrap: data
+endpoints:
+  - field: payment
+    path: /api/v1/payments/{id}
+    returns: IntPayPayment
+  - field: paymentStatus
+    path: /api/v1/payments/{id}/status
+    returns: String
+types: |
+  type IntPayPayment {
+    id: String
+    user_id: String
+    amount: Float
+    currency: String
+    payment_method: String
+    status: String
+    description: String
+    metadata: String
+    external_id: String
+    processor_response: String
+    created_at: String
+    updated_at: String
+  }
+

@@ -15,10 +15,15 @@ func InitRewardPointRouter(router *gin.Engine, dsn string) {
 		convertedRewardPointService: service.InitRewardPointServiceImpl(dsn),
 	}
 
-	router.GET("/", rewardPointController.GetRewardPointHandler)
-	router.GET("/:id", rewardPointController.GetRewardPointByIDHandler)
-	router.POST("/", rewardPointController.CreateRewardPointHandler)
-	router.PUT("/", rewardPointController.UpdateRewardPointHandler)
+	registerRewardPointRoutes(router, &rewardPointController)
+}
+
+func registerRewardPointRoutes(router gin.IRouter, rewardPointController *RewardPointController) {
+	group := router.Group("/api/v1/reward-points")
+	group.GET("", rewardPointController.GetRewardPointHandler)
+	group.GET("/:id", rewardPointController.GetRewardPointByIDHandler)
+	group.POST("", rewardPointController.CreateRewardPointHandler)
+	group.PUT("", rewardPointController.UpdateRewardPointHandler)
 }
 
 func (r *RewardPointController) GetRewardPointHandler(c *gin.Context) {

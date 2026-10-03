@@ -1,0 +1,21 @@
+extend type Query {
+  """GET endpoints of sard-service"""
+  sardService: SardQuery!
+}
+
+type SardQuery {
+  """
+  GET /api/info
+  
+  Metadata of the CCCD (citizen ID card) detection API.
+  """
+  info: SardInfo
+}
+
+type SardInfo {
+  name: String
+  version: String
+  description: String
+  """Endpoint -> description."""
+  endpoints: Map
+}

@@ -1,0 +1,38 @@
+extend type Query {
+  """GET endpoints of reward-service"""
+  rewardService: RewardQuery!
+}
+
+type RewardQuery {
+  """
+  GET /reward
+  """
+  rewards(name: String, page: Int, page_size: Int): RewardPage
+
+  """
+  GET /reward/{reward_id}
+  
+  The service wraps the single reward in the same records/meta envelope.
+  """
+  reward(reward_id: String!): RewardPage
+}
+
+type RewardMeta {
+  count: Int
+  page: Int
+  pages: Int
+}
+
+type RewardReward {
+  id: String
+  name: String
+  description: String
+  points: Int
+  created_at: String
+  updated_at: String
+}
+
+type RewardPage {
+  meta: RewardMeta
+  records: [RewardReward!]
+}

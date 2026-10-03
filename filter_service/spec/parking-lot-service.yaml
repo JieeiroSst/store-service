@@ -1,0 +1,45 @@
+service: parking-lot-service
+source: parking-lot-service/internal/adapter/primary/http/routes.go
+namespace: parkingLotService
+prefix: Parking
+baseURL: http://parking-lot-service-svc
+endpoints:
+  - field: availableSpots
+    path: /api/v1/spots/available
+    returns: "[ParkingSpotAvailability!]"
+  - field: rates
+    path: /api/v1/rates
+    returns: "[ParkingRate!]"
+  - field: ticket
+    path: /api/v1/tickets/{id}
+    returns: ParkingTicket
+  - field: history
+    path: /api/v1/history
+    query: { plate: String!, limit: Int, offset: Int }
+    returns: "[ParkingTicket!]"
+types: |
+  type ParkingSpotAvailability {
+    type: String
+    available: Int
+    total: Int
+  }
+
+  type ParkingRate {
+    RateID: String
+    VehicleType: String
+    HourlyRate: Float
+    DailyMaxRate: Float
+    EffectiveFrom: String
+  }
+
+  type ParkingTicket {
+    TicketID: String
+    VehiclePlate: String
+    SpotID: String
+    EntryGateID: String
+    ExitGateID: String
+    ParkedTime: String
+    LeaveTime: String
+    Status: String
+  }
+

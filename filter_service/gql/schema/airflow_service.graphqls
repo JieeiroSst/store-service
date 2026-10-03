@@ -1,0 +1,147 @@
+extend type Query {
+  """GET endpoints of airflow-service"""
+  airflowService: AirflowQuery!
+}
+
+type AirflowQuery {
+  """
+  GET /health
+  
+  Health of the Airflow metadatabase and scheduler.
+  """
+  health: AirflowHealthStatus
+
+  """
+  GET /dags
+  """
+  dags(limit: Int, offset: Int): AirflowDAGList
+
+  """
+  GET /dags/{dagId}
+  """
+  dag(dagId: String!): AirflowDAG
+
+  """
+  GET /dags/{dagId}/dagRuns
+  """
+  dagRuns(dagId: String!, limit: Int, offset: Int): AirflowDAGRunList
+
+  """
+  GET /dags/{dagId}/dagRuns/{dagRunId}
+  """
+  dagRun(dagId: String!, dagRunId: String!): AirflowDAGRun
+
+  """
+  GET /dags/{dagId}/dagRuns/{dagRunId}/taskInstances
+  """
+  taskInstances(dagId: String!, dagRunId: String!): AirflowTaskInstanceList
+
+  """
+  GET /dags/{dagId}/dagRuns/{dagRunId}/taskInstances/{taskId}
+  """
+  taskInstance(dagId: String!, dagRunId: String!, taskId: String!): AirflowTaskInstance
+
+  """
+  GET /variables
+  """
+  variables(limit: Int, offset: Int): AirflowVariableList
+
+  """
+  GET /variables/{key}
+  """
+  variable(key: String!): AirflowVariable
+
+  """
+  GET /pools
+  """
+  pools(limit: Int, offset: Int): AirflowPoolList
+
+  """
+  GET /pools/{name}
+  """
+  pool(name: String!): AirflowPool
+}
+
+type AirflowHealthStatus {
+  metadatabase_status: String
+  scheduler_status: String
+  latest_scheduler_heartbeat: String
+}
+
+type AirflowDAGList {
+  dags: [AirflowDAG!]
+  total_entries: Int
+}
+
+type AirflowDAG {
+  dag_id: String
+  is_paused: Boolean
+  is_active: Boolean
+  is_subdag: Boolean
+  owners: [String!]
+  description: String
+  fileloc: String
+}
+
+type AirflowDAGRunList {
+  dag_runs: [AirflowDAGRun!]
+  total_entries: Int
+}
+
+type AirflowDAGRun {
+  dag_id: String
+  dag_run_id: String
+  logical_date: String
+  start_date: String
+  end_date: String
+  state: String
+  external_trigger: Boolean
+  conf: Map
+  note: String
+}
+
+type AirflowTaskInstanceList {
+  task_instances: [AirflowTaskInstance!]
+  total_entries: Int
+}
+
+type AirflowTaskInstance {
+  task_id: String
+  dag_id: String
+  dag_run_id: String
+  execution_date: String
+  start_date: String
+  end_date: String
+  duration: Float
+  state: String
+  try_number: Int
+  map_index: Int
+  pool: String
+  operator: String
+}
+
+type AirflowVariableList {
+  variables: [AirflowVariable!]
+  total_entries: Int
+}
+
+type AirflowVariable {
+  key: String
+  value: String
+  description: String
+}
+
+type AirflowPoolList {
+  pools: [AirflowPool!]
+  total_entries: Int
+}
+
+type AirflowPool {
+  name: String
+  slots: Int
+  occupied_slots: Int
+  used_slots: Int
+  queued_slots: Int
+  open_slots: Int
+  description: String
+}

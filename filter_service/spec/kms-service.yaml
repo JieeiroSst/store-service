@@ -1,0 +1,89 @@
+service: kms-service
+source: kms-service/main.go
+namespace: kmsService
+prefix: Kms
+baseURL: http://kms-service:8080
+endpoints:
+  - field: keys
+    path: /api/v1/keys
+    returns: "[KmsKey!]"
+  - field: key
+    path: /api/v1/keys/{id}
+    returns: KmsKey
+  - field: keyForUse
+    path: /api/v1/keys/{id}/use
+    returns: KmsKeyUse
+    doc: Marks the key as used (increments use_count) and returns its metadata.
+  - field: keyUsageStats
+    path: /api/v1/keys/{id}/stats
+    returns: KmsKeyStats
+  - field: keyAuditLogs
+    path: /api/v1/keys/{id}/audit
+    query: { limit: Int, offset: Int }
+    returns: KmsKeyAuditLogs
+  - field: auditLogs
+    path: /api/v1/audit/logs
+    query: { limit: Int, offset: Int }
+    returns: KmsAuditLogs
+types: |
+  type KmsKeyUse {
+    key: KmsKey
+    message: String
+  }
+
+  type KmsKeyStats {
+    key_id: String
+    alias: String
+    use_count: Int
+    created_at: String
+    last_rotated_at: String
+    expires_at: String
+    status: String
+    version: Int
+  }
+
+  type KmsKeyAuditLogs {
+    key_id: String
+    logs: [KmsAuditLog!]
+    limit: Int
+    offset: Int
+  }
+
+  type KmsAuditLogs {
+    logs: [KmsAuditLog!]
+    limit: Int
+    offset: Int
+  }
+
+  type KmsKey {
+    id: String
+    alias: String
+    algorithm: String
+    key_length: Int
+    created_at: String
+    updated_at: String
+    expires_at: String
+    last_rotated_at: String
+    status: String
+    version: Int
+    created_by: Int
+    tags: Map
+    use_count: Int
+  }
+
+  type KmsAuditLog {
+    id: String
+    actor_id: Int
+    actor_name: String
+    action: String
+    resource: String
+    resource_id: String
+    timestamp: String
+    ip_address: String
+    user_agent: String
+    success: Boolean
+    error_msg: String
+    metadata: Map
+    level: String
+  }
+

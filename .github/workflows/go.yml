@@ -1065,3 +1065,26 @@ jobs:
 
     - name: Test
       run: cd webrtc-service && go test -race -v ./...
+
+  filter_service:
+    name: filter_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Build
+      run: cd filter_service && make build
+
+    - name: Vet
+      run: cd filter_service && make vet
+
+    - name: Test
+      run: cd filter_service && make test
+
+    - name: Generated code matches spec/
+      run: cd filter_service && make check-gen

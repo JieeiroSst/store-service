@@ -1,0 +1,56 @@
+service: ekyc-service
+source: ekyc-service/internal/adapter/primary/http/routes.go
+namespace: ekycService
+prefix: Ekyc
+baseURL: http://ekyc-service-svc
+endpoints:
+  - field: status
+    path: /api/v1/ekyc/{user_id}
+    returns: EkycEkycStatus
+types: |
+  type EkycEkycStatus {
+    user_id: String
+    identity: EkycCitizenIdentity
+    face: EkycFaceBiometric
+    verification: EkycEkycVerification
+  }
+
+  type EkycCitizenIdentity {
+    id: String
+    user_id: String
+    source: String
+    document_number: String
+    surname: String
+    given_names: String
+    nationality: String
+    date_of_birth: String
+    sex: String
+    date_of_expiry: String
+    mrz_line1: String
+    mrz_line2: String
+    mrz_line3: String
+    checksum_valid: Boolean
+    confidence: Float
+    nfc_verified: Boolean
+    created_at: String
+    updated_at: String
+  }
+
+  type EkycFaceBiometric {
+    id: String
+    user_id: String
+    quality_score: Float
+    created_at: String
+    updated_at: String
+  }
+
+  type EkycEkycVerification {
+    id: String
+    user_id: String
+    status: String
+    match_score: Float
+    verified_at: String
+    created_at: String
+    updated_at: String
+  }
+

@@ -1,0 +1,250 @@
+extend type Query {
+  """GET endpoints of shortlink-service"""
+  shortlinkService: ShortlinkQuery!
+}
+
+type ShortlinkQuery {
+  """
+  GET /api/links
+  """
+  links(userId: String): [ShortlinkLink!]
+
+  """
+  GET /api/links/{id}
+  """
+  link(id: String!, userId: String): ShortlinkLink
+
+  """
+  GET /api/analytics/overview
+  """
+  analyticsOverview(userId: String, days: Int): ShortlinkAnalytics
+
+  """
+  GET /api/analytics/links/{linkId}
+  """
+  linkAnalytics(linkId: String!, userId: String, days: Int): ShortlinkAnalytics
+
+  """
+  GET /api/sdk/v1/resolve/{shortCode}
+  
+  Records a click and returns where the app should route.
+  """
+  resolve(shortCode: String!): ShortlinkResolve
+
+  """
+  GET /api/sdk/v1/resolve/{templateSlug}/{shortCode}
+  """
+  resolveWithTemplate(templateSlug: String!, shortCode: String!): ShortlinkResolve
+
+  """
+  GET /api/sdk/v1/attribution/{fingerprint}
+  """
+  attribution(fingerprint: String!): ShortlinkAttribution
+
+  """
+  GET /api/sdk/v1/health
+  """
+  sdkHealth: ShortlinkSdkHealth
+
+  """
+  GET /api/webhooks
+  """
+  webhooks(userId: String): [ShortlinkWebhook!]
+
+  """
+  GET /api/webhooks/{id}
+  
+  The signing secret returned by the service is not exposed through the gateway.
+  """
+  webhook(id: String!, userId: String): ShortlinkWebhook
+
+  """
+  GET /api/templates
+  """
+  templates(userId: String): [ShortlinkTemplate!]
+
+  """
+  GET /api/templates/{id}
+  """
+  template(id: String!, userId: String): ShortlinkTemplate
+
+  """
+  GET /.well-known/apple-app-site-association
+  """
+  appleAppSiteAssociation: Map
+
+  """
+  GET /.well-known/assetlinks.json
+  """
+  assetLinks: [Map!]
+}
+
+type ShortlinkLink {
+  id: String
+  user_id: String
+  template_id: String
+  short_code: String
+  original_url: String
+  title: String
+  description: String
+  ios_app_store_url: String
+  android_app_store_url: String
+  web_fallback_url: String
+  app_scheme: String
+  ios_universal_link: String
+  android_app_link: String
+  deep_link_path: String
+  deep_link_parameters: Map
+  utm_parameters: ShortlinkUTMParameters
+  targeting_rules: ShortlinkTargetingRules
+  og_title: String
+  og_description: String
+  og_image_url: String
+  og_type: String
+  attribution_window_hours: Int
+  is_active: Boolean
+  expires_at: String
+  append_click_id: Boolean
+  created_at: String
+  updated_at: String
+  organization_id: String
+  warn_at: String
+  disabled_at: String
+  disabled_reason: String
+  click_count: Int
+  template_slug: String
+}
+
+type ShortlinkTopLink {
+  id: String
+  shortCode: String
+  title: String
+  originalUrl: String
+  totalClicks: Int
+  uniqueClicks: Int
+}
+
+type ShortlinkDateCount {
+  date: String
+  clicks: Int
+}
+
+type ShortlinkCountryCount {
+  countryCode: String
+  country: String
+  clicks: Int
+}
+
+type ShortlinkDeviceCount {
+  device: String
+  clicks: Int
+}
+
+type ShortlinkPlatformCount {
+  platform: String
+  clicks: Int
+}
+
+type ShortlinkAnalytics {
+  totalClicks: Int
+  uniqueClicks: Int
+  clicksByDate: [ShortlinkDateCount!]
+  clicksByCountry: [ShortlinkCountryCount!]
+  clicksByDevice: [ShortlinkDeviceCount!]
+  clicksByPlatform: [ShortlinkPlatformCount!]
+  topLinks: [ShortlinkTopLink!]
+}
+
+type ShortlinkSdkHealth {
+  status: String
+  version: String
+  timestamp: String
+}
+
+type ShortlinkWebhook {
+  id: String
+  user_id: String
+  name: String
+  url: String
+  events: [String!]
+  is_active: Boolean
+  retry_count: Int
+  timeout_ms: Int
+  headers: Map
+  created_at: String
+  updated_at: String
+}
+
+type ShortlinkTemplate {
+  id: String
+  user_id: String
+  name: String
+  slug: String
+  description: String
+  settings: Any
+  is_default: Boolean
+  created_at: String
+  updated_at: String
+}
+
+type ShortlinkUTMParameters {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+type ShortlinkTargetingRules {
+  countries: [String!]
+  devices: [String!]
+  languages: [String!]
+}
+
+type ShortlinkResolve {
+  shortCode: String
+  linkId: String
+  deepLinkPath: String
+  appScheme: String
+  iosUrl: String
+  androidUrl: String
+  webUrl: String
+  utmParameters: ShortlinkUTMParameters
+  customParameters: Map
+  clickedAt: String
+}
+
+type ShortlinkAttribution {
+  fingerprint: String
+  attributed: Boolean
+  installEvent: ShortlinkInstallEvent
+  clickEvent: ShortlinkClickEvent
+  linkData: ShortlinkAttributionLinkData
+}
+
+type ShortlinkInstallEvent {
+  id: String
+  installedAt: String
+  firstOpenAt: String
+  confidenceScore: Float
+  deepLinkRetrieved: Boolean
+}
+
+type ShortlinkClickEvent {
+  id: String
+  clickedAt: String
+  deviceType: String
+  platform: String
+  countryCode: String
+  city: String
+}
+
+type ShortlinkAttributionLinkData {
+  shortCode: String
+  originalUrl: String
+  iosUrl: String
+  androidUrl: String
+  webFallbackUrl: String
+  utmParameters: ShortlinkUTMParameters
+  deepLinkParameters: Map
+}

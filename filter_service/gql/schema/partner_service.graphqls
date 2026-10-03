@@ -1,0 +1,159 @@
+extend type Query {
+  """GET endpoints of partner-service"""
+  partnerService: PartnerQuery!
+}
+
+type PartnerQuery {
+  """
+  GET /v1/partner/
+  """
+  partners(limit: Int, page: Int, sort: String): PartnerPartnerPage
+
+  """
+  GET /v1/partner/search
+  """
+  searchPartners(limit: Int, page: Int, sort: String, type: String, status: String, name: String, user_id: String): PartnerPartnerPage
+
+  """
+  GET /v1/partner/statistics
+  """
+  statistics: PartnerPartnerStatistics
+
+  """
+  GET /v1/partner/active
+  """
+  activity(id: String!): PartnerPartnerActivity
+
+  """
+  GET /v1/partner/{id}
+  """
+  partner(id: String!): PartnerPartner
+
+  """
+  GET /v1/partnership/{id}
+  """
+  partnership(id: String!): PartnerPartnership
+
+  """
+  GET /v1/partnership/
+  """
+  partnerships(limit: Int, page: Int, sort: String): PartnerPartnershipPage
+
+  """
+  GET /v1/partnerships-partner/{id}
+  """
+  partnershipsPartner(id: String!): PartnerPartnershipsPartner
+
+  """
+  GET /v1/partnerships-partner/
+  """
+  partnershipsPartners(limit: Int, page: Int, sort: String): PartnerPartnershipsPartnerPage
+
+  """
+  GET /v1/project/
+  """
+  projects(limit: Int, page: Int, sort: String): PartnerProjectPage
+
+  """
+  GET /v1/project/{id}
+  """
+  project(id: String!): PartnerProject
+}
+
+type PartnerPartnerPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerPartner!]
+}
+
+type PartnerPartnershipPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerPartnership!]
+}
+
+type PartnerPartnershipsPartnerPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerPartnershipsPartner!]
+}
+
+type PartnerProjectPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerProject!]
+}
+
+type PartnerPartner {
+  id: String
+  type: String
+  name: String
+  email: String
+  phone: String
+  address: String
+  status: String
+  score: Int
+  user_id: String
+  created_at: Int
+  updated_at: Int
+  deleted_at: Int
+}
+
+type PartnerPartnership {
+  id: String
+  project_id: String
+  description: String
+  started_on: Int
+  expires_on: Int
+  projects: [PartnerProject!]
+  user_id: String
+  created_at: Int
+}
+
+type PartnerPartnershipsPartner {
+  id: String
+  partner_id: String
+  partnership_id: String
+  content: String
+  joined_on: Int
+  left_on: Int
+  partners: [PartnerPartner!]
+  partnerships: [PartnerPartnership!]
+  user_id: String
+  created_at: Int
+}
+
+type PartnerProject {
+  id: String
+  name: String
+  user_id: String
+  created_at: Int
+}
+
+type PartnerPartnerStatistics {
+  total: Int
+  by_status: Map
+  by_type: Map
+}
+
+type PartnerPartnerActivity {
+  partner_id: String
+  status: String
+  score: Int
+  has_open_partnership: Boolean
+  last_activity_at: Int
+  eligible_for_closure: Boolean
+  is_active: Boolean
+}

@@ -1,0 +1,148 @@
+service: address-country-service
+source: address-country-service/internal/adapter/primary/http/routes.go
+namespace: addressCountryService
+prefix: Addr
+baseURL: http://address-country-svc
+unwrap: data
+endpoints:
+  - field: addressCountries
+    path: /address-countries
+    returns: "[AddrAddressCountry!]"
+  - field: addressCountry
+    path: /address-countries/{id}
+    returns: AddrAddressCountry
+  - field: orderBillingAddresses
+    path: /order-billing-addresses
+    returns: "[AddrOrderBillingaddress!]"
+  - field: orderBillingAddress
+    path: /order-billing-addresses/{id}
+    returns: AddrOrderBillingaddress
+  - field: orderShippingAddresses
+    path: /order-shipping-addresses
+    returns: "[AddrOrderShippingaddress!]"
+  - field: orderShippingAddress
+    path: /order-shipping-addresses/{id}
+    returns: AddrOrderShippingaddress
+  - field: partnerAddresses
+    path: /partner-addresses
+    returns: "[AddrPartneraddress!]"
+  - field: partnerAddress
+    path: /partner-addresses/{id}
+    returns: AddrPartneraddress
+  - field: shippingOrderAndItemChangesCountries
+    path: /shipping-orderanditemchanges-countries
+    returns: "[AddrShippingOrderanditemchangesCountry!]"
+  - field: shippingOrderAndItemChangesCountry
+    path: /shipping-orderanditemchanges-countries/{id}
+    returns: AddrShippingOrderanditemchangesCountry
+  - field: shippingWeightBasedCountries
+    path: /shipping-weightbased-countries
+    returns: "[AddrShippingWeightbasedCountry!]"
+  - field: shippingWeightBasedCountry
+    path: /shipping-weightbased-countries/{id}
+    returns: AddrShippingWeightbasedCountry
+  - field: userAddresses
+    path: /user-addresses
+    returns: "[AddrUserAddress!]"
+  - field: userAddress
+    path: /user-addresses/{id}
+    returns: AddrUserAddress
+types: |
+  type AddrAddressCountry {
+    iso31661a2: String
+    prinatable_name: String
+    name: String
+    display_order: Int
+    is_shipping_country: Boolean
+  }
+
+  type AddrOrderBillingaddress {
+    id: Int
+    title: String
+    first_name: String
+    last_name: String
+    line1: String
+    line2: String
+    line3: String
+    line4: String
+    state: String
+    postcode: String
+    search_text: String
+    country_id: String
+    address_country: AddrAddressCountry
+  }
+
+  type AddrOrderShippingaddress {
+    id: Int
+    title: String
+    first_name: String
+    last_name: String
+    line1: String
+    line2: String
+    line3: String
+    line4: String
+    state: String
+    postcode: String
+    search_text: String
+    country_id: String
+    phone_number: String
+    notes: String
+    address_country: AddrAddressCountry
+  }
+
+  type AddrPartneraddress {
+    id: Int
+    title: String
+    first_name: String
+    last_name: String
+    line1: String
+    line2: String
+    line3: String
+    line4: String
+    state: String
+    postcode: String
+    search_text: String
+    country_id: String
+    partner_id: Int
+    address_country: AddrAddressCountry
+  }
+
+  type AddrShippingOrderanditemchangesCountry {
+    id: Int
+    orderanditemchanges_id: Int
+    country_id: String
+    address_country: AddrAddressCountry
+  }
+
+  type AddrShippingWeightbasedCountry {
+    id: Int
+    weightbased_id: Int
+    country_id: String
+    address_country: AddrAddressCountry
+  }
+
+  type AddrUserAddress {
+    id: Int
+    title: String
+    first_name: String
+    last_name: String
+    line1: String
+    line2: String
+    line3: String
+    line4: String
+    state: String
+    postcode: String
+    search_text: String
+    country_id: String
+    phone_number: String
+    notes: String
+    is_default_for_shipping: Boolean
+    is_default_for_billing: Boolean
+    number_orders_as_shipping_address: Int
+    hash: String
+    date_created: String
+    user_id: Int
+    number_orders_as_billing_address: Int
+    address_country: AddrAddressCountry
+  }
+

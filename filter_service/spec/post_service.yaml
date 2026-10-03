@@ -1,0 +1,63 @@
+service: post_service
+source: post_service/internal/adapter/primary/http/routes.go
+namespace: postService
+prefix: Post
+baseURL: http://post-service-svc
+endpoints:
+  - field: posts
+    path: /api/v1/post
+    query: { cursor: String, limit: Int }
+    returns: PostPostPage
+  - field: post
+    path: /api/v1/post/{id}
+    returns: PostPost
+  - field: categories
+    path: /api/v1/category
+    query: { cursor: String, limit: Int }
+    returns: PostCategoryPage
+  - field: category
+    path: /api/v1/category/{id}
+    returns: PostCategory
+types: |
+  type PostPostPage {
+    rows: [PostPost!]
+    next_cursor: String
+    has_more: Boolean
+  }
+
+  type PostCategoryPage {
+    rows: [PostCategory!]
+    next_cursor: String
+    has_more: Boolean
+  }
+
+  type PostPost {
+    id: String
+    author_id: String
+    name: String
+    content: String
+    description: String
+    media_id: String
+    created_at: String
+    updated_at: String
+    categories: [PostCategory!]
+    media: PostMedia
+  }
+
+  type PostCategory {
+    id: String
+    name: String
+    description: String
+    created_at: String
+    updated_at: String
+    posts: [PostPost!]
+  }
+
+  type PostMedia {
+    id: String
+    url: String
+    description: String
+    created_at: String
+    updated_at: String
+  }
+

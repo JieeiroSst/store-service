@@ -1,0 +1,68 @@
+extend type Query {
+  """GET endpoints of post_service"""
+  postService: PostQuery!
+}
+
+type PostQuery {
+  """
+  GET /api/v1/post
+  """
+  posts(cursor: String, limit: Int): PostPostPage
+
+  """
+  GET /api/v1/post/{id}
+  """
+  post(id: String!): PostPost
+
+  """
+  GET /api/v1/category
+  """
+  categories(cursor: String, limit: Int): PostCategoryPage
+
+  """
+  GET /api/v1/category/{id}
+  """
+  category(id: String!): PostCategory
+}
+
+type PostPostPage {
+  rows: [PostPost!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type PostCategoryPage {
+  rows: [PostCategory!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type PostPost {
+  id: String
+  author_id: String
+  name: String
+  content: String
+  description: String
+  media_id: String
+  created_at: String
+  updated_at: String
+  categories: [PostCategory!]
+  media: PostMedia
+}
+
+type PostCategory {
+  id: String
+  name: String
+  description: String
+  created_at: String
+  updated_at: String
+  posts: [PostPost!]
+}
+
+type PostMedia {
+  id: String
+  url: String
+  description: String
+  created_at: String
+  updated_at: String
+}

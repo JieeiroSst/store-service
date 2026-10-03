@@ -1,0 +1,38 @@
+service: video-service
+source: video-service/BE/internal/adapter/primary/http/routes.go
+namespace: videoService
+prefix: Video
+baseURL: http://video-service-svc
+endpoints:
+  - field: videos
+    path: /api/videos
+    query: { page: Int, page_size: Int, sort: String, q: String }
+    returns: VideoVideoList
+  - field: video
+    path: /api/videos/{id}
+    returns: VideoVideo
+  - field: related
+    path: /api/videos/{id}/related
+    query: { limit: Int }
+    returns: "[VideoVideo!]"
+    unwrap: items
+types: |
+  type VideoVideoList {
+    items: [VideoVideo!]
+    total: Int
+  }
+
+  type VideoVideo {
+    id: String
+    title: String
+    description: String
+    content_type: String
+    size: Int
+    status: String
+    duration: Float
+    width: Int
+    height: Int
+    created_at: String
+    views: Int
+  }
+

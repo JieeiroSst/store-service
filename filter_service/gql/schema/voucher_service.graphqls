@@ -1,0 +1,105 @@
+extend type Query {
+  """GET endpoints of voucher-service"""
+  voucherService: VoucherQuery!
+}
+
+type VoucherQuery {
+  """
+  GET /api/v1/vouchers/{id}
+  """
+  voucher(id: String!): VoucherVoucher
+
+  """
+  GET /api/v1/vouchers/{id}/validate
+  """
+  validate(id: String!, pin: String): VoucherValidationResult
+
+  """
+  GET /api/v1/vouchers
+  """
+  vouchers(owner_id: String): [VoucherVoucher!]
+
+  """
+  GET /api/v1/orders/{id}
+  """
+  order(id: String!): VoucherOrder
+
+  """
+  GET /api/v1/merchants/{id}
+  """
+  merchant(id: String!): VoucherMerchant
+
+  """
+  GET /api/v1/merchants
+  """
+  merchants: [VoucherMerchant!]
+
+  """
+  GET /api/v1/wallets/{ownerType}/{ownerId}/balance
+  """
+  walletBalance(ownerType: String!, ownerId: String!): VoucherBalance
+
+  """
+  GET /api/v1/reports/redemptions
+  """
+  redemptionReports(from: String, to: String): [VoucherRedemptionReport!]
+
+  """
+  GET /api/v1/reports/corporates/{id}/spend
+  """
+  corporateSpend(id: String!, from: String, to: String): VoucherCorporateSpendReport
+}
+
+type VoucherBalance {
+  amount: Int
+  currency: String
+}
+
+type VoucherVoucher {
+  id: String
+  merchant_id: String
+  code: String
+  status: String
+  version: Int
+}
+
+type VoucherValidationResult {
+  valid: Boolean
+  balance: VoucherMoney
+  reason: String
+}
+
+type VoucherOrder {
+  id: String
+  status: String
+  total_amount: Int
+  currency: String
+}
+
+type VoucherMerchant {
+  id: String
+  name: String
+  provider_type: String
+  status: String
+}
+
+type VoucherRedemptionReport {
+  merchant_id: String
+  total_issued: Int
+  total_redeemed: Int
+  redemption_rate: Float
+  period_start: String
+  period_end: String
+}
+
+type VoucherCorporateSpendReport {
+  corporate_id: String
+  total_spent: Int
+  currency: String
+  vouchers_sent: Int
+}
+
+type VoucherMoney {
+  amount: Int
+  currency: String
+}

@@ -1,0 +1,174 @@
+extend type Query {
+  """GET endpoints of address-country-service"""
+  addressCountryService: AddrQuery!
+}
+
+type AddrQuery {
+  """
+  GET /address-countries
+  """
+  addressCountries: [AddrAddressCountry!]
+
+  """
+  GET /address-countries/{id}
+  """
+  addressCountry(id: String!): AddrAddressCountry
+
+  """
+  GET /order-billing-addresses
+  """
+  orderBillingAddresses: [AddrOrderBillingaddress!]
+
+  """
+  GET /order-billing-addresses/{id}
+  """
+  orderBillingAddress(id: String!): AddrOrderBillingaddress
+
+  """
+  GET /order-shipping-addresses
+  """
+  orderShippingAddresses: [AddrOrderShippingaddress!]
+
+  """
+  GET /order-shipping-addresses/{id}
+  """
+  orderShippingAddress(id: String!): AddrOrderShippingaddress
+
+  """
+  GET /partner-addresses
+  """
+  partnerAddresses: [AddrPartneraddress!]
+
+  """
+  GET /partner-addresses/{id}
+  """
+  partnerAddress(id: String!): AddrPartneraddress
+
+  """
+  GET /shipping-orderanditemchanges-countries
+  """
+  shippingOrderAndItemChangesCountries: [AddrShippingOrderanditemchangesCountry!]
+
+  """
+  GET /shipping-orderanditemchanges-countries/{id}
+  """
+  shippingOrderAndItemChangesCountry(id: String!): AddrShippingOrderanditemchangesCountry
+
+  """
+  GET /shipping-weightbased-countries
+  """
+  shippingWeightBasedCountries: [AddrShippingWeightbasedCountry!]
+
+  """
+  GET /shipping-weightbased-countries/{id}
+  """
+  shippingWeightBasedCountry(id: String!): AddrShippingWeightbasedCountry
+
+  """
+  GET /user-addresses
+  """
+  userAddresses: [AddrUserAddress!]
+
+  """
+  GET /user-addresses/{id}
+  """
+  userAddress(id: String!): AddrUserAddress
+}
+
+type AddrAddressCountry {
+  iso31661a2: String
+  prinatable_name: String
+  name: String
+  display_order: Int
+  is_shipping_country: Boolean
+}
+
+type AddrOrderBillingaddress {
+  id: Int
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  address_country: AddrAddressCountry
+}
+
+type AddrOrderShippingaddress {
+  id: Int
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  phone_number: String
+  notes: String
+  address_country: AddrAddressCountry
+}
+
+type AddrPartneraddress {
+  id: Int
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  partner_id: Int
+  address_country: AddrAddressCountry
+}
+
+type AddrShippingOrderanditemchangesCountry {
+  id: Int
+  orderanditemchanges_id: Int
+  country_id: String
+  address_country: AddrAddressCountry
+}
+
+type AddrShippingWeightbasedCountry {
+  id: Int
+  weightbased_id: Int
+  country_id: String
+  address_country: AddrAddressCountry
+}
+
+type AddrUserAddress {
+  id: Int
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  phone_number: String
+  notes: String
+  is_default_for_shipping: Boolean
+  is_default_for_billing: Boolean
+  number_orders_as_shipping_address: Int
+  hash: String
+  date_created: String
+  user_id: Int
+  number_orders_as_billing_address: Int
+  address_country: AddrAddressCountry
+}

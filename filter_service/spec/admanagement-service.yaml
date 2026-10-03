@@ -1,0 +1,220 @@
+service: admanagement-service
+source: admanagement-service/internal/adapter/primary/http/routes.go
+namespace: admanagementService
+prefix: Adm
+baseURL: http://admanagement-svc
+endpoints:
+  - field: campaigns
+    path: /campaigns
+    returns: "[AdmAdCampaign!]"
+  - field: campaign
+    path: /campaigns/{id}
+    params: { id: Int! }
+    returns: AdmAdCampaign
+  - field: campaignAds
+    path: /campaigns/{id}/ads
+    params: { id: Int! }
+    returns: "[AdmAd!]"
+  - field: campaignPerformance
+    path: /campaigns/{id}/performance
+    params: { id: Int! }
+    query: { from: String, to: String }
+    returns: AdmCampaignPerformance
+    doc: Dates are YYYY-MM-DD; defaults to the last 30 days.
+  - field: categories
+    path: /categories
+    returns: "[AdmAdCategory!]"
+  - field: category
+    path: /categories/{id}
+    params: { id: Int! }
+    returns: AdmAdCategory
+  - field: positions
+    path: /positions
+    returns: "[AdmAdPosition!]"
+  - field: position
+    path: /positions/{id}
+    params: { id: Int! }
+    returns: AdmAdPosition
+  - field: serveAd
+    path: /positions/{id}/serve
+    params: { id: Int! }
+    query: { session_id: String, country: String, device: String, gender: String, referrer_url: String, page_url: String, age: Int, user_id: Int }
+    returns: AdmServedAd
+    doc: Picks an ad for the position and records an impression.
+  - field: ads
+    path: /ads
+    returns: "[AdmAd!]"
+  - field: ad
+    path: /ads/{id}
+    params: { id: Int! }
+    returns: AdmAd
+  - field: adImpressions
+    path: /ads/{id}/impressions
+    params: { id: Int! }
+    returns: "[AdmAdImpression!]"
+  - field: adClicks
+    path: /ads/{id}/clicks
+    params: { id: Int! }
+    returns: "[AdmAdClick!]"
+  - field: positionMappings
+    path: /position-mappings
+    returns: "[AdmAdPositionMapping!]"
+  - field: positionMapping
+    path: /position-mappings/{id}
+    params: { id: Int! }
+    returns: AdmAdPositionMapping
+  - field: impressions
+    path: /impressions
+    returns: "[AdmAdImpression!]"
+  - field: impression
+    path: /impressions/{id}
+    params: { id: Int! }
+    returns: AdmAdImpression
+  - field: clicks
+    path: /clicks
+    returns: "[AdmAdClick!]"
+  - field: click
+    path: /clicks/{id}
+    params: { id: Int! }
+    returns: AdmAdClick
+  - field: targetingRules
+    path: /targeting-rules
+    returns: "[AdmAdTargetingRule!]"
+  - field: targetingRule
+    path: /targeting-rules/{id}
+    params: { id: Int! }
+    returns: AdmAdTargetingRule
+  - field: performanceSummaries
+    path: /performance-summaries
+    returns: "[AdmAdPerformanceSummary!]"
+  - field: performanceSummary
+    path: /performance-summaries/{id}
+    params: { id: Int! }
+    returns: AdmAdPerformanceSummary
+types: |
+  type AdmAdCampaign {
+    id: Int
+    user_id: Int
+    name: String
+    description: String
+    budget: Float
+    start_date: String
+    end_date: String
+    status: String
+    created_at: String
+    updated_at: String
+  }
+
+  type AdmAd {
+    id: Int
+    campaign_id: Int
+    category_id: Int
+    title: String
+    description: String
+    ad_type: String
+    content_url: String
+    target_url: String
+    file_path: String
+    file_size: Int
+    mime_type: String
+    duration: Int
+    priority: Int
+    is_active: Boolean
+    start_date: String
+    end_date: String
+    created_at: String
+    updated_at: String
+  }
+
+  type AdmCampaignPerformance {
+    campaign_id: Int
+    impressions: Int
+    clicks: Int
+    ctr: Float
+    cost: Float
+    revenue: Float
+  }
+
+  type AdmAdCategory {
+    id: Int
+    name: String
+    description: String
+    parent_id: Int
+    is_active: Boolean
+    created_at: String
+  }
+
+  type AdmAdPosition {
+    id: Int
+    name: String
+    description: String
+    width: Int
+    height: Int
+    max_file_size: Int
+    allowed_formats: Any
+    is_active: Boolean
+  }
+
+  type AdmServedAd {
+    ad: AdmAd
+    impression_id: Int
+  }
+
+  type AdmAdImpression {
+    id: Int
+    ad_id: Int
+    user_id: Int
+    session_id: String
+    ip_address: String
+    user_agent: String
+    referrer_url: String
+    page_url: String
+    position_id: Int
+    created_at: String
+  }
+
+  type AdmAdClick {
+    id: Int
+    ad_id: Int
+    impression_id: Int
+    user_id: Int
+    session_id: String
+    ip_address: String
+    user_agent: String
+    referrer_url: String
+    target_url: String
+    created_at: String
+  }
+
+  type AdmAdPositionMapping {
+    id: Int
+    ad_id: Int
+    position_id: Int
+    weight: Int
+    is_active: Boolean
+    created_at: String
+  }
+
+  type AdmAdTargetingRule {
+    id: Int
+    ad_id: Int
+    rule_type: String
+    rule_operator: String
+    rule_value: Any
+    is_active: Boolean
+    created_at: String
+  }
+
+  type AdmAdPerformanceSummary {
+    id: Int
+    ad_id: Int
+    date: String
+    impressions: Int
+    clicks: Int
+    ctr: Float
+    cost: Float
+    revenue: Float
+    created_at: String
+    updated_at: String
+  }
+

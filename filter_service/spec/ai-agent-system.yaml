@@ -1,0 +1,49 @@
+service: ai-agent-system
+source: ai-agent-system/internal/httpapi/router.go, internal/ollamaapi/router.go
+namespace: aiAgentSystem
+prefix: AiAgent
+baseURL: http://ai-agent-system:8080
+endpoints:
+  - field: chatHistory
+    path: /v1/chat/history
+    query: { limit: Int }
+    headers: { X-User-Id: String! }
+    returns: AiAgentHistory
+    doc: Most recent question/answer turns of the user, newest first (limit 1-200, default 50).
+  - field: tags
+    path: /api/tags
+    returns: AiAgentTags
+    doc: Ollama-compatible model list served by the agent.
+types: |
+  type AiAgentHistory {
+    messages: [AiAgentHistoryMessage!]
+  }
+
+  type AiAgentHistoryMessage {
+    role: String
+    content: String
+    source: String
+    created_at: String
+  }
+
+  type AiAgentTags {
+    models: [AiAgentTagsModel!]
+  }
+
+  type AiAgentTagsModel {
+    name: String
+    model: String
+    modified_at: String
+    size: Int
+    digest: String
+    details: AiAgentModelDetails
+  }
+
+  type AiAgentModelDetails {
+    parent_model: String
+    format: String
+    family: String
+    families: [String!]
+    parameter_size: String
+    quantization_level: String
+  }

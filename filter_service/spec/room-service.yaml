@@ -1,0 +1,54 @@
+service: room-service
+source: room-service/BE/internal/adapter/primary/http/router.go
+namespace: roomService
+prefix: Room
+baseURL: http://room-service-svc
+endpoints:
+  - field: me
+    path: /api/me
+    returns: RoomUser
+  - field: rooms
+    path: /api/rooms
+    returns: "[RoomRoom!]"
+  - field: room
+    path: /api/rooms/{id}
+    params: { id: Int! }
+    returns: RoomRoom
+  - field: members
+    path: /api/rooms/{id}/members
+    params: { id: Int! }
+    returns: "[RoomMember!]"
+  - field: messages
+    path: /api/rooms/{id}/messages
+    params: { id: Int! }
+    query: { before: Int, limit: Int }
+    returns: "[RoomMessage!]"
+types: |
+  type RoomUser {
+    id: Int
+    username: String
+  }
+
+  type RoomRoom {
+    id: Int
+    name: String
+    owner: String
+    member_count: Int
+    created_at: String
+  }
+
+  type RoomMember {
+    room_id: Int
+    username: String
+    role: String
+    joined_at: String
+  }
+
+  type RoomMessage {
+    id: Int
+    room_id: Int
+    username: String
+    content: String
+    created_at: String
+  }
+

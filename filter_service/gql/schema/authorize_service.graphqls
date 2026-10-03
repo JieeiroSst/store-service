@@ -1,0 +1,40 @@
+extend type Query {
+  """GET endpoints of authorize_service"""
+  authorizeService: AuthzQuery!
+}
+
+type AuthzQuery {
+  """
+  GET /casbin
+  
+  gRPC AuthorizeService.GetCasbinRules
+  """
+  getCasbinRules(limit: Int, page: Int, sort: String, total_rows: String, total_pages: Int): AuthzCasbinRuleList
+
+  """
+  GET /casbin/{id}
+  
+  gRPC AuthorizeService.GetCasbinRuleById
+  """
+  getCasbinRuleById(id: Int!): AuthzCasbinRule
+}
+
+type AuthzCasbinRuleList {
+  limit: Int
+  page: Int
+  sort: String
+  totalRows: String
+  totalPages: Int
+  rows: [AuthzCasbinRule!]
+}
+
+type AuthzCasbinRule {
+  id: Int
+  ptype: String
+  v0: String
+  v1: String
+  v2: String
+  v3: String
+  v4: String
+  v5: String
+}

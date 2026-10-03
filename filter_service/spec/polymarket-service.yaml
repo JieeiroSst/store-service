@@ -1,0 +1,431 @@
+service: polymarket-service
+source: polymarket-service/internal/adapter/primary/http/routes.go
+namespace: polymarketService
+prefix: Poly
+baseURL: http://polymarket-service-svc
+endpoints:
+  - field: categories
+    path: /api/v1/categories
+    returns: "[PolyCategoryCount!]"
+  - field: leaderboard
+    path: /api/v1/leaderboard
+    query: { metric: String, window: String, limit: Int }
+    returns: "[PolyLeaderboardEntry!]"
+  - field: events
+    path: /api/v1/events
+    query: { status: String, category: String, tag: String, q: String, featured: Boolean, sort: String, limit: Int, cursor: String }
+    returns: PolyEventPage
+  - field: event
+    path: /api/v1/events/{id}
+    returns: PolyEvent
+  - field: relatedEvents
+    path: /api/v1/events/{id}/related
+    query: { limit: Int }
+    returns: "[PolyEvent!]"
+  - field: comments
+    path: /api/v1/events/{id}/comments
+    query: { sort: String, limit: Int, cursor: String }
+    returns: PolyCommentPage
+  - field: markets
+    path: /api/v1/markets
+    query: { q: String, status: String, limit: Int, offset: Int }
+    returns: PolyMarketSearch
+  - field: market
+    path: /api/v1/markets/{id}
+    returns: PolyMarket
+    doc: id is the numeric id or the slug.
+  - field: orderBook
+    path: /api/v1/markets/{id}/book
+    query: { outcome: String }
+    returns: PolyOrderBook
+  - field: quote
+    path: /api/v1/markets/{id}/quote
+    query: { side: String, outcome: String, amount: Int }
+    returns: PolyQuote
+  - field: marketTrades
+    path: /api/v1/markets/{id}/trades
+    query: { limit: Int, offset: Int }
+    returns: "[PolyTrade!]"
+  - field: priceHistory
+    path: /api/v1/markets/{id}/prices-history
+    query: { range: String, bucket: Int }
+    returns: "[PolyCandle!]"
+  - field: topHolders
+    path: /api/v1/markets/{id}/holders
+    query: { outcome: String, limit: Int }
+    returns: "[PolyHolderEntry!]"
+  - field: marketRewards
+    path: /api/v1/markets/{id}/rewards
+    returns: PolyMarketRewards
+  - field: exchange
+    path: /api/v1/admin/exchange
+    returns: PolyExchangeSummary
+    doc: Admin only.
+  - field: order
+    path: /api/v1/orders/{orderId}
+    params: { orderId: Int! }
+    returns: PolyOrder
+  - field: profile
+    path: /api/v1/users/{userId}/profile
+    returns: PolyProfile
+  - field: balance
+    path: /api/v1/users/{userId}/balance
+    returns: PolyBalance
+  - field: wallet
+    path: /api/v1/users/{userId}/wallet
+    returns: PolyWallet
+  - field: portfolio
+    path: /api/v1/users/{userId}/portfolio
+    returns: PolyPortfolio
+  - field: closedPositions
+    path: /api/v1/users/{userId}/positions/closed
+    returns: "[PolyPosition!]"
+  - field: activity
+    path: /api/v1/users/{userId}/activity
+    query: { limit: Int }
+    returns: "[PolyActivity!]"
+  - field: userOrders
+    path: /api/v1/users/{userId}/orders
+    query: { market_id: Int, status: String, limit: Int, cursor: String }
+    returns: PolyOrderPage
+  - field: watchlist
+    path: /api/v1/users/{userId}/watchlist
+    returns: "[PolyEvent!]"
+  - field: userRewards
+    path: /api/v1/users/{userId}/rewards
+    query: { limit: Int, cursor: String }
+    returns: PolyUserRewardsPage
+  - field: referral
+    path: /api/v1/users/{userId}/referral
+    returns: PolyReferralSummary
+types: |
+  type PolyEventPage {
+    items: [PolyEvent!]
+    next_cursor: String
+    is_last_page: Boolean
+  }
+
+  type PolyCommentPage {
+    items: [PolyComment!]
+    next_cursor: String
+    is_last_page: Boolean
+  }
+
+  type PolyOrderPage {
+    items: [PolyOrder!]
+    next_cursor: String
+    is_last_page: Boolean
+  }
+
+  type PolyUserRewardsPage {
+    items: [PolyRewardPayout!]
+    next_cursor: String
+    is_last_page: Boolean
+    total_paid: Int
+  }
+
+  type PolyMarketSearch {
+    items: [PolyMarket!]
+    total: Int
+  }
+
+  type PolyQuote {
+    shares: Float
+    cash: Float
+    fee: Float
+    avg_price: Float
+    worst_price: Float
+    fillable: Boolean
+  }
+
+  type PolyWallet {
+    wallet_id: String
+    balance: Int
+    currency: String
+    status: String
+  }
+
+  type PolyCategoryCount {
+    category: String
+    events: Int
+  }
+
+  type PolyLeaderboardEntry {
+    rank: Int
+    user_id: String
+    username: String
+    profit: Int
+    volume: Int
+  }
+
+  type PolyEvent {
+    markets: [PolyMarket!]
+    id: Int
+    slug: String
+    title: String
+    description: String
+    category: String
+    tags: [String!]
+    image_url: String
+    featured: Boolean
+    neg_risk: Boolean
+    status: String
+    end_date: String
+    volume: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type PolyComment {
+    id: Int
+    event_id: Int
+    parent_id: Int
+    user_id: String
+    body: String
+    created_at: String
+    likes: Int
+  }
+
+  type PolyOrderBook {
+    market_id: Int
+    outcome: String
+    bids: [PolyBookLevel!]
+    asks: [PolyBookLevel!]
+    best_bid: Int
+    best_ask: Int
+    spread: Int
+    midpoint: Float
+    last_trade_price: Int
+  }
+
+  type PolyTrade {
+    id: Int
+    market_id: Int
+    yes_price: Int
+    size: Int
+    kind: String
+    maker_order_id: Int
+    taker_order_id: Int
+    maker_user_id: String
+    taker_user_id: String
+    maker_outcome: String
+    maker_side: String
+    taker_outcome: String
+    taker_side: String
+    taker_fee: Int
+    maker_rebate: Int
+    referral_fee: Int
+    created_at: String
+  }
+
+  type PolyCandle {
+    time: String
+    open: Int
+    high: Int
+    low: Int
+    close: Int
+    volume: Int
+  }
+
+  type PolyHolderEntry {
+    user_id: String
+    username: String
+    shares: Int
+  }
+
+  type PolyMarketRewards {
+    market_id: Int
+    daily_pool: Int
+    max_spread: Int
+    min_size: Int
+    epoch_seconds: Int
+    epoch_pool: Int
+  }
+
+  type PolyExchangeSummary {
+    revenue: Int
+    bond_held: Int
+  }
+
+  type PolyOrder {
+    id: Int
+    market_id: Int
+    user_id: String
+    client_order_id: String
+    outcome: String
+    side: String
+    type: String
+    time_in_force: String
+    price: Int
+    size: Int
+    filled: Int
+    budget: Int
+    fee: Int
+    filled_cash: Int
+    status: String
+    expires_at: String
+    created_at: String
+    updated_at: String
+  }
+
+  type PolyProfile {
+    user_id: String
+    username: String
+    bio: String
+    avatar_url: String
+    created_at: String
+    updated_at: String
+  }
+
+  type PolyBalance {
+    user_id: String
+    available: Int
+    locked: Int
+    updated_at: String
+  }
+
+  type PolyPortfolio {
+    balance: PolyBalance
+    positions: [PolyPositionView!]
+    positions_value: Float
+    unrealized_pnl: Float
+    realized_pnl: Int
+    total_value: Float
+  }
+
+  type PolyPosition {
+    id: Int
+    market_id: Int
+    user_id: String
+    outcome: String
+    shares: Int
+    locked_shares: Int
+    cost_basis: Int
+    realized_pnl: Int
+    settled: Boolean
+    created_at: String
+    updated_at: String
+  }
+
+  type PolyActivity {
+    type: String
+    market_id: Int
+    outcome: String
+    side: String
+    price: Int
+    size: Int
+    amount: Int
+    created_at: String
+  }
+
+  type PolyRewardPayout {
+    id: Int
+    epoch_start: String
+    market_id: Int
+    user_id: String
+    score: Float
+    amount: Int
+    created_at: String
+  }
+
+  type PolyReferralSummary {
+    ref_code: String
+    deep_link: String
+    referred_by: String
+    referees: Int
+    earnings: Int
+    commission_bps: Int
+    service_stats: PolyReferralStats
+  }
+
+  type PolyMarket {
+    yes_price: Float
+    no_price: Float
+    id: Int
+    event_id: Int
+    slug: String
+    question: String
+    group_item_title: String
+    description: String
+    share_value: Int
+    min_order_size: Int
+    end_time: String
+    status: String
+    proposed_outcome: String
+    dispute_deadline: String
+    disputed_by: String
+    dispute_reason: String
+    resolved_outcome: String
+    reward_pool: Int
+    reward_max_spread: Int
+    reward_min_size: Int
+    dispute_bond: Int
+    best_bid: Int
+    best_ask: Int
+    last_price: Int
+    volume: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type PolyMarketBase {
+    id: Int
+    event_id: Int
+    slug: String
+    question: String
+    group_item_title: String
+    description: String
+    share_value: Int
+    min_order_size: Int
+    end_time: String
+    status: String
+    proposed_outcome: String
+    dispute_deadline: String
+    disputed_by: String
+    dispute_reason: String
+    resolved_outcome: String
+    reward_pool: Int
+    reward_max_spread: Int
+    reward_min_size: Int
+    dispute_bond: Int
+    best_bid: Int
+    best_ask: Int
+    last_price: Int
+    volume: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type PolyBookLevel {
+    price: Int
+    size: Int
+  }
+
+  type PolyPositionView {
+    question: String
+    event_id: Int
+    avg_price: Float
+    current_price: Float
+    value: Float
+    unrealized_pnl: Float
+    market_status: String
+    id: Int
+    market_id: Int
+    user_id: String
+    outcome: String
+    shares: Int
+    locked_shares: Int
+    cost_basis: Int
+    realized_pnl: Int
+    settled: Boolean
+    created_at: String
+    updated_at: String
+  }
+
+  type PolyReferralStats {
+    total_invited: Int
+    total_installed: Int
+    total_rewarded: Int
+    total_reward_amt: Float
+  }
+

@@ -1,0 +1,35 @@
+extend type Query {
+  """GET endpoints of face-recognition-service"""
+  faceRecognitionService: FaceRecQuery!
+}
+
+type FaceRecQuery {
+  """
+  GET /api/face/position
+  
+  Latest face and color positions reported by the tracking page.
+  """
+  facePosition: FaceRecPositions
+}
+
+type FaceRecRect {
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+}
+
+type FaceRecColorRect {
+  color: String
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+}
+
+type FaceRecPositions {
+  faces: [FaceRecRect!]
+  colors: [FaceRecColorRect!]
+  frame: Any
+  updatedAt: String
+}

@@ -1,0 +1,168 @@
+extend type Query {
+  """GET endpoints of toggle-service"""
+  toggleService: ToggleQuery!
+}
+
+type ToggleQuery {
+  """
+  GET /api/admin/roles
+  """
+  roles: [ToggleRole!]
+
+  """
+  GET /api/admin/environments/
+  """
+  environments: [ToggleEnvironment!]
+
+  """
+  GET /api/admin/tokens/
+  """
+  tokens: [ToggleAPIToken!]
+
+  """
+  GET /api/admin/projects/
+  """
+  projects: [ToggleProject!]
+
+  """
+  GET /api/admin/projects/{projectId}/
+  """
+  project(projectId: String!): ToggleProject
+
+  """
+  GET /api/admin/projects/{projectId}/members
+  """
+  projectMembers(projectId: String!): [ToggleProjectMembership!]
+
+  """
+  GET /api/admin/projects/{projectId}/audit
+  
+  since/until are RFC3339.
+  """
+  audit(projectId: String!, entityType: String, since: String, until: String): [ToggleAuditEvent!]
+
+  """
+  GET /api/admin/projects/{projectId}/flags
+  """
+  flags(projectId: String!): [ToggleFeatureFlag!]
+
+  """
+  GET /api/admin/projects/{projectId}/flags/{key}/
+  """
+  flag(projectId: String!, key: String!): ToggleFeatureFlag
+
+  """
+  GET /api/admin/projects/{projectId}/flags/{key}/environments/{envName}/strategies
+  """
+  strategies(projectId: String!, key: String!, envName: String!): [ToggleActivationStrategy!]
+
+  """
+  GET /api/client/features
+  
+  Flag configuration for an SDK, authorised by its client API token.
+  """
+  clientFeatures: ToggleClientFeaturesResponse
+}
+
+type ToggleRole {
+  id: String
+  name: String
+  description: String
+}
+
+type ToggleEnvironment {
+  id: String
+  name: String
+  type: String
+  sortOrder: Int
+  enabled: Boolean
+  createdAt: String
+}
+
+type ToggleAPIToken {
+  id: String
+  name: String
+  tokenPrefix: String
+  type: String
+  projectId: String
+  environmentId: String
+  expiresAt: String
+  createdBy: String
+  createdAt: String
+}
+
+type ToggleProject {
+  id: String
+  name: String
+  description: String
+  createdBy: String
+  createdAt: String
+  updatedAt: String
+}
+
+type ToggleProjectMembership {
+  id: String
+  projectId: String
+  userId: String
+  roleId: String
+  createdAt: String
+}
+
+type ToggleAuditEvent {
+  id: String
+  entityType: String
+  entityId: String
+  action: String
+  projectId: String
+  environmentId: String
+  userId: String
+  before: Any
+  after: Any
+  createdAt: String
+}
+
+type ToggleFeatureFlag {
+  id: String
+  projectId: String
+  key: String
+  name: String
+  description: String
+  type: String
+  archived: Boolean
+  createdBy: String
+  createdAt: String
+  updatedAt: String
+}
+
+type ToggleActivationStrategy {
+  id: String
+  featureFlagEnvironmentId: String
+  strategyType: String
+  parameters: Any
+  sortOrder: Int
+  constraints: [ToggleConstraint!]
+  createdAt: String
+  updatedAt: String
+}
+
+type ToggleClientFeaturesResponse {
+  version: Int
+  features: [ToggleClientFeature!]
+}
+
+type ToggleConstraint {
+  id: String
+  strategyId: String
+  contextField: String
+  operator: String
+  values: Any
+  caseInsensitive: Boolean
+}
+
+type ToggleClientFeature {
+  name: String
+  description: String
+  type: String
+  enabled: Boolean
+  strategies: [ToggleActivationStrategy!]
+}

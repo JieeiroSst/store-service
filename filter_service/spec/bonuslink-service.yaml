@@ -1,0 +1,43 @@
+service: bonuslink-service
+source: bonuslink-service/internal/adapters/primary/http/handler.go
+namespace: bonuslinkService
+prefix: Bonus
+baseURL: http://bonuslink-service-svc
+endpoints:
+  - field: userRewards
+    path: /api/v1/bonus/users/{user_id}/rewards
+    query: { limit: Int, offset: Int }
+    returns: BonusRewardList
+    doc: limit 1-100 (default 20).
+  - field: userBalances
+    path: /api/v1/bonus/users/{user_id}/balances
+    returns: "[BonusBalance!]"
+    unwrap: data
+types: |
+  type BonusRewardList {
+    data: [BonusReward!]
+    meta: BonusListMeta
+  }
+
+  type BonusListMeta {
+    count: Int
+  }
+
+  type BonusReward {
+    reward_id: String
+    event_id: String
+    user_id: String
+    ref_code: String
+    source: String
+    reward_type: String
+    reward_value: Float
+    created_at: String
+  }
+
+  type BonusBalance {
+    user_id: String
+    reward_type: String
+    total_value: Float
+    reward_count: Int
+  }
+

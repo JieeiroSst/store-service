@@ -1,0 +1,132 @@
+service: banking-service
+source: banking-service/internal/adapter/primary/http/routes.go
+namespace: bankingService
+prefix: Bank
+baseURL: http://banking-service-svc
+endpoints:
+  - field: persons
+    path: /persons
+    returns: "[BankPerson!]"
+  - field: person
+    path: /persons/{id}
+    params: { id: Int! }
+    returns: BankPerson
+  - field: branches
+    path: /branches
+    returns: "[BankBranch!]"
+  - field: branch
+    path: /branches/{id}
+    params: { id: Int! }
+    returns: BankBranch
+  - field: customers
+    path: /customers
+    returns: "[BankCustomer!]"
+  - field: customer
+    path: /customers/{id}
+    params: { id: Int! }
+    returns: BankCustomer
+  - field: employees
+    path: /employees
+    returns: "[BankEmployee!]"
+  - field: employee
+    path: /employees/{id}
+    params: { id: Int! }
+    returns: BankEmployee
+  - field: accounts
+    path: /accounts
+    returns: "[BankAccount!]"
+  - field: account
+    path: /accounts/{id}
+    params: { id: Int! }
+    returns: BankAccount
+  - field: loans
+    path: /loans
+    returns: "[BankLoan!]"
+  - field: loan
+    path: /loans/{id}
+    params: { id: Int! }
+    returns: BankLoan
+  - field: loanPayments
+    path: /loan-payments
+    returns: "[BankLoanPayment!]"
+  - field: loanPayment
+    path: /loan-payments/{id}
+    params: { id: Int! }
+    returns: BankLoanPayment
+  - field: transactions
+    path: /transactions
+    returns: "[BankTransaction!]"
+  - field: transaction
+    path: /transactions/{id}
+    params: { id: Int! }
+    returns: BankTransaction
+types: |
+  type BankPerson {
+    person_id: Int
+    last_name: String
+    first_name: String
+    date_of_birth: Int
+    email: String
+    phone_number: String
+    address: String
+    tax_identifier: String
+  }
+
+  type BankBranch {
+    branch_id: Int
+    branch_name: String
+    branch_code: String
+    address: String
+    phone_number: String
+  }
+
+  type BankCustomer {
+    customer_id: Int
+    customer_type: String
+  }
+
+  type BankEmployee {
+    employee_id: Int
+    position: String
+  }
+
+  type BankAccount {
+    account_id: Int
+    account_number: String
+    account_type: String
+    current_balance: Int
+    date_opened: Int
+    date_closed: Int
+    account_status: String
+  }
+
+  type BankLoan {
+    loan_id: Int
+    loan_type: String
+    loan_amount: Int
+    interes_rate: Int
+    term: Int
+    start_date: Int
+    end_date: Int
+    loan_status: String
+  }
+
+  type BankLoanPayment {
+    loan_payment_id: Int
+    scheduled_payment_date: Int
+    payment_account: Int
+    principal_amount: Int
+    interest_amount: Int
+    paid_amount: Int
+    paid_date: Int
+  }
+
+  type BankTransaction {
+    transaction_id: Int
+    account_id: Int
+    external_ref: String
+    transaction_type: String
+    amount: Int
+    transaction_date: Int
+  }
+

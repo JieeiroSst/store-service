@@ -1,0 +1,25 @@
+service: food-service
+source: food-service/src/main/java/com/store/foodservice/controller/FoodController.java
+namespace: foodService
+prefix: Food
+baseURL: http://food-service:8080
+endpoints:
+  - field: food
+    path: /api/food/{id}
+    params: { id: Int! }
+    returns: FoodFood
+  - field: foods
+    path: /api/food/
+    returns: "[FoodFood!]"
+  - field: searchFoods
+    path: /api/food/search
+    query: { name: String! }
+    returns: "[FoodFood!]"
+types: |
+  type FoodFood {
+    id: Int
+    name: String
+    description: String
+    price: Int
+    category: String
+  }

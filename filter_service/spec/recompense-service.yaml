@@ -1,0 +1,61 @@
+service: recompense-service
+source: recompense-service/internal/adapter/inbound/http/handler.ts
+namespace: recompenseService
+prefix: Recomp
+baseURL: http://recompense-service-svc
+endpoints:
+  - field: recompenses
+    path: /api/recompenses
+    query: { page: Int, limit: Int }
+    returns: "[RecompRecompense!]"
+  - field: recompense
+    path: /api/recompenses/{id}
+    returns: RecompRecompense
+  - field: memberRecompenses
+    path: /api/recompenses/member/{memberId}
+    params: { memberId: Int! }
+    query: { page: Int, limit: Int }
+    returns: "[RecompRecompense!]"
+  - field: memberPoints
+    path: /api/members/{memberId}/points
+    params: { memberId: Int! }
+    returns: RecompMemberStatus
+  - field: bestRecompense
+    path: /api/members/{memberId}/recompenses/best
+    params: { memberId: Int! }
+    query: { amount: Float! }
+    returns: RecompRedemption
+    doc: The best usable recompense for an order amount.
+types: |
+  type RecompRecompense {
+    ID: String
+    MemberID: Int
+    Source: String
+    SourceID: String
+    Tier: Int
+    PointsPerPurchase: Int
+    MinimumPoints: Int
+    CodeDeReduction: String
+    ReductionDescription: String
+    """fixed or percent."""
+    ReductionType: String
+    ReductionValue: Float
+    MaxReduction: Float
+    ExpiryDate: Float
+  }
+
+  type RecompMemberStatus {
+    MemberID: Int
+    Points: Int
+    Tier: Int
+    TierName: String
+    NextTier: Int
+    PointsToNextTier: Int
+  }
+
+  type RecompRedemption {
+    Recompense: RecompRecompense
+    Amount: Float
+    Discount: Float
+    Total: Float
+  }

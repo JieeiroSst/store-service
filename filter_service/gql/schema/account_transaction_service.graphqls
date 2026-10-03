@@ -1,0 +1,87 @@
+extend type Query {
+  """GET endpoints of account-transaction-service"""
+  accountTransactionService: AcctTxQuery!
+}
+
+type AcctTxQuery {
+  """
+  GET /v1/accounts/{id}
+  
+  gRPC BankingService.GetAccount
+  """
+  getAccount(id: String!): AcctTxAccount
+
+  """
+  GET /v1/accounts
+  
+  gRPC BankingService.ListAccounts
+  """
+  listAccounts(page_size: Int, page_token: String): AcctTxListAccountsResponse
+
+  """
+  GET /v1/transactions/{id}
+  
+  gRPC BankingService.GetTransaction
+  """
+  getTransaction(id: String!): AcctTxTransaction
+
+  """
+  GET /v1/transactions
+  
+  gRPC BankingService.ListTransactions
+  """
+  listTransactions(page_size: Int, page_token: String, type: String): AcctTxListTransactionsResponse
+
+  """
+  GET /v1/accounts/{account_id}/transactions
+  
+  gRPC BankingService.GetAccountTransactions
+  """
+  getAccountTransactions(account_id: String!, page_size: Int, page_token: String): AcctTxListTransactionsResponse
+}
+
+type AcctTxAccount {
+  id: String
+  firstName: String
+  lastName: String
+  dateCreated: String
+}
+
+type AcctTxListAccountsResponse {
+  accounts: [AcctTxAccount!]
+  nextPageToken: String
+}
+
+type AcctTxTransaction {
+  id: String
+  type: String
+  amount: Float
+  dateCreated: String
+  deposit: AcctTxDepositTransactionDetails
+  withdrawal: AcctTxWithdrawalTransactionDetails
+  transfer: AcctTxAccountToAccountTransactionDetails
+  payment: AcctTxPaymentForServiceTransactionDetails
+}
+
+type AcctTxDepositTransactionDetails {
+  accountId: String
+}
+
+type AcctTxWithdrawalTransactionDetails {
+  accountId: String
+}
+
+type AcctTxAccountToAccountTransactionDetails {
+  senderId: String
+  receiverId: String
+}
+
+type AcctTxPaymentForServiceTransactionDetails {
+  accountId: String
+  serviceName: String
+}
+
+type AcctTxListTransactionsResponse {
+  transactions: [AcctTxTransaction!]
+  nextPageToken: String
+}

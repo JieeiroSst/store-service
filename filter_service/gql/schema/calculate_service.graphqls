@@ -1,0 +1,139 @@
+extend type Query {
+  """GET endpoints of calculate-service"""
+  calculateService: CalcQuery!
+}
+
+type CalcQuery {
+  """
+  GET /api/v1/weather/forecast
+  """
+  forecast(lat: Float!, lon: Float!): CalcForecast
+
+  """
+  GET /api/v1/weather/tide
+  """
+  tide(station: String): CalcTidePrediction
+
+  """
+  GET /api/v1/weather/radar
+  """
+  radar: CalcRainRadar
+
+  """
+  GET /api/v1/weather/current
+  """
+  current(location: String): CalcWeatherSnapshot
+
+  """
+  GET /api/v1/weather/locations
+  """
+  locations: [CalcTrackedLocation!]
+
+  """
+  GET /api/v1/market/snapshot
+  """
+  marketSnapshot: CalcMarketSnapshot
+}
+
+type CalcForecast {
+  coordinate: CalcCoordinate
+  generated_at: String
+  source: String
+  hourly: [CalcForecastPoint!]
+}
+
+type CalcTidePrediction {
+  station_id: String
+  source: String
+  events: [CalcTideEvent!]
+}
+
+type CalcRainRadar {
+  generated_at: String
+  host: String
+  past: [CalcRadarFrame!]
+  nowcast: [CalcRadarFrame!]
+  source: String
+}
+
+type CalcWeatherSnapshot {
+  location: String
+  coordinate: CalcCoordinate
+  generated_at: String
+  current: CalcForecastPoint
+  next_tide: CalcTideEvent
+  latest_radar: CalcRadarFrame
+}
+
+type CalcTrackedLocation {
+  name: String
+  coordinate: CalcCoordinate
+  tide_station_id: String
+}
+
+type CalcMarketSnapshot {
+  vs_currency: String
+  generated_at: String
+  coins: [CalcCoin!]
+}
+
+type CalcCoordinate {
+  lat: Float
+  lon: Float
+}
+
+type CalcForecastPoint {
+  time: String
+  temperature_c: Float
+  precipitation_mm: Float
+  wind_speed_kmh: Float
+  wind_direction_deg: Float
+  surface_pressure_hpa: Float
+  pressure_msl_hpa: Float
+}
+
+type CalcTideEvent {
+  time: String
+  type: String
+  height_m: Float
+}
+
+type CalcRadarFrame {
+  time: String
+  tile_url: String
+}
+
+type CalcCoin {
+  id: String
+  symbol: String
+  name: String
+  image: String
+  current_price: Float
+  market_cap: Float
+  market_cap_rank: Int
+  fully_diluted_valuation: Float
+  total_volume: Float
+  high_24h: Float
+  low_24h: Float
+  price_change_24h: Float
+  price_change_percentage_24h: Float
+  market_cap_change_24h: Float
+  market_cap_change_percentage_24h: Float
+  circulating_supply: Float
+  total_supply: Float
+  max_supply: Float
+  ath: Float
+  ath_change_percentage: Float
+  ath_date: String
+  atl: Float
+  atl_change_percentage: Float
+  atl_date: String
+  roi: CalcCoinROI
+  last_updated: String
+}
+
+type CalcCoinROI {
+  times: Float
+  currency: String
+  percentage: Float
+}

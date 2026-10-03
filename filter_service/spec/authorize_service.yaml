@@ -1,0 +1,36 @@
+service: authorize_service
+source: lib-gateway/authorize-service/service.proto (grpc-gateway)
+namespace: authorizeService
+prefix: Authz
+baseURL: http://authorize-service-api-svc
+endpoints:
+  - field: getCasbinRules
+    path: /casbin
+    query: { "limit": Int, "page": Int, "sort": String, "total_rows": String, "total_pages": Int }
+    returns: AuthzCasbinRuleList
+    doc: gRPC AuthorizeService.GetCasbinRules
+  - field: getCasbinRuleById
+    path: /casbin/{id}
+    params: { id: Int! }
+    returns: AuthzCasbinRule
+    doc: gRPC AuthorizeService.GetCasbinRuleById
+types: |
+  type AuthzCasbinRuleList {
+    limit: Int
+    page: Int
+    sort: String
+    totalRows: String
+    totalPages: Int
+    rows: [AuthzCasbinRule!]
+  }
+
+  type AuthzCasbinRule {
+    id: Int
+    ptype: String
+    v0: String
+    v1: String
+    v2: String
+    v3: String
+    v4: String
+    v5: String
+  }

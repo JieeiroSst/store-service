@@ -1,8 +1,25 @@
-FROM golang
+FROM golang:1.26-alpine AS builder
+
 WORKDIR /app
-COPY . .
-ENV PORT 9090
-EXPOSE 9090
+
+COPY go.mod go.sum ./
 RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o /out/main ./cmd/main.go
-ENTRYPOINT ["/out/main"]
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o filter-service ./cmd
+
+FROM alpine:3.19
+
+WORKDIR /app
+
+RUN apk add --no-cache ca-certificates tzdata \
+    && adduser -D -u 10001 app
+
+COPY --from=builder /app/filter-service .
+
+USER app
+
+ENV PORT=9090
+EXPOSE 9090
+
+ENTRYPOINT ["./filter-service"]

@@ -1,0 +1,81 @@
+service: coupon-service
+source: coupon-service/internal/adapter/primary/http/routes.go
+namespace: couponService
+prefix: Coupon
+baseURL: http://coupon-service-svc
+endpoints:
+  - field: coupons
+    path: /api/v1/coupons
+    returns: "[CouponCoupon!]"
+  - field: couponByCode
+    path: /api/v1/coupons/code/{code}
+    returns: CouponCoupon
+  - field: coupon
+    path: /api/v1/coupons/{id}
+    params: { id: Int! }
+    returns: CouponCoupon
+  - field: couponRestrictions
+    path: /api/v1/coupons/{id}/restrictions
+    params: { id: Int! }
+    returns: "[CouponCouponRestriction!]"
+  - field: couponUsages
+    path: /api/v1/coupons/{id}/usages
+    params: { id: Int! }
+    returns: "[CouponCouponUsage!]"
+  - field: couponUserCoupons
+    path: /api/v1/coupons/{id}/user-coupons
+    params: { id: Int! }
+    returns: "[CouponUserCoupon!]"
+  - field: userCoupons
+    path: /api/v1/user-coupons
+    query: { user_id: Int! }
+    returns: "[CouponUserCoupon!]"
+  - field: userCouponUsages
+    path: /api/v1/users/{user_id}/coupon-usages
+    params: { user_id: Int! }
+    returns: "[CouponCouponUsage!]"
+types: |
+  type CouponCoupon {
+    id: Int
+    code: String
+    type: String
+    discount_value: Float
+    minimum_purchase: Float
+    max_discount_amount: Float
+    description: String
+    start_date: String
+    end_date: String
+    is_active: Boolean
+    max_uses: Int
+    current_uses: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type CouponCouponRestriction {
+    id: Int
+    coupon_id: Int
+    restriction_type: String
+    restricted_entity_id: Int
+    is_exclude: Boolean
+    created_at: String
+  }
+
+  type CouponCouponUsage {
+    id: Int
+    coupon_id: Int
+    user_id: Int
+    order_id: Int
+    discount_amount: Float
+    used_at: String
+  }
+
+  type CouponUserCoupon {
+    id: Int
+    user_id: Int
+    coupon_id: Int
+    is_used: Boolean
+    assigned_at: String
+    used_at: String
+  }
+

@@ -1,0 +1,93 @@
+service: ollama-service
+source: ollama-service/main.go
+namespace: ollamaService
+prefix: OllamaChat
+baseURL: http://ollama-service:8080
+endpoints:
+  - field: contacts
+    path: /users/contacts
+    returns: OllamaChatContacts
+    doc: Users the caller shares a group or conversation with.
+  - field: searchGroups
+    path: /users/search
+    query: { q: String! }
+    returns: OllamaChatGroupSearch
+  - field: groups
+    path: /groups/
+    returns: OllamaChatGroups
+  - field: groupMembers
+    path: /groups/{groupId}/members
+    params: { groupId: Int! }
+    returns: OllamaChatGroupMembers
+  - field: chatHistory
+    path: /chat/history
+    query: { limit: Int, offset: Int, group_id: Int, recipient_id: Int }
+    returns: OllamaChatHistory
+types: |
+  type OllamaChatContact {
+    id: Int
+    username: String
+    email: String
+  }
+
+  type OllamaChatContacts {
+    contacts: [OllamaChatContact!]
+  }
+
+  type OllamaChatGroupSearchHit {
+    id: Int
+    name: String
+    description: String
+    creator_id: Int
+    type: String
+    is_member: Boolean
+  }
+
+  type OllamaChatGroupSearch {
+    groups: [OllamaChatGroupSearchHit!]
+  }
+
+  type OllamaChatGroup {
+    id: Int
+    name: String
+    description: String
+    creator_id: Int
+    created_at: String
+    role: String
+  }
+
+  type OllamaChatGroups {
+    groups: [OllamaChatGroup!]
+  }
+
+  type OllamaChatGroupMember {
+    id: Int
+    username: String
+    email: String
+    role: String
+    joined_at: String
+  }
+
+  type OllamaChatGroupMembers {
+    group_id: Int
+    members: [OllamaChatGroupMember!]
+  }
+
+  type OllamaChatMessage {
+    id: Int
+    message_type: String
+    content: String
+    created_at: String
+    sender_id: Int
+    recipient_id: Int
+    group_id: Int
+    url: String
+    sender_name: String
+  }
+
+  type OllamaChatHistory {
+    messages: [OllamaChatMessage!]
+    count: Int
+    offset: Int
+    limit: Int
+  }

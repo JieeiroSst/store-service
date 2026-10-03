@@ -269,5 +269,8 @@ dependencies:
 - name: webrtc-service
   repository: file://webrtc-service
   version: 0.2.0
-digest: sha256:da59623c0b1578b514bd38735504f7a72d3e013b78d0a98a8b1650dbf76644f1
-generated: "2026-10-03T20:48:44.251239+07:00"
+- name: filter-service
+  repository: file://filter-service
+  version: 0.2.0
+digest: sha256:c692cc1563a30a533b06794acce1d61aa39bef767e306d17329c8b07f776801b
+generated: "2026-10-04T02:15:09.592136+07:00"

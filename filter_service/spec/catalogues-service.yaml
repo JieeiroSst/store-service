@@ -1,0 +1,102 @@
+service: catalogues-service
+source: catalogues-service/internal/adapter/primary/httpapi
+namespace: cataloguesService
+prefix: Catalog
+baseURL: http://catalogues-service-svc
+endpoints:
+  - field: options
+    path: /v1/options
+    returns: "[CatalogOption!]"
+  - field: option
+    path: /v1/options/{id}
+    params: { id: Int! }
+    returns: CatalogOption
+  - field: productClasses
+    path: /v1/product-classes
+    returns: "[CatalogProductClass!]"
+  - field: productClass
+    path: /v1/product-classes/{id}
+    params: { id: Int! }
+    returns: CatalogProductClass
+  - field: products
+    path: /v1/products
+    query: { q: String, public: Boolean, category_id: Int, limit: Int, offset: Int }
+    returns: "[CatalogProduct!]"
+  - field: product
+    path: /v1/products/{id}
+    params: { id: Int! }
+    returns: CatalogProduct
+  - field: categories
+    path: /v1/categories
+    returns: "[CatalogCategory!]"
+  - field: category
+    path: /v1/categories/{id}
+    params: { id: Int! }
+    returns: CatalogCategory
+types: |
+  type CatalogOption {
+    id: Int
+    name: String
+    code: String
+    type: String
+    required: Boolean
+  }
+
+  type CatalogProductClass {
+    id: Int
+    name: String
+    slug: String
+    requires_shipping: Boolean
+    track_stock: Boolean
+    option_ids: [Int!]
+  }
+
+  type CatalogProduct {
+    id: Int
+    structure: String
+    upc: String
+    title: String
+    slug: String
+    description: String
+    rating: Float
+    is_discountable: Boolean
+    is_public: Boolean
+    parent_id: Int
+    product_class_id: Int
+    meta_title: String
+    meta_description: String
+    date_created: String
+    date_updated: String
+    category_ids: [Int!]
+    option_ids: [Int!]
+    images: [CatalogImage!]
+    recommendations: [CatalogRecommendation!]
+  }
+
+  type CatalogCategory {
+    id: Int
+    parent_id: Int
+    name: String
+    slug: String
+    description: String
+    image: String
+    is_public: Boolean
+    ancestors_are_public: Boolean
+    meta_title: String
+    meta_description: String
+  }
+
+  type CatalogImage {
+    id: Int
+    product_id: Int
+    original: String
+    caption: String
+    display_order: Int
+    date_created: String
+  }
+
+  type CatalogRecommendation {
+    product_id: Int
+    ranking: Int
+  }
+

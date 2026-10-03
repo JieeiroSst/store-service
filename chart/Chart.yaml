@@ -431,3 +431,8 @@ dependencies:
     version: "0.2.0"
     repository: file://webrtc-service
     condition: webrtcService.enabled
+  - alias: filterService
+    name: filter-service
+    version: "0.2.0"
+    repository: file://filter-service
+    condition: filterService.enabled

@@ -1,0 +1,29 @@
+service: restaurant-consumer-service
+source: restaurant/consumer-service/internal/adapter/primary/http/routes.go
+namespace: restaurantConsumerService
+prefix: RConsumer
+baseURL: http://consumer-service-svc
+unwrap: data
+endpoints:
+  - field: consumers
+    path: /api/v1/consumer
+    query: { Limit: Int, Page: Int, Sort: String }
+    returns: RConsumerPage
+    doc: Query keys are Limit/Page/Sort (gin binds the Go field names).
+types: |
+  type RConsumerPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [RConsumerConsumer!]
+  }
+
+  type RConsumerConsumer {
+    id: Int
+    name: String
+    kitchen_id: Int
+    menu: String
+  }
+

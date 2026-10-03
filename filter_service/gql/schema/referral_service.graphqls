@@ -1,0 +1,102 @@
+extend type Query {
+  """GET endpoints of referral-service"""
+  referralService: ReferralQuery!
+}
+
+type ReferralQuery {
+  """
+  GET /api/v1/referral/link/{ref_code}
+  """
+  link(ref_code: String!): ReferralReferralLink
+
+  """
+  GET /api/v1/referral/user/{user_id}/links
+  """
+  userLinks(user_id: String!, limit: Int, cursor: String): ReferralLinkList
+
+  """
+  GET /api/v1/referral/status
+  """
+  status(ref_code: String!): ReferralReferralStatusResponse
+
+  """
+  GET /api/v1/referral/user/{user_id}/stats
+  """
+  userStats(user_id: String!): ReferralUserReferralStats
+
+  """
+  GET /api/v1/referral/share/{ref_code}
+  """
+  shareTargets(ref_code: String!): [ReferralShareTarget!]
+
+  """
+  GET /api/v1/programs/active
+  """
+  activeRewardProgram: ReferralRewardProgram
+}
+
+type ReferralLinkList {
+  data: [ReferralReferralLink!]
+  meta: ReferralPageMeta
+}
+
+type ReferralPageMeta {
+  count: Int
+  next_cursor: String
+}
+
+type ReferralReferralLink {
+  ref_code: String
+  created_at: Int
+  owner_user_id: String
+  channel: String
+  status: String
+  expires_at: Int
+  deep_link: String
+  platform: String
+}
+
+type ReferralReferralStatusResponse {
+  ref_code: String
+  status: String
+  invitation_status: String
+  owner_user_id: String
+  invited_at: Int
+  activated_at: Int
+  time_to_install_ms: Int
+  platform: String
+  new_user_id: String
+  reward_status: String
+  reward_value: Float
+}
+
+type ReferralUserReferralStats {
+  user_id: String
+  total_invited: Int
+  total_installed: Int
+  total_rewarded: Int
+  total_reward_amt: Float
+  last_active_at: Int
+}
+
+type ReferralShareTarget {
+  channel: String
+  label: String
+  share_url: String
+  qr_url: String
+}
+
+type ReferralRewardProgram {
+  program_id: String
+  name: String
+  status: String
+  tiers: [ReferralRewardTier!]
+  created_at: Int
+  updated_at: Int
+}
+
+type ReferralRewardTier {
+  min_count: Int
+  max_count: Int
+  reward_value: Float
+}

@@ -1,0 +1,59 @@
+extend type Query {
+  """GET endpoints of bot-service"""
+  botService: BotQuery!
+}
+
+type BotQuery {
+  """
+  GET /bot-content/v1/posts
+  """
+  posts(limit: Int, offset: Int, status: String, campaign: String): [BotPost!]
+
+  """
+  GET /bot-content/v1/posts/{id}
+  """
+  post(id: String!): BotPost
+}
+
+type BotPost {
+  id: String
+  title: String
+  text: String
+  hashtags: [String!]
+  media: [BotMedia!]
+  media_kind: String
+  channels: [String!]
+  scheduled_at: String
+  timezone: String
+  cron_expr: String
+  max_runs_per_day: Int
+  max_runs_per_month: Int
+  runs_today: Int
+  runs_this_month: Int
+  last_run_date: String
+  last_run_month: String
+  last_run_at: String
+  status: String
+  reject_reason: String
+  results: [BotChannelPublishResult!]
+  campaign: String
+  created_by: String
+  approved_by: String
+  status_changed_by: String
+  created_at: String
+  updated_at: String
+}
+
+type BotMedia {
+  url: String
+  type: String
+  thumbnail: String
+}
+
+type BotChannelPublishResult {
+  channel: String
+  external_id: String
+  published_url: String
+  error: String
+  published_at: String
+}

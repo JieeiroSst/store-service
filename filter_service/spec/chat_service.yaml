@@ -1,0 +1,32 @@
+service: chat_service
+source: chat_service/internal/delivery/http/v1/http.go
+namespace: chatService
+prefix: Chat
+baseURL: http://chat-service:6060
+endpoints:
+  - field: message
+    path: /message/{id}
+    params: { id: Int! }
+    returns: ChatMessage
+  - field: userReports
+    path: /report/{userID}
+    params: { userID: Int! }
+    returns: "[ChatReport!]"
+types: |
+  type ChatMessage {
+    ID: Int
+    Guid: String
+    SenderId: Int
+    MessageType: String
+    CreatedAt: String
+    DeletedAt: String
+  }
+
+  type ChatReport {
+    ID: Int
+    UserId: Int
+    ReportType: String
+    Notes: String
+    Status: String
+    CreatedAt: String
+  }

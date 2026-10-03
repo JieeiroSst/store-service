@@ -2,7 +2,6 @@ package v1
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -22,10 +21,10 @@ func NewHttpV1(Usecase *usecase.Usecase) *Http {
 }
 
 func (u *Http) SetupRoutes(router chi.Router) {
-	router.Get("/message/:id", u.GetMessageById)
+	router.Get("/message/{id}", u.GetMessageById)
 	router.Post("/report", u.CreateReport)
-	router.Get("/report/:user-id", u.GetReportByUser)
-	router.Delete("/message/:user-id/:message-id", u.DeleteMessage)
+	router.Get("/report/{userID}", u.GetReportByUser)
+	router.Delete("/message/{userID}/{messageID}", u.DeleteMessage)
 }
 
 func (u *Http) GetMessageById(w http.ResponseWriter, r *http.Request) {
@@ -39,12 +38,7 @@ func (u *Http) GetMessageById(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(500), 500)
 		return
 	}
-	messageJson, err := json.Marshal(&message)
-	if err != nil {
-		http.Error(w, http.StatusText(404), 404)
-		return
-	}
-	w.Write(messageJson)
+	writeJSON(w, http.StatusOK, message)
 }
 
 func (u *Http) CreateReport(w http.ResponseWriter, r *http.Request) {
@@ -58,11 +52,11 @@ func (u *Http) CreateReport(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Fprintf(w, "Person: %+v", report)
+	writeJSON(w, http.StatusCreated, report)
 }
 
 func (u *Http) GetReportByUser(w http.ResponseWriter, r *http.Request) {
-	userId, err := strconv.Atoi(chi.URLParam(r, "user-id"))
+	userId, err := strconv.Atoi(chi.URLParam(r, "userID"))
 	if err != nil {
 		http.Error(w, http.StatusText(404), 404)
 		return
@@ -73,16 +67,16 @@ func (u *Http) GetReportByUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(404), 404)
 		return
 	}
-	fmt.Fprintf(w, "Person: %+v", reports)
+	writeJSON(w, http.StatusOK, reports)
 }
 
 func (u *Http) DeleteMessage(w http.ResponseWriter, r *http.Request) {
-	userId, err := strconv.Atoi(chi.URLParam(r, "user-id"))
+	userId, err := strconv.Atoi(chi.URLParam(r, "userID"))
 	if err != nil {
 		http.Error(w, http.StatusText(404), 404)
 		return
 	}
-	messageId, err := strconv.Atoi(chi.URLParam(r, "message-id"))
+	messageId, err := strconv.Atoi(chi.URLParam(r, "messageID"))
 	if err != nil {
 		http.Error(w, http.StatusText(404), 404)
 		return
@@ -92,4 +86,10 @@ func (u *Http) DeleteMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func writeJSON(w http.ResponseWriter, status int, v any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(v)
 }

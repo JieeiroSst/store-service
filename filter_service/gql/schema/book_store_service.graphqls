@@ -1,0 +1,120 @@
+extend type Query {
+  """GET endpoints of book-store-service"""
+  bookStoreService: BookStoreQuery!
+}
+
+type BookStoreQuery {
+  """
+  GET /api/v1/books
+  """
+  books: [BookStoreBook!]
+
+  """
+  GET /api/v1/books/highest-price
+  """
+  highestPriceBook: BookStoreBook
+
+  """
+  GET /api/v1/books/most-purchased
+  """
+  mostPurchasedBook: BookStoreBook
+
+  """
+  GET /api/v1/books/{id}
+  """
+  book(id: Int!): BookStoreBook
+
+  """
+  GET /api/v1/authors
+  """
+  authors: [BookStoreAuthor!]
+
+  """
+  GET /api/v1/authors/most-read
+  """
+  mostReadAuthor: BookStoreAuthorStat
+
+  """
+  GET /api/v1/authors/most-purchased
+  """
+  mostPurchasedAuthor: BookStoreAuthorStat
+
+  """
+  GET /api/v1/authors/{id}
+  """
+  author(id: Int!): BookStoreAuthor
+
+  """
+  GET /api/v1/publishers
+  """
+  publishers: [BookStorePublisher!]
+
+  """
+  GET /api/v1/publishers/{id}
+  """
+  publisher(id: Int!): BookStorePublisher
+
+  """
+  GET /api/v1/categories
+  """
+  categories: [BookStoreCategory!]
+
+  """
+  GET /api/v1/categories/price-stats
+  """
+  categoryPriceStats: [BookStoreCategoryPriceStat!]
+
+  """
+  GET /api/v1/categories/{id}
+  """
+  category(id: Int!): BookStoreCategory
+}
+
+type BookStoreBook {
+  id: Int
+  name: String
+  author_id: Int
+  author: BookStoreAuthor
+  publisher_id: Int
+  publisher: BookStorePublisher
+  category_id: Int
+  category: BookStoreCategory
+  price: Float
+  quantity: Int
+  unit_of_measurement: String
+  purchase_count: Int
+  read_count: Int
+}
+
+type BookStoreAuthor {
+  id: Int
+  name: String
+  bio: String
+}
+
+type BookStoreAuthorStat {
+  author_id: Int
+  author_name: String
+  total_reads: Int
+  total_purchases: Int
+}
+
+type BookStorePublisher {
+  id: Int
+  name: String
+  address: String
+}
+
+type BookStoreCategory {
+  id: Int
+  name: String
+}
+
+type BookStoreCategoryPriceStat {
+  category_id: Int
+  category_name: String
+  min_price: Float
+  max_price: Float
+  avg_price: Float
+  book_count: Int
+}

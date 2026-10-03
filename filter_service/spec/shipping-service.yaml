@@ -1,0 +1,156 @@
+service: shipping-service
+source: shipping-service/internal/adapter/primary/http/routes.go
+namespace: shippingService
+prefix: Ship
+baseURL: http://shipping-service-svc
+forwardHeaders: [X-API-Key]
+endpoints:
+  - field: shipments
+    path: /api/v1/shipments
+    query: { status: String, limit: Int, offset: Int }
+    returns: ShipShipmentList
+  - field: shipment
+    path: /api/v1/shipments/{id}
+    params: { id: Int! }
+    returns: ShipShipmentDetail
+  - field: shipmentByClientCode
+    path: /api/v1/shipments/by-client-code/{code}
+    returns: ShipShipmentDetail
+  - field: warehouses
+    path: /api/v1/warehouses
+    returns: "[ShipWarehouse!]"
+    unwrap: items
+  - field: provinces
+    path: /api/v1/locations/provinces
+    returns: "[ShipProvince!]"
+    unwrap: items
+  - field: districts
+    path: /api/v1/locations/districts
+    query: { province_id: Int! }
+    returns: "[ShipDistrict!]"
+    unwrap: items
+  - field: wards
+    path: /api/v1/locations/wards
+    query: { district_id: Int! }
+    returns: "[ShipWard!]"
+    unwrap: items
+types: |
+  type ShipShipmentList {
+    items: [ShipShipment!]
+    total: Int
+  }
+
+  type ShipShipmentDetail {
+    shipment: ShipShipment
+    events: [ShipShipmentEvent!]
+  }
+
+  type ShipWarehouse {
+    id: Int
+    code: String
+    name: String
+    phone: String
+    street: String
+    ward_code: String
+    district_id: Int
+    province_id: Int
+    carrier_shop_id: Int
+    active: Boolean
+    created_at: String
+    updated_at: String
+  }
+
+  type ShipProvince {
+    id: Int
+    name: String
+  }
+
+  type ShipDistrict {
+    id: Int
+    province_id: Int
+    name: String
+  }
+
+  type ShipWard {
+    code: String
+    district_id: Int
+    name: String
+  }
+
+  type ShipShipment {
+    id: Int
+    code: String
+    client_service: String
+    client_order_code: String
+    status: String
+    carrier_status: String
+    carrier_order_code: String
+    warehouse_id: Int
+    carrier_shop_id: Int
+    service_id: Int
+    service_type_id: Int
+    service_name: String
+    strategy: String
+    recipient: ShipAddress
+    parcel: ShipParcel
+    customer: ShipCustomer
+    cod_amount: Int
+    insurance_value: Int
+    payment_type: String
+    required_note: String
+    note: String
+    quoted_fee: Int
+    shipping_fee: Int
+    expected_delivery_at: String
+    delivered_at: String
+    callback_url: String
+    place_attempts: Int
+    last_error: String
+    created_at: String
+    updated_at: String
+  }
+
+  type ShipShipmentEvent {
+    id: Int
+    shipment_id: Int
+    source: String
+    from_status: String
+    to_status: String
+    carrier_status: String
+    reason: String
+    applied: Boolean
+    occurred_at: String
+    created_at: String
+  }
+
+  type ShipAddress {
+    name: String
+    phone: String
+    street: String
+    ward_code: String
+    district_id: Int
+    province_id: Int
+  }
+
+  type ShipParcel {
+    weight_gram: Int
+    length_cm: Int
+    width_cm: Int
+    height_cm: Int
+    content: String
+    items: [ShipItem!]
+  }
+
+  type ShipCustomer {
+    user_id: Int
+    email: String
+  }
+
+  type ShipItem {
+    name: String
+    code: String
+    quantity: Int
+    weight_gram: Int
+    price: Int
+  }
+

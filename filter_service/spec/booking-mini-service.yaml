@@ -1,0 +1,50 @@
+service: booking-mini-service
+source: booking-mini-service/src/adapters/api/mod.rs
+namespace: bookingMiniService
+prefix: BookingMini
+baseURL: http://booking-mini-service-svc
+endpoints:
+  - field: availableRooms
+    path: /api/rooms
+    query: { from_date: String!, to_date: String! }
+    returns: "[BookingMiniRoom!]"
+    doc: Dates are YYYY-MM-DD.
+  - field: booking
+    path: /api/bookings/{id}
+    params: { id: Int! }
+    returns: BookingMiniBooking
+  - field: passenger
+    path: /api/passengers/{id}
+    params: { id: Int! }
+    returns: BookingMiniPassenger
+types: |
+  type BookingMiniRoomTypeDetails {
+    id: Int
+    description: String
+    capacity: Int
+  }
+
+  type BookingMiniRoom {
+    room_no: Int
+    """Single, Double or Suite."""
+    room_type: String
+    room_type_details: BookingMiniRoomTypeDetails
+    bed_type: String
+    bed_count: Int
+    amenities: String
+  }
+
+  type BookingMiniPassenger {
+    id: Int
+    name: String
+  }
+
+  type BookingMiniBooking {
+    id: Int
+    from_date: String
+    to_date: String
+    room_no: Int
+    passenger_id: Int
+    passenger: BookingMiniPassenger
+    room: BookingMiniRoom
+  }
