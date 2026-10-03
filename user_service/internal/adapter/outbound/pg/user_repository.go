@@ -16,8 +16,12 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func (d *UserRepository) UpdateProfile(ctx context.Context, user domain.User) (domain.User, error) {
-	if err := d.db.Model(domain.User{}).Where("id = ? ", user.Id).Updates(user).Error; err != nil {
-		return domain.User{}, err
+	r := d.db.Model(domain.User{}).Where("id = ? ", user.Id).Updates(user)
+	if r.Error != nil {
+		return domain.User{}, r.Error
+	}
+	if r.RowsAffected == 0 {
+		return domain.User{}, domain.ErrUserNotExist
 	}
 	return user, nil
 }
@@ -31,8 +35,12 @@ func (d *UserRepository) LockAccount(ctx context.Context, id int) error {
 
 func (d *UserRepository) FindUser(ctx context.Context, userId int) (domain.User, error) {
 	var user domain.User
-	if err := d.db.Preload("Roles").Where("id = ?", userId).Find(&user).Error; err != nil {
-		return domain.User{}, domain.ErrNotFound
+	r := d.db.Preload("Roles").Where("id = ?", userId).Find(&user)
+	if r.Error != nil {
+		return domain.User{}, r.Error
+	}
+	if r.RowsAffected == 0 {
+		return domain.User{}, domain.ErrUserNotExist
 	}
 	return user, nil
 }

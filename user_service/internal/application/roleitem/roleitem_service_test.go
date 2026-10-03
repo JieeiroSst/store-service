@@ -17,7 +17,7 @@ type fakeRoleRepo struct {
 func (f fakeRoleRepo) Role(_ context.Context, id int) (*domain.Role, error) {
 	name, ok := f.roles[id]
 	if !ok {
-		return nil, domain.ErrNotFound
+		return nil, domain.ErrRoleNotFound
 	}
 	return &domain.Role{Id: id, Name: name}, nil
 }

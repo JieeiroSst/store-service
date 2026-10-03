@@ -12,8 +12,6 @@ import (
 	"github.com/JIeeiroSst/user-service/internal/domain"
 	"github.com/JIeeiroSst/user-service/internal/port/output"
 	"github.com/JIeeiroSst/utils/copy"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type Service struct {
@@ -45,11 +43,14 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 	}
 
 	userID, hashedPassword, _, err := s.userRepo.CheckAccount(ctx, user)
+	if errors.Is(err, domain.ErrUserNotExist) {
+		return dto.LoginResponse{}, domain.ErrInvalidCredentials
+	}
 	if err != nil {
-		return dto.LoginResponse{}, errors.New("user does not exist")
+		return dto.LoginResponse{}, err
 	}
 	if err := s.hasher.CheckPassword(user.Password, hashedPassword); err != nil {
-		return dto.LoginResponse{}, errors.New("password entered incorrectly")
+		return dto.LoginResponse{}, domain.ErrInvalidCredentials
 	}
 
 	pair, err := s.issueTokenPair(ctx, userID, user.Username, s.userRoles(ctx, userID))
@@ -93,7 +94,7 @@ func (s *Service) ValidateSession(ctx context.Context, req dto.ValidateRequest) 
 func (s *Service) RefreshToken(ctx context.Context, req dto.RefreshRequest) (dto.RefreshResponse, error) {
 	session, err := s.tokenStore.GetSessionByRefreshToken(ctx, req.RefreshToken)
 	if err != nil {
-		return dto.RefreshResponse{}, status.Errorf(codes.Unauthenticated, "refresh token is invalid or expired, please login again")
+		return dto.RefreshResponse{}, domain.ErrRefreshTokenInvalid
 	}
 
 	// Re-read the role so grants/revocations take effect on refresh.

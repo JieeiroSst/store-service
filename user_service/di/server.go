@@ -22,10 +22,10 @@ func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Ha
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpcadapter.UnaryErrorInterceptor))
 	userServiceGrpc.RegisterUserServiceServer(grpcServer, handler)
 
-	mux := runtime.NewServeMux()
+	mux := runtime.NewServeMux(runtime.WithErrorHandler(grpcadapter.HTTPErrorHandler))
 	httpServer := &http.Server{
 		Addr:    fmt.Sprintf(":%v", cfg.Server.PortHttpServer),
 		Handler: mux,

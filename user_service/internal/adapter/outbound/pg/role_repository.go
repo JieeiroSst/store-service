@@ -32,7 +32,7 @@ func (r *RoleRepository) Role(ctx context.Context, id int) (*domain.Role, error)
 	var role domain.Role
 	query := r.db.Where("id =?", id).Preload("Users").Find(&role)
 	if query.RowsAffected == 0 {
-		return nil, domain.ErrNotFound
+		return nil, domain.ErrRoleNotFound
 	}
 	if query.Error != nil {
 		return nil, query.Error
