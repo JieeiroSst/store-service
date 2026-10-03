@@ -1,0 +1,235 @@
+# Base values: what `helm install` of the umbrella chart runs on a local
+# cluster. Environment overlays (values-dev.yaml, values-staging.yaml,
+# values-prod.yaml) are layered on top by Argo CD - see deploy/argocd.
+
+global:
+  environment: local
+
+bookService:
+  name: book-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/book-service
+    tag: latest
+    # Set to a sha256 digest to pin the exact scanned image (wins over tag).
+    digest: ""
+    pullPolicy: IfNotPresent
+    port: 9000
+
+  imagePullSecrets: []
+
+  service:
+    name: book-service-svc
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: book-service.local
+    path: /api/v1/books
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ""
+
+  # Chapter text is stored in MinIO (chart/minio creates the bucket; the
+  # service also creates it if missing). The bucket objects are
+  # books/<bookId>/chapters/<n>.txt.
+  storage:
+    endpoint: http://minio-svc:9000
+    region: us-east-1
+    bucket: book-service
+    # Browser-reachable MinIO/S3 URL used to presign cover image links.
+    # Empty: coverUrl points at GET /api/v1/books/:id/cover, which proxies
+    # the image from MinIO.
+    publicEndpoint: ""
+
+  # PostgreSQL from chart/postgres (database + role book_service_svc). Its
+  # provisioner creates the credentials Secret below in `default`; other
+  # namespaces mirror it with an ExternalSecret (values-dev.yaml).
+  database:
+    url: jdbc:postgresql://postgresdb:80/book_service
+    credentialsSecret: book-service-db-credentials
+
+  # Upload the text of the seeded sample books to MinIO on startup.
+  seedContent: true
+
+  # Rendered into <name>-secret for local and non-prod clusters; prod turns
+  # it off and syncs the same Secret with externalSecret. Dev defaults are
+  # the shared MinIO root credentials from chart/minio.
+  secret:
+    create: true
+    stringData:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+      # Play's application secret (>= 32 chars); local/dev only.
+      APPLICATION_SECRET: book-service-dev-secret-change-me-0123456789
+      # X-Api-Key required by the write endpoints (POST/PUT/DELETE).
+      BOOK_ADMIN_API_KEY: book-service-dev-admin-key
+
+  # Rendered through `tpl`, so values may reference other values.
+  containerEnv:
+    - name: MINIO_ENDPOINT
+      value: "{{ .Values.bookService.storage.endpoint }}"
+    - name: MINIO_REGION
+      value: "{{ .Values.bookService.storage.region }}"
+    - name: MINIO_BUCKET
+      value: "{{ .Values.bookService.storage.bucket }}"
+    - name: MINIO_PUBLIC_ENDPOINT
+      value: "{{ .Values.bookService.storage.publicEndpoint }}"
+    - name: BOOK_SEED_ENABLED
+      value: "{{ .Values.bookService.seedContent }}"
+    - name: DB_DRIVER
+      value: org.postgresql.Driver
+    - name: DB_URL
+      value: "{{ .Values.bookService.database.url }}"
+    - name: DB_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.bookService.database.credentialsSecret }}"
+          key: POSTGRES_USER
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.bookService.database.credentialsSecret }}"
+          key: POSTGRES_PASSWORD
+    # Replicas start together; only one applies the schema evolutions.
+    - name: EVOLUTIONS_USE_LOCKS
+      value: "true"
+    - name: MINIO_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: book-service-secret
+          key: MINIO_ACCESS_KEY
+    - name: MINIO_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: book-service-secret
+          key: MINIO_SECRET_KEY
+    - name: APPLICATION_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: book-service-secret
+          key: APPLICATION_SECRET
+    - name: BOOK_ADMIN_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: book-service-secret
+          key: BOOK_ADMIN_API_KEY
+
+  probes:
+    # The JVM + Play take a while to boot; hold off liveness until then.
+    startup:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 5
+      failureThreshold: 36
+    # Ready only when PostgreSQL and the MinIO bucket answer.
+    readiness:
+      httpGet:
+        path: /health/ready
+        port: http
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 20
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+    automountToken: false
+
+  # The image runs as uid 10001 (see book-service/Dockerfile).
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+
+  # Logs go to stdout and the pid file is disabled, so the root filesystem
+  # can stay read-only (chart/common mounts an emptyDir at /tmp).
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+
+  podAnnotations: {}
+  podLabels: {}
+
+  # Labels the platform chart's shared NetworkPolicies select on.
+  networkLabels:
+    consulClient: false
+
+  priorityClassName: ""
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 384Mi
+    limits:
+      cpu: "1"
+      memory: 768Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+
+  # The service has no /metrics endpoint yet; flip on once it does.
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ""
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+
+  externalSecret:
+    enabled: false
+    targetName: book-service-db-credentials
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+
+  consulSeed:
+    enabled: false

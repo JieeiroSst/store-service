@@ -112,6 +112,14 @@ spec:
         helm:
           name: bonuslinkService.image.name
           tag: bonuslinkService.image.tag
+  - namePattern: book-service-dev
+    images:
+    - alias: bookService
+      imageName: localhost:5000/book-service
+      manifestTargets:
+        helm:
+          name: bookService.image.name
+          tag: bookService.image.tag
   - namePattern: book-store-service-dev
     images:
     - alias: bookStoreService

@@ -1,0 +1,71 @@
+# Argo CD: namespace store-staging, auto-synced. Promoted from dev with the
+# "Promote image" workflow; mirrors prod topology at smaller scale.
+global:
+  environment: staging
+
+bookService:
+  image:
+    tag: latest
+
+  storage:
+    endpoint: http://minio-svc.default.svc.cluster.local:9000
+
+  database:
+    url: jdbc:postgresql://postgresdb.default.svc.cluster.local:80/book_service
+
+  ingress:
+    enabled: true
+    host: books.staging.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/limit-rps: "50"
+    tls:
+      enabled: true
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+
+  topologySpread:
+    enabled: true
+
+  networkPolicy:
+    enabled: true
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: minio
+        ports:
+          - port: 9000
+            protocol: TCP
+
+  # Copies the Secret the postgres chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-staging.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: book-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: book-service-db-credentials
+        property: POSTGRES_PASSWORD

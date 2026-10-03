@@ -60,18 +60,31 @@ spec:
           volumeMounts:
             - name: minio-data
               mountPath: /data
+          # Generous timeouts: on a CPU-starved node the health endpoints can
+          # take seconds to answer, and the 1s default got MinIO killed by its
+          # liveness probe in a restart loop. The startup probe holds liveness
+          # off until the server has come up once.
+          startupProbe:
+            httpGet:
+              path: /minio/health/live
+              port: api
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
           readinessProbe:
             httpGet:
               path: /minio/health/ready
               port: api
-            initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /minio/health/live
               port: api
-            initialDelaySeconds: 10
-            periodSeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 6
       volumes:
         - name: minio-data
           persistentVolumeClaim:

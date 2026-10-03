@@ -1,0 +1,109 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through
+# a reviewed PR opened by the "Promote image" workflow.
+global:
+  environment: prod
+
+bookService:
+  image:
+    # Immutable tag promoted from staging; never `latest` in prod.
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  # Managed S3-compatible object storage (chart/platform aliases minio-svc).
+  storage:
+    endpoint: http://minio-svc:9000
+    # Public object-storage URL so clients download covers directly.
+    publicEndpoint: https://objects.store.example.com
+
+  # Managed PostgreSQL. Credentials come with the rest from the secret manager.
+  database:
+    url: jdbc:postgresql://postgresdb:80/book_service?sslmode=require
+    credentialsSecret: book-service-secret
+
+  # Prod content comes from the catalogue, not the sample books.
+  seedContent: false
+
+  ingress:
+    enabled: true
+    host: books.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/limit-rps: "100"
+      nginx.ingress.kubernetes.io/proxy-body-size: 1m
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    tls:
+      enabled: true
+
+  priorityClassName: store-standard
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "2"
+      memory: 1Gi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 65
+    targetMemoryUtilizationPercentage: 80
+
+  pdb:
+    enabled: true
+    minAvailable: 2
+
+  topologySpread:
+    enabled: true
+    hostnameWhenUnsatisfiable: DoNotSchedule
+
+  terminationGracePeriodSeconds: 45
+  preStopSleepSeconds: 10
+
+  networkPolicy:
+    enabled: true
+    # Managed PostgreSQL and object storage outside the cluster (private range).
+    egress:
+      - to:
+          - ipBlock:
+              cidr: 10.20.0.0/16
+        ports:
+          - port: 5432
+            protocol: TCP
+      - to:
+          - ipBlock:
+              cidr: 10.20.0.0/16
+        ports:
+          - port: 9000
+            protocol: TCP
+          - port: 443
+            protocol: TCP
+
+  # Credentials from the secret manager instead of values.
+  secret:
+    create: false
+  externalSecret:
+    enabled: true
+    targetName: book-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: store/prod/book-service/postgres
+        property: username
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: store/prod/book-service/postgres
+        property: password
+      - secretKey: BOOK_ADMIN_API_KEY
+        remoteKey: store/prod/book-service
+        property: adminApiKey
+      - secretKey: MINIO_ACCESS_KEY
+        remoteKey: store/prod/book-service
+        property: minioAccessKey
+      - secretKey: MINIO_SECRET_KEY
+        remoteKey: store/prod/book-service
+        property: minioSecretKey
+      - secretKey: APPLICATION_SECRET
+        remoteKey: store/prod/book-service
+        property: applicationSecret

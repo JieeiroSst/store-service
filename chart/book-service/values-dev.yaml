@@ -1,0 +1,72 @@
+# Argo CD: namespace store-dev, auto-synced. The in-cluster CI (deploy/ci)
+# builds every push to master and Argo CD Image Updater rolls it out.
+global:
+  environment: dev
+
+bookService:
+  image:
+    tag: latest
+
+  # Shared MinIO from the umbrella chart in `default` (aliased as minio-svc
+  # in store-dev by chart/platform).
+  storage:
+    endpoint: http://minio-svc.default.svc.cluster.local:9000
+
+  database:
+    url: jdbc:postgresql://postgresdb.default.svc.cluster.local:80/book_service
+
+  ingress:
+    enabled: true
+    host: books.dev.store.local
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    tls:
+      enabled: true
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+
+  # Laptop-sized requests; the JVM still needs real memory, so keep the
+  # values.yaml limits.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 256Mi
+
+  networkPolicy:
+    enabled: true
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: minio
+        ports:
+          - port: 9000
+            protocol: TCP
+
+  # Copies the Secret the postgres chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-dev.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: book-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: book-service-db-credentials
+        property: POSTGRES_PASSWORD

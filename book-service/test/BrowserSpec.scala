@@ -8,7 +8,8 @@ class BrowserSpec extends PlaySpec
   with OneBrowserPerTest
   with GuiceOneServerPerTest
   with HtmlUnitFactory
-  with ServerProvider {
+  with ServerProvider
+  with support.TestApp {
 
   "Application" should {
 

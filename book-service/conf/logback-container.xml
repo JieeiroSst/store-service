@@ -1,0 +1,20 @@
+<!-- Used in the container image (-Dlogger.resource): stdout only, since the
+     root filesystem is read-only and the cluster collects container logs. -->
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%date{ISO8601} %level %logger{24} - %message%n%xException{20}</pattern>
+    </encoder>
+  </appender>
+  <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="STDOUT" />
+  </appender>
+
+  <logger name="play" level="INFO" />
+  <logger name="services" level="INFO" />
+  <logger name="storage" level="INFO" />
+
+  <root level="WARN">
+    <appender-ref ref="ASYNCSTDOUT" />
+  </root>
+</configuration>

@@ -1,30 +1,21 @@
-FROM openjdk:8-jdk-alpine
+# Build: `sbt stage` produces a self-contained Play distribution.
+FROM sbtscala/scala-sbt:eclipse-temurin-jammy-11.0.22_7_1.9.9_2.13.13 AS build
+WORKDIR /src
+# Dependencies first so they stay cached until the build definition changes.
+COPY build.sbt ./
+COPY project/build.properties project/plugins.sbt project/
+RUN sbt -batch update
+COPY app app
+COPY conf conf
+COPY public public
+RUN sbt -batch stage
 
-ENV SBT_VERSION 1.0.4
-ENV CHECKSUM 27b511fb26f38af4d480bd964da4130a94716302c596fce1d9d1e44fb58cbca2
-
-# Install sbt
-RUN apk add --update bash curl openssl ca-certificates && \
-  curl -L -o /tmp/sbt.zip \
-    https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.zip && \
-  openssl dgst -sha256 /tmp/sbt.zip \
-    | grep ${CHECKSUM} \
-    || (echo 'shasum mismatch' && false) && \
-  mkdir -p /opt/sbt && \
-  unzip /tmp/sbt.zip -d /opt/sbt && \
-  rm /tmp/sbt.zip && \
-  chmod +x /opt/sbt/sbt/bin/sbt && \
-  ln -s /opt/sbt/sbt/bin/sbt /usr/bin/sbt && \
-  rm -rf /tmp/* /var/cache/apk/*
-  
-EXPOSE 9001
-# Prebuild with sbt
-COPY . /tmp/build/
-
-# sbt sometimes failed because of network. retry 3 times.
-RUN cd /tmp/build && \
-  (sbt compile || sbt compile || sbt compile) && \
-  (sbt test:compile || sbt test:compile || sbt test:compile) && \
-  rm -rf /tmp/build
-
-CMD ["sbt "run 9001""]
+FROM eclipse-temurin:11-jre-jammy
+RUN groupadd -g 10001 app && useradd -u 10001 -g app -M -d /app -s /usr/sbin/nologin app
+COPY --from=build --chown=10001:10001 /src/target/universal/stage /app
+USER 10001
+WORKDIR /app
+EXPOSE 9000
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -Djava.io.tmpdir=/tmp"
+# No RUNNING_PID file: the root filesystem is read-only in the cluster.
+ENTRYPOINT ["/app/bin/book-service", "-Dpidfile.path=/dev/null", "-Dhttp.port=9000", "-Dlogger.resource=logback-container.xml"]
