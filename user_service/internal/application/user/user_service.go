@@ -29,6 +29,9 @@ func New(userRepo output.UserRepository, hasher output.Hasher, cache expire.Cach
 }
 
 func (s *Service) SignUp(ctx context.Context, req dto.SignUpRequest) (dto.SignUpResponse, error) {
+	if req.Username == "" {
+		return dto.SignUpResponse{}, domain.ErrUsernameRequired
+	}
 	if err := utils.CheckEmail(req.Email); err != nil {
 		return dto.SignUpResponse{}, err
 	}
@@ -42,7 +45,7 @@ func (s *Service) SignUp(ctx context.Context, req dto.SignUpRequest) (dto.SignUp
 	}
 
 	if err := s.userRepo.CheckAccountExists(ctx, user); err != nil {
-		return dto.SignUpResponse{}, domain.ErrUserAlready
+		return dto.SignUpResponse{}, err
 	}
 	hashedPassword, err := s.hasher.HashPassword(user.Password)
 	if err != nil {
