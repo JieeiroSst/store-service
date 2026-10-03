@@ -266,5 +266,8 @@ dependencies:
 - name: vending-machine-service
   repository: file://vending-machine-service
   version: 0.2.0
-digest: sha256:824645be7ca29755c015a4b68bd950bd7284afb4f5f05136522a80ea0ae90913
-generated: "2026-10-02T21:57:32.594399+07:00"
+- name: webrtc-service
+  repository: file://webrtc-service
+  version: 0.2.0
+digest: sha256:da59623c0b1578b514bd38735504f7a72d3e013b78d0a98a8b1650dbf76644f1
+generated: "2026-10-03T20:48:44.251239+07:00"

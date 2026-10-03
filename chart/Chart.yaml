@@ -426,3 +426,8 @@ dependencies:
     version: "0.2.0"
     repository: file://vending-machine-service
     condition: vendingMachineService.enabled
+  - alias: webrtcService
+    name: webrtc-service
+    version: "0.2.0"
+    repository: file://webrtc-service
+    condition: webrtcService.enabled

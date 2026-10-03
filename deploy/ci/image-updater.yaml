@@ -542,3 +542,11 @@ spec:
         helm:
           name: voucherService.image.name
           tag: voucherService.image.tag
+  - namePattern: webrtc-service-dev
+    images:
+    - alias: webrtcService
+      imageName: localhost:5000/webrtc-service
+      manifestTargets:
+        helm:
+          name: webrtcService.image.name
+          tag: webrtcService.image.tag
