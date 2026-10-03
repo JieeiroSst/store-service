@@ -1,0 +1,34 @@
+extend type Query {
+  """GET endpoints of chat_service"""
+  chatService: ChatQuery!
+}
+
+type ChatQuery {
+  """
+  GET /message/{id}
+  """
+  message(id: Int!): ChatMessage
+
+  """
+  GET /report/{userID}
+  """
+  userReports(userID: Int!): [ChatReport!]
+}
+
+type ChatMessage {
+  ID: Int
+  Guid: String
+  SenderId: Int
+  MessageType: String
+  CreatedAt: String
+  DeletedAt: String
+}
+
+type ChatReport {
+  ID: Int
+  UserId: Int
+  ReportType: String
+  Notes: String
+  Status: String
+  CreatedAt: String
+}

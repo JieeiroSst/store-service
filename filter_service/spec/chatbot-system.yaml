@@ -1,0 +1,46 @@
+service: chatbot-system
+source: chatbot-system/internal/infrastructure/http/chat_handler.go
+namespace: chatbotSystem
+prefix: Chatbot
+baseURL: http://chatbot-system:8080
+endpoints:
+  - field: conversationHistory
+    path: /api/conversations/{conversation_id}/history
+    params: { conversation_id: Int! }
+    query: { limit: Int, offset: Int }
+    returns: ChatbotMessageList
+  - field: conversations
+    path: /api/conversations
+    returns: ChatbotConversationList
+    doc: Conversations of the caller (bearer token).
+types: |
+  type ChatbotMessageList {
+    messages: [ChatbotMessage!]
+    count: Int
+  }
+
+  type ChatbotConversationList {
+    conversations: [ChatbotConversation!]
+    count: Int
+  }
+
+  type ChatbotMessage {
+    id: Int
+    conversation_id: Int
+    sender_id: Int
+    content: String
+    message_type: String
+    ai_model: String
+    created_at: String
+  }
+
+  type ChatbotConversation {
+    id: Int
+    user1_id: Int
+    user2_id: Int
+    is_ai_chat: Boolean
+    active_ai_model: String
+    created_at: String
+    updated_at: String
+  }
+

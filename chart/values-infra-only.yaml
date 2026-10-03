@@ -132,3 +132,5 @@ videoWeb:
   enabled: false
 webrtcService:
   enabled: false
+filterService:
+  enabled: false

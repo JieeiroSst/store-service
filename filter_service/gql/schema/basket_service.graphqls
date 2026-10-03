@@ -1,0 +1,112 @@
+extend type Query {
+  """GET endpoints of basket-service"""
+  basketService: BasketQuery!
+}
+
+type BasketQuery {
+  """
+  GET /api/v1/baskets
+  
+  Admins get every basket; other callers get their own.
+  """
+  baskets: [BasketBasket!]
+
+  """
+  GET /api/v1/baskets/{id}
+  """
+  basket(id: Int!): BasketBasket
+
+  """
+  GET /api/v1/basket-lines
+  """
+  basketLines: [BasketBasketLine!]
+
+  """
+  GET /api/v1/basket-lines/{id}
+  """
+  basketLine(id: Int!): BasketBasketLine
+
+  """
+  GET /api/v1/basket-line-attributes
+  """
+  basketLineAttributes: [BasketBasketLineAttribute!]
+
+  """
+  GET /api/v1/basket-line-attributes/{id}
+  """
+  basketLineAttribute(id: Int!): BasketBasketLineAttribute
+
+  """
+  GET /api/v1/orders
+  
+  Admins get every order; other callers get their own.
+  """
+  orders: [BasketOrder!]
+
+  """
+  GET /api/v1/orders/{id}
+  """
+  order(id: Int!): BasketOrder
+
+  """
+  GET /api/v1/users/{id}
+  """
+  user(id: Int!): BasketUser
+}
+
+type BasketBasket {
+  id: Int
+  status: String
+  date_placed: String
+  date_created: String
+  date_merged: String
+  date_submitted: String
+  billing_address_id: Int
+  shipping_address_id: Int
+  user_id: Int
+}
+
+type BasketBasketLine {
+  id: Int
+  line_reference: String
+  quantity: Int
+  price_currency: String
+  price_excl_tax: Float
+  price_incl_tax: Float
+  basket_id: Int
+  product_id: Int
+  stockrecord_id: Int
+}
+
+type BasketBasketLineAttribute {
+  id: Int
+  basket_id: Int
+  line_id: Int
+  option_id: Int
+  value: String
+}
+
+type BasketOrder {
+  id: Int
+  number: String
+  currency: String
+  total_incl_tax: Float
+  total_excl_tax: Float
+  shipping_incl_tax: Float
+  shipping_excl_tax: Float
+  shipping_method: String
+  shipping_code: String
+  status: String
+  guest_email: String
+  site_id: Int
+  user_id: Int
+  owner_id: Int
+}
+
+type BasketUser {
+  id: String
+  username: String
+  email: String
+  name: String
+  active: Boolean
+}

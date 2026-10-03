@@ -14,10 +14,15 @@ func InitRewardDiscountRouter(router *gin.Engine, dsn string) {
 	rewardDiscountController := RewardDiscountController{
 		rewardDiscountService: service.InitRewardDiscountServiceImpl(dsn),
 	}
-	router.GET("/", rewardDiscountController.GetRewardDiscountHandler)
-	router.GET("/:id", rewardDiscountController.GetRewardDiscountByIdHandler)
-	router.POST("/", rewardDiscountController.CreateRewardDiscountHandler)
-	router.PUT("/", rewardDiscountController.UpdateRewardDiscountHandler)
+	registerRewardDiscountRoutes(router, &rewardDiscountController)
+}
+
+func registerRewardDiscountRoutes(router gin.IRouter, rewardDiscountController *RewardDiscountController) {
+	group := router.Group("/api/v1/reward-discounts")
+	group.GET("", rewardDiscountController.GetRewardDiscountHandler)
+	group.GET("/:id", rewardDiscountController.GetRewardDiscountByIdHandler)
+	group.POST("", rewardDiscountController.CreateRewardDiscountHandler)
+	group.PUT("", rewardDiscountController.UpdateRewardDiscountHandler)
 }
 
 func (r *RewardDiscountController) GetRewardDiscountHandler(c *gin.Context) {

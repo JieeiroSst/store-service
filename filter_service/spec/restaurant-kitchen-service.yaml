@@ -1,0 +1,65 @@
+service: restaurant-kitchen-service
+source: restaurant/kitchen-service/internal/adapter/primary/http/routes.go
+namespace: restaurantKitchenService
+prefix: RKitchen
+baseURL: http://kitchen-service-svc
+unwrap: data
+endpoints:
+  - field: categories
+    path: /api/v1/category
+    returns: "[RKitchenCategory!]"
+  - field: foods
+    path: /api/v1/food
+    query: { Limit: Int, Page: Int, Sort: String }
+    returns: RKitchenFoodPage
+    doc: Query keys are Limit/Page/Sort (gin binds the Go field names).
+  - field: foodsByIDs
+    path: /api/v1/food/batch
+    query: { ids: String! }
+    returns: "[RKitchenFood!]"
+    doc: ids is comma separated.
+  - field: kitchens
+    path: /api/v1/kitchen
+    query: { Limit: Int, Page: Int, Sort: String }
+    returns: RKitchenKitchenPage
+    doc: Query keys are Limit/Page/Sort (gin binds the Go field names).
+types: |
+  type RKitchenFoodPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [RKitchenFood!]
+  }
+
+  type RKitchenKitchenPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [RKitchenKitchen!]
+  }
+
+  type RKitchenCategory {
+    id: Int
+    name: String
+  }
+
+  type RKitchenFood {
+    id: Int
+    name: String
+    category_id: Int
+    price: Float
+    status: Int
+    category: RKitchenCategory
+  }
+
+  type RKitchenKitchen {
+    id: Int
+    name: String
+    status: String
+    foods: [RKitchenFood!]
+  }
+

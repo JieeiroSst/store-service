@@ -1,0 +1,60 @@
+service: user_service
+source: lib-gateway/user-service/service.proto (grpc-gateway)
+namespace: userService
+prefix: User
+baseURL: http://user-api-svc
+endpoints:
+  - field: findUser
+    path: /user
+    query: { "username": String, "email": String, "page": Int, "limit": Int }
+    returns: UserFindUserResponse
+    doc: gRPC UserService.FindUser
+  - field: getRole
+    path: /api/v1/role/{id}
+    params: { id: Int! }
+    returns: UserGetRoleResponse
+    doc: gRPC UserService.GetRole
+  - field: listRoles
+    path: /api/v1/role
+    query: { "limit": Int, "page": Int }
+    returns: UserListRolesResponse
+    doc: gRPC UserService.ListRoles
+types: |
+  type UserFindUserResponse {
+    users: [UserUser!]
+    total: Int
+  }
+
+  type UserUser {
+    id: Int
+    username: String
+    email: String
+    name: String
+    phone: String
+    address: String
+    sex: String
+    checked: Boolean
+    createTime: String
+    updateTime: String
+    roles: [UserRole!]
+  }
+
+  type UserRole {
+    id: Int
+    name: String
+    users: [UserUser!]
+  }
+
+  type UserGetRoleResponse {
+    role: UserRole
+    message: String
+  }
+
+  type UserListRolesResponse {
+    limit: Int
+    page: Int
+    sort: String
+    totalRows: String
+    totalPages: Int
+    roles: [UserRole!]
+  }

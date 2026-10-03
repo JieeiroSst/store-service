@@ -1,0 +1,251 @@
+extend type Query {
+  """GET endpoints of admanagement-service"""
+  admanagementService: AdmQuery!
+}
+
+type AdmQuery {
+  """
+  GET /campaigns
+  """
+  campaigns: [AdmAdCampaign!]
+
+  """
+  GET /campaigns/{id}
+  """
+  campaign(id: Int!): AdmAdCampaign
+
+  """
+  GET /campaigns/{id}/ads
+  """
+  campaignAds(id: Int!): [AdmAd!]
+
+  """
+  GET /campaigns/{id}/performance
+  
+  Dates are YYYY-MM-DD; defaults to the last 30 days.
+  """
+  campaignPerformance(id: Int!, from: String, to: String): AdmCampaignPerformance
+
+  """
+  GET /categories
+  """
+  categories: [AdmAdCategory!]
+
+  """
+  GET /categories/{id}
+  """
+  category(id: Int!): AdmAdCategory
+
+  """
+  GET /positions
+  """
+  positions: [AdmAdPosition!]
+
+  """
+  GET /positions/{id}
+  """
+  position(id: Int!): AdmAdPosition
+
+  """
+  GET /positions/{id}/serve
+  
+  Picks an ad for the position and records an impression.
+  """
+  serveAd(id: Int!, session_id: String, country: String, device: String, gender: String, referrer_url: String, page_url: String, age: Int, user_id: Int): AdmServedAd
+
+  """
+  GET /ads
+  """
+  ads: [AdmAd!]
+
+  """
+  GET /ads/{id}
+  """
+  ad(id: Int!): AdmAd
+
+  """
+  GET /ads/{id}/impressions
+  """
+  adImpressions(id: Int!): [AdmAdImpression!]
+
+  """
+  GET /ads/{id}/clicks
+  """
+  adClicks(id: Int!): [AdmAdClick!]
+
+  """
+  GET /position-mappings
+  """
+  positionMappings: [AdmAdPositionMapping!]
+
+  """
+  GET /position-mappings/{id}
+  """
+  positionMapping(id: Int!): AdmAdPositionMapping
+
+  """
+  GET /impressions
+  """
+  impressions: [AdmAdImpression!]
+
+  """
+  GET /impressions/{id}
+  """
+  impression(id: Int!): AdmAdImpression
+
+  """
+  GET /clicks
+  """
+  clicks: [AdmAdClick!]
+
+  """
+  GET /clicks/{id}
+  """
+  click(id: Int!): AdmAdClick
+
+  """
+  GET /targeting-rules
+  """
+  targetingRules: [AdmAdTargetingRule!]
+
+  """
+  GET /targeting-rules/{id}
+  """
+  targetingRule(id: Int!): AdmAdTargetingRule
+
+  """
+  GET /performance-summaries
+  """
+  performanceSummaries: [AdmAdPerformanceSummary!]
+
+  """
+  GET /performance-summaries/{id}
+  """
+  performanceSummary(id: Int!): AdmAdPerformanceSummary
+}
+
+type AdmAdCampaign {
+  id: Int
+  user_id: Int
+  name: String
+  description: String
+  budget: Float
+  start_date: String
+  end_date: String
+  status: String
+  created_at: String
+  updated_at: String
+}
+
+type AdmAd {
+  id: Int
+  campaign_id: Int
+  category_id: Int
+  title: String
+  description: String
+  ad_type: String
+  content_url: String
+  target_url: String
+  file_path: String
+  file_size: Int
+  mime_type: String
+  duration: Int
+  priority: Int
+  is_active: Boolean
+  start_date: String
+  end_date: String
+  created_at: String
+  updated_at: String
+}
+
+type AdmCampaignPerformance {
+  campaign_id: Int
+  impressions: Int
+  clicks: Int
+  ctr: Float
+  cost: Float
+  revenue: Float
+}
+
+type AdmAdCategory {
+  id: Int
+  name: String
+  description: String
+  parent_id: Int
+  is_active: Boolean
+  created_at: String
+}
+
+type AdmAdPosition {
+  id: Int
+  name: String
+  description: String
+  width: Int
+  height: Int
+  max_file_size: Int
+  allowed_formats: Any
+  is_active: Boolean
+}
+
+type AdmServedAd {
+  ad: AdmAd
+  impression_id: Int
+}
+
+type AdmAdImpression {
+  id: Int
+  ad_id: Int
+  user_id: Int
+  session_id: String
+  ip_address: String
+  user_agent: String
+  referrer_url: String
+  page_url: String
+  position_id: Int
+  created_at: String
+}
+
+type AdmAdClick {
+  id: Int
+  ad_id: Int
+  impression_id: Int
+  user_id: Int
+  session_id: String
+  ip_address: String
+  user_agent: String
+  referrer_url: String
+  target_url: String
+  created_at: String
+}
+
+type AdmAdPositionMapping {
+  id: Int
+  ad_id: Int
+  position_id: Int
+  weight: Int
+  is_active: Boolean
+  created_at: String
+}
+
+type AdmAdTargetingRule {
+  id: Int
+  ad_id: Int
+  rule_type: String
+  rule_operator: String
+  rule_value: Any
+  is_active: Boolean
+  created_at: String
+}
+
+type AdmAdPerformanceSummary {
+  id: Int
+  ad_id: Int
+  date: String
+  impressions: Int
+  clicks: Int
+  ctr: Float
+  cost: Float
+  revenue: Float
+  created_at: String
+  updated_at: String
+}

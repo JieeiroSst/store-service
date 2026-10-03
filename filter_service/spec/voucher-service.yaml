@@ -1,0 +1,95 @@
+service: voucher-service
+source: voucher-service/internal/adapters/inbound/http/router.go
+namespace: voucherService
+prefix: Voucher
+baseURL: http://voucher-service-svc
+endpoints:
+  - field: voucher
+    path: /api/v1/vouchers/{id}
+    returns: VoucherVoucher
+  - field: validate
+    path: /api/v1/vouchers/{id}/validate
+    query: { pin: String }
+    returns: VoucherValidationResult
+  - field: vouchers
+    path: /api/v1/vouchers
+    query: { owner_id: String }
+    returns: "[VoucherVoucher!]"
+    unwrap: vouchers
+  - field: order
+    path: /api/v1/orders/{id}
+    returns: VoucherOrder
+  - field: merchant
+    path: /api/v1/merchants/{id}
+    returns: VoucherMerchant
+  - field: merchants
+    path: /api/v1/merchants
+    returns: "[VoucherMerchant!]"
+    unwrap: merchants
+  - field: walletBalance
+    path: /api/v1/wallets/{ownerType}/{ownerId}/balance
+    returns: VoucherBalance
+  - field: redemptionReports
+    path: /api/v1/reports/redemptions
+    query: { from: String, to: String }
+    returns: "[VoucherRedemptionReport!]"
+    unwrap: reports
+  - field: corporateSpend
+    path: /api/v1/reports/corporates/{id}/spend
+    query: { from: String, to: String }
+    returns: VoucherCorporateSpendReport
+types: |
+  type VoucherBalance {
+    amount: Int
+    currency: String
+  }
+
+  type VoucherVoucher {
+    id: String
+    merchant_id: String
+    code: String
+    status: String
+    version: Int
+  }
+
+  type VoucherValidationResult {
+    valid: Boolean
+    balance: VoucherMoney
+    reason: String
+  }
+
+  type VoucherOrder {
+    id: String
+    status: String
+    total_amount: Int
+    currency: String
+  }
+
+  type VoucherMerchant {
+    id: String
+    name: String
+    provider_type: String
+    status: String
+  }
+
+  type VoucherRedemptionReport {
+    merchant_id: String
+    total_issued: Int
+    total_redeemed: Int
+    redemption_rate: Float
+    period_start: String
+    period_end: String
+  }
+
+  type VoucherCorporateSpendReport {
+    corporate_id: String
+    total_spent: Int
+    currency: String
+    vouchers_sent: Int
+  }
+
+  type VoucherMoney {
+    amount: Int
+    currency: String
+  }
+

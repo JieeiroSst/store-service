@@ -1,0 +1,58 @@
+service: arrange-service
+source: arrange-service/src/main/kotlin/com/JIeeiroSst/routes
+namespace: arrangeService
+prefix: Arrange
+baseURL: http://arrange-service-svc
+endpoints:
+  - field: shifts
+    path: /shifts
+    query: { storeId: Int! }
+    returns: "[ArrangeShift!]"
+  - field: availableSpaces
+    path: /spaces
+    query: { storeId: Int!, minCapacity: Int }
+    returns: "[ArrangeSpace!]"
+  - field: spaceAssignments
+    path: /spaces/assignments
+    query: { storeId: Int! }
+    returns: "[ArrangeSpaceAssignment!]"
+  - field: dispatchAssignments
+    path: /dispatch/assignments
+    query: { driverId: Int! }
+    returns: "[ArrangeDispatchAssignment!]"
+types: |
+  type ArrangeShift {
+    id: Int
+    employeeId: Int
+    storeId: Int
+    role: String
+    startTime: String
+    endTime: String
+    status: String
+  }
+
+  type ArrangeSpace {
+    id: Int
+    storeId: Int
+    name: String
+    type: String
+    capacity: Int
+  }
+
+  type ArrangeSpaceAssignment {
+    id: Int
+    spaceId: Int
+    referenceId: Int
+    partySize: Int
+    arrangedFrom: String
+    arrangedTo: String
+    status: String
+  }
+
+  type ArrangeDispatchAssignment {
+    id: Int
+    orderId: Int
+    driverId: Int
+    sequence: Int
+    status: String
+  }

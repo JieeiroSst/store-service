@@ -36,7 +36,7 @@ func (h *ProjectHandler) CreateProject(c *gin.Context) {
 	c.JSON(200, project)
 }
 
-func (h *ProjectHandler) ReadProject(c *gin.Context) {
+func (h *ProjectHandler) ReadProjects(c *gin.Context) {
 	limmit, _ := strconv.Atoi(c.Query("limit"))
 	page, _ := strconv.Atoi(c.Query("page"))
 	pagination := domain.Pagination{
@@ -48,12 +48,13 @@ func (h *ProjectHandler) ReadProject(c *gin.Context) {
 	projects, err := h.svc.ReadProjects(pagination)
 	if err != nil {
 		c.JSON(500, err)
+		return
 	}
 	c.JSON(200, projects)
 }
 
-func (h *ProjectHandler) ReadProjects(c *gin.Context) {
-	id := c.Query("id")
+func (h *ProjectHandler) ReadProject(c *gin.Context) {
+	id := c.Param("id")
 	if id == "" {
 		c.JSON(400, "")
 		return

@@ -1,0 +1,45 @@
+extend type Query {
+  """GET endpoints of bonuslink-service"""
+  bonuslinkService: BonusQuery!
+}
+
+type BonusQuery {
+  """
+  GET /api/v1/bonus/users/{user_id}/rewards
+  
+  limit 1-100 (default 20).
+  """
+  userRewards(user_id: String!, limit: Int, offset: Int): BonusRewardList
+
+  """
+  GET /api/v1/bonus/users/{user_id}/balances
+  """
+  userBalances(user_id: String!): [BonusBalance!]
+}
+
+type BonusRewardList {
+  data: [BonusReward!]
+  meta: BonusListMeta
+}
+
+type BonusListMeta {
+  count: Int
+}
+
+type BonusReward {
+  reward_id: String
+  event_id: String
+  user_id: String
+  ref_code: String
+  source: String
+  reward_type: String
+  reward_value: Float
+  created_at: String
+}
+
+type BonusBalance {
+  user_id: String
+  reward_type: String
+  total_value: Float
+  reward_count: Int
+}

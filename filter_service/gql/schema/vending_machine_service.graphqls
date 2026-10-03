@@ -1,0 +1,222 @@
+extend type Query {
+  """GET endpoints of vending-machine-service"""
+  vendingMachineService: VendQuery!
+}
+
+type VendQuery {
+  """
+  GET /api/v1/machines
+  """
+  machines(status: String, cursor: String, limit: Int): VendMachinePage
+
+  """
+  GET /api/v1/machines/{id}
+  """
+  machine(id: String!): VendMachine
+
+  """
+  GET /api/v1/machines/{id}/maintenance
+  """
+  maintenance(id: String!): [VendMaintenance!]
+
+  """
+  GET /api/v1/machines/{id}/events
+  """
+  events(id: String!, limit: Int): [VendEvent!]
+
+  """
+  GET /api/v1/machines/{id}/sales
+  """
+  salesReport(id: String!, from: String, to: String): VendSalesReport
+
+  """
+  GET /api/v1/machines/{id}/inventory
+  """
+  inventory(id: String!, cursor: String, limit: Int): VendInventoryPage
+
+  """
+  GET /api/v1/inventory/low
+  """
+  lowInventory(machine_id: String, cursor: String, limit: Int): VendInventoryPage
+
+  """
+  GET /api/v1/categories
+  """
+  categories(cursor: String, limit: Int): VendCategoryPage
+
+  """
+  GET /api/v1/products
+  """
+  products(category_id: String, cursor: String, limit: Int): VendProductPage
+
+  """
+  GET /api/v1/products/{id}
+  """
+  product(id: String!): VendProduct
+
+  """
+  GET /api/v1/sessions/{id}
+  """
+  session(id: String!): VendSession
+
+  """
+  GET /api/v1/sessions/{id}/orders
+  """
+  sessionOrders(id: String!): [VendOrder!]
+
+  """
+  GET /api/v1/payments/{id}
+  """
+  payment(id: String!): VendPaymentStatus
+
+  """
+  GET /api/v1/orders/{id}
+  """
+  order(id: String!): VendOrder
+}
+
+type VendMachinePage {
+  items: [VendMachine!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendInventoryPage {
+  items: [VendInventory!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendCategoryPage {
+  items: [VendCategory!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendProductPage {
+  items: [VendProduct!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendMachine {
+  id: String
+  location: String
+  model: String
+  status: String
+  last_maintenance_at: String
+  created_at: String
+  updated_at: String
+}
+
+type VendMaintenance {
+  id: String
+  machine_id: String
+  technician_id: String
+  maintenance_type: String
+  notes: String
+  performed_at: String
+}
+
+type VendEvent {
+  id: String
+  event_type: String
+  related_entity: String
+  entity_id: String
+  machine_id: String
+  data: Map
+  occurred_at: String
+}
+
+type VendSalesReport {
+  machine_id: String
+  from: String
+  to: String
+  orders: Int
+  revenue_cents: Int
+  discount_cents: Int
+  products: [VendProductSales!]
+}
+
+type VendInventory {
+  id: String
+  machine_id: String
+  slot: String
+  product_id: String
+  product: VendProduct
+  quantity: Int
+  max_capacity: Int
+  low_threshold: Int
+  is_low: Boolean
+  last_restocked_at: String
+  updated_at: String
+}
+
+type VendCategory {
+  id: String
+  name: String
+  description: String
+  display_order: Int
+  created_at: String
+}
+
+type VendProduct {
+  id: String
+  name: String
+  description: String
+  price_cents: Int
+  category_id: String
+  image_url: String
+  barcode: String
+  is_active: Boolean
+  attributes: Map
+  created_at: String
+}
+
+type VendSession {
+  id: String
+  machine_id: String
+  status: String
+  started_at: String
+  expires_at: String
+}
+
+type VendOrder {
+  id: String
+  order_no: Int
+  session_id: String
+  reservation_id: String
+  payment_id: String
+  status: String
+  fulfilled_at: String
+  created_at: String
+}
+
+type VendPaymentStatus {
+  payment: VendPayment
+  order: VendOrder
+}
+
+type VendProductSales {
+  product_id: String
+  product_name: String
+  units: Int
+  revenue_cents: Int
+  discount_cents: Int
+}
+
+type VendPayment {
+  id: String
+  amount_cents: Int
+  discount_cents: Int
+  coupon_code: String
+  currency: String
+  payment_method: String
+  status: String
+  transaction_id: String
+  completed_at: String
+}

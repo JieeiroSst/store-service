@@ -1,0 +1,404 @@
+extend type Query {
+  """GET endpoints of reservation-service"""
+  reservationService: ResvQuery!
+}
+
+type ResvQuery {
+  """
+  GET /api/v1/hotels
+  
+  check_in/check_out are YYYY-MM-DD; amenities is comma separated.
+  """
+  hotels(city: String, q: String, rooms: Int, guests: Int, sort: String, limit: Int, min_rate: String, max_rate: String, amenities: String, cursor: String, check_in: String, check_out: String): ResvHotelPage
+
+  """
+  GET /api/v1/hotels/{id}
+  """
+  hotel(id: Int!): ResvHotel
+
+  """
+  GET /api/v1/hotels/{id}/room-types
+  """
+  roomTypes(id: Int!): [ResvRoomType!]
+
+  """
+  GET /api/v1/hotels/{id}/room-types/{type}/inventory
+  """
+  inventory(id: Int!, type: Int!, from: String, to: String): [ResvInventory!]
+
+  """
+  GET /api/v1/hotels/{id}/quotes
+  """
+  quotes(id: Int!, check_in: String!, check_out: String!, rooms: Int): [ResvQuote!]
+
+  """
+  GET /api/v1/hotels/{id}/services
+  """
+  services(id: Int!): [ResvService!]
+
+  """
+  GET /api/v1/hotels/{id}/reviews
+  """
+  reviews(id: Int!, cursor: String, limit: Int): ResvReviewPage
+
+  """
+  GET /api/v1/my/hotels
+  """
+  myHotels(limit: Int): ResvHotelPage
+
+  """
+  GET /api/v1/admin/hotels
+  """
+  hotelReviewQueue(status: String, limit: Int): ResvHotelPage
+
+  """
+  GET /api/v1/hotels/{id}/rooms
+  """
+  rooms(id: Int!, room_type_id: Int): [ResvRoom!]
+
+  """
+  GET /api/v1/hotels/{id}/promotions
+  """
+  promotions(id: Int!): [ResvPromotion!]
+
+  """
+  GET /api/v1/hotels/{id}/report
+  """
+  hotelReport(id: Int!, from: String, to: String): ResvReport
+
+  """
+  GET /api/v1/reservations
+  """
+  reservations(status: String, cursor: String, as: String, hotel_id: Int, limit: Int): ResvReservationPage
+
+  """
+  GET /api/v1/reservations/{id}
+  """
+  reservation(id: Int!): ResvReservation
+
+  """
+  GET /api/v1/reservations/{id}/cancellation-quote
+  """
+  cancellationQuote(id: Int!): ResvCancellationQuote
+
+  """
+  GET /api/v1/reservations/{id}/history
+  """
+  reservationHistory(id: Int!): [ResvHistoryEntry!]
+
+  """
+  GET /api/v1/waitlist
+  """
+  waitlist(cursor: String, limit: Int): ResvWaitPage
+
+  """
+  GET /api/v1/wishlist
+  """
+  wishlist(cursor: String, limit: Int): ResvHotelPage
+
+  """
+  GET /api/v1/notifications
+  """
+  notifications(cursor: String, unread: Boolean, limit: Int): ResvNotificationPage
+
+  """
+  GET /api/v1/notifications/unread-count
+  """
+  unreadNotifications: ResvUnreadCount
+
+  """
+  GET /api/v1/loyalty
+  """
+  loyalty: ResvLoyalty
+
+  """
+  GET /api/v1/wallet
+  """
+  wallet: ResvWallet
+
+  """
+  GET /api/v1/wallet/transactions
+  """
+  walletTransactions(limit: Int, offset: Int): [ResvWalletTxn!]
+}
+
+type ResvUnreadCount {
+  unread: Int
+}
+
+type ResvReviewPage {
+  items: [ResvReview!]
+  has_more: Boolean
+  next_cursor: String
+}
+
+type ResvReservationPage {
+  items: [ResvReservation!]
+  has_more: Boolean
+  next_cursor: String
+}
+
+type ResvWaitPage {
+  items: [ResvWait!]
+  has_more: Boolean
+  next_cursor: String
+}
+
+type ResvNotificationPage {
+  items: [ResvNotification!]
+  has_more: Boolean
+  next_cursor: String
+}
+
+type ResvHotel {
+  id: Int
+  name: String
+  description: String
+  stars: Int
+  city: String
+  address: String
+  phone_number: String
+  email: String
+  images: [String!]
+  amenities: [String!]
+  check_in_time: String
+  check_out_time: String
+  currency: String
+  free_cancel_hours: Int
+  cancellation_policy: [ResvtierDTO!]
+  status: Int
+  status_name: String
+  review_note: String
+  manager_id: Int
+  accepts_wallet_payment: Boolean
+  rating: Float
+  review_count: Int
+  room_types: [ResvRoomType!]
+  created_at: String
+}
+
+type ResvHotelPage {
+  items: [ResvHotel!]
+  has_more: Boolean
+  next_cursor: String
+}
+
+type ResvRoomType {
+  id: Int
+  name: String
+  description: String
+  capacity: Int
+  bed: String
+  size_m2: Int
+  view: String
+  amenities: [String!]
+  active: Boolean
+}
+
+type ResvRoom {
+  id: Int
+  room_type_id: Int
+  name: String
+  floor: Int
+  available: Boolean
+}
+
+type ResvInventory {
+  date: String
+  total_inventory: Int
+  total_reserved: Int
+  left: Int
+  rate: String
+}
+
+type ResvQuote {
+  room_type: ResvRoomType
+  nights: Int
+  rooms_available: Int
+  total: String
+  bookable: Boolean
+}
+
+type ResvService {
+  id: Int
+  name: String
+  description: String
+  price: String
+  unit: String
+  active: Boolean
+}
+
+type ResvReservation {
+  id: Int
+  hotel_id: Int
+  room_type_id: Int
+  guest_id: Int
+  check_in: String
+  check_out: String
+  nights: Int
+  rooms: Int
+  adults: Int
+  children: Int
+  status: Int
+  status_name: String
+  status_note: String
+  currency: String
+  room_total: String
+  promo_code: String
+  discount: String
+  services_total: String
+  total_amount: String
+  cancellation_fee: String
+  refund_amount: String
+  stay_status: String
+  checked_in_at: String
+  checked_out_at: String
+  special_requests: String
+  services: [ResvAddon!]
+  request_id: String
+  payment_method: String
+  payment_ref: String
+  paid_at: String
+  expires_at: String
+  created_at: String
+}
+
+type ResvReview {
+  id: Int
+  hotel_id: Int
+  user_id: Int
+  reservation_id: Int
+  rating: Int
+  comment: String
+  created_at: String
+}
+
+type ResvLoyalty {
+  points: Int
+  tier: Int
+  tier_name: String
+}
+
+type ResvWallet {
+  wallet_id: String
+  balance: Int
+  currency: String
+  status: String
+}
+
+type ResvWalletTxn {
+  transaction_id: String
+  type: String
+  amount: Int
+  currency: String
+  status: String
+  reference_id: String
+  description: String
+  created_at: String
+}
+
+type ResvCancellationQuote {
+  status_name: String
+  hours_before_check_in: Float
+  fee_percent: Int
+  fee: String
+  refund: String
+  cancellable: Boolean
+  reason: String
+  policy: [ResvtierDTO!]
+}
+
+type ResvNotification {
+  id: Int
+  kind: String
+  title: String
+  body: String
+  reservation_id: Int
+  hotel_id: Int
+  created_at: String
+  read: Boolean
+}
+
+type ResvPromotion {
+  id: Int
+  code: String
+  description: String
+  percent_off: Int
+  amount_off: String
+  min_nights: Int
+  max_uses: Int
+  used_count: Int
+  valid_from: String
+  valid_to: String
+  active: Boolean
+}
+
+type ResvReport {
+  from: String
+  to: String
+  occupancy: ResvReportOccupancy
+  revenue: ResvReportRevenue
+  reservations_by_status: Map
+  no_shows: Int
+}
+
+type ResvHistoryEntry {
+  at: String
+  by: String
+  event: String
+  from_status: String
+  to_status: String
+  note: String
+}
+
+type ResvWait {
+  id: Int
+  hotel_id: Int
+  room_type_id: Int
+  check_in: String
+  check_out: String
+  rooms: Int
+  adults: Int
+  children: Int
+  state: String
+  reservation_id: Int
+  created_at: String
+  offered_at: String
+}
+
+type ResvtierDTO {
+  hours_before: Int
+  fee_percent: Int
+}
+
+type ResvAddon {
+  service_id: Int
+  name: String
+  quantity: Int
+  unit_price: String
+  amount: String
+}
+
+type ResvReportOccupancy {
+  room_nights_available: Int
+  room_nights_sold: Int
+  occupancy_percent: Float
+  days: [ResvoccupancyDay!]
+}
+
+type ResvReportRevenue {
+  currency: String
+  paid_reservations: Int
+  paid_revenue: String
+  refunded_reservations: Int
+  refunded_amount: String
+  cancellation_fees_kept: String
+  net_revenue: String
+}
+
+type ResvoccupancyDay {
+  date: String
+  rooms: Int
+  reserved: Int
+  occupancy_percent: Float
+}

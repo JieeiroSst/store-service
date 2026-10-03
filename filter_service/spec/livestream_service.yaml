@@ -1,0 +1,69 @@
+service: livestream_service
+source: livestream_service/internal/adapter/primary/http/routes.go (edge router)
+namespace: livestreamService
+prefix: Live
+baseURL: http://livestream-service-svc
+endpoints:
+  - field: rooms
+    path: /api/v1/rooms
+    query: { live: Boolean }
+    returns: "[LiveRoom!]"
+  - field: room
+    path: /api/v1/rooms/{id}
+    returns: LiveRoom
+  - field: activeStream
+    path: /api/v1/rooms/{id}/stream
+    returns: LiveStream
+  - field: recordings
+    path: /api/v1/rooms/{id}/recordings
+    returns: "[LiveRecording!]"
+  - field: viewerCount
+    path: /api/v1/rooms/{id}/viewers
+    returns: LiveViewerCount
+  - field: playback
+    path: /api/v1/rooms/{id}/playback
+    returns: LivePlaybackInfo
+types: |
+  type LiveViewerCount {
+    viewers: Int
+  }
+
+  type LiveRoom {
+    id: String
+    ownerUserId: String
+    slug: String
+    title: String
+    description: String
+    streamKey: String
+    status: String
+    createdAt: String
+    updatedAt: String
+  }
+
+  type LiveStream {
+    id: String
+    roomId: String
+    nodeId: String
+    status: String
+    startedAt: String
+    endedAt: String
+    peakViewer: Int
+    createdAt: String
+  }
+
+  type LiveRecording {
+    id: String
+    streamId: String
+    roomId: String
+    objectKey: String
+    durationSeconds: Int
+    sizeBytes: Int
+    createdAt: String
+  }
+
+  type LivePlaybackInfo {
+    URL: String
+    ExpiresAt: String
+    IsLive: Boolean
+  }
+

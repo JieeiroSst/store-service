@@ -1,0 +1,95 @@
+extend type Query {
+  """GET endpoints of shopify-service"""
+  shopifyService: ShopifyQuery!
+}
+
+type ShopifyQuery {
+  """
+  GET /api/v1/products
+  """
+  products(limit: Int, offset: Int): ShopifyProductList
+
+  """
+  GET /api/v1/products/{id}
+  """
+  product(id: Int!): ShopifyProduct
+
+  """
+  GET /api/v1/orders
+  """
+  orders(limit: Int, offset: Int): ShopifyOrderList
+
+  """
+  GET /api/v1/orders/{id}
+  """
+  order(id: Int!): ShopifyOrder
+}
+
+type ShopifyProductList {
+  items: [ShopifyProduct!]
+  total: Int
+}
+
+type ShopifyOrderList {
+  items: [ShopifyOrder!]
+  total: Int
+}
+
+type ShopifyProduct {
+  id: Int
+  shopify_id: String
+  title: String
+  handle: String
+  status: String
+  vendor: String
+  product_type: String
+  tags: String
+  variants: [ShopifyProductVariant!]
+  shopify_created_at: String
+  shopify_updated_at: String
+  created_at: String
+  updated_at: String
+}
+
+type ShopifyOrder {
+  id: Int
+  shopify_id: String
+  name: String
+  email: String
+  financial_status: String
+  fulfillment_status: String
+  currency: String
+  total_price: String
+  cancelled_at: String
+  processed_at: String
+  line_items: [ShopifyLineItem!]
+  shopify_created_at: String
+  shopify_updated_at: String
+  created_at: String
+  updated_at: String
+}
+
+type ShopifyProductVariant {
+  id: Int
+  product_id: Int
+  shopify_id: String
+  title: String
+  sku: String
+  price: String
+  inventory_quantity: Int
+  created_at: String
+  updated_at: String
+}
+
+type ShopifyLineItem {
+  id: Int
+  order_id: Int
+  shopify_id: String
+  variant_shopify_id: String
+  title: String
+  sku: String
+  quantity: Int
+  unit_price: String
+  created_at: String
+  updated_at: String
+}

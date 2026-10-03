@@ -1,0 +1,56 @@
+service: photo-service
+source: photo-service/internal/adapters/inbound/http/router.go
+namespace: photoService
+prefix: Photo
+baseURL: http://photo-service-svc
+endpoints:
+  - field: composition
+    path: /v1/compositions/{id}
+    returns: PhotoComposition
+types: |
+  type PhotoComposition {
+    id: String
+    status: String
+    layout: PhotolayoutDTO
+    sources: [PhotosourceDTO!]
+    object_key: String
+    url: String
+    width: Int
+    height: Int
+    format: String
+    size_bytes: Int
+    error_message: String
+    created_at: String
+    updated_at: String
+  }
+
+  type PhotolayoutDTO {
+    type: String
+    rows: Int
+    cols: Int
+    width: Int
+    height: Int
+    spacing: Int
+    padding: Int
+    background: String
+    cell_fit: String
+    cells: [PhotocellDTO!]
+    format: String
+    quality: Int
+  }
+
+  type PhotosourceDTO {
+    type: String
+    url: String
+    object_key: String
+    order: Int
+  }
+
+  type PhotocellDTO {
+    x: Int
+    y: Int
+    width: Int
+    height: Int
+    image_index: Int
+  }
+

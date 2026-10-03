@@ -1,0 +1,47 @@
+service: wallet-service
+source: wallet-service/internal/adapters/primary/http/router.go
+namespace: walletService
+prefix: WalletSvc
+baseURL: http://wallet-service:8080
+endpoints:
+  - field: wallet
+    path: /api/v1/wallets/{id}
+    returns: WalletSvcWallet
+  - field: transaction
+    path: /api/v1/transactions/{id}
+    returns: WalletSvcTransaction
+types: |
+  type WalletSvcWallet {
+    id: String
+    user_id: String
+    balance: String
+    frozen_amount: String
+    currency: String
+    status: String
+    version: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type WalletSvcTransaction {
+    id: String
+    idempotency_key: String
+    wallet_id: String
+    merchant_id: String
+    acquirer_bank_id: String
+    issuer_bank_id: String
+    card_id: String
+    card_network: String
+    amount: String
+    currency: String
+    fee: String
+    type: String
+    status: String
+    description: String
+    authorization_code: String
+    batch_id: String
+    metadata: Map
+    created_at: String
+    updated_at: String
+  }
+

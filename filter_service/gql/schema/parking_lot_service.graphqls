@@ -1,0 +1,51 @@
+extend type Query {
+  """GET endpoints of parking-lot-service"""
+  parkingLotService: ParkingQuery!
+}
+
+type ParkingQuery {
+  """
+  GET /api/v1/spots/available
+  """
+  availableSpots: [ParkingSpotAvailability!]
+
+  """
+  GET /api/v1/rates
+  """
+  rates: [ParkingRate!]
+
+  """
+  GET /api/v1/tickets/{id}
+  """
+  ticket(id: String!): ParkingTicket
+
+  """
+  GET /api/v1/history
+  """
+  history(plate: String!, limit: Int, offset: Int): [ParkingTicket!]
+}
+
+type ParkingSpotAvailability {
+  type: String
+  available: Int
+  total: Int
+}
+
+type ParkingRate {
+  RateID: String
+  VehicleType: String
+  HourlyRate: Float
+  DailyMaxRate: Float
+  EffectiveFrom: String
+}
+
+type ParkingTicket {
+  TicketID: String
+  VehiclePlate: String
+  SpotID: String
+  EntryGateID: String
+  ExitGateID: String
+  ParkedTime: String
+  LeaveTime: String
+  Status: String
+}

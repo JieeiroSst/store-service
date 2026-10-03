@@ -1,0 +1,638 @@
+service: ticket-service
+source: ticket-service/internal/adapter/inbound/http/router.go
+namespace: ticketService
+prefix: Ticket
+baseURL: http://ticket-service-svc
+endpoints:
+  - field: events
+    path: /api/v1/events
+    query: { q: String, city: String, category: String, sort: String, featured: Boolean, limit: Int, offset: Int, from: String, to: String, min_price: String, max_price: String }
+    returns: "[TicketEvent!]"
+    unwrap: items
+  - field: categories
+    path: /api/v1/categories
+    returns: "[String!]"
+    unwrap: items
+  - field: event
+    path: /api/v1/events/{id}
+    params: { id: Int! }
+    returns: TicketEvent
+  - field: seats
+    path: /api/v1/events/{id}/ticket-types/{type}/seats
+    params: { id: Int!, type: Int! }
+    returns: TicketSeatList
+  - field: eventSeries
+    path: /api/v1/events/{id}/series
+    params: { id: Int! }
+    returns: "[TicketEvent!]"
+    unwrap: items
+  - field: sessions
+    path: /api/v1/events/{id}/sessions
+    params: { id: Int! }
+    returns: "[TicketSession!]"
+    unwrap: items
+  - field: seatMap
+    path: /api/v1/events/{id}/seat-map
+    params: { id: Int! }
+    returns: TicketSeatMap
+  - field: venueTemplates
+    path: /api/v1/venue-templates
+    returns: "[TicketTemplate!]"
+    unwrap: items
+  - field: resale
+    path: /api/v1/events/{id}/resale
+    params: { id: Int! }
+    query: { type: Int, sort: String, limit: Int, cursor: String }
+    returns: TicketResalePage
+  - field: myEvents
+    path: /api/v1/my/events
+    query: { cursor: String, limit: Int }
+    returns: TicketEventPage
+  - field: venues
+    path: /api/v1/venues
+    query: { scope: String, cursor: String, limit: Int }
+    returns: TicketVenuePage
+  - field: venue
+    path: /api/v1/venues/{id}
+    params: { id: Int! }
+    query: { seats: Boolean }
+    returns: TicketVenueDetail
+  - field: promotions
+    path: /api/v1/events/{id}/promotions
+    params: { id: Int! }
+    returns: "[TicketPromotion!]"
+    unwrap: items
+  - field: eventReport
+    path: /api/v1/events/{id}/report
+    params: { id: Int! }
+    returns: TicketReport
+  - field: eventOrders
+    path: /api/v1/events/{id}/orders
+    params: { id: Int! }
+    query: { status: String, cursor: String, limit: Int }
+    returns: TicketOrderPage
+  - field: attendees
+    path: /api/v1/events/{id}/attendees
+    params: { id: Int! }
+    query: { cursor: String, limit: Int }
+    returns: TicketAttendeePage
+  - field: lookupTicket
+    path: /api/v1/events/{id}/tickets/{code}
+    params: { id: Int! }
+    returns: TicketTicket
+  - field: staff
+    path: /api/v1/events/{id}/staff
+    params: { id: Int! }
+    returns: "[TicketStaff!]"
+    unwrap: items
+  - field: staffEvents
+    path: /api/v1/my/staff-events
+    returns: "[TicketEvent!]"
+    unwrap: items
+  - field: eventReviewQueue
+    path: /api/v1/admin/events
+    query: { cursor: String, limit: Int }
+    returns: TicketEventPage
+  - field: orders
+    path: /api/v1/orders
+    query: { status: String, event_id: Int, cursor: String, limit: Int }
+    returns: TicketOrderPage
+  - field: order
+    path: /api/v1/orders/{id}
+    params: { id: Int! }
+    returns: TicketOrder
+  - field: invoice
+    path: /api/v1/orders/{id}/invoice
+    params: { id: Int! }
+    returns: TicketInvoice
+  - field: orderDocuments
+    path: /api/v1/orders/{id}/documents
+    params: { id: Int! }
+    returns: "[TicketDocument!]"
+    unwrap: items
+  - field: tickets
+    path: /api/v1/tickets
+    query: { status: String, event_id: Int, cursor: String, limit: Int }
+    returns: TicketTicketPage
+  - field: myTickets
+    path: /api/v1/my/tickets
+    query: { status: String, event_id: Int, cursor: String, limit: Int }
+    returns: TicketTicketPage
+  - field: ticket
+    path: /api/v1/tickets/{id}
+    params: { id: Int! }
+    returns: TicketTicket
+  - field: ticketHistory
+    path: /api/v1/tickets/{id}/history
+    params: { id: Int! }
+    returns: "[TicketTicketEvent!]"
+    unwrap: items
+  - field: myResale
+    path: /api/v1/resale
+    query: { status: String, cursor: String, limit: Int }
+    returns: TicketResalePage
+  - field: transfers
+    path: /api/v1/transfers
+    query: { direction: String, cursor: String, limit: Int }
+    returns: TicketTransferPage
+  - field: waitlist
+    path: /api/v1/waitlist
+    returns: "[TicketWaitlist!]"
+    unwrap: items
+  - field: wishlist
+    path: /api/v1/wishlist
+    query: { limit: Int, offset: Int }
+    returns: "[TicketEvent!]"
+    unwrap: items
+  - field: notifications
+    path: /api/v1/notifications
+    query: { unread: Boolean, cursor: String, limit: Int }
+    returns: TicketNotificationPage
+  - field: unreadNotifications
+    path: /api/v1/notifications/unread-count
+    returns: TicketUnreadCount
+types: |
+  type TicketUnreadCount {
+    unread: Int
+  }
+
+  type TicketSeatList {
+    layout: TicketSeatMapLayout
+    items: [TicketSeat!]
+  }
+
+  type TicketSeatMap {
+    layout: TicketSeatMapLayout
+    ticket_types: [TicketTicketType!]
+    seats: [TicketSeat!]
+  }
+
+  type TicketVenuePreview {
+    total: Int
+    sections: [TicketSectionCount!]
+    layout: TicketSeatMapLayout
+    seats: [TicketGeneratedSeat!]
+  }
+
+  type TicketVenueDetail {
+    venue: TicketVenue
+    preview: TicketVenuePreview
+  }
+
+  type TicketResalePage {
+    items: [TicketResale!]
+    next_cursor: String
+  }
+
+  type TicketEventPage {
+    items: [TicketEvent!]
+    next_cursor: String
+  }
+
+  type TicketVenuePage {
+    items: [TicketVenue!]
+    next_cursor: String
+  }
+
+  type TicketOrderPage {
+    items: [TicketOrder!]
+    next_cursor: String
+  }
+
+  type TicketAttendeePage {
+    items: [TicketAttendee!]
+    next_cursor: String
+  }
+
+  type TicketTicketPage {
+    items: [TicketTicket!]
+    next_cursor: String
+  }
+
+  type TicketTransferPage {
+    items: [TicketTransfer!]
+    next_cursor: String
+  }
+
+  type TicketNotificationPage {
+    items: [TicketNotification!]
+    next_cursor: String
+  }
+
+  type TicketEvent {
+    id: Int
+    organizer_id: Int
+    title: String
+    description: String
+    category: String
+    city: String
+    venue: String
+    address: String
+    banner_url: String
+    starts_at: String
+    ends_at: String
+    currency: String
+    status: String
+    review_note: String
+    featured: Boolean
+    wallet_id: String
+    refund_cutoff_hours: Int
+    transferable: Boolean
+    resale_cap_percent: Int
+    series_id: Int
+    venue_id: Int
+    min_price: Int
+    sold_out: Boolean
+    next_session_at: String
+    sessions: [TicketSession!]
+    ticket_types: [TicketTicketType!]
+  }
+
+  type TicketTicketType {
+    id: Int
+    event_id: Int
+    name: String
+    description: String
+    price: Int
+    total: Int
+    available: Int
+    sold: Int
+    held: Int
+    min_per_order: Int
+    max_per_order: Int
+    max_per_user: Int
+    sale_starts_at: String
+    sale_ends_at: String
+    seated: Boolean
+    active: Boolean
+    sort_order: Int
+    session_id: Int
+    on_sale: Boolean
+    sold_out: Boolean
+  }
+
+  type TicketSeat {
+    id: Int
+    ticket_type_id: Int
+    accessible: Boolean
+    section: String
+    row: String
+    number: Int
+    label: String
+    status: String
+    x: Float
+    y: Float
+  }
+
+  type TicketSession {
+    id: Int
+    event_id: Int
+    starts_at: String
+    ends_at: String
+    label: String
+    status: String
+    cancel_reason: String
+  }
+
+  type TicketTemplate {
+    name: String
+    description: String
+    params: [TicketTemplateParam!]
+  }
+
+  type TicketResale {
+    id: Int
+    ticket_id: Int
+    event_id: Int
+    type_name: String
+    seat: String
+    price: Int
+    face_price: Int
+    currency: String
+    status: String
+    created_at: String
+    seller_id: Int
+    fee: Int
+  }
+
+  type TicketVenue {
+    id: Int
+    owner_id: Int
+    name: String
+    city: String
+    address: String
+    description: String
+    shared: Boolean
+    seats: Int
+    sections: Int
+    created_at: String
+    map: TicketVenueMap
+  }
+
+  type TicketPromotion {
+    id: Int
+    code: String
+    kind: String
+    value: Int
+    max_uses: Int
+    used: Int
+    min_tickets: Int
+    valid_from: String
+    valid_to: String
+    active: Boolean
+  }
+
+  type TicketReport {
+    event_id: Int
+    orders: Int
+    tickets_sold: Int
+    revenue: Int
+    refunded: Int
+    checked_in: Int
+    invited: Int
+    by_type: [TicketTypeSales!]
+    daily: [TicketDailySales!]
+  }
+
+  type TicketOrder {
+    id: Int
+    event_id: Int
+    user_id: Int
+    status: String
+    currency: String
+    subtotal: Int
+    discount: Int
+    total: Int
+    promo_code: String
+    buyer_name: String
+    buyer_email: String
+    buyer_phone: String
+    session_id: Int
+    expires_at: String
+    payment_method: String
+    paid_at: String
+    refund_amount: Int
+    status_note: String
+    created_at: String
+    items: [TicketOrderItem!]
+    tickets: [TicketTicket!]
+  }
+
+  type TicketAttendee {
+    buyer_name: String
+    buyer_email: String
+    id: Int
+    order_id: Int
+    event_id: Int
+    event_title: String
+    event_starts_at: String
+    event_ends_at: String
+    session_id: Int
+    session_label: String
+    venue: String
+    ticket_type_id: Int
+    type_name: String
+    seat_id: Int
+    seat: String
+    code: String
+    status: String
+    holder_id: Int
+    holder_name: String
+    holder_email: String
+    transfer_count: Int
+    checked_in_at: String
+  }
+
+  type TicketTicket {
+    id: Int
+    order_id: Int
+    event_id: Int
+    event_title: String
+    event_starts_at: String
+    event_ends_at: String
+    session_id: Int
+    session_label: String
+    venue: String
+    ticket_type_id: Int
+    type_name: String
+    seat_id: Int
+    seat: String
+    code: String
+    status: String
+    holder_id: Int
+    holder_name: String
+    holder_email: String
+    transfer_count: Int
+    checked_in_at: String
+  }
+
+  type TicketStaff {
+    user_id: Int
+    added_by: Int
+    created_at: String
+  }
+
+  type TicketInvoice {
+    number: String
+    issued_at: String
+    order_id: Int
+    seller_name: String
+    seller_tax_id: String
+    seller_address: String
+    buyer_name: String
+    buyer_email: String
+    event_title: String
+    event_date: String
+    venue: String
+    currency: String
+    lines: [TicketInvoiceLine!]
+    subtotal: Int
+    discount: Int
+    promo_code: String
+    total: Int
+    vat_percent: Int
+    vat: Int
+    payment_method: String
+    status: String
+    refund_amount: Int
+  }
+
+  type TicketDocument {
+    kind: String
+    file_name: String
+    size: Int
+    created_at: String
+    url: String
+  }
+
+  type TicketTicketEvent {
+    id: Int
+    event: String
+    from_status: String
+    to_status: String
+    actor: Int
+    note: String
+    created_at: String
+  }
+
+  type TicketTransfer {
+    id: Int
+    ticket_id: Int
+    from_user: Int
+    to_user: Int
+    to_email: String
+    status: String
+    message: String
+    created_at: String
+    expires_at: String
+    resolved_at: String
+    ticket: TicketTicket
+  }
+
+  type TicketWaitlist {
+    ticket_type_id: Int
+    event_id: Int
+    event_title: String
+    type_name: String
+    created_at: String
+  }
+
+  type TicketNotification {
+    id: Int
+    kind: String
+    title: String
+    body: String
+    order_id: Int
+    event_id: Int
+    created_at: String
+    read_at: String
+  }
+
+  type TicketSectionCount {
+    key: String
+    name: String
+    seats: Int
+    accessible: Int
+  }
+
+  type TicketGeneratedSeat {
+    section: String
+    row: String
+    number: Int
+    x: Float
+    y: Float
+    accessible: Boolean
+  }
+
+  type TicketSeatMapLayout {
+    width: Float
+    height: Float
+    stage: TicketMapRect
+    stages: [TicketStageShape!]
+    sections: [TicketSectionShape!]
+  }
+
+  type TicketTemplateParam {
+    name: String
+    description: String
+    default: Int
+    min: Int
+    max: Int
+  }
+
+  type TicketVenueMap {
+    width: Float
+    height: Float
+    stages: [TicketStageShape!]
+    sections: [TicketSectionSpec!]
+  }
+
+  type TicketTypeSales {
+    ticket_type_id: Int
+    name: String
+    total: Int
+    sold: Int
+    held: Int
+    revenue: Int
+  }
+
+  type TicketDailySales {
+    day: String
+    orders: Int
+    tickets: Int
+    revenue: Int
+  }
+
+  type TicketOrderItem {
+    ticket_type_id: Int
+    name: String
+    quantity: Int
+    unit_price: Int
+    seat_ids: [Int!]
+  }
+
+  type TicketInvoiceLine {
+    description: String
+    quantity: Int
+    unit_price: Int
+    amount: Int
+  }
+
+  type TicketMapRect {
+    label: String
+    x: Float
+    y: Float
+    w: Float
+    h: Float
+  }
+
+  type TicketStageShape {
+    label: String
+    shape: String
+    x: Float
+    y: Float
+    w: Float
+    h: Float
+    points: Any
+  }
+
+  type TicketSectionShape {
+    key: String
+    name: String
+    label: String
+    color: String
+    points: Any
+    ticket_type_id: Int
+  }
+
+  type TicketSectionSpec {
+    key: String
+    name: String
+    label: String
+    color: String
+    layout: String
+    outline: Any
+    rows: Int
+    seats_per_row: Int
+    row_seats: [Int!]
+    row_start: String
+    number_from: String
+    skip: [String!]
+    accessible: [String!]
+    origin: TicketPoint
+    seat_pitch: Float
+    row_pitch: Float
+    align: String
+    aisle_after: [Int!]
+    rotation: Float
+    center: TicketPoint
+    radius: Float
+    angle_start: Float
+    angle_end: Float
+  }
+
+  type TicketPoint {
+    x: Float
+    y: Float
+  }
+

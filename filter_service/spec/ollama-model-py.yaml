@@ -1,0 +1,32 @@
+service: ollama-model-py
+source: ollama-model-py/app/routes.py
+namespace: ollamaModelPy
+prefix: OllamaPy
+baseURL: http://ollama-model-py:8000
+endpoints:
+  - field: tags
+    path: /api/tags
+    returns: OllamaPyTags
+    doc: Ollama-compatible model list.
+types: |
+  type OllamaPyTags {
+    models: [OllamaPyTagsModel!]
+  }
+
+  type OllamaPyTagsModel {
+    name: String
+    model: String
+    modified_at: String
+    size: Int
+    digest: String
+    details: OllamaPyModelDetails
+  }
+
+  type OllamaPyModelDetails {
+    parent_model: String
+    format: String
+    family: String
+    families: [String!]
+    parameter_size: String
+    quantization_level: String
+  }

@@ -1,0 +1,90 @@
+extend type Query {
+  """GET endpoints of coupon-service"""
+  couponService: CouponQuery!
+}
+
+type CouponQuery {
+  """
+  GET /api/v1/coupons
+  """
+  coupons: [CouponCoupon!]
+
+  """
+  GET /api/v1/coupons/code/{code}
+  """
+  couponByCode(code: String!): CouponCoupon
+
+  """
+  GET /api/v1/coupons/{id}
+  """
+  coupon(id: Int!): CouponCoupon
+
+  """
+  GET /api/v1/coupons/{id}/restrictions
+  """
+  couponRestrictions(id: Int!): [CouponCouponRestriction!]
+
+  """
+  GET /api/v1/coupons/{id}/usages
+  """
+  couponUsages(id: Int!): [CouponCouponUsage!]
+
+  """
+  GET /api/v1/coupons/{id}/user-coupons
+  """
+  couponUserCoupons(id: Int!): [CouponUserCoupon!]
+
+  """
+  GET /api/v1/user-coupons
+  """
+  userCoupons(user_id: Int!): [CouponUserCoupon!]
+
+  """
+  GET /api/v1/users/{user_id}/coupon-usages
+  """
+  userCouponUsages(user_id: Int!): [CouponCouponUsage!]
+}
+
+type CouponCoupon {
+  id: Int
+  code: String
+  type: String
+  discount_value: Float
+  minimum_purchase: Float
+  max_discount_amount: Float
+  description: String
+  start_date: String
+  end_date: String
+  is_active: Boolean
+  max_uses: Int
+  current_uses: Int
+  created_at: String
+  updated_at: String
+}
+
+type CouponCouponRestriction {
+  id: Int
+  coupon_id: Int
+  restriction_type: String
+  restricted_entity_id: Int
+  is_exclude: Boolean
+  created_at: String
+}
+
+type CouponCouponUsage {
+  id: Int
+  coupon_id: Int
+  user_id: Int
+  order_id: Int
+  discount_amount: Float
+  used_at: String
+}
+
+type CouponUserCoupon {
+  id: Int
+  user_id: Int
+  coupon_id: Int
+  is_used: Boolean
+  assigned_at: String
+  used_at: String
+}

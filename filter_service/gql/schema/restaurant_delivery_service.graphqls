@@ -1,0 +1,33 @@
+extend type Query {
+  """GET endpoints of restaurant-delivery-service"""
+  restaurantDeliveryService: RDeliveryQuery!
+}
+
+type RDeliveryQuery {
+  """
+  GET /api/v1/delivery/
+  
+  Query keys are Limit/Page/Sort (gin binds the Go field names).
+  """
+  deliveries(Limit: Int, Page: Int, Sort: String): RDeliveryPage
+}
+
+type RDeliveryPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RDeliveryDelivery!]
+}
+
+type RDeliveryDelivery {
+  ship_id: Int
+  name: String
+  address: String
+  kitchen_id: Int
+  status: Int
+  distance_km: Float
+  fee: Float
+  eta_minutes: Int
+}

@@ -1,0 +1,40 @@
+extend type Query {
+  """GET endpoints of video-service"""
+  videoService: VideoQuery!
+}
+
+type VideoQuery {
+  """
+  GET /api/videos
+  """
+  videos(page: Int, page_size: Int, sort: String, q: String): VideoVideoList
+
+  """
+  GET /api/videos/{id}
+  """
+  video(id: String!): VideoVideo
+
+  """
+  GET /api/videos/{id}/related
+  """
+  related(id: String!, limit: Int): [VideoVideo!]
+}
+
+type VideoVideoList {
+  items: [VideoVideo!]
+  total: Int
+}
+
+type VideoVideo {
+  id: String
+  title: String
+  description: String
+  content_type: String
+  size: Int
+  status: String
+  duration: Float
+  width: Int
+  height: Int
+  created_at: String
+  views: Int
+}

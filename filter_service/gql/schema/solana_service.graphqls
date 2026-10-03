@@ -1,0 +1,225 @@
+extend type Query {
+  """GET endpoints of solana-service"""
+  solanaService: SolQuery!
+}
+
+type SolQuery {
+  """
+  GET /api/v1/solana/accounts/{address}
+  """
+  account(address: String!): SolAccountInfo
+
+  """
+  GET /api/v1/solana/accounts/{address}/balance
+  
+  Balance in lamports.
+  """
+  balance(address: String!): SolBalance
+
+  """
+  GET /api/v1/solana/transactions/{signature}
+  """
+  transaction(signature: String!): SolTransaction
+
+  """
+  GET /api/v1/solana/programs/{id}
+  """
+  program(id: String!): SolProgram
+
+  """
+  GET /api/v1/circle/wallet-sets/{id}
+  """
+  circleWalletSet(id: String!): SolCircleWalletSet
+
+  """
+  GET /api/v1/circle/wallet-sets
+  """
+  circleWalletSets: [SolCircleWalletSet!]
+
+  """
+  GET /api/v1/circle/wallets/{id}
+  """
+  circleWallet(id: String!): SolCircleWallet
+
+  """
+  GET /api/v1/circle/wallets
+  """
+  circleWallets(walletSetId: String, blockchain: String): [SolCircleWallet!]
+
+  """
+  GET /api/v1/circle/wallets/{id}/balance
+  """
+  circleWalletBalance(id: String!): [SolCircleBalance!]
+
+  """
+  GET /api/v1/circle/wallets/{id}/nfts
+  """
+  circleWalletNFTs(id: String!): [SolNFTBalance!]
+
+  """
+  GET /api/v1/circle/transactions/{id}
+  """
+  circleTransaction(id: String!): SolCircleTransaction
+
+  """
+  GET /api/v1/circle/transactions/estimate-fee
+  """
+  circleEstimateFee(walletId: String!, destinationAddress: String!, tokenId: String!, amount: String!): SolFeeEstimate
+
+  """
+  GET /api/v1/circle/tokens/{id}
+  """
+  circleToken(id: String!): SolToken
+
+  """
+  GET /api/v1/circle/tokens
+  """
+  circleTokens(blockchain: String): [SolToken!]
+
+  """
+  GET /api/v1/bridge/transfers/{id}
+  """
+  bridgeTransfer(id: String!): SolBridgeTransfer
+}
+
+type SolBalance {
+  balance: Int
+}
+
+type SolAccountInfo {
+  Address: String
+  Balance: Int
+  Owner: String
+  Executable: Boolean
+  RentEpoch: Int
+}
+
+type SolTransaction {
+  Signature: String
+  BlockTime: Int
+  Slot: Int
+  Fee: Int
+  Status: String
+  Instructions: [SolInstruction!]
+}
+
+type SolProgram {
+  ID: String
+  Name: String
+  Executable: Boolean
+  Owner: String
+}
+
+type SolCircleWalletSet {
+  id: String
+  name: String
+  custodyType: String
+  createDate: String
+  updateDate: String
+}
+
+type SolCircleWallet {
+  id: String
+  walletSetId: String
+  custodyType: String
+  address: String
+  blockchain: String
+  state: String
+  accountType: String
+  createDate: String
+  updateDate: String
+}
+
+type SolCircleBalance {
+  tokenId: String
+  token: SolToken
+  amount: String
+  updateDate: String
+}
+
+type SolNFTBalance {
+  tokenId: String
+  name: String
+  standard: String
+  blockchain: String
+  tokenCount: String
+  updateDate: String
+}
+
+type SolCircleTransaction {
+  id: String
+  blockchain: String
+  tokenId: String
+  walletId: String
+  sourceAddress: String
+  destinationAddress: String
+  transactionType: String
+  custodyType: String
+  state: String
+  amounts: [String!]
+  nftTokenIds: [String!]
+  txHash: String
+  blockHash: String
+  blockHeight: Int
+  networkFee: String
+  firstConfirmDate: String
+  operation: String
+  abiParameters: [SolABIParameter!]
+  createDate: String
+  updateDate: String
+  userId: String
+  errorReason: String
+}
+
+type SolFeeEstimate {
+  low: SolFeeLevel
+  medium: SolFeeLevel
+  high: SolFeeLevel
+}
+
+type SolToken {
+  id: String
+  blockchain: String
+  name: String
+  symbol: String
+  decimals: Int
+  isNative: Boolean
+  tokenAddress: String
+  standard: String
+  createDate: String
+  updateDate: String
+}
+
+type SolBridgeTransfer {
+  id: String
+  solanaAddress: String
+  circleWalletId: String
+  direction: String
+  amount: String
+  tokenId: String
+  status: String
+  solanaTxSignature: String
+  circleTxId: String
+  createDate: String
+  completeDate: String
+  errorMessage: String
+}
+
+type SolInstruction {
+  ProgramID: String
+  Accounts: [String!]
+  Data: String
+}
+
+type SolABIParameter {
+  name: String
+  type: String
+  value: Any
+}
+
+type SolFeeLevel {
+  maxFee: String
+  gasLimit: String
+  baseFee: String
+  priorityFee: String
+}

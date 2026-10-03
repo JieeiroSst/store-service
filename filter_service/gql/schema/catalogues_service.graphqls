@@ -1,0 +1,112 @@
+extend type Query {
+  """GET endpoints of catalogues-service"""
+  cataloguesService: CatalogQuery!
+}
+
+type CatalogQuery {
+  """
+  GET /v1/options
+  """
+  options: [CatalogOption!]
+
+  """
+  GET /v1/options/{id}
+  """
+  option(id: Int!): CatalogOption
+
+  """
+  GET /v1/product-classes
+  """
+  productClasses: [CatalogProductClass!]
+
+  """
+  GET /v1/product-classes/{id}
+  """
+  productClass(id: Int!): CatalogProductClass
+
+  """
+  GET /v1/products
+  """
+  products(q: String, public: Boolean, category_id: Int, limit: Int, offset: Int): [CatalogProduct!]
+
+  """
+  GET /v1/products/{id}
+  """
+  product(id: Int!): CatalogProduct
+
+  """
+  GET /v1/categories
+  """
+  categories: [CatalogCategory!]
+
+  """
+  GET /v1/categories/{id}
+  """
+  category(id: Int!): CatalogCategory
+}
+
+type CatalogOption {
+  id: Int
+  name: String
+  code: String
+  type: String
+  required: Boolean
+}
+
+type CatalogProductClass {
+  id: Int
+  name: String
+  slug: String
+  requires_shipping: Boolean
+  track_stock: Boolean
+  option_ids: [Int!]
+}
+
+type CatalogProduct {
+  id: Int
+  structure: String
+  upc: String
+  title: String
+  slug: String
+  description: String
+  rating: Float
+  is_discountable: Boolean
+  is_public: Boolean
+  parent_id: Int
+  product_class_id: Int
+  meta_title: String
+  meta_description: String
+  date_created: String
+  date_updated: String
+  category_ids: [Int!]
+  option_ids: [Int!]
+  images: [CatalogImage!]
+  recommendations: [CatalogRecommendation!]
+}
+
+type CatalogCategory {
+  id: Int
+  parent_id: Int
+  name: String
+  slug: String
+  description: String
+  image: String
+  is_public: Boolean
+  ancestors_are_public: Boolean
+  meta_title: String
+  meta_description: String
+}
+
+type CatalogImage {
+  id: Int
+  product_id: Int
+  original: String
+  caption: String
+  display_order: Int
+  date_created: String
+}
+
+type CatalogRecommendation {
+  product_id: Int
+  ranking: Int
+}

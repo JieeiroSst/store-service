@@ -1,0 +1,54 @@
+extend type Query {
+  """GET endpoints of booking-mini-service"""
+  bookingMiniService: BookingMiniQuery!
+}
+
+type BookingMiniQuery {
+  """
+  GET /api/rooms
+  
+  Dates are YYYY-MM-DD.
+  """
+  availableRooms(from_date: String!, to_date: String!): [BookingMiniRoom!]
+
+  """
+  GET /api/bookings/{id}
+  """
+  booking(id: Int!): BookingMiniBooking
+
+  """
+  GET /api/passengers/{id}
+  """
+  passenger(id: Int!): BookingMiniPassenger
+}
+
+type BookingMiniRoomTypeDetails {
+  id: Int
+  description: String
+  capacity: Int
+}
+
+type BookingMiniRoom {
+  room_no: Int
+  """Single, Double or Suite."""
+  room_type: String
+  room_type_details: BookingMiniRoomTypeDetails
+  bed_type: String
+  bed_count: Int
+  amenities: String
+}
+
+type BookingMiniPassenger {
+  id: Int
+  name: String
+}
+
+type BookingMiniBooking {
+  id: Int
+  from_date: String
+  to_date: String
+  room_no: Int
+  passenger_id: Int
+  passenger: BookingMiniPassenger
+  room: BookingMiniRoom
+}

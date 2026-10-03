@@ -1,0 +1,396 @@
+extend type Query {
+  """GET endpoints of recruitment-platform-service"""
+  recruitmentPlatformService: RecruitQuery!
+}
+
+type RecruitQuery {
+  """
+  GET /api/v1/jobs
+  """
+  jobs(page: Int, limit: Int, status: String, department_id: String, recruiter_id: Int, work_mode: String, skills: [String!], search: String): RecruitJobPage
+
+  """
+  GET /api/v1/jobs/{id}
+  """
+  job(id: String!): RecruitJob
+
+  """
+  GET /api/v1/jobs/{id}/recommended-candidates
+  """
+  recommendedCandidates(id: String!): [RecruitCandidate!]
+
+  """
+  GET /api/v1/applications
+  """
+  applications(page: Int, limit: Int, job_id: String, candidate_id: String, recruiter_id: Int, status: String): RecruitApplicationPage
+
+  """
+  GET /api/v1/applications/{id}
+  """
+  application(id: String!): RecruitApplication
+
+  """
+  GET /api/v1/candidates
+  """
+  candidates(page: Int, limit: Int, status: String, source: String, experience_level: String, skills: [String!], min_score: Float, search: String): RecruitCandidatePage
+
+  """
+  GET /api/v1/candidates/{id}
+  """
+  candidate(id: String!): RecruitCandidate
+
+  """
+  GET /api/v1/referrals/partners/{id}/stats
+  """
+  partnerStats(id: String!): RecruitPartnerStats
+
+  """
+  GET /api/v1/referrals/partners/{id}/network
+  """
+  partnerNetwork(id: String!): RecruitPartnerNetwork
+
+  """
+  GET /api/v1/referrals/leaderboard
+  """
+  referralLeaderboard: [RecruitPartnerStats!]
+
+  """
+  GET /api/v1/analytics/funnel
+  """
+  funnel: RecruitFunnel
+
+  """
+  GET /api/v1/analytics/funnel/{job_id}
+  """
+  funnelByJob(job_id: String!): RecruitJobFunnel
+
+  """
+  GET /api/v1/analytics/recruiter
+  """
+  recruiterPerformance: [RecruitRecruiterRow!]
+
+  """
+  GET /api/v1/analytics/sla-breaches
+  """
+  slaBreaches(breached_only: Boolean): RecruitSLABreaches
+
+  """
+  GET /api/v1/analytics/ai-scores
+  """
+  aiScoreDistribution: [RecruitScoreRow!]
+
+  """
+  GET /api/v1/analytics/referral-network
+  """
+  referralNetworkStats: [RecruitNetworkRow!]
+}
+
+type RecruitJobPage {
+  items: [RecruitJob!]
+  total: Int
+  page: Int
+  limit: Int
+  total_pages: Int
+}
+
+type RecruitApplicationPage {
+  items: [RecruitApplication!]
+  total: Int
+  page: Int
+  limit: Int
+  total_pages: Int
+}
+
+type RecruitCandidatePage {
+  items: [RecruitCandidate!]
+  total: Int
+  page: Int
+  limit: Int
+  total_pages: Int
+}
+
+type RecruitPartnerNetwork {
+  partner_id: String
+  tier: String
+  network_depth: Int
+  total_referrals: Int
+  hired_count: Int
+}
+
+type RecruitFunnelRow {
+  job_id: String
+  job_title: String
+  job_code: String
+  total_applications: Int
+  cv_review: Int
+  phone_screen: Int
+  technical: Int
+  final_round: Int
+  offer: Int
+  hired: Int
+  rejected: Int
+  withdrawn: Int
+  offer_rate_pct: Float
+  avg_days_to_hire: Float
+}
+
+type RecruitFunnel {
+  funnel: [RecruitFunnelRow!]
+  total: Int
+}
+
+type RecruitJobFunnel {
+  job_id: String
+  job_title: String
+  total_applications: Int
+  cv_review: Int
+  phone_screen: Int
+  technical: Int
+  final_round: Int
+  offer: Int
+  hired: Int
+  rejected: Int
+  offer_rate_pct: Float
+  avg_days_to_hire: Float
+}
+
+type RecruitRecruiterRow {
+  recruiter_id: Int
+  total_managed: Int
+  hired: Int
+  active_jobs: Int
+  avg_time_to_close_days: Float
+  stale_applications: Int
+}
+
+type RecruitSLARow {
+  application_id: String
+  job_id: String
+  candidate_id: String
+  recruiter_id: Int
+  status: String
+  days_in_stage: Int
+  sla_days: Int
+  is_breached: Boolean
+}
+
+type RecruitSLABreaches {
+  applications: [RecruitSLARow!]
+  total: Int
+  breached_count: Int
+}
+
+type RecruitScoreRow {
+  job_id: String
+  job_title: String
+  scored_applications: Int
+  avg_score: Float
+  min_score: Float
+  max_score: Float
+  high_match: Int
+  medium_match: Int
+  low_match: Int
+}
+
+type RecruitNetworkRow {
+  partner_id: String
+  full_name: String
+  network_level: Int
+  hired_referrals: Int
+  direct_downline: Int
+}
+
+type RecruitJob {
+  title: String
+  code: String
+  department_id: String
+  hiring_manager_id: Int
+  recruiter_ids: [Int!]
+  description: String
+  requirements: [String!]
+  nice_to_have: [String!]
+  skills: [String!]
+  job_type: String
+  work_mode: String
+  location: RecruitAddress
+  salary_min: RecruitMoney
+  salary_max: RecruitMoney
+  salary_visible: Boolean
+  headcount: Int
+  pipeline_stages: [RecruitPipelineStage!]
+  status: String
+  priority: Int
+  tags: [String!]
+  total_applications: Int
+  open_applications: Int
+  id: String
+  created_at: String
+  updated_at: String
+  deleted_at: String
+}
+
+type RecruitApplication {
+  job_id: String
+  candidate_id: String
+  recruiter_id: Int
+  status: String
+  current_stage_id: String
+  rejection_reason: String
+  withdraw_reason: String
+  interviews: [RecruitInterview!]
+  offer: RecruitOffer
+  match_score: RecruitAIScore
+  priority: Int
+  referred_by_partner_id: String
+  days_in_stage: Int
+  last_moved_at: String
+  id: String
+  created_at: String
+  updated_at: String
+  deleted_at: String
+}
+
+type RecruitCandidate {
+  full_name: String
+  email: String
+  phone: String
+  avatar_url: String
+  linkedin_url: String
+  resume_url: String
+  location: RecruitAddress
+  current_title: String
+  current_company: String
+  years_of_experience: Int
+  experience_level: String
+  skills: [String!]
+  expected_salary: RecruitMoney
+  notice_period_days: Int
+  status: String
+  source: String
+  referred_by_id: String
+  tags: [String!]
+  notes: String
+  ai_score: RecruitAIScore
+  experiences: [RecruitWorkExperience!]
+  educations: [RecruitEducation!]
+  id: String
+  created_at: String
+  updated_at: String
+  deleted_at: String
+}
+
+type RecruitPartnerStats {
+  partner: RecruitPartner
+  total_referrals: Int
+  hired_count: Int
+  conversion_rate: Float
+  pending_payout: RecruitMoney
+  total_earned: RecruitMoney
+  rank: Int
+}
+
+type RecruitAddress {
+  street: String
+  city: String
+  country: String
+}
+
+type RecruitMoney {
+  amount: Int
+  currency: String
+}
+
+type RecruitPipelineStage {
+  id: String
+  name: String
+  order: Int
+  is_system: Boolean
+}
+
+type RecruitInterview {
+  id: String
+  round: Int
+  title: String
+  interviewer_ids: [Int!]
+  scheduled_at: String
+  duration_min: Int
+  meeting_url: String
+  type: String
+  feedback: RecruitInterviewFeedback
+}
+
+type RecruitOffer {
+  id: String
+  salary: RecruitMoney
+  start_date: String
+  title: String
+  benefits: [String!]
+  offer_letter_url: String
+  expires_at: String
+  sent_at: String
+  responded_at: String
+}
+
+type RecruitAIScore {
+  score: Float
+  confidence: Float
+  breakdown: Map
+  scored_at: String
+  model_id: String
+}
+
+type RecruitWorkExperience {
+  company: String
+  title: String
+  start_date: String
+  end_date: String
+  description: String
+}
+
+type RecruitEducation {
+  institution: String
+  degree: String
+  major: String
+  graduated_at: String
+}
+
+type RecruitPartner {
+  user_id: Int
+  full_name: String
+  email: String
+  phone: String
+  company: String
+  bio: String
+  referred_by_partner_id: String
+  network_depth: Int
+  status: String
+  tier: String
+  commission: RecruitCommissionConfig
+  total_referrals: Int
+  hired_referrals: Int
+  conversion_rate: Float
+  total_earned: RecruitMoney
+  pending_payout: RecruitMoney
+  id: String
+  created_at: String
+  updated_at: String
+  deleted_at: String
+}
+
+type RecruitInterviewFeedback {
+  submitted_by: Int
+  decision: String
+  score: Int
+  strengths: String
+  weaknesses: String
+  notes: String
+  submitted_at: String
+}
+
+type RecruitCommissionConfig {
+  type: String
+  fixed_amount: RecruitMoney
+  percentage: Float
+  payout_trigger: String
+  probation_days: Int
+}

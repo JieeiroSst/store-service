@@ -1,0 +1,203 @@
+service: solana-service
+source: solana-service/internal/adapters/http/routes.go
+namespace: solanaService
+prefix: Sol
+baseURL: http://solana-service:8080
+endpoints:
+  - field: account
+    path: /api/v1/solana/accounts/{address}
+    returns: SolAccountInfo
+  - field: balance
+    path: /api/v1/solana/accounts/{address}/balance
+    returns: SolBalance
+    doc: Balance in lamports.
+  - field: transaction
+    path: /api/v1/solana/transactions/{signature}
+    returns: SolTransaction
+  - field: program
+    path: /api/v1/solana/programs/{id}
+    returns: SolProgram
+  - field: circleWalletSet
+    path: /api/v1/circle/wallet-sets/{id}
+    returns: SolCircleWalletSet
+  - field: circleWalletSets
+    path: /api/v1/circle/wallet-sets
+    returns: "[SolCircleWalletSet!]"
+    unwrap: walletSets
+  - field: circleWallet
+    path: /api/v1/circle/wallets/{id}
+    returns: SolCircleWallet
+  - field: circleWallets
+    path: /api/v1/circle/wallets
+    query: { walletSetId: String, blockchain: String }
+    returns: "[SolCircleWallet!]"
+    unwrap: wallets
+  - field: circleWalletBalance
+    path: /api/v1/circle/wallets/{id}/balance
+    returns: "[SolCircleBalance!]"
+    unwrap: balances
+  - field: circleWalletNFTs
+    path: /api/v1/circle/wallets/{id}/nfts
+    returns: "[SolNFTBalance!]"
+    unwrap: nfts
+  - field: circleTransaction
+    path: /api/v1/circle/transactions/{id}
+    returns: SolCircleTransaction
+  - field: circleEstimateFee
+    path: /api/v1/circle/transactions/estimate-fee
+    query: { walletId: String!, destinationAddress: String!, tokenId: String!, amount: String! }
+    returns: SolFeeEstimate
+  - field: circleToken
+    path: /api/v1/circle/tokens/{id}
+    returns: SolToken
+  - field: circleTokens
+    path: /api/v1/circle/tokens
+    query: { blockchain: String }
+    returns: "[SolToken!]"
+    unwrap: tokens
+  - field: bridgeTransfer
+    path: /api/v1/bridge/transfers/{id}
+    returns: SolBridgeTransfer
+types: |
+  type SolBalance {
+    balance: Int
+  }
+
+  type SolAccountInfo {
+    Address: String
+    Balance: Int
+    Owner: String
+    Executable: Boolean
+    RentEpoch: Int
+  }
+
+  type SolTransaction {
+    Signature: String
+    BlockTime: Int
+    Slot: Int
+    Fee: Int
+    Status: String
+    Instructions: [SolInstruction!]
+  }
+
+  type SolProgram {
+    ID: String
+    Name: String
+    Executable: Boolean
+    Owner: String
+  }
+
+  type SolCircleWalletSet {
+    id: String
+    name: String
+    custodyType: String
+    createDate: String
+    updateDate: String
+  }
+
+  type SolCircleWallet {
+    id: String
+    walletSetId: String
+    custodyType: String
+    address: String
+    blockchain: String
+    state: String
+    accountType: String
+    createDate: String
+    updateDate: String
+  }
+
+  type SolCircleBalance {
+    tokenId: String
+    token: SolToken
+    amount: String
+    updateDate: String
+  }
+
+  type SolNFTBalance {
+    tokenId: String
+    name: String
+    standard: String
+    blockchain: String
+    tokenCount: String
+    updateDate: String
+  }
+
+  type SolCircleTransaction {
+    id: String
+    blockchain: String
+    tokenId: String
+    walletId: String
+    sourceAddress: String
+    destinationAddress: String
+    transactionType: String
+    custodyType: String
+    state: String
+    amounts: [String!]
+    nftTokenIds: [String!]
+    txHash: String
+    blockHash: String
+    blockHeight: Int
+    networkFee: String
+    firstConfirmDate: String
+    operation: String
+    abiParameters: [SolABIParameter!]
+    createDate: String
+    updateDate: String
+    userId: String
+    errorReason: String
+  }
+
+  type SolFeeEstimate {
+    low: SolFeeLevel
+    medium: SolFeeLevel
+    high: SolFeeLevel
+  }
+
+  type SolToken {
+    id: String
+    blockchain: String
+    name: String
+    symbol: String
+    decimals: Int
+    isNative: Boolean
+    tokenAddress: String
+    standard: String
+    createDate: String
+    updateDate: String
+  }
+
+  type SolBridgeTransfer {
+    id: String
+    solanaAddress: String
+    circleWalletId: String
+    direction: String
+    amount: String
+    tokenId: String
+    status: String
+    solanaTxSignature: String
+    circleTxId: String
+    createDate: String
+    completeDate: String
+    errorMessage: String
+  }
+
+  type SolInstruction {
+    ProgramID: String
+    Accounts: [String!]
+    Data: String
+  }
+
+  type SolABIParameter {
+    name: String
+    type: String
+    value: Any
+  }
+
+  type SolFeeLevel {
+    maxFee: String
+    gasLimit: String
+    baseFee: String
+    priorityFee: String
+  }
+

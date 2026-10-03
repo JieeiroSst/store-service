@@ -1,0 +1,98 @@
+service: basket-service
+source: basket-service/internal/adapter/primary/http/routes.go
+namespace: basketService
+prefix: Basket
+baseURL: http://basket-service-svc
+endpoints:
+  - field: baskets
+    path: /api/v1/baskets
+    returns: "[BasketBasket!]"
+    doc: Admins get every basket; other callers get their own.
+  - field: basket
+    path: /api/v1/baskets/{id}
+    params: { id: Int! }
+    returns: BasketBasket
+  - field: basketLines
+    path: /api/v1/basket-lines
+    returns: "[BasketBasketLine!]"
+  - field: basketLine
+    path: /api/v1/basket-lines/{id}
+    params: { id: Int! }
+    returns: BasketBasketLine
+  - field: basketLineAttributes
+    path: /api/v1/basket-line-attributes
+    returns: "[BasketBasketLineAttribute!]"
+  - field: basketLineAttribute
+    path: /api/v1/basket-line-attributes/{id}
+    params: { id: Int! }
+    returns: BasketBasketLineAttribute
+  - field: orders
+    path: /api/v1/orders
+    returns: "[BasketOrder!]"
+    doc: Admins get every order; other callers get their own.
+  - field: order
+    path: /api/v1/orders/{id}
+    params: { id: Int! }
+    returns: BasketOrder
+  - field: user
+    path: /api/v1/users/{id}
+    params: { id: Int! }
+    returns: BasketUser
+types: |
+  type BasketBasket {
+    id: Int
+    status: String
+    date_placed: String
+    date_created: String
+    date_merged: String
+    date_submitted: String
+    billing_address_id: Int
+    shipping_address_id: Int
+    user_id: Int
+  }
+
+  type BasketBasketLine {
+    id: Int
+    line_reference: String
+    quantity: Int
+    price_currency: String
+    price_excl_tax: Float
+    price_incl_tax: Float
+    basket_id: Int
+    product_id: Int
+    stockrecord_id: Int
+  }
+
+  type BasketBasketLineAttribute {
+    id: Int
+    basket_id: Int
+    line_id: Int
+    option_id: Int
+    value: String
+  }
+
+  type BasketOrder {
+    id: Int
+    number: String
+    currency: String
+    total_incl_tax: Float
+    total_excl_tax: Float
+    shipping_incl_tax: Float
+    shipping_excl_tax: Float
+    shipping_method: String
+    shipping_code: String
+    status: String
+    guest_email: String
+    site_id: Int
+    user_id: Int
+    owner_id: Int
+  }
+
+  type BasketUser {
+    id: String
+    username: String
+    email: String
+    name: String
+    active: Boolean
+  }
+

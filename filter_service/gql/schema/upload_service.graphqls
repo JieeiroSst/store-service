@@ -1,0 +1,35 @@
+extend type Query {
+  """GET endpoints of upload_service"""
+  uploadService: UploadQuery!
+}
+
+type UploadQuery {
+  """
+  GET /api/v1/upload
+  """
+  files(receiver_id: String, limit: Int, offset: Int): UploadFileList
+
+  """
+  GET /api/v1/upload/{id}
+  
+  Metadata; the bytes are served at the returned url.
+  """
+  file(id: String!): UploadFile
+}
+
+type UploadFileList {
+  files: [UploadFile!]
+  total_count: Int
+}
+
+type UploadFile {
+  id: String
+  receiver_id: String
+  file_name: String
+  content_type: String
+  size: Int
+  sha256: String
+  created_at: String
+  updated_at: String
+  url: String
+}

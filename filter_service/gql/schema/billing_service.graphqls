@@ -1,0 +1,121 @@
+extend type Query {
+  """GET endpoints of billing-service"""
+  billingService: BillingQuery!
+}
+
+type BillingQuery {
+  """
+  GET /addresses
+  """
+  addresses: [BillingAddress!]
+
+  """
+  GET /addresses/{id}
+  """
+  address(id: Int!): BillingAddress
+
+  """
+  GET /customers
+  """
+  customers: [BillingCustomer!]
+
+  """
+  GET /customers/{id}
+  """
+  customer(id: Int!): BillingCustomer
+
+  """
+  GET /plans
+  """
+  plans: [BillingPlan!]
+
+  """
+  GET /plans/{id}
+  """
+  plan(id: Int!): BillingPlan
+
+  """
+  GET /subscriptions
+  """
+  subscriptions: [BillingSubscription!]
+
+  """
+  GET /subscriptions/{id}
+  """
+  subscription(id: Int!): BillingSubscription
+
+  """
+  GET /invoices
+  """
+  invoices: [BillingInvoice!]
+
+  """
+  GET /invoices/{id}
+  """
+  invoice(id: Int!): BillingInvoice
+
+  """
+  GET /transactions
+  """
+  transactions: [BillingTransaction!]
+
+  """
+  GET /transactions/{id}
+  """
+  transaction(id: Int!): BillingTransaction
+}
+
+type BillingAddress {
+  address_id: Int
+  line1: String
+  line2: String
+  city: String
+  state: String
+  postal_code: String
+  country: String
+}
+
+type BillingCustomer {
+  customer_id: Int
+  name: String
+  company: String
+  email: String
+  phone_number: String
+  address_id: Int
+}
+
+type BillingPlan {
+  plan_id: Int
+  name: String
+  description: String
+  price: Float
+  billing_cycle: String
+}
+
+type BillingSubscription {
+  subscription_id: Int
+  customer_id: Int
+  plan_id: Int
+  start_date: Int
+  end_date: Int
+  status: String
+}
+
+type BillingInvoice {
+  invoice_id: Int
+  subscription_id: Int
+  invoice_date: Int
+  due_date: Int
+  amount: Float
+  tax: String
+  status: String
+}
+
+type BillingTransaction {
+  transaction_id: Int
+  invoice_id: Int
+  payment_method: String
+  transaction_date: Int
+  amount: Float
+  status: String
+}

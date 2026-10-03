@@ -1,0 +1,98 @@
+extend type Query {
+  """GET endpoints of book-service"""
+  bookService: BookSvcQuery!
+}
+
+type BookSvcQuery {
+  """
+  GET /api/v1/books
+  """
+  books(cursor: String, limit: Int, q: String, author: String, year: Int, category: String): BookSvcBookPage
+
+  """
+  GET /api/v1/books/{id}
+  """
+  book(id: Int!): BookSvcBookDetail
+
+  """
+  GET /api/v1/books/{id}/chapters
+  """
+  chapters(id: Int!, cursor: String, limit: Int): BookSvcChapterPage
+
+  """
+  GET /api/v1/books/{id}/chapters/{number}
+  """
+  chapter(id: Int!, number: Int!): BookSvcChapter
+
+  """
+  GET /api/v1/categories
+  """
+  categories: [BookSvcCategory!]
+
+  """
+  GET /api/v1/categories/{slug}
+  """
+  category(slug: String!): BookSvcCategory
+
+  """
+  GET /api/v1/categories/{slug}/books
+  """
+  categoryBooks(slug: String!, cursor: String, limit: Int, q: String): BookSvcBookPage
+}
+
+type BookSvcCategory {
+  slug: String
+  name: String
+}
+
+type BookSvcBook {
+  id: Int
+  title: String
+  author: String
+  isbn: String
+  description: String
+  publishedYear: Int
+  categories: [BookSvcCategory!]
+  coverUrl: String
+  createdAt: String
+  updatedAt: String
+}
+
+type BookSvcBookDetail {
+  id: Int
+  title: String
+  author: String
+  isbn: String
+  description: String
+  publishedYear: Int
+  categories: [BookSvcCategory!]
+  coverUrl: String
+  createdAt: String
+  updatedAt: String
+  chapterCount: Int
+}
+
+type BookSvcChapter {
+  bookId: Int
+  number: Int
+  title: String
+  contentType: String
+  sizeBytes: Int
+  content: String
+}
+
+type BookSvcPagination {
+  limit: Int
+  nextCursor: String
+  hasMore: Boolean
+}
+
+type BookSvcBookPage {
+  data: [BookSvcBook!]
+  pagination: BookSvcPagination
+}
+
+type BookSvcChapterPage {
+  data: [BookSvcChapter!]
+  pagination: BookSvcPagination
+}

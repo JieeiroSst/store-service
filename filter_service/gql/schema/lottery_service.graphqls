@@ -1,0 +1,23 @@
+extend type Query {
+  """GET endpoints of lottery-service"""
+  lotteryService: LotteryQuery!
+}
+
+type LotteryQuery {
+  """
+  GET /api/v1/results
+  
+  Full lottery result of one province on one day (date is YYYY-MM-DD).
+  """
+  results(date: String!, province: String!): LotteryResult
+}
+
+type LotteryResult {
+  date: String
+  region: String
+  province: String
+  province_code: String
+  """Prize name -> winning numbers."""
+  prizes: Map
+  source: String
+}

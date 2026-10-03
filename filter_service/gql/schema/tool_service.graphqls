@@ -1,0 +1,159 @@
+extend type Query {
+  """GET endpoints of tool-service"""
+  toolService: ToolQuery!
+}
+
+type ToolQuery {
+  """
+  GET /api/v1/jobs
+  """
+  jobs: [ToolJob!]
+
+  """
+  GET /api/v1/jobs/{id}
+  """
+  job(id: String!): ToolJob
+
+  """
+  GET /api/v1/qa/mobile/devices
+  """
+  mobileDevices: ToolMobileDevices
+
+  """
+  GET /api/v1/learning/stats
+  """
+  learningStats: ToolStats
+
+  """
+  GET /api/v1/learning/pending
+  """
+  learningPending: [ToolExperience!]
+
+  """
+  GET /api/v1/learning/history
+  """
+  learningHistory: [ToolSnapshot!]
+
+  """
+  GET /api/v1/suites/{name}
+  """
+  suite(name: String!): ToolSuiteResult
+}
+
+type ToolAndroidDevices {
+  available: Boolean
+  error: String
+  devices: [ToolDevice!]
+}
+
+type ToolIosSimulators {
+  available: Boolean
+  error: String
+  simulators: [ToolSimulator!]
+}
+
+type ToolMobileDevices {
+  android: ToolAndroidDevices
+  ios: ToolIosSimulators
+}
+
+type ToolSuiteResult {
+  suite: ToolSuite
+  precision: Float
+}
+
+type ToolJob {
+  id: String
+  kind: String
+  status: String
+  progress: String
+  started_at: String
+  finished_at: String
+  result: Any
+  error: String
+}
+
+type ToolDevice {
+  serial: String
+  state: String
+  model: String
+  product: String
+  android_version: String
+  sdk: Int
+  screen: String
+  density_dpi: Int
+}
+
+type ToolSimulator {
+  udid: String
+  name: String
+  state: String
+  runtime: String
+}
+
+type ToolStats {
+  active_model: String
+  base_model: String
+  by_model: Map
+  by_model_human_only: Map
+  total: Int
+  good: Int
+  bad: Int
+  pending: Int
+  approval_rate: Float
+  feedback_since_reflect: Int
+  playbook: String
+}
+
+type ToolExperience {
+  id: String
+  kind: String
+  input: String
+  output: Any
+  model: String
+  verdict: String
+  source: String
+  score: Float
+  note: String
+  corrected: Any
+  signals: Map
+  embedding: [Float!]
+  created_at: String
+}
+
+type ToolSnapshot {
+  at: String
+  model: String
+  approval_rate: Float
+  human_rate: Float
+  auto_rate: Float
+  reviews: Int
+  by_model: Map
+}
+
+type ToolSuite {
+  name: String
+  cases: [ToolApproved!]
+  ai_accepted: Int
+  ai_rejected: Int
+}
+
+type ToolApproved {
+  hash: String
+  case: ToolTestCase
+  approved_at: String
+  from_ai: Boolean
+}
+
+type ToolTestCase {
+  name: String
+  method: String
+  path: String
+  headers: Map
+  body: Any
+  expect_status: Int
+  expect_body_contains: [String!]
+  expect_json: Map
+  max_latency_ms: Int
+  spec_quote: String
+}

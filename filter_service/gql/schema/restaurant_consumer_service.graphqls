@@ -1,0 +1,29 @@
+extend type Query {
+  """GET endpoints of restaurant-consumer-service"""
+  restaurantConsumerService: RConsumerQuery!
+}
+
+type RConsumerQuery {
+  """
+  GET /api/v1/consumer
+  
+  Query keys are Limit/Page/Sort (gin binds the Go field names).
+  """
+  consumers(Limit: Int, Page: Int, Sort: String): RConsumerPage
+}
+
+type RConsumerPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RConsumerConsumer!]
+}
+
+type RConsumerConsumer {
+  id: Int
+  name: String
+  kitchen_id: Int
+  menu: String
+}

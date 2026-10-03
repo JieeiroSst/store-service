@@ -1,0 +1,29 @@
+extend type Query {
+  """GET endpoints of food-service"""
+  foodService: FoodQuery!
+}
+
+type FoodQuery {
+  """
+  GET /api/food/{id}
+  """
+  food(id: Int!): FoodFood
+
+  """
+  GET /api/food/
+  """
+  foods: [FoodFood!]
+
+  """
+  GET /api/food/search
+  """
+  searchFoods(name: String!): [FoodFood!]
+}
+
+type FoodFood {
+  id: Int
+  name: String
+  description: String
+  price: Int
+  category: String
+}

@@ -1,0 +1,100 @@
+service: call_center_ai
+source: call_center_ai/main.py
+namespace: callCenterAi
+prefix: CallCenter
+baseURL: http://call-center-ai:8000
+endpoints:
+  - field: calls
+    path: /api/calls
+    query: { skip: Int, limit: Int, status: String, from_number: String }
+    returns: "[CallCenterCall!]"
+  - field: call
+    path: /api/calls/{call_id}
+    params: { call_id: Int! }
+    returns: CallCenterCallHistory
+  - field: scenarios
+    path: /api/scenarios
+    query: { skip: Int, limit: Int }
+    returns: "[CallCenterScenario!]"
+  - field: scenario
+    path: /api/scenarios/{scenario_id}
+    params: { scenario_id: Int! }
+    returns: CallCenterScenario
+  - field: customer
+    path: /api/customers/{phone_number}
+    returns: CallCenterCustomer
+  - field: statistics
+    path: /api/analytics/statistics
+    query: { days: Int }
+    returns: CallCenterCallStatistics
+types: |
+  type CallCenterCall {
+    id: Int
+    call_sid: String
+    from_number: String
+    to_number: String
+    notes: String
+    status: String
+    duration: Int
+    start_time: String
+    end_time: String
+    recording_url: String
+    created_at: String
+    updated_at: String
+  }
+
+  type CallCenterMessage {
+    id: Int
+    call_id: Int
+    role: String
+    content: String
+    audio_url: String
+    timestamp: String
+    processing_time: Float
+  }
+
+  type CallCenterCallHistory {
+    id: Int
+    call_sid: String
+    from_number: String
+    to_number: String
+    notes: String
+    status: String
+    duration: Int
+    start_time: String
+    end_time: String
+    recording_url: String
+    created_at: String
+    updated_at: String
+    messages: [CallCenterMessage!]
+  }
+
+  type CallCenterScenario {
+    id: Int
+    name: String
+    description: String
+    prompt: String
+    is_active: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type CallCenterCustomer {
+    id: Int
+    phone_number: String
+    name: String
+    email: String
+    notes: String
+    total_calls: Int
+    last_call_date: String
+    created_at: String
+    updated_at: String
+  }
+
+  type CallCenterCallStatistics {
+    total_calls: Int
+    completed_calls: Int
+    failed_calls: Int
+    average_duration: Float
+    total_messages: Int
+  }

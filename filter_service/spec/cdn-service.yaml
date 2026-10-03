@@ -1,0 +1,28 @@
+service: cdn-service
+source: cdn-service/internal/adapters/http/routes.go
+namespace: cdnService
+prefix: Cdn
+baseURL: http://cdn-service-svc
+endpoints:
+  - field: files
+    path: /api/v1/files
+    query: { limit: Int, offset: Int }
+    returns: CdnFileList
+  - field: file
+    path: /api/v1/files/{id}
+    returns: CdnFile
+types: |
+  type CdnFileList {
+    files: [CdnFile!]
+  }
+
+  type CdnFile {
+    id: String
+    file_name: String
+    content_type: String
+    size_bytes: Int
+    status: String
+    created_at: String
+    updated_at: String
+  }
+

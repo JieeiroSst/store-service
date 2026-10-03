@@ -1,0 +1,35 @@
+extend type Query {
+  """GET endpoints of identified_service"""
+  identifiedService: GymQuery!
+}
+
+type GymQuery {
+  """
+  GET /classes
+  """
+  classes: [GymClass!]
+
+  """
+  GET /classes/{class_id}
+  """
+  class(class_id: String!): GymClass
+
+  """
+  GET /gym-passes/{gym_pass_id}/verification
+  """
+  gymPassVerification(gym_pass_id: String!): GymPass
+}
+
+type GymClass {
+  id: String
+  name: String
+  day: String
+  time: String
+  coach: String
+  description: String
+}
+
+type GymPass {
+  id: String
+  is_active: Boolean
+}

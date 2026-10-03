@@ -1,0 +1,97 @@
+extend type Query {
+  """GET endpoints of point-service"""
+  pointService: PointQuery!
+}
+
+type PointQuery {
+  """
+  GET /api/v1/reward-points
+  """
+  rewardPoints(per_page: Int, sort_order: String, cursor: String): PointRewardPointPage
+
+  """
+  GET /api/v1/reward-points/{id}
+  """
+  rewardPoint(id: String!): PointRewardPoint
+
+  """
+  GET /api/v1/reward-discounts
+  """
+  rewardDiscounts(per_page: Int, sort_order: String, cursor: String): PointRewardDiscountPage
+
+  """
+  GET /api/v1/reward-discounts/{id}
+  """
+  rewardDiscount(id: String!): PointRewardDiscount
+
+  """
+  GET /api/v1/converted-reward-points
+  """
+  convertedRewardPoints(per_page: Int, sort_order: String, cursor: String): PointConvertedRewardPointPage
+
+  """
+  GET /api/v1/converted-reward-points/{id}
+  """
+  convertedRewardPoint(id: String!): PointConvertedRewardPoint
+}
+
+type PointPaginationInfo {
+  next_cursor: String
+  prev_cursor: String
+}
+
+type PointRewardPointPage {
+  success: Boolean
+  data: [PointRewardPoint!]
+  pagination: PointPaginationInfo
+}
+
+type PointRewardDiscountPage {
+  success: Boolean
+  data: [PointRewardDiscount!]
+  pagination: PointPaginationInfo
+}
+
+type PointConvertedRewardPointPage {
+  success: Boolean
+  data: [PointConvertedRewardPoint!]
+  pagination: PointPaginationInfo
+}
+
+type PointRewardPoint {
+  reward_points_id: String
+  total_points: Int
+  points_pending: Int
+  points_active: Int
+  points_expired: Int
+  points_converted: Int
+  points_cancelled: Int
+  activate_date: Int
+  expire_date: Int
+  created_at: String
+  updated_at: String
+}
+
+type PointRewardDiscount {
+  reward_discount_id: String
+  total_points: Int
+  points_pending: Int
+  points_active: Int
+  points_expired: Int
+  points_converted: Int
+  points_cancelled: Int
+  activate_date: Int
+  expire_date: Int
+  created_at: String
+  updated_at: String
+}
+
+type PointConvertedRewardPoint {
+  rew_convert_id: String
+  rew_convert_ord_detail_id: String
+  rew_convert_discount_id: String
+  rew_convert_points: Int
+  rew_convert_date: Int
+  created_at: String
+  updated_at: String
+}

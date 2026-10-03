@@ -1,0 +1,78 @@
+service: account-transaction-service
+source: lib-gateway/account-transaction-service/service.proto (grpc-gateway)
+namespace: accountTransactionService
+prefix: AcctTx
+baseURL: http://account-transaction-api-svc
+endpoints:
+  - field: getAccount
+    path: /v1/accounts/{id}
+    params: { id: String! }
+    returns: AcctTxAccount
+    doc: gRPC BankingService.GetAccount
+  - field: listAccounts
+    path: /v1/accounts
+    query: { "page_size": Int, "page_token": String }
+    returns: AcctTxListAccountsResponse
+    doc: gRPC BankingService.ListAccounts
+  - field: getTransaction
+    path: /v1/transactions/{id}
+    params: { id: String! }
+    returns: AcctTxTransaction
+    doc: gRPC BankingService.GetTransaction
+  - field: listTransactions
+    path: /v1/transactions
+    query: { "page_size": Int, "page_token": String, "type": String }
+    returns: AcctTxListTransactionsResponse
+    doc: gRPC BankingService.ListTransactions
+  - field: getAccountTransactions
+    path: /v1/accounts/{account_id}/transactions
+    params: { account_id: String! }
+    query: { "page_size": Int, "page_token": String }
+    returns: AcctTxListTransactionsResponse
+    doc: gRPC BankingService.GetAccountTransactions
+types: |
+  type AcctTxAccount {
+    id: String
+    firstName: String
+    lastName: String
+    dateCreated: String
+  }
+
+  type AcctTxListAccountsResponse {
+    accounts: [AcctTxAccount!]
+    nextPageToken: String
+  }
+
+  type AcctTxTransaction {
+    id: String
+    type: String
+    amount: Float
+    dateCreated: String
+    deposit: AcctTxDepositTransactionDetails
+    withdrawal: AcctTxWithdrawalTransactionDetails
+    transfer: AcctTxAccountToAccountTransactionDetails
+    payment: AcctTxPaymentForServiceTransactionDetails
+  }
+
+  type AcctTxDepositTransactionDetails {
+    accountId: String
+  }
+
+  type AcctTxWithdrawalTransactionDetails {
+    accountId: String
+  }
+
+  type AcctTxAccountToAccountTransactionDetails {
+    senderId: String
+    receiverId: String
+  }
+
+  type AcctTxPaymentForServiceTransactionDetails {
+    accountId: String
+    serviceName: String
+  }
+
+  type AcctTxListTransactionsResponse {
+    transactions: [AcctTxTransaction!]
+    nextPageToken: String
+  }

@@ -1,0 +1,32 @@
+service: face-recognition-service
+source: face-recognition-service/src/api/routes/face.js
+namespace: faceRecognitionService
+prefix: FaceRec
+baseURL: http://face-recognition-service:1234
+endpoints:
+  - field: facePosition
+    path: /api/face/position
+    returns: FaceRecPositions
+    doc: Latest face and color positions reported by the tracking page.
+types: |
+  type FaceRecRect {
+    x: Float
+    y: Float
+    width: Float
+    height: Float
+  }
+
+  type FaceRecColorRect {
+    color: String
+    x: Float
+    y: Float
+    width: Float
+    height: Float
+  }
+
+  type FaceRecPositions {
+    faces: [FaceRecRect!]
+    colors: [FaceRecColorRect!]
+    frame: Any
+    updatedAt: String
+  }

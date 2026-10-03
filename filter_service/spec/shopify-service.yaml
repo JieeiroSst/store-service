@@ -1,0 +1,92 @@
+service: shopify-service
+source: shopify-service/internal/adapter/primary/http/routes.go
+namespace: shopifyService
+prefix: Shopify
+baseURL: http://shopify-service-svc
+endpoints:
+  - field: products
+    path: /api/v1/products
+    query: { limit: Int, offset: Int }
+    returns: ShopifyProductList
+  - field: product
+    path: /api/v1/products/{id}
+    params: { id: Int! }
+    returns: ShopifyProduct
+  - field: orders
+    path: /api/v1/orders
+    query: { limit: Int, offset: Int }
+    returns: ShopifyOrderList
+  - field: order
+    path: /api/v1/orders/{id}
+    params: { id: Int! }
+    returns: ShopifyOrder
+types: |
+  type ShopifyProductList {
+    items: [ShopifyProduct!]
+    total: Int
+  }
+
+  type ShopifyOrderList {
+    items: [ShopifyOrder!]
+    total: Int
+  }
+
+  type ShopifyProduct {
+    id: Int
+    shopify_id: String
+    title: String
+    handle: String
+    status: String
+    vendor: String
+    product_type: String
+    tags: String
+    variants: [ShopifyProductVariant!]
+    shopify_created_at: String
+    shopify_updated_at: String
+    created_at: String
+    updated_at: String
+  }
+
+  type ShopifyOrder {
+    id: Int
+    shopify_id: String
+    name: String
+    email: String
+    financial_status: String
+    fulfillment_status: String
+    currency: String
+    total_price: String
+    cancelled_at: String
+    processed_at: String
+    line_items: [ShopifyLineItem!]
+    shopify_created_at: String
+    shopify_updated_at: String
+    created_at: String
+    updated_at: String
+  }
+
+  type ShopifyProductVariant {
+    id: Int
+    product_id: Int
+    shopify_id: String
+    title: String
+    sku: String
+    price: String
+    inventory_quantity: Int
+    created_at: String
+    updated_at: String
+  }
+
+  type ShopifyLineItem {
+    id: Int
+    order_id: Int
+    shopify_id: String
+    variant_shopify_id: String
+    title: String
+    sku: String
+    quantity: Int
+    unit_price: String
+    created_at: String
+    updated_at: String
+  }
+

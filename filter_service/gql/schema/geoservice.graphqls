@@ -1,0 +1,138 @@
+extend type Query {
+  """GET endpoints of geoservice"""
+  geoservice: GeoQuery!
+}
+
+type GeoQuery {
+  """
+  GET /api/v1/locate
+  
+  Province/district/ward containing the point; tolerance is in meters.
+  """
+  locate(lng: Float!, lat: Float!, tolerance: Float): GeoLocationResult
+
+  """
+  GET /api/v1/provinces
+  """
+  provinces: [GeoProvince!]
+
+  """
+  GET /api/v1/provinces/{code}
+  """
+  province(code: String!): GeoProvince
+
+  """
+  GET /api/v1/provinces/{code}/districts
+  """
+  districts(code: String!): [GeoDistrict!]
+
+  """
+  GET /api/v1/districts/{code}/wards
+  """
+  wards(code: String!): [GeoWard!]
+
+  """
+  GET /api/v1/provinces/{code}/streets
+  """
+  streets(code: String!): [GeoStreet!]
+
+  """
+  GET /api/v1/stats
+  """
+  stats: GeoStats
+
+  """
+  GET /api/v1/whitelist/check
+  """
+  whitelistCheck(lng: Float!, lat: Float!, tolerance: Float): GeoWhitelistResult
+
+  """
+  GET /api/v1/whitelist/cities
+  """
+  whitelistCities: [GeoWhitelistCity!]
+}
+
+type GeoStats {
+  provinces: Int
+  districts: Int
+  wards: Int
+}
+
+type GeoLocationResult {
+  found: Boolean
+  province: GeoProvince
+  district: GeoDistrict
+  ward: GeoWard
+  street: GeoStreet
+  point: GeoPoint
+  distance_m: Float
+}
+
+type GeoProvince {
+  code: String
+  name: String
+  name_full: String
+  name_en: String
+  type: String
+  region: String
+  slug: String
+  gid: String
+  area_km2: Float
+}
+
+type GeoDistrict {
+  code: String
+  province_code: String
+  name: String
+  name_full: String
+  name_en: String
+  type: String
+  slug: String
+  gid: String
+  area_km2: Float
+}
+
+type GeoWard {
+  code: String
+  district_code: String
+  province_code: String
+  name: String
+  name_full: String
+  name_en: String
+  type: String
+  slug: String
+  gid: String
+  area_km2: Float
+}
+
+type GeoStreet {
+  id: Int
+  province_code: String
+  district_code: String
+  name: String
+  name_full: String
+  name_en: String
+  slug: String
+  gid: String
+  length_m: Float
+  distance_m: Float
+}
+
+type GeoWhitelistResult {
+  whitelisted: Boolean
+  province: GeoProvince
+  district: GeoDistrict
+  ward: GeoWard
+  street: GeoStreet
+  point: GeoPoint
+}
+
+type GeoWhitelistCity {
+  province_code: String
+  note: String
+}
+
+type GeoPoint {
+  lng: Float
+  lat: Float
+}

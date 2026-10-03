@@ -1,0 +1,31 @@
+extend type Query {
+  """GET endpoints of integrated-payment-service"""
+  integratedPaymentService: IntPayQuery!
+}
+
+type IntPayQuery {
+  """
+  GET /api/v1/payments/{id}
+  """
+  payment(id: String!): IntPayPayment
+
+  """
+  GET /api/v1/payments/{id}/status
+  """
+  paymentStatus(id: String!): String
+}
+
+type IntPayPayment {
+  id: String
+  user_id: String
+  amount: Float
+  currency: String
+  payment_method: String
+  status: String
+  description: String
+  metadata: String
+  external_id: String
+  processor_response: String
+  created_at: String
+  updated_at: String
+}

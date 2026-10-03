@@ -1,0 +1,81 @@
+service: doordash-service
+source: doordash-service/internal/adapter/primary/http/routes.go
+namespace: doordashService
+prefix: Doordash
+baseURL: http://doordash-service-svc
+endpoints:
+  - field: orders
+    path: /api/v1/orders
+    query: { customer_id: String, restaurant_id: String }
+    returns: "[DoordashOrder!]"
+    doc: Pass customer_id or restaurant_id.
+  - field: order
+    path: /api/v1/orders/{id}
+    params: { id: Int! }
+    returns: DoordashOrder
+  - field: orderTracking
+    path: /api/v1/orders/{id}/tracking
+    params: { id: Int! }
+    returns: "[DoordashOrderTracking!]"
+  - field: driverAssignments
+    path: /api/v1/driver-assignments
+    query: { driver_id: String! }
+    returns: "[DoordashDriverAssignment!]"
+types: |
+  type DoordashOrder {
+    id: Int
+    customer_id: String
+    restaurant_id: String
+    driver_id: String
+    delivery_address_id: String
+    status: String
+    placed_at: String
+    estimated_delivery_time: String
+    actual_delivery_time: String
+    subtotal: Float
+    delivery_fee: Float
+    service_fee: Float
+    tax: Float
+    tip: Float
+    total_amount: Float
+    payment_method_id: String
+    payment_status: String
+    special_instructions: String
+    created_at: String
+    updated_at: String
+    items: [DoordashOrderItem!]
+  }
+
+  type DoordashOrderTracking {
+    id: Int
+    order_id: Int
+    status: String
+    latitude: Float
+    longitude: Float
+    timestamp: String
+    notes: String
+  }
+
+  type DoordashDriverAssignment {
+    id: Int
+    driver_id: String
+    order_id: Int
+    status: String
+    assigned_at: String
+    accepted_at: String
+    completed_at: String
+    rejection_reason: String
+  }
+
+  type DoordashOrderItem {
+    id: Int
+    order_id: Int
+    menu_item_id: String
+    name: String
+    quantity: Int
+    unit_price: Float
+    customizations: String
+    special_instructions: String
+    created_at: String
+  }
+

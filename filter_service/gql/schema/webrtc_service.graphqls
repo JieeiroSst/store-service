@@ -1,0 +1,47 @@
+extend type Query {
+  """GET endpoints of webrtc-service"""
+  webrtcService: WebrtcQuery!
+}
+
+type WebrtcQuery {
+  """
+  GET /api/ice-servers
+  
+  STUN servers and short-lived TURN credentials for the given user.
+  """
+  iceServers(user_id: String): WebrtcIceServers
+
+  """
+  GET /api/rooms/{room_id}
+  
+  Participants of a room and their media state.
+  """
+  room(room_id: String!): WebrtcRoomInfo
+}
+
+type WebrtcIceServers {
+  ice_servers: [WebrtcIceServer!]!
+}
+
+type WebrtcIceServer {
+  urls: [String!]!
+  username: String
+  credential: String
+}
+
+type WebrtcRoomInfo {
+  room_id: String!
+  capacity: Int!
+  participants: [WebrtcParticipant!]!
+}
+
+type WebrtcParticipant {
+  user_id: String!
+  media: WebrtcMediaState!
+}
+
+type WebrtcMediaState {
+  audio: Boolean!
+  video: Boolean!
+  screen: Boolean!
+}

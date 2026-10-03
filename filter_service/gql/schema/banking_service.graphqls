@@ -1,0 +1,155 @@
+extend type Query {
+  """GET endpoints of banking-service"""
+  bankingService: BankQuery!
+}
+
+type BankQuery {
+  """
+  GET /persons
+  """
+  persons: [BankPerson!]
+
+  """
+  GET /persons/{id}
+  """
+  person(id: Int!): BankPerson
+
+  """
+  GET /branches
+  """
+  branches: [BankBranch!]
+
+  """
+  GET /branches/{id}
+  """
+  branch(id: Int!): BankBranch
+
+  """
+  GET /customers
+  """
+  customers: [BankCustomer!]
+
+  """
+  GET /customers/{id}
+  """
+  customer(id: Int!): BankCustomer
+
+  """
+  GET /employees
+  """
+  employees: [BankEmployee!]
+
+  """
+  GET /employees/{id}
+  """
+  employee(id: Int!): BankEmployee
+
+  """
+  GET /accounts
+  """
+  accounts: [BankAccount!]
+
+  """
+  GET /accounts/{id}
+  """
+  account(id: Int!): BankAccount
+
+  """
+  GET /loans
+  """
+  loans: [BankLoan!]
+
+  """
+  GET /loans/{id}
+  """
+  loan(id: Int!): BankLoan
+
+  """
+  GET /loan-payments
+  """
+  loanPayments: [BankLoanPayment!]
+
+  """
+  GET /loan-payments/{id}
+  """
+  loanPayment(id: Int!): BankLoanPayment
+
+  """
+  GET /transactions
+  """
+  transactions: [BankTransaction!]
+
+  """
+  GET /transactions/{id}
+  """
+  transaction(id: Int!): BankTransaction
+}
+
+type BankPerson {
+  person_id: Int
+  last_name: String
+  first_name: String
+  date_of_birth: Int
+  email: String
+  phone_number: String
+  address: String
+  tax_identifier: String
+}
+
+type BankBranch {
+  branch_id: Int
+  branch_name: String
+  branch_code: String
+  address: String
+  phone_number: String
+}
+
+type BankCustomer {
+  customer_id: Int
+  customer_type: String
+}
+
+type BankEmployee {
+  employee_id: Int
+  position: String
+}
+
+type BankAccount {
+  account_id: Int
+  account_number: String
+  account_type: String
+  current_balance: Int
+  date_opened: Int
+  date_closed: Int
+  account_status: String
+}
+
+type BankLoan {
+  loan_id: Int
+  loan_type: String
+  loan_amount: Int
+  interes_rate: Int
+  term: Int
+  start_date: Int
+  end_date: Int
+  loan_status: String
+}
+
+type BankLoanPayment {
+  loan_payment_id: Int
+  scheduled_payment_date: Int
+  payment_account: Int
+  principal_amount: Int
+  interest_amount: Int
+  paid_amount: Int
+  paid_date: Int
+}
+
+type BankTransaction {
+  transaction_id: Int
+  account_id: Int
+  external_ref: String
+  transaction_type: String
+  amount: Int
+  transaction_date: Int
+}

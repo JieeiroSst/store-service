@@ -1,0 +1,85 @@
+extend type Query {
+  """GET endpoints of doordash-service"""
+  doordashService: DoordashQuery!
+}
+
+type DoordashQuery {
+  """
+  GET /api/v1/orders
+  
+  Pass customer_id or restaurant_id.
+  """
+  orders(customer_id: String, restaurant_id: String): [DoordashOrder!]
+
+  """
+  GET /api/v1/orders/{id}
+  """
+  order(id: Int!): DoordashOrder
+
+  """
+  GET /api/v1/orders/{id}/tracking
+  """
+  orderTracking(id: Int!): [DoordashOrderTracking!]
+
+  """
+  GET /api/v1/driver-assignments
+  """
+  driverAssignments(driver_id: String!): [DoordashDriverAssignment!]
+}
+
+type DoordashOrder {
+  id: Int
+  customer_id: String
+  restaurant_id: String
+  driver_id: String
+  delivery_address_id: String
+  status: String
+  placed_at: String
+  estimated_delivery_time: String
+  actual_delivery_time: String
+  subtotal: Float
+  delivery_fee: Float
+  service_fee: Float
+  tax: Float
+  tip: Float
+  total_amount: Float
+  payment_method_id: String
+  payment_status: String
+  special_instructions: String
+  created_at: String
+  updated_at: String
+  items: [DoordashOrderItem!]
+}
+
+type DoordashOrderTracking {
+  id: Int
+  order_id: Int
+  status: String
+  latitude: Float
+  longitude: Float
+  timestamp: String
+  notes: String
+}
+
+type DoordashDriverAssignment {
+  id: Int
+  driver_id: String
+  order_id: Int
+  status: String
+  assigned_at: String
+  accepted_at: String
+  completed_at: String
+  rejection_reason: String
+}
+
+type DoordashOrderItem {
+  id: Int
+  order_id: Int
+  menu_item_id: String
+  name: String
+  quantity: Int
+  unit_price: Float
+  customizations: String
+  special_instructions: String
+  created_at: String
+}

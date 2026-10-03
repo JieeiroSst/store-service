@@ -1,0 +1,383 @@
+extend type Query {
+  """GET endpoints of customer-relationship-service"""
+  customerRelationshipService: CrmQuery!
+}
+
+type CrmQuery {
+  """
+  GET /api/v1/campaigns
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  campaigns(offset: Int, limit: Int, q: String): [CrmCampaign!]
+
+  """
+  GET /api/v1/campaigns/{id}
+  """
+  campaign(id: Int!): CrmCampaign
+
+  """
+  GET /api/v1/leads
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  leads(offset: Int, limit: Int, q: String, status: String, source: String): [CrmLead!]
+
+  """
+  GET /api/v1/leads/{id}
+  """
+  lead(id: Int!): CrmLead
+
+  """
+  GET /api/v1/accounts
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  accounts(offset: Int, limit: Int, q: String): [CrmAccount!]
+
+  """
+  GET /api/v1/accounts/{id}
+  """
+  account(id: Int!): CrmAccount
+
+  """
+  GET /api/v1/contacts
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  contacts(offset: Int, limit: Int, q: String, account_id: String): [CrmContact!]
+
+  """
+  GET /api/v1/contacts/{id}
+  """
+  contact(id: Int!): CrmContact
+
+  """
+  GET /api/v1/campaign-members
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  campaignMembers(offset: Int, limit: Int, q: String, campaign_id: String, lead_id: String, contact_id: String): [CrmCampaignMember!]
+
+  """
+  GET /api/v1/campaign-members/{id}
+  """
+  campaignMember(id: Int!): CrmCampaignMember
+
+  """
+  GET /api/v1/cases
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  cases(offset: Int, limit: Int, q: String, contact_id: String, status: String, priority: String): [CrmCase!]
+
+  """
+  GET /api/v1/cases/{id}
+  """
+  case(id: Int!): CrmCase
+
+  """
+  GET /api/v1/contracts
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  contracts(offset: Int, limit: Int, q: String, account_id: String, contract_status: String): [CrmContract!]
+
+  """
+  GET /api/v1/contracts/{id}
+  """
+  contract(id: Int!): CrmContract
+
+  """
+  GET /api/v1/account-contact-roles
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  accountContactRoles(offset: Int, limit: Int, q: String, contact_id: String, account_id: String): [CrmAccountContactRole!]
+
+  """
+  GET /api/v1/account-contact-roles/{id}
+  """
+  accountContactRole(id: Int!): CrmAccountContactRole
+
+  """
+  GET /api/v1/opportunities
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  opportunities(offset: Int, limit: Int, q: String, account_id: String, opportunity_stage: String): [CrmOpportunity!]
+
+  """
+  GET /api/v1/opportunities/{id}
+  """
+  opportunity(id: Int!): CrmOpportunity
+
+  """
+  GET /api/v1/opportunity-contact-roles
+  
+  limit 1-200 (default 50); the total is in the X-Total-Count header.
+  """
+  opportunityContactRoles(offset: Int, limit: Int, q: String, contact_id: String, opportunity_id: String): [CrmOpportunityContactRole!]
+
+  """
+  GET /api/v1/opportunity-contact-roles/{id}
+  """
+  opportunityContactRole(id: Int!): CrmOpportunityContactRole
+
+  """
+  GET /api/v1/contract-file-kinds
+  """
+  contractFileKinds: [CrmFileKind!]
+
+  """
+  GET /api/v1/contracts/{id}/files
+  """
+  contractFiles(id: Int!, kind: String, all_versions: Boolean, offset: Int, limit: Int): [CrmContractFile!]
+
+  """
+  GET /api/v1/contracts/{id}/files/{file_id}
+  """
+  contractFile(id: Int!, file_id: Int!): CrmContractFile
+
+  """
+  GET /api/v1/contracts/{id}/files/{file_id}/history
+  """
+  contractFileHistory(id: Int!, file_id: Int!): CrmFileHistory
+
+  """
+  GET /api/v1/contracts/{id}/file-events
+  """
+  contractFileEvents(id: Int!, action: String, file_id: Int, offset: Int, limit: Int): [CrmContractFileEvent!]
+
+  """
+  GET /api/v1/contracts/{id}/signing-payload
+  
+  Dates are RFC3339.
+  """
+  contractSigningPayload(id: Int!, signed_by: String!, end_date: String!, signing_time: String): CrmSigningPayload
+
+  """
+  GET /api/v1/accounts/{id}/overview
+  """
+  accountOverview(id: Int!): CrmAccountOverview
+
+  """
+  GET /api/v1/reports/summary
+  """
+  reportSummary: CrmSummary
+}
+
+type CrmSigningPayload {
+  payload: String
+  sha256: String
+  signing_time: String
+}
+
+type CrmCampaign {
+  id: Int
+  created_at: String
+  updated_at: String
+  campaign_name: String
+  campaign_objectives: String
+  campaign_sponsor: String
+  campaign_start_date: String
+  campaign_end_date: String
+  campaign_other_details: String
+}
+
+type CrmLead {
+  id: Int
+  created_at: String
+  updated_at: String
+  lead_firstname: String
+  lead_surname: String
+  email: String
+  phone: String
+  source: String
+  lead_other_details: String
+  status: String
+  converted_account_id: Int
+  converted_contact_id: Int
+}
+
+type CrmAccount {
+  id: Int
+  created_at: String
+  updated_at: String
+  account_name: String
+  account_description: String
+  account_phone: String
+  billing_address: String
+  email: String
+  tax_code: String
+  representative: String
+  representative_title: String
+}
+
+type CrmContact {
+  id: Int
+  created_at: String
+  updated_at: String
+  account_id: Int
+  name: String
+  email: String
+  phone: String
+  contact_address: String
+  contact_contact_details: String
+}
+
+type CrmCampaignMember {
+  id: Int
+  created_at: String
+  updated_at: String
+  campaign_id: Int
+  lead_id: Int
+  contact_id: Int
+}
+
+type CrmCase {
+  id: Int
+  created_at: String
+  updated_at: String
+  contact_id: Int
+  subject: String
+  description: String
+  priority: String
+  status: String
+  closed_at: String
+}
+
+type CrmContract {
+  id: Int
+  created_at: String
+  updated_at: String
+  account_id: Int
+  contract_number: String
+  contract_title: String
+  end_date: String
+  contract_status: String
+  contract_approval: String
+  signed_by: String
+  signed_at: String
+  signature_algorithm: String
+  signature: String
+  signer_certificate: String
+  signer_subject: String
+  signer_serial: String
+  signer_fingerprint: String
+  signature_payload_hash: String
+  signature_format: String
+  revocation_status: String
+  countersigner_subject: String
+  countersigner_serial: String
+  countersigner_fingerprint: String
+  countersigned_at: String
+  timestamp_token: String
+  timestamp_at: String
+  timestamp_authority: String
+}
+
+type CrmAccountContactRole {
+  id: Int
+  created_at: String
+  updated_at: String
+  contact_id: Int
+  account_id: Int
+}
+
+type CrmOpportunity {
+  id: Int
+  created_at: String
+  updated_at: String
+  account_id: Int
+  opportunity_description: String
+  opportunity_details: String
+  amount: Float
+  close_date: String
+  opportunity_stage: String
+}
+
+type CrmOpportunityContactRole {
+  id: Int
+  created_at: String
+  updated_at: String
+  contact_id: Int
+  opportunity_id: Int
+  date_time: String
+  other_details: String
+}
+
+type CrmFileKind {
+  kind: String
+  label: String
+  formats: [String!]
+  system: Boolean
+}
+
+type CrmContractFile {
+  id: Int
+  created_at: String
+  updated_at: String
+  deleted_at: String
+  contract_id: Int
+  kind: String
+  name: String
+  content_type: String
+  format: String
+  size: Int
+  sha256: String
+  description: String
+  uploaded_by: String
+  uploader_id: String
+  source: String
+  lineage_id: Int
+  version: Int
+  latest: Boolean
+  replaces_id: Int
+  scan_status: String
+  scan_engine: String
+  scanned_at: String
+}
+
+type CrmFileHistory {
+  versions: [CrmContractFile!]
+  events: [CrmContractFileEvent!]
+}
+
+type CrmContractFileEvent {
+  id: Int
+  at: String
+  contract_id: Int
+  file_id: Int
+  lineage_id: Int
+  version: Int
+  file_name: String
+  kind: String
+  action: String
+  actor_id: String
+  actor_name: String
+  actor_roles: String
+  actor_service: Boolean
+  ip: String
+  detail: String
+}
+
+type CrmAccountOverview {
+  account: CrmAccount
+  contacts: [CrmContact!]
+  contracts: [CrmContract!]
+  opportunities: [CrmOpportunity!]
+}
+
+type CrmSummary {
+  counts: Map
+  leads_by_status: Map
+  open_cases: Int
+  pipeline: [CrmStageSummary!]
+}
+
+type CrmStageSummary {
+  stage: String
+  count: Int
+  amount: Float
+}

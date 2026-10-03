@@ -1,0 +1,357 @@
+extend type Query {
+  """GET endpoints of hospital-patient-management-service"""
+  hospitalPatientManagementService: HospitalQuery!
+}
+
+type HospitalQuery {
+  """
+  GET /v1/departments/{department_id}
+  
+  gRPC HospotalService.GetDepartment
+  """
+  getDepartment(department_id: Int!, name: String, description: String, created_at: String, updated_at: String): HospitalDepartment
+
+  """
+  GET /v1/departments
+  
+  gRPC HospotalService.ListDepartments
+  """
+  listDepartments(page_size: Int, page_number: Int): HospitalListDepartmentsResponse
+
+  """
+  GET /v1/staff/{staff_id}
+  
+  gRPC HospotalService.GetStaff
+  """
+  getStaff(staff_id: Int!, department_id: Int, first_name: String, last_name: String, role: String, specialization: String, email: String, phone: String, hire_date: String, license_number: String, created_at: String, updated_at: String): HospitalStaff
+
+  """
+  GET /v1/staff
+  
+  gRPC HospotalService.ListStaff
+  """
+  listStaff(page_size: Int, page_number: Int, department_id: Int): HospitalListStaffResponse
+
+  """
+  GET /v1/patients/{patient_id}
+  
+  gRPC HospotalService.GetPatient
+  """
+  getPatient(patient_id: Int!, first_name: String, last_name: String, date_of_birth: String, gender: String, blood_type: String, address: String, phone: String, email: String, emergency_contact_name: String, emergency_contact_phone: String, insurance_provider: String, insurance_policy_number: String, created_at: String, updated_at: String): HospitalPatient
+
+  """
+  GET /v1/patients
+  
+  gRPC HospotalService.ListPatients
+  """
+  listPatients(page_size: Int, page_number: Int, search_term: String): HospitalListPatientsResponse
+
+  """
+  GET /v1/medical-records/{record_id}
+  
+  gRPC HospotalService.GetMedicalRecord
+  """
+  getMedicalRecord(record_id: Int!, patient_id: Int, diagnosis: String, treatment_plan: String, notes: String, created_by: Int, created_at: String, updated_at: String): HospitalMedicalRecord
+
+  """
+  GET /v1/patients/{patient_id}/medical-records
+  
+  gRPC HospotalService.ListMedicalRecords
+  """
+  listMedicalRecords(patient_id: Int!, page_size: Int, page_number: Int): HospitalListMedicalRecordsResponse
+
+  """
+  GET /v1/appointments/{appointment_id}
+  
+  gRPC AppointmentService.GetAppointment
+  """
+  getAppointment(appointment_id: Int!, patient_id: Int, staff_id: Int, department_id: Int, appointment_date: String, status: String, reason: String, notes: String, created_at: String, updated_at: String): HospitalAppointment
+
+  """
+  GET /v1/appointments
+  
+  gRPC AppointmentService.ListAppointments
+  """
+  listAppointments(page_size: Int, page_number: Int, patient_id: Int, staff_id: Int, date_from: String, date_to: String, status: String): HospitalListAppointmentsResponse
+
+  """
+  GET /v1/prescriptions/{prescription_id}
+  
+  gRPC AppointmentService.GetPrescription
+  """
+  getPrescription(prescription_id: Int!, patient_id: Int, prescribed_by: Int, medication_name: String, dosage: String, frequency: String, start_date: String, end_date: String, instructions: String, created_at: String, updated_at: String): HospitalPrescription
+
+  """
+  GET /v1/patients/{patient_id}/prescriptions
+  
+  gRPC AppointmentService.ListPrescriptions
+  """
+  listPrescriptions(patient_id: Int!, page_size: Int, page_number: Int): HospitalListPrescriptionsResponse
+
+  """
+  GET /v1/lab-results/{result_id}
+  
+  gRPC AppointmentService.GetLabResult
+  """
+  getLabResult(result_id: Int!, patient_id: Int, ordered_by: Int, test_name: String, test_date: String, results: String, normal_range: String, notes: String, created_at: String, updated_at: String): HospitalLabResult
+
+  """
+  GET /v1/patients/{patient_id}/lab-results
+  
+  gRPC AppointmentService.ListLabResults
+  """
+  listLabResults(patient_id: Int!, page_size: Int, page_number: Int): HospitalListLabResultsResponse
+
+  """
+  GET /v1/billings/{bill_id}
+  
+  gRPC AppointmentService.GetBilling
+  """
+  getBilling(bill_id: Int!, patient_id: Int, appointment_id: Int, amount: Float, insurance_covered: Float, patient_responsibility: Float, status: String, due_date: String, paid_date: String, created_at: String, updated_at: String): HospitalBilling
+
+  """
+  GET /v1/patients/{patient_id}/billings
+  
+  gRPC AppointmentService.ListBillings
+  """
+  listBillings(patient_id: Int!, page_size: Int, page_number: Int, status: String): HospitalListBillingsResponse
+
+  """
+  GET /v1/analytics/departments
+  
+  gRPC AppointmentService.GetDepartmentStats
+  """
+  getDepartmentStats: HospitalDepartmentStatsResponse
+
+  """
+  GET /v1/analytics/appointments
+  
+  gRPC AppointmentService.GetAppointmentStats
+  """
+  getAppointmentStats(date_from: String, date_to: String, department_id: Int): HospitalAppointmentStatsResponse
+
+  """
+  GET /v1/analytics/billings
+  
+  gRPC AppointmentService.GetBillingStats
+  """
+  getBillingStats(date_from: String, date_to: String): HospitalBillingStatsResponse
+
+  """
+  GET /v1/patients/{id}/documents
+  """
+  patientDocuments(id: Int!, limit: Int, offset: Int): HospitalDocumentList
+
+  """
+  GET /v1/patients/{id}/identity
+  """
+  patientIdentity(id: Int!): HospitalIdentityStatus
+}
+
+type HospitalDepartment {
+  departmentId: Int
+  name: String
+  description: String
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListDepartmentsResponse {
+  departments: [HospitalDepartment!]
+  totalCount: Int
+}
+
+type HospitalStaff {
+  staffId: Int
+  departmentId: Int
+  firstName: String
+  lastName: String
+  role: String
+  specialization: String
+  email: String
+  phone: String
+  hireDate: String
+  licenseNumber: String
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListStaffResponse {
+  staff: [HospitalStaff!]
+  totalCount: Int
+}
+
+type HospitalPatient {
+  patientId: Int
+  firstName: String
+  lastName: String
+  dateOfBirth: String
+  gender: String
+  bloodType: String
+  address: String
+  phone: String
+  email: String
+  emergencyContactName: String
+  emergencyContactPhone: String
+  insuranceProvider: String
+  insurancePolicyNumber: String
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListPatientsResponse {
+  patients: [HospitalPatient!]
+  totalCount: Int
+}
+
+type HospitalMedicalRecord {
+  recordId: Int
+  patientId: Int
+  diagnosis: String
+  treatmentPlan: String
+  notes: String
+  createdBy: Int
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListMedicalRecordsResponse {
+  records: [HospitalMedicalRecord!]
+  totalCount: Int
+}
+
+type HospitalAppointment {
+  appointmentId: Int
+  patientId: Int
+  staffId: Int
+  departmentId: Int
+  appointmentDate: String
+  status: String
+  reason: String
+  notes: String
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListAppointmentsResponse {
+  appointments: [HospitalAppointment!]
+  totalCount: Int
+}
+
+type HospitalPrescription {
+  prescriptionId: Int
+  patientId: Int
+  prescribedBy: Int
+  medicationName: String
+  dosage: String
+  frequency: String
+  startDate: String
+  endDate: String
+  instructions: String
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListPrescriptionsResponse {
+  prescriptions: [HospitalPrescription!]
+  totalCount: Int
+}
+
+type HospitalLabResult {
+  resultId: Int
+  patientId: Int
+  orderedBy: Int
+  testName: String
+  testDate: String
+  results: String
+  normalRange: String
+  notes: String
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListLabResultsResponse {
+  labResults: [HospitalLabResult!]
+  totalCount: Int
+}
+
+type HospitalBilling {
+  billId: Int
+  patientId: Int
+  appointmentId: Int
+  amount: Float
+  insuranceCovered: Float
+  patientResponsibility: Float
+  status: String
+  dueDate: String
+  paidDate: String
+  createdAt: String
+  updatedAt: String
+}
+
+type HospitalListBillingsResponse {
+  billings: [HospitalBilling!]
+  totalCount: Int
+}
+
+type HospitalDepartmentStatsResponse {
+  departmentStats: [HospitalDepartmentStatsResponseDepartmentStat!]
+}
+
+type HospitalDepartmentStatsResponseDepartmentStat {
+  departmentId: Int
+  departmentName: String
+  staffCount: Int
+  appointmentCount: Int
+}
+
+type HospitalAppointmentStatsResponse {
+  totalAppointments: Int
+  completedAppointments: Int
+  cancelledAppointments: Int
+  noShowAppointments: Int
+  dailyStats: [HospitalAppointmentStatsResponseDailyStats!]
+}
+
+type HospitalAppointmentStatsResponseDailyStats {
+  date: String
+  appointmentCount: Int
+}
+
+type HospitalBillingStatsResponse {
+  totalBilled: Float
+  totalCollected: Float
+  totalOutstanding: Float
+  totalInsuranceCovered: Float
+  totalPatientResponsibility: Float
+  monthlyStats: [HospitalBillingStatsResponseMonthlyStats!]
+}
+
+type HospitalBillingStatsResponseMonthlyStats {
+  month: String
+  amountBilled: Float
+  amountCollected: Float
+}
+
+type HospitalDocument {
+  id: String
+  patient_id: Int
+  file_name: String
+  content_type: String
+  size: Int
+  created_at: String
+}
+
+type HospitalDocumentList {
+  documents: [HospitalDocument!]
+  total_count: Int
+}
+
+type HospitalIdentityStatus {
+  patient_id: Int
+  status: String
+  match_score: Float
+  verified_at: String
+  has_citizen_card: Boolean
+  has_face_scan: Boolean
+}

@@ -1,0 +1,202 @@
+service: vending-machine-service
+source: vending-machine-service/internal/adapter/primary/http/router.go
+namespace: vendingMachineService
+prefix: Vend
+baseURL: http://vending-machine-service-svc
+endpoints:
+  - field: machines
+    path: /api/v1/machines
+    query: { status: String, cursor: String, limit: Int }
+    returns: VendMachinePage
+  - field: machine
+    path: /api/v1/machines/{id}
+    returns: VendMachine
+  - field: maintenance
+    path: /api/v1/machines/{id}/maintenance
+    returns: "[VendMaintenance!]"
+  - field: events
+    path: /api/v1/machines/{id}/events
+    query: { limit: Int }
+    returns: "[VendEvent!]"
+  - field: salesReport
+    path: /api/v1/machines/{id}/sales
+    query: { from: String, to: String }
+    returns: VendSalesReport
+  - field: inventory
+    path: /api/v1/machines/{id}/inventory
+    query: { cursor: String, limit: Int }
+    returns: VendInventoryPage
+  - field: lowInventory
+    path: /api/v1/inventory/low
+    query: { machine_id: String, cursor: String, limit: Int }
+    returns: VendInventoryPage
+  - field: categories
+    path: /api/v1/categories
+    query: { cursor: String, limit: Int }
+    returns: VendCategoryPage
+  - field: products
+    path: /api/v1/products
+    query: { category_id: String, cursor: String, limit: Int }
+    returns: VendProductPage
+  - field: product
+    path: /api/v1/products/{id}
+    returns: VendProduct
+  - field: session
+    path: /api/v1/sessions/{id}
+    returns: VendSession
+  - field: sessionOrders
+    path: /api/v1/sessions/{id}/orders
+    returns: "[VendOrder!]"
+  - field: payment
+    path: /api/v1/payments/{id}
+    returns: VendPaymentStatus
+  - field: order
+    path: /api/v1/orders/{id}
+    returns: VendOrder
+types: |
+  type VendMachinePage {
+    items: [VendMachine!]
+    next_cursor: String
+    is_last_page: Boolean
+    limit: Int
+  }
+
+  type VendInventoryPage {
+    items: [VendInventory!]
+    next_cursor: String
+    is_last_page: Boolean
+    limit: Int
+  }
+
+  type VendCategoryPage {
+    items: [VendCategory!]
+    next_cursor: String
+    is_last_page: Boolean
+    limit: Int
+  }
+
+  type VendProductPage {
+    items: [VendProduct!]
+    next_cursor: String
+    is_last_page: Boolean
+    limit: Int
+  }
+
+  type VendMachine {
+    id: String
+    location: String
+    model: String
+    status: String
+    last_maintenance_at: String
+    created_at: String
+    updated_at: String
+  }
+
+  type VendMaintenance {
+    id: String
+    machine_id: String
+    technician_id: String
+    maintenance_type: String
+    notes: String
+    performed_at: String
+  }
+
+  type VendEvent {
+    id: String
+    event_type: String
+    related_entity: String
+    entity_id: String
+    machine_id: String
+    data: Map
+    occurred_at: String
+  }
+
+  type VendSalesReport {
+    machine_id: String
+    from: String
+    to: String
+    orders: Int
+    revenue_cents: Int
+    discount_cents: Int
+    products: [VendProductSales!]
+  }
+
+  type VendInventory {
+    id: String
+    machine_id: String
+    slot: String
+    product_id: String
+    product: VendProduct
+    quantity: Int
+    max_capacity: Int
+    low_threshold: Int
+    is_low: Boolean
+    last_restocked_at: String
+    updated_at: String
+  }
+
+  type VendCategory {
+    id: String
+    name: String
+    description: String
+    display_order: Int
+    created_at: String
+  }
+
+  type VendProduct {
+    id: String
+    name: String
+    description: String
+    price_cents: Int
+    category_id: String
+    image_url: String
+    barcode: String
+    is_active: Boolean
+    attributes: Map
+    created_at: String
+  }
+
+  type VendSession {
+    id: String
+    machine_id: String
+    status: String
+    started_at: String
+    expires_at: String
+  }
+
+  type VendOrder {
+    id: String
+    order_no: Int
+    session_id: String
+    reservation_id: String
+    payment_id: String
+    status: String
+    fulfilled_at: String
+    created_at: String
+  }
+
+  type VendPaymentStatus {
+    payment: VendPayment
+    order: VendOrder
+  }
+
+  type VendProductSales {
+    product_id: String
+    product_name: String
+    units: Int
+    revenue_cents: Int
+    discount_cents: Int
+  }
+
+  type VendPayment {
+    id: String
+    amount_cents: Int
+    discount_cents: Int
+    coupon_code: String
+    currency: String
+    payment_method: String
+    status: String
+    transaction_id: String
+    completed_at: String
+  }
+

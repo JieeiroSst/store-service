@@ -1,0 +1,53 @@
+extend type Query {
+  """GET endpoints of ai-agent-system"""
+  aiAgentSystem: AiAgentQuery!
+}
+
+type AiAgentQuery {
+  """
+  GET /v1/chat/history
+  
+  Most recent question/answer turns of the user, newest first (limit 1-200, default 50).
+  """
+  chatHistory(limit: Int, xUserId: String!): AiAgentHistory
+
+  """
+  GET /api/tags
+  
+  Ollama-compatible model list served by the agent.
+  """
+  tags: AiAgentTags
+}
+
+type AiAgentHistory {
+  messages: [AiAgentHistoryMessage!]
+}
+
+type AiAgentHistoryMessage {
+  role: String
+  content: String
+  source: String
+  created_at: String
+}
+
+type AiAgentTags {
+  models: [AiAgentTagsModel!]
+}
+
+type AiAgentTagsModel {
+  name: String
+  model: String
+  modified_at: String
+  size: Int
+  digest: String
+  details: AiAgentModelDetails
+}
+
+type AiAgentModelDetails {
+  parent_model: String
+  format: String
+  family: String
+  families: [String!]
+  parameter_size: String
+  quantization_level: String
+}

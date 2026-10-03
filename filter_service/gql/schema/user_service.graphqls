@@ -1,0 +1,66 @@
+extend type Query {
+  """GET endpoints of user_service"""
+  userService: UserQuery!
+}
+
+type UserQuery {
+  """
+  GET /user
+  
+  gRPC UserService.FindUser
+  """
+  findUser(username: String, email: String, page: Int, limit: Int): UserFindUserResponse
+
+  """
+  GET /api/v1/role/{id}
+  
+  gRPC UserService.GetRole
+  """
+  getRole(id: Int!): UserGetRoleResponse
+
+  """
+  GET /api/v1/role
+  
+  gRPC UserService.ListRoles
+  """
+  listRoles(limit: Int, page: Int): UserListRolesResponse
+}
+
+type UserFindUserResponse {
+  users: [UserUser!]
+  total: Int
+}
+
+type UserUser {
+  id: Int
+  username: String
+  email: String
+  name: String
+  phone: String
+  address: String
+  sex: String
+  checked: Boolean
+  createTime: String
+  updateTime: String
+  roles: [UserRole!]
+}
+
+type UserRole {
+  id: Int
+  name: String
+  users: [UserUser!]
+}
+
+type UserGetRoleResponse {
+  role: UserRole
+  message: String
+}
+
+type UserListRolesResponse {
+  limit: Int
+  page: Int
+  sort: String
+  totalRows: String
+  totalPages: Int
+  roles: [UserRole!]
+}

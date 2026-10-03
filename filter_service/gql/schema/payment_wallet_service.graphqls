@@ -1,0 +1,141 @@
+extend type Query {
+  """GET endpoints of payment-wallet-service"""
+  paymentWalletService: WalletQuery!
+}
+
+type WalletQuery {
+  """
+  GET /api/v1/wallets/{id}
+  """
+  wallet(id: String!): WalletWallet
+
+  """
+  GET /api/v1/wallets/user/{userId}
+  """
+  walletByUser(userId: String!): WalletWallet
+
+  """
+  GET /api/v1/wallets/{id}/transactions
+  """
+  transactions(id: String!, limit: Int, offset: Int): [WalletTransaction!]
+
+  """
+  GET /api/v1/wallets/{id}/transactions/by-reference/{referenceId}
+  """
+  transactionByReference(id: String!, referenceId: String!): WalletTransaction
+
+  """
+  GET /api/v1/wallets/{id}/pockets
+  """
+  pockets(id: String!): [WalletPocket!]
+
+  """
+  GET /api/v1/transfers/{id}
+  """
+  transfer(id: String!): WalletTransfer
+
+  """
+  GET /api/v1/transactions/{id}
+  """
+  transaction(id: String!): WalletTransaction
+
+  """
+  GET /api/v1/payment-requests
+  """
+  paymentRequests(wallet_id: String!): [WalletPaymentRequest!]
+
+  """
+  GET /api/v1/payment-requests/{id}
+  """
+  paymentRequest(id: String!): WalletPaymentRequest
+
+  """
+  GET /api/v1/payment-requests/{id}/qr
+  """
+  paymentRequestQR(id: String!): WalletPaymentRequestQR
+
+  """
+  GET /api/v1/payment-methods
+  """
+  paymentMethods(user_id: String!): [WalletPaymentMethod!]
+}
+
+type WalletPaymentRequestQR {
+  payment_request_id: String
+  payload: String
+}
+
+type WalletWallet {
+  wallet_id: String
+  user_id: String
+  balance: Int
+  currency: String
+  status: String
+  daily_limit: Int
+  per_transaction_limit: Int
+  frozen_reason: String
+  created_at: String
+  updated_at: String
+}
+
+type WalletTransaction {
+  transaction_id: String
+  wallet_id: String
+  type: String
+  amount: Int
+  currency: String
+  status: String
+  reference_id: String
+  counterparty_wallet_id: String
+  pocket_id: String
+  description: String
+  created_at: String
+}
+
+type WalletPocket {
+  pocket_id: String
+  wallet_id: String
+  name: String
+  balance: Int
+  currency: String
+  created_at: String
+  updated_at: String
+}
+
+type WalletTransfer {
+  transfer_id: String
+  sender_wallet_id: String
+  receiver_wallet_id: String
+  amount: Int
+  currency: String
+  status: String
+  reference_id: String
+  out_transaction_id: String
+  in_transaction_id: String
+  description: String
+  created_at: String
+}
+
+type WalletPaymentRequest {
+  payment_request_id: String
+  requester_wallet_id: String
+  payer_wallet_id: String
+  amount: Int
+  currency: String
+  status: String
+  description: String
+  transfer_id: String
+  expires_at: String
+  created_at: String
+}
+
+type WalletPaymentMethod {
+  payment_method_id: String
+  user_id: String
+  type: String
+  provider: String
+  account_number: String
+  is_default: Boolean
+  is_active: Boolean
+  created_at: String
+}

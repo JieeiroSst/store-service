@@ -16,10 +16,15 @@ func InitConvertedRewardPointRouter(router *gin.Engine, dsn string) {
 		convertedRewardPointService: service.InitConvertedRewardPointServiceImpl(dsn),
 	}
 
-	router.GET("/", convertedRewardPointContrller.GetConvertedRewardPointHandler)
-	router.GET("/:id", convertedRewardPointContrller.GetConvertedRewardPointByIdHandler)
-	router.POST("/", convertedRewardPointContrller.CreateConvertedRewardPointHandler)
-	router.PUT("/", convertedRewardPointContrller.UpdateConvertedRewardPointHandler)
+	registerConvertedRewardPointRoutes(router, &convertedRewardPointContrller)
+}
+
+func registerConvertedRewardPointRoutes(router gin.IRouter, convertedRewardPointContrller *ConvertedRewardPointContrller) {
+	group := router.Group("/api/v1/converted-reward-points")
+	group.GET("", convertedRewardPointContrller.GetConvertedRewardPointHandler)
+	group.GET("/:id", convertedRewardPointContrller.GetConvertedRewardPointByIdHandler)
+	group.POST("", convertedRewardPointContrller.CreateConvertedRewardPointHandler)
+	group.PUT("", convertedRewardPointContrller.UpdateConvertedRewardPointHandler)
 }
 
 func (r *ConvertedRewardPointContrller) GetConvertedRewardPointHandler(c *gin.Context) {

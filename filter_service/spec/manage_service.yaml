@@ -1,0 +1,1096 @@
+service: manage_service
+source: manage_service/internal/adapter/primary/http (chi routes over gocloak)
+namespace: manageService
+prefix: Kc
+baseURL: http://manage-service-svc
+forwardHeaders: [X-Api-Key]
+endpoints:
+  - field: tokenUser
+    path: /token-user
+    query: { realm: String }
+    returns: KcTokenInfo
+    doc: Token info of the caller.
+  - field: issuer
+    path: /api/v1/realms/{realm}/issuer
+    returns: KcIssuerResponse
+    doc: "Keycloak GetIssuer. Public."
+  - field: certs
+    path: /api/v1/realms/{realm}/protocol/certs
+    returns: KcCertResponse
+    doc: "Keycloak GetCerts. Public."
+  - field: rawUserInfo
+    path: /api/v1/realms/{realm}/protocol/userinfo
+    returns: Map
+    doc: "Keycloak GetRawUserInfo. Needs the caller bearer token."
+  - field: decodeAccessToken
+    path: /api/v1/realms/{realm}/protocol/decode
+    returns: Map
+    doc: "Keycloak DecodeAccessToken. Needs the caller bearer token."
+  - field: userPermissions
+    path: /api/v1/realms/{realm}/authz/uma-permissions
+    returns: "[KcPermissionGrantResponseRepresentation!]"
+    doc: "Keycloak GetUserPermissions. Needs the caller bearer token."
+  - field: resourcesClient
+    path: /api/v1/realms/{realm}/authz/resources
+    query: { "deep": String, "first": String, "max": String, "name": String, "owner": String, "type": String, "uri": String, "scope": String, "matchingUri": String, "exactName": String }
+    returns: "[KcResourceRepresentation!]"
+    doc: "Keycloak GetResourcesClient. Needs the caller bearer token."
+  - field: resourceClient
+    path: /api/v1/realms/{realm}/authz/resources/{resourceID}
+    returns: KcResourceRepresentation
+    doc: "Keycloak GetResourceClient. Needs the caller bearer token."
+  - field: resourcePolicies
+    path: /api/v1/realms/{realm}/authz/resource-policies
+    query: { "resource": String, "name": String, "scope": String, "first": String, "max": String }
+    returns: "[KcResourcePolicyRepresentation!]"
+    doc: "Keycloak GetResourcePolicies. Needs the caller bearer token."
+  - field: resourcePolicy
+    path: /api/v1/realms/{realm}/authz/resource-policies/{permissionID}
+    returns: KcResourcePolicyRepresentation
+    doc: "Keycloak GetResourcePolicy. Needs the caller bearer token."
+  - field: serverInfo
+    path: /api/v1/admin/server-info
+    returns: KcServerInfoRepresentation
+    doc: "Keycloak GetServerInfo. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: realms
+    path: /api/v1/admin/realms
+    returns: "[KcRealmRepresentation!]"
+    doc: "Keycloak GetRealms. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: realm
+    path: /api/v1/admin/realms/{realm}
+    returns: KcRealmRepresentation
+    doc: "Keycloak GetRealm. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: keyStoreConfig
+    path: /api/v1/admin/realms/{realm}/keys
+    returns: KcKeyStoreConfig
+    doc: "Keycloak GetKeyStoreConfig. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: events
+    path: /api/v1/admin/realms/{realm}/events
+    query: { "client": String, "dateFrom": String, "dateTo": String, "first": String, "ipAddress": String, "max": String, "user": String }
+    returns: "[KcEventRepresentation!]"
+    doc: "Keycloak GetEvents. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: credentialRegistrators
+    path: /api/v1/admin/realms/{realm}/credential-registrators
+    returns: "[String!]"
+    doc: "Keycloak GetCredentialRegistrators. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: users
+    path: /api/v1/admin/realms/{realm}/users
+    query: { "briefRepresentation": String, "email": String, "emailVerified": String, "enabled": String, "exact": String, "first": String, "firstName": String, "idpAlias": String, "idpUserId": String, "lastName": String, "max": String, "q": String, "search": String, "username": String }
+    returns: "[KcUser!]"
+    doc: "Keycloak GetUsers. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: userCount
+    path: /api/v1/admin/realms/{realm}/users/count
+    query: { "briefRepresentation": String, "email": String, "emailVerified": String, "enabled": String, "exact": String, "first": String, "firstName": String, "idpAlias": String, "idpUserId": String, "lastName": String, "max": String, "q": String, "search": String, "username": String }
+    returns: Int
+    doc: "Keycloak GetUserCount. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: userByID
+    path: /api/v1/admin/realms/{realm}/users/{userID}
+    returns: KcUser
+    doc: "Keycloak GetUserByID. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: userBruteForceDetectionStatus
+    path: /api/v1/admin/realms/{realm}/users/{userID}/brute-force
+    returns: KcBruteForceStatus
+    doc: "Keycloak GetUserBruteForceDetectionStatus. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: userSessions
+    path: /api/v1/admin/realms/{realm}/users/{userID}/sessions
+    returns: "[KcUserSessionRepresentation!]"
+    doc: "Keycloak GetUserSessions. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: userOfflineSessionsForClient
+    path: /api/v1/admin/realms/{realm}/users/{userID}/offline-sessions/{clientID}
+    returns: "[KcUserSessionRepresentation!]"
+    doc: "Keycloak GetUserOfflineSessionsForClient. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: userGroups
+    path: /api/v1/admin/realms/{realm}/users/{userID}/groups
+    query: { "briefRepresentation": String, "exact": String, "first": String, "full": String, "max": String, "q": String, "search": String }
+    returns: "[KcGroup!]"
+    doc: "Keycloak GetUserGroups. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: credentials
+    path: /api/v1/admin/realms/{realm}/users/{userID}/credentials
+    returns: "[KcCredentialRepresentation!]"
+    doc: "Keycloak GetCredentials. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: configuredUserStorageCredentialTypes
+    path: /api/v1/admin/realms/{realm}/users/{userID}/configured-user-storage-credential-types
+    returns: "[String!]"
+    doc: "Keycloak GetConfiguredUserStorageCredentialTypes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: userFederatedIdentities
+    path: /api/v1/admin/realms/{realm}/users/{userID}/federated-identity
+    returns: "[KcFederatedIdentityRepresentation!]"
+    doc: "Keycloak GetUserFederatedIdentities. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: groups
+    path: /api/v1/admin/realms/{realm}/groups
+    query: { "briefRepresentation": String, "exact": String, "first": String, "full": String, "max": String, "q": String, "search": String }
+    returns: "[KcGroup!]"
+    doc: "Keycloak GetGroups. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: groupsCount
+    path: /api/v1/admin/realms/{realm}/groups/count
+    query: { "briefRepresentation": String, "exact": String, "first": String, "full": String, "max": String, "q": String, "search": String }
+    returns: Int
+    doc: "Keycloak GetGroupsCount. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: group
+    path: /api/v1/admin/realms/{realm}/groups/{groupID}
+    returns: KcGroup
+    doc: "Keycloak GetGroup. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: groupMembers
+    path: /api/v1/admin/realms/{realm}/groups/{groupID}/members
+    query: { "briefRepresentation": String, "exact": String, "first": String, "full": String, "max": String, "q": String, "search": String }
+    returns: "[KcUser!]"
+    doc: "Keycloak GetGroupMembers. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: groupByPath
+    path: /api/v1/admin/realms/{realm}/group-by-path/{path}
+    rawParams: [path]
+    returns: KcGroup
+    doc: "Keycloak GetGroupByPath. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: defaultGroups
+    path: /api/v1/admin/realms/{realm}/default-groups
+    returns: "[KcGroup!]"
+    doc: "Keycloak GetDefaultGroups. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: realmRoles
+    path: /api/v1/admin/realms/{realm}/roles
+    query: { "first": String, "max": String, "search": String, "briefRepresentation": String }
+    returns: "[KcRole!]"
+    doc: "Keycloak GetRealmRoles. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: realmRole
+    path: /api/v1/admin/realms/{realm}/roles/{roleName}
+    returns: KcRole
+    doc: "Keycloak GetRealmRole. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: compositeRealmRoles
+    path: /api/v1/admin/realms/{realm}/roles/{roleName}/composites
+    returns: "[KcRole!]"
+    doc: "Keycloak GetCompositeRealmRoles. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: usersByRoleName
+    path: /api/v1/admin/realms/{realm}/roles/{roleName}/users
+    query: { "first": String, "max": String }
+    returns: "[KcUser!]"
+    doc: "Keycloak GetUsersByRoleName. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: groupsByRole
+    path: /api/v1/admin/realms/{realm}/roles/{roleName}/groups
+    returns: "[KcGroup!]"
+    doc: "Keycloak GetGroupsByRole. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: realmRoleByID
+    path: /api/v1/admin/realms/{realm}/roles-by-id/{roleID}
+    returns: KcRole
+    doc: "Keycloak GetRealmRoleByID. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: compositeRolesByRoleID
+    path: /api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites
+    returns: "[KcRole!]"
+    doc: "Keycloak GetCompositeRolesByRoleID. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: compositeRealmRolesByRoleID
+    path: /api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites/realm
+    returns: "[KcRole!]"
+    doc: "Keycloak GetCompositeRealmRolesByRoleID. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: compositeClientRolesByRoleID
+    path: /api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites/clients/{clientID}
+    returns: "[KcRole!]"
+    doc: "Keycloak GetCompositeClientRolesByRoleID. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientsWithParams
+    path: /api/v1/admin/realms/{realm}/clients
+    query: { "clientId": String, "viewableOnly": String, "first": String, "max": String, "search": String, "q": String }
+    returns: "[KcClient!]"
+    doc: "Keycloak GetClientsWithParams. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: client
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}
+    returns: KcClient
+    doc: "Keycloak GetClient. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientSecret
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/client-secret
+    returns: KcCredentialRepresentation
+    doc: "Keycloak GetClientSecret. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientServiceAccount
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/service-account-user
+    returns: KcUser
+    doc: "Keycloak GetClientServiceAccount. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientUserSessions
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/user-sessions
+    returns: "[KcUserSessionRepresentation!]"
+    doc: "Keycloak GetClientUserSessions. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientOfflineSessions
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/offline-sessions
+    returns: "[KcUserSessionRepresentation!]"
+    doc: "Keycloak GetClientOfflineSessions. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientsDefaultScopes
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/default-client-scopes
+    returns: "[KcClientScope!]"
+    doc: "Keycloak GetClientsDefaultScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientsOptionalScopes
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/optional-client-scopes
+    returns: "[KcClientScope!]"
+    doc: "Keycloak GetClientsOptionalScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientScopeMappings
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/scope-mappings
+    returns: KcMappingsRepresentation
+    doc: "Keycloak GetClientScopeMappings. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientRoles
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/roles
+    query: { "first": String, "max": String, "search": String, "briefRepresentation": String }
+    returns: "[KcRole!]"
+    doc: "Keycloak GetClientRoles. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientRole
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}
+    returns: KcRole
+    doc: "Keycloak GetClientRole. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: usersByClientRoleName
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}/users
+    query: { "first": String, "max": String }
+    returns: "[KcUser!]"
+    doc: "Keycloak GetUsersByClientRoleName. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: groupsByClientRole
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}/groups
+    returns: "[KcGroup!]"
+    doc: "Keycloak GetGroupsByClientRole. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: resourceServer
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server
+    returns: KcResourceServerRepresentation
+    doc: "Keycloak GetResourceServer. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: resources
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/resource
+    query: { "deep": String, "first": String, "max": String, "name": String, "owner": String, "type": String, "uri": String, "scope": String, "matchingUri": String, "exactName": String }
+    returns: "[KcResourceRepresentation!]"
+    doc: "Keycloak GetResources. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: resource
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/resource/{resourceID}
+    returns: KcResourceRepresentation
+    doc: "Keycloak GetResource. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: scopes
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/scope
+    query: { "deep": String, "first": String, "max": String, "name": String }
+    returns: "[KcScopeRepresentation!]"
+    doc: "Keycloak GetScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: scope
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/scope/{scopeID}
+    returns: KcScopeRepresentation
+    doc: "Keycloak GetScope. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: policies
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy
+    query: { "first": String, "max": String, "name": String, "permission": String, "type": String }
+    returns: "[KcPolicyRepresentation!]"
+    doc: "Keycloak GetPolicies. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: policy
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}
+    returns: KcPolicyRepresentation
+    doc: "Keycloak GetPolicy. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: authorizationPolicyAssociatedPolicies
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/associatedPolicies
+    returns: "[KcPolicyRepresentation!]"
+    doc: "Keycloak GetAuthorizationPolicyAssociatedPolicies. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: authorizationPolicyResources
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/resources
+    returns: "[KcPolicyResourceRepresentation!]"
+    doc: "Keycloak GetAuthorizationPolicyResources. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: authorizationPolicyScopes
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/scopes
+    returns: "[KcPolicyScopeRepresentation!]"
+    doc: "Keycloak GetAuthorizationPolicyScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: dependentPermissions
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/dependentPolicies
+    returns: "[KcPermissionRepresentation!]"
+    doc: "Keycloak GetDependentPermissions. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: permissions
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission
+    query: { "first": String, "max": String, "name": String, "resource": String, "scope": String, "type": String }
+    returns: "[KcPermissionRepresentation!]"
+    doc: "Keycloak GetPermissions. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: permission
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}
+    returns: KcPermissionRepresentation
+    doc: "Keycloak GetPermission. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: permissionResources
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}/resources
+    returns: "[KcPermissionResource!]"
+    doc: "Keycloak GetPermissionResources. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: permissionScopes
+    path: /api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}/scopes
+    returns: "[KcPermissionScope!]"
+    doc: "Keycloak GetPermissionScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientRepresentation
+    path: /api/v1/admin/realms/{realm}/clients-registrations/{clientID}
+    returns: KcClient
+    doc: "Keycloak GetClientRepresentation. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: adapterConfiguration
+    path: /api/v1/admin/realms/{realm}/clients-registrations/{clientID}/installation
+    returns: KcAdapterConfiguration
+    doc: "Keycloak GetAdapterConfiguration. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientScopes
+    path: /api/v1/admin/realms/{realm}/client-scopes
+    returns: "[KcClientScope!]"
+    doc: "Keycloak GetClientScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientScope
+    path: /api/v1/admin/realms/{realm}/client-scopes/{scopeID}
+    returns: KcClientScope
+    doc: "Keycloak GetClientScope. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientScopeProtocolMappers
+    path: /api/v1/admin/realms/{realm}/client-scopes/{scopeID}/protocol-mappers
+    returns: "[KcProtocolMappers!]"
+    doc: "Keycloak GetClientScopeProtocolMappers. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: clientScopeProtocolMapper
+    path: /api/v1/admin/realms/{realm}/client-scopes/{scopeID}/protocol-mappers/{mapperID}
+    returns: KcProtocolMappers
+    doc: "Keycloak GetClientScopeProtocolMapper. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: defaultDefaultClientScopes
+    path: /api/v1/admin/realms/{realm}/default-default-client-scopes
+    returns: "[KcClientScope!]"
+    doc: "Keycloak GetDefaultDefaultClientScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: defaultOptionalClientScopes
+    path: /api/v1/admin/realms/{realm}/default-optional-client-scopes
+    returns: "[KcClientScope!]"
+    doc: "Keycloak GetDefaultOptionalClientScopes. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: componentsWithParams
+    path: /api/v1/admin/realms/{realm}/components
+    query: { "name": String, "provider": String, "parent": String }
+    returns: "[KcComponent!]"
+    doc: "Keycloak GetComponentsWithParams. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: component
+    path: /api/v1/admin/realms/{realm}/components/{componentID}
+    returns: KcComponent
+    doc: "Keycloak GetComponent. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: authenticationFlows
+    path: /api/v1/admin/realms/{realm}/authentication/flows
+    returns: "[KcAuthenticationFlowRepresentation!]"
+    doc: "Keycloak GetAuthenticationFlows. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: authenticationFlow
+    path: /api/v1/admin/realms/{realm}/authentication/flows/{flow}
+    returns: KcAuthenticationFlowRepresentation
+    doc: "Keycloak GetAuthenticationFlow. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: authenticationExecutions
+    path: /api/v1/admin/realms/{realm}/authentication/flows/{flow}/executions
+    returns: "[KcModifyAuthenticationExecutionRepresentation!]"
+    doc: "Keycloak GetAuthenticationExecutions. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: requiredActions
+    path: /api/v1/admin/realms/{realm}/authentication/required-actions
+    returns: "[KcRequiredActionProviderRepresentation!]"
+    doc: "Keycloak GetRequiredActions. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: requiredAction
+    path: /api/v1/admin/realms/{realm}/authentication/required-actions/{alias}
+    returns: KcRequiredActionProviderRepresentation
+    doc: "Keycloak GetRequiredAction. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: identityProviders
+    path: /api/v1/admin/realms/{realm}/identity-providers
+    returns: "[KcIdentityProviderRepresentation!]"
+    doc: "Keycloak GetIdentityProviders. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: identityProvider
+    path: /api/v1/admin/realms/{realm}/identity-providers/{alias}
+    returns: KcIdentityProviderRepresentation
+    doc: "Keycloak GetIdentityProvider. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: exportIDPPublicBrokerConfig
+    path: /api/v1/admin/realms/{realm}/identity-providers/{alias}/export
+    returns: String
+    doc: "Keycloak ExportIDPPublicBrokerConfig. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: identityProviderMappers
+    path: /api/v1/admin/realms/{realm}/identity-providers/{alias}/mappers
+    returns: "[KcIdentityProviderMapper!]"
+    doc: "Keycloak GetIdentityProviderMappers. Admin API - uses the caller bearer token, or the service admin token when absent."
+  - field: identityProviderMapperByID
+    path: /api/v1/admin/realms/{realm}/identity-providers/{alias}/mappers/{mapperID}
+    returns: KcIdentityProviderMapper
+    doc: "Keycloak GetIdentityProviderMapperByID. Admin API - uses the caller bearer token, or the service admin token when absent."
+types: |
+  type KcAdapterConfiguration {
+    realm: String
+    auth_server_url: String @goTag(key: "json", value: "auth-server-url")
+    ssl_required: String @goTag(key: "json", value: "ssl-required")
+    resource: String
+    credentials: Any
+    confidential_port: Int @goTag(key: "json", value: "confidential-port")
+  }
+
+  type KcAuthenticationFlowRepresentation {
+    alias: String
+    authenticationExecutions: [KcAuthenticationExecutionRepresentation!]
+    builtIn: Boolean
+    description: String
+    id: String
+    providerId: String
+    topLevel: Boolean
+  }
+
+  type KcBruteForceStatus {
+    numFailures: Int
+    disabled: Boolean
+    lastIPFailure: String
+    lastFailure: Int
+  }
+
+  type KcCertResponse {
+    keys: [KcCertResponseKey!]
+  }
+
+  type KcClient {
+    access: Map
+    adminUrl: String
+    attributes: Map
+    authenticationFlowBindingOverrides: Map
+    authorizationServicesEnabled: Boolean
+    authorizationSettings: KcResourceServerRepresentation
+    baseUrl: String
+    bearerOnly: Boolean
+    clientAuthenticatorType: String
+    clientId: String
+    consentRequired: Boolean
+    defaultClientScopes: [String!]
+    defaultRoles: [String!]
+    description: String
+    directAccessGrantsEnabled: Boolean
+    enabled: Boolean
+    frontchannelLogout: Boolean
+    fullScopeAllowed: Boolean
+    id: String
+    implicitFlowEnabled: Boolean
+    name: String
+    nodeReRegistrationTimeout: Int
+    notBefore: Int
+    optionalClientScopes: [String!]
+    origin: String
+    protocol: String
+    protocolMappers: [KcProtocolMapperRepresentation!]
+    publicClient: Boolean
+    redirectUris: [String!]
+    registeredNodes: Map
+    registrationAccessToken: String
+    rootUrl: String
+    secret: String
+    serviceAccountsEnabled: Boolean
+    standardFlowEnabled: Boolean
+    surrogateAuthRequired: Boolean
+    webOrigins: [String!]
+  }
+
+  type KcClientScope {
+    id: String
+    name: String
+    description: String
+    protocol: String
+    attributes: KcClientScopeAttributes
+    protocolMappers: [KcProtocolMappers!]
+  }
+
+  type KcComponent {
+    id: String
+    name: String
+    providerId: String
+    providerType: String
+    parentId: String
+    config: Map
+    subType: String
+  }
+
+  type KcCredentialRepresentation {
+    createdDate: Int
+    temporary: Boolean
+    type: String
+    value: String
+    algorithm: String
+    config: KcMultiValuedHashMap
+    counter: Int
+    device: String
+    digits: Int
+    hashIterations: Int
+    hashedSaltedValue: String
+    period: Int
+    salt: String
+    credentialData: String
+    id: String
+    priority: Int
+    secretData: String
+    userLabel: String
+  }
+
+  type KcEventRepresentation {
+    time: Int
+    type: String
+    realmId: String
+    clientId: String
+    userId: String
+    sessionId: String
+    ipAddress: String
+    details: Map
+  }
+
+  type KcFederatedIdentityRepresentation {
+    identityProvider: String
+    userId: String
+    userName: String
+  }
+
+  type KcGroup {
+    id: String
+    name: String
+    path: String
+    subGroups: [KcGroup!]
+    attributes: Map
+    access: Map
+    clientRoles: Map
+    realmRoles: [String!]
+  }
+
+  type KcIdentityProviderMapper {
+    id: String
+    name: String
+    identityProviderMapper: String
+    identityProviderAlias: String
+    config: Map
+  }
+
+  type KcIdentityProviderRepresentation {
+    addReadTokenRoleOnCreate: Boolean
+    alias: String
+    config: Map
+    displayName: String
+    enabled: Boolean
+    firstBrokerLoginFlowAlias: String
+    internalId: String
+    linkOnly: Boolean
+    postBrokerLoginFlowAlias: String
+    providerId: String
+    storeToken: Boolean
+    trustEmail: Boolean
+  }
+
+  type KcIssuerResponse {
+    realm: String
+    public_key: String
+    token_service: String @goTag(key: "json", value: "token-service")
+    account_service: String @goTag(key: "json", value: "account-service")
+    tokens_not_before: Int @goTag(key: "json", value: "tokens-not-before")
+  }
+
+  type KcKeyStoreConfig {
+    active: KcActiveKeys
+    keys: [KcKey!]
+  }
+
+  type KcMappingsRepresentation {
+    clientMappings: Map
+    realmMappings: [KcRole!]
+  }
+
+  type KcModifyAuthenticationExecutionRepresentation {
+    id: String
+    providerId: String
+    authenticationConfig: String
+    authenticationFlow: Boolean
+    requirement: String
+    flowId: String
+    displayName: String
+    alias: String
+    requirementChoices: [String!]
+    configurable: Boolean
+    level: Int
+    index: Int
+    description: String
+  }
+
+  type KcPermissionGrantResponseRepresentation {
+    id: String
+    owner: String
+    resource: String
+    scope: String
+    granted: Boolean
+    requester: String
+  }
+
+  type KcPermissionRepresentation {
+    decisionStrategy: String
+    description: String
+    id: String
+    logic: String
+    name: String
+    policies: [String!]
+    resources: [String!]
+    resourceType: String
+    scopes: [String!]
+    type: String
+  }
+
+  type KcPermissionResource {
+    _id: String
+    name: String
+  }
+
+  type KcPermissionScope {
+    id: String
+    name: String
+  }
+
+  type KcPolicyRepresentation {
+    config: Map
+    decisionStrategy: String
+    description: String
+    id: String
+    logic: String
+    name: String
+    owner: String
+    policies: [String!]
+    resources: [String!]
+    scopes: [String!]
+    type: String
+    roles: [KcRoleDefinition!]
+    code: String
+    clients: [String!]
+    notBefore: String
+    notOnOrAfter: String
+    dayMonth: String
+    dayMonthEnd: String
+    month: String
+    monthEnd: String
+    year: String
+    yearEnd: String
+    hour: String
+    hourEnd: String
+    minute: String
+    minuteEnd: String
+    users: [String!]
+    groups: [KcGroupDefinition!]
+    groupsClaim: String
+  }
+
+  type KcPolicyResourceRepresentation {
+    _id: String
+    name: String
+  }
+
+  type KcPolicyScopeRepresentation {
+    id: String
+    name: String
+  }
+
+  type KcProtocolMappers {
+    id: String
+    name: String
+    protocol: String
+    protocolMapper: String
+    consentRequired: Boolean
+    config: KcProtocolMappersConfig
+  }
+
+  type KcRealmRepresentation {
+    accessCodeLifespan: Int
+    accessCodeLifespanLogin: Int
+    accessCodeLifespanUserAction: Int
+    accessTokenLifespan: Int
+    accessTokenLifespanForImplicitFlow: Int
+    accountTheme: String
+    actionTokenGeneratedByAdminLifespan: Int
+    actionTokenGeneratedByUserLifespan: Int
+    adminEventsDetailsEnabled: Boolean
+    adminEventsEnabled: Boolean
+    adminTheme: String
+    attributes: Map
+    authenticationFlows: [Any!]
+    authenticatorConfig: [Any!]
+    browserFlow: String
+    browserSecurityHeaders: Map
+    bruteForceProtected: Boolean
+    clientAuthenticationFlow: String
+    clientScopeMappings: Map
+    clientScopes: [KcClientScope!]
+    clients: [KcClient!]
+    components: Any
+    defaultDefaultClientScopes: [String!]
+    defaultGroups: [String!]
+    defaultLocale: String
+    defaultOptionalClientScopes: [String!]
+    defaultRole: KcRole
+    defaultRoles: [String!]
+    defaultSignatureAlgorithm: String
+    directGrantFlow: String
+    displayName: String
+    displayNameHtml: String
+    dockerAuthenticationFlow: String
+    duplicateEmailsAllowed: Boolean
+    editUsernameAllowed: Boolean
+    emailTheme: String
+    enabled: Boolean
+    enabledEventTypes: [String!]
+    eventsEnabled: Boolean
+    eventsExpiration: Int
+    eventsListeners: [String!]
+    failureFactor: Int
+    federatedUsers: [Any!]
+    groups: [Any!]
+    id: String
+    identityProviderMappers: [Any!]
+    identityProviders: [Any!]
+    internationalizationEnabled: Boolean
+    keycloakVersion: String
+    loginTheme: String
+    loginWithEmailAllowed: Boolean
+    maxDeltaTimeSeconds: Int
+    maxFailureWaitSeconds: Int
+    minimumQuickLoginWaitSeconds: Int
+    notBefore: Int
+    offlineSessionIdleTimeout: Int
+    offlineSessionMaxLifespan: Int
+    offlineSessionMaxLifespanEnabled: Boolean
+    otpPolicyAlgorithm: String
+    otpPolicyDigits: Int
+    otpPolicyInitialCounter: Int
+    otpPolicyLookAheadWindow: Int
+    otpPolicyPeriod: Int
+    otpPolicyType: String
+    otpSupportedApplications: [String!]
+    passwordPolicy: String
+    permanentLockout: Boolean
+    protocolMappers: [Any!]
+    quickLoginCheckMilliSeconds: Int
+    realm: String
+    refreshTokenMaxReuse: Int
+    registrationAllowed: Boolean
+    registrationEmailAsUsername: Boolean
+    registrationFlow: String
+    rememberMe: Boolean
+    requiredActions: [Any!]
+    resetCredentialsFlow: String
+    resetPasswordAllowed: Boolean
+    revokeRefreshToken: Boolean
+    roles: KcRolesRepresentation
+    scopeMappings: [Any!]
+    smtpServer: Map
+    sslRequired: String
+    ssoSessionIdleTimeout: Int
+    ssoSessionIdleTimeoutRememberMe: Int
+    ssoSessionMaxLifespan: Int
+    ssoSessionMaxLifespanRememberMe: Int
+    supportedLocales: [String!]
+    userFederationMappers: [Any!]
+    userFederationProviders: [Any!]
+    userManagedAccessAllowed: Boolean
+    users: [KcUser!]
+    verifyEmail: Boolean
+    waitIncrementSeconds: Int
+    webAuthnPolicyAcceptableAaguids: [String!]
+    webAuthnPolicyAttestationConveyancePreference: String
+    webAuthnPolicyAuthenticatorAttachment: String
+    webAuthnPolicyAvoidSameAuthenticatorRegister: Boolean
+    webAuthnPolicyCreateTimeout: Int
+    webAuthnPolicyPasswordlessAcceptableAaguids: [String!]
+    webAuthnPolicyPasswordlessAttestationConveyancePreference: String
+    webAuthnPolicyPasswordlessAuthenticatorAttachment: String
+    webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister: Boolean
+    webAuthnPolicyPasswordlessCreateTimeout: Int
+    webAuthnPolicyPasswordlessRequireResidentKey: String
+    webAuthnPolicyPasswordlessRpEntityName: String
+    webAuthnPolicyPasswordlessRpId: String
+    webAuthnPolicyPasswordlessSignatureAlgorithms: [String!]
+    webAuthnPolicyPasswordlessUserVerificationRequirement: String
+    webAuthnPolicyRequireResidentKey: String
+    webAuthnPolicyRpEntityName: String
+    webAuthnPolicyRpId: String
+    webAuthnPolicySignatureAlgorithms: [String!]
+    webAuthnPolicyUserVerificationRequirement: String
+  }
+
+  type KcRequiredActionProviderRepresentation {
+    alias: String
+    config: Map
+    defaultAction: Boolean
+    enabled: Boolean
+    name: String
+    priority: Int
+    providerId: String
+  }
+
+  type KcResourcePolicyRepresentation {
+    name: String
+    description: String
+    scopes: [String!]
+    roles: [String!]
+    groups: [String!]
+    clients: [String!]
+    id: String
+    logic: String
+    decisionStrategy: String
+    owner: String
+    type: String
+    users: [String!]
+  }
+
+  type KcResourceRepresentation {
+    _id: String
+    attributes: Map
+    displayName: String
+    icon_uri: String
+    name: String
+    owner: KcResourceOwnerRepresentation
+    ownerManagedAccess: Boolean
+    resource_scopes: [KcScopeRepresentation!]
+    scopes: [KcScopeRepresentation!]
+    type: String
+    uris: [String!]
+  }
+
+  type KcResourceServerRepresentation {
+    allowRemoteResourceManagement: Boolean
+    clientId: String
+    id: String
+    name: String
+    policies: [KcPolicyRepresentation!]
+    policyEnforcementMode: String
+    resources: [KcResourceRepresentation!]
+    scopes: [KcScopeRepresentation!]
+    decisionStrategy: String
+  }
+
+  type KcRole {
+    id: String
+    name: String
+    scopeParamRequired: Boolean
+    composite: Boolean
+    composites: KcCompositesRepresentation
+    clientRole: Boolean
+    containerId: String
+    description: String
+    attributes: Map
+  }
+
+  type KcScopeRepresentation {
+    displayName: String
+    iconUri: String
+    id: String
+    name: String
+    policies: [KcPolicyRepresentation!]
+    resources: [KcResourceRepresentation!]
+  }
+
+  type KcServerInfoRepresentation {
+    systemInfo: KcSystemInfoRepresentation
+    memoryInfo: KcMemoryInfoRepresentation
+    passwordPolicies: [KcPasswordPolicy!]
+    protocolMapperTypes: KcProtocolMapperTypes
+    builtinProtocolMappers: KcBuiltinProtocolMappers
+    themes: KcThemes
+  }
+
+  type KcUser {
+    id: String
+    createdTimestamp: Int
+    username: String
+    enabled: Boolean
+    totp: Boolean
+    emailVerified: Boolean
+    firstName: String
+    lastName: String
+    email: String
+    federationLink: String
+    attributes: Map
+    disableableCredentialTypes: [Any!]
+    requiredActions: [String!]
+    access: Map
+    clientRoles: Map
+    realmRoles: [String!]
+    groups: [String!]
+    serviceAccountClientId: String
+    credentials: [KcCredentialRepresentation!]
+  }
+
+  type KcUserSessionRepresentation {
+    clients: Map
+    id: String
+    ipAddress: String
+    lastAccess: Int
+    start: Int
+    userId: String
+    username: String
+  }
+
+  type KcTokenInfo {
+    AccessToken: String
+    RefreshToken: String
+    TokenType: String
+    ExpiresIn: Int
+    RefreshExpiresIn: Int
+    Scope: String
+  }
+
+  type KcAuthenticationExecutionRepresentation {
+    authenticator: String
+    authenticatorConfig: String
+    authenticatorFlow: Boolean
+    autheticatorFlow: Boolean
+    flowAlias: String
+    priority: Int
+    requirement: String
+    userSetupAllowed: Boolean
+  }
+
+  type KcCertResponseKey {
+    kid: String
+    kty: String
+    alg: String
+    use: String
+    n: String
+    e: String
+    x: String
+    y: String
+    crv: String
+    key_ops: [String!]
+    x5u: String
+    x5c: [String!]
+    x5t: String
+    x5t_S256: String @goTag(key: "json", value: "x5t#S256")
+  }
+
+  type KcProtocolMapperRepresentation {
+    config: Map
+    id: String
+    name: String
+    protocol: String
+    protocolMapper: String
+    consentRequired: Boolean
+  }
+
+  type KcClientScopeAttributes {
+    consent_screen_text: String @goTag(key: "json", value: "consent.screen.text")
+    display_on_consent_screen: String @goTag(key: "json", value: "display.on.consent.screen")
+    include_in_token_scope: String @goTag(key: "json", value: "include.in.token.scope")
+  }
+
+  type KcMultiValuedHashMap {
+    empty: Boolean
+    loadFactor: Float
+    threshold: Int
+  }
+
+  type KcActiveKeys {
+    HS256: String
+    RS256: String
+    AES: String
+  }
+
+  type KcKey {
+    providerId: String
+    providerPriority: Int
+    kid: String
+    status: String
+    type: String
+    algorithm: String
+    publicKey: String
+    certificate: String
+  }
+
+  type KcRoleDefinition {
+    id: String
+    private: Boolean
+    required: Boolean
+  }
+
+  type KcGroupDefinition {
+    id: String
+    path: String
+    extendChildren: Boolean
+  }
+
+  type KcProtocolMappersConfig {
+    userinfo_token_claim: String @goTag(key: "json", value: "userinfo.token.claim")
+    user_attribute: String @goTag(key: "json", value: "user.attribute")
+    id_token_claim: String @goTag(key: "json", value: "id.token.claim")
+    access_token_claim: String @goTag(key: "json", value: "access.token.claim")
+    claim_name: String @goTag(key: "json", value: "claim.name")
+    claim_value: String @goTag(key: "json", value: "claim.value")
+    jsonType_label: String @goTag(key: "json", value: "jsonType.label")
+    multivalued: String
+    usermodel_clientRoleMapping_clientId: String @goTag(key: "json", value: "usermodel.clientRoleMapping.clientId")
+    included_client_audience: String @goTag(key: "json", value: "included.client.audience")
+    full_path: String @goTag(key: "json", value: "full.path")
+    attribute_name: String @goTag(key: "json", value: "attribute.name")
+    attribute_nameformat: String @goTag(key: "json", value: "attribute.nameformat")
+    single: String
+  }
+
+  type KcRolesRepresentation {
+    client: Map
+    realm: [KcRole!]
+  }
+
+  type KcResourceOwnerRepresentation {
+    id: String
+    name: String
+  }
+
+  type KcCompositesRepresentation {
+    client: Map
+    realm: [String!]
+  }
+
+  type KcSystemInfoRepresentation {
+    fileEncoding: String
+    javaHome: String
+    javaRuntime: String
+    javaVendor: String
+    javaVersion: String
+    javaVm: String
+    javaVmVersion: String
+    osArchitecture: String
+    osName: String
+    osVersion: String
+    serverTime: String
+    uptime: String
+    uptimeMillis: Int
+    userDir: String
+    userLocale: String
+    userName: String
+    userTimezone: String
+    version: String
+  }
+
+  type KcMemoryInfoRepresentation {
+    free: Int
+    freeFormated: String
+    freePercentage: Int
+    total: Int
+    totalFormated: String
+    used: Int
+    usedFormated: String
+  }
+
+  type KcPasswordPolicy {
+    configType: String
+    defaultValue: String
+    displayName: String
+    id: String
+    multipleSupported: Boolean
+  }
+
+  type KcProtocolMapperTypes {
+    docker_v2: [KcProtocolMapperType!] @goTag(key: "json", value: "docker-v2")
+    saml: [KcProtocolMapperType!]
+    openid_connect: [KcProtocolMapperType!] @goTag(key: "json", value: "openid-connect")
+  }
+
+  type KcBuiltinProtocolMappers {
+    saml: [KcProtocolMapperRepresentation!]
+    openid_connect: [KcProtocolMapperRepresentation!] @goTag(key: "json", value: "openid-connect")
+  }
+
+  type KcThemes {
+    account: [KcThemeRepresentation!]
+    admin: [KcThemeRepresentation!]
+    common: [KcThemeRepresentation!]
+    email: [KcThemeRepresentation!]
+    login: [KcThemeRepresentation!]
+    welcome: [KcThemeRepresentation!]
+  }
+
+  type KcProtocolMapperType {
+    id: String
+    name: String
+    category: String
+    helpText: String
+    priority: Int
+    properties: [KcProtocolMapperTypeProperty!]
+  }
+
+  type KcThemeRepresentation {
+    name: String
+    locales: [String!]
+  }
+
+  type KcProtocolMapperTypeProperty {
+    name: String
+    label: String
+    helpText: String
+    type: String
+    options: [String!]
+    defaultValue: String
+    secret: Boolean
+    readOnly: Boolean
+  }
+

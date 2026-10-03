@@ -1,0 +1,84 @@
+service: automatic-payment-service
+source: automatic-payment-service/internal/adapter/primary/http/routes.go
+namespace: automaticPaymentService
+prefix: AutoPay
+baseURL: http://automatic-payment-service-svc
+unwrap: data
+endpoints:
+  - field: subscription
+    path: /subscriptions/{id}
+    returns: AutoPaySubscription
+  - field: subscriptionTransactions
+    path: /subscriptions/{id}/transactions
+    returns: "[AutoPayTransaction!]"
+  - field: subscriptionInvoices
+    path: /subscriptions/{id}/invoices
+    returns: "[AutoPayInvoice!]"
+  - field: paymentMethods
+    path: /payment-methods
+    query: { userId: String! }
+    returns: "[AutoPayPaymentMethod!]"
+  - field: invoices
+    path: /invoices
+    query: { userId: String! }
+    returns: "[AutoPayInvoice!]"
+  - field: invoice
+    path: /invoices/{id}
+    returns: AutoPayInvoice
+types: |
+  type AutoPaySubscription {
+    subscriptionId: String
+    userId: String
+    planId: String
+    status: String
+    amount: Float
+    currency: String
+    startDate: String
+    endDate: String
+    autoRenewal: Boolean
+    trialEndDate: String
+    nextBillingDate: String
+    paymentFailureCount: Int
+    createdAt: String
+    updatedAt: String
+  }
+
+  type AutoPayTransaction {
+    transactionId: String
+    subscriptionId: String
+    paymentMethodId: String
+    amount: Float
+    currency: String
+    status: String
+    gatewayTransactionId: String
+    errorMessage: String
+    createdAt: String
+  }
+
+  type AutoPayInvoice {
+    invoiceId: String
+    transactionId: String
+    subscriptionId: String
+    userId: String
+    amount: Float
+    taxAmount: Float
+    totalAmount: Float
+    status: String
+    dueDate: String
+    paidDate: String
+    invoiceNumber: String
+    createdAt: String
+  }
+
+  type AutoPayPaymentMethod {
+    paymentMethodId: String
+    userId: String
+    provider: String
+    tokenId: String
+    lastFourDigits: String
+    expiryDate: String
+    isDefault: Boolean
+    createdAt: String
+    updatedAt: String
+  }
+

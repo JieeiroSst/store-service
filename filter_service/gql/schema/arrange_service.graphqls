@@ -1,0 +1,62 @@
+extend type Query {
+  """GET endpoints of arrange-service"""
+  arrangeService: ArrangeQuery!
+}
+
+type ArrangeQuery {
+  """
+  GET /shifts
+  """
+  shifts(storeId: Int!): [ArrangeShift!]
+
+  """
+  GET /spaces
+  """
+  availableSpaces(storeId: Int!, minCapacity: Int): [ArrangeSpace!]
+
+  """
+  GET /spaces/assignments
+  """
+  spaceAssignments(storeId: Int!): [ArrangeSpaceAssignment!]
+
+  """
+  GET /dispatch/assignments
+  """
+  dispatchAssignments(driverId: Int!): [ArrangeDispatchAssignment!]
+}
+
+type ArrangeShift {
+  id: Int
+  employeeId: Int
+  storeId: Int
+  role: String
+  startTime: String
+  endTime: String
+  status: String
+}
+
+type ArrangeSpace {
+  id: Int
+  storeId: Int
+  name: String
+  type: String
+  capacity: Int
+}
+
+type ArrangeSpaceAssignment {
+  id: Int
+  spaceId: Int
+  referenceId: Int
+  partySize: Int
+  arrangedFrom: String
+  arrangedTo: String
+  status: String
+}
+
+type ArrangeDispatchAssignment {
+  id: Int
+  orderId: Int
+  driverId: Int
+  sequence: Int
+  status: String
+}

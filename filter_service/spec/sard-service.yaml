@@ -1,0 +1,18 @@
+service: sard-service
+source: sard-service/customer-info-service/main.go
+namespace: sardService
+prefix: Sard
+baseURL: http://sard-customer-info-service:8081
+endpoints:
+  - field: info
+    path: /api/info
+    returns: SardInfo
+    doc: Metadata of the CCCD (citizen ID card) detection API.
+types: |
+  type SardInfo {
+    name: String
+    version: String
+    description: String
+    """Endpoint -> description."""
+    endpoints: Map
+  }

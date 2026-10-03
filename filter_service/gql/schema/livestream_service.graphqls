@@ -1,0 +1,79 @@
+extend type Query {
+  """GET endpoints of livestream_service"""
+  livestreamService: LiveQuery!
+}
+
+type LiveQuery {
+  """
+  GET /api/v1/rooms
+  """
+  rooms(live: Boolean): [LiveRoom!]
+
+  """
+  GET /api/v1/rooms/{id}
+  """
+  room(id: String!): LiveRoom
+
+  """
+  GET /api/v1/rooms/{id}/stream
+  """
+  activeStream(id: String!): LiveStream
+
+  """
+  GET /api/v1/rooms/{id}/recordings
+  """
+  recordings(id: String!): [LiveRecording!]
+
+  """
+  GET /api/v1/rooms/{id}/viewers
+  """
+  viewerCount(id: String!): LiveViewerCount
+
+  """
+  GET /api/v1/rooms/{id}/playback
+  """
+  playback(id: String!): LivePlaybackInfo
+}
+
+type LiveViewerCount {
+  viewers: Int
+}
+
+type LiveRoom {
+  id: String
+  ownerUserId: String
+  slug: String
+  title: String
+  description: String
+  streamKey: String
+  status: String
+  createdAt: String
+  updatedAt: String
+}
+
+type LiveStream {
+  id: String
+  roomId: String
+  nodeId: String
+  status: String
+  startedAt: String
+  endedAt: String
+  peakViewer: Int
+  createdAt: String
+}
+
+type LiveRecording {
+  id: String
+  streamId: String
+  roomId: String
+  objectKey: String
+  durationSeconds: Int
+  sizeBytes: Int
+  createdAt: String
+}
+
+type LivePlaybackInfo {
+  URL: String
+  ExpiresAt: String
+  IsLive: Boolean
+}

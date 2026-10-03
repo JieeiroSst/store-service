@@ -1,0 +1,28 @@
+extend type Query {
+  """GET endpoints of draw-image-service"""
+  drawImageService: DrawImageQuery!
+}
+
+type DrawImageQuery {
+  """
+  GET /images/{id}/info
+  
+  Metadata of a collage; the JPEG itself is at the returned url.
+  """
+  imageInfo(id: String!): DrawImageCollage
+}
+
+type DrawImageCollage {
+  id: String
+  url: String
+  bucket: String
+  object_key: String
+  content_type: String
+  size: Int
+  width: Int
+  height: Int
+  image_count: Int
+  layout: String
+  columns: Int
+  created_at: String
+}

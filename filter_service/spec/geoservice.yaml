@@ -1,0 +1,122 @@
+service: geoservice
+source: geoservice/internal/adapter/handler/location_handler.go
+namespace: geoservice
+prefix: Geo
+baseURL: http://geoservice-svc
+endpoints:
+  - field: locate
+    path: /api/v1/locate
+    query: { lng: Float!, lat: Float!, tolerance: Float }
+    returns: GeoLocationResult
+    doc: Province/district/ward containing the point; tolerance is in meters.
+  - field: provinces
+    path: /api/v1/provinces
+    returns: "[GeoProvince!]"
+  - field: province
+    path: /api/v1/provinces/{code}
+    returns: GeoProvince
+  - field: districts
+    path: /api/v1/provinces/{code}/districts
+    returns: "[GeoDistrict!]"
+  - field: wards
+    path: /api/v1/districts/{code}/wards
+    returns: "[GeoWard!]"
+  - field: streets
+    path: /api/v1/provinces/{code}/streets
+    returns: "[GeoStreet!]"
+  - field: stats
+    path: /api/v1/stats
+    returns: GeoStats
+  - field: whitelistCheck
+    path: /api/v1/whitelist/check
+    query: { lng: Float!, lat: Float!, tolerance: Float }
+    returns: GeoWhitelistResult
+  - field: whitelistCities
+    path: /api/v1/whitelist/cities
+    returns: "[GeoWhitelistCity!]"
+types: |
+  type GeoStats {
+    provinces: Int
+    districts: Int
+    wards: Int
+  }
+
+  type GeoLocationResult {
+    found: Boolean
+    province: GeoProvince
+    district: GeoDistrict
+    ward: GeoWard
+    street: GeoStreet
+    point: GeoPoint
+    distance_m: Float
+  }
+
+  type GeoProvince {
+    code: String
+    name: String
+    name_full: String
+    name_en: String
+    type: String
+    region: String
+    slug: String
+    gid: String
+    area_km2: Float
+  }
+
+  type GeoDistrict {
+    code: String
+    province_code: String
+    name: String
+    name_full: String
+    name_en: String
+    type: String
+    slug: String
+    gid: String
+    area_km2: Float
+  }
+
+  type GeoWard {
+    code: String
+    district_code: String
+    province_code: String
+    name: String
+    name_full: String
+    name_en: String
+    type: String
+    slug: String
+    gid: String
+    area_km2: Float
+  }
+
+  type GeoStreet {
+    id: Int
+    province_code: String
+    district_code: String
+    name: String
+    name_full: String
+    name_en: String
+    slug: String
+    gid: String
+    length_m: Float
+    distance_m: Float
+  }
+
+  type GeoWhitelistResult {
+    whitelisted: Boolean
+    province: GeoProvince
+    district: GeoDistrict
+    ward: GeoWard
+    street: GeoStreet
+    point: GeoPoint
+  }
+
+  type GeoWhitelistCity {
+    province_code: String
+    note: String
+  }
+
+  type GeoPoint {
+    lng: Float
+    lat: Float
+  }
+

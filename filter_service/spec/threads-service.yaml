@@ -1,0 +1,97 @@
+service: threads-service
+source: threads-service/internal/adapter/primary/http/routes.go
+namespace: threadsService
+prefix: Threads
+baseURL: http://threads-service-svc
+endpoints:
+  - field: posts
+    path: /api/v1/posts
+    query: { author_id: String, cursor: String, limit: Int }
+    returns: ThreadsPostPage
+  - field: post
+    path: /api/v1/posts/{id}
+    returns: ThreadsPost
+  - field: comments
+    path: /api/v1/posts/{id}/comments
+    query: { cursor: String, limit: Int }
+    returns: ThreadsCommentPage
+  - field: followers
+    path: /api/v1/users/{id}/followers
+    query: { cursor: String, limit: Int }
+    returns: ThreadsAuthorPage
+  - field: following
+    path: /api/v1/users/{id}/following
+    query: { cursor: String, limit: Int }
+    returns: ThreadsAuthorPage
+  - field: homeFeed
+    path: /api/v1/feed
+    query: { cursor: String, limit: Int }
+    returns: ThreadsPostPage
+    doc: Posts from authors the caller follows (bearer token).
+  - field: bookmarks
+    path: /api/v1/bookmarks
+    query: { cursor: String, limit: Int }
+    returns: ThreadsPostPage
+  - field: trendingTags
+    path: /api/v1/tags/trending
+    query: { limit: Int }
+    returns: "[ThreadsTagCount!]"
+    unwrap: tags
+types: |
+  type ThreadsPostPage {
+    rows: [ThreadsPost!]
+    next_cursor: String
+    has_more: Boolean
+  }
+
+  type ThreadsCommentPage {
+    rows: [ThreadsComment!]
+    next_cursor: String
+    has_more: Boolean
+  }
+
+  type ThreadsAuthorPage {
+    rows: [ThreadsAuthor!]
+    next_cursor: String
+    has_more: Boolean
+  }
+
+  type ThreadsPost {
+    id: String
+    user_id: String
+    content: String
+    media_urls: [String!]
+    like_count: Int
+    comment_count: Int
+    repost_of_id: String
+    repost_count: Int
+    created_at: String
+    updated_at: String
+    author: ThreadsAuthor
+    tags: [String!]
+    original_post: ThreadsPost
+  }
+
+  type ThreadsComment {
+    id: String
+    post_id: String
+    user_id: String
+    parent_comment_id: String
+    content: String
+    media_urls: [String!]
+    created_at: String
+    updated_at: String
+    author: ThreadsAuthor
+  }
+
+  type ThreadsAuthor {
+    id: String
+    username: String
+    profile_image_url: String
+  }
+
+  type ThreadsTagCount {
+    name: String
+    count: Int
+  }
+

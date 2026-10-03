@@ -1,0 +1,29 @@
+service: identified_service
+source: identified_service/identified_service/gym_classes/controllers.py, gym_passes/controllers.py
+namespace: identifiedService
+prefix: Gym
+baseURL: http://identified-service:8000
+endpoints:
+  - field: classes
+    path: /classes
+    returns: "[GymClass!]"
+  - field: class
+    path: /classes/{class_id}
+    returns: GymClass
+  - field: gymPassVerification
+    path: /gym-passes/{gym_pass_id}/verification
+    returns: GymPass
+types: |
+  type GymClass {
+    id: String
+    name: String
+    day: String
+    time: String
+    coach: String
+    description: String
+  }
+
+  type GymPass {
+    id: String
+    is_active: Boolean
+  }

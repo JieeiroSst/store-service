@@ -1,0 +1,33 @@
+service: restaurant-delivery-service
+source: restaurant/delivery-service/internal/adapter/primary/http/routes.go
+namespace: restaurantDeliveryService
+prefix: RDelivery
+baseURL: http://delivery-service-svc
+unwrap: data
+endpoints:
+  - field: deliveries
+    path: /api/v1/delivery/
+    query: { Limit: Int, Page: Int, Sort: String }
+    returns: RDeliveryPage
+    doc: Query keys are Limit/Page/Sort (gin binds the Go field names).
+types: |
+  type RDeliveryPage {
+    limit: Int
+    page: Int
+    sort: String
+    total_rows: Int
+    total_pages: Int
+    rows: [RDeliveryDelivery!]
+  }
+
+  type RDeliveryDelivery {
+    ship_id: Int
+    name: String
+    address: String
+    kitchen_id: Int
+    status: Int
+    distance_km: Float
+    fee: Float
+    eta_minutes: Int
+  }
+

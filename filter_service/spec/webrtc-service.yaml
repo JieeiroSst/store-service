@@ -1,0 +1,43 @@
+service: webrtc-service
+source: webrtc-service/internal/adapter/primary/http
+namespace: webrtcService
+prefix: Webrtc
+baseURL: http://webrtc-service-svc
+endpoints:
+  - field: iceServers
+    path: /api/ice-servers
+    query:
+      user_id: String
+    returns: WebrtcIceServers
+    doc: STUN servers and short-lived TURN credentials for the given user.
+  - field: room
+    path: /api/rooms/{room_id}
+    returns: WebrtcRoomInfo
+    doc: Participants of a room and their media state.
+types: |
+  type WebrtcIceServers {
+    ice_servers: [WebrtcIceServer!]!
+  }
+
+  type WebrtcIceServer {
+    urls: [String!]!
+    username: String
+    credential: String
+  }
+
+  type WebrtcRoomInfo {
+    room_id: String!
+    capacity: Int!
+    participants: [WebrtcParticipant!]!
+  }
+
+  type WebrtcParticipant {
+    user_id: String!
+    media: WebrtcMediaState!
+  }
+
+  type WebrtcMediaState {
+    audio: Boolean!
+    video: Boolean!
+    screen: Boolean!
+  }

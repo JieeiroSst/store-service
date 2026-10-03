@@ -1,0 +1,30 @@
+extend type Query {
+  """GET endpoints of cdn-service"""
+  cdnService: CdnQuery!
+}
+
+type CdnQuery {
+  """
+  GET /api/v1/files
+  """
+  files(limit: Int, offset: Int): CdnFileList
+
+  """
+  GET /api/v1/files/{id}
+  """
+  file(id: String!): CdnFile
+}
+
+type CdnFileList {
+  files: [CdnFile!]
+}
+
+type CdnFile {
+  id: String
+  file_name: String
+  content_type: String
+  size_bytes: Int
+  status: String
+  created_at: String
+  updated_at: String
+}
