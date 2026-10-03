@@ -1045,3 +1045,23 @@ jobs:
 
     - name: Test
       run: cd vending-machine-service && go test -v ./...
+
+  webrtc_service:
+    name: webrtc_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.24"
+
+    - name: Build
+      run: cd webrtc-service && go build -v ./...
+
+    - name: Vet
+      run: cd webrtc-service && go vet ./...
+
+    - name: Test
+      run: cd webrtc-service && go test -race -v ./...

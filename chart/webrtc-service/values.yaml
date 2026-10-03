@@ -1,0 +1,165 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+webrtcService:
+  name: webrtc-service
+  selectorApp: webrtc-service
+  containerName: webrtc-service
+  # Rooms live in each pod's memory, so every member of a room must reach the
+  # same pod. The ingress hashes on room_id to do that; the replica count is
+  # fixed (no HPA) so the hash ring does not move under live rooms.
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/webrtc-service
+    tag: latest
+    port: 8080
+    pullPolicy: IfNotPresent
+
+  service:
+    name: webrtc-service-svc
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      # Signaling WebSockets stay open for the whole call.
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+      nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_room_id"
+    host: webrtc-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  env:
+    # Comma-separated browser origins allowed to open /ws; empty = same origin
+    # only, "*" = any.
+    allowedOrigins: ''
+    wsPongWaitSeconds: "60"
+    wsMaxMessageKb: "64"
+    wsSendBuffer: "256"
+    # Mesh calls: each client uploads to every other one, so keep rooms small.
+    maxPeersPerRoom: "8"
+    # ICE servers handed to browsers by GET /api/ice-servers.
+    stunUrls: stun:stun.l.google.com:19302
+    # TURN relays calls that cannot go peer-to-peer (symmetric NAT, UDP
+    # blocked). Point at a coturn running with use-auth-secret; leave empty to
+    # offer STUN only. The secret comes from turnSecretRef, never from values.
+    turnUrls: ''
+    turnTtlSeconds: "86400"
+  # Existing Secret holding coturn's static-auth-secret (e.g. synced by
+  # externalSecret below). Empty = no TURN credentials.
+  turnSecretRef:
+    name: ''
+    key: turn-secret
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.webrtcService.image.port }}'
+    - name: ALLOWED_ORIGINS
+      value: '{{ .Values.webrtcService.env.allowedOrigins }}'
+    - name: WS_PONG_WAIT_SECONDS
+      value: '{{ .Values.webrtcService.env.wsPongWaitSeconds }}'
+    - name: WS_MAX_MESSAGE_KB
+      value: '{{ .Values.webrtcService.env.wsMaxMessageKb }}'
+    - name: WS_SEND_BUFFER
+      value: '{{ .Values.webrtcService.env.wsSendBuffer }}'
+    - name: MAX_PEERS_PER_ROOM
+      value: '{{ .Values.webrtcService.env.maxPeersPerRoom }}'
+    - name: STUN_URLS
+      value: '{{ .Values.webrtcService.env.stunUrls }}'
+    - name: TURN_URLS
+      value: '{{ .Values.webrtcService.env.turnUrls }}'
+    - name: TURN_TTL_SECONDS
+      value: '{{ .Values.webrtcService.env.turnTtlSeconds }}'
+    - name: TURN_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.webrtcService.turnSecretRef.name }}'
+          key: '{{ .Values.webrtcService.turnSecretRef.key }}'
+      when: '{{ .Values.webrtcService.turnSecretRef.name }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  # Pure signaling relay: no database, no Consul, no outbound internet (STUN
+  # is used by the browsers, not by this service).
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  # /metrics on the app port: webrtc_rooms, webrtc_peers,
+  # webrtc_messages_relayed_total{type}, webrtc_joins_rejected_total{reason}.
+  metrics:
+    enabled: true
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

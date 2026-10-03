@@ -130,3 +130,5 @@ videoService:
   enabled: false
 videoWeb:
   enabled: false
+webrtcService:
+  enabled: false

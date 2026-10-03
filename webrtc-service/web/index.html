@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0d12">
+    <title>Video Call</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%236366f1'/%3E%3Cpath d='m15 12 4-2.5v5L15 12Z M5 8.5h9v7H5z' fill='white'/%3E%3C/svg%3E">
+    <style>
+        :root {
+            --bg: #0b0d12;
+            --surface: #141821;
+            --surface-2: #1b2030;
+            --surface-3: #252b3d;
+            --border: rgba(255, 255, 255, .08);
+            --border-strong: rgba(255, 255, 255, .14);
+            --text: #e9ebf1;
+            --muted: #8d95a8;
+            --accent: #6366f1;
+            --accent-2: #8b5cf6;
+            --accent-soft: rgba(99, 102, 241, .16);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, .16);
+            --ok: #22c55e;
+            --warn: #f59e0b;
+            --radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            font-family: var(--font);
+            font-size: 14px;
+            background:
+                radial-gradient(1200px 600px at 10% -10%, rgba(99, 102, 241, .14), transparent 60%),
+                radial-gradient(900px 500px at 110% 110%, rgba(139, 92, 246, .10), transparent 60%),
+                var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+        #root { height: 100%; }
+        button, select, input { font: inherit; color: inherit; }
+        button { cursor: pointer; }
+        button:disabled { opacity: .45; cursor: not-allowed; }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+        svg.icon { flex: none; display: block; }
+        code { background: var(--surface-3); padding: 1px 6px; border-radius: 6px; font-size: 12px; }
+
+        .field { display: flex; flex-direction: column; gap: 6px; }
+        .field > span { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+        .input-row { display: flex; gap: 8px; }
+        input, select {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            padding: 11px 14px;
+            min-width: 0;
+            transition: border-color .15s, background .15s;
+        }
+        input:focus, select:focus { border-color: var(--accent); background: var(--surface-3); outline: none; }
+        input::placeholder { color: #5f6779; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            border: 1px solid var(--border-strong); background: var(--surface-2);
+            border-radius: 12px; padding: 10px 14px; font-weight: 500;
+            transition: background .15s, border-color .15s, transform .1s;
+        }
+        .btn:hover:not(:disabled) { background: var(--surface-3); }
+        .btn:active:not(:disabled) { transform: translateY(1px); }
+        .btn.primary {
+            border: 0; color: #fff; font-weight: 600; padding: 13px 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 8px 24px rgba(99, 102, 241, .35);
+        }
+        .btn.primary:hover:not(:disabled) { filter: brightness(1.08); background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+        .btn.ghost { background: transparent; border-color: transparent; color: var(--muted); padding: 8px; }
+        .btn.ghost:hover:not(:disabled) { background: var(--surface-3); color: var(--text); }
+
+        .lobby {
+            min-height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            padding: 32px 20px;
+        }
+        .lobby-card {
+            width: min(1040px, 100%);
+            display: grid; grid-template-columns: 1.35fr 1fr; gap: 32px; align-items: center;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; margin-bottom: 18px; }
+        .brand-mark {
+            width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+        }
+        .preview {
+            position: relative; aspect-ratio: 16 / 10; border-radius: 22px; overflow: hidden;
+            background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+        }
+        .preview video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block; }
+        .preview .avatar-wrap { position: absolute; inset: 0; display: grid; place-items: center; background: var(--surface); }
+        .preview-name {
+            position: absolute; left: 16px; top: 14px; font-weight: 600;
+            background: rgba(0, 0, 0, .45); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 999px;
+        }
+        .preview-controls {
+            position: absolute; left: 0; right: 0; bottom: 16px;
+            display: flex; justify-content: center; gap: 12px;
+        }
+        .preview-error {
+            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 12px; text-align: center; padding: 24px; color: var(--muted);
+        }
+        .join-panel h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; letter-spacing: -.02em; }
+        .join-panel p.lead { color: var(--muted); margin: 0 0 24px; line-height: 1.5; }
+        .join-form { display: flex; flex-direction: column; gap: 16px; }
+        .devices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .alert {
+            display: flex; gap: 10px; align-items: flex-start;
+            background: var(--danger-soft); border: 1px solid rgba(239, 68, 68, .35); color: #fecaca;
+            padding: 12px 14px; border-radius: 12px; margin-bottom: 18px; line-height: 1.4;
+        }
+
+        .room { height: 100%; display: flex; flex-direction: column; }
+        .topbar {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 18px; min-height: 60px;
+        }
+        .room-name { font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw; }
+        .divider { width: 1px; height: 18px; background: var(--border-strong); }
+        .timer { color: var(--muted); font-variant-numeric: tabular-nums; }
+        .spacer { flex: 1; }
+        .pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 12px; border-radius: 999px; font-size: 13px;
+            background: var(--surface-2); border: 1px solid var(--border);
+        }
+        .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+        .pill.connected .dot { background: var(--ok); box-shadow: 0 0 0 4px rgba(34, 197, 94, .18); }
+        .pill.reconnecting .dot { background: var(--warn); animation: pulse 1.2s infinite; }
+        .pill.error .dot { background: var(--danger); }
+        .pill.rec { color: #fecaca; background: var(--danger-soft); border-color: rgba(239, 68, 68, .35); }
+        .pill.rec .dot { background: var(--danger); animation: pulse 1.2s infinite; }
+        @keyframes pulse { 50% { opacity: .35; } }
+
+        .body { flex: 1; display: flex; min-height: 0; padding: 0 12px; gap: 12px; }
+        .stage { flex: 1; min-width: 0; min-height: 0; display: flex; }
+
+        .grid { flex: 1; display: grid; gap: 12px; min-height: 0; }
+        .spotlight { flex: 1; display: flex; gap: 12px; min-height: 0; min-width: 0; }
+        .spotlight .main { flex: 1; min-width: 0; display: flex; }
+        .filmstrip { width: 236px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+        .filmstrip .tile { flex: none; aspect-ratio: 16 / 10; }
+        .spotlight .main .tile video { object-fit: contain; }
+        .filmstrip .stats { transform: scale(.8); transform-origin: top left; }
+        .filmstrip .label { font-size: 12px; padding: 3px 8px; }
+
+        .tile {
+            position: relative; flex: 1; min-height: 0; min-width: 0;
+            background: var(--surface); border-radius: var(--radius); overflow: hidden;
+            border: 1px solid var(--border);
+            animation: pop .25s ease-out;
+        }
+        @keyframes pop { from { opacity: 0; transform: scale(.97); } }
+        .tile::after {
+            content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+            box-shadow: inset 0 0 0 0 transparent; transition: box-shadow .2s;
+        }
+        .tile.speaking::after { box-shadow: inset 0 0 0 3px var(--ok); }
+        .tile video { width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
+        .tile.local video { transform: scaleX(-1); }
+        .tile.screen video { object-fit: contain; transform: none; }
+        .tile .shade {
+            position: absolute; left: 0; right: 0; bottom: 0; height: 70px; pointer-events: none;
+            background: linear-gradient(transparent, rgba(0, 0, 0, .55));
+        }
+        .tile .avatar-wrap {
+            position: absolute; inset: 0; display: grid; place-items: center;
+            background: radial-gradient(circle at 50% 40%, var(--surface-3), var(--surface));
+        }
+        .tile .label {
+            position: absolute; left: 10px; bottom: 10px; max-width: calc(100% - 20px);
+            display: flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 500; padding: 4px 10px; border-radius: 999px;
+            background: rgba(0, 0, 0, .45); backdrop-filter: blur(8px);
+        }
+        .tile .label .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .tile .badges { position: absolute; right: 10px; top: 10px; display: flex; gap: 6px; }
+        .badge {
+            width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+            background: rgba(0, 0, 0, .5); backdrop-filter: blur(8px);
+        }
+        .badge.danger { background: var(--danger); }
+        .tile .state {
+            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            font-size: 12px; padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, .6);
+            text-transform: capitalize;
+        }
+        .tile .stats {
+            position: absolute; left: 10px; top: 10px; white-space: pre;
+            font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+            background: rgba(0, 0, 0, .65); backdrop-filter: blur(8px);
+            padding: 6px 8px; border-radius: 10px;
+        }
+        .tile .pin {
+            position: absolute; right: 10px; bottom: 10px; opacity: 0; transition: opacity .15s;
+            width: 32px; height: 32px; border-radius: 50%; border: 0; display: grid; place-items: center;
+            background: rgba(0, 0, 0, .55); backdrop-filter: blur(8px);
+        }
+        .tile:hover .pin, .tile .pin.active { opacity: 1; }
+        .tile .pin.active { background: var(--accent); }
+
+        .avatar {
+            border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .35); user-select: none;
+        }
+
+        .invite {
+            flex: 1; border-radius: var(--radius); border: 1px dashed var(--border-strong);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 14px; padding: 24px; text-align: center; color: var(--muted);
+        }
+        .invite h3 { color: var(--text); margin: 0; font-size: 18px; }
+        .invite .link {
+            display: flex; gap: 8px; align-items: center; max-width: 100%;
+            background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 6px 6px 6px 12px;
+        }
+        .invite .link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+
+        .panel {
+            width: 340px; display: none; flex-direction: column; min-height: 0;
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .panel.open { display: flex; animation: slide .2s ease-out; }
+        @keyframes slide { from { opacity: 0; transform: translateX(12px); } }
+        .panel-head { display: flex; align-items: center; gap: 4px; padding: 10px 10px 0 14px; }
+        .tabs { display: flex; gap: 4px; flex: 1; background: var(--surface-2); padding: 4px; border-radius: 12px; }
+        .tab {
+            flex: 1; border: 0; background: transparent; padding: 8px; border-radius: 9px; color: var(--muted); font-weight: 500;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .tab.active { background: var(--surface-3); color: var(--text); }
+        .count { font-size: 11px; background: var(--surface-3); padding: 1px 7px; border-radius: 999px; }
+        .tab.active .count { background: var(--accent-soft); color: #c7d2fe; }
+
+        .messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .messages .empty { margin: auto; text-align: center; color: var(--muted); line-height: 1.5; }
+        .msg { display: flex; gap: 8px; align-items: flex-end; max-width: 92%; }
+        .msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+        .msg .bubble {
+            background: var(--surface-2); padding: 8px 12px; border-radius: 14px 14px 14px 4px;
+            overflow-wrap: anywhere; line-height: 1.45;
+        }
+        .msg.mine .bubble { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border-radius: 14px 14px 4px 14px; }
+        .msg .meta { font-size: 11px; color: var(--muted); margin-bottom: 3px; display: flex; gap: 6px; align-items: center; }
+        .msg.mine .meta { justify-content: flex-end; }
+        .msg.private .bubble { box-shadow: inset 0 0 0 1px rgba(245, 158, 11, .6); }
+        .msg .private-tag { color: var(--warn); display: inline-flex; align-items: center; gap: 3px; }
+        .msg.system {
+            align-self: center; max-width: 100%; font-size: 12px; color: var(--muted);
+            background: var(--surface-2); padding: 4px 12px; border-radius: 999px;
+        }
+        .chat-form { padding: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+        .chat-form select { padding: 8px 12px; font-size: 13px; }
+        .composer {
+            display: flex; gap: 6px; align-items: center;
+            background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 14px; padding: 4px 4px 4px 12px;
+        }
+        .composer:focus-within { border-color: var(--accent); }
+        .composer input { border: 0; background: transparent; padding: 8px 0; }
+        .composer input:focus { background: transparent; }
+        .send {
+            width: 36px; height: 36px; border-radius: 10px; border: 0; display: grid; place-items: center;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+        }
+
+        .people { flex: 1; overflow-y: auto; padding: 10px; list-style: none; margin: 0; }
+        .people li { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 12px; }
+        .people li:hover { background: var(--surface-2); }
+        .people .who { flex: 1; min-width: 0; }
+        .people .who div:first-child { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .people .who div:last-child { font-size: 12px; color: var(--muted); }
+        .people .icons { display: flex; gap: 6px; color: var(--muted); }
+        .people .icons .off { color: var(--danger); }
+
+        .controlbar {
+            display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;
+            padding: 14px 18px calc(14px + env(safe-area-inset-bottom));
+        }
+        .cluster { display: flex; gap: 10px; align-items: center; }
+        .ctl {
+            position: relative; width: 48px; height: 48px; border-radius: 50%;
+            display: grid; place-items: center; border: 1px solid var(--border-strong);
+            background: var(--surface-2); transition: background .15s, transform .1s, border-color .15s;
+        }
+        .ctl:hover:not(:disabled) { background: var(--surface-3); }
+        .ctl:active:not(:disabled) { transform: scale(.95); }
+        .ctl.off { background: var(--danger); border-color: var(--danger); color: #fff; }
+        .ctl.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .ctl.rec { background: var(--danger-soft); border-color: rgba(239, 68, 68, .5); color: #fca5a5; }
+        .ctl .dot-badge {
+            position: absolute; top: -2px; right: -2px; min-width: 18px; height: 18px; padding: 0 5px;
+            border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; font-weight: 700;
+            display: grid; place-items: center; border: 2px solid var(--bg);
+        }
+        .split { display: flex; align-items: center; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 999px; padding: 3px; gap: 2px; position: relative; }
+        .split .ctl { width: 42px; height: 42px; border: 0; }
+        .split .chev { width: 28px; height: 42px; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: var(--muted); }
+        .split .chev:hover { color: var(--text); background: var(--surface-3); }
+        .leave {
+            display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px;
+            border: 0; border-radius: 999px; background: var(--danger); color: #fff; font-weight: 600;
+            box-shadow: 0 8px 24px rgba(239, 68, 68, .3);
+        }
+        .leave:hover { filter: brightness(1.08); }
+
+        [data-tip] { position: relative; }
+        [data-tip]:hover::before {
+            content: attr(data-tip); position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+            white-space: nowrap; font-size: 12px; font-weight: 500; color: var(--text);
+            background: var(--surface-3); border: 1px solid var(--border-strong); padding: 5px 9px; border-radius: 8px;
+            pointer-events: none; z-index: 20;
+        }
+
+        .menu {
+            position: absolute; bottom: calc(100% + 10px); left: 0; z-index: 30; min-width: 260px; max-width: 80vw;
+            background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 14px; padding: 6px;
+            box-shadow: var(--shadow); animation: pop .15s ease-out;
+        }
+        .menu h4 { margin: 6px 10px 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+        .menu button {
+            width: 100%; display: flex; align-items: center; gap: 10px; text-align: left;
+            border: 0; background: transparent; padding: 9px 10px; border-radius: 10px;
+        }
+        .menu button:hover { background: var(--surface-3); }
+        .menu button span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .menu .check { width: 16px; color: var(--accent); }
+
+        .toast {
+            position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 50;
+            display: flex; align-items: center; gap: 10px; max-width: min(520px, 90vw);
+            background: var(--surface-3); border: 1px solid var(--border-strong); box-shadow: var(--shadow);
+            padding: 12px 16px; border-radius: 14px; animation: rise .25s ease-out;
+        }
+        @keyframes rise { from { opacity: 0; transform: translate(-50%, 10px); } }
+
+        @media (max-width: 900px) {
+            .lobby-card { grid-template-columns: 1fr; gap: 20px; }
+            .join-panel h1 { font-size: 24px; }
+            .room-name { max-width: 40vw; }
+            .hide-sm { display: none !important; }
+            .panel.open {
+                position: fixed; inset: 0; z-index: 40; width: auto; border-radius: 0; border: 0;
+            }
+            .spotlight { flex-direction: column; }
+            .filmstrip { width: auto; flex-direction: row; overflow-x: auto; overflow-y: hidden; height: 110px; }
+            .filmstrip .tile { height: 100%; }
+            .controlbar { gap: 10px; }
+            .ctl { width: 44px; height: 44px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="/static/vendor/react-18.3.1.production.min.js"></script>
+    <script src="/static/vendor/react-dom-18.3.1.production.min.js"></script>
+    <script src="/static/vendor/htm-3.1.1.umd.js"></script>
+
+    <script>
+    'use strict';
+
+    const { useState, useEffect, useRef, useSyncExternalStore } = React;
+    const html = htm.bind(React.createElement);
+
+    const FALLBACK_ICE = [{ urls: 'stun:stun.l.google.com:19302' }];
+    const FATAL_ERRORS = new Set(['replaced', 'room_full', 'invalid_id']);
+    const LOCAL = '__local';
+
+
+    class Peer {
+        constructor(id) {
+            this.id = id;
+            this.pc = null;
+            this.polite = false;
+            this.pendingCandidates = [];
+            this.makingOffer = false;
+            this.ignoreOffer = false;
+            this.tracksAdded = false;
+            this.stream = null;
+            this.streamVersion = 0;
+            this.media = { audio: true, video: true, screen: false };
+            this.prevStats = null;
+            this.stats = '';
+        }
+    }
+
+    const initialState = {
+        inCall: false,
+        joining: false,
+        joinedAt: 0,
+        userId: '',
+        roomId: '',
+        status: { text: 'Not connected', kind: '' },
+        previewError: '',
+        localPreview: null,
+        media: { audio: false, video: false, screen: false },
+        peers: [],
+        speaking: [],
+        messages: [],
+        devices: { cameras: [], mics: [] },
+        camera: '',
+        mic: '',
+        showStats: false,
+        recording: false,
+        toast: null,
+    };
+
+    class CallEngine {
+        constructor() {
+            this.state = initialState;
+            this.listeners = new Set();
+            this.peers = new Map();
+            this.ws = null;
+            this.iceServers = FALLBACK_ICE;
+            this.localStream = null;
+            this.previewPromise = null;
+            this.screenTrack = null;
+            this.levels = null;
+            this.reconnectAttempts = 0;
+            this.reconnectTimer = null;
+            this.statsTimer = null;
+            this.toastTimer = null;
+            this.recorder = null;
+            this.nextMessageId = 1;
+
+            this.subscribe = this.subscribe.bind(this);
+            this.getSnapshot = this.getSnapshot.bind(this);
+
+            this.listDevices();
+            navigator.mediaDevices?.addEventListener('devicechange', () => this.listDevices());
+        }
+
+
+        subscribe(listener) {
+            this.listeners.add(listener);
+            return () => this.listeners.delete(listener);
+        }
+
+        getSnapshot() {
+            return this.state;
+        }
+
+        set(patch) {
+            this.state = { ...this.state, ...patch };
+            this.listeners.forEach(l => l());
+        }
+
+        syncPeers() {
+            const peers = [...this.peers.values()]
+                .sort((a, b) => a.id.localeCompare(b.id))
+                .map(p => ({
+                    id: p.id,
+                    stream: p.stream,
+                    streamVersion: p.streamVersion,
+                    media: p.media,
+                    connectionState: p.pc?.connectionState || 'new',
+                    stats: p.stats,
+                }));
+            this.set({ peers });
+        }
+
+        setStatus(text, kind = '') {
+            this.set({ status: { text, kind } });
+        }
+
+        toast(text) {
+            clearTimeout(this.toastTimer);
+            this.set({ toast: text });
+            this.toastTimer = setTimeout(() => this.set({ toast: null }), 4000);
+        }
+
+        addMessage(message) {
+            this.set({ messages: [...this.state.messages, { id: this.nextMessageId++, ...message }] });
+        }
+
+
+        async listDevices() {
+            if (!navigator.mediaDevices?.enumerateDevices) return;
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const pick = (kind, label) => devices
+                .filter(d => d.kind === kind)
+                .map((d, i) => ({ id: d.deviceId, label: d.label || `${label} ${i + 1}` }));
+            const cameras = pick('videoinput', 'Camera');
+            const mics = pick('audioinput', 'Microphone');
+            const keep = (current, list) => (list.some(d => d.id === current) ? current : list[0]?.id || '');
+            this.set({
+                devices: { cameras, mics },
+                camera: keep(this.state.camera, cameras),
+                mic: keep(this.state.mic, mics),
+            });
+        }
+
+        startPreview() {
+            if (this.localStream) return Promise.resolve(true);
+            if (!this.previewPromise) {
+                this.previewPromise = this.getUserMedia()
+                    .then(stream => {
+                        this.localStream = stream;
+                        this.set({
+                            localPreview: stream,
+                            previewError: '',
+                            media: {
+                                audio: stream.getAudioTracks().length > 0,
+                                video: stream.getVideoTracks().length > 0,
+                                screen: false,
+                            },
+                        });
+                        this.listDevices();
+                        return true;
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        this.set({ previewError: 'Camera and microphone are blocked or unavailable.' });
+                        return false;
+                    })
+                    .finally(() => {
+                        this.previewPromise = null;
+                    });
+            }
+            return this.previewPromise;
+        }
+
+        async selectDevice(kind, deviceId) {
+            this.set(kind === 'video' ? { camera: deviceId } : { mic: deviceId });
+            if (!deviceId || !this.localStream) return;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ [kind]: { deviceId: { exact: deviceId } } });
+                const track = stream.getTracks()[0];
+                const old = kind === 'video' ? this.localStream.getVideoTracks()[0] : this.localStream.getAudioTracks()[0];
+                track.enabled = kind === 'video' ? this.state.media.video : this.state.media.audio;
+                if (old) {
+                    this.localStream.removeTrack(old);
+                    old.stop();
+                }
+                this.localStream.addTrack(track);
+                if (kind === 'audio' || !this.screenTrack) await this.replaceTrack(kind, track);
+                if (kind === 'audio') this.levels?.watch(LOCAL, this.localStream);
+                if (!this.screenTrack) this.set({ localPreview: new MediaStream(this.localStream.getTracks()) });
+            } catch (err) {
+                console.error(err);
+                this.toast(`Could not switch ${kind === 'video' ? 'camera' : 'microphone'}`);
+            }
+        }
+
+        async getUserMedia() {
+            const { camera, mic } = this.state;
+            const audio = mic ? { deviceId: { exact: mic } } : true;
+            const video = camera ? { deviceId: { exact: camera } } : true;
+            try {
+                return await navigator.mediaDevices.getUserMedia({ audio, video });
+            } catch (err) {
+                console.warn('camera unavailable, using audio only', err);
+                return await navigator.mediaDevices.getUserMedia({ audio, video: false });
+            }
+        }
+
+
+        async join(userId, roomId) {
+            userId = userId.trim();
+            roomId = roomId.trim();
+            if (!userId || !roomId) {
+                this.toast('Enter your name and a room');
+                return;
+            }
+            this.set({ joining: true });
+            if (!(await this.startPreview())) {
+                this.set({ joining: false });
+                this.toast('Could not access camera or microphone');
+                return;
+            }
+
+            this.levels = new AudioLevels(speaking => this.set({ speaking }));
+            this.levels.watch(LOCAL, this.localStream);
+            this.set({
+                joining: false,
+                inCall: true,
+                joinedAt: Date.now(),
+                userId,
+                roomId,
+                messages: [],
+                status: { text: 'Connecting…', kind: 'reconnecting' },
+            });
+            history.replaceState(null, '', `?room=${encodeURIComponent(roomId)}`);
+            await this.fetchIceServers();
+            if (this.state.inCall) this.connect();
+        }
+
+        async fetchIceServers() {
+            try {
+                const res = await fetch(`/api/ice-servers?user_id=${encodeURIComponent(this.state.userId)}`, { cache: 'no-store' });
+                const body = await res.json();
+                if (body.ice_servers?.length) this.iceServers = body.ice_servers;
+            } catch (err) {
+                console.warn('using fallback ICE servers', err);
+            }
+        }
+
+        connect() {
+            const scheme = location.protocol === 'https:' ? 'wss' : 'ws';
+            const query = new URLSearchParams({ user_id: this.state.userId, room_id: this.state.roomId });
+            const ws = new WebSocket(`${scheme}://${location.host}/ws?${query}`);
+            this.ws = ws;
+
+            ws.onopen = () => {
+                this.reconnectAttempts = 0;
+                this.setStatus('Connected', 'connected');
+            };
+            ws.onmessage = event => this.handleMessage(JSON.parse(event.data));
+            ws.onclose = () => {
+                if (this.ws !== ws) return;
+                this.ws = null;
+                if (this.state.inCall) this.scheduleReconnect();
+            };
+        }
+
+        scheduleReconnect() {
+            const delay = Math.min(1000 * 2 ** this.reconnectAttempts, 10000);
+            this.reconnectAttempts++;
+            this.setStatus(`Reconnecting in ${Math.round(delay / 1000)}s…`, 'reconnecting');
+            this.reconnectTimer = setTimeout(async () => {
+                await this.fetchIceServers();
+                if (this.state.inCall) this.connect();
+            }, delay);
+        }
+
+        leave(reason) {
+            clearTimeout(this.reconnectTimer);
+            if (this.ws) {
+                const ws = this.ws;
+                this.ws = null;
+                ws.close();
+            }
+            if (this.recorder) this.stopRecording();
+            for (const id of [...this.peers.keys()]) this.removePeer(id);
+            this.levels?.close();
+            this.levels = null;
+            this.screenTrack?.stop();
+            this.screenTrack = null;
+            this.localStream?.getTracks().forEach(t => t.stop());
+            this.localStream = null;
+            clearInterval(this.statsTimer);
+            this.statsTimer = null;
+            this.set({
+                inCall: false,
+                localPreview: null,
+                media: initialState.media,
+                peers: [],
+                speaking: [],
+                showStats: false,
+                status: { text: reason || 'Not connected', kind: reason ? 'error' : '' },
+            });
+        }
+
+        send(message) {
+            if (this.ws?.readyState === WebSocket.OPEN) {
+                this.ws.send(JSON.stringify(message));
+            }
+        }
+
+
+        handleMessage(msg) {
+            switch (msg.type) {
+                case 'room_users':
+                    for (const id of [...this.peers.keys()]) this.removePeer(id);
+                    msg.data.forEach(id => this.ensurePeer(id, true));
+                    this.sendMediaState();
+                    break;
+                case 'user_joined':
+                    this.ensurePeer(msg.user_id, false);
+                    this.addMessage({ kind: 'system', text: `${msg.user_id} joined` });
+                    break;
+                case 'user_left':
+                    this.removePeer(msg.user_id);
+                    this.addMessage({ kind: 'system', text: `${msg.user_id} left` });
+                    break;
+                case 'offer':
+                case 'answer':
+                    this.handleDescription(msg.user_id, msg.data);
+                    break;
+                case 'ice_candidate':
+                    this.handleCandidate(msg.user_id, msg.data);
+                    break;
+                case 'media_state': {
+                    const peer = this.peers.get(msg.user_id);
+                    if (peer) {
+                        peer.media = msg.data;
+                        this.syncPeers();
+                    }
+                    break;
+                }
+                case 'chat':
+                    this.addMessage({
+                        kind: 'chat', from: msg.user_id, mine: false, text: msg.data.text,
+                        sentAt: msg.data.sent_at, private: Boolean(msg.to_user_id),
+                    });
+                    break;
+                case 'error':
+                    this.handleError(msg.data);
+                    break;
+            }
+        }
+
+        handleError(err) {
+            console.warn('server error', err);
+            if (FATAL_ERRORS.has(err?.code)) {
+                this.leave(err.message);
+                this.toast(err.message);
+            } else if (err?.message) {
+                this.toast(err.message);
+            }
+        }
+
+        ensurePeer(id, initiate) {
+            let peer = this.peers.get(id);
+            if (peer?.pc) return peer;
+            if (!peer) {
+                peer = new Peer(id);
+                this.peers.set(id, peer);
+            }
+
+            const pc = new RTCPeerConnection({ iceServers: this.iceServers });
+            peer.pc = pc;
+            peer.polite = this.state.userId > id;
+
+            pc.onicecandidate = ({ candidate }) => {
+                if (candidate) this.send({ type: 'ice_candidate', to_user_id: id, data: candidate });
+            };
+            pc.onnegotiationneeded = async () => {
+                try {
+                    peer.makingOffer = true;
+                    await pc.setLocalDescription();
+                    this.send({ type: 'offer', to_user_id: id, data: pc.localDescription });
+                } catch (err) {
+                    console.error('negotiation failed', err);
+                } finally {
+                    peer.makingOffer = false;
+                }
+            };
+            pc.ontrack = ({ track, streams }) => {
+                peer.stream = streams[0] || peer.stream || new MediaStream();
+                if (!streams[0]) peer.stream.addTrack(track);
+                peer.streamVersion++;
+                if (track.kind === 'audio') this.levels?.watch(id, peer.stream);
+                if (this.recorder) this.recorder.addAudio(peer.stream);
+                this.syncPeers();
+            };
+            pc.onconnectionstatechange = () => {
+                if (pc.connectionState === 'failed' && !peer.polite) pc.restartIce();
+                this.syncPeers();
+            };
+
+            if (initiate) this.addLocalTracks(peer);
+            this.syncPeers();
+            return peer;
+        }
+
+        addLocalTracks(peer) {
+            if (peer.tracksAdded || !this.localStream) return;
+            peer.tracksAdded = true;
+            for (const track of this.localStream.getAudioTracks()) peer.pc.addTrack(track, this.localStream);
+            const video = this.screenTrack || this.localStream.getVideoTracks()[0];
+            if (video) peer.pc.addTrack(video, this.localStream);
+        }
+
+        async handleDescription(from, description) {
+            const peer = this.ensurePeer(from, false);
+            const pc = peer.pc;
+            try {
+                const collision = description.type === 'offer' && (peer.makingOffer || pc.signalingState !== 'stable');
+                peer.ignoreOffer = !peer.polite && collision;
+                if (peer.ignoreOffer) return;
+
+                await pc.setRemoteDescription(description);
+                if (description.type === 'offer') {
+                    this.addLocalTracks(peer);
+                    await pc.setLocalDescription();
+                    this.send({ type: 'answer', to_user_id: from, data: pc.localDescription });
+                }
+                for (const c of peer.pendingCandidates.splice(0)) await pc.addIceCandidate(c);
+            } catch (err) {
+                console.error('failed to apply description from', from, err);
+            }
+        }
+
+        async handleCandidate(from, candidate) {
+            const peer = this.peers.get(from);
+            if (!peer?.pc) return;
+            if (!peer.pc.remoteDescription) {
+                peer.pendingCandidates.push(candidate);
+                return;
+            }
+            try {
+                await peer.pc.addIceCandidate(candidate);
+            } catch (err) {
+                if (!peer.ignoreOffer) console.error('bad ICE candidate from', from, err);
+            }
+        }
+
+        removePeer(id) {
+            const peer = this.peers.get(id);
+            if (!peer) return;
+            peer.pc?.close();
+            this.levels?.unwatch(id);
+            this.peers.delete(id);
+            this.syncPeers();
+        }
+
+
+        sendMediaState() {
+            this.send({ type: 'media_state', data: this.state.media });
+        }
+
+        setMedia(patch) {
+            this.set({ media: { ...this.state.media, ...patch } });
+            this.sendMediaState();
+        }
+
+        toggleAudio() {
+            const tracks = this.localStream?.getAudioTracks() || [];
+            if (!tracks.length) return this.toast('No microphone found');
+            const audio = !this.state.media.audio;
+            tracks.forEach(t => (t.enabled = audio));
+            this.setMedia({ audio });
+        }
+
+        toggleVideo() {
+            const tracks = this.localStream?.getVideoTracks() || [];
+            if (!tracks.length) return this.toast('No camera found');
+            const video = !this.state.media.video;
+            tracks.forEach(t => (t.enabled = video));
+            this.setMedia({ video });
+        }
+
+        async replaceTrack(kind, track) {
+            for (const peer of this.peers.values()) {
+                if (!peer.pc || !peer.tracksAdded) continue;
+                const tr = peer.pc.getTransceivers().find(t => !t.stopped && t.receiver.track.kind === kind);
+                if (tr) {
+                    await tr.sender.replaceTrack(track);
+                    if (track && !tr.direction.includes('send')) {
+                        tr.direction = tr.direction === 'inactive' ? 'sendonly' : 'sendrecv';
+                    }
+                    if (track && this.localStream) tr.sender.setStreams?.(this.localStream);
+                } else if (track) {
+                    peer.pc.addTrack(track, this.localStream);
+                }
+            }
+        }
+
+        toggleScreenShare() {
+            return this.state.media.screen ? this.stopScreenShare() : this.startScreenShare();
+        }
+
+        async startScreenShare() {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+                this.screenTrack = stream.getVideoTracks()[0];
+                this.screenTrack.contentHint = 'detail';
+                this.screenTrack.onended = () => this.stopScreenShare();
+                await this.replaceTrack('video', this.screenTrack);
+                this.set({ localPreview: new MediaStream([this.screenTrack]) });
+                this.setMedia({ screen: true });
+            } catch (err) {
+                if (err.name !== 'NotAllowedError') this.toast('Could not share the screen');
+            }
+        }
+
+        async stopScreenShare() {
+            if (!this.screenTrack) return;
+            this.screenTrack.onended = null;
+            this.screenTrack.stop();
+            this.screenTrack = null;
+            await this.replaceTrack('video', this.localStream?.getVideoTracks()[0] || null);
+            this.set({ localPreview: this.localStream });
+            this.setMedia({ screen: false });
+        }
+
+
+        sendChat(text, to) {
+            text = text.trim();
+            if (!text) return false;
+            this.send({ type: 'chat', to_user_id: to || undefined, data: { text } });
+            this.addMessage({ kind: 'chat', from: this.state.userId, mine: true, to, text, sentAt: new Date().toISOString(), private: Boolean(to) });
+            return true;
+        }
+
+
+        toggleStats() {
+            const showStats = !this.state.showStats;
+            clearInterval(this.statsTimer);
+            this.statsTimer = showStats ? setInterval(() => this.collectStats(), 2000) : null;
+            this.set({ showStats });
+            if (showStats) this.collectStats();
+        }
+
+        async collectStats() {
+            for (const peer of this.peers.values()) {
+                if (!peer.pc) continue;
+                peer.stats = await peerStats(peer);
+            }
+            this.syncPeers();
+        }
+
+
+        toggleRecording() {
+            if (this.recorder) this.stopRecording();
+            else this.startRecording();
+        }
+
+        startRecording() {
+            this.recorder = new CallRecorder(`call-${this.state.roomId}`);
+            if (this.localStream) this.recorder.addAudio(this.localStream);
+            for (const peer of this.peers.values()) if (peer.stream) this.recorder.addAudio(peer.stream);
+            this.recorder.start();
+            this.set({ recording: true });
+        }
+
+        stopRecording() {
+            this.recorder.stop();
+            this.recorder = null;
+            this.set({ recording: false });
+        }
+    }
+
+    class AudioLevels {
+        constructor(onChange) {
+            this.ctx = new AudioContext();
+            this.nodes = new Map();
+            this.onChange = onChange;
+            this.current = '';
+            this.timer = setInterval(() => this.poll(), 200);
+        }
+
+        watch(key, stream) {
+            this.unwatch(key);
+            if (!stream?.getAudioTracks().length) return;
+            const source = this.ctx.createMediaStreamSource(stream);
+            const analyser = this.ctx.createAnalyser();
+            analyser.fftSize = 512;
+            source.connect(analyser);
+            this.nodes.set(key, { source, analyser, data: new Uint8Array(analyser.fftSize), level: 0 });
+        }
+
+        unwatch(key) {
+            const node = this.nodes.get(key);
+            if (!node) return;
+            node.source.disconnect();
+            this.nodes.delete(key);
+        }
+
+        poll() {
+            const speaking = [];
+            for (const [key, node] of this.nodes) {
+                node.analyser.getByteTimeDomainData(node.data);
+                let sum = 0;
+                for (const v of node.data) {
+                    const x = (v - 128) / 128;
+                    sum += x * x;
+                }
+                node.level = node.level * 0.6 + Math.sqrt(sum / node.data.length) * 0.4;
+                if (node.level > 0.03) speaking.push(key);
+            }
+            const id = speaking.sort().join('\n');
+            if (id !== this.current) {
+                this.current = id;
+                this.onChange(speaking);
+            }
+        }
+
+        close() {
+            clearInterval(this.timer);
+            this.ctx.close();
+        }
+    }
+
+    async function peerStats(peer) {
+        const report = await peer.pc.getStats();
+        const now = { bytesIn: 0, bytesOut: 0, at: performance.now() };
+        let video = null, lost = 0, received = 0, pairId = null;
+        const byId = new Map();
+        report.forEach(s => {
+            byId.set(s.id, s);
+            if (s.type === 'inbound-rtp') {
+                now.bytesIn += s.bytesReceived || 0;
+                lost += s.packetsLost || 0;
+                received += s.packetsReceived || 0;
+                if (s.kind === 'video') video = s;
+            }
+            if (s.type === 'outbound-rtp') now.bytesOut += s.bytesSent || 0;
+            if (s.type === 'transport' && s.selectedCandidatePairId) pairId = s.selectedCandidatePairId;
+        });
+        const pair = pairId ? byId.get(pairId) : [...byId.values()].find(s => s.type === 'candidate-pair' && s.nominated && s.state === 'succeeded');
+        const local = pair && byId.get(pair.localCandidateId);
+        const prev = peer.prevStats;
+        const secs = prev ? (now.at - prev.at) / 1000 : 0;
+        const kbps = (cur, old) => (secs ? Math.round(((cur - old) * 8) / secs / 1000) : '-');
+        peer.prevStats = now;
+
+        return [
+            `rtt   ${pair?.currentRoundTripTime != null ? Math.round(pair.currentRoundTripTime * 1000) + ' ms' : '-'}`,
+            `in    ${prev ? kbps(now.bytesIn, prev.bytesIn) : '-'} kbps`,
+            `out   ${prev ? kbps(now.bytesOut, prev.bytesOut) : '-'} kbps`,
+            `loss  ${received + lost ? ((lost / (received + lost)) * 100).toFixed(1) : '0.0'} %`,
+            `video ${video?.frameWidth ? `${video.frameWidth}x${video.frameHeight} @${Math.round(video.framesPerSecond || 0)}fps` : '-'}`,
+            `path  ${local?.candidateType || '-'}${local?.candidateType === 'relay' ? ' (TURN)' : ''}`,
+        ].join('\n');
+    }
+
+    class CallRecorder {
+        constructor(name) {
+            this.name = name;
+            this.canvas = Object.assign(document.createElement('canvas'), { width: 1280, height: 720 });
+            this.ctx = this.canvas.getContext('2d');
+            this.audioCtx = new AudioContext();
+            this.audioDest = this.audioCtx.createMediaStreamDestination();
+            this.sources = new Set();
+            this.chunks = [];
+        }
+
+        addAudio(stream) {
+            if (this.sources.has(stream) || !stream.getAudioTracks().length) return;
+            this.sources.add(stream);
+            this.audioCtx.createMediaStreamSource(stream).connect(this.audioDest);
+        }
+
+        draw() {
+            const { canvas, ctx } = this;
+            const videos = [...document.querySelectorAll('.tile video')]
+                .filter(v => v.videoWidth && !v.parentElement.querySelector('.avatar-wrap'));
+            ctx.fillStyle = '#0b0d12';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const cols = Math.ceil(Math.sqrt(videos.length || 1));
+            const rows = Math.ceil((videos.length || 1) / cols);
+            const w = canvas.width / cols, h = canvas.height / rows;
+            videos.forEach((v, i) => ctx.drawImage(v, (i % cols) * w, Math.floor(i / cols) * h, w, h));
+        }
+
+        start() {
+            const tick = 'let t; onmessage = e => { clearInterval(t); if (e.data) t = setInterval(() => postMessage(0), e.data); };';
+            this.tickerUrl = URL.createObjectURL(new Blob([tick], { type: 'text/javascript' }));
+            this.ticker = new Worker(this.tickerUrl);
+            this.ticker.onmessage = () => this.draw();
+            this.ticker.postMessage(1000 / 30);
+            this.draw();
+
+            const stream = new MediaStream([...this.canvas.captureStream(30).getVideoTracks(), ...this.audioDest.stream.getAudioTracks()]);
+            this.mediaRecorder = new MediaRecorder(stream, { mimeType: pickMimeType() });
+            this.mediaRecorder.ondataavailable = e => e.data.size && this.chunks.push(e.data);
+            this.mediaRecorder.onstop = () => this.download();
+            this.mediaRecorder.start(1000);
+        }
+
+        stop() {
+            this.ticker.terminate();
+            URL.revokeObjectURL(this.tickerUrl);
+            this.mediaRecorder.stop();
+            this.audioCtx.close();
+        }
+
+        download() {
+            const blob = new Blob(this.chunks, { type: this.mediaRecorder.mimeType });
+            const a = Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(blob),
+                download: `${this.name}-${new Date().toISOString().replace(/[:.]/g, '-')}.webm`,
+            });
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+        }
+    }
+
+    function pickMimeType() {
+        const types = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+        return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+    }
+
+
+    const ICONS = {
+        mic: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/>',
+        micOff: '<path d="M2 2l20 20"/><path d="M18.89 13.23A7 7 0 0 0 19 12v-2"/><path d="M5 10v2a7 7 0 0 0 12 5"/><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/><path d="M12 19v3"/>',
+        video: '<path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.75-.43L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+        videoOff: '<path d="M2 2l20 20"/><path d="M10.66 6H14a2 2 0 0 1 2 2v2.5l5.25-3.06a.5.5 0 0 1 .75.43v8.26"/><path d="M16 16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2"/>',
+        screen: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="m9 10 3-3 3 3"/><path d="M12 13V7"/>',
+        record: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor"/>',
+        stats: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+        chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+        users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+        phoneOff: '<path transform="rotate(135 12 12)" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+        link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+        x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+        send: '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+        lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+        chevronUp: '<path d="m18 15-6-6-6 6"/>',
+        check: '<path d="M20 6 9 17l-5-5"/>',
+        pin: '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',
+        shuffle: '<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.6 2.2"/><path d="M22 18h-5.9c-1.3 0-2.6-.7-3.3-1.8l-.5-.8"/><path d="m18 14 4 4-4 4"/>',
+        alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+        info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+    };
+
+    function Icon({ name, size = 20 }) {
+        return html`<svg className="icon" width=${size} height=${size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+            dangerouslySetInnerHTML=${{ __html: ICONS[name] }} />`;
+    }
+
+    function hue(text) {
+        let h = 0;
+        for (const ch of text) h = (h * 31 + ch.codePointAt(0)) % 360;
+        return h;
+    }
+
+    function initials(name) {
+        const parts = name.trim().split(/[\s._-]+/).filter(Boolean);
+        const letters = parts.length > 1 ? parts[0][0] + parts[1][0] : [...(parts[0] || '?')].slice(0, 2).join('');
+        return letters.toUpperCase();
+    }
+
+    function Avatar({ name, size = 40 }) {
+        const h = hue(name);
+        return html`
+            <div className="avatar" style=${{
+                width: size, height: size, fontSize: Math.round(size * 0.38),
+                background: `linear-gradient(135deg, hsl(${h} 70% 58%), hsl(${(h + 40) % 360} 65% 42%))`,
+            }}>${initials(name)}</div>
+        `;
+    }
+
+    function inviteLink(roomId) {
+        return `${location.origin}${location.pathname}?room=${encodeURIComponent(roomId)}`;
+    }
+
+    async function copyText(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch {
+            const area = Object.assign(document.createElement('textarea'), { value: text });
+            document.body.append(area);
+            area.select();
+            document.execCommand('copy');
+            area.remove();
+        }
+        engine.toast('Invite link copied');
+    }
+
+    function randomRoom() {
+        const words = ['amber', 'river', 'cedar', 'nova', 'pixel', 'lotus', 'delta', 'ember', 'maple', 'orbit'];
+        const pick = () => words[crypto.getRandomValues(new Uint32Array(1))[0] % words.length];
+        return `${pick()}-${pick()}-${Math.floor(100 + Math.random() * 900)}`;
+    }
+
+    function formatDuration(ms) {
+        const s = Math.floor(ms / 1000);
+        const pad = n => String(n).padStart(2, '0');
+        const h = Math.floor(s / 3600);
+        return h ? `${h}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}` : `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+    }
+
+    function formatTime(iso) {
+        return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function readStored(key) {
+        try { return localStorage.getItem(key) || ''; } catch { return ''; }
+    }
+
+    function store(key, value) {
+        try { localStorage.setItem(key, value); } catch { }
+    }
+
+    function useClickOutside(ref, onOutside, active) {
+        useEffect(() => {
+            if (!active) return;
+            const handler = e => ref.current && !ref.current.contains(e.target) && onOutside();
+            document.addEventListener('mousedown', handler);
+            return () => document.removeEventListener('mousedown', handler);
+        }, [active]);
+    }
+
+
+    const engine = new CallEngine();
+    window.callEngine = engine;
+
+    function useCall() {
+        return useSyncExternalStore(engine.subscribe, engine.getSnapshot);
+    }
+
+    function App() {
+        const call = useCall();
+        useEffect(() => {
+            const onUnload = () => engine.state.inCall && engine.leave();
+            window.addEventListener('beforeunload', onUnload);
+            return () => window.removeEventListener('beforeunload', onUnload);
+        }, []);
+
+        return html`
+            ${call.inCall ? html`<${Room} call=${call} />` : html`<${Lobby} call=${call} />`}
+            ${call.toast && html`
+                <div className="toast" role="status"><${Icon} name="info" size=${18} />${call.toast}</div>
+            `}
+        `;
+    }
+
+
+    function Lobby({ call }) {
+        const [userId, setUserId] = useState(() => readStored('webrtc.name'));
+        const [roomId, setRoomId] = useState(() => new URLSearchParams(location.search).get('room') || '');
+        useEffect(() => { engine.startPreview(); }, []);
+
+        const join = e => {
+            e.preventDefault();
+            store('webrtc.name', userId.trim());
+            engine.join(userId, roomId);
+        };
+
+        return html`
+            <div className="lobby">
+                <div className="lobby-card">
+                    <div>
+                        <div className="brand">
+                            <div className="brand-mark"><${Icon} name="video" size=${18} /></div>
+                            Video Call
+                        </div>
+                        <${PreviewTile} call=${call} name=${userId.trim() || 'You'} />
+                    </div>
+
+                    <div className="join-panel">
+                        ${call.status.kind === 'error' && html`
+                            <div className="alert" role="alert"><${Icon} name="alert" size=${18} />
+                                <div><strong>You left the call.</strong><br /><span id="statusText">${call.status.text}</span></div>
+                            </div>
+                        `}
+                        <h1>Ready to join?</h1>
+                        <p className="lead">Check your camera and microphone, pick a room, and share the link with whoever you want to talk to.</p>
+
+                        <form className="join-form" onSubmit=${join}>
+                            <label className="field">
+                                <span>Your name</span>
+                                <input id="userIdInput" placeholder="e.g. Alice" maxLength="64" autoComplete="nickname"
+                                    value=${userId} onChange=${e => setUserId(e.target.value)} />
+                            </label>
+                            <label className="field">
+                                <span>Room</span>
+                                <div className="input-row">
+                                    <input id="roomIdInput" placeholder="e.g. team-standup" maxLength="64"
+                                        value=${roomId} onChange=${e => setRoomId(e.target.value)} />
+                                    <button type="button" className="btn" data-tip="Random room" aria-label="Random room"
+                                        onClick=${() => setRoomId(randomRoom())}><${Icon} name="shuffle" size=${18} /></button>
+                                </div>
+                            </label>
+                            <div className="devices">
+                                <label className="field">
+                                    <span>Camera</span>
+                                    <${DeviceSelect} devices=${call.devices.cameras} value=${call.camera} empty="No camera"
+                                        onChange=${id => engine.selectDevice('video', id)} />
+                                </label>
+                                <label className="field">
+                                    <span>Microphone</span>
+                                    <${DeviceSelect} devices=${call.devices.mics} value=${call.mic} empty="No microphone"
+                                        onChange=${id => engine.selectDevice('audio', id)} />
+                                </label>
+                            </div>
+                            <button id="joinButton" className="btn primary" disabled=${call.joining}>
+                                <${Icon} name="video" size=${18} />
+                                ${call.joining ? 'Joining…' : 'Join now'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function PreviewTile({ call, name }) {
+        const videoRef = useRef(null);
+        useEffect(() => {
+            if (videoRef.current) videoRef.current.srcObject = call.localPreview;
+        }, [call.localPreview]);
+
+        const showVideo = call.localPreview && call.media.video;
+        return html`
+            <div className="preview">
+                <video ref=${videoRef} autoPlay playsInline muted style=${{ visibility: showVideo ? 'visible' : 'hidden' }} />
+                ${!showVideo && !call.previewError && html`<div className="avatar-wrap"><${Avatar} name=${name} size=${96} /></div>`}
+                ${call.previewError && html`
+                    <div className="preview-error">
+                        <${Icon} name="videoOff" size=${36} />
+                        <div>${call.previewError}<br />Allow access in your browser, then try again.</div>
+                        <button className="btn" onClick=${() => engine.startPreview()}>Try again</button>
+                    </div>
+                `}
+                <div className="preview-name">${name}</div>
+                ${!call.previewError && html`
+                    <div className="preview-controls">
+                        <${ControlButton} id="previewMic" icon=${call.media.audio ? 'mic' : 'micOff'} off=${!call.media.audio}
+                            tip=${call.media.audio ? 'Turn off microphone' : 'Turn on microphone'} onClick=${() => engine.toggleAudio()} />
+                        <${ControlButton} id="previewCam" icon=${call.media.video ? 'video' : 'videoOff'} off=${!call.media.video}
+                            tip=${call.media.video ? 'Turn off camera' : 'Turn on camera'} onClick=${() => engine.toggleVideo()} />
+                    </div>
+                `}
+            </div>
+        `;
+    }
+
+    function DeviceSelect({ devices, value, onChange, empty }) {
+        return html`
+            <select value=${value} onChange=${e => onChange(e.target.value)} disabled=${!devices.length}>
+                ${devices.length
+                    ? devices.map(d => html`<option key=${d.id} value=${d.id}>${d.label}</option>`)
+                    : html`<option value="">${empty}</option>`}
+            </select>
+        `;
+    }
+
+
+    function Room({ call }) {
+        const [panel, setPanel] = useState(() => (window.innerWidth >= 1100 ? 'chat' : null));
+        const [pinned, setPinned] = useState(null);
+        const [seen, setSeen] = useState(0);
+
+        const incoming = call.messages.filter(m => m.kind === 'chat' && !m.mine).length;
+        useEffect(() => {
+            if (panel === 'chat') setSeen(incoming);
+        }, [panel, incoming]);
+        const unread = panel === 'chat' ? 0 : Math.max(0, incoming - seen);
+
+        const togglePanel = name => setPanel(p => (p === name ? null : name));
+
+        return html`
+            <div className="room">
+                <${TopBar} call=${call} />
+                <div className="body">
+                    <div className="stage">
+                        <${Stage} call=${call} pinned=${pinned} onPin=${key => setPinned(p => (p === key ? null : key))} />
+                    </div>
+                    <${SidePanel} call=${call} panel=${panel} setPanel=${setPanel} />
+                </div>
+                <${ControlBar} call=${call} panel=${panel} unread=${unread} togglePanel=${togglePanel} />
+            </div>
+        `;
+    }
+
+    function TopBar({ call }) {
+        return html`
+            <div className="topbar">
+                <div className="room-name" title=${call.roomId}>${call.roomId}</div>
+                <button className="btn ghost" data-tip="Copy invite link" aria-label="Copy invite link"
+                    onClick=${() => copyText(inviteLink(call.roomId))}><${Icon} name="link" size=${18} /></button>
+                <div className="divider hide-sm"></div>
+                <${Timer} since=${call.joinedAt} />
+                <div className="spacer"></div>
+                ${call.recording && html`<div className="pill rec"><span className="dot"></span>REC</div>`}
+                <div className=${`pill ${call.status.kind}`}>
+                    <span className="dot"></span><span id="statusText">${call.status.text}</span>
+                </div>
+                <div className="pill hide-sm"><${Icon} name="users" size=${15} />${call.peers.length + 1}</div>
+            </div>
+        `;
+    }
+
+    function Timer({ since }) {
+        const [now, setNow] = useState(Date.now());
+        useEffect(() => {
+            const t = setInterval(() => setNow(Date.now()), 1000);
+            return () => clearInterval(t);
+        }, []);
+        return html`<div className="timer">${formatDuration(now - since)}</div>`;
+    }
+
+    function participants(call) {
+        return [
+            {
+                key: LOCAL, local: true, name: call.userId, stream: call.localPreview, streamVersion: 0,
+                media: call.media, connectionState: 'connected', stats: '',
+            },
+            ...call.peers.map(p => ({ key: p.id, local: false, name: p.id, ...p })),
+        ];
+    }
+
+    function Stage({ call, pinned, onPin }) {
+        const all = participants(call);
+        const sharer = all.find(p => !p.local && p.media.screen) || all.find(p => p.local && p.media.screen);
+        const focusKey = (pinned && all.some(p => p.key === pinned) ? pinned : null) || sharer?.key;
+        const tile = p => html`
+            <${VideoTile} key=${p.key} participant=${p} speaking=${call.speaking.includes(p.key)}
+                showStats=${call.showStats} pinned=${p.key === pinned} onPin=${() => onPin(p.key)} />
+        `;
+
+        if (focusKey && all.length > 1) {
+            const focus = all.find(p => p.key === focusKey);
+            return html`
+                <div className="spotlight">
+                    <div className="main">${tile(focus)}</div>
+                    <div className="filmstrip">${all.filter(p => p.key !== focusKey).map(tile)}</div>
+                </div>
+            `;
+        }
+
+        const alone = all.length === 1;
+        const n = all.length + (alone ? 1 : 0);
+        const cols = n <= 1 ? 1 : n <= 4 ? 2 : n <= 9 ? 3 : 4;
+        const rows = Math.ceil(n / cols);
+        return html`
+            <div className="grid" style=${{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` }}>
+                ${all.map(tile)}
+                ${alone && html`<${InviteCard} roomId=${call.roomId} />`}
+            </div>
+        `;
+    }
+
+    function InviteCard({ roomId }) {
+        const link = inviteLink(roomId);
+        return html`
+            <div className="invite">
+                <${Icon} name="users" size=${36} />
+                <h3>Waiting for others to join</h3>
+                <div>Share this link to invite people to the call.</div>
+                <div className="link">
+                    <span title=${link}>${link}</span>
+                    <button className="btn primary" style=${{ padding: '8px 12px' }} onClick=${() => copyText(link)}>
+                        <${Icon} name="link" size=${16} />Copy
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function VideoTile({ participant: p, speaking, showStats, pinned, onPin }) {
+        const videoRef = useRef(null);
+        useEffect(() => {
+            const video = videoRef.current;
+            if (video && video.srcObject !== p.stream) video.srcObject = p.stream;
+        }, [p.stream, p.streamVersion]);
+
+        const hasVideo = p.stream && (p.media.video || p.media.screen);
+        const connecting = !p.local && p.connectionState !== 'connected';
+        const classes = ['tile', p.local && 'local', p.media.screen && 'screen', speaking && p.media.audio && 'speaking'].filter(Boolean).join(' ');
+        return html`
+            <div className=${classes} data-user=${p.local ? p.name : p.key}
+                data-muted=${String(!p.media.audio)} data-screen=${String(Boolean(p.media.screen))} data-speaking=${String(Boolean(speaking))}>
+                <video ref=${videoRef} autoPlay playsInline muted=${p.local} />
+                ${!hasVideo && html`<div className="avatar-wrap"><${Avatar} name=${p.name} size=${88} /></div>`}
+                <div className="shade"></div>
+                <div className="badges">
+                    ${p.media.screen && html`<div className="badge" title="Sharing screen"><${Icon} name="screen" size=${15} /></div>`}
+                    ${!p.media.audio && html`<div className="badge danger" title="Muted"><${Icon} name="micOff" size=${15} /></div>`}
+                </div>
+                <div className="label">
+                    <span className="name">${p.local ? `${p.name} (You)` : p.name}</span>
+                </div>
+                ${connecting && html`<div className="state">${p.connectionState}…</div>`}
+                ${showStats && p.stats && html`<div className="stats">${p.stats}</div>`}
+                <button className=${pinned ? 'pin active' : 'pin'} aria-label=${pinned ? 'Unpin' : 'Pin'} title=${pinned ? 'Unpin' : 'Pin to spotlight'}
+                    onClick=${onPin}><${Icon} name="pin" size=${15} /></button>
+            </div>
+        `;
+    }
+
+
+    function SidePanel({ call, panel, setPanel }) {
+        return html`
+            <aside className=${panel ? 'panel open' : 'panel'} aria-hidden=${!panel}>
+                <div className="panel-head">
+                    <div className="tabs" role="tablist">
+                        <button className=${panel === 'chat' ? 'tab active' : 'tab'} role="tab" onClick=${() => setPanel('chat')}>
+                            <${Icon} name="chat" size=${16} />Chat
+                        </button>
+                        <button className=${panel === 'people' ? 'tab active' : 'tab'} role="tab" onClick=${() => setPanel('people')}>
+                            <${Icon} name="users" size=${16} />People <span className="count">${call.peers.length + 1}</span>
+                        </button>
+                    </div>
+                    <button className="btn ghost" aria-label="Close panel" onClick=${() => setPanel(null)}><${Icon} name="x" size=${18} /></button>
+                </div>
+                ${panel === 'people' ? html`<${People} call=${call} />` : html`<${Chat} call=${call} />`}
+            </aside>
+        `;
+    }
+
+    function People({ call }) {
+        return html`
+            <ul className="people">
+                ${participants(call).map(p => html`
+                    <li key=${p.key}>
+                        <${Avatar} name=${p.name} size=${36} />
+                        <div className="who">
+                            <div>${p.name}${p.local ? ' (You)' : ''}</div>
+                            <div>${p.media.screen ? 'Presenting' : call.speaking.includes(p.key) && p.media.audio ? 'Speaking' : p.local ? 'In the call' : p.connectionState}</div>
+                        </div>
+                        <div className="icons">
+                            <span className=${p.media.audio ? '' : 'off'}><${Icon} name=${p.media.audio ? 'mic' : 'micOff'} size=${17} /></span>
+                            <span className=${p.media.video || p.media.screen ? '' : 'off'}><${Icon} name=${p.media.video || p.media.screen ? 'video' : 'videoOff'} size=${17} /></span>
+                        </div>
+                    </li>
+                `)}
+            </ul>
+        `;
+    }
+
+    function Chat({ call }) {
+        const [text, setText] = useState('');
+        const [target, setTarget] = useState('');
+        const listRef = useRef(null);
+        const stickToBottom = useRef(true);
+
+        const to = call.peers.some(p => p.id === target) ? target : '';
+
+        useEffect(() => {
+            const list = listRef.current;
+            if (list && stickToBottom.current) list.scrollTop = list.scrollHeight;
+        }, [call.messages.length]);
+
+        const onScroll = e => {
+            const el = e.currentTarget;
+            stickToBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+        };
+        const submit = e => {
+            e.preventDefault();
+            if (engine.sendChat(text, to)) setText('');
+        };
+
+        return html`
+            <div className="messages" id="messages" ref=${listRef} onScroll=${onScroll}>
+                ${call.messages.length === 0 && html`
+                    <div className="empty">No messages yet.<br />Messages are only kept while you are in the call.</div>
+                `}
+                ${call.messages.map(m => m.kind === 'system'
+                    ? html`<div key=${m.id} className="msg system">${m.text}</div>`
+                    : html`
+                        <div key=${m.id} className=${['msg', m.mine && 'mine', m.private && 'private'].filter(Boolean).join(' ')}>
+                            ${!m.mine && html`<${Avatar} name=${m.from} size=${28} />`}
+                            <div>
+                                <div className="meta">
+                                    ${m.private && html`<span className="private-tag"><${Icon} name="lock" size=${11} />${m.mine ? `to ${m.to}` : 'private'}</span>`}
+                                    <span>${m.mine ? 'You' : m.from} · ${formatTime(m.sentAt)}</span>
+                                </div>
+                                <div className="bubble">${m.text}</div>
+                            </div>
+                        </div>
+                    `)}
+            </div>
+            <form className="chat-form" onSubmit=${submit}>
+                <select id="chatTarget" value=${to} onChange=${e => setTarget(e.target.value)} aria-label="Send to">
+                    <option value="">Send to everyone</option>
+                    ${call.peers.map(p => html`<option key=${p.id} value=${p.id}>Private to ${p.id}</option>`)}
+                </select>
+                <div className="composer">
+                    <input id="chatInput" placeholder=${to ? `Message ${to} privately` : 'Send a message'} maxLength="2000"
+                        autoComplete="off" value=${text} onChange=${e => setText(e.target.value)} />
+                    <button id="chatSend" className="send" aria-label="Send" disabled=${!text.trim()}><${Icon} name="send" size=${17} /></button>
+                </div>
+            </form>
+        `;
+    }
+
+
+    function ControlButton({ id, icon, tip, off, on, className = '', badge, disabled, onClick }) {
+        const classes = ['ctl', off && 'off', on && 'on', className].filter(Boolean).join(' ');
+        return html`
+            <button id=${id} className=${classes} data-tip=${tip} aria-label=${tip} aria-pressed=${on || off ? 'true' : 'false'}
+                disabled=${disabled} onClick=${onClick}>
+                <${Icon} name=${icon} />
+                ${badge ? html`<span className="dot-badge">${badge > 9 ? '9+' : badge}</span>` : null}
+            </button>
+        `;
+    }
+
+    function DeviceToggle({ children, devices, value, title, onSelect }) {
+        const [open, setOpen] = useState(false);
+        const ref = useRef(null);
+        useClickOutside(ref, () => setOpen(false), open);
+        return html`
+            <div className="split" ref=${ref}>
+                ${children}
+                <button className="chev" aria-label=${`Choose ${title.toLowerCase()}`} aria-expanded=${open}
+                    onClick=${() => setOpen(o => !o)}><${Icon} name="chevronUp" size=${16} /></button>
+                ${open && html`
+                    <div className="menu" role="menu">
+                        <h4>${title}</h4>
+                        ${devices.length === 0 && html`<button disabled><span>None found</span></button>`}
+                        ${devices.map(d => html`
+                            <button key=${d.id} role="menuitemradio" aria-checked=${d.id === value}
+                                onClick=${() => { onSelect(d.id); setOpen(false); }}>
+                                <span className="check">${d.id === value && html`<${Icon} name="check" size=${16} />`}</span>
+                                <span>${d.label}</span>
+                            </button>
+                        `)}
+                    </div>
+                `}
+            </div>
+        `;
+    }
+
+    function ControlBar({ call, panel, unread, togglePanel }) {
+        const { media } = call;
+        return html`
+            <div className="controlbar">
+                <div className="cluster">
+                    <${DeviceToggle} title="Microphone" devices=${call.devices.mics} value=${call.mic}
+                        onSelect=${id => engine.selectDevice('audio', id)}>
+                        <${ControlButton} id="micButton" icon=${media.audio ? 'mic' : 'micOff'} off=${!media.audio}
+                            tip=${media.audio ? 'Mute' : 'Unmute'} onClick=${() => engine.toggleAudio()} />
+                    <//>
+                    <${DeviceToggle} title="Camera" devices=${call.devices.cameras} value=${call.camera}
+                        onSelect=${id => engine.selectDevice('video', id)}>
+                        <${ControlButton} id="camButton" icon=${media.video ? 'video' : 'videoOff'} off=${!media.video}
+                            tip=${media.video ? 'Turn off camera' : 'Turn on camera'} onClick=${() => engine.toggleVideo()} />
+                    <//>
+                    <${ControlButton} id="screenButton" icon="screen" on=${media.screen}
+                        tip=${media.screen ? 'Stop presenting' : 'Present screen'}
+                        disabled=${!navigator.mediaDevices?.getDisplayMedia} onClick=${() => engine.toggleScreenShare()} />
+                    <${ControlButton} id="recordButton" icon="record" className=${call.recording ? 'rec' : ''}
+                        tip=${call.recording ? 'Stop recording' : 'Record'}
+                        disabled=${typeof MediaRecorder === 'undefined'} onClick=${() => engine.toggleRecording()} />
+                    <${ControlButton} id="statsButton" icon="stats" on=${call.showStats}
+                        tip=${call.showStats ? 'Hide connection stats' : 'Connection stats'} onClick=${() => engine.toggleStats()} />
+                </div>
+                <div className="cluster">
+                    <${ControlButton} id="chatToggle" icon="chat" on=${panel === 'chat'} badge=${unread}
+                        tip="Chat" onClick=${() => togglePanel('chat')} />
+                    <${ControlButton} id="peopleToggle" icon="users" on=${panel === 'people'}
+                        tip="People" onClick=${() => togglePanel('people')} />
+                </div>
+                <button id="leaveButton" className="leave" onClick=${() => engine.leave()}>
+                    <${Icon} name="phoneOff" size=${20} /><span className="hide-sm">Leave</span>
+                </button>
+            </div>
+        `;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(html`<${App} />`);
+    </script>
+</body>
+</html>

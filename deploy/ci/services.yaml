@@ -475,3 +475,10 @@ services:
   - voucherService
   lang: go
   goVersion: '1.25'
+- name: webrtc-service
+  context: webrtc-service
+  image: webrtc-service
+  helmKeys:
+  - webrtcService
+  lang: go
+  goVersion: '1.24'
