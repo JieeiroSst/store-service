@@ -118,3 +118,11 @@ postgres:
       consulKey: voucher_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # book-service reads plain env vars (DB_URL / DB_USERNAME / DB_PASSWORD);
+    # its chart takes the credentials from book-service-db-credentials.
+    - name: book-service
+      database: book_service
+      role: book_service_svc
+      consulKey: book_service
+      userField: .postgres.user
+      passwordField: .postgres.password

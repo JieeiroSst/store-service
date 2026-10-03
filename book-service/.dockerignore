@@ -1,0 +1,12 @@
+target
+project/target
+project/project
+project/metals.sbt
+.bloop
+.metals
+.bsp
+.vscode
+thirt_party
+sbt-dist
+logs
+**/.DS_Store

@@ -9,5 +9,32 @@ GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
 GET     /message                    controllers.AsyncController.message
 
-# Map static resources from the /public folder to the /assets URL path
+GET     /health                     controllers.HealthController.live
+GET     /health/ready               controllers.HealthController.ready
+
+# Books. Lists are cursor-paginated: pass `nextCursor` from the previous page
+# as `cursor`. Write endpoints require X-Api-Key when book.admin.apiKey is set.
+GET     /api/v1/books                               controllers.BookController.list(cursor: Option[String], limit: Option[Int], q: Option[String], author: Option[String], year: Option[Int], category: Option[String])
+POST    /api/v1/books                               controllers.BookController.create
+GET     /api/v1/books/:id                           controllers.BookController.show(id: Long)
+PUT     /api/v1/books/:id                           controllers.BookController.update(id: Long)
+DELETE  /api/v1/books/:id                           controllers.BookController.delete(id: Long)
+
+GET     /api/v1/books/:id/cover                     controllers.BookController.cover(id: Long)
+PUT     /api/v1/books/:id/cover                     controllers.BookController.putCover(id: Long)
+DELETE  /api/v1/books/:id/cover                     controllers.BookController.deleteCover(id: Long)
+
+GET     /api/v1/books/:id/chapters                  controllers.BookController.chapters(id: Long, cursor: Option[String], limit: Option[Int])
+GET     /api/v1/books/:id/chapters/:number          controllers.BookController.chapter(id: Long, number: Int)
+PUT     /api/v1/books/:id/chapters/:number          controllers.BookController.putChapter(id: Long, number: Int)
+DELETE  /api/v1/books/:id/chapters/:number          controllers.BookController.deleteChapter(id: Long, number: Int)
+
+# Categories
+GET     /api/v1/categories                          controllers.CategoryController.list
+POST    /api/v1/categories                          controllers.CategoryController.create
+GET     /api/v1/categories/:slug                    controllers.CategoryController.show(slug: String)
+PUT     /api/v1/categories/:slug                    controllers.CategoryController.rename(slug: String)
+DELETE  /api/v1/categories/:slug                    controllers.CategoryController.delete(slug: String)
+GET     /api/v1/categories/:slug/books              controllers.CategoryController.books(slug: String, cursor: Option[String], limit: Option[Int], q: Option[String])
+
 GET     /assets/*file               controllers.Assets.versioned(file)

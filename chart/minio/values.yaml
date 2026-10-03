@@ -29,6 +29,7 @@ minio:
     - customer-relationship-service
     - upload-service
     - draw-image-service
+    - book-service
 
   storage:
     size: 5Gi

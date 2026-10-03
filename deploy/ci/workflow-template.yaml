@@ -5,7 +5,7 @@
 #              export the build context of every changed service
 #   service -> per changed service (2 at a time):
 #                test   go vet + go test (Go services; Postgres/MySQL sidecars
-#                       when services.yaml lists testServices)
+#                       when services.yaml lists testServices), sbt test (Scala)
 #                image  docker build + push to localhost:5000/<image>:<tag>
 #
 # Argo CD Image Updater (image-updater.yaml) then rolls the new tag out to
@@ -108,6 +108,12 @@ spec:
                 - { name: src, value: "{{inputs.parameters.src}}" }
                 - { name: goVersion, value: "{{inputs.parameters.goVersion}}" }
                 - { name: testEnv, value: "{{inputs.parameters.testEnv}}" }
+          - name: test-scala
+            template: sbt-test
+            when: "'{{inputs.parameters.lang}}' == 'scala'"
+            arguments:
+              parameters:
+                - { name: src, value: "{{inputs.parameters.src}}" }
           - name: test-with-db
             template: go-test-db
             when: "'{{inputs.parameters.lang}}' == 'go' && '{{inputs.parameters.db}}' == 'true'"
@@ -201,6 +207,29 @@ spec:
             - { name: MYSQL_DATABASE, value: shop }
           resources:
             requests: { cpu: 50m, memory: 256Mi }
+
+    - name: sbt-test
+      inputs:
+        parameters: [{ name: src }]
+      script:
+        image: sbtscala/scala-sbt:eclipse-temurin-jammy-11.0.22_7_1.9.9_2.13.13
+        command: [bash]
+        env:
+          # Dependency and sbt launcher caches live on the workspace volume.
+          - { name: COURSIER_CACHE, value: /workspace/cache/coursier }
+          - name: SBT_OPTS
+            value: >-
+              -Xmx2g -Dsbt.boot.directory=/workspace/cache/sbt/boot
+              -Dsbt.ivy.home=/workspace/cache/ivy2 -Dsbt.global.base=/workspace/cache/sbt/global
+        source: |
+          set -euo pipefail
+          cd "{{inputs.parameters.src}}"
+          sbt -batch test
+        resources:
+          requests: { cpu: 100m, memory: 512Mi }
+          limits: { cpu: "2", memory: 3Gi }
+        volumeMounts:
+          - { name: workspace, mountPath: /workspace }
 
     - name: image
       inputs:

@@ -3,7 +3,8 @@
 #   context      Docker build context (repo-relative); a push touching it rebuilds the service
 #   image        repository name in the local registry (localhost:5000/<image>)
 #   helmKeys     values keys whose image.name/tag Argo CD Image Updater overrides in store-dev
-#   lang/goVersion, testEnv, testServices   how the test step runs (Go only; others build-only)
+#   lang/goVersion, testEnv, testServices   how the test step runs (go: go vet + go test,
+#                                           scala: sbt test; others build-only)
 services:
 - name: account-transaction
   context: account-transaction-service
@@ -88,6 +89,12 @@ services:
   - bonuslinkService
   lang: go
   goVersion: '1.25'
+- name: book-service
+  context: book-service
+  image: book-service
+  helmKeys:
+  - bookService
+  lang: scala
 - name: book-store-service
   context: book-store-service
   image: book-store-service
