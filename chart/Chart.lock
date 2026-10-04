@@ -272,5 +272,8 @@ dependencies:
 - name: filter-service
   repository: file://filter-service
   version: 0.2.0
-digest: sha256:c692cc1563a30a533b06794acce1d61aa39bef767e306d17329c8b07f776801b
-generated: "2026-10-04T02:15:09.592136+07:00"
+- name: networking-service
+  repository: file://networking-service
+  version: 0.2.0
+digest: sha256:9ed843bb0abd7f2ed30a001093ff724fff66900458a2e061dd78198fb6962b37
+generated: "2026-10-04T13:58:43.64627+07:00"

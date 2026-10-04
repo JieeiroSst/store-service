@@ -1,0 +1,279 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+networkingService:
+  name: networking-service
+  selectorApp: networking-service
+  containerName: networking-service
+  # With store.backend=redis all replicas share state through Redis and one of
+  # them (elected through a Redis lock) runs the health checks. With
+  # store.backend=memory keep replicas: 1, strategy Recreate and persistence on.
+  replicas: 2
+
+  image:
+    name: ghcr.io/jieeirosst/networking-service
+    tag: latest
+    # Consul's HTTP port, so CONSUL_HTTP_ADDR=networking-service-svc:8500 works.
+    port: 8500
+    pullPolicy: IfNotPresent
+
+  # DNS interface (<service>.service.consul) on Consul's port.
+  extraPorts:
+    - name: dns-udp
+      containerPort: 8600
+      protocol: UDP
+    - name: dns-tcp
+      containerPort: 8600
+      protocol: TCP
+
+  service:
+    name: networking-service-svc
+    type: ClusterIP
+    port: 8500
+    extraPorts:
+      - name: dns-udp
+        port: 8600
+        protocol: UDP
+      - name: dns-tcp
+        port: 8600
+        protocol: TCP
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      # Blocking queries hold a request open for up to BLOCKING_MAX_WAIT.
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "660"
+    host: networking-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  # Snapshot volume for store.backend=memory only; with Redis the state lives
+  # in Redis and this stays off.
+  persistence:
+    enabled: false
+    size: 1Gi
+    storageClass: ""
+
+  store:
+    # redis | memory
+    backend: redis
+    # The dedicated Redis below. Not the umbrella's shared redis-svc: that one
+    # is a cache (no volume, evictable keys), the registry must not be.
+    redisAddr: networking-service-redis:6379
+    redisDb: "0"
+    redisPrefix: "networking:"
+    leaderTtl: 10s
+  # Dedicated Redis for the registry: AOF (fsync every second) + RDB on a PVC,
+  # noeviction so a full Redis rejects writes instead of dropping keys.
+  # Disable it to use an external Redis through store.redisAddr.
+  redis:
+    enabled: true
+    image:
+      name: redis
+      tag: 7.4-alpine
+    maxMemory: 200mb
+    persistence:
+      size: 1Gi
+      storageClass: ""
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  # Existing Secret holding the Redis password (used by both the dedicated
+  # Redis and the service); empty name = no AUTH.
+  redisPasswordSecretRef:
+    name: ''
+    key: redis-password
+
+  env:
+    datacenter: dc1
+    # Stable node name: pods get new names on restart, but services
+    # registered through the agent API must stay on the same node.
+    nodeName: networking-service
+    # Address of that node. All replicas must agree on it, so it is the
+    # Service name; set it empty to use the pod IP (memory backend).
+    nodeAddress: networking-service-svc
+    dnsDomain: consul
+    # "true" answers DNS only with fully passing instances (default: all but critical).
+    dnsOnlyPassing: "false"
+    # allow | deny: decision for traffic no intention matches.
+    intentionsDefault: allow
+    # allow | deny: requests without a known token. With deny, set
+    # aclTokenSecretRef so clients can authenticate.
+    aclDefaultPolicy: allow
+    kvMaxValueKb: "512"
+    snapshotInterval: 30s
+    blockingMaxWait: 10m
+  # Existing Secret with the management token (full access) and, optionally,
+  # comma-separated read-only tokens. Empty name = no tokens.
+  aclTokenSecretRef:
+    name: ''
+    managementKey: management-token
+    readKey: read-tokens
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.networkingService.image.port }}'
+    - name: PORT_DNS_SERVER
+      value: "8600"
+    - name: NODE_NAME
+      value: '{{ .Values.networkingService.env.nodeName }}'
+    - name: NODE_ADDRESS
+      value: '{{ .Values.networkingService.env.nodeAddress }}'
+      when: '{{ .Values.networkingService.env.nodeAddress }}'
+    - name: NODE_ADDRESS
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+      when: '{{ if not .Values.networkingService.env.nodeAddress }}true{{ end }}'
+    - name: STORE_BACKEND
+      value: '{{ .Values.networkingService.store.backend }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.networkingService.store.redisAddr }}'
+    - name: REDIS_DB
+      value: '{{ .Values.networkingService.store.redisDb }}'
+    - name: REDIS_PREFIX
+      value: '{{ .Values.networkingService.store.redisPrefix }}'
+    - name: LEADER_TTL
+      value: '{{ .Values.networkingService.store.leaderTtl }}'
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.networkingService.redisPasswordSecretRef.name }}'
+          key: '{{ .Values.networkingService.redisPasswordSecretRef.key }}'
+      when: '{{ .Values.networkingService.redisPasswordSecretRef.name }}'
+    - name: DATACENTER
+      value: '{{ .Values.networkingService.env.datacenter }}'
+    - name: DNS_DOMAIN
+      value: '{{ .Values.networkingService.env.dnsDomain }}'
+    - name: DNS_ONLY_PASSING
+      value: '{{ .Values.networkingService.env.dnsOnlyPassing }}'
+    - name: INTENTIONS_DEFAULT
+      value: '{{ .Values.networkingService.env.intentionsDefault }}'
+    - name: ACL_DEFAULT_POLICY
+      value: '{{ .Values.networkingService.env.aclDefaultPolicy }}'
+    - name: KV_MAX_VALUE_KB
+      value: '{{ .Values.networkingService.env.kvMaxValueKb }}'
+    - name: SNAPSHOT_INTERVAL
+      value: '{{ .Values.networkingService.env.snapshotInterval }}'
+    - name: BLOCKING_MAX_WAIT
+      value: '{{ .Values.networkingService.env.blockingMaxWait }}'
+    - name: DATA_DIR
+      value: /app/data
+      when: '{{ if .Values.networkingService.persistence.enabled }}true{{ end }}'
+    - name: ACL_MANAGEMENT_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.networkingService.aclTokenSecretRef.name }}'
+          key: '{{ .Values.networkingService.aclTokenSecretRef.managementKey }}'
+      when: '{{ .Values.networkingService.aclTokenSecretRef.name }}'
+    - name: ACL_READ_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.networkingService.aclTokenSecretRef.name }}'
+          key: '{{ .Values.networkingService.aclTokenSecretRef.readKey }}'
+          optional: true
+      when: '{{ .Values.networkingService.aclTokenSecretRef.name }}'
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: '{{ .Values.networkingService.name }}-data'
+      when: '{{ if .Values.networkingService.persistence.enabled }}true{{ end }}'
+    - name: data
+      emptyDir:
+        sizeLimit: 256Mi
+      when: '{{ if not .Values.networkingService.persistence.enabled }}true{{ end }}'
+  volumeMounts:
+    - name: data
+      mountPath: /app/data
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  # Memory backend with a PVC needs type: Recreate instead.
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  # Health checks call other services in the namespace (allowed by the
+  # platform's intra-namespace policy). Set internet: true to also run checks
+  # against external services registered through /v1/catalog/register.
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  # /metrics on the app port: networking_catalog_objects{kind},
+  # networking_health_checks{status}, networking_check_runs_total{type,status},
+  # networking_sessions_invalidated_total{reason}, networking_state_index.
+  metrics:
+    enabled: true
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

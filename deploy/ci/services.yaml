@@ -489,3 +489,10 @@ services:
   - filterService
   lang: go
   goVersion: '1.26'
+- name: networking-service
+  context: networking-service
+  image: networking-service
+  helmKeys:
+  - networkingService
+  lang: go
+  goVersion: '1.26'

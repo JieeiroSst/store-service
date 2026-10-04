@@ -558,3 +558,11 @@ spec:
         helm:
           name: filterService.image.name
           tag: filterService.image.tag
+  - namePattern: networking-service-dev
+    images:
+    - alias: networkingService
+      imageName: localhost:5000/networking-service
+      manifestTargets:
+        helm:
+          name: networkingService.image.name
+          tag: networkingService.image.tag

@@ -436,3 +436,8 @@ dependencies:
     version: "0.2.0"
     repository: file://filter-service
     condition: filterService.enabled
+  - alias: networkingService
+    name: networking-service
+    version: "0.2.0"
+    repository: file://networking-service
+    condition: networkingService.enabled

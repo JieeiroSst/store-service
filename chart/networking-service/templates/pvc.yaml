@@ -1,0 +1,20 @@
+{{- $p := .Values.networkingService.persistence }}
+{{- if $p.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.networkingService.name }}-data
+  annotations:
+    # The KV store and catalog live here; never let a sync or uninstall take it.
+    helm.sh/resource-policy: keep
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
+spec:
+  {{- with $p.storageClass }}
+  storageClassName: {{ . }}
+  {{- end }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ $p.size }}
+{{- end }}

@@ -1,0 +1,13 @@
+apiVersion: v2
+name: networking-service
+description: A Helm chart for networking-service, a Consul-compatible service registry, KV store and DNS
+
+type: application
+
+version: 0.2.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: common
+    version: "0.1.0"
+    repository: file://../common

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Networking Service</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #fff; --text: #1d2330; --muted: #646d7f; --line: #e1e4ea;
+    --accent: #5b4be1; --pass: #1a8a4a; --warn: #b26a00; --crit: #c4302b; --code: #f0f1f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12141a; --panel: #1b1e26; --text: #e6e8ee; --muted: #9aa2b4; --line: #2c303b;
+      --accent: #9387ff; --pass: #4cc47e; --warn: #f0a640; --crit: #ff6b63; --code: #232733;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { display: flex; align-items: center; gap: 16px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  header h1 { font-size: 16px; margin: 0; }
+  header .dc { color: var(--muted); font-size: 12px; }
+  nav { display: flex; gap: 4px; }
+  nav button { background: none; border: 0; padding: 6px 10px; border-radius: 6px; color: var(--muted); cursor: pointer; font: inherit; }
+  nav button.active { background: var(--code); color: var(--text); font-weight: 600; }
+  .token { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  .panel h2 { font-size: 14px; margin: 0; padding: 10px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  tr:last-child td { border-bottom: 0; }
+  tr.click { cursor: pointer; }
+  tr.click:hover td { background: var(--code); }
+  .tag { display: inline-block; background: var(--code); border-radius: 4px; padding: 0 6px; margin: 0 4px 2px 0; font-size: 12px; }
+  .st { font-weight: 600; }
+  .passing { color: var(--pass); } .warning { color: var(--warn); } .critical { color: var(--crit); }
+  .muted { color: var(--muted); }
+  .empty { padding: 20px 14px; color: var(--muted); }
+  pre { background: var(--code); padding: 8px; border-radius: 6px; white-space: pre-wrap; word-break: break-all; margin: 4px 0 0; font-size: 12px; max-height: 160px; overflow: auto; }
+  input, select, textarea { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+  textarea { width: 100%; min-height: 140px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  button.btn { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--text); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.danger { color: var(--crit); }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 10px 14px; }
+  .crumbs a { color: var(--accent); cursor: pointer; text-decoration: none; }
+  .err { color: var(--crit); padding: 8px 14px; }
+  .scroll { overflow-x: auto; }
+  @media (max-width: 640px) { .token { margin-left: 0; width: 100%; } .token input { flex: 1; } th, td { padding: 6px 8px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Networking Service</h1>
+  <span class="dc" id="dc"></span>
+  <nav id="tabs">
+    <button data-tab="services" class="active">Services</button>
+    <button data-tab="nodes">Nodes</button>
+    <button data-tab="kv">Key/Value</button>
+    <button data-tab="intentions">Intentions</button>
+  </nav>
+  <div class="token"><input id="token" type="password" placeholder="ACL token" autocomplete="off"></div>
+</header>
+<main id="view"></main>
+<script>
+(() => {
+  const view = document.getElementById('view');
+  const tokenInput = document.getElementById('token');
+  const store = {
+    get(k) { try { return localStorage.getItem(k) || ''; } catch { return ''; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+  };
+  tokenInput.value = store.get('consul-token');
+  tokenInput.addEventListener('change', () => { store.set('consul-token', tokenInput.value); route(); });
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const status = s => `<span class="st ${esc(s)}">${esc(s)}</span>`;
+  const tags = list => (list || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+
+  let gen = 0;
+  async function api(path, opts = {}) {
+    const headers = Object.assign({}, opts.headers || {});
+    if (tokenInput.value) headers['X-Consul-Token'] = tokenInput.value;
+    const res = await fetch(path, Object.assign({}, opts, { headers }));
+    if (res.status === 404) return { data: null, index: res.headers.get('X-Consul-Index') };
+    if (!res.ok) throw new Error(`${res.status} ${(await res.text()).trim()}`);
+    const ct = res.headers.get('Content-Type') || '';
+    const data = ct.includes('json') ? await res.json() : await res.text();
+    return { data, index: res.headers.get('X-Consul-Index') };
+  }
+
+  async function watch(path, render) {
+    const my = ++gen;
+    let index = 0;
+    while (my === gen) {
+      try {
+        const sep = path.includes('?') ? '&' : '?';
+        const r = await api(index ? `${path}${sep}index=${index}&wait=60s` : path);
+        if (my !== gen) return;
+        if (r.index !== String(index)) render(r.data);
+        index = Number(r.index) || 0;
+      } catch (e) {
+        if (my !== gen) return;
+        view.innerHTML = `<div class="panel"><div class="err">${esc(e.message)}</div></div>`;
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    }
+  }
+
+  function panel(title, body, actions = '') {
+    return `<div class="panel"><h2><span>${title}</span><span>${actions}</span></h2>${body}</div>`;
+  }
+
+  function services() {
+    watch('/v1/internal/ui/services', list => {
+      list = list || [];
+      const rows = list.map(s => {
+        const health = s.ChecksCritical ? 'critical' : s.ChecksWarning ? 'warning' : 'passing';
+        return `<tr class="click" data-svc="${esc(s.Name)}">
+          <td><b>${esc(s.Name)}</b><div>${tags(s.Tags)}</div></td>
+          <td>${status(health)}</td>
+          <td>${s.Instances}</td>
+          <td><span class="passing">${s.ChecksPassing}</span> / <span class="warning">${s.ChecksWarning}</span> / <span class="critical">${s.ChecksCritical}</span></td>
+        </tr>`;
+      }).join('');
+      view.innerHTML = panel(`Services (${list.length})`, list.length
+        ? `<div class="scroll"><table><tr><th>Name</th><th>Health</th><th>Instances</th><th>Checks ✓ / ! / ✗</th></tr>${rows}</table></div>`
+        : '<div class="empty">No services registered yet. Register one with PUT /v1/agent/service/register.</div>');
+      view.querySelectorAll('[data-svc]').forEach(tr => tr.onclick = () => go('service', tr.dataset.svc));
+    });
+  }
+
+  function service(name) {
+    watch(`/v1/health/service/${encodeURIComponent(name)}`, entries => {
+      entries = entries || [];
+      const rows = entries.map(e => {
+        const agg = e.Checks.some(c => c.Status === 'critical') ? 'critical' : e.Checks.some(c => c.Status === 'warning') ? 'warning' : 'passing';
+        const checks = e.Checks.map(c => `<div>${status(c.Status)} ${esc(c.Name)} <span class="muted">${esc(c.CheckID)}</span>${c.Output ? `<pre>${esc(c.Output)}</pre>` : ''}${c.Notes ? `<div class="muted">${esc(c.Notes)}</div>` : ''}</div>`).join('');
+        return `<tr><td><b>${esc(e.Service.ID)}</b><div>${tags(e.Service.Tags)}</div></td>
+          <td>${esc(e.Service.Address || e.Node.Address)}:${e.Service.Port}<div class="muted">node ${esc(e.Node.Node)}</div></td>
+          <td>${status(agg)}</td><td>${checks || '<span class="muted">no checks</span>'}</td></tr>`;
+      }).join('');
+      view.innerHTML = `<div class="row crumbs"><a data-back>Services</a> / <b>${esc(name)}</b></div>` +
+        panel(`Instances (${entries.length})`, entries.length
+          ? `<div class="scroll"><table><tr><th>ID</th><th>Address</th><th>Health</th><th>Checks</th></tr>${rows}</table></div>`
+          : '<div class="empty">No instances.</div>');
+      view.querySelector('[data-back]').onclick = () => go('services');
+    });
+  }
+
+  function nodes() {
+    watch('/v1/catalog/nodes', async list => {
+      list = list || [];
+      const { data: checks } = await api('/v1/health/state/any');
+      const byNode = {};
+      (checks || []).filter(c => !c.ServiceID).forEach(c => (byNode[c.Node] = byNode[c.Node] || []).push(c));
+      const rows = list.map(n => {
+        const cs = byNode[n.Node] || [];
+        const agg = cs.some(c => c.Status === 'critical') ? 'critical' : cs.some(c => c.Status === 'warning') ? 'warning' : 'passing';
+        const meta = Object.entries(n.Meta || {}).map(([k, v]) => `<span class="tag">${esc(k)}=${esc(v)}</span>`).join('');
+        return `<tr><td><b>${esc(n.Node)}</b><div>${meta}</div></td><td>${esc(n.Address)}</td><td>${status(agg)}</td>
+          <td>${cs.map(c => `${status(c.Status)} ${esc(c.Name)}`).join('<br>') || '<span class="muted">none</span>'}</td></tr>`;
+      }).join('');
+      view.innerHTML = panel(`Nodes (${list.length})`,
+        `<div class="scroll"><table><tr><th>Node</th><th>Address</th><th>Health</th><th>Node checks</th></tr>${rows}</table></div>`);
+    });
+  }
+
+  function kv(prefix = '') {
+    watch(`/v1/kv/${encodePath(prefix)}?keys&separator=/`, async keys => {
+      keys = (keys || []).filter(k => k !== prefix);
+      const crumbs = ['<a data-prefix="">root</a>'];
+      let acc = '';
+      prefix.split('/').filter(Boolean).forEach(p => { acc += p + '/'; crumbs.push(`<a data-prefix="${esc(acc)}">${esc(p)}</a>`); });
+      const rows = keys.map(k => {
+        const folder = k.endsWith('/');
+        return `<tr class="click" data-key="${esc(k)}"><td>${folder ? '📁 ' : ''}${esc(k.slice(prefix.length))}</td></tr>`;
+      }).join('');
+      view.innerHTML = `<div class="row crumbs">${crumbs.join(' / ')}</div>` +
+        panel('Keys', rows ? `<table>${rows}</table>` : '<div class="empty">No keys here.</div>',
+          `<button class="btn primary" data-new>Create</button>`) +
+        '<div id="editor"></div>';
+      view.querySelectorAll('[data-prefix]').forEach(a => a.onclick = () => go('kv', a.dataset.prefix));
+      view.querySelectorAll('[data-key]').forEach(tr => tr.onclick = () => {
+        const k = tr.dataset.key;
+        if (k.endsWith('/')) go('kv', k); else editKey(k);
+      });
+      view.querySelector('[data-new]').onclick = () => editKey(null, prefix);
+    });
+  }
+
+  const encodePath = p => p.split('/').map(encodeURIComponent).join('/');
+
+  async function editKey(key, prefix = '') {
+    const box = document.getElementById('editor');
+    let value = '', meta = '';
+    if (key) {
+      try {
+        const { data } = await api(`/v1/kv/${encodePath(key)}`);
+        const p = data && data[0];
+        value = p && p.Value ? new TextDecoder().decode(Uint8Array.from(atob(p.Value), c => c.charCodeAt(0))) : '';
+        meta = p ? `ModifyIndex ${p.ModifyIndex} · Flags ${p.Flags}${p.Session ? ` · locked by ${esc(p.Session)}` : ''}` : '';
+      } catch (e) { box.innerHTML = `<div class="err">${esc(e.message)}</div>`; return; }
+    }
+    box.innerHTML = panel(key ? esc(key) : 'New key', `
+      <div class="row">${key ? `<span class="muted">${meta}</span>` : `<input id="kname" placeholder="key" value="${esc(prefix)}" style="flex:1">`}</div>
+      <div class="row"><textarea id="kval">${esc(value)}</textarea></div>
+      <div class="row"><button class="btn primary" id="ksave">Save</button>${key ? '<button class="btn danger" id="kdel">Delete</button>' : ''}<span id="kmsg" class="muted"></span></div>`);
+    const msg = t => document.getElementById('kmsg').textContent = t;
+    document.getElementById('ksave').onclick = async () => {
+      const k = key || document.getElementById('kname').value.trim();
+      if (!k || k.endsWith('/')) { msg('Enter a key name (not ending in /).'); return; }
+      try { await api(`/v1/kv/${encodePath(k)}`, { method: 'PUT', body: document.getElementById('kval').value }); msg('Saved.'); }
+      catch (e) { msg(e.message); }
+    };
+    const del = document.getElementById('kdel');
+    if (del) del.onclick = async () => {
+      if (!confirm(`Delete ${key}?`)) return;
+      try { await api(`/v1/kv/${encodePath(key)}`, { method: 'DELETE' }); box.innerHTML = ''; }
+      catch (e) { msg(e.message); }
+    };
+  }
+
+  function intentions() {
+    watch('/v1/connect/intentions', list => {
+      list = list || [];
+      const rows = list.map(i => `<tr><td>${esc(i.SourceName)}</td><td>→</td><td>${esc(i.DestinationName)}</td>
+        <td><span class="st ${i.Action === 'allow' ? 'passing' : 'critical'}">${esc(i.Action)}</span></td>
+        <td class="muted">${i.Precedence}</td><td class="muted">${esc(i.Description || '')}</td>
+        <td><button class="btn danger" data-del="${esc(i.ID)}">Delete</button></td></tr>`).join('');
+      view.innerHTML = panel('Check a connection', `<div class="row">
+          <input id="csrc" placeholder="source service"> → <input id="cdst" placeholder="destination service">
+          <button class="btn" id="ccheck">Check</button><span id="cres"></span></div>`) +
+        panel('Add intention', `<div class="row">
+          <input id="isrc" placeholder="source (or *)"> → <input id="idst" placeholder="destination (or *)">
+          <select id="iact"><option>allow</option><option>deny</option></select>
+          <input id="idesc" placeholder="description">
+          <button class="btn primary" id="iadd">Save</button><span id="imsg" class="muted"></span></div>`) +
+        panel(`Intentions (${list.length})`, list.length
+          ? `<div class="scroll"><table><tr><th>Source</th><th></th><th>Destination</th><th>Action</th><th>Precedence</th><th>Description</th><th></th></tr>${rows}</table></div>`
+          : '<div class="empty">No intentions: every connection gets the default policy.</div>');
+      document.getElementById('ccheck').onclick = async () => {
+        const q = new URLSearchParams({ source: $('csrc').value.trim(), destination: $('cdst').value.trim() });
+        try { const { data } = await api(`/v1/connect/intentions/check?${q}`);
+          $('cres').innerHTML = data.Allowed ? '<b class="passing">allowed</b>' : '<b class="critical">denied</b>'; }
+        catch (e) { $('cres').textContent = e.message; }
+      };
+      document.getElementById('iadd').onclick = async () => {
+        const q = new URLSearchParams({ source: $('isrc').value.trim(), destination: $('idst').value.trim() });
+        try { await api(`/v1/connect/intentions/exact?${q}`, { method: 'PUT',
+            body: JSON.stringify({ Action: $('iact').value, Description: $('idesc').value }) }); }
+        catch (e) { $('imsg').textContent = e.message; }
+      };
+      view.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+        try { await api(`/v1/connect/intentions/${encodeURIComponent(b.dataset.del)}`, { method: 'DELETE' }); }
+        catch (e) { alert(e.message); }
+      });
+    });
+  }
+
+  const routes = { services, service, nodes, kv, intentions };
+  function go(name, arg = '') {
+    location.hash = arg ? `${name}/${encodeURIComponent(arg)}` : name;
+  }
+  function route() {
+    const [name, ...rest] = (location.hash.slice(1) || 'services').split('/');
+    const arg = decodeURIComponent(rest.join('/'));
+    const tab = name === 'service' ? 'services' : name;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    view.innerHTML = '<div class="empty">Loading…</div>';
+    (routes[name] || services)(arg);
+  }
+  document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => go(b.dataset.tab));
+  window.addEventListener('hashchange', route);
+  api('/v1/agent/self').then(({ data }) => {
+    document.getElementById('dc').textContent = `${data.Config.Datacenter} · ${data.Config.NodeName} · v${data.Config.Version}`;
+  }).catch(() => {});
+  route();
+})();
+</script>
+</body>
+</html>
