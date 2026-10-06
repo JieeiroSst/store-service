@@ -1,0 +1,34 @@
+# Argo CD: namespace store-staging, auto-synced. Promoted from dev with the
+# "Promote image" workflow; mirrors prod topology at smaller scale.
+global:
+  environment: staging
+serpapiService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: true
+    internet: true
+  autoscaling:
+    enabled: false
+  replicas: 2
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  topologySpread:
+    enabled: true

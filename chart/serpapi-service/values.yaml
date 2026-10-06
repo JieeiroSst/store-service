@@ -1,0 +1,165 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+serpapiService:
+  name: serpapi-service
+  selectorApp: serpapi-service
+  containerName: serpapi-service
+  # Stateless: replicas share nothing unless the Consul config sets cache.backend=redis.
+  replicas: 2
+
+  image:
+    name: ghcr.io/jieeirosst/serpapi-service
+    tag: latest
+    port: 8080
+    pullPolicy: IfNotPresent
+
+  service:
+    name: serpapi-service-svc
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      # A search can take up to SERPAPI_TIMEOUT per attempt.
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    host: serpapi-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  # Secret holding the SerpApi private key and, optionally, comma-separated
+  # access tokens for /api/*. It is never rendered from values: create it by
+  # hand outside prod, e.g.
+  #   kubectl -n store-dev create secret generic serpapi-service-secret \
+  #     --from-literal=serpapiApiKey=<key> --from-literal=accessTokens=<t1,t2>
+  # and sync it with externalSecret in prod (values-prod.yaml).
+  secretRef:
+    name: serpapi-service-secret
+    apiKeyKey: serpapiApiKey
+    accessTokensKey: accessTokens
+
+  # Non-secret config is the Consul KV key below, seeded once from
+  # files/consul.json (keep it in sync with serpapi-service/consul.json) and
+  # never overwritten afterwards: edit it in Consul to change the config.
+  consul:
+    addr: http://consul-service
+    key: serpapi_service
+  consulSeed:
+    image: curlimages/curl:8.10.1
+    enabled: true
+    key: serpapi_service
+  # Existing Secret with the Redis password; empty name = no AUTH.
+  redisPasswordSecretRef:
+    name: ''
+    key: redis-password
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: CONSUL_ADDR
+      value: '{{ .Values.serpapiService.consul.addr }}'
+    - name: CONSUL_KEY
+      value: '{{ .Values.serpapiService.consul.key }}'
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.serpapiService.image.port }}'
+    - name: SERPAPI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.serpapiService.secretRef.name }}'
+          key: '{{ .Values.serpapiService.secretRef.apiKeyKey }}'
+    - name: ACCESS_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.serpapiService.secretRef.name }}'
+          key: '{{ .Values.serpapiService.secretRef.accessTokensKey }}'
+          optional: true
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.serpapiService.redisPasswordSecretRef.name }}'
+          key: '{{ .Values.serpapiService.redisPasswordSecretRef.key }}'
+      when: '{{ .Values.serpapiService.redisPasswordSecretRef.name }}'
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  # In-flight searches can take a while; give them time to finish.
+  terminationGracePeriodSeconds: 60
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  # Reads its config from Consul and calls https://serpapi.com.
+  networkLabels:
+    consulClient: true
+    internet: true
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  # /metrics on the app port: serpapi_upstream_requests_total{op,engine,outcome},
+  # serpapi_upstream_request_duration_seconds{op}, serpapi_cache_lookups_total{op,hit}.
+  metrics:
+    enabled: true
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

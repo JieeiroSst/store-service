@@ -496,3 +496,10 @@ services:
   - networkingService
   lang: go
   goVersion: '1.26'
+- name: serpapi-service
+  context: serpapi-service
+  image: serpapi-service
+  helmKeys:
+  - serpapiService
+  lang: go
+  goVersion: '1.26'

@@ -566,3 +566,11 @@ spec:
         helm:
           name: networkingService.image.name
           tag: networkingService.image.tag
+  - namePattern: serpapi-service-dev
+    images:
+    - alias: serpapiService
+      imageName: localhost:5000/serpapi-service
+      manifestTargets:
+        helm:
+          name: serpapiService.image.name
+          tag: serpapiService.image.tag

@@ -1,0 +1,24 @@
+{
+    "server": {
+        "portHttpServer": "8080"
+    },
+    "serpapi": {
+        "baseUrl": "https://serpapi.com",
+        "timeout": "90s",
+        "maxRetries": 2
+    },
+    "search": {
+        "strictEngines": false,
+        "maxConcurrent": 32,
+        "maxBatchSize": 20
+    },
+    "cache": {
+        "backend": "memory",
+        "ttl": "1h",
+        "locationsTtl": "24h",
+        "maxEntries": 1000,
+        "redisAddr": "redis-svc:6379",
+        "redisDb": 0,
+        "redisPrefix": "serpapi:"
+    }
+}

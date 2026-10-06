@@ -1,0 +1,48 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
+# reviewed PR opened by the "Promote image" workflow.
+# The SerpApi key comes from the secret manager (SecretStore store-secrets);
+# create store/prod/serpapi-service before the first sync.
+global:
+  environment: prod
+serpapiService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: true
+    internet: true
+  autoscaling:
+    enabled: false
+  replicas: 3
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  topologySpread:
+    enabled: true
+  priorityClassName: store-standard
+  externalSecret:
+    enabled: true
+    targetName: serpapi-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: serpapiApiKey
+        remoteKey: store/prod/serpapi-service
+        property: serpapiApiKey
+      - secretKey: accessTokens
+        remoteKey: store/prod/serpapi-service
+        property: accessTokens

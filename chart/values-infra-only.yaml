@@ -136,3 +136,5 @@ filterService:
   enabled: false
 networkingService:
   enabled: false
+serpapiService:
+  enabled: false

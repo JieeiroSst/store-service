@@ -275,5 +275,8 @@ dependencies:
 - name: networking-service
   repository: file://networking-service
   version: 0.2.0
-digest: sha256:9ed843bb0abd7f2ed30a001093ff724fff66900458a2e061dd78198fb6962b37
-generated: "2026-10-04T13:58:43.64627+07:00"
+- name: serpapi-service
+  repository: file://serpapi-service
+  version: 0.2.0
+digest: sha256:e50a5f4fba650e14c8c1bea99bdde65322aa0ed65b5a997290f03eb87a957cdc
+generated: "2026-10-06T21:33:08.341381+07:00"

@@ -1109,3 +1109,27 @@ jobs:
     # The compatibility tests drive the server with hashicorp/consul/api.
     - name: Test
       run: cd networking-service && make test
+
+  serpapi_service:
+    name: serpapi_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Check chart consul.json is in sync
+      run: diff serpapi-service/consul.json chart/serpapi-service/files/consul.json
+
+    - name: Build
+      run: cd serpapi-service && make build
+
+    - name: Vet
+      run: cd serpapi-service && make vet
+
+    # SerpApi is faked with httptest; no API key is needed.
+    - name: Test
+      run: cd serpapi-service && make test

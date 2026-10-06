@@ -441,3 +441,8 @@ dependencies:
     version: "0.2.0"
     repository: file://networking-service
     condition: networkingService.enabled
+  - alias: serpapiService
+    name: serpapi-service
+    version: "0.2.0"
+    repository: file://serpapi-service
+    condition: serpapiService.enabled
