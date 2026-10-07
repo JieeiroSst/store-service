@@ -1,6 +1,53 @@
-./
-
 # Helm builds these from file:// dependencies (e.g. chart/common).
 chart/*/charts/
 
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.idea/
+*.iml
+.metadata/
+.vscode/*.log
+*.swp
+*~
+
+# Secrets / local config (commit .env.example instead)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+.surfpool/
+
+# Build output
 target/
+cmake-build-*/
+node-service/build/
+*.exe
+*.test
+*.out
+*.prof
+coverage.out
+coverage.html
+
+# Scala / sbt / Metals
+.bloop/
+.metals/
+.bsp/
+project/project/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/

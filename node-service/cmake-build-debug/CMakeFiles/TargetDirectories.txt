@@ -1,3 +1,0 @@
-/Users//Desktop/store-service/node-service/cmake-build-debug/CMakeFiles/node_service.dir
-/Users//Desktop/store-service/node-service/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users//Desktop/store-service/node-service/cmake-build-debug/CMakeFiles/rebuild_cache.dir
