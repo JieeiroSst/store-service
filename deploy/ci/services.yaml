@@ -67,7 +67,7 @@ services:
   helmKeys:
   - bankingService
   lang: go
-  goVersion: '1.22'
+  goVersion: '1.25'
 - name: basket-service
   context: basket-service
   image: basket-service
@@ -191,7 +191,7 @@ services:
   helmKeys:
   - ekycService
   lang: go
-  goVersion: '1.23'
+  goVersion: '1.25'
 - name: gateway-service
   context: restaurant/gateway-service
   image: gateway-service
@@ -311,7 +311,7 @@ services:
   helmKeys:
   - photoService
   lang: go
-  goVersion: '1.23'
+  goVersion: '1.24'
 - name: polymarket-service
   context: polymarket-service
   image: polymarket-service
@@ -503,3 +503,158 @@ services:
   - serpapiService
   lang: go
   goVersion: '1.26'
+- name: ai-agent-system
+  context: ai-agent-system
+  image: ai-agent-system
+  helmKeys:
+  - aiAgentSystem
+  lang: go
+  goVersion: '1.26'
+- name: goflow-service
+  context: goflow-service
+  image: goflow-service
+  helmKeys:
+  - goflowService
+  lang: go
+  goVersion: '1.22'
+- name: kms-service
+  context: kms-service
+  image: kms-service
+  helmKeys:
+  - kmsService
+  lang: go
+  goVersion: '1.24'
+- name: media-service
+  context: media-service
+  image: media-service
+  helmKeys:
+  - mediaService
+  lang: go
+  goVersion: '1.22'
+- name: message-service
+  context: message-service
+  image: message-service
+  helmKeys:
+  - messageService
+  lang: other
+- name: notifyhub-service
+  context: notifyhub-service
+  image: notifyhub-service
+  helmKeys:
+  - notifyhubService
+  lang: go
+  goVersion: '1.26'
+- name: offer-range-service
+  context: offer-range-service
+  image: offer-range-service
+  helmKeys:
+  - offerRangeService
+  lang: go
+  goVersion: '1.22'
+- name: ollama-gateway
+  context: ollama-gateway
+  image: ollama-gateway
+  helmKeys:
+  - ollamaGateway
+  lang: go
+  goVersion: '1.21'
+- name: order-processing-service
+  context: order-processing-service
+  image: order-processing-service
+  helmKeys:
+  - orderProcessingService
+  lang: go
+  goVersion: '1.22'
+- name: payer-service
+  context: payer-service
+  image: payer-service
+  helmKeys:
+  - payerService
+  lang: go
+  goVersion: '1.22'
+- name: point-service
+  context: point-service
+  image: point-service
+  helmKeys:
+  - pointService
+  lang: go
+  goVersion: '1.22'
+- name: real-time-service
+  context: real-time-service
+  image: real-time-service
+  helmKeys:
+  - realTimeService
+  lang: go
+  goVersion: '1.21'
+- name: search-service
+  context: search-service
+  image: search-service
+  helmKeys:
+  - searchService
+  lang: go
+  goVersion: '1.21'
+- name: solana-service
+  context: solana-service
+  image: solana-service
+  helmKeys:
+  - solanaService
+  lang: go
+  goVersion: '1.25'
+- name: sso-service
+  context: sso-service
+  image: sso-service
+  helmKeys:
+  - ssoService
+  lang: go
+  goVersion: '1.22'
+- name: wishlists-service
+  context: wishlists-service
+  image: wishlists-service
+  helmKeys:
+  - wishlistsService
+  lang: go
+  goVersion: '1.21'
+- name: sard-auth-service
+  context: sard-service/auth-service
+  image: sard-auth-service
+  helmKeys:
+  - sardAuthService
+  lang: go
+  goVersion: '1.24'
+- name: sard-customer-info-service
+  context: sard-service/customer-info-service
+  image: sard-customer-info-service
+  helmKeys:
+  - sardCustomerInfoService
+  lang: go
+  goVersion: '1.24'
+- name: ollama-model-py
+  context: ollama-model-py
+  image: ollama-model-py
+  helmKeys:
+  - ollamaModelPy
+  lang: other
+- name: identified-service
+  context: identified_service
+  image: identified-service
+  helmKeys:
+  - identifiedService
+  lang: other
+- name: face-recognition-service
+  context: face-recognition-service
+  image: face-recognition-service
+  helmKeys:
+  - faceRecognitionService
+  lang: other
+- name: share-service
+  context: share-service
+  image: share-service
+  helmKeys:
+  - shareService
+  lang: other
+- name: food-service
+  context: food-service
+  image: food-service
+  helmKeys:
+  - foodService
+  lang: other

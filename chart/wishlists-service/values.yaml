@@ -1,0 +1,133 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+wishlistsService:
+  name: wishlists-service
+  selectorApp: wishlists-service
+  containerName: wishlists-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/wishlists-service
+    tag: latest
+    port: 9000
+    pullPolicy: IfNotPresent
+
+  service:
+    name: wishlists-service-svc
+    type: ClusterIP
+    port: 9000
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: wishlists-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: APP_NAME
+      value: 'wishlists-service'
+    - name: HTTP_PORT
+      value: '{{ .Values.wishlistsService.image.port }}'
+    - name: DB_HOST
+      value: 'mysql-svc'
+    - name: DB_PORT
+      value: '80'
+    - name: DB_USER
+      value: 'root'
+    - name: DB_PASSWORD
+      value: 'password'
+    - name: DB_NAME
+      value: 'wishlists_service'
+    - name: DB_DIALECT
+      value: 'mysql'
+    - name: REDIS_HOST
+      value: 'redis-svc'
+    - name: REDIS_PORT
+      value: '80'
+  # No health endpoint known for this service: TCP checks on the http port.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

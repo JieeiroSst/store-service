@@ -1,0 +1,124 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+aiAgentSystem:
+  name: ai-agent-system
+  selectorApp: ai-agent-system
+  containerName: ai-agent-system
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/ai-agent-system
+    tag: latest
+    port: 8080
+    pullPolicy: IfNotPresent
+
+  service:
+    name: ai-agent-system-svc
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: ai-agent-system.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.aiAgentSystem.image.port }}'
+    - name: OLLAMA_BASE_URL
+      value: 'http://ollama-model-py-svc:11435'
+    - name: OLLAMA_MODEL
+      value: 'custom-model'
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      MYSQL_DSN=root:password@tcp(mysql-svc:80)/ai_agent_system?parseTime=true
+  # No health endpoint known for this service: TCP checks on the http port.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

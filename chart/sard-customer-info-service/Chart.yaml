@@ -1,0 +1,13 @@
+apiVersion: v2
+name: sard-customer-info-service
+description: A Helm chart for sard-customer-info-service, sARD customer info - citizen ID card OCR with tesseract
+
+type: application
+
+version: 0.2.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: common
+    version: "0.1.0"
+    repository: file://../common

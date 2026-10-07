@@ -1,0 +1,138 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+kmsService:
+  name: kms-service
+  selectorApp: kms-service
+  containerName: kms-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/kms-service
+    tag: latest
+    port: 8080
+    pullPolicy: IfNotPresent
+
+  service:
+    name: kms-service-svc
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: kms-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: SERVER_PORT
+      value: '{{ .Values.kmsService.image.port }}'
+    - name: MASTER_KEY_PATH
+      value: '/etc/kms/master.key'
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      POSTGRES_DSN=postgres://testUser:testPassword@postgresdb:80/kms_service?sslmode=disable
+      REDIS_ADDR=redis-svc:80
+      USER_SERVICE_URL=http://user-api-svc:80
+  # Master key that wraps every data key. Losing it makes stored keys unreadable,
+  # so it lives in a Secret, never in the pod. Create it once per namespace:
+  #   kubectl -n store-dev create secret generic kms-service-master-key \
+  #     --from-file=master.key=<(head -c 32 /dev/urandom)
+  masterKeySecret:
+    name: kms-service-master-key
+  volumes:
+    - name: master-key
+      secret:
+        secretName: '{{ .Values.kmsService.masterKeySecret.name }}'
+  volumeMounts:
+    - name: master-key
+      mountPath: /etc/kms
+      readOnly: true
+  # No health endpoint known for this service: TCP checks on the http port.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

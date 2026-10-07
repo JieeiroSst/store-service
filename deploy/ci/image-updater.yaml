@@ -574,3 +574,187 @@ spec:
         helm:
           name: serpapiService.image.name
           tag: serpapiService.image.tag
+  - namePattern: ai-agent-system-dev
+    images:
+    - alias: aiAgentSystem
+      imageName: localhost:5000/ai-agent-system
+      manifestTargets:
+        helm:
+          name: aiAgentSystem.image.name
+          tag: aiAgentSystem.image.tag
+  - namePattern: goflow-service-dev
+    images:
+    - alias: goflowService
+      imageName: localhost:5000/goflow-service
+      manifestTargets:
+        helm:
+          name: goflowService.image.name
+          tag: goflowService.image.tag
+  - namePattern: kms-service-dev
+    images:
+    - alias: kmsService
+      imageName: localhost:5000/kms-service
+      manifestTargets:
+        helm:
+          name: kmsService.image.name
+          tag: kmsService.image.tag
+  - namePattern: media-service-dev
+    images:
+    - alias: mediaService
+      imageName: localhost:5000/media-service
+      manifestTargets:
+        helm:
+          name: mediaService.image.name
+          tag: mediaService.image.tag
+  - namePattern: message-service-dev
+    images:
+    - alias: messageService
+      imageName: localhost:5000/message-service
+      manifestTargets:
+        helm:
+          name: messageService.image.name
+          tag: messageService.image.tag
+  - namePattern: notifyhub-service-dev
+    images:
+    - alias: notifyhubService
+      imageName: localhost:5000/notifyhub-service
+      manifestTargets:
+        helm:
+          name: notifyhubService.image.name
+          tag: notifyhubService.image.tag
+  - namePattern: offer-range-service-dev
+    images:
+    - alias: offerRangeService
+      imageName: localhost:5000/offer-range-service
+      manifestTargets:
+        helm:
+          name: offerRangeService.image.name
+          tag: offerRangeService.image.tag
+  - namePattern: ollama-gateway-dev
+    images:
+    - alias: ollamaGateway
+      imageName: localhost:5000/ollama-gateway
+      manifestTargets:
+        helm:
+          name: ollamaGateway.image.name
+          tag: ollamaGateway.image.tag
+  - namePattern: order-processing-service-dev
+    images:
+    - alias: orderProcessingService
+      imageName: localhost:5000/order-processing-service
+      manifestTargets:
+        helm:
+          name: orderProcessingService.image.name
+          tag: orderProcessingService.image.tag
+  - namePattern: payer-service-dev
+    images:
+    - alias: payerService
+      imageName: localhost:5000/payer-service
+      manifestTargets:
+        helm:
+          name: payerService.image.name
+          tag: payerService.image.tag
+  - namePattern: point-service-dev
+    images:
+    - alias: pointService
+      imageName: localhost:5000/point-service
+      manifestTargets:
+        helm:
+          name: pointService.image.name
+          tag: pointService.image.tag
+  - namePattern: real-time-service-dev
+    images:
+    - alias: realTimeService
+      imageName: localhost:5000/real-time-service
+      manifestTargets:
+        helm:
+          name: realTimeService.image.name
+          tag: realTimeService.image.tag
+  - namePattern: search-service-dev
+    images:
+    - alias: searchService
+      imageName: localhost:5000/search-service
+      manifestTargets:
+        helm:
+          name: searchService.image.name
+          tag: searchService.image.tag
+  - namePattern: solana-service-dev
+    images:
+    - alias: solanaService
+      imageName: localhost:5000/solana-service
+      manifestTargets:
+        helm:
+          name: solanaService.image.name
+          tag: solanaService.image.tag
+  - namePattern: sso-service-dev
+    images:
+    - alias: ssoService
+      imageName: localhost:5000/sso-service
+      manifestTargets:
+        helm:
+          name: ssoService.image.name
+          tag: ssoService.image.tag
+  - namePattern: wishlists-service-dev
+    images:
+    - alias: wishlistsService
+      imageName: localhost:5000/wishlists-service
+      manifestTargets:
+        helm:
+          name: wishlistsService.image.name
+          tag: wishlistsService.image.tag
+  - namePattern: sard-auth-service-dev
+    images:
+    - alias: sardAuthService
+      imageName: localhost:5000/sard-auth-service
+      manifestTargets:
+        helm:
+          name: sardAuthService.image.name
+          tag: sardAuthService.image.tag
+  - namePattern: sard-customer-info-service-dev
+    images:
+    - alias: sardCustomerInfoService
+      imageName: localhost:5000/sard-customer-info-service
+      manifestTargets:
+        helm:
+          name: sardCustomerInfoService.image.name
+          tag: sardCustomerInfoService.image.tag
+  - namePattern: ollama-model-py-dev
+    images:
+    - alias: ollamaModelPy
+      imageName: localhost:5000/ollama-model-py
+      manifestTargets:
+        helm:
+          name: ollamaModelPy.image.name
+          tag: ollamaModelPy.image.tag
+  - namePattern: identified-service-dev
+    images:
+    - alias: identifiedService
+      imageName: localhost:5000/identified-service
+      manifestTargets:
+        helm:
+          name: identifiedService.image.name
+          tag: identifiedService.image.tag
+  - namePattern: face-recognition-service-dev
+    images:
+    - alias: faceRecognitionService
+      imageName: localhost:5000/face-recognition-service
+      manifestTargets:
+        helm:
+          name: faceRecognitionService.image.name
+          tag: faceRecognitionService.image.tag
+  - namePattern: share-service-dev
+    images:
+    - alias: shareService
+      imageName: localhost:5000/share-service
+      manifestTargets:
+        helm:
+          name: shareService.image.name
+          tag: shareService.image.tag
+  - namePattern: food-service-dev
+    images:
+    - alias: foodService
+      imageName: localhost:5000/food-service
+      manifestTargets:
+        helm:
+          name: foodService.image.name
+          tag: foodService.image.tag

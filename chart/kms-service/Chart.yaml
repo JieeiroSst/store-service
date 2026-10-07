@@ -1,0 +1,13 @@
+apiVersion: v2
+name: kms-service
+description: A Helm chart for kms-service, key management service - data keys, encryption and rotation
+
+type: application
+
+version: 0.2.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: common
+    version: "0.1.0"
+    repository: file://../common

@@ -1,0 +1,13 @@
+apiVersion: v2
+name: ai-agent-system
+description: A Helm chart for ai-agent-system, aI agent that answers through Ollama and keeps history in MySQL
+
+type: application
+
+version: 0.2.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: common
+    version: "0.1.0"
+    repository: file://../common

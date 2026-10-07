@@ -1,0 +1,53 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
+# reviewed PR opened by the "Promote image" workflow.
+# Credentials come from the secret manager (SecretStore store-secrets);
+# create the store/prod/... keys before the first sync.
+global:
+  environment: prod
+identifiedService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: false
+    internet: true
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 60
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  topologySpread:
+    enabled: true
+  priorityClassName: store-standard
+  externalSecret:
+    enabled: true
+    targetName: identified-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: dropboxAccessToken
+        remoteKey: store/prod/identified-service
+        property: dropboxAccessToken
+      - secretKey: awsAccessKeyId
+        remoteKey: store/prod/identified-service
+        property: awsAccessKeyId
+      - secretKey: awsSecretAccessKey
+        remoteKey: store/prod/identified-service
+        property: awsSecretAccessKey

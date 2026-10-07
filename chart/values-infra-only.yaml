@@ -138,3 +138,49 @@ networkingService:
   enabled: false
 serpapiService:
   enabled: false
+aiAgentSystem:
+  enabled: false
+goflowService:
+  enabled: false
+kmsService:
+  enabled: false
+mediaService:
+  enabled: false
+messageService:
+  enabled: false
+notifyhubService:
+  enabled: false
+offerRangeService:
+  enabled: false
+ollamaGateway:
+  enabled: false
+orderProcessingService:
+  enabled: false
+payerService:
+  enabled: false
+pointService:
+  enabled: false
+realTimeService:
+  enabled: false
+searchService:
+  enabled: false
+solanaService:
+  enabled: false
+ssoService:
+  enabled: false
+wishlistsService:
+  enabled: false
+sardAuthService:
+  enabled: false
+sardCustomerInfoService:
+  enabled: false
+ollamaModelPy:
+  enabled: false
+identifiedService:
+  enabled: false
+faceRecognitionService:
+  enabled: false
+shareService:
+  enabled: false
+foodService:
+  enabled: false

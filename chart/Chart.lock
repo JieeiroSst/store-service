@@ -278,5 +278,74 @@ dependencies:
 - name: serpapi-service
   repository: file://serpapi-service
   version: 0.2.0
-digest: sha256:e50a5f4fba650e14c8c1bea99bdde65322aa0ed65b5a997290f03eb87a957cdc
-generated: "2026-10-06T21:33:08.341381+07:00"
+- name: ai-agent-system
+  repository: file://ai-agent-system
+  version: 0.2.0
+- name: goflow-service
+  repository: file://goflow-service
+  version: 0.2.0
+- name: kms-service
+  repository: file://kms-service
+  version: 0.2.0
+- name: media-service
+  repository: file://media-service
+  version: 0.2.0
+- name: message-service
+  repository: file://message-service
+  version: 0.2.0
+- name: notifyhub-service
+  repository: file://notifyhub-service
+  version: 0.2.0
+- name: offer-range-service
+  repository: file://offer-range-service
+  version: 0.2.0
+- name: ollama-gateway
+  repository: file://ollama-gateway
+  version: 0.2.0
+- name: order-processing-service
+  repository: file://order-processing-service
+  version: 0.2.0
+- name: payer-service
+  repository: file://payer-service
+  version: 0.2.0
+- name: point-service
+  repository: file://point-service
+  version: 0.2.0
+- name: real-time-service
+  repository: file://real-time-service
+  version: 0.2.0
+- name: search-service
+  repository: file://search-service
+  version: 0.2.0
+- name: solana-service
+  repository: file://solana-service
+  version: 0.2.0
+- name: sso-service
+  repository: file://sso-service
+  version: 0.2.0
+- name: wishlists-service
+  repository: file://wishlists-service
+  version: 0.2.0
+- name: sard-auth-service
+  repository: file://sard-auth-service
+  version: 0.2.0
+- name: sard-customer-info-service
+  repository: file://sard-customer-info-service
+  version: 0.2.0
+- name: ollama-model-py
+  repository: file://ollama-model-py
+  version: 0.2.0
+- name: identified-service
+  repository: file://identified-service
+  version: 0.2.0
+- name: face-recognition-service
+  repository: file://face-recognition-service
+  version: 0.2.0
+- name: share-service
+  repository: file://share-service
+  version: 0.2.0
+- name: food-service
+  repository: file://food-service
+  version: 0.2.0
+digest: sha256:b8401b42f478bf4dfbbf4ade583d7af9fd9981b72ed702d2b9f7c06815de98ef
+generated: "2026-10-07T16:13:04.932212+07:00"

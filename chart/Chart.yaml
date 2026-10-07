@@ -446,3 +446,118 @@ dependencies:
     version: "0.2.0"
     repository: file://serpapi-service
     condition: serpapiService.enabled
+  - alias: aiAgentSystem
+    name: ai-agent-system
+    version: "0.2.0"
+    repository: file://ai-agent-system
+    condition: aiAgentSystem.enabled
+  - alias: goflowService
+    name: goflow-service
+    version: "0.2.0"
+    repository: file://goflow-service
+    condition: goflowService.enabled
+  - alias: kmsService
+    name: kms-service
+    version: "0.2.0"
+    repository: file://kms-service
+    condition: kmsService.enabled
+  - alias: mediaService
+    name: media-service
+    version: "0.2.0"
+    repository: file://media-service
+    condition: mediaService.enabled
+  - alias: messageService
+    name: message-service
+    version: "0.2.0"
+    repository: file://message-service
+    condition: messageService.enabled
+  - alias: notifyhubService
+    name: notifyhub-service
+    version: "0.2.0"
+    repository: file://notifyhub-service
+    condition: notifyhubService.enabled
+  - alias: offerRangeService
+    name: offer-range-service
+    version: "0.2.0"
+    repository: file://offer-range-service
+    condition: offerRangeService.enabled
+  - alias: ollamaGateway
+    name: ollama-gateway
+    version: "0.2.0"
+    repository: file://ollama-gateway
+    condition: ollamaGateway.enabled
+  - alias: orderProcessingService
+    name: order-processing-service
+    version: "0.2.0"
+    repository: file://order-processing-service
+    condition: orderProcessingService.enabled
+  - alias: payerService
+    name: payer-service
+    version: "0.2.0"
+    repository: file://payer-service
+    condition: payerService.enabled
+  - alias: pointService
+    name: point-service
+    version: "0.2.0"
+    repository: file://point-service
+    condition: pointService.enabled
+  - alias: realTimeService
+    name: real-time-service
+    version: "0.2.0"
+    repository: file://real-time-service
+    condition: realTimeService.enabled
+  - alias: searchService
+    name: search-service
+    version: "0.2.0"
+    repository: file://search-service
+    condition: searchService.enabled
+  - alias: solanaService
+    name: solana-service
+    version: "0.2.0"
+    repository: file://solana-service
+    condition: solanaService.enabled
+  - alias: ssoService
+    name: sso-service
+    version: "0.2.0"
+    repository: file://sso-service
+    condition: ssoService.enabled
+  - alias: wishlistsService
+    name: wishlists-service
+    version: "0.2.0"
+    repository: file://wishlists-service
+    condition: wishlistsService.enabled
+  - alias: sardAuthService
+    name: sard-auth-service
+    version: "0.2.0"
+    repository: file://sard-auth-service
+    condition: sardAuthService.enabled
+  - alias: sardCustomerInfoService
+    name: sard-customer-info-service
+    version: "0.2.0"
+    repository: file://sard-customer-info-service
+    condition: sardCustomerInfoService.enabled
+  - alias: ollamaModelPy
+    name: ollama-model-py
+    version: "0.2.0"
+    repository: file://ollama-model-py
+    condition: ollamaModelPy.enabled
+  - alias: identifiedService
+    name: identified-service
+    version: "0.2.0"
+    repository: file://identified-service
+    condition: identifiedService.enabled
+  - alias: faceRecognitionService
+    name: face-recognition-service
+    version: "0.2.0"
+    repository: file://face-recognition-service
+    condition: faceRecognitionService.enabled
+  - alias: shareService
+    name: share-service
+    version: "0.2.0"
+    repository: file://share-service
+    condition: shareService.enabled
+  - alias: foodService
+    name: food-service
+    version: "0.2.0"
+    repository: file://food-service
+    condition: foodService.enabled

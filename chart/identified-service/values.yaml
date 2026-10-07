@@ -1,0 +1,142 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+identifiedService:
+  name: identified-service
+  selectorApp: identified-service
+  containerName: identified-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/identified-service
+    tag: latest
+    port: 8000
+    pullPolicy: IfNotPresent
+
+  service:
+    name: identified-service-svc
+    type: ClusterIP
+    port: 8000
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: identified-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  # Optional Secret with dropboxAccessToken, awsAccessKeyId, awsSecretAccessKey. Never rendered from values: create it by
+  # hand outside prod, and sync it with externalSecret in prod.
+  secretRef:
+    name: identified-service-secret
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: ENVIRONMENT
+      value: '{{ .Values.global.environment }}'
+    - name: MONGO_CONNECTION_URL
+      value: 'mongodb://mongo-svc:80'
+    - name: MONGO_DATABASE_NAME
+      value: 'identified_service'
+    - name: DROPBOX_ACCESS_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.identifiedService.secretRef.name }}'
+          key: dropboxAccessToken
+          optional: true
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.identifiedService.secretRef.name }}'
+          key: awsAccessKeyId
+          optional: true
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.identifiedService.secretRef.name }}'
+          key: awsSecretAccessKey
+          optional: true
+  # No health endpoint known for this service: TCP checks on the http port.
+  probes:
+    startup:
+      tcpSocket:
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      tcpSocket:
+        port: http
+      periodSeconds: 10
+      failureThreshold: 3
+    liveness:
+      tcpSocket:
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: true
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

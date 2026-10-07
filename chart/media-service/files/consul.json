@@ -1,0 +1,30 @@
+{
+    "server": {
+        "port_server": "8080"
+    },
+    "secret": {
+        "jwt_secret_key": "secretkey"
+    },
+    "nats": {
+        "dns": "nats://nats:4222"
+    },
+    "postgres": {
+        "postgresql_host": "postgresdb",
+        "postgresql_port": "80",
+        "postgresql_user": "testUser",
+        "postgresql_password": "testPassword",
+        "postgresql_dbname": "media_service",
+        "postgresql_ssl_mode": false,
+        "pg_driver": "pgx"
+    },
+    "cache": {
+        "dns": "redis-svc:80"
+    },
+    "cloudflare": {
+        "api_token": "",
+        "account_id": ""
+    },
+    "elastic": {
+        "dns": "http://elasticsearch-service:9200"
+    }
+}

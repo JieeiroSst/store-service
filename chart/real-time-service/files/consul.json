@@ -1,0 +1,8 @@
+{
+    "server": {
+        "server_port": "8080"
+    },
+    "serect": {
+        "key": "secretkey"
+    }
+}
