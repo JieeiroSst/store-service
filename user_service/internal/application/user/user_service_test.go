@@ -79,3 +79,61 @@ func TestSignUpRollsBackWhenAuthorizeFails(t *testing.T) {
 		t.Errorf("account not rolled back: created=%v deleted=%v", repo.created, repo.deleted)
 	}
 }
+
+type searchRepo struct {
+	output.UserRepository
+	users  map[int]domain.User
+	filter domain.UserFilter
+}
+
+func (r *searchRepo) FindUser(_ context.Context, id int) (domain.User, error) {
+	u, ok := r.users[id]
+	if !ok {
+		return domain.User{}, domain.ErrUserNotExist
+	}
+	return u, nil
+}
+
+func (r *searchRepo) SearchUsers(_ context.Context, f domain.UserFilter) ([]domain.User, int64, error) {
+	r.filter = f
+	var out []domain.User
+	for id := 1; id <= len(r.users); id++ {
+		u := r.users[id]
+		if (f.Username == "" || u.Username == f.Username) && (f.Email == "" || u.Email == f.Email) {
+			out = append(out, u)
+		}
+	}
+	return out, int64(len(out)), nil
+}
+
+func TestFindUser(t *testing.T) {
+	repo := &searchRepo{users: map[int]domain.User{
+		1: {Id: 1, Username: "alice", Email: "alice@mail.com", Password: "hash", Checked: true},
+		2: {Id: 2, Username: "bob", Email: "bob@mail.com"},
+	}}
+	svc := New(repo, fakeHasher{}, nil, &fakeAuthorizer{})
+	ctx := context.Background()
+
+	byID, err := svc.FindUser(ctx, dto.FindUserRequest{UserId: 2})
+	if err != nil || byID.Total != 1 || len(byID.Users) != 1 || byID.Users[0].Username != "bob" {
+		t.Fatalf("by id: %v %+v", err, byID)
+	}
+	if _, err := svc.FindUser(ctx, dto.FindUserRequest{UserId: 9}); !errors.Is(err, domain.ErrUserNotExist) {
+		t.Fatalf("missing id: %v", err)
+	}
+
+	name := "alice"
+	byName, err := svc.FindUser(ctx, dto.FindUserRequest{Username: &name})
+	if err != nil || byName.Total != 1 || byName.Users[0].Id != 1 || byName.Users[0].Password != "" {
+		t.Fatalf("by username: %v %+v", err, byName)
+	}
+	if repo.filter.Page != domain.DefaultUserPage || repo.filter.Limit != domain.DefaultUserLimit {
+		t.Fatalf("filter not normalized: %+v", repo.filter)
+	}
+
+	limit := int32(500)
+	all, err := svc.FindUser(ctx, dto.FindUserRequest{Limit: &limit})
+	if err != nil || all.Total != 2 || repo.filter.Limit != domain.MaxUserLimit {
+		t.Fatalf("list: %v %+v %+v", err, all, repo.filter)
+	}
+}

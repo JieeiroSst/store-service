@@ -33,5 +33,12 @@ func newConfig() (*config.Config, error) {
 		log.Printf("failed to parse consul config, falling back to env: %v", err)
 		return config.FromEnv(), nil
 	}
+	env := config.FromEnv()
+	if _, ok := os.LookupEnv("INTERNAL_TOKENS"); ok {
+		cfg.Auth.InternalTokens = env.Auth.InternalTokens
+	}
+	if _, ok := os.LookupEnv("USER_SERVICE_TOKEN"); ok {
+		cfg.UserService.Token = env.UserService.Token
+	}
 	return &cfg, nil
 }

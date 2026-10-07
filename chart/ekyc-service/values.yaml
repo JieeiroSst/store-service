@@ -35,7 +35,11 @@ ekycService:
   # from the shared service-env-files secret as /app/.env (see
   # chart/templates/env-files-secret.yaml's ekyc-service.env block and
   # templates/ekyc-service.yaml's volumeMount below).
+  # Dev-only service token; prod sets internalTokens: '' and
+  # internalTokensFromSecret: true (values-prod.yaml).
+  internalTokensFromSecret: false
   env:
+    internalTokens: local-dev-ekyc-internal
     postgresHost: postgresdb
     postgresPort: "80"
     postgresUser: testUser
@@ -98,6 +102,17 @@ ekycService:
       value: '{{ .Values.ekycService.env.userServiceBaseURL }}'
     - name: USER_SERVICE_TIMEOUT
       value: '{{ .Values.ekycService.env.userServiceTimeout }}'
+    # /api/v1/ekyc/{user_id}/* accepts a user-service session for that user, or
+    # one of these service tokens (sard-customer-info-service's ekycServiceToken).
+    - name: INTERNAL_TOKENS
+      value: '{{ .Values.ekycService.env.internalTokens }}'
+      when: '{{ .Values.ekycService.env.internalTokens }}'
+    - name: INTERNAL_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: ekyc-service-secret
+          key: internalTokens
+      when: '{{ if .Values.ekycService.internalTokensFromSecret }}true{{ end }}'
     - name: EKYC_MRZ_MIN_CONFIDENCE
       value: '{{ .Values.ekycService.env.mrzMinConfidence }}'
     - name: EKYC_FACE_MATCH_THRESHOLD

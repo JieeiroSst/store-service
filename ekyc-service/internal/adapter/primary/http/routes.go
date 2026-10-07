@@ -16,13 +16,13 @@ func NewRouter(h *Handler) *gin.Engine {
 
 	api := engine.Group("/api/v1")
 	{
-		ekyc := api.Group("/ekyc")
+		ekyc := api.Group("/ekyc/:user_id", h.Authorize)
 		{
-			ekyc.POST("/:user_id/citizen-card", h.SubmitCitizenCard)
-			ekyc.POST("/:user_id/nfc-chip", h.SubmitNFCChip)
-			ekyc.POST("/:user_id/face-scan", h.SubmitFaceScan)
-			ekyc.POST("/:user_id/verify", h.Verify)
-			ekyc.GET("/:user_id", h.GetStatus)
+			ekyc.POST("/citizen-card", h.SubmitCitizenCard)
+			ekyc.POST("/nfc-chip", h.SubmitNFCChip)
+			ekyc.POST("/face-scan", h.SubmitFaceScan)
+			ekyc.POST("/verify", h.Verify)
+			ekyc.GET("", h.GetStatus)
 		}
 	}
 

@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/JIeeiroSst/utils/consul"
@@ -20,6 +21,11 @@ type Config struct {
 	Token    TokenPolicy    `json:"token"`
 
 	AuthorizeService AuthorizeServiceConfig `json:"authorize_service"`
+	Internal         InternalConfig         `json:"internal"`
+}
+
+type InternalConfig struct {
+	ApiTokens []string `json:"api_tokens"`
 }
 
 type AuthorizeServiceConfig struct {
@@ -137,6 +143,19 @@ func InitializeConfiguration(dir string) (*Config, error) {
 	if err := json.Unmarshal(conf, &config); err != nil {
 		return nil, err
 	}
+	if v, ok := os.LookupEnv("INTERNAL_API_TOKENS"); ok {
+		config.Internal.ApiTokens = splitTokens(v)
+	}
 
 	return &config, nil
+}
+
+func splitTokens(s string) []string {
+	var out []string
+	for _, v := range strings.Split(s, ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			out = append(out, v)
+		}
+	}
+	return out
 }

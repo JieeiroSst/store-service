@@ -332,6 +332,9 @@ dependencies:
 - name: sard-customer-info-service
   repository: file://sard-customer-info-service
   version: 0.2.0
+- name: sard-card-service
+  repository: file://sard-card-service
+  version: 0.2.0
 - name: ollama-model-py
   repository: file://ollama-model-py
   version: 0.2.0
@@ -347,5 +350,5 @@ dependencies:
 - name: food-service
   repository: file://food-service
   version: 0.2.0
-digest: sha256:b8401b42f478bf4dfbbf4ade583d7af9fd9981b72ed702d2b9f7c06815de98ef
-generated: "2026-10-07T16:13:04.932212+07:00"
+digest: sha256:1d51a151553422c2ae2a0c124edfcb55b083d016c2130dc8d335c3c41b0d465a
+generated: "2026-10-07T20:51:34.756345+07:00"

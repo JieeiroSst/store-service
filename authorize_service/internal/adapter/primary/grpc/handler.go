@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"errors"
+	"strings"
 
 	authorizeGrpc "github.com/JIeeiroSst/lib-gateway/authorize-service/gateway/authorize-service"
 	"github.com/JIeeiroSst/utils/logger"
@@ -12,6 +13,8 @@ import (
 	"github.com/JieeiroSst/authorize-service/internal/domain/port"
 	"github.com/JieeiroSst/authorize-service/pkg/pagination"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Handler struct {
@@ -134,23 +137,34 @@ func (h *Handler) CreateOTP(ctx context.Context, in *authorizeGrpc.CreateOTPRequ
 	ctx = trace_id.EnsureTracerID(ctx)
 	lg := logger.WithContext(ctx)
 
-	token, err := h.otp.CreateOtpByUser(ctx, in.Username)
+	username := strings.TrimSpace(in.Username)
+	if username == "" {
+		return nil, status.Error(codes.InvalidArgument, "username is required")
+	}
+	token, expiresAt, err := h.otp.CreateOtpByUser(ctx, username)
 	if err != nil {
 		lg.Error("CreateOTP", zap.Error(err))
-		return nil, err
+		if errors.Is(err, common.ErrOTPLimit) {
+			return nil, status.Error(codes.ResourceExhausted, err.Error())
+		}
+		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &authorizeGrpc.CreateOTPResponse{Otp: token, ExpiresAt: 70}, nil
+	return &authorizeGrpc.CreateOTPResponse{Otp: token, ExpiresAt: expiresAt.Unix()}, nil
 }
 
 func (h *Handler) AuthorizeOTP(ctx context.Context, in *authorizeGrpc.AuthorizeOTPRequest) (*authorizeGrpc.AuthorizeOTPResponse, error) {
 	ctx = trace_id.EnsureTracerID(ctx)
 	lg := logger.WithContext(ctx)
 
-	if err := h.otp.Authorize(ctx, in.Otp, in.Username); err != nil {
-		lg.Error("AuthorizeOTP", zap.Error(err))
-		return &authorizeGrpc.AuthorizeOTPResponse{Message: err.Error()}, err
+	username := strings.TrimSpace(in.Username)
+	if username == "" || strings.TrimSpace(in.Otp) == "" {
+		return nil, status.Error(codes.InvalidArgument, "username and otp are required")
 	}
-	return &authorizeGrpc.AuthorizeOTPResponse{Message: "OTP authorized"}, nil
+	if err := h.otp.Authorize(ctx, in.Otp, username); err != nil {
+		lg.Warn("AuthorizeOTP rejected", zap.Error(err))
+		return &authorizeGrpc.AuthorizeOTPResponse{Valid: false, Message: err.Error()}, nil
+	}
+	return &authorizeGrpc.AuthorizeOTPResponse{Valid: true, Message: "OTP authorized"}, nil
 }
 
 // ─── helpers ──────────────────────────────────────────────────────────────────

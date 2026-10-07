@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -6,7 +6,10 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o auth-service .
+ARG VERSION=dev
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath \
+    -ldflags="-s -w -X github.com/JIeeiroSst/auth-service/config.Version=${VERSION}" \
+    -o auth-service ./cmd
 
 FROM alpine:3.19
 
@@ -19,6 +22,7 @@ COPY --from=builder /app/auth-service .
 
 USER app
 
-EXPOSE 8081
+ENV PORT_HTTP_SERVER=8080
+EXPOSE 8080
 
 ENTRYPOINT ["./auth-service"]

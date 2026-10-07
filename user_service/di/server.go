@@ -9,6 +9,8 @@ import (
 
 	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
+	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/internalhttp"
+	"github.com/JIeeiroSst/user-service/internal/port/input"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
@@ -16,7 +18,7 @@ import (
 	userServiceGrpc "github.com/JIeeiroSst/lib-gateway/user-service/gateway/user-service"
 )
 
-func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Handler) error {
+func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Handler, users input.UserService) error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", cfg.Server.PortGrpcServer))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
@@ -26,6 +28,9 @@ func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Ha
 	userServiceGrpc.RegisterUserServiceServer(grpcServer, handler)
 
 	mux := runtime.NewServeMux(runtime.WithErrorHandler(grpcadapter.HTTPErrorHandler))
+	if err := internalhttp.New(users, cfg.Internal.ApiTokens).Register(mux); err != nil {
+		return fmt.Errorf("failed to register internal routes: %w", err)
+	}
 	httpServer := &http.Server{
 		Addr:    fmt.Sprintf(":%v", cfg.Server.PortHttpServer),
 		Handler: mux,

@@ -16,3 +16,29 @@ type User struct {
 	UpdateTime time.Time `json:"update_time" gorm:"default:null"`
 	Roles      []Role    `gorm:"many2many:user_roles;"`
 }
+
+const (
+	DefaultUserPage  = 1
+	DefaultUserLimit = 10
+	MaxUserLimit     = 100
+)
+
+type UserFilter struct {
+	Username string
+	Email    string
+	Page     int
+	Limit    int
+}
+
+func (f UserFilter) Normalize() UserFilter {
+	if f.Page < 1 {
+		f.Page = DefaultUserPage
+	}
+	if f.Limit < 1 {
+		f.Limit = DefaultUserLimit
+	}
+	if f.Limit > MaxUserLimit {
+		f.Limit = MaxUserLimit
+	}
+	return f
+}

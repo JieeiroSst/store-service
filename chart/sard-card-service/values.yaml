@@ -1,0 +1,202 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+sardCardService:
+  name: sard-card-service
+  selectorApp: sard-card-service
+  containerName: sard-card-service
+  # State lives in Postgres and authorizations take a per-card advisory lock,
+  # so replicas can scale freely.
+  replicas: 2
+
+  image:
+    name: ghcr.io/jieeirosst/sard-card-service
+    tag: latest
+    port: 8080
+    pullPolicy: IfNotPresent
+
+  service:
+    name: sard-card-service-svc
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: sard-card-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  # CARD_MASTER_KEY derives the PAN encryption, PAN hash and CVV keys: changing
+  # it makes every stored card unreadable. internalTokens are accepted on
+  # /internal/* (sard-auth-service resolves cards with it); customerInfoToken and
+  # authServiceToken are sent to sard-customer-info-service and to
+  # sard-auth-service's /internal/*, and must match those charts. Rendered from
+  # values only outside prod (dev values below); prod sets create=false and syncs
+  # the same Secret with externalSecret (values-prod.yaml).
+  secret:
+    create: true
+    name: sard-card-service-secret
+    stringData:
+      cardMasterKey: local-dev-only-card-master-key-change-me-0001
+      accessTokens: ''
+      internalTokens: local-dev-sard-card-internal
+      customerInfoToken: local-dev-sard-customer-info
+      authServiceToken: local-dev-sard-auth-internal
+  secretRef:
+    name: sard-card-service-secret
+    masterKeyKey: cardMasterKey
+    accessTokensKey: accessTokens
+    internalTokensKey: internalTokens
+    customerInfoTokenKey: customerInfoToken
+    authServiceTokenKey: authServiceToken
+
+  # Database "card" and role "card_svc" are provisioned by chart/postgres
+  # (serviceDatabases), which also writes the generated credentials into the
+  # Consul key and into this Secret.
+  dbCredentialsSecret: sard-card-service-db-credentials
+
+  # Non-secret config is the Consul KV key below, seeded once from
+  # files/consul.json (keep it in sync with sard-service/card-service/consul.json)
+  # and never overwritten afterwards: edit it in Consul to change the config.
+  consul:
+    addr: http://consul-service
+    key: card_service
+  consulSeed:
+    image: curlimages/curl:8.10.1
+    enabled: true
+    key: card_service
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: CONSUL_ADDR
+      value: '{{ .Values.sardCardService.consul.addr }}'
+    - name: CONSUL_KEY
+      value: '{{ .Values.sardCardService.consul.key }}'
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.sardCardService.image.port }}'
+    - name: CARD_MASTER_KEY
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCardService.secretRef.name }}'
+          key: '{{ .Values.sardCardService.secretRef.masterKeyKey }}'
+    - name: ACCESS_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCardService.secretRef.name }}'
+          key: '{{ .Values.sardCardService.secretRef.accessTokensKey }}'
+          optional: true
+    - name: INTERNAL_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCardService.secretRef.name }}'
+          key: '{{ .Values.sardCardService.secretRef.internalTokensKey }}'
+    - name: CUSTOMER_INFO_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCardService.secretRef.name }}'
+          key: '{{ .Values.sardCardService.secretRef.customerInfoTokenKey }}'
+          optional: true
+    - name: AUTH_SERVICE_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCardService.secretRef.name }}'
+          key: '{{ .Values.sardCardService.secretRef.authServiceTokenKey }}'
+          optional: true
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCardService.dbCredentialsSecret }}'
+          key: POSTGRES_USER
+          optional: true
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCardService.dbCredentialsSecret }}'
+          key: POSTGRES_PASSWORD
+          optional: true
+  probes:
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 15
+      periodSeconds: 20
+      failureThreshold: 6
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  # Reads its config from Consul and calls sard-customer-info-service and
+  # sard-auth-service.
+  networkLabels:
+    consulClient: true
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  # /metrics on the app port: card_issued_total{program,type},
+  # card_lifecycle_events_total{event}, card_authorizations_total{channel,code}.
+  metrics:
+    enabled: true
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

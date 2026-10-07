@@ -1,0 +1,28 @@
+{
+    "server": {
+        "portHttpServer": "8080"
+    },
+    "storage": {
+        "backend": "postgres"
+    },
+    "postgres": {
+        "host": "postgresdb",
+        "port": "80",
+        "user": "",
+        "password": "",
+        "database": "card",
+        "sslMode": "disable",
+        "maxConns": 10
+    },
+    "limits": {
+        "timezone": "Asia/Ho_Chi_Minh"
+    },
+    "customerInfo": {
+        "baseUrl": "http://sard-customer-info-service-svc:8080",
+        "timeout": "5s"
+    },
+    "authService": {
+        "baseUrl": "http://sard-auth-service-svc:8080",
+        "timeout": "5s"
+    }
+}

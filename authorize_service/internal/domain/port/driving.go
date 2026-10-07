@@ -2,6 +2,7 @@ package port
 
 import (
 	"context"
+	"time"
 
 	"github.com/JieeiroSst/authorize-service/internal/domain/model"
 	"github.com/JieeiroSst/authorize-service/pkg/pagination"
@@ -34,6 +35,6 @@ type PermissionUsecase interface {
 }
 
 type OTPUsecase interface {
-	CreateOtpByUser(ctx context.Context, username string) (string, error)
+	CreateOtpByUser(ctx context.Context, username string) (string, time.Time, error)
 	Authorize(ctx context.Context, otpCode string, username string) error
 }

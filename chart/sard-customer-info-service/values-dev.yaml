@@ -21,13 +21,11 @@ sardCustomerInfoService:
       drop:
         - ALL
   networkLabels:
-    consulClient: false
+    consulClient: true
     internet: false
   autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 60
+    enabled: false
+  replicas: 1
   # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
   # limits from values.yaml still cap each pod.
   resources:

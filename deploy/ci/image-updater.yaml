@@ -718,6 +718,14 @@ spec:
         helm:
           name: sardCustomerInfoService.image.name
           tag: sardCustomerInfoService.image.tag
+  - namePattern: sard-card-service-dev
+    images:
+    - alias: sardCardService
+      imageName: localhost:5000/sard-card-service
+      manifestTargets:
+        helm:
+          name: sardCardService.image.name
+          tag: sardCardService.image.tag
   - namePattern: ollama-model-py-dev
     images:
     - alias: ollamaModelPy

@@ -1,6 +1,6 @@
 apiVersion: v2
 name: sard-customer-info-service
-description: A Helm chart for sard-customer-info-service, sARD customer info - citizen ID card OCR with tesseract
+description: A Helm chart for sard-customer-info-service, sARD customer profiles synced from user-service with CCCD eKYC
 
 type: application
 

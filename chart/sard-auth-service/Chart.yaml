@@ -1,6 +1,6 @@
 apiVersion: v2
 name: sard-auth-service
-description: A Helm chart for sard-auth-service, sARD auth and card tokenization service
+description: A Helm chart for sard-auth-service, sARD payment authentication (3-D Secure style OTP step-up for card payments)
 
 type: application
 

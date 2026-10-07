@@ -88,6 +88,7 @@ func (s *Service) UpdateProfile(ctx context.Context, req dto.UpdateProfileReques
 	if err != nil {
 		return dto.UpdateProfileResponse{Message: "failed"}, err
 	}
+	s.refreshCache(ctx, updated.Id)
 
 	return dto.UpdateProfileResponse{User: toDTOUser(updated), Message: "success"}, nil
 }
@@ -96,31 +97,85 @@ func (s *Service) LockAccount(ctx context.Context, req dto.LockAccountRequest) (
 	if err := s.userRepo.LockAccount(ctx, int(req.Id)); err != nil {
 		return dto.LockAccountResponse{Message: "failed"}, err
 	}
+	s.refreshCache(ctx, int(req.Id))
 	return dto.LockAccountResponse{Message: "success"}, nil
 }
 
 func (s *Service) FindUser(ctx context.Context, req dto.FindUserRequest) (dto.FindUserResponse, error) {
-	key := fmt.Sprintf(domain.UserCacheKey, req.UserId)
-
-	var user domain.User
-	if cached, err := s.cache.GetInterface(ctx, key); err == nil {
-		if raw, ok := cached.(string); ok {
-			_ = json.Unmarshal([]byte(raw), &user)
-		}
-	}
-
-	if user.Id == 0 {
-		fromDB, err := s.userRepo.FindUser(ctx, int(req.UserId))
+	if req.UserId > 0 {
+		user, err := s.findByID(ctx, int(req.UserId))
 		if err != nil {
 			return dto.FindUserResponse{}, err
 		}
-		user = fromDB
-		if payload, err := json.Marshal(user); err == nil {
-			_ = s.cache.SetInterface(ctx, key, string(payload), time.Hour)
-		}
+		return dto.FindUserResponse{Users: []*dto.User{toDTOUser(user)}, Total: 1}, nil
+	}
+	if req.UserId < 0 {
+		return dto.FindUserResponse{}, domain.ErrInvalidRequest
 	}
 
-	return dto.FindUserResponse{User: toDTOUser(user)}, nil
+	filter := domain.UserFilter{}
+	if req.Username != nil {
+		filter.Username = *req.Username
+	}
+	if req.Email != nil {
+		filter.Email = *req.Email
+	}
+	if req.Page != nil {
+		filter.Page = int(*req.Page)
+	}
+	if req.Limit != nil {
+		filter.Limit = int(*req.Limit)
+	}
+	users, total, err := s.userRepo.SearchUsers(ctx, filter.Normalize())
+	if err != nil {
+		return dto.FindUserResponse{}, err
+	}
+	out := dto.FindUserResponse{Users: make([]*dto.User, 0, len(users)), Total: int32(total)}
+	for _, u := range users {
+		out.Users = append(out.Users, toDTOUser(u))
+	}
+	return out, nil
+}
+
+func (s *Service) findByID(ctx context.Context, id int) (domain.User, error) {
+	key := fmt.Sprintf(domain.UserCacheKey, id)
+	var user domain.User
+	if s.cache != nil {
+		if cached, err := s.cache.GetInterface(ctx, key); err == nil {
+			if raw, ok := cached.(string); ok {
+				_ = json.Unmarshal([]byte(raw), &user)
+			}
+		}
+	}
+	if user.Id != 0 {
+		return user, nil
+	}
+	fromDB, err := s.userRepo.FindUser(ctx, id)
+	if err != nil {
+		return domain.User{}, err
+	}
+	s.cacheUser(ctx, fromDB)
+	return fromDB, nil
+}
+
+func (s *Service) refreshCache(ctx context.Context, id int) {
+	if s.cache == nil {
+		return
+	}
+	fromDB, err := s.userRepo.FindUser(ctx, id)
+	if err != nil {
+		return
+	}
+	s.cacheUser(ctx, fromDB)
+}
+
+func (s *Service) cacheUser(ctx context.Context, user domain.User) {
+	if s.cache == nil {
+		return
+	}
+	if payload, err := json.Marshal(user); err == nil {
+		_ = s.cache.SetInterface(ctx, fmt.Sprintf(domain.UserCacheKey, user.Id), string(payload), time.Hour)
+	}
 }
 
 func toDTOUser(u domain.User) *dto.User {

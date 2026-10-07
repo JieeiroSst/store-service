@@ -28,7 +28,7 @@ func NewHandler(auth input.AuthService, user input.UserService, role input.RoleS
 
 func (h *Handler) Login(ctx context.Context, in *userServiceGrpc.LoginRequest) (*userServiceGrpc.LoginResponse, error) {
 	var req dto.LoginRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -46,7 +46,7 @@ func (h *Handler) Login(ctx context.Context, in *userServiceGrpc.LoginRequest) (
 
 func (h *Handler) Logout(ctx context.Context, in *userServiceGrpc.LogoutRequest) (*userServiceGrpc.LogoutResponse, error) {
 	var req dto.LogoutRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -60,7 +60,7 @@ func (h *Handler) Logout(ctx context.Context, in *userServiceGrpc.LogoutRequest)
 
 func (h *Handler) ValidateSession(ctx context.Context, in *userServiceGrpc.ValidateRequest) (*userServiceGrpc.ValidateResponse, error) {
 	var req dto.ValidateRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -79,7 +79,7 @@ func (h *Handler) ValidateSession(ctx context.Context, in *userServiceGrpc.Valid
 
 func (h *Handler) RefreshToken(ctx context.Context, in *userServiceGrpc.RefreshRequest) (*userServiceGrpc.RefreshResponse, error) {
 	var req dto.RefreshRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -98,7 +98,7 @@ func (h *Handler) RefreshToken(ctx context.Context, in *userServiceGrpc.RefreshR
 
 func (h *Handler) SignUp(ctx context.Context, in *userServiceGrpc.SignUpRequest) (*userServiceGrpc.SignUpResponse, error) {
 	var req dto.SignUpRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -117,7 +117,7 @@ func (h *Handler) SignUp(ctx context.Context, in *userServiceGrpc.SignUpRequest)
 
 func (h *Handler) UpdateProfile(ctx context.Context, in *userServiceGrpc.UpdateProfileRequest) (*userServiceGrpc.UpdateProfileResponse, error) {
 	var req dto.UpdateProfileRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -136,7 +136,7 @@ func (h *Handler) UpdateProfile(ctx context.Context, in *userServiceGrpc.UpdateP
 
 func (h *Handler) FindUser(ctx context.Context, in *userServiceGrpc.FindUserRequest) (*userServiceGrpc.FindUserResponse, error) {
 	var req dto.FindUserRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -145,17 +145,25 @@ func (h *Handler) FindUser(ctx context.Context, in *userServiceGrpc.FindUserRequ
 		return &userServiceGrpc.FindUserResponse{}, err
 	}
 
-	var res userServiceGrpc.FindUserResponse
-	if err := copy.CopyObject(&resp, &res); err != nil {
-		return nil, err
+	res := &userServiceGrpc.FindUserResponse{Total: resp.Total}
+	for _, u := range resp.Users {
+		pu := &userServiceGrpc.User{}
+		if err := copy.CopyObject(u, pu); err != nil {
+			return nil, err
+		}
+		pu.Password = ""
+		pu.Roles = nil
+		for _, r := range u.Roles {
+			pu.Roles = append(pu.Roles, &userServiceGrpc.Role{Id: r.Id, Name: r.Name})
+		}
+		res.Users = append(res.Users, pu)
 	}
-
-	return &res, nil
+	return res, nil
 }
 
 func (h *Handler) AddRoleItem(ctx context.Context, in *userServiceGrpc.AddRoleItemRequest) (*userServiceGrpc.AddRoleItemResponse, error) {
 	var req dto.AddRoleItemRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -174,7 +182,7 @@ func (h *Handler) AddRoleItem(ctx context.Context, in *userServiceGrpc.AddRoleIt
 
 func (h *Handler) UpdateItemRole(ctx context.Context, in *userServiceGrpc.UpdateRoleItemRequest) (*userServiceGrpc.UpdateRoleItemResponse, error) {
 	var req dto.UpdateRoleItemRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -193,7 +201,7 @@ func (h *Handler) UpdateItemRole(ctx context.Context, in *userServiceGrpc.Update
 
 func (h *Handler) RemoveRoleItem(ctx context.Context, in *userServiceGrpc.RemoveRoleItemRequest) (*userServiceGrpc.RemoveRoleItemResponse, error) {
 	var req dto.RemoveRoleItemRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -212,7 +220,7 @@ func (h *Handler) RemoveRoleItem(ctx context.Context, in *userServiceGrpc.Remove
 
 func (h *Handler) GetRole(ctx context.Context, in *userServiceGrpc.GetRoleRequest) (*userServiceGrpc.GetRoleResponse, error) {
 	var req dto.GetRoleRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -231,7 +239,7 @@ func (h *Handler) GetRole(ctx context.Context, in *userServiceGrpc.GetRoleReques
 
 func (h *Handler) ListRoles(ctx context.Context, in *userServiceGrpc.ListRolesRequest) (*userServiceGrpc.ListRolesResponse, error) {
 	var req dto.ListRolesRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -250,7 +258,7 @@ func (h *Handler) ListRoles(ctx context.Context, in *userServiceGrpc.ListRolesRe
 
 func (h *Handler) CreateRole(ctx context.Context, in *userServiceGrpc.CreateRoleResquest) (*userServiceGrpc.CreateRoleResponse, error) {
 	var req dto.CreateRoleResquest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -269,7 +277,7 @@ func (h *Handler) CreateRole(ctx context.Context, in *userServiceGrpc.CreateRole
 
 func (h *Handler) UpdateRole(ctx context.Context, in *userServiceGrpc.UpdateRoleRequest) (*userServiceGrpc.UpdateRoleResponse, error) {
 	var req dto.UpdateRoleRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 
@@ -288,7 +296,7 @@ func (h *Handler) UpdateRole(ctx context.Context, in *userServiceGrpc.UpdateRole
 
 func (h *Handler) DeleteRole(ctx context.Context, in *userServiceGrpc.DeleteRoleRequest) (*userServiceGrpc.DeleteRoleResponse, error) {
 	var req dto.DeleteRoleRequest
-	if err := copy.CopyObject(&in, &req); err != nil {
+	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
 	}
 

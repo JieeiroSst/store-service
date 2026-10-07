@@ -47,4 +47,15 @@ Config: env vars (config.FromEnv) or Consul KV, same convention as every
 other service in this repo - see HostConsul/KeyConsul/ServiceConsul and
 internal/infrastructure/config_provider.go.
 
+Auth: every /api/v1/ekyc/{user_id}/* route needs `Authorization: Bearer
+<token>` (or `X-Session-Token`). The token is either
+  - a user-service session: validated with POST /api/v1/validate on
+    user-service, and the session's userId must equal {user_id} (403
+    otherwise), so a user can only read and submit their own eKYC; or
+  - one of INTERNAL_TOKENS (comma-separated, env only, never in Consul): a
+    service caller such as sard-customer-info-service, allowed for any user.
+Missing or invalid token gives 401, and user-service being down gives 503.
+/health stays public. User lookups use user-service GET
+/internal/v1/users/{id} (USER_SERVICE_TOKEN when user-service requires one).
+
 API: see internal/adapter/primary/http/routes.go.

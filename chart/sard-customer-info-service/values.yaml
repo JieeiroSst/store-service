@@ -6,18 +6,20 @@ sardCustomerInfoService:
   name: sard-customer-info-service
   selectorApp: sard-customer-info-service
   containerName: sard-customer-info-service
-  replicas: 1
+  # Customer profiles synced from user-service; CCCD OCR, NFC and face match are
+  # delegated to ekyc-service, this service owns the KYC decision. State lives in Postgres.
+  replicas: 2
 
   image:
     name: ghcr.io/jieeirosst/sard-customer-info-service
     tag: latest
-    port: 8081
+    port: 8080
     pullPolicy: IfNotPresent
 
   service:
     name: sard-customer-info-service-svc
     type: ClusterIP
-    port: 8081
+    port: 8080
   ingress:
     enabled: false
     className: nginx
@@ -29,43 +31,116 @@ sardCustomerInfoService:
       enabled: false
       secretName: ''
 
+  # documentHashKey keys the CCCD number hashes used to stop one identity
+  # document from being verified twice. accessTokens guard /api/* and must
+  # contain chart/sard-card-service's customerInfoToken. userServiceToken is
+  # sent to user-service's /internal/v1/users/{id} (leave empty while
+  # user-service has no internal.api_tokens). ekycServiceToken is sent to
+  # ekyc-service and must be in its INTERNAL_TOKENS (chart/ekyc-service).
+  # Rendered from values outside prod only.
+  secret:
+    create: true
+    name: sard-customer-info-service-secret
+    stringData:
+      documentHashKey: local-dev-only-document-hash-key-change-me
+      accessTokens: local-dev-sard-customer-info
+      userServiceToken: ''
+      ekycServiceToken: local-dev-ekyc-internal
+  secretRef:
+    name: sard-customer-info-service-secret
+    documentHashKeyKey: documentHashKey
+    accessTokensKey: accessTokens
+    userServiceTokenKey: userServiceToken
+    ekycServiceTokenKey: ekycServiceToken
+  # Database "customer_info" and role "customer_info_svc" are provisioned by
+  # chart/postgres (serviceDatabases), which also writes the generated
+  # credentials into the Consul key and into this Secret.
+  dbCredentialsSecret: sard-customer-info-service-db-credentials
+
+  # Non-secret config is the Consul KV key below, seeded once from
+  # files/consul.json (keep it in sync with sard-service/customer-info-service/consul.json)
+  # and never overwritten afterwards: edit it in Consul to change the config.
+  consul:
+    addr: http://consul-service
+    key: customer_info_service
+  consulSeed:
+    image: curlimages/curl:8.10.1
+    enabled: true
+    key: customer_info_service
+
   resources:
     requests:
       cpu: 50m
       memory: 64Mi
     limits:
-      cpu: 1
-      memory: 512Mi
+      cpu: 500m
+      memory: 256Mi
 
   autoscaling:
     enabled: false
   containerEnv:
-    - name: PORT
+    - name: CONSUL_ADDR
+      value: '{{ .Values.sardCustomerInfoService.consul.addr }}'
+    - name: CONSUL_KEY
+      value: '{{ .Values.sardCustomerInfoService.consul.key }}'
+    - name: PORT_HTTP_SERVER
       value: '{{ .Values.sardCustomerInfoService.image.port }}'
-  # No health endpoint known for this service: TCP checks on the http port.
+    - name: DOCUMENT_HASH_KEY
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCustomerInfoService.secretRef.name }}'
+          key: '{{ .Values.sardCustomerInfoService.secretRef.documentHashKeyKey }}'
+    - name: ACCESS_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCustomerInfoService.secretRef.name }}'
+          key: '{{ .Values.sardCustomerInfoService.secretRef.accessTokensKey }}'
+          optional: true
+    - name: USER_SERVICE_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCustomerInfoService.secretRef.name }}'
+          key: '{{ .Values.sardCustomerInfoService.secretRef.userServiceTokenKey }}'
+          optional: true
+    - name: EKYC_SERVICE_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCustomerInfoService.secretRef.name }}'
+          key: '{{ .Values.sardCustomerInfoService.secretRef.ekycServiceTokenKey }}'
+          optional: true
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCustomerInfoService.dbCredentialsSecret }}'
+          key: POSTGRES_USER
+          optional: true
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardCustomerInfoService.dbCredentialsSecret }}'
+          key: POSTGRES_PASSWORD
+          optional: true
   probes:
-    startup:
-      tcpSocket:
-        port: http
-      periodSeconds: 5
-      failureThreshold: 30
     readiness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
+      initialDelaySeconds: 3
       periodSeconds: 10
-      failureThreshold: 3
     liveness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
+      initialDelaySeconds: 15
       periodSeconds: 20
-      failureThreshold: 3
+      failureThreshold: 6
 
   # Production contract, see chart/common/templates
   strategy:
     maxSurge: 25%
     maxUnavailable: 0
   revisionHistoryLimit: 5
-  terminationGracePeriodSeconds: 30
+  terminationGracePeriodSeconds: 60
   preStopSleepSeconds: 5
   serviceAccount:
     create: true
@@ -80,8 +155,9 @@ sardCustomerInfoService:
     allowPrivilegeEscalation: false
   podAnnotations: {}
   podLabels: {}
+  # Reads its config from Consul and calls user-service and ekyc-service.
   networkLabels:
-    consulClient: false
+    consulClient: true
     internet: false
   priorityClassName: ''
   nodeSelector: {}
@@ -98,8 +174,10 @@ sardCustomerInfoService:
     allowToApps: []
     ingress: []
     egress: []
+  # /metrics on the app port: customer_onboarding_total{result},
+  # customer_kyc_submissions_total{status}.
   metrics:
-    enabled: false
+    enabled: true
     path: /metrics
     port: ''
     serviceMonitor:

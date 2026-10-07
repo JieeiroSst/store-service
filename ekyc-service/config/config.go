@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -14,6 +15,11 @@ type Config struct {
 	Ekyc        EkycConfig
 	Providers   ProvidersConfig
 	Python      PythonConfig
+	Auth        AuthConfig
+}
+
+type AuthConfig struct {
+	InternalTokens []string
 }
 
 type ServerConfig struct {
@@ -31,6 +37,7 @@ type PostgresConfig struct {
 
 type UserServiceConfig struct {
 	BaseURL string
+	Token   string
 	Timeout string
 }
 
@@ -88,6 +95,7 @@ func FromEnv() *Config {
 		},
 		UserService: UserServiceConfig{
 			BaseURL: getEnv("USER_SERVICE_BASE_URL", "http://user-api-svc"),
+			Token:   getEnv("USER_SERVICE_TOKEN", ""),
 			Timeout: getEnv("USER_SERVICE_TIMEOUT", "5s"),
 		},
 		Storage: StorageConfig{
@@ -106,6 +114,9 @@ func FromEnv() *Config {
 			CardReader:   getEnv("CARD_READER_PROVIDER", "native"),
 			FaceAnalyzer: getEnv("FACE_ANALYZER_PROVIDER", "native"),
 		},
+		Auth: AuthConfig{
+			InternalTokens: splitList(getEnv("INTERNAL_TOKENS", "")),
+		},
 		Python: PythonConfig{
 			Bin:           getEnv("PYTHON_BIN", "python3"),
 			ScriptPath:    getEnv("PYTHON_EXTRACT_SCRIPT", "python/extract_id.py"),
@@ -119,6 +130,16 @@ func getEnv(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+func splitList(s string) []string {
+	var out []string
+	for _, v := range strings.Split(s, ",") {
+		if v = strings.TrimSpace(v); v != "" {
+			out = append(out, v)
+		}
+	}
+	return out
 }
 
 func getEnvFloat(key string, fallback float64) float64 {

@@ -1,0 +1,72 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
+# reviewed PR opened by the "Promote image" workflow.
+# The card master key comes from the secret manager (SecretStore store-secrets);
+# create store/prod/sard-card-service before the first sync and never rotate
+# it without re-encrypting the cards table.
+global:
+  environment: prod
+sardCardService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  secret:
+    create: false
+  # chart/postgres does not run in prod: the role's credentials live in the
+  # same secret-manager entry and land in the service Secret.
+  dbCredentialsSecret: sard-card-service-secret
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: true
+    internet: false
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 60
+  replicas: 3
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  topologySpread:
+    enabled: true
+  priorityClassName: store-standard
+  externalSecret:
+    enabled: true
+    targetName: sard-card-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: cardMasterKey
+        remoteKey: store/prod/sard-card-service
+        property: cardMasterKey
+      - secretKey: accessTokens
+        remoteKey: store/prod/sard-card-service
+        property: accessTokens
+      - secretKey: internalTokens
+        remoteKey: store/prod/sard-internal
+        property: cardServiceToken
+      - secretKey: customerInfoToken
+        remoteKey: store/prod/sard-internal
+        property: customerInfoToken
+      - secretKey: authServiceToken
+        remoteKey: store/prod/sard-internal
+        property: authServiceToken
+      - secretKey: POSTGRES_USER
+        remoteKey: store/prod/sard-card-service
+        property: postgresUser
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: store/prod/sard-card-service
+        property: postgresPassword

@@ -1,0 +1,30 @@
+{
+    "server": {
+        "portHttpServer": "8080"
+    },
+    "storage": {
+        "backend": "postgres"
+    },
+    "postgres": {
+        "host": "postgresdb",
+        "port": "80",
+        "user": "",
+        "password": "",
+        "database": "customer_info",
+        "sslMode": "disable",
+        "maxConns": 10
+    },
+    "userService": {
+        "baseUrl": "http://user-api-svc",
+        "timeout": "5s"
+    },
+    "kyc": {
+        "minAge": 18,
+        "minConfidence": 0.5,
+        "requireFaceMatch": true
+    },
+    "ekycService": {
+        "baseUrl": "http://ekyc-service-svc",
+        "timeout": "60s"
+    }
+}

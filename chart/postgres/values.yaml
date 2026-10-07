@@ -126,3 +126,23 @@ postgres:
       consulKey: book_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # sard-card-service reads the role from Consul (card_service) and, taking
+    # precedence, from sard-card-service-db-credentials.
+    - name: sard-card-service
+      database: card
+      role: card_svc
+      consulKey: card_service
+      userField: .postgres.user
+      passwordField: .postgres.password
+    - name: sard-customer-info-service
+      database: customer_info
+      role: customer_info_svc
+      consulKey: customer_info_service
+      userField: .postgres.user
+      passwordField: .postgres.password
+    - name: sard-auth-service
+      database: payment_auth
+      role: payment_auth_svc
+      consulKey: auth_service
+      userField: .postgres.user
+      passwordField: .postgres.password

@@ -364,9 +364,40 @@ Response `200`:
 
 Lỗi: `USER_NOT_FOUND` (404) nếu không có user với `id` này.
 
-#### `GET /user` - Lấy thông tin user
+#### `GET /user` - Tìm user
 
-Query: `username`, `email`, `page`, `limit` (đều optional).
+Query: `username`, `email`, `page` (mặc định 1), `limit` (mặc định 10, tối đa 100), đều optional.
+Không có `username`/`email` thì trả danh sách user theo trang.
+
+Response `200`:
+
+```json
+{ "users": [ { "id": 1234567, "username": "quanluu", "email": "quanluu@gmail.com", "...": "..." } ], "total": 1 }
+```
+
+`password` luôn rỗng.
+
+### Internal (service-to-service, không dành cho mobile)
+
+#### `GET /internal/v1/users/{id}` - Lấy user theo id
+
+Dùng bởi `sard-service/customer-info-service`. Không có trong proto
+`lib-gateway`, được đăng ký thẳng vào gateway mux (`internal/adapter/inbound/internalhttp`).
+Khi `internal.api_tokens` (Consul) hoặc `INTERNAL_API_TOKENS` (env, phân tách bằng dấu phẩy)
+được set thì bắt buộc header `Authorization: Bearer <token>` hoặc `X-Internal-Token`.
+Không set thì endpoint mở (chỉ nên dùng khi gateway không có ingress).
+
+Response `200`:
+
+```json
+{
+  "id": 1234567, "username": "quanluu", "email": "quanluu@gmail.com", "name": "Quan Luu",
+  "phone": "0901234567", "address": "HCM", "sex": "male", "active": true,
+  "create_time": "2026-10-03T08:15:30.123Z"
+}
+```
+
+Lỗi: `USER_NOT_FOUND` (404), `INVALID_REQUEST` (400), `AUTH_TOKEN_INVALID` (401).
 
 ### Role (dành cho admin, mobile thường không cần)
 

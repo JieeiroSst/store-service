@@ -1,5 +1,7 @@
 # Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
 # reviewed PR opened by the "Promote image" workflow.
+# Secrets come from the secret manager (SecretStore store-secrets); create
+# store/prod/sard-customer-info-service and store/prod/sard-internal before the first sync.
 global:
   environment: prod
 sardCustomerInfoService:
@@ -8,6 +10,11 @@ sardCustomerInfoService:
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
+  secret:
+    create: false
+  # chart/postgres does not run in prod: the role's credentials live in the
+  # same secret-manager entry and land in the service Secret.
+  dbCredentialsSecret: sard-customer-info-service-secret
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 10001
@@ -22,16 +29,40 @@ sardCustomerInfoService:
       drop:
         - ALL
   networkLabels:
-    consulClient: false
+    consulClient: true
     internet: false
   autoscaling:
     enabled: true
     minReplicas: 3
-    maxReplicas: 10
+    maxReplicas: 6
     targetCPUUtilizationPercentage: 60
+  replicas: 3
   pdb:
     enabled: true
     maxUnavailable: 1
   topologySpread:
     enabled: true
   priorityClassName: store-standard
+  externalSecret:
+    enabled: true
+    targetName: sard-customer-info-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: documentHashKey
+        remoteKey: store/prod/sard-customer-info-service
+        property: documentHashKey
+      - secretKey: accessTokens
+        remoteKey: store/prod/sard-internal
+        property: customerInfoToken
+      - secretKey: userServiceToken
+        remoteKey: store/prod/sard-internal
+        property: userServiceToken
+      - secretKey: ekycServiceToken
+        remoteKey: store/prod/sard-internal
+        property: ekycServiceToken
+      - secretKey: POSTGRES_USER
+        remoteKey: store/prod/sard-customer-info-service
+        property: postgresUser
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: store/prod/sard-customer-info-service
+        property: postgresPassword

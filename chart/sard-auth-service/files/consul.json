@@ -1,0 +1,41 @@
+{
+    "server": {
+        "portHttpServer": "8080",
+        "verifyPerMinute": 30
+    },
+    "storage": {
+        "backend": "postgres"
+    },
+    "postgres": {
+        "host": "postgresdb",
+        "port": "80",
+        "user": "",
+        "password": "",
+        "database": "payment_auth",
+        "sslMode": "disable",
+        "maxConns": 10
+    },
+    "userService": {
+        "baseUrl": "http://user-api-svc",
+        "timeout": "5s"
+    },
+    "cardService": {
+        "baseUrl": "http://sard-card-service-svc:8080",
+        "timeout": "5s"
+    },
+    "challenge": {
+        "otpTtl": "5m",
+        "maxAttempts": 3,
+        "validityTime": "10m",
+        "maxResends": 3
+    },
+    "otpDelivery": {
+        "backend": "log",
+        "webhookUrl": "",
+        "timeout": "5s"
+    },
+    "authorizeService": {
+        "grpcAddress": "authorize-service-grpc-svc:90",
+        "timeout": "5s"
+    }
+}

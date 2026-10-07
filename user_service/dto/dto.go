@@ -112,7 +112,8 @@ type FindUserRequest struct {
 }
 
 type FindUserResponse struct {
-	User *User `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Users []*User `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Total int32   `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 }
 
 type AddRoleItemRequest struct {

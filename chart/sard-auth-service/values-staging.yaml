@@ -22,13 +22,11 @@ sardAuthService:
       drop:
         - ALL
   networkLabels:
-    consulClient: false
+    consulClient: true
     internet: false
   autoscaling:
-    enabled: true
-    minReplicas: 2
-    maxReplicas: 4
-    targetCPUUtilizationPercentage: 60
+    enabled: false
+  replicas: 2
   pdb:
     enabled: true
     maxUnavailable: 1

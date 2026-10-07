@@ -94,6 +94,9 @@ func (s *ekycService) SubmitCitizenCard(ctx context.Context, userID string, fron
 	if err := s.identities.Create(ctx, identity); err != nil {
 		return nil, fmt.Errorf("store citizen identity: %w", err)
 	}
+	if err := s.resetVerification(ctx, userID); err != nil {
+		return nil, err
+	}
 	return identity, nil
 }
 
@@ -133,6 +136,9 @@ func (s *ekycService) SubmitNFCChip(ctx context.Context, userID string, dump por
 
 	if err := s.identities.Create(ctx, identity); err != nil {
 		return nil, fmt.Errorf("store citizen identity: %w", err)
+	}
+	if err := s.resetVerification(ctx, userID); err != nil {
+		return nil, err
 	}
 	return identity, nil
 }
@@ -239,6 +245,18 @@ func (s *ekycService) GetStatus(ctx context.Context, userID string) (*model.Ekyc
 	status.Verification = verification
 
 	return status, nil
+}
+
+func (s *ekycService) resetVerification(ctx context.Context, userID string) error {
+	err := s.verifications.Upsert(ctx, &model.EkycVerification{
+		ID:     uuid.NewString(),
+		UserID: userID,
+		Status: model.VerificationPending,
+	})
+	if err != nil {
+		return fmt.Errorf("reset verification: %w", err)
+	}
+	return nil
 }
 
 func (s *ekycService) putImage(ctx context.Context, userID, name string, data []byte) (string, error) {

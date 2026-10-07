@@ -41,6 +41,9 @@ ekycService:
     externalSecret:
       remoteKey: store/prod/ekyc-service/env-file
       property: env
+  internalTokensFromSecret: true
+  env:
+    internalTokens: ''
   externalSecret:
     enabled: true
     targetName: ekyc-service-secret
@@ -55,3 +58,6 @@ ekycService:
       - secretKey: s3SecretKey
         remoteKey: store/prod/ekyc-service
         property: s3SecretKey
+      - secretKey: internalTokens
+        remoteKey: store/prod/sard-internal
+        property: ekycServiceToken

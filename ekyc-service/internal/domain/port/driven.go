@@ -17,6 +17,10 @@ type UserClient interface {
 	GetUser(ctx context.Context, userID string) (*UserInfo, error)
 }
 
+type SessionValidator interface {
+	ValidateSession(ctx context.Context, sessionToken string) (string, error)
+}
+
 type CardReader interface {
 	ReadMRZ(ctx context.Context, backImage []byte) (*model.MRZResult, error)
 }

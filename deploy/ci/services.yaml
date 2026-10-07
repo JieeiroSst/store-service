@@ -620,14 +620,21 @@ services:
   helmKeys:
   - sardAuthService
   lang: go
-  goVersion: '1.24'
+  goVersion: '1.26'
 - name: sard-customer-info-service
   context: sard-service/customer-info-service
   image: sard-customer-info-service
   helmKeys:
   - sardCustomerInfoService
   lang: go
-  goVersion: '1.24'
+  goVersion: '1.26'
+- name: sard-card-service
+  context: sard-service/card-service
+  image: sard-card-service
+  helmKeys:
+  - sardCardService
+  lang: go
+  goVersion: '1.26'
 - name: ollama-model-py
   context: ollama-model-py
   image: ollama-model-py

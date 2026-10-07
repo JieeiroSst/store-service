@@ -1,5 +1,8 @@
 package dto
 
+import "time"
+
 type OTP struct {
-	OTP string
+	OTP       string
+	ExpiresAt time.Time
 }

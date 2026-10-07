@@ -25,6 +25,6 @@ type CachePort interface {
 }
 
 type OTPPort interface {
-	GenerateOTP(username string) (string, error)
+	GenerateOTP(username string) (string, time.Time, error)
 	ValidateOTP(otpCode, username string) error
 }

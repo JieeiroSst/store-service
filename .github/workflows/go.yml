@@ -1133,3 +1133,123 @@ jobs:
     # SerpApi is faked with httptest; no API key is needed.
     - name: Test
       run: cd serpapi-service && make test
+
+  sard_card_service:
+    name: sard_card_service
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: card
+          POSTGRES_PASSWORD: card
+          POSTGRES_DB: card
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U card"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Check chart consul.json is in sync
+      run: diff sard-service/card-service/consul.json chart/sard-card-service/files/consul.json
+
+    - name: Build
+      run: cd sard-service/card-service && make build
+
+    - name: Vet
+      run: cd sard-service/card-service && make vet
+
+    # The postgres adapter tests run against the service container above.
+    - name: Test
+      env:
+        CARD_TEST_POSTGRES_DSN: postgres://card:card@localhost:5432/card?sslmode=disable
+      run: cd sard-service/card-service && make test
+
+  sard_auth_service:
+    name: sard_auth_service
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sard
+          POSTGRES_PASSWORD: sard
+          POSTGRES_DB: sard
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sard"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Check chart consul.json is in sync
+      run: diff sard-service/auth-service/consul.json chart/sard-auth-service/files/consul.json
+
+    - name: Build
+      run: cd sard-service/auth-service && make build
+
+    - name: Vet
+      run: cd sard-service/auth-service && make vet
+
+    # The postgres adapter tests run against the service container above.
+    - name: Test
+      env:
+        AUTH_TEST_POSTGRES_DSN: postgres://sard:sard@localhost:5432/sard?sslmode=disable
+      run: cd sard-service/auth-service && make test
+
+  sard_customer_info_service:
+    name: sard_customer_info_service
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sard
+          POSTGRES_PASSWORD: sard
+          POSTGRES_DB: sard
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sard"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Check chart consul.json is in sync
+      run: diff sard-service/customer-info-service/consul.json chart/sard-customer-info-service/files/consul.json
+
+    - name: Build
+      run: cd sard-service/customer-info-service && make build
+
+    - name: Vet
+      run: cd sard-service/customer-info-service && make vet
+
+    # The postgres adapter tests run against the service container above.
+    - name: Test
+      env:
+        CUSTOMER_INFO_TEST_POSTGRES_DSN: postgres://sard:sard@localhost:5432/sard?sslmode=disable
+      run: cd sard-service/customer-info-service && make test

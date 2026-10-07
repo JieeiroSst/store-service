@@ -45,6 +45,27 @@ func (d *UserRepository) FindUser(ctx context.Context, userId int) (domain.User,
 	return user, nil
 }
 
+func (d *UserRepository) SearchUsers(ctx context.Context, filter domain.UserFilter) ([]domain.User, int64, error) {
+	filter = filter.Normalize()
+	q := d.db.WithContext(ctx).Model(&domain.User{})
+	if filter.Username != "" {
+		q = q.Where("username = ?", filter.Username)
+	}
+	if filter.Email != "" {
+		q = q.Where("email = ?", filter.Email)
+	}
+	var total int64
+	if err := q.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	var users []domain.User
+	err := q.Preload("Roles").Order("id").Offset((filter.Page - 1) * filter.Limit).Limit(filter.Limit).Find(&users).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return users, total, nil
+}
+
 func (d *UserRepository) CheckAccount(ctx context.Context, user domain.User) (int, string, string, error) {
 	var result domain.User
 	r := d.db.Preload("Roles").Where("username = ?", user.Username).Limit(1).Find(&result)

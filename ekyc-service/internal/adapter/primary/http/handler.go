@@ -3,20 +3,31 @@ package http
 import (
 	"errors"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/JIeeiroSst/ekyc-service/config"
 	"github.com/JIeeiroSst/ekyc-service/internal/domain/port"
 )
 
 type Handler struct {
-	usecase port.EkycUsecase
+	usecase  port.EkycUsecase
+	sessions port.SessionValidator
+	internal [][]byte
 }
 
-func NewHandler(usecase port.EkycUsecase) *Handler {
-	return &Handler{usecase: usecase}
+func NewHandler(cfg *config.Config, usecase port.EkycUsecase, sessions port.SessionValidator) *Handler {
+	h := &Handler{usecase: usecase, sessions: sessions}
+	for _, t := range cfg.Auth.InternalTokens {
+		h.internal = append(h.internal, []byte(t))
+	}
+	if len(h.internal) == 0 {
+		log.Printf("INTERNAL_TOKENS is empty: only user-service sessions can call /api/v1/ekyc")
+	}
+	return h
 }
 
 func (h *Handler) SubmitCitizenCard(c *gin.Context) {

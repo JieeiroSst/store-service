@@ -6,18 +6,20 @@ sardAuthService:
   name: sard-auth-service
   selectorApp: sard-auth-service
   containerName: sard-auth-service
-  replicas: 1
+  # Payment authentication (3-D Secure style OTP challenges). State lives in
+  # Postgres and every challenge update takes an advisory lock.
+  replicas: 2
 
   image:
     name: ghcr.io/jieeirosst/sard-auth-service
     tag: latest
-    port: 8081
+    port: 8080
     pullPolicy: IfNotPresent
 
   service:
     name: sard-auth-service-svc
     type: ClusterIP
-    port: 8081
+    port: 8080
   ingress:
     enabled: false
     className: nginx
@@ -29,6 +31,44 @@ sardAuthService:
       enabled: false
       secretName: ''
 
+  # OTPs are generated and checked by authorize-service (gRPC CreateOTP /
+  # AuthorizeOTP, consul authorizeService.grpcAddress). internalTokens are accepted on
+  # /internal/* (sard-card-service consumes authentications with it) and
+  # cardServiceToken is sent to sard-card-service's /internal/*; both must
+  # match the tokens in chart/sard-card-service. accessTokens guard the
+  # merchant/gateway API. userServiceToken is sent to user-service's
+  # /internal/v1/users/{id} to read the cardholder's username. Rendered from
+  # values outside prod only.
+  secret:
+    create: true
+    name: sard-auth-service-secret
+    stringData:
+      accessTokens: ''
+      internalTokens: local-dev-sard-auth-internal
+      cardServiceToken: local-dev-sard-card-internal
+      userServiceToken: ''
+  secretRef:
+    name: sard-auth-service-secret
+    accessTokensKey: accessTokens
+    internalTokensKey: internalTokens
+    cardServiceTokenKey: cardServiceToken
+    userServiceTokenKey: userServiceToken
+  # Database "payment_auth" and role "payment_auth_svc" are provisioned by
+  # chart/postgres (serviceDatabases), which also writes the generated
+  # credentials into the Consul key and into this Secret.
+  dbCredentialsSecret: sard-auth-service-db-credentials
+
+  # Non-secret config is the Consul KV key below, seeded once from
+  # files/consul.json (keep it in sync with sard-service/auth-service/consul.json)
+  # and never overwritten afterwards: edit it in Consul to change the config.
+  consul:
+    addr: http://consul-service
+    key: auth_service
+  consulSeed:
+    image: curlimages/curl:8.10.1
+    enabled: true
+    key: auth_service
+
   resources:
     requests:
       cpu: 50m
@@ -39,24 +79,61 @@ sardAuthService:
 
   autoscaling:
     enabled: false
-  containerEnv: []
-  # No health endpoint known for this service: TCP checks on the http port.
+  containerEnv:
+    - name: CONSUL_ADDR
+      value: '{{ .Values.sardAuthService.consul.addr }}'
+    - name: CONSUL_KEY
+      value: '{{ .Values.sardAuthService.consul.key }}'
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.sardAuthService.image.port }}'
+    - name: ACCESS_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardAuthService.secretRef.name }}'
+          key: '{{ .Values.sardAuthService.secretRef.accessTokensKey }}'
+          optional: true
+    - name: INTERNAL_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardAuthService.secretRef.name }}'
+          key: '{{ .Values.sardAuthService.secretRef.internalTokensKey }}'
+    - name: CARD_SERVICE_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardAuthService.secretRef.name }}'
+          key: '{{ .Values.sardAuthService.secretRef.cardServiceTokenKey }}'
+    - name: USER_SERVICE_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardAuthService.secretRef.name }}'
+          key: '{{ .Values.sardAuthService.secretRef.userServiceTokenKey }}'
+          optional: true
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardAuthService.dbCredentialsSecret }}'
+          key: POSTGRES_USER
+          optional: true
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.sardAuthService.dbCredentialsSecret }}'
+          key: POSTGRES_PASSWORD
+          optional: true
   probes:
-    startup:
-      tcpSocket:
-        port: http
-      periodSeconds: 5
-      failureThreshold: 30
     readiness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
+      initialDelaySeconds: 3
       periodSeconds: 10
-      failureThreshold: 3
     liveness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
+      initialDelaySeconds: 15
       periodSeconds: 20
-      failureThreshold: 3
+      failureThreshold: 6
 
   # Production contract, see chart/common/templates
   strategy:
@@ -78,8 +155,11 @@ sardAuthService:
     allowPrivilegeEscalation: false
   podAnnotations: {}
   podLabels: {}
+  # Reads its config from Consul, calls user-service, sard-card-service and
+  # authorize-service (gRPC), and
+  # posts OTPs to the delivery webhook when otpDelivery.backend=webhook.
   networkLabels:
-    consulClient: false
+    consulClient: true
     internet: false
   priorityClassName: ''
   nodeSelector: {}
@@ -96,8 +176,9 @@ sardAuthService:
     allowToApps: []
     ingress: []
     egress: []
+  # /metrics on the app port: payment_authentication_events_total{event}.
   metrics:
-    enabled: false
+    enabled: true
     path: /metrics
     port: ''
     serviceMonitor:

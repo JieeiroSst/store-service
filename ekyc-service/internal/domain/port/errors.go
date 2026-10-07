@@ -4,6 +4,8 @@ import "errors"
 
 var (
 	ErrUserNotFound         = errors.New("user not found in user-service")
+	ErrUnauthenticated      = errors.New("missing or invalid session or service token")
+	ErrForbidden            = errors.New("session does not belong to this user")
 	ErrIdentityExists       = errors.New("citizen identity already submitted for this user")
 	ErrIdentityNotFound     = errors.New("citizen identity not found")
 	ErrFaceNotFound         = errors.New("face biometric not found")

@@ -536,6 +536,11 @@ dependencies:
     version: "0.2.0"
     repository: file://sard-customer-info-service
     condition: sardCustomerInfoService.enabled
+  - alias: sardCardService
+    name: sard-card-service
+    version: "0.2.0"
+    repository: file://sard-card-service
+    condition: sardCardService.enabled
   - alias: ollamaModelPy
     name: ollama-model-py
     version: "0.2.0"
