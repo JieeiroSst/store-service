@@ -1,0 +1,82 @@
+{
+  "index": {
+    "mapping": {
+      "ignore_malformed": true,
+      "total_fields": {
+        "limit": 2000
+      }
+    },
+    "max_result_window": 10000
+  },
+  "analysis": {
+    "filter": {
+      "folding": {
+        "type": "asciifolding",
+        "preserve_original": true
+      },
+      "autocomplete_edge": {
+        "type": "edge_ngram",
+        "min_gram": 1,
+        "max_gram": 20
+      },
+      "shingle_2_3": {
+        "type": "shingle",
+        "min_shingle_size": 2,
+        "max_shingle_size": 3
+      }
+    },
+    "normalizer": {
+      "lowercase_folding": {
+        "type": "custom",
+        "filter": [
+          "lowercase",
+          "asciifolding"
+        ]
+      }
+    },
+    "analyzer": {
+      "text_folding": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "folding"
+        ]
+      },
+      "text_search": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "folding"
+        ]
+      },
+      "autocomplete_index": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "asciifolding",
+          "autocomplete_edge"
+        ]
+      },
+      "autocomplete_search": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "asciifolding"
+        ]
+      },
+      "shingle_analyzer": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "asciifolding",
+          "shingle_2_3"
+        ]
+      }
+    }
+  }
+}

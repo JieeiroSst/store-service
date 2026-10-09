@@ -1,6 +1,23 @@
-up:
-	TAG=8.4.0 docker-compose up
-down:
-	TAG=8.4.0 docker-compose down
+PKGS = ./...
+ES_TAG = 7.17.5
+
 run:
-	go run cmd/main.go
+	go run ./cmd
+
+build:
+	go build $(PKGS)
+
+vet:
+	go vet $(PKGS)
+
+test:
+	go test -race $(PKGS)
+
+docker:
+	docker build -t search-service .
+
+up:
+	TAG=$(ES_TAG) docker-compose up
+
+down:
+	TAG=$(ES_TAG) docker-compose down

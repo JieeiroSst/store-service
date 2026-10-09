@@ -39,28 +39,35 @@ searchService:
 
   autoscaling:
     enabled: false
-  containerEnv: []
+  consul:
+    addr: http://consul-service
+    key: search-service
+  containerEnv:
+    - name: CONSUL_ADDR
+      value: '{{ .Values.searchService.consul.addr }}'
+    - name: CONSUL_KEY
+      value: '{{ .Values.searchService.consul.key }}'
+    - name: PORT_HTTP_SERVER
+      value: '{{ .Values.searchService.image.port }}'
   envFile:
-    enabled: true
-    mountPath: /app/.env
-    content: |
-      HostConsul="http://consul-service"
-      KeyConsul="search-service"
-      ServiceConsul="consul"
-  # No health endpoint known for this service: TCP checks on the http port.
+    enabled: false
+  # /health pings Elasticsearch (readiness); /livez only checks the process.
   probes:
     startup:
-      tcpSocket:
+      httpGet:
+        path: /livez
         port: http
       periodSeconds: 5
       failureThreshold: 30
     readiness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
       periodSeconds: 10
       failureThreshold: 3
     liveness:
-      tcpSocket:
+      httpGet:
+        path: /livez
         port: http
       periodSeconds: 20
       failureThreshold: 3
@@ -83,6 +90,10 @@ searchService:
     fsGroup: 10001
   securityContext:
     allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
   podAnnotations: {}
   podLabels: {}
   networkLabels:

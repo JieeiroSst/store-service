@@ -592,7 +592,7 @@ services:
   helmKeys:
   - searchService
   lang: go
-  goVersion: '1.21'
+  goVersion: '1.26'
 - name: solana-service
   context: solana-service
   image: solana-service

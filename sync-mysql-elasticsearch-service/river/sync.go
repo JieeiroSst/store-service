@@ -14,6 +14,7 @@ import (
 	"github.com/go-mysql-org/go-mysql/replication"
 	"github.com/go-mysql-org/go-mysql/schema"
 	"github.com/juju/errors"
+	"github.com/siddontang/go/log"
 )
 
 const (
@@ -465,25 +466,72 @@ func (r *River) getParentID(rule *Rule, row []interface{}, columnName string) (s
 	return fmt.Sprint(row[index]), nil
 }
 
+const (
+	bulkMaxAttempts  = 8
+	bulkRetryBackoff = 500 * time.Millisecond
+)
+
 func (r *River) doBulk(reqs []*elastic.BulkRequest) error {
-	if len(reqs) == 0 {
-		return nil
+	backoff := bulkRetryBackoff
+	for attempt := 1; len(reqs) > 0; attempt++ {
+		retry, err := r.bulkOnce(reqs)
+		if err != nil {
+			return err
+		}
+		if len(retry) == 0 {
+			return nil
+		}
+		if attempt >= bulkMaxAttempts {
+			return errors.Errorf("bulk: %d items still failing after %d attempts", len(retry), attempt)
+		}
+		log.Warnf("bulk: retrying %d items in %s (attempt %d)", len(retry), backoff, attempt)
+		select {
+		case <-time.After(backoff):
+		case <-r.ctx.Done():
+			return r.ctx.Err()
+		}
+		if backoff < 8*time.Second {
+			backoff *= 2
+		}
+		reqs = retry
+	}
+	return nil
+}
+
+func (r *River) bulkOnce(reqs []*elastic.BulkRequest) ([]*elastic.BulkRequest, error) {
+	resp, err := r.es.Bulk(reqs)
+	if err != nil {
+		return nil, errors.Trace(err)
+	}
+	if resp.Code/100 != 2 && !resp.Errors {
+		return nil, errors.Errorf("bulk: elasticsearch returned status %d", resp.Code)
 	}
 
-	if resp, err := r.es.Bulk(reqs); err != nil {
-		return errors.Trace(err)
-	} else if resp.Code/100 == 2 || resp.Errors {
-		for i := 0; i < len(resp.Items); i++ {
-			for action, item := range resp.Items[i] {
-				if len(item.Error) > 0 {
-					fmt.Printf("%s index: %s, type: %s, id: %s, status: %d, error: %s",
-						action, item.Index, item.Type, item.ID, item.Status, item.Error)
-				}
+	var retry []*elastic.BulkRequest
+	for i := 0; i < len(resp.Items); i++ {
+		for action, item := range resp.Items[i] {
+			if len(item.Error) == 0 {
+				continue
 			}
+			if retriableBulkError(item) && i < len(reqs) {
+				retry = append(retry, reqs[i])
+				continue
+			}
+			log.Errorf("bulk: dropping %s index: %s, id: %s, status: %d, error: %s",
+				action, item.Index, item.ID, item.Status, item.Error)
 		}
 	}
+	return retry, nil
+}
 
-	return nil
+func retriableBulkError(item *elastic.BulkResponseItem) bool {
+	switch {
+	case item.Status == 429, item.Status >= 500:
+		return true
+	case item.Status == 403 && bytes.Contains(item.Error, []byte("cluster_block_exception")):
+		return true
+	}
+	return false
 }
 
 func (r *River) getFieldValue(col *schema.TableColumn, fieldType string, value interface{}) interface{} {

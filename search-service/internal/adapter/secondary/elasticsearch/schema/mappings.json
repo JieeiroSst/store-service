@@ -1,0 +1,123 @@
+{
+  "date_detection": true,
+  "dynamic_date_formats": [
+    "strict_date_optional_time",
+    "yyyy-MM-dd HH:mm:ss",
+    "yyyy-MM-dd"
+  ],
+  "numeric_detection": false,
+  "properties": {
+    "all_text": {
+      "type": "text",
+      "analyzer": "text_folding",
+      "search_analyzer": "text_search",
+      "fields": {
+        "autocomplete": {
+          "type": "text",
+          "analyzer": "autocomplete_index",
+          "search_analyzer": "autocomplete_search"
+        },
+        "shingle": {
+          "type": "text",
+          "analyzer": "shingle_analyzer"
+        }
+      }
+    }
+  },
+  "dynamic_templates": [
+    {
+      "sensitive_strings": {
+        "match_mapping_type": "string",
+        "match_pattern": "regex",
+        "match": "__SENSITIVE__",
+        "mapping": {
+          "type": "keyword",
+          "index": false,
+          "doc_values": false
+        }
+      }
+    },
+    {
+      "sensitive_numbers": {
+        "match_mapping_type": "long",
+        "match_pattern": "regex",
+        "match": "__SENSITIVE__",
+        "mapping": {
+          "type": "long",
+          "index": false,
+          "doc_values": false
+        }
+      }
+    },
+    {
+      "identifier_strings": {
+        "match_mapping_type": "string",
+        "match_pattern": "regex",
+        "match": "(?i)(id|.*_id|.*uuid|.*_code|.*_no|sku|slug)",
+        "mapping": {
+          "type": "keyword",
+          "ignore_above": 256,
+          "copy_to": "all_text"
+        }
+      }
+    },
+    {
+      "identifier_numbers": {
+        "match_mapping_type": "long",
+        "match_pattern": "regex",
+        "match": "(?i)(id|.*_id)",
+        "mapping": {
+          "type": "long"
+        }
+      }
+    },
+    {
+      "dates": {
+        "match_mapping_type": "date",
+        "mapping": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss||strict_date_optional_time||yyyy-MM-dd||epoch_millis"
+        }
+      }
+    },
+    {
+      "strings": {
+        "match_mapping_type": "string",
+        "mapping": {
+          "type": "text",
+          "analyzer": "text_folding",
+          "copy_to": "all_text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            },
+            "sort": {
+              "type": "keyword",
+              "normalizer": "lowercase_folding",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    {
+      "longs": {
+        "match_mapping_type": "long",
+        "mapping": {
+          "type": "long",
+          "copy_to": "all_text"
+        }
+      }
+    },
+    {
+      "doubles": {
+        "match_mapping_type": "double",
+        "mapping": {
+          "type": "double",
+          "copy_to": "all_text"
+        }
+      }
+    }
+  ]
+}

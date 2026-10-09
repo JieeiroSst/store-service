@@ -1253,3 +1253,43 @@ jobs:
       env:
         CUSTOMER_INFO_TEST_POSTGRES_DSN: postgres://sard:sard@localhost:5432/sard?sslmode=disable
       run: cd sard-service/customer-info-service && make test
+
+  search_service:
+    name: search_service
+    runs-on: ubuntu-latest
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: "false"
+          ES_JAVA_OPTS: -Xms512m -Xmx512m
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl -fs http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Check chart consul.json is in sync
+      run: diff search-service/consul.json chart/search-service/files/consul.json
+
+    - name: Build
+      run: cd search-service && make build
+
+    - name: Vet
+      run: cd search-service && make vet
+
+    # The elasticsearch adapter integration test runs against the service container above.
+    - name: Test
+      env:
+        SEARCH_TEST_ES_URL: http://localhost:9200
+      run: cd search-service && make test

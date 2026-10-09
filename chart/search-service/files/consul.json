@@ -6,6 +6,17 @@
         "authorize_key": "no_name"
     },
     "elasticsearch": {
-        "dns": "http://elasticsearch-service:9200"
+        "dns": "http://elasticsearch-service:9200",
+        "indices": ["*", "-.*"],
+        "schema": {
+            "name": "store-sync",
+            "index_patterns": ["*"],
+            "priority": 10,
+            "synonyms": [
+                "dien thoai, smartphone, phone",
+                "tivi, tv, television",
+                "may tinh, laptop, computer"
+            ]
+        }
     }
 }
