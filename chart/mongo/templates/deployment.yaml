@@ -1,3 +1,4 @@
+{{- $rs := .Values.mongo.replicaSet }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,6 +7,8 @@ spec:
   selector:
     matchLabels:
       app: {{.Values.mongo.name}}-deployment
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -16,7 +19,26 @@ spec:
         name: mongodb
         ports:
         - containerPort: {{.Values.mongo.image.port}}
+        volumeMounts:
+          - name: data
+            mountPath: /data/db
         imagePullPolicy: Always
         env:
           - name: NODE_ENV
             value: production
+        {{- if $rs.enabled }}
+        command:
+          - sh
+          - -c
+          - |
+            (
+              until mongosh --quiet --eval "try { rs.status().ok } catch (e) { rs.initiate({_id: '{{ $rs.name }}', members: [{_id: 0, host: '{{ $rs.host }}'}]}).ok }"; do
+                sleep 2
+              done
+            ) &
+            exec docker-entrypoint.sh mongod --replSet {{ $rs.name | quote }} --bind_ip_all
+        {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.mongo.name }}-data

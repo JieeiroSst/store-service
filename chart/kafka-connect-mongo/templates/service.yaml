@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kafkaConnect.service.name }}
+spec:
+  ports:
+    - port: {{ .Values.kafkaConnect.service.port }}
+      targetPort: {{ .Values.kafkaConnect.service.port }}
+      nodePort: {{ .Values.kafkaConnect.service.nodePort }}
+  type: NodePort
+  selector:
+    app: {{ .Values.kafkaConnect.name }}

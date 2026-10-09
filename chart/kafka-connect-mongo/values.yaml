@@ -1,0 +1,47 @@
+kafkaConnect:
+  name: kafka-connect-mongo
+  replicas: 1
+
+  image:
+    repository: debezium-mongo-es
+    tag: v1
+    pullPolicy: IfNotPresent
+
+  service:
+    name: kafka-connect-mongo-service
+    port: 8083
+    nodePort: 30084
+
+  bootstrapServers: kafka-service:9092
+  groupId: mongo-es-sync
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "768Mi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+
+  requestTimeoutMs: "90000"
+
+  # Source database. Debezium reads MongoDB change streams, which only exist on
+  # a replica set; the mongo chart runs a single-node replica set (rs0) whose
+  # member is advertised as mongo-svc:80.
+  mongo:
+    connectionString: mongodb://mongo-svc:80/?replicaSet=rs0
+
+  elasticsearch:
+    url: http://elasticsearch-service:9200
+
+  # One Debezium source + one Elasticsearch sink per entry. Each collection is
+  # written to the Kafka topic "<name>.<database>.<collection>", and the sink
+  # indexes it into an Elasticsearch index of the same name. The Mongo _id is
+  # stored in the document as "id"; the Elasticsearch _id is the Debezium key.
+  # Inserts/updates upsert the document; deletes remove it.
+  # name, database and collection names must be lowercase (they become the
+  # ES index name).
+  connectors:
+    - name: upload
+      collections:
+        - upload.files

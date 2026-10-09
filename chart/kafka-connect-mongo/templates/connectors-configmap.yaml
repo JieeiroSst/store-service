@@ -1,0 +1,48 @@
+{{- $kc := .Values.kafkaConnect }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $kc.name }}-connectors
+  labels:
+    app: {{ $kc.name }}
+data:
+  {{- range $kc.connectors }}
+  {{- $dbs := list }}
+  {{- range .collections }}
+  {{- $dbs = append $dbs (index (splitList "." .) 0) }}
+  {{- end }}
+  {{ .name }}-source.json: |
+    {{- dict
+      "connector.class" "io.debezium.connector.mongodb.MongoDbConnector"
+      "mongodb.connection.string" $kc.mongo.connectionString
+      "topic.prefix" .name
+      "database.include.list" (join "," (uniq $dbs))
+      "collection.include.list" (join "," .collections)
+      "capture.mode" "change_streams_update_full"
+      "snapshot.mode" "initial"
+      "transforms" "unwrap,renameId"
+      "transforms.unwrap.type" "io.debezium.connector.mongodb.transforms.ExtractNewDocumentState"
+      "transforms.unwrap.delete.tombstone.handling.mode" "tombstone"
+      "transforms.renameId.type" "org.apache.kafka.connect.transforms.ReplaceField$Value"
+      "transforms.renameId.renames" "_id:id"
+      "transforms.renameId.predicate" "isTombstone"
+      "transforms.renameId.negate" "true"
+      "predicates" "isTombstone"
+      "predicates.isTombstone.type" "org.apache.kafka.connect.transforms.predicates.RecordIsTombstone"
+      | toPrettyJson | nindent 4 }}
+  {{ .name }}-sink.json: |
+    {{- dict
+      "connector.class" "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector"
+      "topics.regex" (printf "^%s\\..*" (regexQuoteMeta .name))
+      "connection.url" $kc.elasticsearch.url
+      "key.ignore" "false"
+      "schema.ignore" "true"
+      "write.method" "upsert"
+      "behavior.on.null.values" "delete"
+      "transforms" "extractKey"
+      "transforms.extractKey.type" "org.apache.kafka.connect.transforms.ExtractField$Key"
+      "transforms.extractKey.field" "id"
+      "errors.tolerance" "none"
+      "consumer.override.metadata.max.age.ms" "30000"
+      | toPrettyJson | nindent 4 }}
+  {{- end }}

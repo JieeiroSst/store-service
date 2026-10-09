@@ -4,9 +4,23 @@ mongo:
 
   image:
     name: mongo
-    tag: latest
+    tag: "9.0"
     port: 27017
+
+  # Without a volume the data (and the replica set config) lived in the
+  # container's anonymous VOLUME and was lost on every pod restart.
+  persistence:
+    size: 10Gi
+    storageClass: ""
 
   service:
     name: mongo-svc
     type: LoadBalancer
+
+  # Single-node replica set so change streams (Debezium) work. The member is
+  # advertised by its service address so clients that discover the topology
+  # keep connecting through mongo-svc.
+  replicaSet:
+    enabled: true
+    name: rs0
+    host: mongo-svc:80

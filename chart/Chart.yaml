@@ -79,6 +79,10 @@ dependencies:
     name: kafka-connect
     version: "0.1.0"
     repository: file://kafka-connect
+  - alias: kafkaConnectMongo
+    name: kafka-connect-mongo
+    version: "0.1.0"
+    repository: file://kafka-connect-mongo
   - alias: mysqlRiver
     name: mysql-river
     version: "0.1.0"

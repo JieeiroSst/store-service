@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.kafkaConnect.name }}
+  labels:
+    app: {{ .Values.kafkaConnect.name }}
+spec:
+  replicas: {{ .Values.kafkaConnect.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.kafkaConnect.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.kafkaConnect.name }}
+    spec:
+      containers:
+        - name: {{ .Values.kafkaConnect.name }}
+          image: "{{ .Values.kafkaConnect.image.repository }}:{{ .Values.kafkaConnect.image.tag }}"
+          imagePullPolicy: {{ .Values.kafkaConnect.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.kafkaConnect.service.port }}
+          resources:
+            {{- toYaml .Values.kafkaConnect.resources | nindent 12 }}
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: {{ .Values.kafkaConnect.bootstrapServers }}
+            - name: GROUP_ID
+              value: {{ .Values.kafkaConnect.groupId | quote }}
+            - name: CONFIG_STORAGE_TOPIC
+              value: {{ .Values.kafkaConnect.groupId }}-connect-configs
+            - name: OFFSET_STORAGE_TOPIC
+              value: {{ .Values.kafkaConnect.groupId }}-connect-offsets
+            - name: STATUS_STORAGE_TOPIC
+              value: {{ .Values.kafkaConnect.groupId }}-connect-status
+            - name: CONNECT_ADMIN_REQUEST_TIMEOUT_MS
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
+            - name: CONNECT_PRODUCER_REQUEST_TIMEOUT_MS
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
+            - name: CONNECT_CONSUMER_REQUEST_TIMEOUT_MS
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
+            - name: CONNECT_CONSUMER_DEFAULT_API_TIMEOUT_MS
+              value: {{ .Values.kafkaConnect.requestTimeoutMs | quote }}
+          readinessProbe:
+            httpGet:
+              path: /connectors
+              port: {{ .Values.kafkaConnect.service.port }}
+            initialDelaySeconds: 20
+            periodSeconds: 10

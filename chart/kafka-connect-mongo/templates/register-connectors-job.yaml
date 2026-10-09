@@ -1,0 +1,53 @@
+# Registers every connector in kafkaConnect.connectors with the Connect REST
+# API. PUT /connectors/<name>/config creates the connector or updates it in
+# place, so this is idempotent and safe to run on every install/upgrade.
+# Connectors removed from values are NOT deleted; remove them by hand with
+# DELETE /connectors/<name>.
+{{- $kc := .Values.kafkaConnect }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $kc.name }}-register-connectors
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: register-connectors
+          image: curlimages/curl:8.10.1
+          env:
+            - name: CONNECT_URL
+              value: "http://{{ $kc.service.name }}:{{ $kc.service.port }}"
+          volumeMounts:
+            - name: connectors
+              mountPath: /connectors
+              readOnly: true
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              until curl -sf "$CONNECT_URL/connectors" >/dev/null; do
+                echo "waiting for kafka connect at $CONNECT_URL..."
+                sleep 5
+              done
+
+              for f in /connectors/*.json; do
+                name=$(basename "$f" .json)
+                echo "== registering $name =="
+                curl -sS --fail-with-body -X PUT -H "Content-Type: application/json" \
+                  --data @"$f" "$CONNECT_URL/connectors/$name/config"
+                echo
+              done
+
+              echo "all connectors registered"
+      volumes:
+        - name: connectors
+          configMap:
+            name: {{ $kc.name }}-connectors
