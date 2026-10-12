@@ -1293,3 +1293,42 @@ jobs:
       env:
         SEARCH_TEST_ES_URL: http://localhost:9200
       run: cd search-service && make test
+
+  ejabberd_service:
+    name: ejabberd_service
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ejabberd
+          POSTGRES_PASSWORD: ejabberd
+          POSTGRES_DB: ejabberd
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ejabberd"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.26"
+
+    - name: Build
+      run: cd ejabberd-service && make build
+
+    - name: Vet
+      run: cd ejabberd-service && make vet
+
+    # The postgres adapter integration tests run against the service container above.
+    - name: Test
+      env:
+        EJABBERD_TEST_SQL_SERVER: localhost
+        EJABBERD_TEST_SQL_PORT: "5432"
+        EJABBERD_TEST_SQL_PASSWORD: ejabberd
+      run: cd ejabberd-service && make test

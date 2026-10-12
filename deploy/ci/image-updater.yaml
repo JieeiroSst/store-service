@@ -224,6 +224,14 @@ spec:
         helm:
           name: drawImageService.image.name
           tag: drawImageService.image.tag
+  - namePattern: ejabberd-service-dev
+    images:
+    - alias: ejabberdService
+      imageName: localhost:5000/ejabberd-service
+      manifestTargets:
+        helm:
+          name: ejabberdService.image.name
+          tag: ejabberdService.image.tag
   - namePattern: ekyc-service-dev
     images:
     - alias: ekycService

@@ -1,0 +1,126 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
+# reviewed PR opened by the "Promote image" workflow.
+# Credentials come from the secret manager (SecretStore store-secrets);
+# create the store/prod/ejabberd-service/... keys before the first sync.
+global:
+  environment: prod
+ejabberdService:
+  image:
+    # Immutable tag promoted from staging; never `latest` in prod.
+    tag: latest
+    pullPolicy: IfNotPresent
+  xmpp:
+    hosts:
+      - store.example.com
+    admins:
+      - admin@store.example.com
+    loglevel: warning
+    # Certificate from cert-manager, mounted below.
+    certfiles:
+      - /etc/ejabberd-certs/tls.crt
+      - /etc/ejabberd-certs/tls.key
+  httpUpload:
+    putURL: https://chat.store.example.com/upload
+    # Synced by the externalSecret below with the database credentials.
+    signingSecret:
+      name: ejabberd-service-db-credentials
+      key: HTTP_UPLOAD_SECRET
+  ingress:
+    enabled: true
+    host: chat.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/proxy-body-size: 25m
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    tls:
+      enabled: true
+  sql:
+    server: postgresdb
+  # The admin password is synced by the externalSecret below into the same
+  # Secret as the database credentials.
+  userService:
+    admin:
+      email: ejabberd.admin@store.com
+      passwordSecret:
+        name: ejabberd-service-db-credentials
+        key: EJABBERD_ADMIN_PASSWORD
+  secret:
+    create: false
+  service:
+    type: LoadBalancer
+  volumeMounts:
+    - name: config
+      mountPath: /etc/ejabberd
+      readOnly: true
+    - name: certs
+      mountPath: /etc/ejabberd-certs
+      readOnly: true
+  volumes:
+    - name: config
+      configMap:
+        name: '{{ .Values.ejabberdService.name }}-config'
+    - name: certs
+      secret:
+        secretName: ejabberd-service-tls
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  priorityClassName: store-standard
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "2"
+      memory: 1Gi
+  terminationGracePeriodSeconds: 45
+  preStopSleepSeconds: 10
+  networkPolicy:
+    enabled: true
+    allowToApps:
+      - name: user-api-deployment
+        port: 1235
+      - name: upload-service-deployment
+        port: 8080
+    ingress:
+      - ports:
+          - port: 5222
+            protocol: TCP
+          - port: 5223
+            protocol: TCP
+          - port: 5280
+            protocol: TCP
+    # Managed PostgreSQL outside the cluster (private range).
+    egress:
+      - to:
+          - ipBlock:
+              cidr: 10.20.0.0/16
+        ports:
+          - port: 5432
+            protocol: TCP
+  externalSecret:
+    enabled: true
+    refreshInterval: 15m
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: store/prod/ejabberd-service/postgres
+        property: username
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: store/prod/ejabberd-service/postgres
+        property: password
+      - secretKey: EJABBERD_ADMIN_PASSWORD
+        remoteKey: store/prod/ejabberd-service/admin
+        property: password
+      - secretKey: HTTP_UPLOAD_SECRET
+        remoteKey: store/prod/ejabberd-service/http-upload
+        property: secret

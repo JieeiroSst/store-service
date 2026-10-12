@@ -1,0 +1,88 @@
+# Argo CD: namespace store-dev, auto-synced. CI bumps image.tag on every merge to master.
+global:
+  environment: dev
+ejabberdService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  xmpp:
+    hosts:
+      - dev.store.local
+    admins:
+      - admin@dev.store.local
+    # Pod network of the local cluster: in-cluster services may register
+    # accounts and send messages through /api.
+    apiNetworks:
+      - 10.0.0.0/8
+  httpUpload:
+    putURL: https://chat.dev.store.local/upload
+  ingress:
+    enabled: true
+    host: chat.dev.store.local
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+      nginx.ingress.kubernetes.io/proxy-body-size: 25m
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    tls:
+      enabled: true
+  sql:
+    server: postgresdb.default.svc.cluster.local
+  service:
+    type: ClusterIP
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+  # limits from values.yaml still cap each pod.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+  networkPolicy:
+    enabled: true
+    allowToApps:
+      - name: user-api-deployment
+        port: 1235
+      - name: upload-service-deployment
+        port: 8080
+    # XMPP clients connect from anywhere; /api stays behind api_permissions.
+    ingress:
+      - ports:
+          - port: 5222
+            protocol: TCP
+          - port: 5223
+            protocol: TCP
+          - port: 5280
+            protocol: TCP
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+  # Copies the Secret the postgres chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-dev.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: ejabberd-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: ejabberd-service-db-credentials
+        property: POSTGRES_PASSWORD

@@ -510,6 +510,11 @@ dependencies:
     version: "0.2.0"
     repository: file://real-time-service
     condition: realTimeService.enabled
+  - alias: ejabberdService
+    name: ejabberd-service
+    version: "0.1.0"
+    repository: file://ejabberd-service
+    condition: ejabberdService.enabled
   - alias: searchService
     name: search-service
     version: "0.2.0"

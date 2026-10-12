@@ -317,6 +317,9 @@ dependencies:
 - name: real-time-service
   repository: file://real-time-service
   version: 0.2.0
+- name: ejabberd-service
+  repository: file://ejabberd-service
+  version: 0.1.0
 - name: search-service
   repository: file://search-service
   version: 0.2.0
@@ -353,5 +356,5 @@ dependencies:
 - name: food-service
   repository: file://food-service
   version: 0.2.0
-digest: sha256:c8acb187c4a3614f7f1bf5fb6762a6e5b38b87b56ac22ed388adda0481ec16b8
-generated: "2026-10-09T22:25:10.260906+07:00"
+digest: sha256:5d9ee9bb711c63b6fe99a570e56ebc5f6cf0591506159b336b6f433630ae24d3
+generated: "2026-10-12T07:00:57.301891+07:00"

@@ -185,6 +185,21 @@ services:
   - drawImageService
   lang: go
   goVersion: '1.23'
+- name: ejabberd-service
+  context: ejabberd-service
+  image: ejabberd-service
+  helmKeys:
+  - ejabberdService
+  lang: go
+  goVersion: '1.26'
+  testEnv:
+    EJABBERD_TEST_SQL_SERVER: localhost
+    EJABBERD_TEST_SQL_PORT: '5432'
+    EJABBERD_TEST_SQL_USERNAME: postgres
+    EJABBERD_TEST_SQL_PASSWORD: pw
+    EJABBERD_TEST_SQL_DATABASE: postgres
+  testServices:
+  - postgres
 - name: ekyc-service
   context: ekyc-service
   image: ekyc-service

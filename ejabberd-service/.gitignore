@@ -1,0 +1,9 @@
+*.swp
+*~
+.DS_Store
+.env
+
+/ejabberd-service
+/cmd/ejabberd-service/ejabberd-service
+*.test
+*.out

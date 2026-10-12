@@ -146,3 +146,12 @@ postgres:
       consulKey: auth_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # ejabberd-service reads SQL_USERNAME / SQL_PASSWORD from
+    # ejabberd-service-db-credentials; it has no Consul key, so the KV patch
+    # step is skipped.
+    - name: ejabberd-service
+      database: ejabberd_service
+      role: ejabberd_service_svc
+      consulKey: ejabberd_service
+      userField: .postgres.user
+      passwordField: .postgres.password

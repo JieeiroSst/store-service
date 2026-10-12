@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.ejabberdService.name }}-config
+  labels:
+    app: {{ .Values.ejabberdService.selectorApp }}
+data:
+  ejabberd.yml: |-
+    {{- tpl (.Files.Get "files/ejabberd.yml") . | nindent 4 }}

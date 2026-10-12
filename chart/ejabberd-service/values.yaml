@@ -1,0 +1,286 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+ejabberdService:
+  name: ejabberd-service
+  selectorApp: ejabberd-service
+  containerName: ejabberd-service
+  # Sessions live in process memory like a single ejabberd node (no Erlang
+  # clustering in the Go port): keep one replica so every user is routable.
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/ejabberd-service
+    tag: latest
+    # ejabberd_http listener: /api (mod_http_api), /health, /livez.
+    port: 5280
+    pullPolicy: IfNotPresent
+
+  extraPorts:
+    - name: xmpp-c2s
+      containerPort: 5222
+    - name: xmpp-c2s-tls
+      containerPort: 5223
+
+  service:
+    name: ejabberd-service-svc
+    type: ClusterIP
+    port: 5280
+    extraPorts:
+      - name: xmpp-c2s
+        port: 5222
+      - name: xmpp-c2s-tls
+        port: 5223
+  # Exposes /upload (XEP-0363 file transfer) to mobile apps; /api stays
+  # cluster-internal.
+  ingress:
+    enabled: false
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: 25m
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    host: ejabberd-service.local
+    path: /upload
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  # Rendered into files/ejabberd.yml (ConfigMap <name>-config).
+  xmpp:
+    hosts:
+      - localhost
+    loglevel: info
+    starttlsRequired: true
+    authPasswordFormat: scram
+    # PEM files (fullchain + key) mounted into the pod; empty generates a
+    # self-signed certificate at startup.
+    certfiles: []
+    # Accounts allowed to call every /api command with HTTP Basic auth
+    # (user@host:password).
+    admins:
+      - admin@localhost
+    # Pods in these ranges may call apiNetworkCommands without credentials.
+    apiNetworks: []
+    apiNetworkCommands:
+      - status
+      - connected_users_number
+      - check_account
+      - register
+      - send_message
+
+  # Logins are checked against user_service (chart/user): the app signs in
+  # with POST /api/v1/login and connects to XMPP with JID <username>@<host>
+  # and the session token as password. Accounts in xmpp.admins must exist in
+  # user_service. Disabled: accounts live in ejabberd's own users table.
+  userService:
+    enabled: true
+    url: http://user-api-svc
+    # username: JID localpart is the user_service username (lowercase).
+    # user_id: JID localpart is the numeric user id (token login only).
+    jidField: username
+    # Also accept the user_service password (desktop XMPP clients).
+    allowPasswordLogin: true
+    # Created in user_service at startup when missing (POST /user/sign-up),
+    # so <username>@<host> in xmpp.admins can call /api with Basic auth.
+    # user_service rules: the password needs an uppercase letter followed by
+    # letters/digits, the email a 2-4 letter TLD.
+    admin:
+      username: admin
+      email: ejabberd.admin@store.com
+      passwordSecret:
+        name: ejabberd-service-secret
+        key: EJABBERD_ADMIN_PASSWORD
+
+  # Rendered into ejabberd-service-secret for local and non-prod clusters;
+  # prod reads the admin password from the secret manager instead.
+  secret:
+    create: true
+    stringData:
+      EJABBERD_ADMIN_PASSWORD: Ejabberd-Admin-dev-2026
+      HTTP_UPLOAD_SECRET: ejabberd-upload-dev-signing-secret
+
+  # mod_http_upload (XEP-0363): chat attachments are stored in upload_service
+  # (chart/upload-service) under receiver_id "ejabberd:...", which that chart
+  # restricts to the service key.
+  httpUpload:
+    enabled: true
+    # Public URL clients upload to and download from (through the ingress).
+    putURL: http://localhost:5280/upload
+    # upload_service rejects files above UPLOAD_MAX_MB (20 MB by default).
+    maxSize: 20971520
+    uploadServiceURL: http://upload-service-svc
+    serviceKeySecret:
+      name: upload-service-secret
+      key: serviceApiKey
+    # Signs upload URLs so slots survive restarts; key in ejabberd-service-secret.
+    signingSecret:
+      name: ejabberd-service-secret
+      key: HTTP_UPLOAD_SECRET
+
+  # PostgreSQL from chart/postgres (database ejabberd_service + role ejabberd_service_svc,
+  # tables from ejabberd's sql/pg.new.sql). Disabled: in-memory storage
+  # (default_db: mnesia), lost on restart.
+  sql:
+    enabled: true
+    server: postgresdb
+    port: 80
+    database: ejabberd_service
+    credentialsSecret: ejabberd-service-db-credentials
+
+  containerEnv:
+    - name: EJABBERD_CONFIG
+      value: /etc/ejabberd/ejabberd.yml
+    - name: UPLOAD_SERVICE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.ejabberdService.httpUpload.serviceKeySecret.name }}'
+          key: '{{ .Values.ejabberdService.httpUpload.serviceKeySecret.key }}'
+      when: '{{ if .Values.ejabberdService.httpUpload.enabled }}true{{ end }}'
+    - name: HTTP_UPLOAD_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.ejabberdService.httpUpload.signingSecret.name }}'
+          key: '{{ .Values.ejabberdService.httpUpload.signingSecret.key }}'
+      when: '{{ if .Values.ejabberdService.httpUpload.enabled }}true{{ end }}'
+    - name: EJABBERD_ADMIN_USERNAME
+      value: '{{ .Values.ejabberdService.userService.admin.username }}'
+      when: '{{ if and .Values.ejabberdService.userService.enabled .Values.ejabberdService.userService.admin.username }}true{{ end }}'
+    - name: EJABBERD_ADMIN_EMAIL
+      value: '{{ .Values.ejabberdService.userService.admin.email }}'
+      when: '{{ if and .Values.ejabberdService.userService.enabled .Values.ejabberdService.userService.admin.username }}true{{ end }}'
+    - name: EJABBERD_ADMIN_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.ejabberdService.userService.admin.passwordSecret.name }}'
+          key: '{{ .Values.ejabberdService.userService.admin.passwordSecret.key }}'
+      when: '{{ if and .Values.ejabberdService.userService.enabled .Values.ejabberdService.userService.admin.username }}true{{ end }}'
+
+    - name: SQL_SERVER
+      value: '{{ .Values.ejabberdService.sql.server }}'
+      when: '{{ if .Values.ejabberdService.sql.enabled }}true{{ end }}'
+    - name: SQL_PORT
+      value: '{{ .Values.ejabberdService.sql.port }}'
+      when: '{{ if .Values.ejabberdService.sql.enabled }}true{{ end }}'
+    - name: SQL_DATABASE
+      value: '{{ .Values.ejabberdService.sql.database }}'
+      when: '{{ if .Values.ejabberdService.sql.enabled }}true{{ end }}'
+    - name: SQL_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.ejabberdService.sql.credentialsSecret }}'
+          key: POSTGRES_USER
+      when: '{{ if .Values.ejabberdService.sql.enabled }}true{{ end }}'
+    - name: SQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.ejabberdService.sql.credentialsSecret }}'
+          key: POSTGRES_PASSWORD
+      when: '{{ if .Values.ejabberdService.sql.enabled }}true{{ end }}'
+  envFile:
+    enabled: false
+
+  volumeMounts:
+    - name: config
+      mountPath: /etc/ejabberd
+      readOnly: true
+  volumes:
+    - name: config
+      configMap:
+        name: '{{ .Values.ejabberdService.name }}-config'
+
+  # /health pings PostgreSQL (readiness); /livez only checks the process.
+  probes:
+    startup:
+      httpGet:
+        path: /livez
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    liveness:
+      httpGet:
+        path: /livez
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  # Lets c2s sessions broadcast unavailable presence before the pod exits.
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  # The image runs as uid 10001 (see ejabberd-service/Dockerfile).
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ejabberd-service-db-credentials
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+  consulSeed:
+    enabled: false

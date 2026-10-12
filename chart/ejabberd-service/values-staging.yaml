@@ -1,0 +1,79 @@
+# Argo CD: namespace store-staging, auto-synced. Promoted from dev with the
+# "Promote image" workflow; mirrors prod topology at smaller scale.
+global:
+  environment: staging
+ejabberdService:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  xmpp:
+    hosts:
+      - staging.store.example.com
+    admins:
+      - admin@staging.store.example.com
+  httpUpload:
+    putURL: https://chat.staging.store.example.com/upload
+  ingress:
+    enabled: true
+    host: chat.staging.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/proxy-body-size: 25m
+      nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    tls:
+      enabled: true
+  sql:
+    server: postgresdb.default.svc.cluster.local
+  # XMPP clients reach the server through a TCP load balancer.
+  service:
+    type: LoadBalancer
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkPolicy:
+    enabled: true
+    allowToApps:
+      - name: user-api-deployment
+        port: 1235
+      - name: upload-service-deployment
+        port: 8080
+    ingress:
+      - ports:
+          - port: 5222
+            protocol: TCP
+          - port: 5223
+            protocol: TCP
+          - port: 5280
+            protocol: TCP
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+  # Copies the Secret the postgres chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-staging.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: ejabberd-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: ejabberd-service-db-credentials
+        property: POSTGRES_PASSWORD

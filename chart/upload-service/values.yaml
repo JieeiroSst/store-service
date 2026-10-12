@@ -56,7 +56,7 @@ uploadService:
     # token cannot list or read them, so the owning service decides who sees what. Both are dev defaults - override the key.
     # Empty prefixes leave every receiver reachable with any valid token.
     serviceApiKey: dev-upload-service-key
-    serviceOnlyReceiverPrefixes: "ticket-user:"
+    serviceOnlyReceiverPrefixes: "ticket-user:,ejabberd:"
 
     # The type is detected from the file's bytes, not its name.
     maxUploadMB: "20"

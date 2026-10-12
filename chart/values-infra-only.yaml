@@ -164,6 +164,8 @@ realTimeService:
   enabled: false
 searchService:
   enabled: false
+ejabberdService:
+  enabled: false
 solanaService:
   enabled: false
 ssoService:

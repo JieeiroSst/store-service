@@ -1,0 +1,4 @@
+{{- $svc := deepCopy .Values.ejabberdService }}
+{{- $checksum := include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+{{- $_ := set $svc "podAnnotations" (merge (dict "checksum/config" $checksum) ($svc.podAnnotations | default dict)) }}
+{{- include "common.app" (dict "root" $ "svc" $svc) }}
