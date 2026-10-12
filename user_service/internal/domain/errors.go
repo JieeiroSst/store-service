@@ -12,6 +12,8 @@ const (
 	CodeInvalidCredentials  ErrorCode = "AUTH_INVALID_CREDENTIALS"
 	CodeTokenInvalid        ErrorCode = "AUTH_TOKEN_INVALID"
 	CodeRefreshTokenInvalid ErrorCode = "AUTH_REFRESH_TOKEN_INVALID"
+	CodeAccountLocked       ErrorCode = "AUTH_ACCOUNT_LOCKED"
+	CodeSSOFailed           ErrorCode = "AUTH_SSO_FAILED"
 
 	CodeUsernameRequired ErrorCode = "USER_USERNAME_REQUIRED"
 	CodeUsernameTaken    ErrorCode = "USER_USERNAME_TAKEN"
@@ -43,6 +45,11 @@ var (
 	ErrFailedToken         = newError(CodeTokenInvalid, "missing or invalid access token")
 	ErrFailedTokenUsername = newError(CodeTokenInvalid, "access token does not belong to this username")
 	ErrRefreshTokenInvalid = newError(CodeRefreshTokenInvalid, "refresh token is invalid or expired, please login again")
+	ErrAccountLocked       = newError(CodeAccountLocked, "account is locked")
+	ErrSSOStateMismatch    = newError(CodeSSOFailed, "sso state is missing or does not match, please login again")
+	ErrSSOExchangeFailed   = newError(CodeSSOFailed, "sso authorization code could not be verified")
+	ErrSSODenied           = newError(CodeSSOFailed, "sso login was denied by the identity provider")
+	ErrSSOEmailUnverified  = newError(CodeSSOFailed, "identity provider did not return a verified email")
 
 	ErrUsernameRequired = newError(CodeUsernameRequired, "username is required")
 	ErrUserExist        = newError(CodeUsernameTaken, "username already exists")

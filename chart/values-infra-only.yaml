@@ -168,8 +168,6 @@ ejabberdService:
   enabled: false
 solanaService:
   enabled: false
-ssoService:
-  enabled: false
 wishlistsService:
   enabled: false
 sardAuthService:

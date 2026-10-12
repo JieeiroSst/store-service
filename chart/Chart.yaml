@@ -525,11 +525,6 @@ dependencies:
     version: "0.2.0"
     repository: file://solana-service
     condition: solanaService.enabled
-  - alias: ssoService
-    name: sso-service
-    version: "0.2.0"
-    repository: file://sso-service
-    condition: ssoService.enabled
   - alias: wishlistsService
     name: wishlists-service
     version: "0.2.0"

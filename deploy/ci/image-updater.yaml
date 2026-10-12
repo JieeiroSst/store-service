@@ -694,14 +694,6 @@ spec:
         helm:
           name: solanaService.image.name
           tag: solanaService.image.tag
-  - namePattern: sso-service-dev
-    images:
-    - alias: ssoService
-      imageName: localhost:5000/sso-service
-      manifestTargets:
-        helm:
-          name: ssoService.image.name
-          tag: ssoService.image.tag
   - namePattern: wishlists-service-dev
     images:
     - alias: wishlistsService

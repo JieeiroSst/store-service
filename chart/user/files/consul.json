@@ -31,5 +31,13 @@
     "authorize_service": {
         "grpc_address": "authorize-service:9090",
         "timeout_seconds": 3
+    },
+    "sso": {
+        "enabled": false,
+        "issuer": "http://keycloak/realms/store",
+        "client_id": "user-service",
+        "client_secret": "",
+        "redirect_url": "http://localhost:1235/api/v1/sso/callback",
+        "scopes": ["openid", "profile", "email"]
     }
 }

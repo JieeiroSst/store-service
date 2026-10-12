@@ -22,6 +22,16 @@ type Config struct {
 
 	AuthorizeService AuthorizeServiceConfig `json:"authorize_service"`
 	Internal         InternalConfig         `json:"internal"`
+	SSO              SSOConfig              `json:"sso"`
+}
+
+type SSOConfig struct {
+	Enabled      bool     `json:"enabled"`
+	Issuer       string   `json:"issuer"`
+	ClientID     string   `json:"client_id"`
+	ClientSecret string   `json:"client_secret"`
+	RedirectURL  string   `json:"redirect_url"`
+	Scopes       []string `json:"scopes"`
 }
 
 type InternalConfig struct {
@@ -145,6 +155,9 @@ func InitializeConfiguration(dir string) (*Config, error) {
 	}
 	if v, ok := os.LookupEnv("INTERNAL_API_TOKENS"); ok {
 		config.Internal.ApiTokens = splitTokens(v)
+	}
+	if v, ok := os.LookupEnv("SSO_CLIENT_SECRET"); ok {
+		config.SSO.ClientSecret = v
 	}
 
 	return &config, nil

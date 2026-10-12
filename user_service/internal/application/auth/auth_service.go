@@ -53,7 +53,11 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 		return dto.LoginResponse{}, domain.ErrInvalidCredentials
 	}
 
-	pair, err := s.issueTokenPair(ctx, userID, user.Username, s.userRoles(ctx, userID))
+	return s.IssueSession(ctx, userID, user.Username)
+}
+
+func (s *Service) IssueSession(ctx context.Context, userID int, username string) (dto.LoginResponse, error) {
+	pair, err := s.issueTokenPair(ctx, userID, username, s.userRoles(ctx, userID))
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}

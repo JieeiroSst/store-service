@@ -21,7 +21,7 @@ If you run an older image or chart, upgrade to the latest `master` build before 
 
 ### In scope
 
-- **Application services**: every service directory at the repository root (for example `user_service`, `payment_service`, `wallet-service`, `kms-service`, `sso-service`, `authorize_service`, `ekyc-service`, `banking-service`, `sard-service`).
+- **Application services**: every service directory at the repository root (for example `user_service`, `payment_service`, `wallet-service`, `kms-service`, `authorize_service`, `ekyc-service`, `banking-service`, `sard-service`).
 - **Gateways**: `gateway-api` (GraphQL gateway) and `gateway-internal-api`, including authentication, authorization and proxy/routing logic.
 - **Deployment and infrastructure as code**:
   - `chart/`: the `app-cluster` umbrella Helm chart, service sub-charts, and the shared `common` and `platform` charts (including the `ExternalSecret` / `SecretStore` templates).

@@ -10,6 +10,7 @@ import (
 	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/internalhttp"
+	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/ssohttp"
 	"github.com/JIeeiroSst/user-service/internal/port/input"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/fx"
@@ -18,7 +19,7 @@ import (
 	userServiceGrpc "github.com/JIeeiroSst/lib-gateway/user-service/gateway/user-service"
 )
 
-func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Handler, users input.UserService) error {
+func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Handler, users input.UserService, sso input.SSOService) error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", cfg.Server.PortGrpcServer))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
@@ -30,6 +31,11 @@ func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Ha
 	mux := runtime.NewServeMux(runtime.WithErrorHandler(grpcadapter.HTTPErrorHandler))
 	if err := internalhttp.New(users, cfg.Internal.ApiTokens).Register(mux); err != nil {
 		return fmt.Errorf("failed to register internal routes: %w", err)
+	}
+	if sso != nil {
+		if err := ssohttp.New(sso).Register(mux); err != nil {
+			return fmt.Errorf("failed to register sso routes: %w", err)
+		}
 	}
 	httpServer := &http.Server{
 		Addr:    fmt.Sprintf(":%v", cfg.Server.PortHttpServer),

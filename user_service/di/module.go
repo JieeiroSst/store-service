@@ -7,12 +7,14 @@ import (
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/authorizeclient"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/jwttoken"
+	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/oidcprovider"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/pg"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/pwhash"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/sessionstore"
 	"github.com/JIeeiroSst/user-service/internal/application/auth"
 	"github.com/JIeeiroSst/user-service/internal/application/role"
 	"github.com/JIeeiroSst/user-service/internal/application/roleitem"
+	"github.com/JIeeiroSst/user-service/internal/application/sso"
 	"github.com/JIeeiroSst/user-service/internal/application/user"
 	"github.com/JIeeiroSst/user-service/internal/domain"
 	"github.com/JIeeiroSst/user-service/internal/port/input"
@@ -71,8 +73,24 @@ func newTokenStore(cache expire.CacheHelper) output.TokenStore {
 	return sessionstore.New(cache)
 }
 
-func newAuthService(cfg *config.Config, userRepo output.UserRepository, authorizer output.Authorizer, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore) input.AuthService {
+func newAuthService(cfg *config.Config, userRepo output.UserRepository, authorizer output.Authorizer, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore) *auth.Service {
 	return auth.New(userRepo, authorizer, hasher, tokenGen, tokenStore, cfg.Token.AccessTokenTTL(), cfg.Token.RefreshTokenTTL())
+}
+
+func asAuthService(s *auth.Service) input.AuthService { return s }
+
+func newSSOService(cfg *config.Config, userRepo output.UserRepository, hasher output.Hasher, authorizer output.Authorizer, authSvc *auth.Service) input.SSOService {
+	if !cfg.SSO.Enabled {
+		return nil
+	}
+	idp := oidcprovider.New(oidcprovider.Config{
+		Issuer:       cfg.SSO.Issuer,
+		ClientID:     cfg.SSO.ClientID,
+		ClientSecret: cfg.SSO.ClientSecret,
+		RedirectURL:  cfg.SSO.RedirectURL,
+		Scopes:       cfg.SSO.Scopes,
+	})
+	return sso.New(idp, userRepo, hasher, authorizer, authSvc)
 }
 
 func newUserService(userRepo output.UserRepository, hasher output.Hasher, cache expire.CacheHelper, authorizer output.Authorizer) input.UserService {
@@ -103,6 +121,8 @@ var Module = fx.Options(
 		newTokenGenerator,
 		newTokenStore,
 		newAuthService,
+		asAuthService,
+		newSSOService,
 		newUserService,
 		newRoleService,
 		newRoleItemService,

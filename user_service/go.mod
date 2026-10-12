@@ -7,13 +7,16 @@ toolchain go1.23.7
 require (
 	github.com/JIeeiroSst/lib-gateway v0.0.0-20250315121820-532f1e5bd5b4
 	github.com/JIeeiroSst/utils v0.0.0-20250222162248-2de645e82d74
+	github.com/coreos/go-oidc/v3 v3.11.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-jose/go-jose/v4 v4.0.5
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.1
 	github.com/joho/godotenv v1.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/swaggo/swag v1.8.3
 	go.uber.org/fx v1.24.0
 	golang.org/x/crypto v0.36.0
+	golang.org/x/oauth2 v0.26.0
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 	gorm.io/gorm v1.25.12

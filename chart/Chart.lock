@@ -326,9 +326,6 @@ dependencies:
 - name: solana-service
   repository: file://solana-service
   version: 0.2.0
-- name: sso-service
-  repository: file://sso-service
-  version: 0.2.0
 - name: wishlists-service
   repository: file://wishlists-service
   version: 0.2.0
@@ -356,5 +353,5 @@ dependencies:
 - name: food-service
   repository: file://food-service
   version: 0.2.0
-digest: sha256:5d9ee9bb711c63b6fe99a570e56ebc5f6cf0591506159b336b6f433630ae24d3
-generated: "2026-10-12T07:00:57.301891+07:00"
+digest: sha256:72b7fd9fcf5c9119be321afadca5b3040da1ee7c9abbde72772ca99075de277e
+generated: "2026-10-13T04:36:10.196394+07:00"

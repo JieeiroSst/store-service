@@ -187,7 +187,7 @@ Others, on purpose:
 |---|---|
 | ticket-service `/internal/v1/*` | service-to-service API keyed by a shared secret that acts as admin |
 | manage_service `GET /token`, `GET /client` | read a JSON body, which a GET from the gateway cannot send |
-| face-service, networking-service, sso-service | HTML pages / redirects / text only |
+| face-service, networking-service, user_service `/api/v1/sso/*` | HTML pages / redirects / text only |
 | message-service, offer-range-service, subsidies-service, search-service, real-time-service | no GET routes registered (or WebSocket only) |
 | gateway-api, gateway-internal-api | GraphQL gateways themselves |
 

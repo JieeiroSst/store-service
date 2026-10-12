@@ -26,6 +26,8 @@ var grpcCodes = map[domain.ErrorCode]codes.Code{
 	domain.CodeInvalidCredentials:  codes.Unauthenticated,    // 401
 	domain.CodeTokenInvalid:        codes.Unauthenticated,    // 401
 	domain.CodeRefreshTokenInvalid: codes.Unauthenticated,    // 401
+	domain.CodeAccountLocked:       codes.PermissionDenied,   // 403
+	domain.CodeSSOFailed:           codes.Unauthenticated,    // 401
 	domain.CodeUsernameRequired:    codes.InvalidArgument,    // 400
 	domain.CodeUsernameTaken:       codes.AlreadyExists,      // 409
 	domain.CodeInvalidEmail:        codes.InvalidArgument,    // 400
@@ -64,6 +66,10 @@ func toStatus(method string, err error) error {
 		return status.Error(code, de.Message)
 	}
 	return st.Err()
+}
+
+func WriteError(w http.ResponseWriter, r *http.Request, err error) {
+	HTTPErrorHandler(r.Context(), nil, nil, w, r, toStatus(r.URL.Path, err))
 }
 
 func classify(err error) *domain.Error {

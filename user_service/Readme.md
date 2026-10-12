@@ -46,7 +46,9 @@ internal/
 
   adapter/
     inbound/grpcadapter/handler.go           driving adapter - implements the generated UserServiceServer
+    inbound/ssohttp/handler.go               driving adapter - OIDC login/callback routes (absorbed sso-service)
     outbound/
+      oidcprovider/provider.go               driven adapter - OIDC discovery, code exchange, id_token verify
       pg/                                    driven adapter - GORM/Postgres repositories
       sessionstore/token_store.go            driven adapter - Redis-backed session store
       jwttoken/token_generator.go            driven adapter - JWT access tokens + opaque refresh tokens
@@ -277,6 +279,25 @@ Response `200`:
 ```
 
 Token sai/hết hạn/đã logout vẫn trả `200` với `{ "valid": false, "userId": "" }`.
+
+#### `GET /api/v1/sso/login` → `GET /api/v1/sso/callback` - Đăng nhập SSO (OIDC)
+
+Gộp từ `sso-service` cũ. Chỉ bật khi `sso.enabled = true` trong Consul
+(`issuer`, `client_id`, `client_secret`, `redirect_url`, `scopes`;
+`SSO_CLIENT_SECRET` env ghi đè `client_secret`).
+
+1. `GET /api/v1/sso/login` tạo `state` ngẫu nhiên, lưu cookie `sso_state`
+   (HttpOnly, 10 phút) rồi `302` sang trang đăng nhập của IdP.
+2. IdP redirect về `GET /api/v1/sso/callback?code=...&state=...`. Service so
+   `state` với cookie, đổi `code` lấy `id_token`, verify chữ ký/issuer/audience.
+3. Tìm user theo `email` (IdP phải trả `email_verified = true`); chưa có thì tạo
+   user mới (username = `preferred_username`, trùng thì dùng email; mật khẩu
+   ngẫu nhiên) và gán role `user`. User bị khoá → `AUTH_ACCOUNT_LOCKED` (403).
+4. Response `200` giống `POST /api/v1/login`:
+   `{ "session_token": "...", "refresh_token": "...", "expiry_time": 900 }`.
+
+Lỗi SSO (state sai, code không hợp lệ, email chưa verify, IdP từ chối):
+`AUTH_SSO_FAILED` (401).
 
 ### Tài khoản
 

@@ -615,13 +615,6 @@ services:
   - solanaService
   lang: go
   goVersion: '1.25'
-- name: sso-service
-  context: sso-service
-  image: sso-service
-  helmKeys:
-  - ssoService
-  lang: go
-  goVersion: '1.22'
 - name: wishlists-service
   context: wishlists-service
   image: wishlists-service
