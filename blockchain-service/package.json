@@ -1,0 +1,52 @@
+{
+  "name": "blockchain-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart contracts (NFT, marketplace, payment escrow) and Starton HTTP API with transaction tracking",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "hardhat compile && tsc -p tsconfig.build.json",
+    "compile": "hardhat compile",
+    "test": "npm run test:contracts && npm run test:api",
+    "test:contracts": "hardhat test",
+    "test:api": "mocha -r ts-node/register 'src/**/*.test.ts'",
+    "coverage": "hardhat coverage",
+    "local-testnet": "hardhat node",
+    "deploy:local": "hardhat run --network localhost scripts/deploy.ts",
+    "deploy:fuji": "hardhat run --network fuji scripts/deploy.ts",
+    "dev": "ts-node src/server.ts",
+    "start": "node dist/server.js",
+    "starton:demo": "ts-node scripts/starton-demo.ts"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "ethers": "^5.7.0",
+    "express": "^4.21.2",
+    "kafkajs": "^2.2.4",
+    "multer": "^2.0.2",
+    "pg": "^8.13.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.1.1",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@openzeppelin/contracts": "4.9.6",
+    "@types/express": "^4.17.21",
+    "@types/mocha": "^9.1.1",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^20.11.16",
+    "@types/pg": "^8.11.10",
+    "@types/supertest": "^6.0.2",
+    "chai": "^4.3.6",
+    "ethereum-waffle": "^3.4.4",
+    "hardhat": "^2.10.2",
+    "mocha": "^10.8.2",
+    "solidity-coverage": "^0.7.21",
+    "supertest": "^7.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  }
+}
