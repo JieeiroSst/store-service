@@ -42,21 +42,36 @@ arrange:
     minReplicas: 1
     maxReplicas: 5
     targetCPUUtilizationPercentage: 60
-  # No health endpoint known for this service: TCP checks on the http port.
-  # Swap for httpGet once the service exposes /health.
+  userServiceUrl: http://user-api-svc
+  internalTokensSecret:
+    enabled: false
+    name: internal-api-tokens
+    key: INTERNAL_API_TOKENS
+  containerEnv:
+    - name: USER_SERVICE_URL
+      value: '{{ .Values.arrange.userServiceUrl }}'
+    - name: INTERNAL_API_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.arrange.internalTokensSecret.name }}'
+          key: '{{ .Values.arrange.internalTokensSecret.key }}'
+      when: '{{ if .Values.arrange.internalTokensSecret.enabled }}true{{ end }}'
   probes:
     startup:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
       periodSeconds: 5
       failureThreshold: 30
     readiness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
       periodSeconds: 10
       failureThreshold: 3
     liveness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
       periodSeconds: 20
       failureThreshold: 3

@@ -1,0 +1,4 @@
+.env
+/wishlists-service
+*.test
+*.out

@@ -33,7 +33,7 @@ func (fakeUsers) FindUser(_ context.Context, req dto.FindUserRequest) (dto.FindU
 func serve(t *testing.T, tokens []string, path string, header ...string) (*httptest.ResponseRecorder, map[string]any) {
 	t.Helper()
 	mux := runtime.NewServeMux()
-	if err := New(fakeUsers{}, tokens).Register(mux); err != nil {
+	if err := New(fakeUsers{}, fakeSessions{}, tokens).Register(mux); err != nil {
 		t.Fatal(err)
 	}
 	req := httptest.NewRequest(http.MethodGet, path, nil)
@@ -73,5 +73,41 @@ func TestGetUserRequiresToken(t *testing.T) {
 	}
 	if rec, _ := serve(t, tokens, "/internal/v1/users/7", "X-Internal-Token", "nope"); rec.Code != 401 {
 		t.Fatalf("wrong token: %d", rec.Code)
+	}
+}
+
+type fakeSessions struct{}
+
+func (fakeSessions) ValidateSession(_ context.Context, req dto.ValidateRequest) (dto.ValidateResponse, error) {
+	if req.SessionToken == "access-7" {
+		return dto.ValidateResponse{Valid: true, UserId: "7"}, nil
+	}
+	return dto.ValidateResponse{Valid: false}, nil
+}
+
+func TestGetProfile(t *testing.T) {
+	rec, body := serve(t, nil, "/api/v1/users/7/profile", "Authorization", "Bearer access-7")
+	if rec.Code != 200 || body["username"] != "quanluu" || body["name"] != "Quan Luu" || body["active"] != true {
+		t.Fatalf("%d %v", rec.Code, body)
+	}
+	for _, k := range []string{"email", "phone", "address", "password"} {
+		if _, ok := body[k]; ok {
+			t.Fatalf("profile must not expose %s", k)
+		}
+	}
+	if rec, _ := serve(t, nil, "/api/v1/users/7/profile"); rec.Code != 401 {
+		t.Fatalf("profile without token must be rejected even when internal tokens are unset: %d", rec.Code)
+	}
+	if rec, _ := serve(t, nil, "/api/v1/users/7/profile", "Authorization", "Bearer expired"); rec.Code != 401 {
+		t.Fatalf("invalid access token: %d", rec.Code)
+	}
+	if rec, _ := serve(t, nil, "/api/v1/users/7/profile", "X-Internal-Token", "anything"); rec.Code != 401 {
+		t.Fatalf("internal token must not be accepted when none are configured: %d", rec.Code)
+	}
+	if rec, _ := serve(t, []string{"s1"}, "/api/v1/users/7/profile", "X-Internal-Token", "s1"); rec.Code != 200 {
+		t.Fatalf("configured internal token: %d", rec.Code)
+	}
+	if rec, _ := serve(t, []string{"s1"}, "/api/v1/users/8/profile", "Authorization", "Bearer access-7"); rec.Code != 404 {
+		t.Fatalf("missing user: %d", rec.Code)
 	}
 }

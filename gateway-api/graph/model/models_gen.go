@@ -9470,9 +9470,79 @@ type WebrtcRoomInfo struct {
 	Participants []*WebrtcParticipant `json:"participants"`
 }
 
-type WishlistCustomer struct {
-	ID   *int    `json:"id,omitempty"`
-	Name *string `json:"name,omitempty"`
+type Wishlist struct {
+	ID          int             `json:"id"`
+	Name        string          `json:"name"`
+	Key         *string         `json:"key,omitempty"`
+	Visibility  string          `json:"visibility"`
+	DateCreated string          `json:"date_created"`
+	OwnerID     string          `json:"owner_id"`
+	Owner       *WishlistOwner  `json:"owner,omitempty"`
+	Lines       []*WishlistLine `json:"lines"`
+}
+
+type WishlistClearResult struct {
+	Removed int `json:"removed"`
+}
+
+type WishlistCreateInput struct {
+	Name       *string `json:"name,omitempty"`
+	Visibility *string `json:"visibility,omitempty"`
+	OwnerID    *string `json:"owner_id,omitempty"`
+}
+
+type WishlistLine struct {
+	ID         int    `json:"id"`
+	WishlistID int    `json:"wishlist_id"`
+	ProductID  int    `json:"product_id"`
+	Title      string `json:"title"`
+	Quantity   int    `json:"quantity"`
+}
+
+type WishlistLineInput struct {
+	ProductID int    `json:"product_id"`
+	Title     string `json:"title"`
+	Quantity  *int   `json:"quantity,omitempty"`
+}
+
+type WishlistOwner struct {
+	ID       string  `json:"id"`
+	Username string  `json:"username"`
+	Name     *string `json:"name,omitempty"`
+	Active   bool    `json:"active"`
+}
+
+type WishlistPage struct {
+	Items  []*Wishlist `json:"items"`
+	Total  int         `json:"total"`
+	Limit  int         `json:"limit"`
+	Offset int         `json:"offset"`
+}
+
+type WishlistProductLookup struct {
+	ProductID  int                          `json:"product_id"`
+	InWishlist bool                         `json:"in_wishlist"`
+	Wishlists  []*WishlistProductMembership `json:"wishlists"`
+}
+
+type WishlistProductMembership struct {
+	WishlistID   int    `json:"wishlist_id"`
+	WishlistName string `json:"wishlist_name"`
+	LineID       int    `json:"line_id"`
+	Quantity     int    `json:"quantity"`
+}
+
+type WishlistProductStat struct {
+	ProductID     int    `json:"product_id"`
+	Title         string `json:"title"`
+	WishlistCount int    `json:"wishlist_count"`
+	TotalQuantity int    `json:"total_quantity"`
+}
+
+type WishlistUpdateInput struct {
+	Name          *string `json:"name,omitempty"`
+	Visibility    *string `json:"visibility,omitempty"`
+	RegenerateKey *bool   `json:"regenerate_key,omitempty"`
 }
 
 type CarRentalPaymentMethod string

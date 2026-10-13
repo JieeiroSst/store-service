@@ -1332,3 +1332,43 @@ jobs:
         EJABBERD_TEST_SQL_PORT: "5432"
         EJABBERD_TEST_SQL_PASSWORD: ejabberd
       run: cd ejabberd-service && make test
+
+  wishlists_service:
+    name: wishlists_service
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: wishlists
+          POSTGRES_PASSWORD: wishlists
+          POSTGRES_DB: wishlists
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U wishlists"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.25"
+
+    - name: Build
+      run: cd wishlists-service && make build
+
+    - name: Vet
+      run: cd wishlists-service && make vet
+
+    - name: Test
+      env:
+        WISHLISTS_TEST_DB_HOST: localhost
+        WISHLISTS_TEST_DB_PORT: "5432"
+        WISHLISTS_TEST_DB_USER: wishlists
+        WISHLISTS_TEST_DB_PASSWORD: wishlists
+        WISHLISTS_TEST_DB_NAME: wishlists
+      run: cd wishlists-service && make test

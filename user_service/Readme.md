@@ -420,6 +420,22 @@ Response `200`:
 
 Lỗi: `USER_NOT_FOUND` (404), `INVALID_REQUEST` (400), `AUTH_TOKEN_INVALID` (401).
 
+#### `GET /api/v1/users/{id}/profile` - Hồ sơ công khai của user
+
+Dùng bởi `wishlists-service` để hiển thị chủ wishlist. Xác thực bằng chính access token
+của user (`session_token` nhận từ `POST /api/v1/login`) qua header `Authorization: Bearer <session_token>`,
+được kiểm tra như `POST /api/v1/validate`. Service gọi service có thể dùng `X-Internal-Token`
+(chỉ khi `INTERNAL_API_TOKENS` được set). Không có token hợp lệ thì luôn trả `401`, kể cả khi
+`INTERNAL_API_TOKENS` chưa set.
+
+Response `200` (chỉ các trường công khai, không có email/phone/address):
+
+```json
+{ "id": 1234567, "username": "quanluu", "name": "Quan Luu", "active": true }
+```
+
+Lỗi: `USER_NOT_FOUND` (404), `INVALID_REQUEST` (400), `AUTH_TOKEN_INVALID` (401).
+
 ### Role (dành cho admin, mobile thường không cần)
 
 | Method | Path | Body / Query | Ghi chú |

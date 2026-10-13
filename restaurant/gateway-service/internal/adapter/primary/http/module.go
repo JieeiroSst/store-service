@@ -1,7 +1,10 @@
 package http
 
-import "go.uber.org/fx"
+import (
+	"github.com/JIeeiroSst/gateway-service/pkg/authn"
+	"go.uber.org/fx"
+)
 
 var Module = fx.Options(
-	fx.Provide(NewHandler),
+	fx.Provide(authn.FromEnv, NewHandler),
 )

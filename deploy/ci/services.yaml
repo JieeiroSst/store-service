@@ -621,7 +621,15 @@ services:
   helmKeys:
   - wishlistsService
   lang: go
-  goVersion: '1.21'
+  goVersion: '1.25'
+  testEnv:
+    WISHLISTS_TEST_DB_HOST: localhost
+    WISHLISTS_TEST_DB_PORT: '5432'
+    WISHLISTS_TEST_DB_USER: postgres
+    WISHLISTS_TEST_DB_PASSWORD: pw
+    WISHLISTS_TEST_DB_NAME: postgres
+  testServices:
+  - postgres
 - name: sard-auth-service
   context: sard-service/auth-service
   image: sard-auth-service

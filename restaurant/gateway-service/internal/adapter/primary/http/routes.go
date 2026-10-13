@@ -23,7 +23,8 @@ func NewRouter(h *Handler) *gin.Engine {
 // the gateway-level prefix so the backend sees its own native paths
 // (e.g. "/consumer/api/v1/consumer" -> "/api/v1/consumer").
 func RegisterRoutes(engine *gin.Engine, h *Handler) {
-	engine.Any("/consumer/*proxyPath", gin.WrapH(nethttp.StripPrefix("/consumer", h.gateway.ConsumerHandler())))
-	engine.Any("/accounting/*proxyPath", gin.WrapH(nethttp.StripPrefix("/accounting", h.gateway.AccountingHandler())))
-	engine.Any("/delivery/*proxyPath", gin.WrapH(nethttp.StripPrefix("/delivery", h.gateway.DeliveryHandler())))
+	api := engine.Group("", Authenticate(h.auth))
+	api.Any("/consumer/*proxyPath", gin.WrapH(nethttp.StripPrefix("/consumer", h.gateway.ConsumerHandler())))
+	api.Any("/accounting/*proxyPath", gin.WrapH(nethttp.StripPrefix("/accounting", h.gateway.AccountingHandler())))
+	api.Any("/delivery/*proxyPath", gin.WrapH(nethttp.StripPrefix("/delivery", h.gateway.DeliveryHandler())))
 }

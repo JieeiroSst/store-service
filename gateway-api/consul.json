@@ -30,9 +30,7 @@
         },
         "arrange-service": {
             "http_address": "http://arrange-service-svc",
-            "timeout_seconds": 10,
-            "basic_auth_user": "arrange",
-            "basic_auth_password": "arrange"
+            "timeout_seconds": 10
         },
         "authorize-service": {
             "grpc_address": "authorize-service-grpc-svc:90",

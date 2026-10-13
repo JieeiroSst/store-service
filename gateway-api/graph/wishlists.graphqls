@@ -1,13 +1,97 @@
-type WishlistCustomer {
-  id: Int
+type WishlistOwner {
+  id: String!
+  username: String!
   name: String
+  active: Boolean!
+}
+
+type WishlistLine {
+  id: Int64!
+  wishlist_id: Int64!
+  product_id: Int64!
+  title: String!
+  quantity: Int!
+}
+
+type Wishlist {
+  id: Int64!
+  name: String!
+  key: String
+  visibility: String!
+  date_created: String!
+  owner_id: String!
+  owner: WishlistOwner
+  lines: [WishlistLine!]!
+}
+
+type WishlistPage {
+  items: [Wishlist!]!
+  total: Int64!
+  limit: Int!
+  offset: Int!
+}
+
+type WishlistProductMembership {
+  wishlist_id: Int64!
+  wishlist_name: String!
+  line_id: Int64!
+  quantity: Int!
+}
+
+type WishlistProductLookup {
+  product_id: Int64!
+  in_wishlist: Boolean!
+  wishlists: [WishlistProductMembership!]!
+}
+
+type WishlistProductStat {
+  product_id: Int64!
+  title: String!
+  wishlist_count: Int64!
+  total_quantity: Int64!
+}
+
+type WishlistClearResult {
+  removed: Int64!
+}
+
+input WishlistCreateInput {
+  name: String
+  visibility: String
+  owner_id: String
+}
+
+input WishlistUpdateInput {
+  name: String
+  visibility: String
+  regenerate_key: Boolean
+}
+
+input WishlistLineInput {
+  product_id: Int64!
+  title: String!
+  quantity: Int
 }
 
 extend type Query {
-  wishlistGreet: String @rest(service: "wishlists-service", path: "/greet", unwrap: "data")
-  wishlistCustomers: [WishlistCustomer!] @rest(service: "wishlists-service", path: "/customer", unwrap: "data")
+  wishlists(owner_id: String, limit: Int, offset: Int): WishlistPage @rest(service: "wishlists-service", path: "/api/v1/wishlists", unwrap: "data")
+  wishlist(id: Int64!): Wishlist @rest(service: "wishlists-service", path: "/api/v1/wishlists/{id}", unwrap: "data")
+  wishlistDefault: Wishlist @rest(service: "wishlists-service", path: "/api/v1/me/wishlists/default", unwrap: "data")
+  wishlistsOfUser(userId: String!, limit: Int, offset: Int): WishlistPage @rest(service: "wishlists-service", path: "/api/v1/users/{userId}/wishlists", unwrap: "data")
+  wishlistShared(key: String!): Wishlist @public @rest(service: "wishlists-service", path: "/api/v1/shared-wishlists/{key}", unwrap: "data")
+  wishlistProductLookup(productId: Int64!): WishlistProductLookup @rest(service: "wishlists-service", path: "/api/v1/me/products/{productId}/wishlists", unwrap: "data")
+  wishlistPopularProducts(limit: Int): [WishlistProductStat!]! @public @rest(service: "wishlists-service", path: "/api/v1/wishlist-stats/popular-products", unwrap: "data")
 }
 
 extend type Mutation {
-  wishlistCreateCustomer(name: String!): Boolean! @hasPermission(object: "/graphql/wishlists-service", action: "MUTATION") @rest(service: "wishlists-service", method: "POST", path: "/customer/{name}", unwrap: "data")
+  wishlistCreate(input: WishlistCreateInput!): Wishlist @rest(service: "wishlists-service", method: "POST", path: "/api/v1/wishlists", unwrap: "data")
+  wishlistUpdate(id: Int64!, input: WishlistUpdateInput!): Wishlist @rest(service: "wishlists-service", method: "PATCH", path: "/api/v1/wishlists/{id}", unwrap: "data")
+  wishlistDelete(id: Int64!): Boolean! @rest(service: "wishlists-service", method: "DELETE", path: "/api/v1/wishlists/{id}")
+  wishlistAddLine(id: Int64!, input: WishlistLineInput!): WishlistLine @rest(service: "wishlists-service", method: "POST", path: "/api/v1/wishlists/{id}/lines", unwrap: "data")
+  wishlistUpdateLine(id: Int64!, lineId: Int64!, quantity: Int!): WishlistLine @rest(service: "wishlists-service", method: "PATCH", path: "/api/v1/wishlists/{id}/lines/{lineId}", unwrap: "data")
+  wishlistRemoveLine(id: Int64!, lineId: Int64!): Boolean! @rest(service: "wishlists-service", method: "DELETE", path: "/api/v1/wishlists/{id}/lines/{lineId}")
+  wishlistClearLines(id: Int64!): WishlistClearResult @rest(service: "wishlists-service", method: "DELETE", path: "/api/v1/wishlists/{id}/lines", unwrap: "data")
+  wishlistMoveLine(id: Int64!, lineId: Int64!, target_wishlist_id: Int64!): WishlistLine @rest(service: "wishlists-service", method: "POST", path: "/api/v1/wishlists/{id}/lines/{lineId}/move", unwrap: "data")
+  wishlistCopyShared(key: String!): Wishlist @rest(service: "wishlists-service", method: "POST", path: "/api/v1/shared-wishlists/{key}/copy", unwrap: "data")
+  wishlistQuickAdd(input: WishlistLineInput!): WishlistLine @rest(service: "wishlists-service", method: "POST", path: "/api/v1/me/wishlist-items", unwrap: "data")
 }

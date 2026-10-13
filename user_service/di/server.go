@@ -19,7 +19,7 @@ import (
 	userServiceGrpc "github.com/JIeeiroSst/lib-gateway/user-service/gateway/user-service"
 )
 
-func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Handler, users input.UserService, sso input.SSOService) error {
+func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Handler, users input.UserService, auth input.AuthService, sso input.SSOService) error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", cfg.Server.PortGrpcServer))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
@@ -29,7 +29,7 @@ func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Ha
 	userServiceGrpc.RegisterUserServiceServer(grpcServer, handler)
 
 	mux := runtime.NewServeMux(runtime.WithErrorHandler(grpcadapter.HTTPErrorHandler))
-	if err := internalhttp.New(users, cfg.Internal.ApiTokens).Register(mux); err != nil {
+	if err := internalhttp.New(users, auth, cfg.Internal.ApiTokens).Register(mux); err != nil {
 		return fmt.Errorf("failed to register internal routes: %w", err)
 	}
 	if sso != nil {

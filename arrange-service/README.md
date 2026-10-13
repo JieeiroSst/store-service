@@ -26,7 +26,17 @@ Here's a list of features included in this project:
 | [Resources](https://start.ktor.io/p/resources)                         | Provides type-safe routing                                                         |
 | [CSRF](https://start.ktor.io/p/csrf)                                   | Cross-site request forgery mitigation                                              |
 | [Authentication](https://start.ktor.io/p/auth)                         | Provides extension point for handling the Authorization header                     |
-| [Authentication Basic](https://start.ktor.io/p/auth-basic)             | Handles 'Basic' username / password authentication scheme                          |
+
+## Authentication
+
+`/shifts`, `/spaces` and `/dispatch` require the caller's user-service access token: `Authorization: Bearer <session_token>` from `POST /api/v1/login`, checked against user-service `POST /api/v1/validate` (cached for 30 seconds). Other services may use `X-Internal-Token` with one of `INTERNAL_API_TOKENS`. gateway-api and filter_service already forward the user's token. Basic auth is no longer accepted.
+
+| env | default |
+|---|---|
+| `USER_SERVICE_URL` | `http://user-api-svc` |
+| `INTERNAL_API_TOKENS` | empty (comma separated); while empty, requests without credentials are accepted as internal calls, invalid tokens are still rejected |
+
+`/` and `/health` stay open.
 
 ## Building & Running
 

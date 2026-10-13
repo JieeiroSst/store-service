@@ -39,41 +39,100 @@ wishlistsService:
 
   autoscaling:
     enabled: false
+  postgres:
+    host: postgresdb
+    port: 80
+    database: wishlists_service
+    sslMode: disable
+    credentialsSecret: wishlists-service-db-credentials
+  userServiceUrl: http://user-api-svc
+  userServiceTimeout: 2s
+  internalTokensSecret:
+    enabled: false
+    name: internal-api-tokens
+    key: INTERNAL_API_TOKENS
+  redis:
+    enabled: true
+    addr: redis-svc:80
+    db: '0'
+    prefix: 'wishlists:'
+    wishlistTtl: 5m
+    userTtl: 10m
+    popularTtl: 5m
+  rateLimit:
+    writesPerMinute: 120
+
   containerEnv:
-    - name: APP_NAME
-      value: 'wishlists-service'
     - name: HTTP_PORT
       value: '{{ .Values.wishlistsService.image.port }}'
+    - name: LOG_LEVEL
+      value: info
     - name: DB_HOST
-      value: 'mysql-svc'
+      value: '{{ .Values.wishlistsService.postgres.host }}'
     - name: DB_PORT
-      value: '80'
-    - name: DB_USER
-      value: 'root'
-    - name: DB_PASSWORD
-      value: 'password'
+      value: '{{ .Values.wishlistsService.postgres.port }}'
     - name: DB_NAME
-      value: 'wishlists_service'
-    - name: DB_DIALECT
-      value: 'mysql'
-    - name: REDIS_HOST
-      value: 'redis-svc'
-    - name: REDIS_PORT
-      value: '80'
-  # No health endpoint known for this service: TCP checks on the http port.
+      value: '{{ .Values.wishlistsService.postgres.database }}'
+    - name: DB_SSLMODE
+      value: '{{ .Values.wishlistsService.postgres.sslMode }}'
+    - name: DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.wishlistsService.postgres.credentialsSecret }}'
+          key: POSTGRES_USER
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.wishlistsService.postgres.credentialsSecret }}'
+          key: POSTGRES_PASSWORD
+    - name: USER_SERVICE_URL
+      value: '{{ .Values.wishlistsService.userServiceUrl }}'
+    - name: USER_SERVICE_TIMEOUT
+      value: '{{ .Values.wishlistsService.userServiceTimeout }}'
+    - name: RATE_LIMIT_WRITES_PER_MINUTE
+      value: '{{ .Values.wishlistsService.rateLimit.writesPerMinute }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.wishlistsService.redis.addr }}'
+      when: '{{ if .Values.wishlistsService.redis.enabled }}true{{ end }}'
+    - name: REDIS_DB
+      value: '{{ .Values.wishlistsService.redis.db }}'
+      when: '{{ if .Values.wishlistsService.redis.enabled }}true{{ end }}'
+    - name: REDIS_PREFIX
+      value: '{{ .Values.wishlistsService.redis.prefix }}'
+      when: '{{ if .Values.wishlistsService.redis.enabled }}true{{ end }}'
+    - name: CACHE_WISHLIST_TTL
+      value: '{{ .Values.wishlistsService.redis.wishlistTtl }}'
+      when: '{{ if .Values.wishlistsService.redis.enabled }}true{{ end }}'
+    - name: CACHE_USER_TTL
+      value: '{{ .Values.wishlistsService.redis.userTtl }}'
+      when: '{{ if .Values.wishlistsService.redis.enabled }}true{{ end }}'
+    - name: CACHE_POPULAR_TTL
+      value: '{{ .Values.wishlistsService.redis.popularTtl }}'
+      when: '{{ if .Values.wishlistsService.redis.enabled }}true{{ end }}'
+    - name: INTERNAL_API_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.wishlistsService.internalTokensSecret.name }}'
+          key: '{{ .Values.wishlistsService.internalTokensSecret.key }}'
+      when: '{{ if .Values.wishlistsService.internalTokensSecret.enabled }}true{{ end }}'
+  # /health pings PostgreSQL (readiness); /livez only checks the process.
   probes:
     startup:
-      tcpSocket:
+      httpGet:
+        path: /livez
         port: http
       periodSeconds: 5
       failureThreshold: 30
     readiness:
-      tcpSocket:
+      httpGet:
+        path: /health
         port: http
       periodSeconds: 10
+      timeoutSeconds: 3
       failureThreshold: 3
     liveness:
-      tcpSocket:
+      httpGet:
+        path: /livez
         port: http
       periodSeconds: 20
       failureThreshold: 3

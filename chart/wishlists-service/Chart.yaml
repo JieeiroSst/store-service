@@ -1,11 +1,11 @@
 apiVersion: v2
 name: wishlists-service
-description: A Helm chart for wishlists-service, wishlists service (gofr)
+description: A Helm chart for wishlists-service, wishlists service (Go, hexagonal + fx, PostgreSQL)
 
 type: application
 
 version: 0.2.0
-appVersion: "1.0.0"
+appVersion: "2.0.0"
 
 dependencies:
   - name: common

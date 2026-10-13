@@ -1,6 +1,7 @@
-.git
-.vscode
-.idea
-*.md
-Dockerfile
-.dockerignore
+*
+!go.mod
+!go.sum
+!cmd/
+!internal/
+!pkg/
+**/*_test.go

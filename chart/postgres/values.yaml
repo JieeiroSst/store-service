@@ -155,3 +155,12 @@ postgres:
       consulKey: ejabberd_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # wishlists-service reads DB_USER / DB_PASSWORD from
+    # wishlists-service-db-credentials; it has no Consul key, so the KV patch
+    # step is skipped.
+    - name: wishlists-service
+      database: wishlists_service
+      role: wishlists_service_svc
+      consulKey: wishlists_service
+      userField: .postgres.user
+      passwordField: .postgres.password
