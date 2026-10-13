@@ -1,0 +1,48 @@
+type BookingMiniRoomTypeDetails {
+  id: Int!
+  description: String!
+  capacity: Int!
+}
+
+type BookingMiniRoom {
+  room_no: Int!
+  room_type: String!
+  room_type_details: BookingMiniRoomTypeDetails
+  bed_type: String
+  bed_count: Int
+  amenities: String
+}
+
+type BookingMiniPassenger {
+  id: Int!
+  name: String!
+}
+
+type BookingMiniBooking {
+  id: Int!
+  from_date: String!
+  to_date: String!
+  room_no: Int!
+  passenger_id: Int!
+  passenger: BookingMiniPassenger
+  room: BookingMiniRoom
+}
+
+input BookingMiniBookingInput {
+  passenger_id: Int
+  room_no: Int
+  from_date: String
+  to_date: String
+}
+
+extend type Query {
+  bookingMiniAvailableRooms(from_date: String!, to_date: String!): [BookingMiniRoom!]! @public @rest(service: "booking-mini-service", path: "/api/rooms")
+  bookingMiniBooking(id: Int!): BookingMiniBooking @hasPermission(object: "/graphql/booking-mini-service", action: "QUERY") @rest(service: "booking-mini-service", path: "/api/bookings/{id}")
+  bookingMiniPassenger(id: Int!): BookingMiniPassenger @hasPermission(object: "/graphql/booking-mini-service", action: "QUERY") @rest(service: "booking-mini-service", path: "/api/passengers/{id}")
+}
+
+extend type Mutation {
+  bookingMiniCreateBooking(input: BookingMiniBookingInput!): BookingMiniBooking @rest(service: "booking-mini-service", method: "POST", path: "/api/bookings")
+  bookingMiniCancelBooking(id: Int!): Boolean! @hasPermission(object: "/graphql/booking-mini-service", action: "MUTATION") @rest(service: "booking-mini-service", method: "DELETE", path: "/api/bookings/{id}")
+  bookingMiniRegisterPassenger(name: String!): BookingMiniPassenger @rest(service: "booking-mini-service", method: "POST", path: "/api/passengers")
+}

@@ -1,0 +1,175 @@
+type BankingPerson {
+  person_id: Int!
+  last_name: String!
+  first_name: String!
+  date_of_birth: Int!
+  email: String!
+  phone_number: String!
+  address: String!
+  tax_identifier: String!
+}
+
+input BankingPersonInput {
+  last_name: String
+  first_name: String
+  date_of_birth: Int
+  email: String
+  phone_number: String
+  address: String
+  tax_identifier: String
+}
+
+type BankingBranch {
+  branch_id: Int!
+  branch_name: String!
+  branch_code: String!
+  address: String!
+  phone_number: String!
+}
+
+input BankingBranchInput {
+  branch_name: String
+  branch_code: String
+  address: String
+  phone_number: String
+}
+
+type BankingCustomer {
+  customer_id: Int!
+  customer_type: String!
+}
+
+input BankingCustomerInput {
+  customer_type: String
+}
+
+type BankingEmployee {
+  employee_id: Int!
+  position: String!
+}
+
+input BankingEmployeeInput {
+  position: String
+}
+
+type BankingAccount {
+  account_id: Int!
+  account_number: String!
+  account_type: String!
+  current_balance: Int!
+  date_opened: Int!
+  date_closed: Int!
+  account_status: String!
+}
+
+input BankingAccountInput {
+  account_number: String
+  account_type: String
+  current_balance: Int
+  date_opened: Int
+  date_closed: Int
+  account_status: String
+}
+
+type BankingLoan {
+  loan_id: Int!
+  loan_type: String!
+  loan_amount: Int!
+  interes_rate: Int!
+  term: Int!
+  start_date: Int!
+  end_date: Int!
+  loan_status: String!
+}
+
+input BankingLoanInput {
+  loan_type: String
+  loan_amount: Int
+  interes_rate: Int
+  term: Int
+  start_date: Int
+  end_date: Int
+  loan_status: String
+}
+
+type BankingLoanPayment {
+  loan_payment_id: Int!
+  scheduled_payment_date: Int!
+  payment_account: Int!
+  principal_amount: Int!
+  interest_amount: Int!
+  paid_amount: Int!
+  paid_date: Int!
+}
+
+input BankingLoanPaymentInput {
+  scheduled_payment_date: Int
+  payment_account: Int
+  principal_amount: Int
+  interest_amount: Int
+  paid_amount: Int
+  paid_date: Int
+}
+
+type BankingTransaction {
+  transaction_id: Int!
+  account_id: Int!
+  external_ref: String
+  transaction_type: String!
+  amount: Int!
+  transaction_date: Int!
+}
+
+input BankingTransactionInput {
+  account_id: Int
+  external_ref: String
+  transaction_type: String
+  amount: Int
+  transaction_date: Int
+}
+
+extend type Query {
+  bankingPersons: [BankingPerson!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/persons")
+  bankingPerson(id: Int!): BankingPerson @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/persons/{id}")
+  bankingBranches: [BankingBranch!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/branches")
+  bankingBranch(id: Int!): BankingBranch @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/branches/{id}")
+  bankingCustomers: [BankingCustomer!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/customers")
+  bankingCustomer(id: Int!): BankingCustomer @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/customers/{id}")
+  bankingEmployees: [BankingEmployee!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/employees")
+  bankingEmployee(id: Int!): BankingEmployee @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/employees/{id}")
+  bankingAccounts: [BankingAccount!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/accounts")
+  bankingAccount(id: Int!): BankingAccount @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/accounts/{id}")
+  bankingLoans: [BankingLoan!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/loans")
+  bankingLoan(id: Int!): BankingLoan @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/loans/{id}")
+  bankingLoanPayments: [BankingLoanPayment!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/loan-payments")
+  bankingLoanPayment(id: Int!): BankingLoanPayment @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/loan-payments/{id}")
+  bankingTransactions: [BankingTransaction!]! @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/transactions")
+  bankingTransaction(id: Int!): BankingTransaction @hasPermission(object: "/graphql/banking-service", action: "QUERY") @rest(service: "banking-service", path: "/transactions/{id}")
+}
+
+extend type Mutation {
+  bankingCreatePerson(input: BankingPersonInput!): BankingPerson @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/persons")
+  bankingUpdatePerson(id: Int!, input: BankingPersonInput!): BankingPerson @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/persons/{id}")
+  bankingDeletePerson(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/persons/{id}")
+  bankingCreateBranch(input: BankingBranchInput!): BankingBranch @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/branches")
+  bankingUpdateBranch(id: Int!, input: BankingBranchInput!): BankingBranch @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/branches/{id}")
+  bankingDeleteBranch(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/branches/{id}")
+  bankingCreateCustomer(input: BankingCustomerInput!): BankingCustomer @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/customers")
+  bankingUpdateCustomer(id: Int!, input: BankingCustomerInput!): BankingCustomer @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/customers/{id}")
+  bankingDeleteCustomer(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/customers/{id}")
+  bankingCreateEmployee(input: BankingEmployeeInput!): BankingEmployee @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/employees")
+  bankingUpdateEmployee(id: Int!, input: BankingEmployeeInput!): BankingEmployee @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/employees/{id}")
+  bankingDeleteEmployee(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/employees/{id}")
+  bankingCreateAccount(input: BankingAccountInput!): BankingAccount @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/accounts")
+  bankingUpdateAccount(id: Int!, input: BankingAccountInput!): BankingAccount @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/accounts/{id}")
+  bankingDeleteAccount(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/accounts/{id}")
+  bankingCreateLoan(input: BankingLoanInput!): BankingLoan @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/loans")
+  bankingUpdateLoan(id: Int!, input: BankingLoanInput!): BankingLoan @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/loans/{id}")
+  bankingDeleteLoan(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/loans/{id}")
+  bankingCreateLoanPayment(input: BankingLoanPaymentInput!): BankingLoanPayment @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/loan-payments")
+  bankingUpdateLoanPayment(id: Int!, input: BankingLoanPaymentInput!): BankingLoanPayment @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/loan-payments/{id}")
+  bankingDeleteLoanPayment(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/loan-payments/{id}")
+  bankingCreateTransaction(input: BankingTransactionInput!): BankingTransaction @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "POST", path: "/transactions")
+  bankingUpdateTransaction(id: Int!, input: BankingTransactionInput!): BankingTransaction @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "PUT", path: "/transactions/{id}")
+  bankingDeleteTransaction(id: Int!): Boolean! @hasPermission(object: "/graphql/banking-service", action: "MUTATION") @rest(service: "banking-service", method: "DELETE", path: "/transactions/{id}")
+}

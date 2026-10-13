@@ -5,6 +5,7 @@ import (
 	"github.com/JIeeiroSst/vending-machine-service/internal/adapter/secondary/httpx"
 	"github.com/JIeeiroSst/vending-machine-service/internal/port"
 	"go.uber.org/fx"
+	"os"
 )
 
 var Module = fx.Options(
@@ -16,5 +17,5 @@ func NewNotifier(cfg *config.Config) port.Notifier {
 	if up.NotificationURL == "" {
 		return Log{}
 	}
-	return NewSlack(httpx.New(up.NotificationURL, up.Timeout, up.ServiceName))
+	return NewSlack(httpx.New(up.NotificationURL, up.Timeout, up.ServiceName).WithHeader("X-Internal-Token", os.Getenv("INTERNAL_API_TOKEN")))
 }

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"github.com/JIeeiroSst/billing-service/pkg/authn"
 
 	httpadapter "github.com/JIeeiroSst/billing-service/internal/adapter/primary/http"
 	"go.uber.org/fx"
@@ -17,6 +18,7 @@ type Params struct {
 
 func New(p Params) {
 	app := gofr.New()
+	app.UseMiddleware(authn.FromEnv().OptionalMiddleware)
 
 	httpadapter.RegisterRoutes(app, p.Handler)
 

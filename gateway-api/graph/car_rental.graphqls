@@ -1,0 +1,421 @@
+enum CarRentalPaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED
+  PAYMENT_METHOD_CREDIT_CARD
+  PAYMENT_METHOD_DEBIT_CARD
+  PAYMENT_METHOD_CASH
+  PAYMENT_METHOD_ONLINE
+}
+
+enum CarRentalPaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED
+  PAYMENT_STATUS_PENDING
+  PAYMENT_STATUS_COMPLETED
+  PAYMENT_STATUS_FAILED
+  PAYMENT_STATUS_REFUNDED
+}
+
+enum CarRentalRentalStatus {
+  RENTAL_STATUS_UNSPECIFIED
+  RENTAL_STATUS_ACTIVE
+  RENTAL_STATUS_COMPLETED
+  RENTAL_STATUS_OVERDUE
+}
+
+enum CarRentalReservationStatus {
+  RESERVATION_STATUS_UNSPECIFIED
+  RESERVATION_STATUS_PENDING
+  RESERVATION_STATUS_CONFIRMED
+  RESERVATION_STATUS_CANCELLED
+  RESERVATION_STATUS_COMPLETED
+}
+
+enum CarRentalUserType {
+  USER_TYPE_UNSPECIFIED
+  USER_TYPE_CUSTOMER
+  USER_TYPE_STAFF
+  USER_TYPE_ADMIN
+}
+
+enum CarRentalVehicleStatus {
+  VEHICLE_STATUS_UNSPECIFIED
+  VEHICLE_STATUS_AVAILABLE
+  VEHICLE_STATUS_RENTED
+  VEHICLE_STATUS_MAINTENANCE
+  VEHICLE_STATUS_RETIRED
+}
+
+enum CarRentalVehicleType {
+  VEHICLE_TYPE_UNSPECIFIED
+  VEHICLE_TYPE_CAR
+  VEHICLE_TYPE_MOTORCYCLE
+  VEHICLE_TYPE_BICYCLE
+}
+
+type CarRentalBicycleDetails {
+  bicycleType: String!
+  frameSize: String!
+  gearCount: Int!
+  hasBasket: Boolean!
+}
+
+type CarRentalCarDetails {
+  fuelType: String!
+  transmission: String!
+  seatingCapacity: Int!
+  trunkCapacity: Float
+  airConditioning: Boolean!
+}
+
+type CarRentalListLocationsResponse {
+  locations: [CarRentalLocationResponse!]!
+  nextPageToken: String!
+  totalCount: Int!
+}
+
+type CarRentalListRentalsResponse {
+  rentals: [CarRentalRentalResponse!]!
+  nextPageToken: String!
+  totalCount: Int!
+}
+
+type CarRentalListReservationsResponse {
+  reservations: [CarRentalReservationResponse!]!
+  nextPageToken: String!
+  totalCount: Int!
+}
+
+type CarRentalListReviewsResponse {
+  reviews: [CarRentalReviewResponse!]!
+  nextPageToken: String!
+  totalCount: Int!
+}
+
+type CarRentalListVehiclesResponse {
+  vehicles: [CarRentalVehicleResponse!]!
+  nextPageToken: String!
+  totalCount: Int!
+}
+
+type CarRentalLocationResponse {
+  locationId: String!
+  name: String!
+  address: String!
+  city: String!
+  state: String!
+  country: String!
+  zipCode: String!
+  latitude: Float
+  longitude: Float
+  contactPhone: String!
+  openingHours: Map!
+}
+
+type CarRentalMotorcycleDetails {
+  engineCapacity: Int!
+  motorcycleType: String!
+  helmetIncluded: Boolean!
+}
+
+type CarRentalPaymentResponse {
+  paymentId: String!
+  rentalId: String!
+  userId: String!
+  amount: Float
+  paymentMethod: CarRentalPaymentMethod
+  transactionId: String!
+  paymentStatus: CarRentalPaymentStatus
+  paymentDate: String
+}
+
+type CarRentalRentalResponse {
+  rentalId: String!
+  reservationId: String!
+  vehicleId: String!
+  userId: String!
+  pickupTime: String
+  actualReturnTime: String
+  pickupLocationId: String!
+  returnLocationId: String!
+  pickupMileage: Float
+  returnMileage: Float
+  status: CarRentalRentalStatus
+  baseFee: Float
+  additionalFees: Float
+  paymentStatus: CarRentalPaymentStatus
+  vehicle: CarRentalVehicleResponse
+  createdAt: String
+}
+
+type CarRentalReservationResponse {
+  reservationId: String!
+  userId: String!
+  vehicleId: String!
+  pickupLocationId: String!
+  returnLocationId: String!
+  startTime: String
+  endTime: String
+  status: CarRentalReservationStatus
+  createdAt: String
+  updatedAt: String
+  vehicle: CarRentalVehicleResponse
+}
+
+type CarRentalReviewResponse {
+  reviewId: String!
+  rentalId: String!
+  userId: String!
+  vehicleId: String!
+  rating: Int!
+  comment: String!
+  createdAt: String
+  user: CarRentalUserResponse
+}
+
+type CarRentalUserResponse {
+  userId: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String!
+  address: String!
+  userType: CarRentalUserType
+  drivingLicense: String!
+  createdAt: String
+  updatedAt: String
+}
+
+type CarRentalVehicleResponse {
+  vehicleId: String!
+  categoryId: String!
+  registrationNumber: String!
+  make: String!
+  model: String!
+  year: Int!
+  color: String!
+  mileage: Float
+  status: CarRentalVehicleStatus
+  hourlyRate: Float
+  dailyRate: Float
+  locationId: String!
+  vehicleType: CarRentalVehicleType
+  features: Map!
+  carDetails: CarRentalCarDetails
+  motorcycleDetails: CarRentalMotorcycleDetails
+  bicycleDetails: CarRentalBicycleDetails
+  createdAt: String
+  updatedAt: String
+}
+
+input CarRentalBicycleDetailsInput {
+  bicycleType: String
+  frameSize: String
+  gearCount: Int
+  hasBasket: Boolean
+}
+
+input CarRentalCancelReservationRequestInput {
+  reservationId: String
+  cancellationReason: String
+}
+
+input CarRentalCarDetailsInput {
+  fuelType: String
+  transmission: String
+  seatingCapacity: Int
+  trunkCapacity: Float
+  airConditioning: Boolean
+}
+
+input CarRentalCompleteRentalRequestInput {
+  rentalId: String
+  returnMileage: Float
+  staffId: String
+  returnLocationId: String
+  additionalFees: Map
+  notes: String
+}
+
+input CarRentalCreateReservationRequestInput {
+  userId: String
+  vehicleId: String
+  pickupLocationId: String
+  returnLocationId: String
+  startTime: String
+  endTime: String
+}
+
+input CarRentalCreateVehicleRequestInput {
+  categoryId: String
+  registrationNumber: String
+  make: String
+  model: String
+  year: Int
+  color: String
+  mileage: Float
+  status: CarRentalVehicleStatus
+  hourlyRate: Float
+  dailyRate: Float
+  locationId: String
+  features: Map
+  carDetails: CarRentalCarDetailsInput
+  motorcycleDetails: CarRentalMotorcycleDetailsInput
+  bicycleDetails: CarRentalBicycleDetailsInput
+}
+
+input CarRentalGetRentalRequestInput {
+  rentalId: String
+}
+
+input CarRentalGetReservationRequestInput {
+  reservationId: String
+}
+
+input CarRentalGetUserRequestInput {
+  userId: String
+}
+
+input CarRentalGetVehicleRequestInput {
+  vehicleId: String
+}
+
+input CarRentalListLocationsRequestInput {
+  city: String
+  state: String
+  country: String
+  pageSize: Int
+  pageToken: String
+}
+
+input CarRentalListUserRentalsRequestInput {
+  userId: String
+  status: CarRentalRentalStatus
+  pageSize: Int
+  pageToken: String
+}
+
+input CarRentalListUserReservationsRequestInput {
+  userId: String
+  status: CarRentalReservationStatus
+  pageSize: Int
+  pageToken: String
+}
+
+input CarRentalListVehicleReviewsRequestInput {
+  vehicleId: String
+  pageSize: Int
+  pageToken: String
+}
+
+input CarRentalListVehiclesRequestInput {
+  pageSize: Int
+  pageToken: String
+  vehicleType: CarRentalVehicleType
+  locationId: String
+}
+
+input CarRentalMotorcycleDetailsInput {
+  engineCapacity: Int
+  motorcycleType: String
+  helmetIncluded: Boolean
+}
+
+input CarRentalProcessPaymentRequestInput {
+  rentalId: String
+  userId: String
+  amount: Float
+  paymentMethod: CarRentalPaymentMethod
+  transactionId: String
+}
+
+input CarRentalRegisterUserRequestInput {
+  email: String
+  password: String
+  firstName: String
+  lastName: String
+  phoneNumber: String
+  address: String
+  drivingLicense: String
+  userType: CarRentalUserType
+}
+
+input CarRentalSearchVehiclesRequestInput {
+  startTime: String
+  endTime: String
+  pickupLocationId: String
+  returnLocationId: String
+  vehicleType: CarRentalVehicleType
+  categoryId: String
+  pageSize: Int
+  pageToken: String
+}
+
+input CarRentalStartRentalRequestInput {
+  reservationId: String
+  pickupMileage: Float
+  staffId: String
+  pickupLocationId: String
+}
+
+input CarRentalSubmitReviewRequestInput {
+  rentalId: String
+  userId: String
+  vehicleId: String
+  rating: Int
+  comment: String
+}
+
+input CarRentalUpdateReservationRequestInput {
+  reservationId: String
+  pickupLocationId: String
+  returnLocationId: String
+  startTime: String
+  endTime: String
+}
+
+input CarRentalUpdateUserRequestInput {
+  userId: String
+  email: String
+  firstName: String
+  lastName: String
+  phoneNumber: String
+  address: String
+  drivingLicense: String
+}
+
+input CarRentalUpdateVehicleRequestInput {
+  vehicleId: String
+  registrationNumber: String
+  mileage: Float
+  status: CarRentalVehicleStatus
+  hourlyRate: Float
+  dailyRate: Float
+  locationId: String
+  features: Map
+}
+
+extend type Query {
+  carRentalGetUser(input: CarRentalGetUserRequestInput!): CarRentalUserResponse
+  carRentalGetVehicle(input: CarRentalGetVehicleRequestInput!): CarRentalVehicleResponse @public
+  carRentalListVehicles(input: CarRentalListVehiclesRequestInput!): CarRentalListVehiclesResponse @public
+  carRentalSearchAvailableVehicles(input: CarRentalSearchVehiclesRequestInput!): CarRentalListVehiclesResponse @public
+  carRentalGetReservation(input: CarRentalGetReservationRequestInput!): CarRentalReservationResponse
+  carRentalListUserReservations(input: CarRentalListUserReservationsRequestInput!): CarRentalListReservationsResponse
+  carRentalGetRental(input: CarRentalGetRentalRequestInput!): CarRentalRentalResponse
+  carRentalListUserRentals(input: CarRentalListUserRentalsRequestInput!): CarRentalListRentalsResponse
+  carRentalListVehicleReviews(input: CarRentalListVehicleReviewsRequestInput!): CarRentalListReviewsResponse @public
+  carRentalListLocations(input: CarRentalListLocationsRequestInput!): CarRentalListLocationsResponse @public
+}
+
+extend type Mutation {
+  carRentalRegisterUser(input: CarRentalRegisterUserRequestInput!): CarRentalUserResponse
+  carRentalUpdateUser(input: CarRentalUpdateUserRequestInput!): CarRentalUserResponse
+  carRentalCreateVehicle(input: CarRentalCreateVehicleRequestInput!): CarRentalVehicleResponse @hasPermission(object: "/graphql/car-rental", action: "MUTATION")
+  carRentalUpdateVehicle(input: CarRentalUpdateVehicleRequestInput!): CarRentalVehicleResponse @hasPermission(object: "/graphql/car-rental", action: "MUTATION")
+  carRentalCreateReservation(input: CarRentalCreateReservationRequestInput!): CarRentalReservationResponse
+  carRentalUpdateReservation(input: CarRentalUpdateReservationRequestInput!): CarRentalReservationResponse
+  carRentalCancelReservation(input: CarRentalCancelReservationRequestInput!): CarRentalReservationResponse
+  carRentalStartRental(input: CarRentalStartRentalRequestInput!): CarRentalRentalResponse
+  carRentalCompleteRental(input: CarRentalCompleteRentalRequestInput!): CarRentalRentalResponse
+  carRentalProcessPayment(input: CarRentalProcessPaymentRequestInput!): CarRentalPaymentResponse
+  carRentalSubmitReview(input: CarRentalSubmitReviewRequestInput!): CarRentalReviewResponse
+}

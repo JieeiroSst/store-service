@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/JIeeiroSst/doordash-service/config"
 	"github.com/JIeeiroSst/doordash-service/internal/domain/port"
@@ -45,6 +46,9 @@ func (c *httpNotifierClient) Notify(ctx context.Context, in port.NotifyInput) er
 		return fmt.Errorf("build request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	if t := os.Getenv("INTERNAL_API_TOKEN"); t != "" {
+		req.Header.Set("X-Internal-Token", t)
+	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {

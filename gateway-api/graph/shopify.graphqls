@@ -1,0 +1,81 @@
+type ShopifyProductList {
+  items: [ShopifyProduct!]
+  total: Int
+}
+
+type ShopifyOrderList {
+  items: [ShopifyOrder!]
+  total: Int
+}
+
+type ShopifyProduct {
+  id: Int
+  shopify_id: String
+  title: String
+  handle: String
+  status: String
+  vendor: String
+  product_type: String
+  tags: String
+  variants: [ShopifyProductVariant!]
+  shopify_created_at: String
+  shopify_updated_at: String
+  created_at: String
+  updated_at: String
+}
+
+type ShopifyOrder {
+  id: Int
+  shopify_id: String
+  name: String
+  email: String
+  financial_status: String
+  fulfillment_status: String
+  currency: String
+  total_price: String
+  cancelled_at: String
+  processed_at: String
+  line_items: [ShopifyLineItem!]
+  shopify_created_at: String
+  shopify_updated_at: String
+  created_at: String
+  updated_at: String
+}
+
+type ShopifyProductVariant {
+  id: Int
+  product_id: Int
+  shopify_id: String
+  title: String
+  sku: String
+  price: String
+  inventory_quantity: Int
+  created_at: String
+  updated_at: String
+}
+
+type ShopifyLineItem {
+  id: Int
+  order_id: Int
+  shopify_id: String
+  variant_shopify_id: String
+  title: String
+  sku: String
+  quantity: Int
+  unit_price: String
+  created_at: String
+  updated_at: String
+}
+
+extend type Query {
+  shopifyProducts(limit: Int, offset: Int): ShopifyProductList @public @rest(service: "shopify-service", path: "/api/v1/products")
+  shopifyProduct(id: Int!): ShopifyProduct @public @rest(service: "shopify-service", path: "/api/v1/products/{id}")
+  shopifyOrders(limit: Int, offset: Int): ShopifyOrderList @public @rest(service: "shopify-service", path: "/api/v1/orders")
+  shopifyOrder(id: Int!): ShopifyOrder @public @rest(service: "shopify-service", path: "/api/v1/orders/{id}")
+}
+
+extend type Mutation {
+  shopifyCreateProduct(title: String!, description_html: String, vendor: String, product_type: String, tags: [String!], status: String): ShopifyProduct @hasPermission(object: "/graphql/shopify-service", action: "MUTATION") @rest(service: "shopify-service", method: "POST", path: "/api/v1/products")
+  shopifySyncProducts: Any @hasPermission(object: "/graphql/shopify-service", action: "MUTATION") @rest(service: "shopify-service", method: "POST", path: "/api/v1/products/sync")
+  shopifySyncOrders: Any @hasPermission(object: "/graphql/shopify-service", action: "MUTATION") @rest(service: "shopify-service", method: "POST", path: "/api/v1/orders/sync")
+}

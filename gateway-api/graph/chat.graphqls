@@ -1,0 +1,41 @@
+type ChatMessage {
+  _id: Int!
+  sender_id: Int!
+  message_type: String!
+  created_at: String
+  deleted_at: String
+}
+
+type ChatReport {
+  _id: Int!
+  users_id: Int!
+  report_type: String!
+  notes: String!
+  status: String!
+  created_at: String
+}
+
+type ChatCreatedReport {
+  ID: Int!
+  UserId: Int!
+  ReportType: String!
+  Notes: String!
+  Status: String!
+  CreatedAt: String
+}
+
+input ChatReportInput {
+  ReportType: String
+  Notes: String
+}
+
+extend type Query {
+  chatMessage(id: Int!): ChatMessage @hasPermission(object: "/graphql/chat-service", action: "QUERY") @rest(service: "chat-service", path: "/message/{id}")
+  myChatReports: [ChatReport!]! @rest(service: "chat-service", path: "/report/{$userId}")
+  chatUserReports(userID: Int!): [ChatReport!]! @hasPermission(object: "/graphql/chat-service", action: "QUERY") @rest(service: "chat-service", path: "/report/{userID}")
+}
+
+extend type Mutation {
+  createChatReport(input: ChatReportInput!): ChatCreatedReport @rest(service: "chat-service", method: "POST", path: "/report", userField: "UserId:int")
+  deleteMyChatMessage(messageID: Int!): Boolean! @rest(service: "chat-service", method: "DELETE", path: "/message/{$userId}/{messageID}")
+}

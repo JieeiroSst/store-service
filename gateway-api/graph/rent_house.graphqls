@@ -1,0 +1,248 @@
+type RentHomestay {
+  id: Int
+  name: String
+  description: String
+  type: Int
+  type_name: String
+  status: Int
+  status_name: String
+  review_note: String
+  phone_number: String
+  address: String
+  ward_id: Int
+  district_id: Int
+  province_id: Int
+  images: [String!]
+  guests: Int
+  bedrooms: Int
+  bathrooms: Int
+  amenity_ids: [Int!]
+  version: Int
+  created_at: String
+  updated_at: String
+  host_id: Int
+  accepts_wallet_payment: Boolean
+  rating: Float
+  review_count: Int
+  rates: [RentRate!]
+}
+
+type RentHomestayPage {
+  items: [RentHomestay!]
+  has_more: Boolean
+  next_cursor: String
+}
+
+type RentSlot {
+  date: String
+  price: String
+  status: Int
+}
+
+type RentAmenity {
+  id: Int
+  name: String
+  icon: String
+}
+
+type RentBooking {
+  id: Int
+  user_id: Int
+  homestay_id: Int
+  checkin_date: String
+  checkout_date: String
+  nights: Int
+  guests: Int
+  status: Int
+  currency: String
+  subtotal: String
+  discount: String
+  total_amount: String
+  note: String
+  request_id: String
+  created_at: String
+  payment_method: String
+  payment_ref: String
+  paid_at: String
+  expires_at: String
+}
+
+type RentRate {
+  model: String
+  price: String
+  currency: String
+  min_periods: Int
+  active: Boolean
+}
+
+type RentLease {
+  id: Int
+  user_id: Int
+  homestay_id: Int
+  model: String
+  start_date: String
+  end_date: String
+  periods: Int
+  billing_day: Int
+  currency: String
+  rent: String
+  status: String
+  note: String
+  expires_at: String
+  created_at: String
+  invoices: [RentInvoice!]
+}
+
+type RentInvoice {
+  id: Int
+  lease_id: Int
+  user_id: Int
+  homestay_id: Int
+  period: Int
+  period_start: String
+  period_end: String
+  due_date: String
+  amount: String
+  status: String
+  overdue: Boolean
+  payment_method: String
+  payment_ref: String
+  paid_at: String
+}
+
+type RentReview {
+  id: Int
+  homestay_id: Int
+  user_id: Int
+  booking_id: Int
+  lease_id: Int
+  rating: Int
+  comment: String
+  created_at: String
+}
+
+type RentLoyalty {
+  points: Int
+  tier: Int
+  tier_name: String
+}
+
+type RentWallet {
+  wallet_id: String
+  balance: Int
+  currency: String
+  status: String
+}
+
+type RentWalletTxn {
+  transaction_id: String
+  type: String
+  amount: Int
+  currency: String
+  status: String
+  reference_id: String
+  description: String
+  created_at: String
+}
+
+input RentHomestayInput {
+  name: String
+  description: String
+  type: Int
+  status: Int
+  phone_number: String
+  address: String
+  ward_id: Int
+  district_id: Int
+  province_id: Int
+  images: [String!]
+  guests: Int
+  bedrooms: Int
+  bathrooms: Int
+  amenity_ids: [Int!]
+  wallet_id: String
+}
+
+input RentAvailabilityInput {
+  from: String
+  to: String
+  price: Float
+  status: Int
+}
+
+input RentBookingInput {
+  homestay_id: Int
+  checkin_date: String
+  checkout_date: String
+  guests: Int
+  currency: String
+  note: String
+  request_id: String
+}
+
+input RentRateInput {
+  price: Float
+  currency: String
+  min_periods: Int
+  active: Boolean
+}
+
+input RentLeaseInput {
+  homestay_id: Int
+  model: String
+  start_date: String
+  periods: Int
+  billing_day: Int
+  note: String
+  request_id: String
+}
+
+input RentReviewInput {
+  booking_id: Int
+  lease_id: Int
+  rating: Int
+  comment: String
+}
+
+extend type Query {
+  rentHomestay(id: Int!): RentHomestay @public @rest(service: "rent-house-service", path: "/api/v1/homestays/{id}")
+  rentHomestays(province_id: Int, district_id: Int, ward_id: Int, type: Int, guests: Int, q: String, modelArg: String, min_price: String, max_price: String, sort: String, limit: Int, cursor: String, amenity_ids: String, checkin: String, checkout: String): RentHomestayPage @public @rest(service: "rent-house-service", path: "/api/v1/homestays", keys: "modelArg:model")
+  rentAvailability(id: Int!, from: String, to: String): [RentSlot!] @public @rest(service: "rent-house-service", path: "/api/v1/homestays/{id}/availability")
+  rentAmenities: [RentAmenity!] @public @rest(service: "rent-house-service", path: "/api/v1/amenities")
+  rentMyHomestays(limit: Int, offset: Int): [RentHomestay!] @rest(service: "rent-house-service", path: "/api/v1/my/homestays")
+  rentHomestayReviewQueue(status: String, limit: Int, offset: Int): [RentHomestay!] @rest(service: "rent-house-service", path: "/api/v1/admin/homestays")
+  rentBookings(user_id: Int, as: String, limit: Int, offset: Int): [RentBooking!] @rest(service: "rent-house-service", path: "/api/v1/bookings")
+  rentBooking(id: Int!): RentBooking @rest(service: "rent-house-service", path: "/api/v1/bookings/{id}")
+  rentRates(id: Int!): [RentRate!] @public @rest(service: "rent-house-service", path: "/api/v1/homestays/{id}/rates")
+  rentLeases(user_id: Int, as: String, limit: Int, offset: Int): [RentLease!] @rest(service: "rent-house-service", path: "/api/v1/leases")
+  rentLease(id: Int!): RentLease @rest(service: "rent-house-service", path: "/api/v1/leases/{id}")
+  rentInvoices(limit: Int, offset: Int, status: String, due_before: String): [RentInvoice!] @rest(service: "rent-house-service", path: "/api/v1/invoices")
+  rentReviews(id: Int!, limit: Int, offset: Int): [RentReview!] @public @rest(service: "rent-house-service", path: "/api/v1/homestays/{id}/reviews")
+  rentWishlist(limit: Int, offset: Int): [RentHomestay!] @rest(service: "rent-house-service", path: "/api/v1/wishlist")
+  rentLoyalty: RentLoyalty @rest(service: "rent-house-service", path: "/api/v1/loyalty")
+  rentWallet: RentWallet @rest(service: "rent-house-service", path: "/api/v1/wallet")
+  rentWalletTransactions(limit: Int, offset: Int): [RentWalletTxn!] @rest(service: "rent-house-service", path: "/api/v1/wallet/transactions")
+}
+
+extend type Mutation {
+  rentApproveHomestay(id: Int!): RentHomestay @rest(service: "rent-house-service", method: "POST", path: "/api/v1/homestays/{id}/approve")
+  rentRejectHomestay(id: Int!, reason: String!): RentHomestay @rest(service: "rent-house-service", method: "POST", path: "/api/v1/homestays/{id}/reject")
+  rentCreateHomestay(input: RentHomestayInput!): RentHomestay @rest(service: "rent-house-service", method: "POST", path: "/api/v1/homestays")
+  rentUpdateHomestay(id: Int!, input: RentHomestayInput!): RentHomestay @rest(service: "rent-house-service", method: "PUT", path: "/api/v1/homestays/{id}")
+  rentDeactivateHomestay(id: Int!): Boolean! @rest(service: "rent-house-service", method: "DELETE", path: "/api/v1/homestays/{id}")
+  rentSetAvailability(id: Int!, input: RentAvailabilityInput!): Any @rest(service: "rent-house-service", method: "PUT", path: "/api/v1/homestays/{id}/availability")
+  rentCreateAmenity(name: String!, icon: String): RentAmenity @rest(service: "rent-house-service", method: "POST", path: "/api/v1/amenities")
+  rentBook(input: RentBookingInput!): RentBooking @rest(service: "rent-house-service", method: "POST", path: "/api/v1/bookings")
+  rentCancelBooking(id: Int!): RentBooking @rest(service: "rent-house-service", method: "POST", path: "/api/v1/bookings/{id}/cancel")
+  rentPayBooking(id: Int!, method: String!, provider: String): RentBooking @rest(service: "rent-house-service", method: "POST", path: "/api/v1/bookings/{id}/pay")
+  rentSetRate(id: Int!, rate_model: String!, input: RentRateInput!): RentRate @rest(service: "rent-house-service", method: "PUT", path: "/api/v1/homestays/{id}/rates/{rate_model}")
+  rentDeleteRate(id: Int!, rate_model: String!): Boolean! @rest(service: "rent-house-service", method: "DELETE", path: "/api/v1/homestays/{id}/rates/{rate_model}")
+  rentStartLease(input: RentLeaseInput!): RentLease @rest(service: "rent-house-service", method: "POST", path: "/api/v1/leases")
+  rentCancelLease(id: Int!): RentLease @rest(service: "rent-house-service", method: "POST", path: "/api/v1/leases/{id}/cancel")
+  rentTerminateLease(id: Int!): RentLease @rest(service: "rent-house-service", method: "POST", path: "/api/v1/leases/{id}/terminate")
+  rentPayLeaseInvoice(id: Int!, period: String!, method: String!, provider: String): Any @rest(service: "rent-house-service", method: "POST", path: "/api/v1/leases/{id}/invoices/{period}/pay")
+  rentCreateReview(id: Int!, input: RentReviewInput!): RentReview @rest(service: "rent-house-service", method: "POST", path: "/api/v1/homestays/{id}/reviews")
+  rentAddWishlist(id: Int!): Boolean! @rest(service: "rent-house-service", method: "PUT", path: "/api/v1/wishlist/{id}")
+  rentRemoveWishlist(id: Int!): Boolean! @rest(service: "rent-house-service", method: "DELETE", path: "/api/v1/wishlist/{id}")
+  rentCreateWallet(currency: String!): RentWallet @rest(service: "rent-house-service", method: "POST", path: "/api/v1/wallet")
+}

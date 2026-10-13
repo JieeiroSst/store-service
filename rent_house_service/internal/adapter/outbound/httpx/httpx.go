@@ -14,9 +14,10 @@ import (
 )
 
 type Client struct {
+	headers map[string]string
 	HTTP    *http.Client
 	BaseURL string
-	Name    string 
+	Name    string
 }
 
 func New(name, baseURL string, timeout time.Duration) *Client {
@@ -38,6 +39,9 @@ func (c *Client) Do(ctx context.Context, method, path string, headers map[string
 	}
 	if in != nil {
 		req.Header.Set("Content-Type", "application/json")
+	}
+	for k, v := range c.headers {
+		req.Header.Set(k, v)
 	}
 	for k, v := range headers {
 		req.Header.Set(k, v)
@@ -71,3 +75,17 @@ func (c *Client) Do(ctx context.Context, method, path string, headers map[string
 }
 
 func OK(status int) bool { return status/100 == 2 }
+
+func (c *Client) WithHeader(key, value string) *Client {
+	if value == "" {
+		return c
+	}
+	cp := *c
+	cp.headers = map[string]string{key: value}
+	for k, v := range c.headers {
+		if k != key {
+			cp.headers[k] = v
+		}
+	}
+	return &cp
+}

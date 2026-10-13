@@ -6,6 +6,7 @@ import (
 
 	"github.com/JIeeiroSst/nofitifaction-service/internal/domain/model"
 	"github.com/JIeeiroSst/nofitifaction-service/internal/domain/port"
+	"github.com/JIeeiroSst/nofitifaction-service/pkg/authn"
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,6 +42,9 @@ func (h *Handler) RegisterDevice(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if !forceOwner(c, &req.UserID) {
+		return
+	}
 	result, err := h.device.RegisterDevice(c.Request.Context(), port.RegisterDeviceInput{
 		UserID:     req.UserID,
 		Token:      req.DeviceToken,
@@ -68,6 +72,9 @@ func (h *Handler) UnregisterDevice(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if !forceOwner(c, &req.UserID) {
+		return
+	}
 	n, err := h.device.UnregisterDevice(c.Request.Context(), port.UnregisterDeviceInput{Token: req.DeviceToken, DeviceID: req.DeviceID, UserID: req.UserID})
 	if err != nil {
 		writeError(c, err)
@@ -82,9 +89,8 @@ func (h *Handler) GetDevice(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
-	result, err := h.device.GetDevice(c.Request.Context(), uint(id))
-	if err != nil {
-		writeError(c, err)
+	result, ok := h.ownedDevice(c, uint(id))
+	if !ok {
 		return
 	}
 	c.JSON(http.StatusOK, viewOf(result))
@@ -93,6 +99,10 @@ func (h *Handler) GetDevice(c *gin.Context) {
 func (h *Handler) ListDevices(c *gin.Context) {
 	userID, ok := parseUint(c, "user_id")
 	if !ok {
+		return
+	}
+	if !principal(c).Owns(strconv.FormatUint(uint64(userID), 10)) {
+		abortAuth(c, authn.ErrForbidden)
 		return
 	}
 	result, err := h.device.ListDevices(c.Request.Context(), userID)
@@ -109,12 +119,19 @@ func (h *Handler) UpdateDevice(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
+	existing, ok := h.ownedDevice(c, uint(id))
+	if !ok {
+		return
+	}
 	var device model.UserDevice
 	if err := c.ShouldBindJSON(&device); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	device.ID = uint(id)
+	if !principal(c).IsAdmin() {
+		device.UserID = existing.UserID
+	}
 	result, err := h.device.UpdateDevice(c.Request.Context(), &device)
 	if err != nil {
 		writeError(c, err)
@@ -129,9 +146,49 @@ func (h *Handler) DeleteDevice(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}
+	if _, ok := h.ownedDevice(c, uint(id)); !ok {
+		return
+	}
 	if err := h.device.DeleteDevice(c.Request.Context(), uint(id)); err != nil {
 		writeError(c, err)
 		return
 	}
 	c.Status(http.StatusNoContent)
+}
+
+func (h *Handler) ownedDevice(c *gin.Context, id uint) (*model.UserDevice, bool) {
+	d, err := h.device.GetDevice(c.Request.Context(), id)
+	if err != nil {
+		writeError(c, err)
+		return nil, false
+	}
+	if !principal(c).Owns(strconv.FormatUint(uint64(d.UserID), 10)) {
+		abortAuth(c, authn.ErrForbidden)
+		return nil, false
+	}
+	return d, true
+}
+
+func forceOwner(c *gin.Context, userID *uint) bool {
+	p := principal(c)
+	if p.IsAdmin() {
+		return true
+	}
+	id, err := strconv.ParseUint(p.UserID, 10, 64)
+	if err != nil {
+		abortAuth(c, authn.ErrForbidden)
+		return false
+	}
+	*userID = uint(id)
+	return true
+}
+
+func ownUserParam() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !principal(c).Owns(c.Param("id")) {
+			abortAuth(c, authn.ErrForbidden)
+			return
+		}
+		c.Next()
+	}
 }

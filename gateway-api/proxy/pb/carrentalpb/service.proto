@@ -1,0 +1,535 @@
+syntax = "proto3";
+
+package vehicle_rental;
+
+option go_package = "github.com/yourdomain/vehicle_rental/proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+service VehicleRentalService {
+  rpc RegisterUser(RegisterUserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/users"
+      body: "*"
+    };
+  }
+  
+  rpc GetUser(GetUserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/users/{user_id}"
+    };
+  }
+  
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/users/{user_id}"
+      body: "*"
+    };
+  }
+  
+  rpc CreateVehicle(CreateVehicleRequest) returns (VehicleResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/vehicles"
+      body: "*"
+    };
+  }
+  
+  rpc GetVehicle(GetVehicleRequest) returns (VehicleResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/vehicles/{vehicle_id}"
+    };
+  }
+  
+  rpc UpdateVehicle(UpdateVehicleRequest) returns (VehicleResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/vehicles/{vehicle_id}"
+      body: "*"
+    };
+  }
+  
+  rpc ListVehicles(ListVehiclesRequest) returns (ListVehiclesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/vehicles"
+    };
+  }
+  
+  rpc SearchAvailableVehicles(SearchVehiclesRequest) returns (ListVehiclesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/vehicles/available"
+    };
+  }
+  
+  // Reservation management
+  rpc CreateReservation(CreateReservationRequest) returns (ReservationResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/reservations"
+      body: "*"
+    };
+  }
+  
+  rpc GetReservation(GetReservationRequest) returns (ReservationResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/reservations/{reservation_id}"
+    };
+  }
+  
+  rpc UpdateReservation(UpdateReservationRequest) returns (ReservationResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/reservations/{reservation_id}"
+      body: "*"
+    };
+  }
+  
+  rpc CancelReservation(CancelReservationRequest) returns (ReservationResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/reservations/{reservation_id}/cancel"
+      body: "*"
+    };
+  }
+  
+  rpc ListUserReservations(ListUserReservationsRequest) returns (ListReservationsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/users/{user_id}/reservations"
+    };
+  }
+  
+  // Rental operations
+  rpc StartRental(StartRentalRequest) returns (RentalResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/rentals/start"
+      body: "*"
+    };
+  }
+  
+  rpc CompleteRental(CompleteRentalRequest) returns (RentalResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/rentals/{rental_id}/complete"
+      body: "*"
+    };
+  }
+  
+  rpc GetRental(GetRentalRequest) returns (RentalResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/rentals/{rental_id}"
+    };
+  }
+  
+  rpc ListUserRentals(ListUserRentalsRequest) returns (ListRentalsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/users/{user_id}/rentals"
+    };
+  }
+  
+  // Payment processing
+  rpc ProcessPayment(ProcessPaymentRequest) returns (PaymentResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/payments"
+      body: "*"
+    };
+  }
+  
+  // Reviews
+  rpc SubmitReview(SubmitReviewRequest) returns (ReviewResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/reviews"
+      body: "*"
+    };
+  }
+  
+  rpc ListVehicleReviews(ListVehicleReviewsRequest) returns (ListReviewsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/vehicles/{vehicle_id}/reviews"
+    };
+  }
+  
+  rpc ListLocations(ListLocationsRequest) returns (ListLocationsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/locations"
+    };
+  }
+}
+
+message RegisterUserRequest {
+  string email = 1;
+  string password = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string phone_number = 5;
+  string address = 6;
+  string driving_license = 7;
+  UserType user_type = 8;
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message UpdateUserRequest {
+  string user_id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string phone_number = 5;
+  string address = 6;
+  string driving_license = 7;
+}
+
+message UserResponse {
+  string user_id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string phone_number = 5;
+  string address = 6;
+  UserType user_type = 7;
+  string driving_license = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+enum UserType {
+  USER_TYPE_UNSPECIFIED = 0;
+  USER_TYPE_CUSTOMER = 1;
+  USER_TYPE_STAFF = 2;
+  USER_TYPE_ADMIN = 3;
+}
+
+message CreateVehicleRequest {
+  string category_id = 1;
+  string registration_number = 2;
+  string make = 3;
+  string model = 4;
+  int32 year = 5;
+  string color = 6;
+  double mileage = 7;
+  VehicleStatus status = 8;
+  double hourly_rate = 9;
+  double daily_rate = 10;
+  string location_id = 11;
+  map<string, string> features = 12;
+  
+  oneof vehicle_details {
+    CarDetails car_details = 13;
+    MotorcycleDetails motorcycle_details = 14;
+    BicycleDetails bicycle_details = 15;
+  }
+}
+
+message GetVehicleRequest {
+  string vehicle_id = 1;
+}
+
+message UpdateVehicleRequest {
+  string vehicle_id = 1;
+  string registration_number = 2;
+  double mileage = 3;
+  VehicleStatus status = 4;
+  double hourly_rate = 5;
+  double daily_rate = 6;
+  string location_id = 7;
+  map<string, string> features = 8;
+}
+
+message VehicleResponse {
+  string vehicle_id = 1;
+  string category_id = 2;
+  string registration_number = 3;
+  string make = 4;
+  string model = 5;
+  int32 year = 6;
+  string color = 7;
+  double mileage = 8;
+  VehicleStatus status = 9;
+  double hourly_rate = 10;
+  double daily_rate = 11;
+  string location_id = 12;
+  VehicleType vehicle_type = 13;
+  map<string, string> features = 14;
+  
+  oneof vehicle_details {
+    CarDetails car_details = 15;
+    MotorcycleDetails motorcycle_details = 16;
+    BicycleDetails bicycle_details = 17;
+  }
+  
+  google.protobuf.Timestamp created_at = 18;
+  google.protobuf.Timestamp updated_at = 19;
+}
+
+message ListVehiclesRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  VehicleType vehicle_type = 3;
+  string location_id = 4;
+}
+
+message ListVehiclesResponse {
+  repeated VehicleResponse vehicles = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message SearchVehiclesRequest {
+  google.protobuf.Timestamp start_time = 1;
+  google.protobuf.Timestamp end_time = 2;
+  string pickup_location_id = 3;
+  string return_location_id = 4;
+  VehicleType vehicle_type = 5;
+  string category_id = 6;
+  int32 page_size = 7;
+  string page_token = 8;
+}
+
+enum VehicleType {
+  VEHICLE_TYPE_UNSPECIFIED = 0;
+  VEHICLE_TYPE_CAR = 1;
+  VEHICLE_TYPE_MOTORCYCLE = 2;
+  VEHICLE_TYPE_BICYCLE = 3;
+}
+
+enum VehicleStatus {
+  VEHICLE_STATUS_UNSPECIFIED = 0;
+  VEHICLE_STATUS_AVAILABLE = 1;
+  VEHICLE_STATUS_RENTED = 2;
+  VEHICLE_STATUS_MAINTENANCE = 3;
+  VEHICLE_STATUS_RETIRED = 4;
+}
+
+message CarDetails {
+  string fuel_type = 1;
+  string transmission = 2;
+  int32 seating_capacity = 3;
+  double trunk_capacity = 4;
+  bool air_conditioning = 5;
+}
+
+message MotorcycleDetails {
+  int32 engine_capacity = 1;
+  string motorcycle_type = 2;
+  bool helmet_included = 3;
+}
+
+message BicycleDetails {
+  string bicycle_type = 1;
+  string frame_size = 2;
+  int32 gear_count = 3;
+  bool has_basket = 4;
+}
+
+// Reservation related messages
+message CreateReservationRequest {
+  string user_id = 1;
+  string vehicle_id = 2;
+  string pickup_location_id = 3;
+  string return_location_id = 4;
+  google.protobuf.Timestamp start_time = 5;
+  google.protobuf.Timestamp end_time = 6;
+}
+
+message GetReservationRequest {
+  string reservation_id = 1;
+}
+
+message UpdateReservationRequest {
+  string reservation_id = 1;
+  string pickup_location_id = 2;
+  string return_location_id = 3;
+  google.protobuf.Timestamp start_time = 4;
+  google.protobuf.Timestamp end_time = 5;
+}
+
+message CancelReservationRequest {
+  string reservation_id = 1;
+  string cancellation_reason = 2;
+}
+
+message ListUserReservationsRequest {
+  string user_id = 1;
+  ReservationStatus status = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+message ReservationResponse {
+  string reservation_id = 1;
+  string user_id = 2;
+  string vehicle_id = 3;
+  string pickup_location_id = 4;
+  string return_location_id = 5;
+  google.protobuf.Timestamp start_time = 6;
+  google.protobuf.Timestamp end_time = 7;
+  ReservationStatus status = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+  VehicleResponse vehicle = 11;
+}
+
+message ListReservationsResponse {
+  repeated ReservationResponse reservations = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+enum ReservationStatus {
+  RESERVATION_STATUS_UNSPECIFIED = 0;
+  RESERVATION_STATUS_PENDING = 1;
+  RESERVATION_STATUS_CONFIRMED = 2;
+  RESERVATION_STATUS_CANCELLED = 3;
+  RESERVATION_STATUS_COMPLETED = 4;
+}
+
+// Rental related messages
+message StartRentalRequest {
+  string reservation_id = 1;
+  double pickup_mileage = 2;
+  string staff_id = 3;
+  string pickup_location_id = 4;
+}
+
+message CompleteRentalRequest {
+  string rental_id = 1;
+  double return_mileage = 2;
+  string staff_id = 3;
+  string return_location_id = 4;
+  map<string, double> additional_fees = 5;
+  string notes = 6;
+}
+
+message GetRentalRequest {
+  string rental_id = 1;
+}
+
+message ListUserRentalsRequest {
+  string user_id = 1;
+  RentalStatus status = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+message RentalResponse {
+  string rental_id = 1;
+  string reservation_id = 2;
+  string vehicle_id = 3;
+  string user_id = 4;
+  google.protobuf.Timestamp pickup_time = 5;
+  google.protobuf.Timestamp actual_return_time = 6;
+  string pickup_location_id = 7;
+  string return_location_id = 8;
+  double pickup_mileage = 9;
+  double return_mileage = 10;
+  RentalStatus status = 11;
+  double base_fee = 12;
+  double additional_fees = 13;
+  PaymentStatus payment_status = 14;
+  VehicleResponse vehicle = 15;
+  google.protobuf.Timestamp created_at = 16;
+}
+
+message ListRentalsResponse {
+  repeated RentalResponse rentals = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+enum RentalStatus {
+  RENTAL_STATUS_UNSPECIFIED = 0;
+  RENTAL_STATUS_ACTIVE = 1;
+  RENTAL_STATUS_COMPLETED = 2;
+  RENTAL_STATUS_OVERDUE = 3;
+}
+
+message ProcessPaymentRequest {
+  string rental_id = 1;
+  string user_id = 2;
+  double amount = 3;
+  PaymentMethod payment_method = 4;
+  string transaction_id = 5;
+}
+
+message PaymentResponse {
+  string payment_id = 1;
+  string rental_id = 2;
+  string user_id = 3;
+  double amount = 4;
+  PaymentMethod payment_method = 5;
+  string transaction_id = 6;
+  PaymentStatus payment_status = 7;
+  google.protobuf.Timestamp payment_date = 8;
+}
+
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CREDIT_CARD = 1;
+  PAYMENT_METHOD_DEBIT_CARD = 2;
+  PAYMENT_METHOD_CASH = 3;
+  PAYMENT_METHOD_ONLINE = 4;
+}
+
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_PENDING = 1;
+  PAYMENT_STATUS_COMPLETED = 2;
+  PAYMENT_STATUS_FAILED = 3;
+  PAYMENT_STATUS_REFUNDED = 4;
+}
+
+message SubmitReviewRequest {
+  string rental_id = 1;
+  string user_id = 2;
+  string vehicle_id = 3;
+  int32 rating = 4;
+  string comment = 5;
+}
+
+message ReviewResponse {
+  string review_id = 1;
+  string rental_id = 2;
+  string user_id = 3;
+  string vehicle_id = 4;
+  int32 rating = 5;
+  string comment = 6;
+  google.protobuf.Timestamp created_at = 7;
+  UserResponse user = 8;
+}
+
+message ListVehicleReviewsRequest {
+  string vehicle_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListReviewsResponse {
+  repeated ReviewResponse reviews = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message ListLocationsRequest {
+  string city = 1;
+  string state = 2;
+  string country = 3;
+  int32 page_size = 4;
+  string page_token = 5;
+}
+
+message LocationResponse {
+  string location_id = 1;
+  string name = 2;
+  string address = 3;
+  string city = 4;
+  string state = 5;
+  string country = 6;
+  string zip_code = 7;
+  double latitude = 8;
+  double longitude = 9;
+  string contact_phone = 10;
+  map<string, string> opening_hours = 11;
+}
+
+message ListLocationsResponse {
+  repeated LocationResponse locations = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}

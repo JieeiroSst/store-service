@@ -1,0 +1,105 @@
+type BookStoreAuthor {
+  id: Int!
+  name: String!
+  bio: String!
+}
+
+input BookStoreAuthorInput {
+  name: String
+  bio: String
+}
+
+type BookStoreCategory {
+  id: Int!
+  name: String!
+}
+
+input BookStoreCategoryInput {
+  name: String
+}
+
+type BookStorePublisher {
+  id: Int!
+  name: String!
+  address: String!
+}
+
+input BookStorePublisherInput {
+  name: String
+  address: String
+}
+
+type BookStoreBook {
+  id: Int!
+  name: String!
+  author_id: Int!
+  author: BookStoreAuthor
+  publisher_id: Int!
+  publisher: BookStorePublisher
+  category_id: Int!
+  category: BookStoreCategory
+  price: Float!
+  quantity: Int!
+  unit_of_measurement: String!
+  purchase_count: Int!
+  read_count: Int!
+}
+
+input BookStoreBookInput {
+  name: String
+  author_id: Int
+  publisher_id: Int
+  category_id: Int
+  price: Float
+  quantity: Int
+  unit_of_measurement: String
+}
+
+type BookStoreAuthorStat {
+  author_id: Int!
+  author_name: String!
+  total_reads: Int!
+  total_purchases: Int!
+}
+
+type BookStoreCategoryPriceStat {
+  category_id: Int!
+  category_name: String!
+  min_price: Float!
+  max_price: Float!
+  avg_price: Float!
+  book_count: Int!
+}
+
+extend type Query {
+  bookStoreBooks: [BookStoreBook!]! @public @rest(service: "book-store-service", path: "/api/v1/books")
+  bookStoreBook(id: Int!): BookStoreBook @public @rest(service: "book-store-service", path: "/api/v1/books/{id}")
+  bookStoreHighestPriceBook: BookStoreBook @public @rest(service: "book-store-service", path: "/api/v1/books/highest-price")
+  bookStoreMostPurchasedBook: BookStoreBook @public @rest(service: "book-store-service", path: "/api/v1/books/most-purchased")
+  bookStoreAuthors: [BookStoreAuthor!]! @public @rest(service: "book-store-service", path: "/api/v1/authors")
+  bookStoreAuthor(id: Int!): BookStoreAuthor @public @rest(service: "book-store-service", path: "/api/v1/authors/{id}")
+  bookStoreMostReadAuthor: BookStoreAuthorStat @public @rest(service: "book-store-service", path: "/api/v1/authors/most-read")
+  bookStoreMostPurchasedAuthor: BookStoreAuthorStat @public @rest(service: "book-store-service", path: "/api/v1/authors/most-purchased")
+  bookStorePublishers: [BookStorePublisher!]! @public @rest(service: "book-store-service", path: "/api/v1/publishers")
+  bookStorePublisher(id: Int!): BookStorePublisher @public @rest(service: "book-store-service", path: "/api/v1/publishers/{id}")
+  bookStoreCategories: [BookStoreCategory!]! @public @rest(service: "book-store-service", path: "/api/v1/categories")
+  bookStoreCategory(id: Int!): BookStoreCategory @public @rest(service: "book-store-service", path: "/api/v1/categories/{id}")
+  bookStoreCategoryPriceStats: [BookStoreCategoryPriceStat!]! @public @rest(service: "book-store-service", path: "/api/v1/categories/price-stats")
+}
+
+extend type Mutation {
+  bookStoreCreateBook(input: BookStoreBookInput!): BookStoreBook @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "POST", path: "/api/v1/books")
+  bookStoreUpdateBook(id: Int!, input: BookStoreBookInput!): BookStoreBook @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "PUT", path: "/api/v1/books/{id}")
+  bookStoreDeleteBook(id: Int!): Boolean! @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "DELETE", path: "/api/v1/books/{id}")
+  bookStorePurchaseBook(id: Int!, quantity: Int!): Boolean! @rest(service: "book-store-service", method: "POST", path: "/api/v1/books/{id}/purchase")
+  bookStoreReadBook(id: Int!): Boolean! @rest(service: "book-store-service", method: "POST", path: "/api/v1/books/{id}/read")
+  bookStoreCreateAuthor(input: BookStoreAuthorInput!): BookStoreAuthor @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "POST", path: "/api/v1/authors")
+  bookStoreUpdateAuthor(id: Int!, input: BookStoreAuthorInput!): BookStoreAuthor @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "PUT", path: "/api/v1/authors/{id}")
+  bookStoreDeleteAuthor(id: Int!): Boolean! @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "DELETE", path: "/api/v1/authors/{id}")
+  bookStoreCreatePublisher(input: BookStorePublisherInput!): BookStorePublisher @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "POST", path: "/api/v1/publishers")
+  bookStoreUpdatePublisher(id: Int!, input: BookStorePublisherInput!): BookStorePublisher @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "PUT", path: "/api/v1/publishers/{id}")
+  bookStoreDeletePublisher(id: Int!): Boolean! @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "DELETE", path: "/api/v1/publishers/{id}")
+  bookStoreCreateCategory(input: BookStoreCategoryInput!): BookStoreCategory @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "POST", path: "/api/v1/categories")
+  bookStoreUpdateCategory(id: Int!, input: BookStoreCategoryInput!): BookStoreCategory @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "PUT", path: "/api/v1/categories/{id}")
+  bookStoreDeleteCategory(id: Int!): Boolean! @hasPermission(object: "/graphql/book-store-service", action: "MUTATION") @rest(service: "book-store-service", method: "DELETE", path: "/api/v1/categories/{id}")
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/JIeeiroSSt/reservation-service/config"
 	"github.com/JIeeiroSSt/reservation-service/internal/adapter/outbound/httpx"
@@ -20,7 +21,7 @@ func NewClient(cfg config.Config) *Client {
 }
 
 func (c *Client) Push(ctx context.Context, n domain.Notification) error {
-	st, msg, err := c.c.Do(ctx, http.MethodPost, "/api/v1/notifications", nil, map[string]any{
+	st, msg, err := c.c.Do(ctx, http.MethodPost, "/api/v1/notifications", internalHeaders(), map[string]any{
 		"user_id": n.UserID, "title": n.Title, "message": n.Body, "type": "push", "priority": 1,
 	}, nil)
 	if err != nil {
@@ -28,6 +29,13 @@ func (c *Client) Push(ctx context.Context, n domain.Notification) error {
 	}
 	if !httpx.OK(st) {
 		return fmt.Errorf("%w: notification-service returned %d: %s", domain.ErrUpstreamUnavailable, st, msg)
+	}
+	return nil
+}
+
+func internalHeaders() map[string]string {
+	if t := os.Getenv("INTERNAL_API_TOKEN"); t != "" {
+		return map[string]string{"X-Internal-Token": t}
 	}
 	return nil
 }

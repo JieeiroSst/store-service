@@ -1,0 +1,53 @@
+type PaymentPaymentList {
+  Items: [PaymentPayment!]
+  Total: Int
+}
+
+type PaymentPayment {
+  ID: Int
+  Provider: String
+  ExternalID: String
+  Amount: Int
+  Currency: String
+  Status: String
+  PayerEmail: String
+  Description: String
+  FailureReason: String
+  IdempotencyKey: String
+  RefundedAmount: Int
+  CreatedAt: String
+  UpdatedAt: String
+}
+
+type PaymentTransaction {
+  ID: Int
+  PaymentID: Int
+  Type: String
+  Status: String
+  Amount: Int
+  ExternalID: String
+  RawStatus: String
+  ErrorMessage: String
+  CreatedAt: String
+}
+
+input PaymentCreateInput {
+  provider: String
+  amount: Int
+  currency: String
+  payer_email: String
+  description: String
+  metadata: Map
+  idempotency_key: String
+}
+
+extend type Query {
+  payments(provider: String, status: String, from: String, to: String, limit: Int, offset: Int): PaymentPaymentList @hasPermission(object: "/graphql/payment-service", action: "QUERY") @rest(service: "payment-service", path: "/api/v1/payments")
+  payment(id: Int!): PaymentPayment @hasPermission(object: "/graphql/payment-service", action: "QUERY") @rest(service: "payment-service", path: "/api/v1/payments/{id}")
+  paymentTransactions(id: Int!): [PaymentTransaction!] @hasPermission(object: "/graphql/payment-service", action: "QUERY") @rest(service: "payment-service", path: "/api/v1/payments/{id}/transactions")
+}
+
+extend type Mutation {
+  paymentCreatePayment(input: PaymentCreateInput!): PaymentPayment @rest(service: "payment-service", method: "POST", path: "/api/v1/payments")
+  paymentRefundPayment(id: String!, amount: Int64): PaymentPayment @hasPermission(object: "/graphql/payment-service", action: "MUTATION") @rest(service: "payment-service", method: "POST", path: "/api/v1/payments/{id}/refund")
+}

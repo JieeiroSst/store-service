@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/JIeeiroSst/ticket-service/config"
 	"github.com/JIeeiroSst/ticket-service/internal/adapter/outbound/httpx"
@@ -23,7 +24,7 @@ func NewClient(cfg config.Config) *Client {
 }
 
 func (c *Client) Push(ctx context.Context, n domain.Notification) error {
-	st, msg, err := c.c.Do(ctx, http.MethodPost, "/api/v1/notifications", nil, map[string]any{
+	st, msg, err := c.c.Do(ctx, http.MethodPost, "/api/v1/notifications", internalHeaders(), map[string]any{
 		"user_id": n.UserID, "title": n.Title, "message": n.Body, "type": "push", "priority": 1,
 	}, nil)
 	if err != nil {
@@ -39,7 +40,7 @@ func (c *Client) Email(ctx context.Context, n domain.Notification) error {
 	if n.Email == nil {
 		return nil
 	}
-	st, msg, err := c.c.Do(ctx, http.MethodPost, "/api/v1/notifications/email", nil, map[string]any{
+	st, msg, err := c.c.Do(ctx, http.MethodPost, "/api/v1/notifications/email", internalHeaders(), map[string]any{
 		"user_id": n.UserID, "recipient": n.Email.To, "template_type": n.Email.Template, "template_data": n.Email.Data, "priority": 1,
 	}, nil)
 	if err != nil {
@@ -47,6 +48,13 @@ func (c *Client) Email(ctx context.Context, n domain.Notification) error {
 	}
 	if !httpx.OK(st) {
 		return fmt.Errorf("%w: notification-service returned %d: %s", domain.ErrUpstreamUnavailable, st, msg)
+	}
+	return nil
+}
+
+func internalHeaders() map[string]string {
+	if t := os.Getenv("INTERNAL_API_TOKEN"); t != "" {
+		return map[string]string{"X-Internal-Token": t}
 	}
 	return nil
 }

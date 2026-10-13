@@ -1,0 +1,7 @@
+directive @public on FIELD_DEFINITION
+
+directive @hasPermission(object: String!, action: String!) on FIELD_DEFINITION
+
+directive @rest(service: String!, method: String, path: String!, unwrap: String, body: String, multipart: Boolean, fixed: String, userQuery: String, userField: String, raw: Boolean, owner: String, ownerPath: String, ownerUnwrap: String, queryArgs: String, keys: String, headerArgs: String) on FIELD_DEFINITION
+
+directive @goTag(key: String!, value: String) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION

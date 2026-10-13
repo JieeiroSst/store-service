@@ -1,5 +1,453 @@
 {
     "server": {
         "port_server": "8080"
+    },
+    "services": {
+        "account-transaction": {
+            "http_address": "http://account-transaction-api-svc",
+            "timeout_seconds": 10,
+            "grpc_address": "account-transaction-grpc-svc:90"
+        },
+        "accounting-service": {
+            "http_address": "http://accounting-service-svc",
+            "timeout_seconds": 10
+        },
+        "address-country": {
+            "http_address": "http://address-country-svc",
+            "timeout_seconds": 10
+        },
+        "admanagement": {
+            "http_address": "http://admanagement-svc",
+            "timeout_seconds": 10
+        },
+        "ai-agent-system": {
+            "http_address": "http://ai-agent-system-svc:8080",
+            "timeout_seconds": 10
+        },
+        "airflow-service": {
+            "http_address": "http://airflow-service-svc",
+            "timeout_seconds": 10
+        },
+        "arrange-service": {
+            "http_address": "http://arrange-service-svc",
+            "timeout_seconds": 10,
+            "basic_auth_user": "arrange",
+            "basic_auth_password": "arrange"
+        },
+        "authorize-service": {
+            "grpc_address": "authorize-service-grpc-svc:90",
+            "http_address": "http://authorize-service-api-svc",
+            "timeout_seconds": 10
+        },
+        "automatic-payment-service": {
+            "http_address": "http://automatic-payment-service-svc",
+            "timeout_seconds": 10
+        },
+        "banking-service": {
+            "http_address": "http://banking-service-svc",
+            "timeout_seconds": 10
+        },
+        "basket-service": {
+            "http_address": "http://basket-service-svc",
+            "timeout_seconds": 10
+        },
+        "billing-service": {
+            "http_address": "http://billing-service-svc",
+            "timeout_seconds": 10
+        },
+        "bonuslink-service": {
+            "http_address": "http://bonuslink-service-svc",
+            "timeout_seconds": 10
+        },
+        "book-service": {
+            "http_address": "http://book-service-svc",
+            "timeout_seconds": 10,
+            "headers": {
+                "X-Api-Key": ""
+            }
+        },
+        "book-store-service": {
+            "http_address": "http://book-store-service-svc",
+            "timeout_seconds": 10
+        },
+        "booking-mini-service": {
+            "http_address": "http://booking-mini-service-svc",
+            "timeout_seconds": 10
+        },
+        "bot-service": {
+            "http_address": "http://bot-service-svc",
+            "timeout_seconds": 10
+        },
+        "calculate-service": {
+            "http_address": "http://calculate-service-svc",
+            "timeout_seconds": 10
+        },
+        "call-center-ai": {
+            "http_address": "http://call-center-ai-svc:8000",
+            "timeout_seconds": 30
+        },
+        "car-rental-service": {
+            "http_address": "http://car-rental-service-svc",
+            "timeout_seconds": 10,
+            "grpc_address": "car-rental-service-svc:2223"
+        },
+        "catalogues-service": {
+            "http_address": "http://catalogues-service-svc",
+            "timeout_seconds": 10
+        },
+        "cdn-service": {
+            "http_address": "http://cdn-service-svc",
+            "timeout_seconds": 10,
+            "headers": {
+                "X-API-Key": ""
+            }
+        },
+        "chat-service": {
+            "http_address": "http://chat-service-svc:8080",
+            "timeout_seconds": 10,
+            "forward_user_token": false,
+            "headers": {
+                "Authorization": ""
+            }
+        },
+        "chatbot-system": {
+            "http_address": "http://chatbot-system-svc:8080",
+            "timeout_seconds": 10
+        },
+        "consumer-service": {
+            "http_address": "http://consumer-service-svc",
+            "timeout_seconds": 10
+        },
+        "coupon-service": {
+            "http_address": "http://coupon-service-svc",
+            "timeout_seconds": 10
+        },
+        "customer-relationship-service": {
+            "http_address": "http://customer-relationship-service-svc",
+            "timeout_seconds": 10
+        },
+        "delivery-service": {
+            "http_address": "http://delivery-service-svc",
+            "timeout_seconds": 10
+        },
+        "doordash-service": {
+            "http_address": "http://doordash-service-svc",
+            "timeout_seconds": 10
+        },
+        "draw-image-service": {
+            "http_address": "http://draw-image-service-svc",
+            "timeout_seconds": 10
+        },
+        "ejabberd-service": {
+            "http_address": "http://ejabberd-service-svc:5280",
+            "timeout_seconds": 10
+        },
+        "ekyc-service": {
+            "http_address": "http://ekyc-service-svc",
+            "timeout_seconds": 10
+        },
+        "face-recognition-service": {
+            "http_address": "http://face-recognition-service-svc:1234",
+            "timeout_seconds": 10
+        },
+        "filter-service": {
+            "http_address": "http://filter-service-svc",
+            "timeout_seconds": 10
+        },
+        "food-service": {
+            "http_address": "http://food-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "geoservice": {
+            "http_address": "http://geoservice-svc",
+            "timeout_seconds": 10
+        },
+        "goflow-service": {
+            "http_address": "http://goflow-service-svc:8181",
+            "timeout_seconds": 10
+        },
+        "hospital-patient-management-service": {
+            "http_address": "http://hospital-patient-management-service-svc",
+            "timeout_seconds": 10,
+            "grpc_address": "hospital-patient-management-service-svc:9090"
+        },
+        "identified-service": {
+            "http_address": "http://identified-service-svc:8000",
+            "timeout_seconds": 10
+        },
+        "integrated-payment-service": {
+            "http_address": "http://integrated-payment-service:8080",
+            "timeout_seconds": 10
+        },
+        "kitchen-service": {
+            "http_address": "http://kitchen-service-svc",
+            "timeout_seconds": 10
+        },
+        "kms-service": {
+            "http_address": "http://kms-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "livestream-service": {
+            "http_address": "http://livestream-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "lottery-service": {
+            "http_address": "http://lottery-service-svc",
+            "timeout_seconds": 10
+        },
+        "manage-service": {
+            "http_address": "http://manage-service-svc",
+            "timeout_seconds": 10,
+            "forward_user_token": false,
+            "headers": {
+                "X-Api-Key": ""
+            }
+        },
+        "media-service": {
+            "http_address": "http://media-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "medical-service": {
+            "http_address": "http://medical-service-svc",
+            "timeout_seconds": 10
+        },
+        "message-service": {
+            "http_address": "http://message-service-svc:8080",
+            "timeout_seconds": 10,
+            "headers": {
+                "Authorization": ""
+            }
+        },
+        "movie-recommendation-service": {
+            "http_address": "http://movie-recommendation-service-svc",
+            "timeout_seconds": 10
+        },
+        "networking-service": {
+            "http_address": "http://networking-service-svc:8500",
+            "timeout_seconds": 10
+        },
+        "notification-service": {
+            "http_address": "http://notification-service-svc",
+            "timeout_seconds": 10
+        },
+        "notifyhub-service": {
+            "http_address": "http://notifyhub-service-svc:8095",
+            "timeout_seconds": 10,
+            "headers": {
+                "X-API-Key": ""
+            }
+        },
+        "offer-range-service": {
+            "http_address": "http://offer-range-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "ollama-gateway": {
+            "http_address": "http://ollama-gateway-svc:8080",
+            "timeout_seconds": 10
+        },
+        "ollama-model-py": {
+            "http_address": "http://ollama-model-py-svc:11435",
+            "timeout_seconds": 10
+        },
+        "ollama-service": {
+            "http_address": "http://ollama-service:8080",
+            "timeout_seconds": 10
+        },
+        "order-processing-service": {
+            "http_address": "http://order-processing-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "order-service": {
+            "http_address": "http://order-service-svc",
+            "timeout_seconds": 10
+        },
+        "parking-lot-service": {
+            "http_address": "http://parking-lot-service-svc",
+            "timeout_seconds": 10
+        },
+        "partner-service": {
+            "http_address": "http://partner-service-svc",
+            "timeout_seconds": 10
+        },
+        "payer-service": {
+            "http_address": "http://payer-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "payment-service": {
+            "http_address": "http://payment-service-svc",
+            "timeout_seconds": 10
+        },
+        "payment-wallet-service": {
+            "http_address": "http://payment-wallet-service-svc",
+            "timeout_seconds": 10
+        },
+        "photo-service": {
+            "http_address": "http://photo-service-svc",
+            "timeout_seconds": 10
+        },
+        "point-service": {
+            "http_address": "http://point-service-svc:3000",
+            "timeout_seconds": 10
+        },
+        "polymarket-service": {
+            "http_address": "http://polymarket-service-svc",
+            "timeout_seconds": 10
+        },
+        "post-service": {
+            "http_address": "http://post-service-svc",
+            "timeout_seconds": 10
+        },
+        "qr-service": {
+            "http_address": "http://qr-service:8080",
+            "timeout_seconds": 10
+        },
+        "real-time-service": {
+            "http_address": "http://real-time-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "recompense-service": {
+            "http_address": "http://recompense-service-svc",
+            "timeout_seconds": 10
+        },
+        "recruitment-platform-service": {
+            "http_address": "http://recruitment-platform-service:8080",
+            "timeout_seconds": 10
+        },
+        "referral-service": {
+            "http_address": "http://referral-service-svc",
+            "timeout_seconds": 10
+        },
+        "rent-house-service": {
+            "http_address": "http://rent-house-service-svc",
+            "timeout_seconds": 10
+        },
+        "reservation-service": {
+            "http_address": "http://reservation-service-svc",
+            "timeout_seconds": 10
+        },
+        "reward-service": {
+            "http_address": "http://reward-service:8080",
+            "timeout_seconds": 10
+        },
+        "room-service": {
+            "http_address": "http://room-service-svc",
+            "timeout_seconds": 10
+        },
+        "sard-auth-service": {
+            "http_address": "http://sard-auth-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "sard-card-service": {
+            "http_address": "http://sard-card-service-svc:8080",
+            "timeout_seconds": 10,
+            "forward_user_token": false,
+            "headers": {
+                "X-Api-Token": ""
+            }
+        },
+        "sard-customer-info-service": {
+            "http_address": "http://sard-customer-info-service-svc:8080",
+            "timeout_seconds": 10,
+            "forward_user_token": false,
+            "headers": {
+                "X-Api-Token": ""
+            }
+        },
+        "search-service": {
+            "http_address": "http://search-service-svc:8080",
+            "timeout_seconds": 10,
+            "forward_user_token": false,
+            "headers": {
+                "Authorization": ""
+            }
+        },
+        "serpapi-service": {
+            "http_address": "http://serpapi-service-svc:8080",
+            "timeout_seconds": 10,
+            "forward_user_token": false,
+            "headers": {
+                "Authorization": ""
+            }
+        },
+        "share-service": {
+            "http_address": "http://share-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "shipping-service": {
+            "http_address": "http://shipping-service-svc",
+            "timeout_seconds": 10,
+            "headers": {
+                "X-API-Key": ""
+            }
+        },
+        "shopify-service": {
+            "http_address": "http://shopify-service-svc",
+            "timeout_seconds": 10
+        },
+        "shortlink-service": {
+            "http_address": "http://shortlink-service-svc",
+            "timeout_seconds": 10
+        },
+        "solana-service": {
+            "http_address": "http://solana-service-svc:8080",
+            "timeout_seconds": 10
+        },
+        "threads-service": {
+            "http_address": "http://threads-service-svc",
+            "timeout_seconds": 10
+        },
+        "ticket-service": {
+            "http_address": "http://ticket-service-svc",
+            "timeout_seconds": 10
+        },
+        "toggle-service": {
+            "http_address": "http://toggle-service-svc",
+            "timeout_seconds": 10
+        },
+        "tool-service": {
+            "http_address": "http://tool-service-svc",
+            "timeout_seconds": 10,
+            "forward_user_token": false,
+            "headers": {
+                "X-API-Key": ""
+            }
+        },
+        "upload-service": {
+            "http_address": "http://upload-service-svc",
+            "timeout_seconds": 10
+        },
+        "user-service": {
+            "http_address": "http://user-api-svc",
+            "timeout_seconds": 10,
+            "grpc_address": "user-grpc-svc:80"
+        },
+        "vending-machine-service": {
+            "http_address": "http://vending-machine-service-svc",
+            "timeout_seconds": 10
+        },
+        "video-service": {
+            "http_address": "http://video-service-svc",
+            "timeout_seconds": 10
+        },
+        "voucher-service": {
+            "http_address": "http://voucher-service-svc",
+            "timeout_seconds": 10
+        },
+        "wallet-service": {
+            "http_address": "http://wallet-service:8080",
+            "timeout_seconds": 10
+        },
+        "webrtc-service": {
+            "http_address": "http://webrtc-service-svc",
+            "timeout_seconds": 10
+        },
+        "wishlists-service": {
+            "http_address": "http://wishlists-service-svc:9000",
+            "timeout_seconds": 10
+        },
+        "workflow-service": {
+            "http_address": "http://workflow-service-svc:8080",
+            "timeout_seconds": 30
+        }
     }
 }

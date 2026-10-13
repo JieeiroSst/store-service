@@ -1,0 +1,90 @@
+type VoucherBalance {
+  amount: Int
+  currency: String
+}
+
+type VoucherVoucher {
+  id: String
+  merchant_id: String
+  code: String
+  status: String
+  version: Int
+}
+
+type VoucherValidationResult {
+  valid: Boolean
+  balance: VoucherMoney
+  reason: String
+}
+
+type VoucherOrder {
+  id: String
+  status: String
+  total_amount: Int
+  currency: String
+}
+
+type VoucherMerchant {
+  id: String
+  name: String
+  provider_type: String
+  status: String
+}
+
+type VoucherRedemptionReport {
+  merchant_id: String
+  total_issued: Int
+  total_redeemed: Int
+  redemption_rate: Float
+  period_start: String
+  period_end: String
+}
+
+type VoucherCorporateSpendReport {
+  corporate_id: String
+  total_spent: Int
+  currency: String
+  vouchers_sent: Int
+}
+
+type VoucherMoney {
+  amount: Int
+  currency: String
+}
+
+input VoucherOrderItemInput {
+  merchant_id: String
+  product_sku: String
+  quantity: Int
+  unit_price: Int
+}
+
+extend type Query {
+  voucher(id: String!): VoucherVoucher @rest(service: "voucher-service", path: "/api/v1/vouchers/{id}")
+  voucherValidate(id: String!, pin: String): VoucherValidationResult @rest(service: "voucher-service", path: "/api/v1/vouchers/{id}/validate")
+  vouchers(owner_id: String): [VoucherVoucher!] @rest(service: "voucher-service", path: "/api/v1/vouchers", unwrap: "vouchers")
+  voucherOrder(id: String!): VoucherOrder @rest(service: "voucher-service", path: "/api/v1/orders/{id}")
+  voucherMerchant(id: String!): VoucherMerchant @rest(service: "voucher-service", path: "/api/v1/merchants/{id}")
+  voucherMerchants: [VoucherMerchant!] @rest(service: "voucher-service", path: "/api/v1/merchants", unwrap: "merchants")
+  voucherWalletBalance(ownerType: String!, ownerId: String!): VoucherBalance @rest(service: "voucher-service", path: "/api/v1/wallets/{ownerType}/{ownerId}/balance")
+  voucherRedemptionReports(from: String, to: String): [VoucherRedemptionReport!] @rest(service: "voucher-service", path: "/api/v1/reports/redemptions", unwrap: "reports")
+  voucherCorporateSpend(id: String!, from: String, to: String): VoucherCorporateSpendReport @rest(service: "voucher-service", path: "/api/v1/reports/corporates/{id}/spend")
+}
+
+extend type Mutation {
+  voucherIssue(merchant_id: String!, product_sku: String!, denomination_amount: Int64!, currency: String!, quantity: Int!, expires_in_days: Int, idempotency_key: String): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/vouchers/issue")
+  voucherActivate(id: String!, owner_type: String!, owner_id: String!): VoucherVoucher @rest(service: "voucher-service", method: "POST", path: "/api/v1/vouchers/{id}/activate")
+  voucherRedeem(id: String!, pin: String!, amount: Int64!, currency: String!, idempotency_key: String): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/vouchers/{id}/redeem")
+  voucherRevoke(id: String!): VoucherVoucher @rest(service: "voucher-service", method: "POST", path: "/api/v1/vouchers/{id}/revoke")
+  voucherCreateOrder(buyer_type: String!, buyer_id: String!, currency: String!, items: [VoucherOrderItemInput!]!, idempotency_key: String): VoucherOrder @rest(service: "voucher-service", method: "POST", path: "/api/v1/orders")
+  voucherCheckoutOrder(id: String!, payment_method: String!, idempotency_key: String): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/orders/{id}/checkout")
+  voucherCancelOrder(id: String!): VoucherOrder @rest(service: "voucher-service", method: "POST", path: "/api/v1/orders/{id}/cancel")
+  voucherRegisterMerchant(name: String!, provider_type: String!, config: Map): VoucherMerchant @rest(service: "voucher-service", method: "POST", path: "/api/v1/merchants")
+  voucherRegisterCorporate(name: String!, tax_code: String, contact_email: String): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/corporates")
+  voucherSetCorporateBudget(id: String!, amount: Int64!, currency: String!): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/corporates/{id}/budget")
+  voucherCreateDistributionJob(corporate_id: String!, merchant_id: String!, product_sku: String!, denomination_amount: Int64!, currency: String!, recipients: [String!]!): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/distribution-jobs")
+  voucherInitPayment(order_id: String!, amount: Int64!, currency: String!, provider: String!, return_url: String, idempotency_key: String): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/payments/init")
+  voucherImportStock(id: String!, file: Upload!): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/merchants/{id}/stock/import", multipart: true)
+  voucherCreditWallet(ownerType: String!, ownerId: String!, amount: Int64!, currency: String!, ref_type: String, ref_id: String, idempotency_key: String): Any @rest(service: "voucher-service", method: "POST", path: "/api/v1/wallets/{ownerType}/{ownerId}/credit")
+  voucherClaim(token: String!): Any @public @rest(service: "voucher-service", method: "POST", path: "/api/v1/claims/{token}/claim")
+}

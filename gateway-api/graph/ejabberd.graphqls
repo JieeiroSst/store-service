@@ -1,0 +1,27 @@
+extend type Query {
+  xmppStatus: String @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/status")
+  xmppCheckAccount(user: String!, host: String!): Int @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/check_account")
+  xmppRegisteredUsers(host: String!): [String!] @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/registered_users")
+  xmppRegisteredVhosts: [String!] @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/registered_vhosts")
+  xmppConnectedUsers: [String!] @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/connected_users")
+  xmppConnectedUsersNumber: Any @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/connected_users_number")
+  xmppConnectedUsersVhost(host: String!): [String!] @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/connected_users_vhost")
+  xmppUserResources(user: String!, host: String!): [String!] @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/user_resources")
+  xmppNumResources(user: String!, host: String!): Any @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/num_resources")
+  xmppRoster(user: String!, host: String!): Any @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/get_roster")
+  xmppOfflineCount(user: String!, host: String!): Any @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/get_offline_count")
+  xmppStats(name: String!): Any @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/stats")
+  xmppCommand(command: String!, args: Map): Any @hasPermission(object: "/graphql/ejabberd-service", action: "QUERY") @rest(service: "ejabberd-service", method: "POST", path: "/api/{command}", body: "args")
+}
+
+extend type Mutation {
+  xmppRegister(user: String!, host: String!, password: String!): String @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/register")
+  xmppUnregister(user: String!, host: String!): String @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/unregister")
+  xmppChangePassword(user: String!, host: String!, newpass: String!): Int @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/change_password")
+  xmppKickUser(user: String!, host: String!): Any @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/kick_user")
+  xmppSendMessage(type: String!, from: String!, to: String!, subject: String, body: String!): Int @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/send_message")
+  xmppSendStanza(from: String!, to: String!, stanza: String!): Int @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/send_stanza")
+  xmppAddRosterItem(localuser: String!, localhost: String!, user: String!, host: String!, nick: String, group: String, subs: String): Int @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/add_rosteritem")
+  xmppDeleteRosterItem(localuser: String!, localhost: String!, user: String!, host: String!): Int @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/delete_rosteritem")
+  xmppDeleteExpiredMessages: Any @hasPermission(object: "/graphql/ejabberd-service", action: "MUTATION") @rest(service: "ejabberd-service", method: "POST", path: "/api/delete_expired_messages")
+}

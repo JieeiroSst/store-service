@@ -1,0 +1,16 @@
+type RAccountingPayment {
+  id: Int
+  order_id: Int
+  amount: Float
+  method: String
+  status: String
+}
+
+extend type Query {
+  rAccountingPayment(orderID: Int!): RAccountingPayment @hasPermission(object: "/graphql/restaurant-accounting", action: "QUERY") @rest(service: "accounting-service", path: "/api/v1/payments/{orderID}", unwrap: "data")
+}
+
+extend type Mutation {
+  rAccountingAuthCart(input: Map!): Any @hasPermission(object: "/graphql/restaurant-accounting", action: "MUTATION") @rest(service: "accounting-service", method: "POST", path: "/api/v1/accounting")
+  rAccountingMarkPaid(orderID: String!): Any @hasPermission(object: "/graphql/restaurant-accounting", action: "MUTATION") @rest(service: "accounting-service", method: "PATCH", path: "/api/v1/payments/{orderID}/pay")
+}

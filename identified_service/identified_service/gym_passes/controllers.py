@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from kink import di
 
+from identified_service.building_blocks.auth_deps import require_admin, require_user
+from identified_service.building_blocks.authn import Principal
 from identified_service.building_blocks.errors import APIErrorMessage
 from identified_service.gym_passes.application.dto import CreateGymPassDTO, GymPassDTO, PauseGymPassDTO
 from identified_service.gym_passes.application.gym_pass_service import GymPassService
@@ -16,8 +18,12 @@ router = APIRouter()
     tags=["gym_passes"],
 )
 async def create_gym_pass(
-    request: CreateGymPassDTO, service: GymPassService = Depends(lambda: di[GymPassService])
+    request: CreateGymPassDTO,
+    service: GymPassService = Depends(lambda: di[GymPassService]),
+    principal: Principal = Depends(require_user),
 ) -> JSONResponse:
+    if not principal.is_admin():
+        request.owner = principal.user_id
     result = service.create(request)
     return JSONResponse(content=result.dict(), status_code=status.HTTP_201_CREATED)
 
@@ -27,6 +33,7 @@ async def create_gym_pass(
     response_model=GymPassDTO,
     responses={400: {"model": APIErrorMessage}, 404: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
     tags=["gym_passes"],
+    dependencies=[Depends(require_admin)],
 )
 async def pause(
     gym_pass_id: str, request: PauseGymPassDTO, service: GymPassService = Depends(lambda: di[GymPassService])
@@ -41,6 +48,7 @@ async def pause(
     response_model=GymPassDTO,
     responses={400: {"model": APIErrorMessage}, 404: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
     tags=["gym_passes"],
+    dependencies=[Depends(require_admin)],
 )
 async def renew(gym_pass_id: str, service: GymPassService = Depends(lambda: di[GymPassService])) -> JSONResponse:
     result = service.renew(gym_pass_id)
@@ -52,6 +60,7 @@ async def renew(gym_pass_id: str, service: GymPassService = Depends(lambda: di[G
     response_model=GymPassDTO,
     responses={400: {"model": APIErrorMessage}, 404: {"model": APIErrorMessage}, 500: {"model": APIErrorMessage}},
     tags=["gym_passes"],
+    dependencies=[Depends(require_user)],
 )
 async def check(gym_pass_id: str, service: GymPassService = Depends(lambda: di[GymPassService])) -> JSONResponse:
     result = service.check(gym_pass_id)

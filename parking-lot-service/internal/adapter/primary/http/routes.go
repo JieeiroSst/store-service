@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/JIeeiroSst/parking-lot-service/pkg/authn"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,16 +15,16 @@ func NewRouter(h *Handler) *gin.Engine {
 
 	engine.GET("/health", getHealth)
 
-	api := engine.Group("/api/v1")
+	api := engine.Group("/api/v1", authenticate(authn.FromEnv()))
 	{
 		api.GET("/spots/available", h.AvailableSpots)
 		api.GET("/rates", h.ListRates)
 
-		api.POST("/check-in", h.CheckIn)
-		api.POST("/check-out", h.CheckOut)
-
-		api.GET("/tickets/:id", h.GetTicket)
-		api.GET("/history", h.ListHistory)
+		staff := api.Group("", requireAdmin())
+		staff.POST("/check-in", h.CheckIn)
+		staff.POST("/check-out", h.CheckOut)
+		staff.GET("/tickets/:id", h.GetTicket)
+		staff.GET("/history", h.ListHistory)
 	}
 
 	return engine

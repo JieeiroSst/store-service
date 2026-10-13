@@ -1,9 +1,12 @@
 package http
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/JIeeiroSst/solana-service/pkg/authn"
+	"github.com/gin-gonic/gin"
+)
 
 func SetupRoutes(r *gin.Engine, h *Handler, ch *CircleHandler) {
-	api := r.Group("/api/v1")
+	api := r.Group("/api/v1", authenticate(authn.FromEnv()), requireAdmin())
 	{
 		// Solana routes
 		solana := api.Group("/solana")

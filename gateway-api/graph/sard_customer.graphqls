@@ -1,0 +1,56 @@
+type SardDocument {
+  type: String!
+  source: String!
+  number_last4: String!
+  full_name: String!
+  date_of_birth: String!
+  gender: String!
+  nationality: String!
+  expiry_date: String!
+  checksum_valid: Boolean!
+  nfc_verified: Boolean!
+  confidence: Float!
+}
+
+type SardKyc {
+  status: String!
+  face_verified: Boolean!
+  document: SardDocument
+  reasons: [String!]
+  submitted_at: String
+  verified_at: String
+}
+
+type SardEligibility {
+  eligible: Boolean!
+  reasons: [String!]
+}
+
+type SardCustomer {
+  id: String!
+  user_id: Int!
+  username: String!
+  full_name: String!
+  email: String!
+  phone: String!
+  address: String!
+  gender: String!
+  status: String!
+  kyc: SardKyc
+  card_eligibility: SardEligibility
+  created_at: String
+  updated_at: String
+  synced_at: String
+}
+
+extend type Query {
+  sardCustomer(id: String!): SardCustomer @hasPermission(object: "/graphql/sard-customer-info-service", action: "QUERY") @rest(service: "sard-customer-info-service", path: "/api/v1/customers/{id}")
+  sardCustomerByUser(userId: Int!): SardCustomer @hasPermission(object: "/graphql/sard-customer-info-service", action: "QUERY") @rest(service: "sard-customer-info-service", path: "/api/v1/users/{userId}/customer")
+}
+
+extend type Mutation {
+  sardOnboardCustomer(input: Map!): SardCustomer @hasPermission(object: "/graphql/sard-customer-info-service", action: "MUTATION") @rest(service: "sard-customer-info-service", method: "POST", path: "/api/v1/customers")
+  sardSyncCustomer(id: String!): SardCustomer @hasPermission(object: "/graphql/sard-customer-info-service", action: "MUTATION") @rest(service: "sard-customer-info-service", method: "POST", path: "/api/v1/customers/{id}/sync")
+  sardSubmitKyc(id: String!, input: Map): SardCustomer @hasPermission(object: "/graphql/sard-customer-info-service", action: "MUTATION") @rest(service: "sard-customer-info-service", method: "POST", path: "/api/v1/customers/{id}/kyc")
+  sardRefreshKyc(id: String!): SardCustomer @hasPermission(object: "/graphql/sard-customer-info-service", action: "MUTATION") @rest(service: "sard-customer-info-service", method: "POST", path: "/api/v1/customers/{id}/kyc/refresh")
+}

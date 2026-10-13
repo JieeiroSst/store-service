@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/JIeeiroSst/customer-relationship-service/config"
 	"github.com/JIeeiroSst/customer-relationship-service/internal/domain/model"
@@ -60,6 +61,9 @@ func (h *httpNotifier) Notify(ctx context.Context, msg model.Notification) error
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	if t := os.Getenv("INTERNAL_API_TOKEN"); t != "" {
+		req.Header.Set("X-Internal-Token", t)
+	}
 
 	resp, err := h.client.Do(req)
 	if err != nil {

@@ -1,0 +1,89 @@
+type AuthzUserRoles {
+  userId: String!
+  roles: [String!]!
+  effectiveRoles: [String!]!
+  primaryRole: String!
+}
+
+type AuthzPermission {
+  object: String!
+  action: String!
+  grantedBy: String!
+}
+
+type AuthzRole {
+  name: String!
+  description: String!
+  rank: Int!
+  inherits: [String!]!
+  permissions: [AuthzPermission!]!
+  assignable: Boolean!
+}
+
+type CasbinRule {
+  id: Int!
+  ptype: String!
+  v0: String!
+  v1: String!
+  v2: String!
+  v3: String!
+  v4: String!
+  v5: String!
+}
+
+type CasbinRuleList {
+  rows: [CasbinRule!]!
+  limit: Int!
+  page: Int!
+  sort: String!
+  totalRows: Int64!
+  totalPages: Int!
+}
+
+type AuthzResult {
+  message: String!
+  error: Boolean!
+}
+
+type OtpToken {
+  otp: String!
+  expiresAt: Int64!
+}
+
+type OtpVerification {
+  valid: Boolean!
+  message: String!
+}
+
+input CasbinRuleInput {
+  ptype: String!
+  v0: String
+  v1: String
+  v2: String
+  v3: String
+  v4: String
+  v5: String
+}
+
+extend type Query {
+  myRoles: AuthzUserRoles!
+  myPermissions: [AuthzPermission!]!
+  checkMyPermission(object: String!, action: String!): Boolean!
+  authzRoles: [AuthzRole!]! @hasPermission(object: "/graphql/authz", action: "QUERY")
+  authzUserRoles(userId: String!): AuthzUserRoles! @hasPermission(object: "/graphql/authz", action: "QUERY")
+  authzUserPermissions(userId: String!): [AuthzPermission!]! @hasPermission(object: "/graphql/authz", action: "QUERY")
+  casbinRules(page: Int, limit: Int, sort: String): CasbinRuleList! @hasPermission(object: "/graphql/authz", action: "QUERY")
+  casbinRule(id: Int!): CasbinRule @hasPermission(object: "/graphql/authz", action: "QUERY")
+}
+
+extend type Mutation {
+  authzAssignRoles(userId: String!, roles: [String!]!): AuthzUserRoles! @hasPermission(object: "/graphql/authz", action: "MUTATION")
+  authzRevokeRoles(userId: String!, roles: [String!]!): AuthzUserRoles! @hasPermission(object: "/graphql/authz", action: "MUTATION")
+  authzSetUserRoles(userId: String!, roles: [String!]!): AuthzUserRoles! @hasPermission(object: "/graphql/authz", action: "MUTATION")
+  authzRemoveUser(userId: String!): Boolean! @hasPermission(object: "/graphql/authz", action: "MUTATION")
+  createCasbinRule(input: CasbinRuleInput!): AuthzResult! @hasPermission(object: "/graphql/authz", action: "MUTATION")
+  updateCasbinRule(id: Int!, field: String!, value: String!): AuthzResult! @hasPermission(object: "/graphql/authz", action: "MUTATION")
+  deleteCasbinRule(id: Int!): Boolean! @hasPermission(object: "/graphql/authz", action: "MUTATION")
+  createOtp(userId: String!, username: String!): OtpToken! @hasPermission(object: "/graphql/authz/otp", action: "MUTATION")
+  verifyOtp(otp: String!): OtpVerification!
+}

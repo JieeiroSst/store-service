@@ -1,0 +1,110 @@
+type PointPaginationInfo {
+  next_cursor: String
+  prev_cursor: String
+}
+
+type PointRewardPointPage {
+  success: Boolean
+  data: [PointRewardPoint!]
+  pagination: PointPaginationInfo
+}
+
+type PointRewardDiscountPage {
+  success: Boolean
+  data: [PointRewardDiscount!]
+  pagination: PointPaginationInfo
+}
+
+type PointConvertedRewardPointPage {
+  success: Boolean
+  data: [PointConvertedRewardPoint!]
+  pagination: PointPaginationInfo
+}
+
+type PointRewardPoint {
+  reward_points_id: String
+  total_points: Int
+  points_pending: Int
+  points_active: Int
+  points_expired: Int
+  points_converted: Int
+  points_cancelled: Int
+  activate_date: Int
+  expire_date: Int
+  created_at: String
+  updated_at: String
+}
+
+type PointRewardDiscount {
+  reward_discount_id: String
+  total_points: Int
+  points_pending: Int
+  points_active: Int
+  points_expired: Int
+  points_converted: Int
+  points_cancelled: Int
+  activate_date: Int
+  expire_date: Int
+  created_at: String
+  updated_at: String
+}
+
+type PointConvertedRewardPoint {
+  rew_convert_id: String
+  rew_convert_ord_detail_id: String
+  rew_convert_discount_id: String
+  rew_convert_points: Int
+  rew_convert_date: Int
+  created_at: String
+  updated_at: String
+}
+
+input PointRewardPointInput {
+  reward_points_id: String
+  total_points: Int
+  points_pending: Int
+  points_active: Int
+  points_expired: Int
+  points_converted: Int
+  points_cancelled: Int
+  activate_date: Int
+  expire_date: Int
+}
+
+input PointRewardDiscountInput {
+  reward_discount_id: String
+  total_points: Int
+  points_pending: Int
+  points_active: Int
+  points_expired: Int
+  points_converted: Int
+  points_cancelled: Int
+  activate_date: Int
+  expire_date: Int
+}
+
+input PointConvertedRewardPointInput {
+  rew_convert_id: String
+  rew_convert_ord_detail_id: String
+  rew_convert_discount_id: String
+  rew_convert_points: Int
+  rew_convert_date: Int
+}
+
+extend type Query {
+  pointRewardPoints(per_page: Int, sort_order: String, cursor: String): PointRewardPointPage @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/reward-points")
+  pointRewardPoint(id: String!): PointRewardPoint @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/reward-points/{id}")
+  pointRewardDiscounts(per_page: Int, sort_order: String, cursor: String): PointRewardDiscountPage @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/reward-discounts")
+  pointRewardDiscount(id: String!): PointRewardDiscount @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/reward-discounts/{id}")
+  pointConvertedRewardPoints(per_page: Int, sort_order: String, cursor: String): PointConvertedRewardPointPage @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/converted-reward-points")
+  pointConvertedRewardPoint(id: String!): PointConvertedRewardPoint @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/converted-reward-points/{id}")
+}
+
+extend type Mutation {
+  pointCreateRewardPoint(input: PointRewardPointInput!): String @hasPermission(object: "/graphql/point-service", action: "MUTATION") @rest(service: "point-service", method: "POST", path: "/api/v1/reward-points")
+  pointUpdateRewardPoint(input: PointRewardPointInput!): String @hasPermission(object: "/graphql/point-service", action: "MUTATION") @rest(service: "point-service", method: "PUT", path: "/api/v1/reward-points")
+  pointCreateRewardDiscount(input: PointRewardDiscountInput!): String @hasPermission(object: "/graphql/point-service", action: "MUTATION") @rest(service: "point-service", method: "POST", path: "/api/v1/reward-discounts")
+  pointUpdateRewardDiscount(input: PointRewardDiscountInput!): String @hasPermission(object: "/graphql/point-service", action: "MUTATION") @rest(service: "point-service", method: "PUT", path: "/api/v1/reward-discounts")
+  pointCreateConvertedRewardPoint(input: PointConvertedRewardPointInput!): String @hasPermission(object: "/graphql/point-service", action: "MUTATION") @rest(service: "point-service", method: "POST", path: "/api/v1/converted-reward-points")
+  pointUpdateConvertedRewardPoint(input: PointConvertedRewardPointInput!): String @hasPermission(object: "/graphql/point-service", action: "MUTATION") @rest(service: "point-service", method: "PUT", path: "/api/v1/converted-reward-points")
+}

@@ -1,0 +1,36 @@
+type RewardMeta {
+  count: Int
+  page: Int
+  pages: Int
+}
+
+type RewardReward {
+  id: String
+  name: String
+  description: String
+  points: Int
+  created_at: String
+  updated_at: String
+}
+
+type RewardPage {
+  meta: RewardMeta
+  records: [RewardReward!]
+}
+
+input RewardRewardInput {
+  name: String
+  description: String
+  points: Int64
+}
+
+extend type Query {
+  rewards(name: String, page: Int, page_size: Int): RewardPage @public @rest(service: "reward-service", path: "/reward")
+  reward(reward_id: String!): RewardPage @public @rest(service: "reward-service", path: "/reward/{reward_id}")
+}
+
+extend type Mutation {
+  rewardCreateReward(input: RewardRewardInput!): RewardReward @hasPermission(object: "/graphql/reward-service", action: "MUTATION") @rest(service: "reward-service", method: "POST", path: "/reward")
+  rewardUpdateReward(reward_id: String!, input: RewardRewardInput!): RewardReward @hasPermission(object: "/graphql/reward-service", action: "MUTATION") @rest(service: "reward-service", method: "PUT", path: "/reward/{reward_id}")
+  rewardDeleteReward(reward_id: String!): Boolean! @hasPermission(object: "/graphql/reward-service", action: "MUTATION") @rest(service: "reward-service", method: "DELETE", path: "/reward/{reward_id}")
+}

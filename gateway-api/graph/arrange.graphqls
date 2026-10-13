@@ -1,0 +1,72 @@
+type ArrangeDispatchAssignment {
+  id: Int!
+  orderId: Int!
+  driverId: Int!
+  sequence: Int!
+  status: String!
+}
+
+type ArrangeShift {
+  id: Int!
+  employeeId: Int!
+  storeId: Int!
+  role: String!
+  startTime: String!
+  endTime: String!
+  status: String!
+}
+
+input ArrangeShiftInput {
+  employeeId: Int
+  storeId: Int
+  role: String
+  startTime: String
+  endTime: String
+}
+
+type ArrangeSpace {
+  id: Int!
+  storeId: Int!
+  name: String!
+  type: String!
+  capacity: Int!
+}
+
+type ArrangeSpaceAssignment {
+  id: Int!
+  spaceId: Int!
+  referenceId: Int!
+  partySize: Int!
+  arrangedFrom: String!
+  arrangedTo: String!
+  status: String!
+}
+
+input ArrangeDispatchInput {
+  orderId: Int
+  driverId: Int
+}
+
+input ArrangeSpaceInput {
+  storeId: Int
+  referenceId: Int
+  partySize: Int
+  from: String
+  to: String
+}
+
+extend type Query {
+  arrangeDispatchAssignments(driverId: Int!): [ArrangeDispatchAssignment!]! @hasPermission(object: "/graphql/arrange-service", action: "QUERY") @rest(service: "arrange-service", path: "/dispatch/assignments")
+  arrangeShifts(storeId: Int!): [ArrangeShift!]! @hasPermission(object: "/graphql/arrange-service", action: "QUERY") @rest(service: "arrange-service", path: "/shifts")
+  arrangeSpaces(storeId: Int!, minCapacity: Int): [ArrangeSpace!]! @hasPermission(object: "/graphql/arrange-service", action: "QUERY") @rest(service: "arrange-service", path: "/spaces")
+  arrangeSpaceAssignments(storeId: Int!): [ArrangeSpaceAssignment!]! @hasPermission(object: "/graphql/arrange-service", action: "QUERY") @rest(service: "arrange-service", path: "/spaces/assignments")
+}
+
+extend type Mutation {
+  arrangeDispatch(input: ArrangeDispatchInput!): ArrangeDispatchAssignment @hasPermission(object: "/graphql/arrange-service", action: "MUTATION") @rest(service: "arrange-service", method: "POST", path: "/dispatch/assignments")
+  arrangeMarkDelivered(id: Int!): Boolean! @hasPermission(object: "/graphql/arrange-service", action: "MUTATION") @rest(service: "arrange-service", method: "PATCH", path: "/dispatch/assignments/{id}/delivered")
+  arrangeShift(input: ArrangeShiftInput!): ArrangeShift @hasPermission(object: "/graphql/arrange-service", action: "MUTATION") @rest(service: "arrange-service", method: "POST", path: "/shifts")
+  arrangeCancelShift(id: Int!): Boolean! @hasPermission(object: "/graphql/arrange-service", action: "MUTATION") @rest(service: "arrange-service", method: "DELETE", path: "/shifts/{id}")
+  arrangeSpace(input: ArrangeSpaceInput!): ArrangeSpaceAssignment @hasPermission(object: "/graphql/arrange-service", action: "MUTATION") @rest(service: "arrange-service", method: "POST", path: "/spaces/assignments")
+  arrangeReleaseSpace(id: Int!): Boolean! @hasPermission(object: "/graphql/arrange-service", action: "MUTATION") @rest(service: "arrange-service", method: "DELETE", path: "/spaces/assignments/{id}")
+}

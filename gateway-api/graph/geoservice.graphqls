@@ -1,0 +1,96 @@
+type GeoStats {
+  provinces: Int
+  districts: Int
+  wards: Int
+}
+
+type GeoLocationResult {
+  found: Boolean
+  province: GeoProvince
+  district: GeoDistrict
+  ward: GeoWard
+  street: GeoStreet
+  point: GeoPoint
+  distance_m: Float
+}
+
+type GeoProvince {
+  code: String
+  name: String
+  name_full: String
+  name_en: String
+  type: String
+  region: String
+  slug: String
+  gid: String
+  area_km2: Float
+}
+
+type GeoDistrict {
+  code: String
+  province_code: String
+  name: String
+  name_full: String
+  name_en: String
+  type: String
+  slug: String
+  gid: String
+  area_km2: Float
+}
+
+type GeoWard {
+  code: String
+  district_code: String
+  province_code: String
+  name: String
+  name_full: String
+  name_en: String
+  type: String
+  slug: String
+  gid: String
+  area_km2: Float
+}
+
+type GeoStreet {
+  id: Int
+  province_code: String
+  district_code: String
+  name: String
+  name_full: String
+  name_en: String
+  slug: String
+  gid: String
+  length_m: Float
+  distance_m: Float
+}
+
+type GeoWhitelistResult {
+  whitelisted: Boolean
+  province: GeoProvince
+  district: GeoDistrict
+  ward: GeoWard
+  street: GeoStreet
+  point: GeoPoint
+}
+
+type GeoWhitelistCity {
+  province_code: String
+  note: String
+}
+
+type GeoPoint {
+  lng: Float
+  lat: Float
+}
+
+extend type Query {
+  geoLocate(lng: Float!, lat: Float!, tolerance: Float): GeoLocationResult @public @rest(service: "geoservice", path: "/api/v1/locate")
+  geoProvinces: [GeoProvince!] @public @rest(service: "geoservice", path: "/api/v1/provinces")
+  geoProvince(code: String!): GeoProvince @public @rest(service: "geoservice", path: "/api/v1/provinces/{code}")
+  geoDistricts(code: String!): [GeoDistrict!] @public @rest(service: "geoservice", path: "/api/v1/provinces/{code}/districts")
+  geoWards(code: String!): [GeoWard!] @public @rest(service: "geoservice", path: "/api/v1/districts/{code}/wards")
+  geoStreets(code: String!): [GeoStreet!] @public @rest(service: "geoservice", path: "/api/v1/provinces/{code}/streets")
+  geoStats: GeoStats @public @rest(service: "geoservice", path: "/api/v1/stats")
+  geoWhitelistCheck(lng: Float!, lat: Float!, tolerance: Float): GeoWhitelistResult @public @rest(service: "geoservice", path: "/api/v1/whitelist/check")
+  geoWhitelistCities: [GeoWhitelistCity!] @public @rest(service: "geoservice", path: "/api/v1/whitelist/cities")
+}

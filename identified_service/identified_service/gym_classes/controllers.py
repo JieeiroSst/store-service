@@ -1,7 +1,8 @@
 from bson.objectid import ObjectId
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 
+from identified_service.building_blocks.auth_deps import require_admin
 from identified_service.gym_classes.config import Config
 from identified_service.gym_classes.errors import GymClassNotFound
 from identified_service.gym_classes.models import CreateOrUpdateClass, GymClass
@@ -9,7 +10,7 @@ from identified_service.gym_classes.models import CreateOrUpdateClass, GymClass
 router = APIRouter()
 
 
-@router.post("/classes", response_model=GymClass, tags=["gym classes"])
+@router.post("/classes", response_model=GymClass, tags=["gym classes"], dependencies=[Depends(require_admin)])
 async def create_class(gym_class_request: CreateOrUpdateClass) -> JSONResponse:
     service = Config.get_gym_class_service()
     result = service.create(gym_class_request)
@@ -35,7 +36,7 @@ async def get_class(class_id: str) -> JSONResponse:
     return JSONResponse(content=result.dict(), status_code=status.HTTP_200_OK)
 
 
-@router.put("/classes/{class_id}", response_model=GymClass, tags=["gym classes"])
+@router.put("/classes/{class_id}", response_model=GymClass, tags=["gym classes"], dependencies=[Depends(require_admin)])
 async def update_class(class_id: str, gym_class_request: CreateOrUpdateClass) -> JSONResponse:
     service = Config.get_gym_class_service()
     try:
@@ -46,7 +47,7 @@ async def update_class(class_id: str, gym_class_request: CreateOrUpdateClass) ->
     return JSONResponse(content=result.dict(), status_code=status.HTTP_200_OK)
 
 
-@router.delete("/classes/{class_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["gym classes"])
+@router.delete("/classes/{class_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["gym classes"], dependencies=[Depends(require_admin)])
 async def delete_class(class_id: str) -> JSONResponse:
     service = Config.get_gym_class_service()
     service.delete(class_id)

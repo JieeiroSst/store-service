@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"crypto/subtle"
 	"encoding/base64"
-	"strings"
 
 	"github.com/JIeeiroSst/chat-service/pkg/log"
 )
@@ -13,7 +13,7 @@ func DecodeBase(msg, decode string) bool {
 		log.Error(err.Error())
 		return false
 	}
-	if !strings.EqualFold(string(msgDecode), decode) {
+	if decode == "" || subtle.ConstantTimeCompare(msgDecode, []byte(decode)) != 1 {
 		log.Error("Decode base failed")
 		return false
 	}

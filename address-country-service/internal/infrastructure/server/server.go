@@ -4,6 +4,7 @@ import (
 	"context"
 
 	httpadapter "github.com/JIeeiroSst/address-country-service/internal/adapter/primary/http"
+	"github.com/JIeeiroSst/address-country-service/pkg/authn"
 	"go.uber.org/fx"
 	"gofr.dev/pkg/gofr"
 )
@@ -17,6 +18,7 @@ type Params struct {
 
 func New(p Params) {
 	app := gofr.New()
+	app.UseMiddleware(authn.FromEnv().OptionalMiddleware)
 
 	httpadapter.RegisterRoutes(app, p.Handler)
 

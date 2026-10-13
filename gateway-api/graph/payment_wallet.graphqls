@@ -1,0 +1,126 @@
+type WalletPaymentRequestQR {
+  payment_request_id: String
+  payload: String
+}
+
+type WalletWallet {
+  wallet_id: String
+  user_id: String
+  balance: Int
+  currency: String
+  status: String
+  daily_limit: Int
+  per_transaction_limit: Int
+  frozen_reason: String
+  created_at: String
+  updated_at: String
+}
+
+type WalletTransaction {
+  transaction_id: String
+  wallet_id: String
+  type: String
+  amount: Int
+  currency: String
+  status: String
+  reference_id: String
+  counterparty_wallet_id: String
+  pocket_id: String
+  description: String
+  created_at: String
+}
+
+type WalletPocket {
+  pocket_id: String
+  wallet_id: String
+  name: String
+  balance: Int
+  currency: String
+  created_at: String
+  updated_at: String
+}
+
+type WalletTransfer {
+  transfer_id: String
+  sender_wallet_id: String
+  receiver_wallet_id: String
+  amount: Int
+  currency: String
+  status: String
+  reference_id: String
+  out_transaction_id: String
+  in_transaction_id: String
+  description: String
+  created_at: String
+}
+
+type WalletPaymentRequest {
+  payment_request_id: String
+  requester_wallet_id: String
+  payer_wallet_id: String
+  amount: Int
+  currency: String
+  status: String
+  description: String
+  transfer_id: String
+  expires_at: String
+  created_at: String
+}
+
+type WalletPaymentMethod {
+  payment_method_id: String
+  user_id: String
+  type: String
+  provider: String
+  account_number: String
+  is_default: Boolean
+  is_active: Boolean
+  created_at: String
+}
+
+extend type Query {
+  wallet(id: String!): WalletWallet @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/wallets/{id}")
+  walletByUser(userId: String!): WalletWallet @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/wallets/user/{userId}")
+  walletTransactions(id: String!, limit: Int, offset: Int): [WalletTransaction!] @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/wallets/{id}/transactions")
+  walletTransactionByReference(id: String!, referenceId: String!): WalletTransaction @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/wallets/{id}/transactions/by-reference/{referenceId}")
+  walletPockets(id: String!): [WalletPocket!] @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/wallets/{id}/pockets")
+  walletTransfer(id: String!): WalletTransfer @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/transfers/{id}")
+  walletTransaction(id: String!): WalletTransaction @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/transactions/{id}")
+  walletPaymentRequests(wallet_id: String!): [WalletPaymentRequest!] @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/payment-requests")
+  walletPaymentRequest(id: String!): WalletPaymentRequest @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/payment-requests/{id}")
+  walletPaymentRequestQR(id: String!): WalletPaymentRequestQR @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/payment-requests/{id}/qr")
+  walletPaymentMethods(user_id: String!): [WalletPaymentMethod!] @hasPermission(object: "/graphql/payment-wallet-service", action: "QUERY") @rest(service: "payment-wallet-service", path: "/api/v1/payment-methods")
+  myWallet: WalletWallet @rest(service: "payment-wallet-service", path: "/api/v1/wallets/user/{$userId}")
+  myWalletTransactions(id: String!, limit: Int, offset: Int): [WalletTransaction!] @rest(service: "payment-wallet-service", path: "/api/v1/wallets/{id}/transactions", owner: "user_id", ownerPath: "/api/v1/wallets/{id}")
+  myWalletPockets(id: String!): [WalletPocket!] @rest(service: "payment-wallet-service", path: "/api/v1/wallets/{id}/pockets", owner: "user_id", ownerPath: "/api/v1/wallets/{id}")
+  myPaymentMethods: [WalletPaymentMethod!] @rest(service: "payment-wallet-service", path: "/api/v1/payment-methods", userQuery: "user_id")
+}
+
+extend type Mutation {
+  createMyWallet(currency: String!): WalletWallet @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets", userField: "user_id")
+  createMyPocket(id: String!, name: String!): WalletPocket @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets/{id}/pockets", owner: "user_id", ownerPath: "/api/v1/wallets/{id}")
+  transferFromMyWallet(sender_wallet_id: String!, receiver_wallet_id: String!, amount: Int64!, reference_id: String!, description: String): WalletTransfer @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/transfers", owner: "user_id", ownerPath: "/api/v1/wallets/{sender_wallet_id}")
+  createMyPaymentRequest(requester_wallet_id: String!, payer_wallet_id: String, amount: Int64!, description: String, expires_in_seconds: Int64): WalletPaymentRequest @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/payment-requests", owner: "user_id", ownerPath: "/api/v1/wallets/{requester_wallet_id}")
+  payPaymentRequestFromMyWallet(id: String!, payer_wallet_id: String!): Any @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/payment-requests/{id}/pay", owner: "user_id", ownerPath: "/api/v1/wallets/{payer_wallet_id}")
+  addMyPaymentMethod(type: String!, provider: String!, account_number: String!): WalletPaymentMethod @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/payment-methods", userField: "user_id")
+  walletCreateWallet(user_id: String!, currency: String!): WalletWallet @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets")
+  walletDeposit(id: String!, amount: Int64!, reference_id: String!, description: String): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets/{id}/deposit")
+  walletWithdraw(id: String!, amount: Int64!, reference_id: String!, description: String): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets/{id}/withdraw")
+  walletFreeze(id: String!, reason: String): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets/{id}/freeze")
+  walletUnfreeze(id: String!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets/{id}/unfreeze")
+  walletClose(id: String!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets/{id}/close")
+  walletSetLimits(id: String!, daily_limit: Int64!, per_transaction_limit: Int64!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "PATCH", path: "/api/v1/wallets/{id}/limits")
+  walletCreatePocket(id: String!, name: String!): WalletPocket @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/wallets/{id}/pockets")
+  walletDepositToPocket(pocketId: String!, amount: Int64!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/pockets/{pocketId}/deposit")
+  walletWithdrawFromPocket(pocketId: String!, amount: Int64!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/pockets/{pocketId}/withdraw")
+  walletClosePocket(pocketId: String!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "DELETE", path: "/api/v1/pockets/{pocketId}")
+  walletTransfer(sender_wallet_id: String!, receiver_wallet_id: String!, amount: Int64!, reference_id: String!, description: String): WalletTransfer @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/transfers")
+  walletReverseTransfer(id: String!, reason: String): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/transfers/{id}/reverse")
+  walletReverseTransaction(id: String!, reason: String): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/transactions/{id}/reverse")
+  walletCreatePaymentRequest(requester_wallet_id: String!, payer_wallet_id: String, amount: Int64!, description: String, expires_in_seconds: Int64): WalletPaymentRequest @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/payment-requests")
+  walletPayPaymentRequest(id: String!, payer_wallet_id: String!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/payment-requests/{id}/pay")
+  walletCancelPaymentRequest(id: String!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/payment-requests/{id}/cancel")
+  walletAddPaymentMethod(user_id: String!, type: String!, provider: String!, account_number: String!): WalletPaymentMethod @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "POST", path: "/api/v1/payment-methods")
+  walletRemovePaymentMethod(id: String!): Boolean! @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "DELETE", path: "/api/v1/payment-methods/{id}")
+  walletSetDefaultPaymentMethod(id: String!): Any @hasPermission(object: "/graphql/payment-wallet-service", action: "MUTATION") @rest(service: "payment-wallet-service", method: "PATCH", path: "/api/v1/payment-methods/{id}/default")
+}

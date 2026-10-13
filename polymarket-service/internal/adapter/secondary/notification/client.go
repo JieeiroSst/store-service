@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -46,6 +47,9 @@ func (c *Client) Notify(ctx context.Context, n port.Notification) error {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	if t := os.Getenv("INTERNAL_API_TOKEN"); t != "" {
+		req.Header.Set("X-Internal-Token", t)
+	}
 
 	resp, err := c.http.Do(req)
 	if err != nil {

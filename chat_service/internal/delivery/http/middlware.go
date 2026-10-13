@@ -22,7 +22,7 @@ const requestIDHeader = "Authorization"
 
 func (h *Http) AccessApi(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authorzation := w.Header().Get(requestIDHeader)
+		authorzation := r.Header.Get(requestIDHeader)
 		if ok := utils.DecodeBase(authorzation, h.Config.Secret.AuthorizeKey); !ok {
 			http.Error(w, http.StatusText(403), 403)
 			return

@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/JIeeiroSst/polymarket-service/config"
@@ -80,6 +81,9 @@ func (c *Client) do(ctx context.Context, method, path string, body, out any) err
 	}
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
+	}
+	if t := os.Getenv("INTERNAL_API_TOKEN"); t != "" {
+		req.Header.Set("X-Internal-Token", t)
 	}
 
 	resp, err := c.http.Do(req)

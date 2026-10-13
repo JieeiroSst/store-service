@@ -15,6 +15,7 @@ import (
 const maxErrorBody = 4 << 10
 
 type Client struct {
+	headers     map[string]string
 	base        string
 	http        *http.Client
 	requestedBy string
@@ -72,6 +73,9 @@ func (c *Client) Do(ctx context.Context, method, path string, body, out any) err
 		return err
 	}
 	req.Header.Set("Accept", "application/json")
+	for k, v := range c.headers {
+		req.Header.Set(k, v)
+	}
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
@@ -122,4 +126,18 @@ func WithRetry(ctx context.Context, attempts int, backoff time.Duration, fn func
 		}
 	}
 	return err
+}
+
+func (c *Client) WithHeader(key, value string) *Client {
+	if value == "" {
+		return c
+	}
+	cp := *c
+	cp.headers = map[string]string{key: value}
+	for k, v := range c.headers {
+		if k != key {
+			cp.headers[k] = v
+		}
+	}
+	return &cp
 }

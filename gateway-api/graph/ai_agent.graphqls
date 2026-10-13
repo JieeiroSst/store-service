@@ -1,0 +1,102 @@
+type AiAgentHistoryMessage {
+  role: String!
+  content: String!
+  source: String!
+  created_at: String!
+}
+
+type AiAgentHistory {
+  messages: [AiAgentHistoryMessage!]!
+}
+
+type AiAgentMessage {
+  role: String!
+  content: String!
+}
+
+input AiAgentMessageInput {
+  role: String
+  content: String
+}
+
+type AiAgentGenerateResponse {
+  model: String!
+  created_at: String!
+  response: String!
+  done: Boolean!
+  total_duration: Int!
+  load_duration: Int!
+  prompt_eval_count: Int!
+  prompt_eval_duration: Int!
+  eval_count: Int!
+  eval_duration: Int!
+}
+
+type AiAgentChatResponse {
+  model: String!
+  created_at: String!
+  message: AiAgentMessage
+  done: Boolean!
+  total_duration: Int!
+  load_duration: Int!
+  prompt_eval_count: Int!
+  prompt_eval_duration: Int!
+  eval_count: Int!
+  eval_duration: Int!
+}
+
+type AiAgentModelDetails {
+  parent_model: String!
+  format: String!
+  family: String!
+  families: [String!]
+  parameter_size: String!
+  quantization_level: String!
+}
+
+type AiAgentModel {
+  name: String!
+  model: String!
+  modified_at: String!
+  size: Int!
+  digest: String!
+  details: AiAgentModelDetails
+}
+
+type AiAgentTags {
+  models: [AiAgentModel!]!
+}
+
+type AiAgentShowResponse {
+  modelfile: String!
+  parameters: String!
+  template: String!
+  details: AiAgentModelDetails
+  model_info: Map
+  capabilities: [String!]
+}
+
+input AiAgentGenerateInput {
+  model: String
+  prompt: String
+}
+
+input AiAgentChatInput {
+  model: String
+  messages: [AiAgentMessageInput!]
+}
+
+input AiAgentShowInput {
+  model: String
+}
+
+extend type Query {
+  aiAgentChatHistory(limit: Int): AiAgentHistory @rest(service: "ai-agent-system", path: "/v1/chat/history")
+  aiAgentModels: AiAgentTags @rest(service: "ai-agent-system", path: "/api/tags")
+  aiAgentShowModel(input: AiAgentShowInput!): AiAgentShowResponse @rest(service: "ai-agent-system", method: "POST", path: "/api/show")
+}
+
+extend type Mutation {
+  aiAgentGenerate(input: AiAgentGenerateInput!): AiAgentGenerateResponse @rest(service: "ai-agent-system", method: "POST", path: "/api/generate", fixed: "{\"stream\":false}")
+  aiAgentChat(input: AiAgentChatInput!): AiAgentChatResponse @rest(service: "ai-agent-system", method: "POST", path: "/api/chat", fixed: "{\"stream\":false}")
+}

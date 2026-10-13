@@ -1,0 +1,142 @@
+type SardLimits {
+  per_transaction: Int!
+  daily: Int!
+}
+
+type SardControls {
+  pos: Boolean!
+  contactless: Boolean!
+  ecommerce: Boolean!
+  atm: Boolean!
+}
+
+type SardProgram {
+  code: String!
+  name: String!
+  mode: String!
+  bin: String!
+  currency: String!
+  validity_years: Int!
+  card_types: [String!]
+  max_active_virtual: Int!
+  default_credit_limit: Int!
+  max_credit_limit: Int!
+  default_limits: SardLimits
+  max_limits: SardLimits
+  supported_channels: SardControls
+  step_up_threshold: Int!
+}
+
+type SardAccount {
+  id: String!
+  customer_id: String!
+  program_code: String!
+  mode: String!
+  currency: String!
+  holder_name: String!
+  status: String!
+  status_reason: String!
+  credit_limit: Int!
+  balance: Int!
+  held: Int!
+  available: Int!
+  created_at: String
+  updated_at: String
+}
+
+type SardCard {
+  id: String!
+  account_id: String!
+  customer_id: String!
+  program_code: String!
+  type: String!
+  cardholder_name: String!
+  masked_pan: String!
+  last4: String!
+  expiry: String!
+  valid_until: String
+  status: String!
+  status_reason: String!
+  limits: SardLimits
+  controls: SardControls
+  spent_today: Int
+  pin_set: Boolean!
+  pin_locked: Boolean!
+  replaces_card_id: String!
+  replaced_by_card_id: String!
+  created_at: String
+  updated_at: String
+  activated_at: String
+}
+
+type SardIssuedCard {
+  card: SardCard
+  pan: String
+  cvv: String
+  notice: String
+}
+
+type SardAuthorization {
+  id: String!
+  account_id: String!
+  card_id: String!
+  processing_code: String!
+  status: String!
+  approved: Boolean!
+  response_code: String!
+  reason: String!
+  auth_code: String!
+  amount: Int!
+  confirmed_amount: Int!
+  currency: String!
+  channel: String!
+  merchant: String!
+  mcc: String!
+  authentication_id: String!
+  created_at: String
+  updated_at: String
+}
+
+type SardTransaction {
+  id: String!
+  card_id: String!
+  authorization_id: String!
+  type: String!
+  processing_code: String!
+  amount: Int!
+  balance_after: Int!
+  description: String!
+  created_at: String
+}
+
+extend type Query {
+  sardPrograms: [SardProgram!] @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/programs")
+  sardAccount(id: String!): SardAccount @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/accounts/{id}")
+  sardCustomerAccounts(customerId: String!): [SardAccount!] @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/customers/{customerId}/accounts")
+  sardAccountTransactions(id: String!, query: Map): [SardTransaction!] @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/accounts/{id}/transactions")
+  sardAccountCards(id: String!): [SardCard!] @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/accounts/{id}/cards")
+  sardCard(id: String!): SardCard @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/cards/{id}")
+  sardCardAuthorizations(id: String!, query: Map): [SardAuthorization!] @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/cards/{id}/authorizations")
+  sardAuthorization(id: String!): SardAuthorization @hasPermission(object: "/graphql/sard-card-service", action: "QUERY") @rest(service: "sard-card-service", path: "/api/v1/authorizations/{id}")
+}
+
+extend type Mutation {
+  sardOpenAccount(input: Map!): SardAccount @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/accounts")
+  sardBlockAccount(id: String!, reason: String): SardAccount @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/accounts/{id}/block")
+  sardUnblockAccount(id: String!, reason: String): SardAccount @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/accounts/{id}/unblock")
+  sardCancelAccount(id: String!, reason: String): SardAccount @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/accounts/{id}/cancel")
+  sardSetCreditLimit(id: String!, input: Map!): SardAccount @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "PUT", path: "/api/v1/accounts/{id}/credit-limit")
+  sardAccountPayment(id: String!, input: Map!): Any @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/accounts/{id}/payments")
+  sardIssueCard(id: String!, input: Map!): SardIssuedCard @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/accounts/{id}/cards")
+  sardActivateCard(id: String!, input: Map): Any @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/cards/{id}/activate")
+  sardBlockCard(id: String!, input: Map): Any @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/cards/{id}/block")
+  sardUnblockCard(id: String!, input: Map): Any @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/cards/{id}/unblock")
+  sardCancelCard(id: String!, input: Map): Any @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/cards/{id}/cancel")
+  sardReportCard(id: String!, input: Map): Any @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/cards/{id}/report")
+  sardUpdateCardLimits(id: String!, per_transaction: Int64, daily: Int64): SardCard @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "PUT", path: "/api/v1/cards/{id}/limits")
+  sardUpdateCardControls(id: String!, pos: Boolean, contactless: Boolean, ecommerce: Boolean, atm: Boolean): SardCard @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "PUT", path: "/api/v1/cards/{id}/controls")
+  sardSetCardPin(id: String!, input: Map!): Any @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "PUT", path: "/api/v1/cards/{id}/pin")
+  sardAuthorize(input: Map!): SardAuthorization @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/authorizations")
+  sardConfirmAuthorization(id: String!, input: Map): SardAuthorization @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/authorizations/{id}/confirm")
+  sardCancelAuthorization(id: String!, input: Map): SardAuthorization @hasPermission(object: "/graphql/sard-card-service", action: "MUTATION") @rest(service: "sard-card-service", method: "POST", path: "/api/v1/authorizations/{id}/cancel")
+}

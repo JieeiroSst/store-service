@@ -1,0 +1,408 @@
+type CrmCampaign {
+  id: Int!
+  created_at: String
+  updated_at: String
+  campaign_name: String!
+  campaign_objectives: String!
+  campaign_sponsor: String!
+  campaign_start_date: String
+  campaign_end_date: String
+  campaign_other_details: String!
+}
+
+input CrmCampaignInput {
+  campaign_name: String
+  campaign_objectives: String
+  campaign_sponsor: String
+  campaign_start_date: String
+  campaign_end_date: String
+  campaign_other_details: String
+}
+
+type CrmLead {
+  id: Int!
+  created_at: String
+  updated_at: String
+  lead_firstname: String!
+  lead_surname: String!
+  email: String!
+  phone: String!
+  source: String!
+  lead_other_details: String!
+  status: String!
+  converted_account_id: Int
+  converted_contact_id: Int
+}
+
+input CrmLeadInput {
+  lead_firstname: String
+  lead_surname: String
+  email: String
+  phone: String
+  source: String
+  lead_other_details: String
+  status: String
+  converted_account_id: Int
+  converted_contact_id: Int
+}
+
+type CrmAccount {
+  id: Int!
+  created_at: String
+  updated_at: String
+  account_name: String!
+  account_description: String!
+  account_phone: String!
+  billing_address: String!
+  email: String!
+  tax_code: String!
+  representative: String!
+  representative_title: String!
+}
+
+input CrmAccountInput {
+  account_name: String
+  account_description: String
+  account_phone: String
+  billing_address: String
+  email: String
+  tax_code: String
+  representative: String
+  representative_title: String
+}
+
+type CrmContact {
+  id: Int!
+  created_at: String
+  updated_at: String
+  account_id: Int!
+  name: String!
+  email: String!
+  phone: String!
+  contact_address: String!
+  contact_contact_details: String!
+}
+
+input CrmContactInput {
+  account_id: Int
+  name: String
+  email: String
+  phone: String
+  contact_address: String
+  contact_contact_details: String
+}
+
+type CrmCampaignMember {
+  id: Int!
+  created_at: String
+  updated_at: String
+  campaign_id: Int!
+  lead_id: Int!
+  contact_id: Int!
+}
+
+input CrmCampaignMemberInput {
+  campaign_id: Int
+  lead_id: Int
+  contact_id: Int
+}
+
+type CrmCase {
+  id: Int!
+  created_at: String
+  updated_at: String
+  contact_id: Int!
+  subject: String!
+  description: String!
+  priority: String!
+  status: String!
+  closed_at: String
+}
+
+input CrmCaseInput {
+  contact_id: Int
+  subject: String
+  description: String
+  priority: String
+  status: String
+  closed_at: String
+}
+
+type CrmContract {
+  id: Int!
+  created_at: String
+  updated_at: String
+  account_id: Int!
+  contract_number: String!
+  contract_title: String!
+  end_date: String
+  contract_status: String!
+  contract_approval: String!
+  signed_by: String!
+  signed_at: String
+  signature_algorithm: String!
+  signature: String!
+  signer_certificate: String!
+  signer_subject: String!
+  signer_serial: String!
+  signer_fingerprint: String!
+  signature_payload_hash: String!
+  signature_format: String!
+  revocation_status: String!
+  countersigner_subject: String!
+  countersigner_serial: String!
+  countersigner_fingerprint: String!
+  countersigned_at: String
+  timestamp_token: String!
+  timestamp_at: String
+  timestamp_authority: String!
+}
+
+input CrmContractInput {
+  account_id: Int
+  contract_number: String
+  contract_title: String
+  end_date: String
+  contract_status: String
+  contract_approval: String
+  signed_by: String
+  signed_at: String
+  signature_algorithm: String
+  signature: String
+  signer_certificate: String
+  signer_subject: String
+  signer_serial: String
+  signer_fingerprint: String
+  signature_payload_hash: String
+  signature_format: String
+  revocation_status: String
+  countersigner_subject: String
+  countersigner_serial: String
+  countersigner_fingerprint: String
+  countersigned_at: String
+  timestamp_token: String
+  timestamp_at: String
+  timestamp_authority: String
+}
+
+type CrmAccountContactRole {
+  id: Int!
+  created_at: String
+  updated_at: String
+  contact_id: Int!
+  account_id: Int!
+}
+
+input CrmAccountContactRoleInput {
+  contact_id: Int
+  account_id: Int
+}
+
+type CrmOpportunity {
+  id: Int!
+  created_at: String
+  updated_at: String
+  account_id: Int!
+  opportunity_description: String!
+  opportunity_details: String!
+  amount: Float!
+  close_date: String
+  opportunity_stage: String!
+}
+
+input CrmOpportunityInput {
+  account_id: Int
+  opportunity_description: String
+  opportunity_details: String
+  amount: Float
+  close_date: String
+  opportunity_stage: String
+}
+
+type CrmOpportunityContactRole {
+  id: Int!
+  created_at: String
+  updated_at: String
+  contact_id: Int!
+  opportunity_id: Int!
+  date_time: String
+  other_details: String!
+}
+
+input CrmOpportunityContactRoleInput {
+  contact_id: Int
+  opportunity_id: Int
+  date_time: String
+  other_details: String
+}
+
+type CrmFileKind {
+  kind: String!
+  label: String!
+  formats: [String!]
+  system: Boolean!
+}
+
+type CrmContractFile {
+  id: Int!
+  created_at: String
+  updated_at: String
+  contract_id: Int!
+  kind: String!
+  name: String!
+  content_type: String!
+  format: String!
+  size: Int!
+  sha256: String!
+  description: String!
+  uploaded_by: String!
+  uploader_id: String!
+  source: String!
+  lineage_id: Int!
+  version: Int!
+  latest: Boolean!
+  replaces_id: Int
+  scan_status: String!
+  scan_engine: String!
+  scanned_at: String
+}
+
+type CrmContractFileEvent {
+  id: Int!
+  at: String
+  contract_id: Int!
+  file_id: Int!
+  lineage_id: Int!
+  version: Int!
+  file_name: String!
+  kind: String!
+  action: String!
+  actor_id: String!
+  actor_name: String!
+  actor_roles: String!
+  actor_service: Boolean!
+  ip: String!
+  detail: String!
+}
+
+type CrmFileHistory {
+  versions: [CrmContractFile!]!
+  events: [CrmContractFileEvent!]!
+}
+
+type CrmConvertLeadResult {
+  lead: CrmLead
+  account: CrmAccount
+  contact: CrmContact
+  opportunity: CrmOpportunity
+}
+
+input CrmConvertLeadInput {
+  account_name: String
+  create_opportunity: Boolean
+  opportunity_description: String
+  opportunity_amount: Float
+}
+
+input CrmSignContractInput {
+  signed_by: String
+  end_date: String
+  signing_time: String
+  algorithm: String
+  signature: String
+  certificate: String
+  signed_pdf: String
+}
+
+type CrmAccountOverview {
+  account: CrmAccount
+  contacts: [CrmContact!]
+  contracts: [CrmContract!]
+  opportunities: [CrmOpportunity!]
+}
+
+type CrmStageSummary {
+  stage: String!
+  count: Int!
+  amount: Float!
+}
+
+type CrmSummary {
+  counts: Map
+  leads_by_status: Map
+  open_cases: Int!
+  pipeline: [CrmStageSummary!]
+}
+
+extend type Query {
+  crmCampaigns(offset: Int, limit: Int, q: String): [CrmCampaign!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/campaigns")
+  crmCampaign(id: Int!): CrmCampaign @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/campaigns/{id}")
+  crmLeads(offset: Int, limit: Int, q: String, status: String, source: String): [CrmLead!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/leads")
+  crmLead(id: Int!): CrmLead @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/leads/{id}")
+  crmAccounts(offset: Int, limit: Int, q: String): [CrmAccount!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/accounts")
+  crmAccount(id: Int!): CrmAccount @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/accounts/{id}")
+  crmContacts(offset: Int, limit: Int, q: String, account_id: Int): [CrmContact!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contacts")
+  crmContact(id: Int!): CrmContact @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contacts/{id}")
+  crmCampaignMembers(offset: Int, limit: Int, q: String, campaign_id: Int, lead_id: Int, contact_id: Int): [CrmCampaignMember!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/campaign-members")
+  crmCampaignMember(id: Int!): CrmCampaignMember @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/campaign-members/{id}")
+  crmCases(offset: Int, limit: Int, q: String, contact_id: Int, status: String, priority: String): [CrmCase!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/cases")
+  crmCase(id: Int!): CrmCase @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/cases/{id}")
+  crmContracts(offset: Int, limit: Int, q: String, account_id: Int, contract_status: String): [CrmContract!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contracts")
+  crmContract(id: Int!): CrmContract @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contracts/{id}")
+  crmAccountContactRoles(offset: Int, limit: Int, q: String, contact_id: Int, account_id: Int): [CrmAccountContactRole!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/account-contact-roles")
+  crmAccountContactRole(id: Int!): CrmAccountContactRole @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/account-contact-roles/{id}")
+  crmOpportunities(offset: Int, limit: Int, q: String, account_id: Int, opportunity_stage: String): [CrmOpportunity!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/opportunities")
+  crmOpportunity(id: Int!): CrmOpportunity @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/opportunities/{id}")
+  crmOpportunityContactRoles(offset: Int, limit: Int, q: String, contact_id: Int, opportunity_id: Int): [CrmOpportunityContactRole!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/opportunity-contact-roles")
+  crmOpportunityContactRole(id: Int!): CrmOpportunityContactRole @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/opportunity-contact-roles/{id}")
+  crmContractSigningPayload(id: Int!, end_date: String!, signed_by: String!, signing_time: String): Any @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contracts/{id}/signing-payload")
+  crmAccountOverview(id: Int!): CrmAccountOverview @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/accounts/{id}/overview")
+  crmSummary: CrmSummary @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/reports/summary")
+  crmContractFileKinds: [CrmFileKind!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contract-file-kinds")
+  crmContractFiles(id: Int!, kind: String, all_versions: Boolean, offset: Int, limit: Int): [CrmContractFile!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contracts/{id}/files")
+  crmContractFile(id: Int!, file_id: Int!): CrmContractFile @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contracts/{id}/files/{file_id}")
+  crmContractFileHistory(id: Int!, file_id: Int!): CrmFileHistory @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contracts/{id}/files/{file_id}/history")
+  crmContractFileEvents(id: Int!, action: String, file_id: Int, offset: Int, limit: Int): [CrmContractFileEvent!]! @hasPermission(object: "/graphql/customer-relationship-service", action: "QUERY") @rest(service: "customer-relationship-service", path: "/api/v1/contracts/{id}/file-events")
+}
+
+extend type Mutation {
+  crmCreateCampaign(input: CrmCampaignInput!): CrmCampaign @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/campaigns")
+  crmUpdateCampaign(id: Int!, input: CrmCampaignInput!): CrmCampaign @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/campaigns/{id}")
+  crmDeleteCampaign(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/campaigns/{id}")
+  crmCreateLead(input: CrmLeadInput!): CrmLead @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/leads")
+  crmUpdateLead(id: Int!, input: CrmLeadInput!): CrmLead @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/leads/{id}")
+  crmDeleteLead(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/leads/{id}")
+  crmCreateAccount(input: CrmAccountInput!): CrmAccount @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/accounts")
+  crmUpdateAccount(id: Int!, input: CrmAccountInput!): CrmAccount @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/accounts/{id}")
+  crmDeleteAccount(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/accounts/{id}")
+  crmCreateContact(input: CrmContactInput!): CrmContact @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/contacts")
+  crmUpdateContact(id: Int!, input: CrmContactInput!): CrmContact @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/contacts/{id}")
+  crmDeleteContact(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/contacts/{id}")
+  crmCreateCampaignMember(input: CrmCampaignMemberInput!): CrmCampaignMember @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/campaign-members")
+  crmUpdateCampaignMember(id: Int!, input: CrmCampaignMemberInput!): CrmCampaignMember @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/campaign-members/{id}")
+  crmDeleteCampaignMember(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/campaign-members/{id}")
+  crmCreateCase(input: CrmCaseInput!): CrmCase @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/cases")
+  crmUpdateCase(id: Int!, input: CrmCaseInput!): CrmCase @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/cases/{id}")
+  crmDeleteCase(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/cases/{id}")
+  crmCreateContract(input: CrmContractInput!): CrmContract @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/contracts")
+  crmUpdateContract(id: Int!, input: CrmContractInput!): CrmContract @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/contracts/{id}")
+  crmDeleteContract(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/contracts/{id}")
+  crmCreateAccountContactRole(input: CrmAccountContactRoleInput!): CrmAccountContactRole @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/account-contact-roles")
+  crmUpdateAccountContactRole(id: Int!, input: CrmAccountContactRoleInput!): CrmAccountContactRole @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/account-contact-roles/{id}")
+  crmDeleteAccountContactRole(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/account-contact-roles/{id}")
+  crmCreateOpportunity(input: CrmOpportunityInput!): CrmOpportunity @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/opportunities")
+  crmUpdateOpportunity(id: Int!, input: CrmOpportunityInput!): CrmOpportunity @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/opportunities/{id}")
+  crmDeleteOpportunity(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/opportunities/{id}")
+  crmCreateOpportunityContactRole(input: CrmOpportunityContactRoleInput!): CrmOpportunityContactRole @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/opportunity-contact-roles")
+  crmUpdateOpportunityContactRole(id: Int!, input: CrmOpportunityContactRoleInput!): CrmOpportunityContactRole @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "PUT", path: "/api/v1/opportunity-contact-roles/{id}")
+  crmDeleteOpportunityContactRole(id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/opportunity-contact-roles/{id}")
+  crmConvertLead(id: Int!, input: CrmConvertLeadInput): CrmConvertLeadResult @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/leads/{id}/convert")
+  crmSetOpportunityStage(id: Int!, stage: String!): CrmOpportunity @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/opportunities/{id}/stage")
+  crmSignContract(id: Int!, input: CrmSignContractInput!): CrmContract @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/contracts/{id}/sign")
+  crmSubmitContract(id: Int!): CrmContract @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/contracts/{id}/submit")
+  crmApproveContract(id: Int!): CrmContract @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/contracts/{id}/approve")
+  crmRejectContract(id: Int!): CrmContract @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/contracts/{id}/reject")
+  crmCloseCase(id: Int!): CrmCase @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/cases/{id}/close")
+  crmUploadContractFile(id: Int!, file: Upload!, kind: String, description: String, replaces: Int): CrmContractFile @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "POST", path: "/api/v1/contracts/{id}/files", multipart: true)
+  crmDeleteContractFile(id: Int!, file_id: Int!): Boolean! @hasPermission(object: "/graphql/customer-relationship-service", action: "MUTATION") @rest(service: "customer-relationship-service", method: "DELETE", path: "/api/v1/contracts/{id}/files/{file_id}")
+}

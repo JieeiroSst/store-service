@@ -14,6 +14,8 @@ import schemas
 import crud
 from database import engine, get_db, init_db
 from ai_service import get_ai_manager, ScenarioManager
+from auth_deps import require_admin
+from twilio_auth import verify_twilio
 from tts_service import get_tts_manager
 
 load_dotenv()
@@ -64,7 +66,7 @@ conversation_history = {}
 
 # ==================== TWILIO VOICE ROUTES ====================
 
-@app.post("/voice/incoming")
+@app.post("/voice/incoming", dependencies=[Depends(verify_twilio)])
 async def handle_incoming_call(request: Request, db: Session = Depends(get_db)):
     """Xử lý cuộc gọi đến"""
     form_data = await request.form()
@@ -127,7 +129,7 @@ async def handle_incoming_call(request: Request, db: Session = Depends(get_db)):
     
     return Response(content=str(response), media_type="application/xml")
 
-@app.post("/voice/process-speech")
+@app.post("/voice/process-speech", dependencies=[Depends(verify_twilio)])
 async def process_speech(request: Request, db: Session = Depends(get_db)):
     """Xử lý speech input từ người dùng"""
     form_data = await request.form()
@@ -247,7 +249,7 @@ async def process_speech(request: Request, db: Session = Depends(get_db)):
     
     return Response(content=str(response), media_type="application/xml")
 
-@app.post("/voice/status")
+@app.post("/voice/status", dependencies=[Depends(verify_twilio)])
 async def call_status_callback(request: Request, db: Session = Depends(get_db)):
     """Callback khi trạng thái cuộc gọi thay đổi"""
     form_data = await request.form()
@@ -293,7 +295,7 @@ async def root():
     }
 
 # Call management endpoints
-@app.get("/api/calls", response_model=List[schemas.CallResponse])
+@app.get("/api/calls", response_model=List[schemas.CallResponse], dependencies=[Depends(require_admin)])
 async def list_calls(
     skip: int = 0,
     limit: int = 100,
@@ -305,7 +307,7 @@ async def list_calls(
     calls = crud.get_calls(db, skip=skip, limit=limit, status=status, from_number=from_number)
     return calls
 
-@app.get("/api/calls/{call_id}", response_model=schemas.CallHistoryResponse)
+@app.get("/api/calls/{call_id}", response_model=schemas.CallHistoryResponse, dependencies=[Depends(require_admin)])
 async def get_call_detail(call_id: int, db: Session = Depends(get_db)):
     """Lấy chi tiết cuộc gọi kèm lịch sử hội thoại"""
     call = crud.get_call_with_messages(db, call_id)
@@ -313,7 +315,7 @@ async def get_call_detail(call_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Call not found")
     return call
 
-@app.delete("/api/calls/{call_id}")
+@app.delete("/api/calls/{call_id}", dependencies=[Depends(require_admin)])
 async def delete_call(call_id: int, db: Session = Depends(get_db)):
     """Xóa cuộc gọi"""
     success = crud.delete_call(db, call_id)
@@ -322,13 +324,13 @@ async def delete_call(call_id: int, db: Session = Depends(get_db)):
     return {"message": "Call deleted successfully"}
 
 # Scenario management endpoints
-@app.get("/api/scenarios", response_model=List[schemas.ScenarioResponse])
+@app.get("/api/scenarios", response_model=List[schemas.ScenarioResponse], dependencies=[Depends(require_admin)])
 async def list_scenarios(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """Lấy danh sách kịch bản"""
     scenarios = crud.get_scenarios(db, skip=skip, limit=limit)
     return scenarios
 
-@app.post("/api/scenarios", response_model=schemas.ScenarioResponse)
+@app.post("/api/scenarios", response_model=schemas.ScenarioResponse, dependencies=[Depends(require_admin)])
 async def create_scenario(scenario: schemas.ScenarioCreate, db: Session = Depends(get_db)):
     """Tạo kịch bản mới"""
     # Kiểm tra trùng tên
@@ -338,7 +340,7 @@ async def create_scenario(scenario: schemas.ScenarioCreate, db: Session = Depend
     
     return crud.create_scenario(db, scenario)
 
-@app.get("/api/scenarios/{scenario_id}", response_model=schemas.ScenarioResponse)
+@app.get("/api/scenarios/{scenario_id}", response_model=schemas.ScenarioResponse, dependencies=[Depends(require_admin)])
 async def get_scenario(scenario_id: int, db: Session = Depends(get_db)):
     """Lấy chi tiết kịch bản"""
     scenario = crud.get_scenario(db, scenario_id)
@@ -346,7 +348,7 @@ async def get_scenario(scenario_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Scenario not found")
     return scenario
 
-@app.put("/api/scenarios/{scenario_id}", response_model=schemas.ScenarioResponse)
+@app.put("/api/scenarios/{scenario_id}", response_model=schemas.ScenarioResponse, dependencies=[Depends(require_admin)])
 async def update_scenario(
     scenario_id: int,
     scenario_update: schemas.ScenarioUpdate,
@@ -358,7 +360,7 @@ async def update_scenario(
         raise HTTPException(status_code=404, detail="Scenario not found")
     return scenario
 
-@app.delete("/api/scenarios/{scenario_id}")
+@app.delete("/api/scenarios/{scenario_id}", dependencies=[Depends(require_admin)])
 async def delete_scenario(scenario_id: int, db: Session = Depends(get_db)):
     """Xóa kịch bản"""
     success = crud.delete_scenario(db, scenario_id)
@@ -367,7 +369,7 @@ async def delete_scenario(scenario_id: int, db: Session = Depends(get_db)):
     return {"message": "Scenario deleted successfully"}
 
 # Customer management endpoints
-@app.get("/api/customers/{phone_number}", response_model=schemas.CustomerResponse)
+@app.get("/api/customers/{phone_number}", response_model=schemas.CustomerResponse, dependencies=[Depends(require_admin)])
 async def get_customer(phone_number: str, db: Session = Depends(get_db)):
     """Lấy thông tin khách hàng"""
     customer = crud.get_customer_by_phone(db, phone_number)
@@ -376,14 +378,14 @@ async def get_customer(phone_number: str, db: Session = Depends(get_db)):
     return customer
 
 # Analytics endpoints
-@app.get("/api/analytics/statistics", response_model=schemas.CallStatistics)
+@app.get("/api/analytics/statistics", response_model=schemas.CallStatistics, dependencies=[Depends(require_admin)])
 async def get_statistics(days: int = 30, db: Session = Depends(get_db)):
     """Lấy thống kê cuộc gọi"""
     stats = crud.get_call_statistics(db, days=days)
     return stats
 
 # Test TTS endpoint
-@app.post("/api/test/tts")
+@app.post("/api/test/tts", dependencies=[Depends(require_admin)])
 async def test_tts(text: str, language: str = "vi-VN"):
     """Test text-to-speech"""
     tts_manager = get_tts_manager()

@@ -1,0 +1,175 @@
+syntax = "proto3";
+
+package banking;
+
+option go_package = "./pb";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service BankingService {
+  rpc CreateAccount(CreateAccountRequest) returns (Account) {
+    option (google.api.http) = {
+      post: "/v1/accounts"
+      body: "*"
+    };
+  }
+  
+  rpc GetAccount(GetAccountRequest) returns (Account) {
+    option (google.api.http) = {
+      get: "/v1/accounts/{id}"
+    };
+  }
+  
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse) {
+    option (google.api.http) = {
+      get: "/v1/accounts"
+    };
+  }
+  
+  rpc CreateDepositTransaction(CreateDepositTransactionRequest) returns (Transaction) {
+    option (google.api.http) = {
+      post: "/v1/transactions/deposit"
+      body: "*"
+    };
+  }
+  
+  rpc CreateWithdrawalTransaction(CreateWithdrawalTransactionRequest) returns (Transaction) {
+    option (google.api.http) = {
+      post: "/v1/transactions/withdrawal"
+      body: "*"
+    };
+  }
+  
+  rpc CreateAccountToAccountTransaction(CreateAccountToAccountTransactionRequest) returns (Transaction) {
+    option (google.api.http) = {
+      post: "/v1/transactions/transfer"
+      body: "*"
+    };
+  }
+  
+  rpc CreatePaymentForServiceTransaction(CreatePaymentForServiceTransactionRequest) returns (Transaction) {
+    option (google.api.http) = {
+      post: "/v1/transactions/payment"
+      body: "*"
+    };
+  }
+  
+  rpc GetTransaction(GetTransactionRequest) returns (Transaction) {
+    option (google.api.http) = {
+      get: "/v1/transactions/{id}"
+    };
+  }
+  
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/transactions"
+    };
+  }
+  
+  rpc GetAccountTransactions(GetAccountTransactionsRequest) returns (ListTransactionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/accounts/{account_id}/transactions"
+    };
+  }
+}
+
+message Account {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  google.protobuf.Timestamp date_created = 4;
+}
+
+message Transaction {
+  string id = 1;
+  string type = 2;
+  double amount = 3;
+  google.protobuf.Timestamp date_created = 4;
+  oneof transaction_details {
+    DepositTransactionDetails deposit = 5;
+    WithdrawalTransactionDetails withdrawal = 6;
+    AccountToAccountTransactionDetails transfer = 7;
+    PaymentForServiceTransactionDetails payment = 8;
+  }
+}
+
+message DepositTransactionDetails {
+  string account_id = 1;
+}
+
+message WithdrawalTransactionDetails {
+  string account_id = 1;
+}
+
+message AccountToAccountTransactionDetails {
+  string sender_id = 1;
+  string receiver_id = 2;
+}
+
+message PaymentForServiceTransactionDetails {
+  string account_id = 1;
+  string service_name = 2;
+}
+
+message CreateAccountRequest {
+  string first_name = 1;
+  string last_name = 2;
+}
+
+message GetAccountRequest {
+  string id = 1;
+}
+
+message ListAccountsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListAccountsResponse {
+  repeated Account accounts = 1;
+  string next_page_token = 2;
+}
+
+message CreateDepositTransactionRequest {
+  string account_id = 1;
+  double amount = 2;
+}
+
+message CreateWithdrawalTransactionRequest {
+  string account_id = 1;
+  double amount = 2;
+}
+
+message CreateAccountToAccountTransactionRequest {
+  string sender_id = 1;
+  string receiver_id = 2;
+  double amount = 3;
+}
+
+message CreatePaymentForServiceTransactionRequest {
+  string account_id = 1;
+  string service_name = 2;
+  double amount = 3;
+}
+
+message GetTransactionRequest {
+  string id = 1;
+}
+
+message ListTransactionsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  string type = 3;
+}
+
+message ListTransactionsResponse {
+  repeated Transaction transactions = 1;
+  string next_page_token = 2;
+}
+
+message GetAccountTransactionsRequest {
+  string account_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}

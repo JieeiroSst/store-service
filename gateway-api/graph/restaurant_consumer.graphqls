@@ -1,0 +1,23 @@
+type RConsumerPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RConsumerConsumer!]
+}
+
+type RConsumerConsumer {
+  id: Int
+  name: String
+  kitchen_id: Int
+  menu: String
+}
+
+extend type Query {
+  rConsumerConsumers(Limit: Int, Page: Int, Sort: String): RConsumerPage @hasPermission(object: "/graphql/restaurant-consumer", action: "QUERY") @rest(service: "consumer-service", path: "/api/v1/consumer", unwrap: "data")
+}
+
+extend type Mutation {
+  rConsumerPlaceOrder(input: Map!): Any @rest(service: "consumer-service", method: "POST", path: "/api/v1/consumer")
+}

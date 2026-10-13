@@ -5,6 +5,7 @@ import (
 	"github.com/JIeeiroSst/vending-machine-service/internal/adapter/secondary/httpx"
 	"github.com/JIeeiroSst/vending-machine-service/internal/port"
 	"go.uber.org/fx"
+	"os"
 )
 
 var Module = fx.Options(
@@ -16,5 +17,5 @@ func NewProvider(cfg *config.Config) port.CouponProvider {
 	if up.CouponServiceURL == "" {
 		return Disabled{}
 	}
-	return NewClient(httpx.New(up.CouponServiceURL, up.Timeout, up.ServiceName))
+	return NewClient(httpx.New(up.CouponServiceURL, up.Timeout, up.ServiceName).WithHeader("X-Internal-Token", os.Getenv("INTERNAL_API_TOKEN")))
 }

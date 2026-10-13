@@ -1,0 +1,13 @@
+type WishlistCustomer {
+  id: Int
+  name: String
+}
+
+extend type Query {
+  wishlistGreet: String @rest(service: "wishlists-service", path: "/greet", unwrap: "data")
+  wishlistCustomers: [WishlistCustomer!] @rest(service: "wishlists-service", path: "/customer", unwrap: "data")
+}
+
+extend type Mutation {
+  wishlistCreateCustomer(name: String!): Boolean! @hasPermission(object: "/graphql/wishlists-service", action: "MUTATION") @rest(service: "wishlists-service", method: "POST", path: "/customer/{name}", unwrap: "data")
+}

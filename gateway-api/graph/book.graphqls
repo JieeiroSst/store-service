@@ -1,0 +1,85 @@
+type BookCategory {
+  slug: String!
+  name: String!
+}
+
+type BookBook {
+  id: Int64!
+  title: String!
+  author: String!
+  isbn: String
+  description: String
+  publishedYear: Int
+  categories: [BookCategory!]!
+  coverUrl: String
+  createdAt: String
+  updatedAt: String
+  chapterCount: Int
+}
+
+type BookChapter {
+  bookId: Int64!
+  number: Int!
+  title: String!
+  contentType: String!
+  sizeBytes: Int64
+  content: String
+}
+
+type BookPagination {
+  limit: Int!
+  nextCursor: String
+  hasMore: Boolean!
+}
+
+type BookBookPage {
+  data: [BookBook!]!
+  pagination: BookPagination
+}
+
+type BookChapterPage {
+  data: [BookChapter!]!
+  pagination: BookPagination
+}
+
+input BookBookInput {
+  title: String
+  author: String
+  isbn: String
+  description: String
+  publishedYear: Int
+  categories: [String!]
+}
+
+input BookChapterInput {
+  title: String
+  content: String
+}
+
+input BookCategoryInput {
+  slug: String
+  name: String
+}
+
+extend type Query {
+  bookBooks(cursor: String, limit: Int, q: String, author: String, year: Int, category: String): BookBookPage @public @rest(service: "book-service", path: "/api/v1/books")
+  bookBook(id: Int64!): BookBook @public @rest(service: "book-service", path: "/api/v1/books/{id}")
+  bookChapters(id: Int64!, cursor: String, limit: Int): BookChapterPage @public @rest(service: "book-service", path: "/api/v1/books/{id}/chapters")
+  bookChapter(id: Int64!, number: Int!): BookChapter @public @rest(service: "book-service", path: "/api/v1/books/{id}/chapters/{number}")
+  bookCategories: [BookCategory!]! @public @rest(service: "book-service", path: "/api/v1/categories", unwrap: "data")
+  bookCategory(slug: String!): BookCategory @public @rest(service: "book-service", path: "/api/v1/categories/{slug}")
+  bookCategoryBooks(slug: String!, cursor: String, limit: Int, q: String): BookBookPage @public @rest(service: "book-service", path: "/api/v1/categories/{slug}/books")
+}
+
+extend type Mutation {
+  bookCreateBook(input: BookBookInput!): BookBook @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "POST", path: "/api/v1/books")
+  bookUpdateBook(id: Int64!, input: BookBookInput!): BookBook @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "PUT", path: "/api/v1/books/{id}")
+  bookDeleteBook(id: Int64!): Boolean! @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "DELETE", path: "/api/v1/books/{id}")
+  bookPutCover(id: Int64!, file: Upload!): BookBook @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "PUT", path: "/api/v1/books/{id}/cover", raw: true)
+  bookDeleteCover(id: Int64!): Boolean! @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "DELETE", path: "/api/v1/books/{id}/cover")
+  bookPutChapter(id: Int64!, number: Int!, input: BookChapterInput!): BookChapter @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "PUT", path: "/api/v1/books/{id}/chapters/{number}")
+  bookDeleteChapter(id: Int64!, number: Int!): Boolean! @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "DELETE", path: "/api/v1/books/{id}/chapters/{number}")
+  bookCreateCategory(input: BookCategoryInput!): BookCategory @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "POST", path: "/api/v1/categories")
+  bookRenameCategory(slug: String!, name: String!): BookCategory @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "PUT", path: "/api/v1/categories/{slug}")
+  bookDeleteCategory(slug: String!): Boolean! @hasPermission(object: "/graphql/book-service", action: "MUTATION") @rest(service: "book-service", method: "DELETE", path: "/api/v1/categories/{slug}")
+}

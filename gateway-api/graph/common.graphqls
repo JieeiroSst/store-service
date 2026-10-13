@@ -1,0 +1,12 @@
+scalar Int64
+scalar Map
+scalar Any
+scalar Upload
+
+type Query {
+  health: String! @public
+}
+
+type Mutation {
+  ping: String! @public
+}

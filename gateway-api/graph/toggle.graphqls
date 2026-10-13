@@ -1,0 +1,151 @@
+type ToggleRole {
+  id: String
+  name: String
+  description: String
+}
+
+type ToggleEnvironment {
+  id: String
+  name: String
+  type: String
+  sortOrder: Int
+  enabled: Boolean
+  createdAt: String
+}
+
+type ToggleAPIToken {
+  id: String
+  name: String
+  tokenPrefix: String
+  type: String
+  projectId: String
+  environmentId: String
+  expiresAt: String
+  createdBy: String
+  createdAt: String
+}
+
+type ToggleProject {
+  id: String
+  name: String
+  description: String
+  createdBy: String
+  createdAt: String
+  updatedAt: String
+}
+
+type ToggleProjectMembership {
+  id: String
+  projectId: String
+  userId: String
+  roleId: String
+  createdAt: String
+}
+
+type ToggleAuditEvent {
+  id: String
+  entityType: String
+  entityId: String
+  action: String
+  projectId: String
+  environmentId: String
+  userId: String
+  before: Any
+  after: Any
+  createdAt: String
+}
+
+type ToggleFeatureFlag {
+  id: String
+  projectId: String
+  key: String
+  name: String
+  description: String
+  type: String
+  archived: Boolean
+  createdBy: String
+  createdAt: String
+  updatedAt: String
+}
+
+type ToggleActivationStrategy {
+  id: String
+  featureFlagEnvironmentId: String
+  strategyType: String
+  parameters: Any
+  sortOrder: Int
+  constraints: [ToggleConstraint!]
+  createdAt: String
+  updatedAt: String
+}
+
+type ToggleClientFeaturesResponse {
+  version: Int
+  features: [ToggleClientFeature!]
+}
+
+type ToggleConstraint {
+  id: String
+  strategyId: String
+  contextField: String
+  operator: String
+  values: Any
+  caseInsensitive: Boolean
+}
+
+type ToggleClientFeature {
+  name: String
+  description: String
+  type: String
+  enabled: Boolean
+  strategies: [ToggleActivationStrategy!]
+}
+
+input ToggleConstraintInput {
+  contextField: String
+  operator: String
+  values: [String!]
+  caseInsensitive: Boolean
+}
+
+input ToggleStrategyInput {
+  strategyType: String
+  parameters: Map
+  sortOrder: Int
+  constraints: [ToggleConstraintInput!]
+}
+
+extend type Query {
+  toggleRoles: [ToggleRole!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/roles")
+  toggleEnvironments: [ToggleEnvironment!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/environments/")
+  toggleTokens: [ToggleAPIToken!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/tokens/")
+  toggleProjects: [ToggleProject!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/projects/")
+  toggleProject(projectId: String!): ToggleProject @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/projects/{projectId}/")
+  toggleProjectMembers(projectId: String!): [ToggleProjectMembership!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/projects/{projectId}/members")
+  toggleAudit(projectId: String!, entityType: String, since: String, until: String): [ToggleAuditEvent!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/projects/{projectId}/audit")
+  toggleFlags(projectId: String!): [ToggleFeatureFlag!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/projects/{projectId}/flags")
+  toggleFlag(projectId: String!, key: String!): ToggleFeatureFlag @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/projects/{projectId}/flags/{key}/")
+  toggleStrategies(projectId: String!, key: String!, envName: String!): [ToggleActivationStrategy!] @hasPermission(object: "/graphql/toggle-service", action: "QUERY") @rest(service: "toggle-service", path: "/api/admin/projects/{projectId}/flags/{key}/environments/{envName}/strategies")
+}
+
+extend type Mutation {
+  toggleCreateEnvironment(name: String!, type: String, sortOrder: Int): ToggleEnvironment @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "POST", path: "/api/admin/environments/")
+  toggleUpdateEnvironment(environmentId: String!, name: String, type: String, enabled: Boolean): ToggleEnvironment @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "PUT", path: "/api/admin/environments/{environmentId}")
+  toggleDeleteEnvironment(environmentId: String!): Boolean! @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "DELETE", path: "/api/admin/environments/{environmentId}")
+  toggleCreateToken(name: String!, type: String!, projectId: String, environmentId: String, expiresAt: String): Any @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "POST", path: "/api/admin/tokens/")
+  toggleRevokeToken(tokenId: String!): Boolean! @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "DELETE", path: "/api/admin/tokens/{tokenId}")
+  toggleUpdateMember(membershipId: String!, roleId: String!): Any @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "PUT", path: "/api/admin/members/{membershipId}/")
+  toggleRemoveMember(membershipId: String!): Boolean! @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "DELETE", path: "/api/admin/members/{membershipId}/")
+  toggleCreateProject(name: String!, description: String): ToggleProject @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "POST", path: "/api/admin/projects/")
+  toggleUpdateProject(projectId: String!, name: String, description: String): ToggleProject @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "PUT", path: "/api/admin/projects/{projectId}/")
+  toggleDeleteProject(projectId: String!): Boolean! @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "DELETE", path: "/api/admin/projects/{projectId}/")
+  toggleAddMember(projectId: String!, userId: String!, roleId: String!): Any @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "POST", path: "/api/admin/projects/{projectId}/members")
+  toggleCreateFlag(projectId: String!, key: String!, name: String!, description: String, type: String): ToggleFeatureFlag @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "POST", path: "/api/admin/projects/{projectId}/flags")
+  toggleUpdateFlag(projectId: String!, key: String!, name: String, description: String, type: String): ToggleFeatureFlag @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "PUT", path: "/api/admin/projects/{projectId}/flags/{key}/")
+  toggleArchiveFlag(projectId: String!, key: String!): Boolean! @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "DELETE", path: "/api/admin/projects/{projectId}/flags/{key}/")
+  toggleFlagOn(projectId: String!, key: String!, envName: String!): Any @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "PATCH", path: "/api/admin/projects/{projectId}/flags/{key}/environments/{envName}/on")
+  toggleFlagOff(projectId: String!, key: String!, envName: String!): Any @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "PATCH", path: "/api/admin/projects/{projectId}/flags/{key}/environments/{envName}/off")
+  toggleCreateStrategy(projectId: String!, key: String!, envName: String!, input: ToggleStrategyInput!): ToggleActivationStrategy @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "POST", path: "/api/admin/projects/{projectId}/flags/{key}/environments/{envName}/strategies")
+  toggleUpdateStrategy(projectId: String!, key: String!, envName: String!, strategyId: String!, input: ToggleStrategyInput!): ToggleActivationStrategy @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "PUT", path: "/api/admin/projects/{projectId}/flags/{key}/environments/{envName}/strategies/{strategyId}")
+  toggleDeleteStrategy(projectId: String!, key: String!, envName: String!, strategyId: String!): Boolean! @hasPermission(object: "/graphql/toggle-service", action: "MUTATION") @rest(service: "toggle-service", method: "DELETE", path: "/api/admin/projects/{projectId}/flags/{key}/environments/{envName}/strategies/{strategyId}")
+}

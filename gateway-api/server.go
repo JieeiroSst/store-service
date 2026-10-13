@@ -18,18 +18,26 @@ import (
 	"github.com/JIeeiroSst/gateway-api/config"
 	"github.com/JIeeiroSst/gateway-api/graph"
 	"github.com/JIeeiroSst/gateway-api/middlware"
+	"github.com/JIeeiroSst/gateway-api/proxy"
 	"github.com/JIeeiroSst/utils/consul"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-func graphqlHandler() gin.HandlerFunc {
-	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+func graphqlHandler(p *proxy.Proxy) gin.HandlerFunc {
+	srv := handler.New(graph.NewExecutableSchema(graph.Config{
+		Resolvers:  &graph.Resolver{Proxy: p},
+		Directives: graph.NewDirectiveRoot(p.Authorize),
+	}))
 
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})
 	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.MultipartForm{
+		MaxUploadSize: 32 << 20,
+		MaxMemory:     8 << 20,
+	})
 
 	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 
@@ -37,6 +45,7 @@ func graphqlHandler() gin.HandlerFunc {
 	srv.Use(extension.AutomaticPersistedQuery{
 		Cache: lru.New[string](100),
 	})
+	srv.AroundRootFields(graph.RequireAuthentication)
 
 	return func(c *gin.Context) {
 		srv.ServeHTTP(c.Writer, c.Request)
@@ -68,7 +77,14 @@ func main() {
 	if err := json.Unmarshal(conf, &config); err != nil {
 		logger.Error(context.Background(), "error %v", err)
 	}
-	router.POST("/query", graphqlHandler())
+	p, err := proxy.NewProxy(config)
+	if err != nil {
+		logger.Error(context.Background(), "error %v", err)
+		os.Exit(1)
+	}
+	defer p.Close()
+
+	router.POST("/query", middlware.ClientInfo(), middlware.Authenticate(p.User), graphqlHandler(p))
 	router.GET("/", playgroundHandler())
 
 	httpSrv := &http.Server{

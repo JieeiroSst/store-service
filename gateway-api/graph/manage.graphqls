@@ -1,0 +1,925 @@
+type KcAdapterConfiguration {
+  realm: String
+  auth_server_url: String @goTag(key: "json", value: "auth-server-url")
+  ssl_required: String @goTag(key: "json", value: "ssl-required")
+  resource: String
+  credentials: Any
+  confidential_port: Int @goTag(key: "json", value: "confidential-port")
+}
+
+type KcAuthenticationFlowRepresentation {
+  alias: String
+  authenticationExecutions: [KcAuthenticationExecutionRepresentation!]
+  builtIn: Boolean
+  description: String
+  id: String
+  providerId: String
+  topLevel: Boolean
+}
+
+type KcBruteForceStatus {
+  numFailures: Int
+  disabled: Boolean
+  lastIPFailure: String
+  lastFailure: Int
+}
+
+type KcCertResponse {
+  keys: [KcCertResponseKey!]
+}
+
+type KcClient {
+  access: Map
+  adminUrl: String
+  attributes: Map
+  authenticationFlowBindingOverrides: Map
+  authorizationServicesEnabled: Boolean
+  authorizationSettings: KcResourceServerRepresentation
+  baseUrl: String
+  bearerOnly: Boolean
+  clientAuthenticatorType: String
+  clientId: String
+  consentRequired: Boolean
+  defaultClientScopes: [String!]
+  defaultRoles: [String!]
+  description: String
+  directAccessGrantsEnabled: Boolean
+  enabled: Boolean
+  frontchannelLogout: Boolean
+  fullScopeAllowed: Boolean
+  id: String
+  implicitFlowEnabled: Boolean
+  name: String
+  nodeReRegistrationTimeout: Int
+  notBefore: Int
+  optionalClientScopes: [String!]
+  origin: String
+  protocol: String
+  protocolMappers: [KcProtocolMapperRepresentation!]
+  publicClient: Boolean
+  redirectUris: [String!]
+  registeredNodes: Map
+  registrationAccessToken: String
+  rootUrl: String
+  secret: String
+  serviceAccountsEnabled: Boolean
+  standardFlowEnabled: Boolean
+  surrogateAuthRequired: Boolean
+  webOrigins: [String!]
+}
+
+type KcClientScope {
+  id: String
+  name: String
+  description: String
+  protocol: String
+  attributes: KcClientScopeAttributes
+  protocolMappers: [KcProtocolMappers!]
+}
+
+type KcComponent {
+  id: String
+  name: String
+  providerId: String
+  providerType: String
+  parentId: String
+  config: Map
+  subType: String
+}
+
+type KcCredentialRepresentation {
+  createdDate: Int
+  temporary: Boolean
+  type: String
+  value: String
+  algorithm: String
+  config: KcMultiValuedHashMap
+  counter: Int
+  device: String
+  digits: Int
+  hashIterations: Int
+  hashedSaltedValue: String
+  period: Int
+  salt: String
+  credentialData: String
+  id: String
+  priority: Int
+  secretData: String
+  userLabel: String
+}
+
+type KcEventRepresentation {
+  time: Int
+  type: String
+  realmId: String
+  clientId: String
+  userId: String
+  sessionId: String
+  ipAddress: String
+  details: Map
+}
+
+type KcFederatedIdentityRepresentation {
+  identityProvider: String
+  userId: String
+  userName: String
+}
+
+type KcGroup {
+  id: String
+  name: String
+  path: String
+  subGroups: [KcGroup!]
+  attributes: Map
+  access: Map
+  clientRoles: Map
+  realmRoles: [String!]
+}
+
+type KcIdentityProviderMapper {
+  id: String
+  name: String
+  identityProviderMapper: String
+  identityProviderAlias: String
+  config: Map
+}
+
+type KcIdentityProviderRepresentation {
+  addReadTokenRoleOnCreate: Boolean
+  alias: String
+  config: Map
+  displayName: String
+  enabled: Boolean
+  firstBrokerLoginFlowAlias: String
+  internalId: String
+  linkOnly: Boolean
+  postBrokerLoginFlowAlias: String
+  providerId: String
+  storeToken: Boolean
+  trustEmail: Boolean
+}
+
+type KcIssuerResponse {
+  realm: String
+  public_key: String
+  token_service: String @goTag(key: "json", value: "token-service")
+  account_service: String @goTag(key: "json", value: "account-service")
+  tokens_not_before: Int @goTag(key: "json", value: "tokens-not-before")
+}
+
+type KcKeyStoreConfig {
+  active: KcActiveKeys
+  keys: [KcKey!]
+}
+
+type KcMappingsRepresentation {
+  clientMappings: Map
+  realmMappings: [KcRole!]
+}
+
+type KcModifyAuthenticationExecutionRepresentation {
+  id: String
+  providerId: String
+  authenticationConfig: String
+  authenticationFlow: Boolean
+  requirement: String
+  flowId: String
+  displayName: String
+  alias: String
+  requirementChoices: [String!]
+  configurable: Boolean
+  level: Int
+  index: Int
+  description: String
+}
+
+type KcPermissionGrantResponseRepresentation {
+  id: String
+  owner: String
+  resource: String
+  scope: String
+  granted: Boolean
+  requester: String
+}
+
+type KcPermissionRepresentation {
+  decisionStrategy: String
+  description: String
+  id: String
+  logic: String
+  name: String
+  policies: [String!]
+  resources: [String!]
+  resourceType: String
+  scopes: [String!]
+  type: String
+}
+
+type KcPermissionResource {
+  _id: String
+  name: String
+}
+
+type KcPermissionScope {
+  id: String
+  name: String
+}
+
+type KcPolicyRepresentation {
+  config: Map
+  decisionStrategy: String
+  description: String
+  id: String
+  logic: String
+  name: String
+  owner: String
+  policies: [String!]
+  resources: [String!]
+  scopes: [String!]
+  type: String
+  roles: [KcRoleDefinition!]
+  code: String
+  clients: [String!]
+  notBefore: String
+  notOnOrAfter: String
+  dayMonth: String
+  dayMonthEnd: String
+  month: String
+  monthEnd: String
+  year: String
+  yearEnd: String
+  hour: String
+  hourEnd: String
+  minute: String
+  minuteEnd: String
+  users: [String!]
+  groups: [KcGroupDefinition!]
+  groupsClaim: String
+}
+
+type KcPolicyResourceRepresentation {
+  _id: String
+  name: String
+}
+
+type KcPolicyScopeRepresentation {
+  id: String
+  name: String
+}
+
+type KcProtocolMappers {
+  id: String
+  name: String
+  protocol: String
+  protocolMapper: String
+  consentRequired: Boolean
+  config: KcProtocolMappersConfig
+}
+
+type KcRealmRepresentation {
+  accessCodeLifespan: Int
+  accessCodeLifespanLogin: Int
+  accessCodeLifespanUserAction: Int
+  accessTokenLifespan: Int
+  accessTokenLifespanForImplicitFlow: Int
+  accountTheme: String
+  actionTokenGeneratedByAdminLifespan: Int
+  actionTokenGeneratedByUserLifespan: Int
+  adminEventsDetailsEnabled: Boolean
+  adminEventsEnabled: Boolean
+  adminTheme: String
+  attributes: Map
+  authenticationFlows: [Any!]
+  authenticatorConfig: [Any!]
+  browserFlow: String
+  browserSecurityHeaders: Map
+  bruteForceProtected: Boolean
+  clientAuthenticationFlow: String
+  clientScopeMappings: Map
+  clientScopes: [KcClientScope!]
+  clients: [KcClient!]
+  components: Any
+  defaultDefaultClientScopes: [String!]
+  defaultGroups: [String!]
+  defaultLocale: String
+  defaultOptionalClientScopes: [String!]
+  defaultRole: KcRole
+  defaultRoles: [String!]
+  defaultSignatureAlgorithm: String
+  directGrantFlow: String
+  displayName: String
+  displayNameHtml: String
+  dockerAuthenticationFlow: String
+  duplicateEmailsAllowed: Boolean
+  editUsernameAllowed: Boolean
+  emailTheme: String
+  enabled: Boolean
+  enabledEventTypes: [String!]
+  eventsEnabled: Boolean
+  eventsExpiration: Int
+  eventsListeners: [String!]
+  failureFactor: Int
+  federatedUsers: [Any!]
+  groups: [Any!]
+  id: String
+  identityProviderMappers: [Any!]
+  identityProviders: [Any!]
+  internationalizationEnabled: Boolean
+  keycloakVersion: String
+  loginTheme: String
+  loginWithEmailAllowed: Boolean
+  maxDeltaTimeSeconds: Int
+  maxFailureWaitSeconds: Int
+  minimumQuickLoginWaitSeconds: Int
+  notBefore: Int
+  offlineSessionIdleTimeout: Int
+  offlineSessionMaxLifespan: Int
+  offlineSessionMaxLifespanEnabled: Boolean
+  otpPolicyAlgorithm: String
+  otpPolicyDigits: Int
+  otpPolicyInitialCounter: Int
+  otpPolicyLookAheadWindow: Int
+  otpPolicyPeriod: Int
+  otpPolicyType: String
+  otpSupportedApplications: [String!]
+  passwordPolicy: String
+  permanentLockout: Boolean
+  protocolMappers: [Any!]
+  quickLoginCheckMilliSeconds: Int
+  realm: String
+  refreshTokenMaxReuse: Int
+  registrationAllowed: Boolean
+  registrationEmailAsUsername: Boolean
+  registrationFlow: String
+  rememberMe: Boolean
+  requiredActions: [Any!]
+  resetCredentialsFlow: String
+  resetPasswordAllowed: Boolean
+  revokeRefreshToken: Boolean
+  roles: KcRolesRepresentation
+  scopeMappings: [Any!]
+  smtpServer: Map
+  sslRequired: String
+  ssoSessionIdleTimeout: Int
+  ssoSessionIdleTimeoutRememberMe: Int
+  ssoSessionMaxLifespan: Int
+  ssoSessionMaxLifespanRememberMe: Int
+  supportedLocales: [String!]
+  userFederationMappers: [Any!]
+  userFederationProviders: [Any!]
+  userManagedAccessAllowed: Boolean
+  users: [KcUser!]
+  verifyEmail: Boolean
+  waitIncrementSeconds: Int
+  webAuthnPolicyAcceptableAaguids: [String!]
+  webAuthnPolicyAttestationConveyancePreference: String
+  webAuthnPolicyAuthenticatorAttachment: String
+  webAuthnPolicyAvoidSameAuthenticatorRegister: Boolean
+  webAuthnPolicyCreateTimeout: Int
+  webAuthnPolicyPasswordlessAcceptableAaguids: [String!]
+  webAuthnPolicyPasswordlessAttestationConveyancePreference: String
+  webAuthnPolicyPasswordlessAuthenticatorAttachment: String
+  webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister: Boolean
+  webAuthnPolicyPasswordlessCreateTimeout: Int
+  webAuthnPolicyPasswordlessRequireResidentKey: String
+  webAuthnPolicyPasswordlessRpEntityName: String
+  webAuthnPolicyPasswordlessRpId: String
+  webAuthnPolicyPasswordlessSignatureAlgorithms: [String!]
+  webAuthnPolicyPasswordlessUserVerificationRequirement: String
+  webAuthnPolicyRequireResidentKey: String
+  webAuthnPolicyRpEntityName: String
+  webAuthnPolicyRpId: String
+  webAuthnPolicySignatureAlgorithms: [String!]
+  webAuthnPolicyUserVerificationRequirement: String
+}
+
+type KcRequiredActionProviderRepresentation {
+  alias: String
+  config: Map
+  defaultAction: Boolean
+  enabled: Boolean
+  name: String
+  priority: Int
+  providerId: String
+}
+
+type KcResourcePolicyRepresentation {
+  name: String
+  description: String
+  scopes: [String!]
+  roles: [String!]
+  groups: [String!]
+  clients: [String!]
+  id: String
+  logic: String
+  decisionStrategy: String
+  owner: String
+  type: String
+  users: [String!]
+}
+
+type KcResourceRepresentation {
+  _id: String
+  attributes: Map
+  displayName: String
+  icon_uri: String
+  name: String
+  owner: KcResourceOwnerRepresentation
+  ownerManagedAccess: Boolean
+  resource_scopes: [KcScopeRepresentation!]
+  scopes: [KcScopeRepresentation!]
+  type: String
+  uris: [String!]
+}
+
+type KcResourceServerRepresentation {
+  allowRemoteResourceManagement: Boolean
+  clientId: String
+  id: String
+  name: String
+  policies: [KcPolicyRepresentation!]
+  policyEnforcementMode: String
+  resources: [KcResourceRepresentation!]
+  scopes: [KcScopeRepresentation!]
+  decisionStrategy: String
+}
+
+type KcRole {
+  id: String
+  name: String
+  scopeParamRequired: Boolean
+  composite: Boolean
+  composites: KcCompositesRepresentation
+  clientRole: Boolean
+  containerId: String
+  description: String
+  attributes: Map
+}
+
+type KcScopeRepresentation {
+  displayName: String
+  iconUri: String
+  id: String
+  name: String
+  policies: [KcPolicyRepresentation!]
+  resources: [KcResourceRepresentation!]
+}
+
+type KcServerInfoRepresentation {
+  systemInfo: KcSystemInfoRepresentation
+  memoryInfo: KcMemoryInfoRepresentation
+  passwordPolicies: [KcPasswordPolicy!]
+  protocolMapperTypes: KcProtocolMapperTypes
+  builtinProtocolMappers: KcBuiltinProtocolMappers
+  themes: KcThemes
+}
+
+type KcUser {
+  id: String
+  createdTimestamp: Int
+  username: String
+  enabled: Boolean
+  totp: Boolean
+  emailVerified: Boolean
+  firstName: String
+  lastName: String
+  email: String
+  federationLink: String
+  attributes: Map
+  disableableCredentialTypes: [Any!]
+  requiredActions: [String!]
+  access: Map
+  clientRoles: Map
+  realmRoles: [String!]
+  groups: [String!]
+  serviceAccountClientId: String
+  credentials: [KcCredentialRepresentation!]
+}
+
+type KcUserSessionRepresentation {
+  clients: Map
+  id: String
+  ipAddress: String
+  lastAccess: Int
+  start: Int
+  userId: String
+  username: String
+}
+
+type KcTokenInfo {
+  AccessToken: String
+  RefreshToken: String
+  TokenType: String
+  ExpiresIn: Int
+  RefreshExpiresIn: Int
+  Scope: String
+}
+
+type KcAuthenticationExecutionRepresentation {
+  authenticator: String
+  authenticatorConfig: String
+  authenticatorFlow: Boolean
+  autheticatorFlow: Boolean
+  flowAlias: String
+  priority: Int
+  requirement: String
+  userSetupAllowed: Boolean
+}
+
+type KcCertResponseKey {
+  kid: String
+  kty: String
+  alg: String
+  use: String
+  n: String
+  e: String
+  x: String
+  y: String
+  crv: String
+  key_ops: [String!]
+  x5u: String
+  x5c: [String!]
+  x5t: String
+  x5t_S256: String @goTag(key: "json", value: "x5t#S256")
+}
+
+type KcProtocolMapperRepresentation {
+  config: Map
+  id: String
+  name: String
+  protocol: String
+  protocolMapper: String
+  consentRequired: Boolean
+}
+
+type KcClientScopeAttributes {
+  consent_screen_text: String @goTag(key: "json", value: "consent.screen.text")
+  display_on_consent_screen: String @goTag(key: "json", value: "display.on.consent.screen")
+  include_in_token_scope: String @goTag(key: "json", value: "include.in.token.scope")
+}
+
+type KcMultiValuedHashMap {
+  empty: Boolean
+  loadFactor: Float
+  threshold: Int
+}
+
+type KcActiveKeys {
+  HS256: String
+  RS256: String
+  AES: String
+}
+
+type KcKey {
+  providerId: String
+  providerPriority: Int
+  kid: String
+  status: String
+  type: String
+  algorithm: String
+  publicKey: String
+  certificate: String
+}
+
+type KcRoleDefinition {
+  id: String
+  private: Boolean
+  required: Boolean
+}
+
+type KcGroupDefinition {
+  id: String
+  path: String
+  extendChildren: Boolean
+}
+
+type KcProtocolMappersConfig {
+  userinfo_token_claim: String @goTag(key: "json", value: "userinfo.token.claim")
+  user_attribute: String @goTag(key: "json", value: "user.attribute")
+  id_token_claim: String @goTag(key: "json", value: "id.token.claim")
+  access_token_claim: String @goTag(key: "json", value: "access.token.claim")
+  claim_name: String @goTag(key: "json", value: "claim.name")
+  claim_value: String @goTag(key: "json", value: "claim.value")
+  jsonType_label: String @goTag(key: "json", value: "jsonType.label")
+  multivalued: String
+  usermodel_clientRoleMapping_clientId: String @goTag(key: "json", value: "usermodel.clientRoleMapping.clientId")
+  included_client_audience: String @goTag(key: "json", value: "included.client.audience")
+  full_path: String @goTag(key: "json", value: "full.path")
+  attribute_name: String @goTag(key: "json", value: "attribute.name")
+  attribute_nameformat: String @goTag(key: "json", value: "attribute.nameformat")
+  single: String
+}
+
+type KcRolesRepresentation {
+  client: Map
+  realm: [KcRole!]
+}
+
+type KcResourceOwnerRepresentation {
+  id: String
+  name: String
+}
+
+type KcCompositesRepresentation {
+  client: Map
+  realm: [String!]
+}
+
+type KcSystemInfoRepresentation {
+  fileEncoding: String
+  javaHome: String
+  javaRuntime: String
+  javaVendor: String
+  javaVersion: String
+  javaVm: String
+  javaVmVersion: String
+  osArchitecture: String
+  osName: String
+  osVersion: String
+  serverTime: String
+  uptime: String
+  uptimeMillis: Int
+  userDir: String
+  userLocale: String
+  userName: String
+  userTimezone: String
+  version: String
+}
+
+type KcMemoryInfoRepresentation {
+  free: Int
+  freeFormated: String
+  freePercentage: Int
+  total: Int
+  totalFormated: String
+  used: Int
+  usedFormated: String
+}
+
+type KcPasswordPolicy {
+  configType: String
+  defaultValue: String
+  displayName: String
+  id: String
+  multipleSupported: Boolean
+}
+
+type KcProtocolMapperTypes {
+  docker_v2: [KcProtocolMapperType!] @goTag(key: "json", value: "docker-v2")
+  saml: [KcProtocolMapperType!]
+  openid_connect: [KcProtocolMapperType!] @goTag(key: "json", value: "openid-connect")
+}
+
+type KcBuiltinProtocolMappers {
+  saml: [KcProtocolMapperRepresentation!]
+  openid_connect: [KcProtocolMapperRepresentation!] @goTag(key: "json", value: "openid-connect")
+}
+
+type KcThemes {
+  account: [KcThemeRepresentation!]
+  admin: [KcThemeRepresentation!]
+  common: [KcThemeRepresentation!]
+  email: [KcThemeRepresentation!]
+  login: [KcThemeRepresentation!]
+  welcome: [KcThemeRepresentation!]
+}
+
+type KcProtocolMapperType {
+  id: String
+  name: String
+  category: String
+  helpText: String
+  priority: Int
+  properties: [KcProtocolMapperTypeProperty!]
+}
+
+type KcThemeRepresentation {
+  name: String
+  locales: [String!]
+}
+
+type KcProtocolMapperTypeProperty {
+  name: String
+  label: String
+  helpText: String
+  type: String
+  options: [String!]
+  defaultValue: String
+  secret: Boolean
+  readOnly: Boolean
+}
+
+extend type Query {
+  kcTokenUser(realm: String): KcTokenInfo @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/token-user")
+  kcIssuer(realm: String!): KcIssuerResponse @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/issuer")
+  kcCerts(realm: String!): KcCertResponse @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/protocol/certs")
+  kcRawUserInfo(realm: String!): Map @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/protocol/userinfo")
+  kcDecodeAccessToken(realm: String!): Map @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/protocol/decode")
+  kcUserPermissions(realm: String!): [KcPermissionGrantResponseRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/authz/uma-permissions")
+  kcResourcesClient(realm: String!, deep: String, first: String, max: String, name: String, owner: String, type: String, uri: String, scope: String, matchingUri: String, exactName: String): [KcResourceRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/authz/resources")
+  kcResourceClient(realm: String!, resourceID: String!): KcResourceRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/authz/resources/{resourceID}")
+  kcResourcePolicies(realm: String!, resource: String, name: String, scope: String, first: String, max: String): [KcResourcePolicyRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/authz/resource-policies")
+  kcResourcePolicy(realm: String!, permissionID: String!): KcResourcePolicyRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/realms/{realm}/authz/resource-policies/{permissionID}")
+  kcServerInfo: KcServerInfoRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/server-info")
+  kcRealms: [KcRealmRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms")
+  kcRealm(realm: String!): KcRealmRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}")
+  kcKeyStoreConfig(realm: String!): KcKeyStoreConfig @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/keys")
+  kcEvents(realm: String!, client: String, dateFrom: String, dateTo: String, first: String, ipAddress: String, max: String, user: String): [KcEventRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/events")
+  kcCredentialRegistrators(realm: String!): [String!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/credential-registrators")
+  kcUsers(realm: String!, briefRepresentation: String, email: String, emailVerified: String, enabled: String, exact: String, first: String, firstName: String, idpAlias: String, idpUserId: String, lastName: String, max: String, q: String, search: String, username: String): [KcUser!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users")
+  kcUserCount(realm: String!, briefRepresentation: String, email: String, emailVerified: String, enabled: String, exact: String, first: String, firstName: String, idpAlias: String, idpUserId: String, lastName: String, max: String, q: String, search: String, username: String): Int @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/count")
+  kcUserByID(realm: String!, userID: String!): KcUser @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}")
+  kcUserBruteForceDetectionStatus(realm: String!, userID: String!): KcBruteForceStatus @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}/brute-force")
+  kcUserSessions(realm: String!, userID: String!): [KcUserSessionRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}/sessions")
+  kcUserOfflineSessionsForClient(realm: String!, userID: String!, clientID: String!): [KcUserSessionRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}/offline-sessions/{clientID}")
+  kcUserGroups(realm: String!, userID: String!, briefRepresentation: String, exact: String, first: String, full: String, max: String, q: String, search: String): [KcGroup!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}/groups")
+  kcCredentials(realm: String!, userID: String!): [KcCredentialRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}/credentials")
+  kcConfiguredUserStorageCredentialTypes(realm: String!, userID: String!): [String!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}/configured-user-storage-credential-types")
+  kcUserFederatedIdentities(realm: String!, userID: String!): [KcFederatedIdentityRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/users/{userID}/federated-identity")
+  kcGroups(realm: String!, briefRepresentation: String, exact: String, first: String, full: String, max: String, q: String, search: String): [KcGroup!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/groups")
+  kcGroupsCount(realm: String!, briefRepresentation: String, exact: String, first: String, full: String, max: String, q: String, search: String): Int @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/groups/count")
+  kcGroup(realm: String!, groupID: String!): KcGroup @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/groups/{groupID}")
+  kcGroupMembers(realm: String!, groupID: String!, briefRepresentation: String, exact: String, first: String, full: String, max: String, q: String, search: String): [KcUser!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/groups/{groupID}/members")
+  kcGroupByPath(realm: String!, path: String!): KcGroup @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/group-by-path/{*path}")
+  kcDefaultGroups(realm: String!): [KcGroup!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/default-groups")
+  kcRealmRoles(realm: String!, first: String, max: String, search: String, briefRepresentation: String): [KcRole!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles")
+  kcRealmRole(realm: String!, roleName: String!): KcRole @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles/{roleName}")
+  kcCompositeRealmRoles(realm: String!, roleName: String!): [KcRole!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles/{roleName}/composites")
+  kcUsersByRoleName(realm: String!, roleName: String!, first: String, max: String): [KcUser!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles/{roleName}/users")
+  kcGroupsByRole(realm: String!, roleName: String!): [KcGroup!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles/{roleName}/groups")
+  kcRealmRoleByID(realm: String!, roleID: String!): KcRole @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles-by-id/{roleID}")
+  kcCompositeRolesByRoleID(realm: String!, roleID: String!): [KcRole!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites")
+  kcCompositeRealmRolesByRoleID(realm: String!, roleID: String!): [KcRole!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites/realm")
+  kcCompositeClientRolesByRoleID(realm: String!, roleID: String!, clientID: String!): [KcRole!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites/clients/{clientID}")
+  kcClientsWithParams(realm: String!, clientId: String, viewableOnly: String, first: String, max: String, search: String, q: String): [KcClient!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients")
+  kcClient(realm: String!, clientID: String!): KcClient @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}")
+  kcClientSecret(realm: String!, clientID: String!): KcCredentialRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/client-secret")
+  kcClientServiceAccount(realm: String!, clientID: String!): KcUser @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/service-account-user")
+  kcClientUserSessions(realm: String!, clientID: String!): [KcUserSessionRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/user-sessions")
+  kcClientOfflineSessions(realm: String!, clientID: String!): [KcUserSessionRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/offline-sessions")
+  kcClientsDefaultScopes(realm: String!, clientID: String!): [KcClientScope!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/default-client-scopes")
+  kcClientsOptionalScopes(realm: String!, clientID: String!): [KcClientScope!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/optional-client-scopes")
+  kcClientScopeMappings(realm: String!, clientID: String!): KcMappingsRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/scope-mappings")
+  kcClientRoles(realm: String!, clientID: String!, first: String, max: String, search: String, briefRepresentation: String): [KcRole!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/roles")
+  kcClientRole(realm: String!, clientID: String!, roleName: String!): KcRole @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}")
+  kcUsersByClientRoleName(realm: String!, clientID: String!, roleName: String!, first: String, max: String): [KcUser!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}/users")
+  kcGroupsByClientRole(realm: String!, clientID: String!, roleName: String!): [KcGroup!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}/groups")
+  kcResourceServer(realm: String!, clientID: String!): KcResourceServerRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server")
+  kcResources(realm: String!, clientID: String!, deep: String, first: String, max: String, name: String, owner: String, type: String, uri: String, scope: String, matchingUri: String, exactName: String): [KcResourceRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/resource")
+  kcResource(realm: String!, clientID: String!, resourceID: String!): KcResourceRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/resource/{resourceID}")
+  kcScopes(realm: String!, clientID: String!, deep: String, first: String, max: String, name: String): [KcScopeRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/scope")
+  kcScope(realm: String!, clientID: String!, scopeID: String!): KcScopeRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/scope/{scopeID}")
+  kcPolicies(realm: String!, clientID: String!, first: String, max: String, name: String, permission: String, type: String): [KcPolicyRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy")
+  kcPolicy(realm: String!, clientID: String!, policyID: String!): KcPolicyRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}")
+  kcAuthorizationPolicyAssociatedPolicies(realm: String!, clientID: String!, policyID: String!): [KcPolicyRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/associatedPolicies")
+  kcAuthorizationPolicyResources(realm: String!, clientID: String!, policyID: String!): [KcPolicyResourceRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/resources")
+  kcAuthorizationPolicyScopes(realm: String!, clientID: String!, policyID: String!): [KcPolicyScopeRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/scopes")
+  kcDependentPermissions(realm: String!, clientID: String!, policyID: String!): [KcPermissionRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}/dependentPolicies")
+  kcPermissions(realm: String!, clientID: String!, first: String, max: String, name: String, resource: String, scope: String, type: String): [KcPermissionRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission")
+  kcPermission(realm: String!, clientID: String!, permissionID: String!): KcPermissionRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}")
+  kcPermissionResources(realm: String!, clientID: String!, permissionID: String!): [KcPermissionResource!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}/resources")
+  kcPermissionScopes(realm: String!, clientID: String!, permissionID: String!): [KcPermissionScope!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}/scopes")
+  kcClientRepresentation(realm: String!, clientID: String!): KcClient @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients-registrations/{clientID}")
+  kcAdapterConfiguration(realm: String!, clientID: String!): KcAdapterConfiguration @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/clients-registrations/{clientID}/installation")
+  kcClientScopes(realm: String!): [KcClientScope!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/client-scopes")
+  kcClientScope(realm: String!, scopeID: String!): KcClientScope @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}")
+  kcClientScopeProtocolMappers(realm: String!, scopeID: String!): [KcProtocolMappers!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}/protocol-mappers")
+  kcClientScopeProtocolMapper(realm: String!, scopeID: String!, mapperID: String!): KcProtocolMappers @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}/protocol-mappers/{mapperID}")
+  kcDefaultDefaultClientScopes(realm: String!): [KcClientScope!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/default-default-client-scopes")
+  kcDefaultOptionalClientScopes(realm: String!): [KcClientScope!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/default-optional-client-scopes")
+  kcComponentsWithParams(realm: String!, name: String, provider: String, parent: String): [KcComponent!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/components")
+  kcComponent(realm: String!, componentID: String!): KcComponent @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/components/{componentID}")
+  kcAuthenticationFlows(realm: String!): [KcAuthenticationFlowRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/authentication/flows")
+  kcAuthenticationFlow(realm: String!, flow: String!): KcAuthenticationFlowRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/authentication/flows/{flow}")
+  kcAuthenticationExecutions(realm: String!, flow: String!): [KcModifyAuthenticationExecutionRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/authentication/flows/{flow}/executions")
+  kcRequiredActions(realm: String!): [KcRequiredActionProviderRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/authentication/required-actions")
+  kcRequiredAction(realm: String!, alias: String!): KcRequiredActionProviderRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/authentication/required-actions/{alias}")
+  kcIdentityProviders(realm: String!): [KcIdentityProviderRepresentation!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/identity-providers")
+  kcIdentityProvider(realm: String!, alias: String!): KcIdentityProviderRepresentation @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}")
+  kcExportIDPPublicBrokerConfig(realm: String!, alias: String!): String @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}/export")
+  kcIdentityProviderMappers(realm: String!, alias: String!): [KcIdentityProviderMapper!] @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}/mappers")
+  kcIdentityProviderMapperByID(realm: String!, alias: String!, mapperID: String!): KcIdentityProviderMapper @hasPermission(object: "/graphql/manage-service", action: "QUERY") @rest(service: "manage-service", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}/mappers/{mapperID}")
+}
+
+extend type Mutation {
+  kcPostRealmsProtocolToken(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/protocol/token", body: "input")
+  kcPostRealmsProtocolIntrospect(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/protocol/introspect", body: "input")
+  kcPostRealmsProtocolRevoke(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/protocol/revoke", body: "input")
+  kcPostRealmsProtocolTokenExchange(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/protocol/token-exchange", body: "input")
+  kcPostRealmsProtocolLogoutPublic(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/protocol/logout-public", body: "input")
+  kcPostRealmsAuthzRpt(realm: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/authz/rpt")
+  kcPostRealmsAuthzRptPermissions(realm: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/authz/rpt/permissions")
+  kcPostRealmsAuthzRptDecision(realm: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/authz/rpt/decision")
+  kcPostRealmsAuthzPermissionTickets(realm: String!, input: [Map!]!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/authz/permission-tickets", body: "input")
+  kcPostRealmsAuthzUmaPermissions(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/authz/uma-permissions", body: "input")
+  kcPutRealmsAuthzUmaPermissions(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/realms/{realm}/authz/uma-permissions", body: "input")
+  kcDeleteRealmsAuthzUmaPermissions(realm: String!, ticketID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/realms/{realm}/authz/uma-permissions/{ticketID}")
+  kcPostRealmsAuthzResources(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/authz/resources", body: "input")
+  kcPutRealmsAuthzResources(realm: String!, resourceID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/realms/{realm}/authz/resources/{resourceID}", body: "input")
+  kcDeleteRealmsAuthzResources(realm: String!, resourceID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/realms/{realm}/authz/resources/{resourceID}")
+  kcPostRealmsAuthzResourcesPolicies(realm: String!, resourceID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/realms/{realm}/authz/resources/{resourceID}/policies", body: "input")
+  kcPutRealmsAuthzResourcePolicies(realm: String!, permissionID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/realms/{realm}/authz/resource-policies/{permissionID}", body: "input")
+  kcDeleteRealmsAuthzResourcePolicies(realm: String!, permissionID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/realms/{realm}/authz/resource-policies/{permissionID}")
+  kcPostAdminRealms(input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms", body: "input")
+  kcPutAdminRealms(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}", body: "input")
+  kcDeleteAdminRealms(realm: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}")
+  kcPostAdminRealmsClearRealmCache(realm: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clear-realm-cache")
+  kcPostAdminRealmsClearUserCache(realm: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clear-user-cache")
+  kcPostAdminRealmsClearKeysCache(realm: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clear-keys-cache")
+  kcDeleteAdminRealmsSessions(realm: String!, sessionID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/sessions/{sessionID}")
+  kcPostAdminRealmsUsers(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/users", body: "input")
+  kcPutAdminRealmsUsers(realm: String!, userID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/users/{userID}", body: "input")
+  kcDeleteAdminRealmsUsers(realm: String!, userID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/users/{userID}")
+  kcPutAdminRealmsUsersResetPassword(realm: String!, userID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/users/{userID}/reset-password", body: "input")
+  kcPutAdminRealmsUsersExecuteActionsEmail(realm: String!, userID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/users/{userID}/execute-actions-email", body: "input")
+  kcPutAdminRealmsUsersSendVerifyEmail(realm: String!, userID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/users/{userID}/send-verify-email")
+  kcDeleteAdminRealmsUsersConsents(realm: String!, userID: String!, clientID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/users/{userID}/consents/{clientID}")
+  kcPostAdminRealmsUsersLogout(realm: String!, userID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/users/{userID}/logout")
+  kcPutAdminRealmsUsersGroups(realm: String!, userID: String!, groupID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/users/{userID}/groups/{groupID}")
+  kcDeleteAdminRealmsUsersGroups(realm: String!, userID: String!, groupID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/users/{userID}/groups/{groupID}")
+  kcDeleteAdminRealmsUsersCredentials(realm: String!, userID: String!, credentialID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/users/{userID}/credentials/{credentialID}")
+  kcPutAdminRealmsUsersCredentialsUserLabel(realm: String!, userID: String!, credentialID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/users/{userID}/credentials/{credentialID}/userLabel", body: "input")
+  kcPostAdminRealmsUsersCredentialsMoveToFirst(realm: String!, userID: String!, credentialID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/users/{userID}/credentials/{credentialID}/moveToFirst")
+  kcPostAdminRealmsUsersCredentialsMoveAfter(realm: String!, userID: String!, credentialID: String!, previousCredentialID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/users/{userID}/credentials/{credentialID}/moveAfter/{previousCredentialID}")
+  kcPutAdminRealmsUsersDisableCredentialTypes(realm: String!, userID: String!, input: [String!]!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/users/{userID}/disable-credential-types", body: "input")
+  kcPostAdminRealmsUsersFederatedIdentity(realm: String!, userID: String!, providerID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/users/{userID}/federated-identity/{providerID}", body: "input")
+  kcDeleteAdminRealmsUsersFederatedIdentity(realm: String!, userID: String!, providerID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/users/{userID}/federated-identity/{providerID}")
+  kcPostAdminRealmsGroups(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/groups", body: "input")
+  kcPutAdminRealmsGroups(realm: String!, groupID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/groups/{groupID}", body: "input")
+  kcDeleteAdminRealmsGroups(realm: String!, groupID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/groups/{groupID}")
+  kcPostAdminRealmsGroupsChildren(realm: String!, groupID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/groups/{groupID}/children", body: "input")
+  kcPutAdminRealmsDefaultGroups(realm: String!, groupID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/default-groups/{groupID}")
+  kcDeleteAdminRealmsDefaultGroups(realm: String!, groupID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/default-groups/{groupID}")
+  kcPostAdminRealmsRoles(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/roles", body: "input")
+  kcPutAdminRealmsRoles(realm: String!, roleName: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/roles/{roleName}", body: "input")
+  kcDeleteAdminRealmsRoles(realm: String!, roleName: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/roles/{roleName}")
+  kcPostAdminRealmsRolesComposites(realm: String!, roleName: String!, input: [Map!]!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/roles/{roleName}/composites", body: "input")
+  kcDeleteAdminRealmsRolesComposites(realm: String!, roleName: String!, input: [Map!]!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/roles/{roleName}/composites", body: "input")
+  kcPutAdminRealmsRolesById(realm: String!, roleID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/roles-by-id/{roleID}", body: "input")
+  kcPostAdminRealmsRolesByIdComposites(realm: String!, roleID: String!, input: [Map!]!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites", body: "input")
+  kcDeleteAdminRealmsRolesByIdComposites(realm: String!, roleID: String!, input: [Map!]!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/roles-by-id/{roleID}/composites", body: "input")
+  kcPostAdminRealmsClients(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients", body: "input")
+  kcPutAdminRealmsClients(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}", body: "input")
+  kcDeleteAdminRealmsClients(realm: String!, clientID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}")
+  kcPostAdminRealmsClientsClientSecret(realm: String!, clientID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/client-secret")
+  kcPutAdminRealmsClientsDefaultClientScopes(realm: String!, clientID: String!, scopeID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/default-client-scopes/{scopeID}")
+  kcDeleteAdminRealmsClientsDefaultClientScopes(realm: String!, clientID: String!, scopeID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/default-client-scopes/{scopeID}")
+  kcPutAdminRealmsClientsOptionalClientScopes(realm: String!, clientID: String!, scopeID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/optional-client-scopes/{scopeID}")
+  kcDeleteAdminRealmsClientsOptionalClientScopes(realm: String!, clientID: String!, scopeID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/optional-client-scopes/{scopeID}")
+  kcPostAdminRealmsClientsRoles(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/roles", body: "input")
+  kcPutAdminRealmsClientsRoles(realm: String!, clientID: String!, roleName: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}", body: "input")
+  kcDeleteAdminRealmsClientsRoles(realm: String!, clientID: String!, roleName: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/roles/{roleName}")
+  kcPostAdminRealmsClientsProtocolMappers(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/protocol-mappers", body: "input")
+  kcPutAdminRealmsClientsProtocolMappers(realm: String!, clientID: String!, mapperID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/protocol-mappers/{mapperID}", body: "input")
+  kcDeleteAdminRealmsClientsProtocolMappers(realm: String!, clientID: String!, mapperID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/protocol-mappers/{mapperID}")
+  kcPostAdminRealmsClientsAuthzResourceServerResource(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/resource", body: "input")
+  kcPutAdminRealmsClientsAuthzResourceServerResource(realm: String!, clientID: String!, resourceID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/resource/{resourceID}", body: "input")
+  kcDeleteAdminRealmsClientsAuthzResourceServerResource(realm: String!, clientID: String!, resourceID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/resource/{resourceID}")
+  kcPostAdminRealmsClientsAuthzResourceServerScope(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/scope", body: "input")
+  kcPutAdminRealmsClientsAuthzResourceServerScope(realm: String!, clientID: String!, scopeID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/scope/{scopeID}", body: "input")
+  kcDeleteAdminRealmsClientsAuthzResourceServerScope(realm: String!, clientID: String!, scopeID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/scope/{scopeID}")
+  kcPostAdminRealmsClientsAuthzResourceServerPolicy(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy", body: "input")
+  kcPutAdminRealmsClientsAuthzResourceServerPolicy(realm: String!, clientID: String!, policyID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}", body: "input")
+  kcDeleteAdminRealmsClientsAuthzResourceServerPolicy(realm: String!, clientID: String!, policyID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/policy/{policyID}")
+  kcPostAdminRealmsClientsAuthzResourceServerPermission(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission", body: "input")
+  kcPutAdminRealmsClientsAuthzResourceServerPermission(realm: String!, clientID: String!, permissionID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}", body: "input")
+  kcDeleteAdminRealmsClientsAuthzResourceServerPermission(realm: String!, clientID: String!, permissionID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients/{clientID}/authz/resource-server/permission/{permissionID}")
+  kcPostAdminRealmsClientsRegistrations(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/clients-registrations", body: "input")
+  kcPutAdminRealmsClientsRegistrations(realm: String!, clientID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/clients-registrations/{clientID}", body: "input")
+  kcDeleteAdminRealmsClientsRegistrations(realm: String!, clientID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/clients-registrations/{clientID}")
+  kcPostAdminRealmsClientScopes(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/client-scopes", body: "input")
+  kcPutAdminRealmsClientScopes(realm: String!, scopeID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}", body: "input")
+  kcDeleteAdminRealmsClientScopes(realm: String!, scopeID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}")
+  kcPostAdminRealmsClientScopesProtocolMappers(realm: String!, scopeID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}/protocol-mappers", body: "input")
+  kcPutAdminRealmsClientScopesProtocolMappers(realm: String!, scopeID: String!, mapperID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}/protocol-mappers/{mapperID}", body: "input")
+  kcDeleteAdminRealmsClientScopesProtocolMappers(realm: String!, scopeID: String!, mapperID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/client-scopes/{scopeID}/protocol-mappers/{mapperID}")
+  kcPostAdminRealmsComponents(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/components", body: "input")
+  kcPutAdminRealmsComponents(realm: String!, componentID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/components/{componentID}", body: "input")
+  kcDeleteAdminRealmsComponents(realm: String!, componentID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/components/{componentID}")
+  kcPostAdminRealmsAuthenticationFlows(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/authentication/flows", body: "input")
+  kcPutAdminRealmsAuthenticationFlows(realm: String!, flow: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/authentication/flows/{flow}", body: "input")
+  kcDeleteAdminRealmsAuthenticationFlows(realm: String!, flow: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/authentication/flows/{flow}")
+  kcPutAdminRealmsAuthenticationFlowsExecutions(realm: String!, flow: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/authentication/flows/{flow}/executions", body: "input")
+  kcPostAdminRealmsAuthenticationFlowsExecutionsExecution(realm: String!, flow: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/authentication/flows/{flow}/executions/execution", body: "input")
+  kcPostAdminRealmsAuthenticationFlowsExecutionsFlow(realm: String!, flow: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/authentication/flows/{flow}/executions/flow", body: "input")
+  kcDeleteAdminRealmsAuthenticationExecutions(realm: String!, executionID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/authentication/executions/{executionID}")
+  kcPostAdminRealmsAuthenticationRegisterRequiredAction(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/authentication/register-required-action", body: "input")
+  kcPutAdminRealmsAuthenticationRequiredActions(realm: String!, alias: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/authentication/required-actions/{alias}", body: "input")
+  kcDeleteAdminRealmsAuthenticationRequiredActions(realm: String!, alias: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/authentication/required-actions/{alias}")
+  kcPostAdminRealmsIdentityProviders(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/identity-providers", body: "input")
+  kcPostAdminRealmsIdentityProvidersImportConfig(realm: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/identity-providers/import-config", body: "input")
+  kcPutAdminRealmsIdentityProviders(realm: String!, alias: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}", body: "input")
+  kcDeleteAdminRealmsIdentityProviders(realm: String!, alias: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}")
+  kcPostAdminRealmsIdentityProvidersMappers(realm: String!, alias: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}/mappers", body: "input")
+  kcPutAdminRealmsIdentityProvidersMappers(realm: String!, alias: String!, mapperID: String!, input: Map!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "PUT", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}/mappers/{mapperID}", body: "input")
+  kcDeleteAdminRealmsIdentityProvidersMappers(realm: String!, alias: String!, mapperID: String!): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "DELETE", path: "/api/v1/admin/realms/{realm}/identity-providers/{alias}/mappers/{mapperID}")
+  kcPostLoginAdmin(input: Map): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/login-admin", body: "input")
+  kcPostUser(input: Map): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/user", body: "input")
+  kcPostLogin(input: Map): Any @public @rest(service: "manage-service", method: "POST", path: "/login", body: "input")
+  kcPostLoginOtp(input: Map): Any @public @rest(service: "manage-service", method: "POST", path: "/login-otp", body: "input")
+  kcPostLogout(input: Map): Any @public @rest(service: "manage-service", method: "POST", path: "/logout", body: "input")
+  kcPostLoginClient(input: Map): Any @public @rest(service: "manage-service", method: "POST", path: "/login-client", body: "input")
+  kcPostRefreshToken(input: Map): Any @public @rest(service: "manage-service", method: "POST", path: "/refresh-token", body: "input")
+  kcPostUserInfo(input: Map): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/user-info", body: "input")
+  kcPostSetPassword(input: Map): Any @hasPermission(object: "/graphql/manage-service", action: "MUTATION") @rest(service: "manage-service", method: "POST", path: "/set-password", body: "input")
+}

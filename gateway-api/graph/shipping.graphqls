@@ -1,0 +1,181 @@
+type ShipShipmentList {
+  items: [ShipShipment!]
+  total: Int
+}
+
+type ShipShipmentDetail {
+  shipment: ShipShipment
+  events: [ShipShipmentEvent!]
+}
+
+type ShipWarehouse {
+  id: Int
+  code: String
+  name: String
+  phone: String
+  street: String
+  ward_code: String
+  district_id: Int
+  province_id: Int
+  carrier_shop_id: Int
+  active: Boolean
+  created_at: String
+  updated_at: String
+}
+
+type ShipProvince {
+  id: Int
+  name: String
+}
+
+type ShipDistrict {
+  id: Int
+  province_id: Int
+  name: String
+}
+
+type ShipWard {
+  code: String
+  district_id: Int
+  name: String
+}
+
+type ShipShipment {
+  id: Int
+  code: String
+  client_service: String
+  client_order_code: String
+  status: String
+  carrier_status: String
+  carrier_order_code: String
+  warehouse_id: Int
+  carrier_shop_id: Int
+  service_id: Int
+  service_type_id: Int
+  service_name: String
+  strategy: String
+  recipient: ShipAddress
+  parcel: ShipParcel
+  customer: ShipCustomer
+  cod_amount: Int
+  insurance_value: Int
+  payment_type: String
+  required_note: String
+  note: String
+  quoted_fee: Int
+  shipping_fee: Int
+  expected_delivery_at: String
+  delivered_at: String
+  callback_url: String
+  place_attempts: Int
+  last_error: String
+  created_at: String
+  updated_at: String
+}
+
+type ShipShipmentEvent {
+  id: Int
+  shipment_id: Int
+  source: String
+  from_status: String
+  to_status: String
+  carrier_status: String
+  reason: String
+  applied: Boolean
+  occurred_at: String
+  created_at: String
+}
+
+type ShipAddress {
+  name: String
+  phone: String
+  street: String
+  ward_code: String
+  district_id: Int
+  province_id: Int
+}
+
+type ShipParcel {
+  weight_gram: Int
+  length_cm: Int
+  width_cm: Int
+  height_cm: Int
+  content: String
+  items: [ShipItem!]
+}
+
+type ShipCustomer {
+  user_id: Int
+  email: String
+}
+
+type ShipItem {
+  name: String
+  code: String
+  quantity: Int
+  weight_gram: Int
+  price: Int
+}
+
+input ShipAddressInput {
+  name: String
+  phone: String
+  street: String
+  ward_code: String
+  district_id: Int
+  province_id: Int
+  address: String
+}
+
+input ShipParcelInput {
+  weight: Int
+  length: Int
+  width: Int
+  height: Int
+  items: [Map!]
+}
+
+input ShipQuoteInput {
+  recipient: ShipAddressInput
+  parcel: ShipParcelInput
+  cod_amount: Int64
+  insurance_value: Int64
+  warehouse_ids: [Int64!]
+}
+
+input ShipCreateShipmentInput {
+  client_order_code: String
+  recipient: ShipAddressInput
+  parcel: ShipParcelInput
+  cod_amount: Int64
+  insurance_value: Int64
+  payment_type: Int
+  required_note: String
+  note: String
+  strategy: String
+  warehouse_ids: [Int64!]
+  warehouse_id: Int64
+  service_id: Int
+  customer: Map
+  callback_url: String
+}
+
+extend type Query {
+  shipments(status: String, limit: Int, offset: Int): ShipShipmentList @hasPermission(object: "/graphql/shipping-service", action: "QUERY") @rest(service: "shipping-service", path: "/api/v1/shipments")
+  shipment(id: Int!): ShipShipmentDetail @hasPermission(object: "/graphql/shipping-service", action: "QUERY") @rest(service: "shipping-service", path: "/api/v1/shipments/{id}")
+  shipmentByClientCode(code: String!): ShipShipmentDetail @hasPermission(object: "/graphql/shipping-service", action: "QUERY") @rest(service: "shipping-service", path: "/api/v1/shipments/by-client-code/{code}")
+  shipWarehouses: [ShipWarehouse!] @hasPermission(object: "/graphql/shipping-service", action: "QUERY") @rest(service: "shipping-service", path: "/api/v1/warehouses", unwrap: "items")
+  shipProvinces: [ShipProvince!] @public @rest(service: "shipping-service", path: "/api/v1/locations/provinces", unwrap: "items")
+  shipDistricts(province_id: Int!): [ShipDistrict!] @public @rest(service: "shipping-service", path: "/api/v1/locations/districts", unwrap: "items")
+  shipWards(district_id: Int!): [ShipWard!] @public @rest(service: "shipping-service", path: "/api/v1/locations/wards", unwrap: "items")
+  shipQuote(input: ShipQuoteInput!): Any @rest(service: "shipping-service", method: "POST", path: "/api/v1/shipments/quote")
+}
+
+extend type Mutation {
+  shipCreateShipment(input: ShipCreateShipmentInput!): Any @hasPermission(object: "/graphql/shipping-service", action: "MUTATION") @rest(service: "shipping-service", method: "POST", path: "/api/v1/shipments")
+  shipPlaceShipment(id: Int64!): Any @hasPermission(object: "/graphql/shipping-service", action: "MUTATION") @rest(service: "shipping-service", method: "POST", path: "/api/v1/shipments/{id}/place")
+  shipCancelShipment(id: Int64!, reason: String): Any @hasPermission(object: "/graphql/shipping-service", action: "MUTATION") @rest(service: "shipping-service", method: "POST", path: "/api/v1/shipments/{id}/cancel")
+  shipSyncShipment(id: Int64!): Any @hasPermission(object: "/graphql/shipping-service", action: "MUTATION") @rest(service: "shipping-service", method: "POST", path: "/api/v1/shipments/{id}/sync")
+  shipCreateWarehouse(code: String!, name: String!, phone: String, street: String, ward_code: String, district_id: Int, province_id: Int, carrier_shop_id: Int64): ShipWarehouse @hasPermission(object: "/graphql/shipping-service", action: "MUTATION") @rest(service: "shipping-service", method: "POST", path: "/api/v1/warehouses")
+  shipSetWarehouseActive(id: Int64!, active: Boolean!): ShipWarehouse @hasPermission(object: "/graphql/shipping-service", action: "MUTATION") @rest(service: "shipping-service", method: "PATCH", path: "/api/v1/warehouses/{id}")
+}

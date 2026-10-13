@@ -1,6 +1,9 @@
 package http
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/JieeiroSst/banking-service/pkg/authn"
+	"github.com/gin-gonic/gin"
+)
 
 func NewRouter(h *Handler) *gin.Engine {
 	engine := gin.New()
@@ -14,7 +17,9 @@ func NewRouter(h *Handler) *gin.Engine {
 func RegisterRoutes(engine *gin.Engine, h *Handler) {
 	engine.GET("/health", h.GetHealth)
 
-	persons := engine.Group("/persons")
+	api := engine.Group("", authenticate(authn.FromEnv()), requireAdmin())
+
+	persons := api.Group("/persons")
 	{
 		persons.POST("", h.CreatePerson)
 		persons.GET("", h.ListPersons)
@@ -23,7 +28,7 @@ func RegisterRoutes(engine *gin.Engine, h *Handler) {
 		persons.DELETE("/:id", h.DeletePerson)
 	}
 
-	branches := engine.Group("/branches")
+	branches := api.Group("/branches")
 	{
 		branches.POST("", h.CreateBranch)
 		branches.GET("", h.ListBranches)
@@ -32,7 +37,7 @@ func RegisterRoutes(engine *gin.Engine, h *Handler) {
 		branches.DELETE("/:id", h.DeleteBranch)
 	}
 
-	customers := engine.Group("/customers")
+	customers := api.Group("/customers")
 	{
 		customers.POST("", h.CreateCustomer)
 		customers.GET("", h.ListCustomers)
@@ -41,7 +46,7 @@ func RegisterRoutes(engine *gin.Engine, h *Handler) {
 		customers.DELETE("/:id", h.DeleteCustomer)
 	}
 
-	employees := engine.Group("/employees")
+	employees := api.Group("/employees")
 	{
 		employees.POST("", h.CreateEmployee)
 		employees.GET("", h.ListEmployees)
@@ -50,7 +55,7 @@ func RegisterRoutes(engine *gin.Engine, h *Handler) {
 		employees.DELETE("/:id", h.DeleteEmployee)
 	}
 
-	accounts := engine.Group("/accounts")
+	accounts := api.Group("/accounts")
 	{
 		accounts.POST("", h.CreateAccount)
 		accounts.GET("", h.ListAccounts)
@@ -59,7 +64,7 @@ func RegisterRoutes(engine *gin.Engine, h *Handler) {
 		accounts.DELETE("/:id", h.DeleteAccount)
 	}
 
-	loans := engine.Group("/loans")
+	loans := api.Group("/loans")
 	{
 		loans.POST("", h.CreateLoan)
 		loans.GET("", h.ListLoans)
@@ -68,7 +73,7 @@ func RegisterRoutes(engine *gin.Engine, h *Handler) {
 		loans.DELETE("/:id", h.DeleteLoan)
 	}
 
-	loanPayments := engine.Group("/loan-payments")
+	loanPayments := api.Group("/loan-payments")
 	{
 		loanPayments.POST("", h.CreateLoanPayment)
 		loanPayments.GET("", h.ListLoanPayments)
@@ -77,7 +82,7 @@ func RegisterRoutes(engine *gin.Engine, h *Handler) {
 		loanPayments.DELETE("/:id", h.DeleteLoanPayment)
 	}
 
-	transactions := engine.Group("/transactions")
+	transactions := api.Group("/transactions")
 	{
 		transactions.POST("", h.CreateTransaction)
 		transactions.GET("", h.ListTransactions)

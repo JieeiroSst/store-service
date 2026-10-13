@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 
 	"github.com/JIeeiroSst/ticket-service/config"
@@ -18,7 +19,7 @@ type Client struct{ c *httpx.Client }
 var _ outbound.WalletGateway = (*Client)(nil)
 
 func NewClient(cfg config.Config) *Client {
-	return &Client{c: httpx.New("wallet-service", cfg.WalletServiceURL, cfg.PaymentServiceTimeout)}
+	return &Client{c: httpx.New("wallet-service", cfg.WalletServiceURL, cfg.PaymentServiceTimeout).WithHeader("X-Internal-Token", os.Getenv("INTERNAL_API_TOKEN"))}
 }
 
 type walletJSON struct {

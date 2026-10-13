@@ -1,0 +1,49 @@
+type BonusReward {
+  reward_id: String!
+  event_id: String!
+  user_id: String!
+  ref_code: String!
+  source: String!
+  reward_type: String!
+  reward_value: Float!
+  created_at: String
+}
+
+type BonusBalance {
+  user_id: String!
+  reward_type: String!
+  total_value: Float!
+  reward_count: Int!
+}
+
+type BonusRecordResult {
+  reward_id: String
+  event_id: String
+  user_id: String
+  ref_code: String
+  source: String
+  reward_type: String
+  reward_value: Float
+  created_at: String
+  duplicate: Boolean
+}
+
+input BonusRecordRewardInput {
+  event_id: String
+  user_id: String
+  ref_code: String
+  source: String
+  reward_type: String
+  reward_value: Float
+}
+
+extend type Query {
+  bonusUserRewards(user_id: String!, limit: Int, offset: Int): [BonusReward!]! @rest(service: "bonuslink-service", path: "/api/v1/bonus/users/{user_id}/rewards", unwrap: "data")
+  bonusUserBalances(user_id: String!): [BonusBalance!]! @rest(service: "bonuslink-service", path: "/api/v1/bonus/users/{user_id}/balances", unwrap: "data")
+  myBonusRewards(limit: Int, offset: Int): [BonusReward!]! @rest(service: "bonuslink-service", path: "/api/v1/bonus/users/{$userId}/rewards", unwrap: "data")
+  myBonusBalances: [BonusBalance!]! @rest(service: "bonuslink-service", path: "/api/v1/bonus/users/{$userId}/balances", unwrap: "data")
+}
+
+extend type Mutation {
+  bonusRecordReward(input: BonusRecordRewardInput!): BonusRecordResult @rest(service: "bonuslink-service", method: "POST", path: "/api/v1/bonus/rewards", unwrap: "data")
+}

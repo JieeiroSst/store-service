@@ -1,0 +1,324 @@
+type ShortlinkLink {
+  id: String
+  user_id: String
+  template_id: String
+  short_code: String
+  original_url: String
+  title: String
+  description: String
+  ios_app_store_url: String
+  android_app_store_url: String
+  web_fallback_url: String
+  app_scheme: String
+  ios_universal_link: String
+  android_app_link: String
+  deep_link_path: String
+  deep_link_parameters: Map
+  utm_parameters: ShortlinkUTMParameters
+  targeting_rules: ShortlinkTargetingRules
+  og_title: String
+  og_description: String
+  og_image_url: String
+  og_type: String
+  attribution_window_hours: Int
+  is_active: Boolean
+  expires_at: String
+  append_click_id: Boolean
+  created_at: String
+  updated_at: String
+  organization_id: String
+  warn_at: String
+  disabled_at: String
+  disabled_reason: String
+  click_count: Int
+  template_slug: String
+}
+
+type ShortlinkTopLink {
+  id: String
+  shortCode: String
+  title: String
+  originalUrl: String
+  totalClicks: Int
+  uniqueClicks: Int
+}
+
+type ShortlinkDateCount {
+  date: String
+  clicks: Int
+}
+
+type ShortlinkCountryCount {
+  countryCode: String
+  country: String
+  clicks: Int
+}
+
+type ShortlinkDeviceCount {
+  device: String
+  clicks: Int
+}
+
+type ShortlinkPlatformCount {
+  platform: String
+  clicks: Int
+}
+
+type ShortlinkAnalytics {
+  totalClicks: Int
+  uniqueClicks: Int
+  clicksByDate: [ShortlinkDateCount!]
+  clicksByCountry: [ShortlinkCountryCount!]
+  clicksByDevice: [ShortlinkDeviceCount!]
+  clicksByPlatform: [ShortlinkPlatformCount!]
+  topLinks: [ShortlinkTopLink!]
+}
+
+type ShortlinkSdkHealth {
+  status: String
+  version: String
+  timestamp: String
+}
+
+type ShortlinkWebhook {
+  id: String
+  user_id: String
+  name: String
+  url: String
+  events: [String!]
+  is_active: Boolean
+  retry_count: Int
+  timeout_ms: Int
+  headers: Map
+  created_at: String
+  updated_at: String
+}
+
+type ShortlinkTemplate {
+  id: String
+  user_id: String
+  name: String
+  slug: String
+  description: String
+  settings: Any
+  is_default: Boolean
+  created_at: String
+  updated_at: String
+}
+
+type ShortlinkUTMParameters {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+type ShortlinkTargetingRules {
+  countries: [String!]
+  devices: [String!]
+  languages: [String!]
+}
+
+type ShortlinkResolve {
+  shortCode: String
+  linkId: String
+  deepLinkPath: String
+  appScheme: String
+  iosUrl: String
+  androidUrl: String
+  webUrl: String
+  utmParameters: ShortlinkUTMParameters
+  customParameters: Map
+  clickedAt: String
+}
+
+type ShortlinkAttribution {
+  fingerprint: String
+  attributed: Boolean
+  installEvent: ShortlinkInstallEvent
+  clickEvent: ShortlinkClickEvent
+  linkData: ShortlinkAttributionLinkData
+}
+
+type ShortlinkInstallEvent {
+  id: String
+  installedAt: String
+  firstOpenAt: String
+  confidenceScore: Float
+  deepLinkRetrieved: Boolean
+}
+
+type ShortlinkClickEvent {
+  id: String
+  clickedAt: String
+  deviceType: String
+  platform: String
+  countryCode: String
+  city: String
+}
+
+type ShortlinkAttributionLinkData {
+  shortCode: String
+  originalUrl: String
+  iosUrl: String
+  androidUrl: String
+  webFallbackUrl: String
+  utmParameters: ShortlinkUTMParameters
+  deepLinkParameters: Map
+}
+
+input ShortlinkUtmInput {
+  source: String
+  medium: String
+  campaign: String
+  term: String
+  content: String
+}
+
+input ShortlinkTargetingInput {
+  countries: [String!]
+  devices: [String!]
+  languages: [String!]
+}
+
+input ShortlinkCreateLinkInput {
+  userId: String
+  customCode: String
+  templateId: String
+  originalUrl: String
+  title: String
+  description: String
+  iosAppStoreUrl: String
+  androidAppStoreUrl: String
+  webFallbackUrl: String
+  appScheme: String
+  iosUniversalLink: String
+  androidAppLink: String
+  deepLinkPath: String
+  deepLinkParameters: Map
+  utmParameters: ShortlinkUtmInput
+  targetingRules: ShortlinkTargetingInput
+  ogTitle: String
+  ogDescription: String
+  ogImageUrl: String
+  ogType: String
+  attributionWindowHours: Int
+  expiresAt: String
+}
+
+input ShortlinkUpdateLinkInput {
+  templateId: String
+  originalUrl: String
+  title: String
+  description: String
+  iosAppStoreUrl: String
+  androidAppStoreUrl: String
+  webFallbackUrl: String
+  appScheme: String
+  iosUniversalLink: String
+  androidAppLink: String
+  deepLinkPath: String
+  deepLinkParameters: Map
+  utmParameters: ShortlinkUtmInput
+  targetingRules: ShortlinkTargetingInput
+  ogTitle: String
+  ogDescription: String
+  ogImageUrl: String
+  ogType: String
+  attributionWindowHours: Int
+  expiresAt: String
+  isActive: Boolean
+}
+
+input ShortlinkWebhookInput {
+  userId: String
+  name: String
+  url: String
+  events: [String!]
+  headers: Map
+  retryCount: Int
+  timeoutMs: Int
+  isActive: Boolean
+}
+
+input ShortlinkTemplateSettingsInput {
+  defaultIosUrl: String
+  defaultAndroidUrl: String
+  defaultWebFallbackUrl: String
+  defaultAttributionWindowHours: Int
+  utmParameters: ShortlinkUtmInput
+  targetingRules: ShortlinkTargetingInput
+  expiresAfterDays: Int
+}
+
+input ShortlinkTemplateInput {
+  userId: String
+  name: String
+  description: String
+  settings: ShortlinkTemplateSettingsInput
+  isDefault: Boolean
+}
+
+input ShortlinkInstallInput {
+  ipAddress: String
+  userAgent: String
+  timezone: String
+  language: String
+  screenWidth: Int
+  screenHeight: Int
+  platform: String
+  platformVersion: String
+  deviceId: String
+  attributionWindowHours: Int
+  sdkName: String
+  sdkVersion: String
+  appToken: String
+}
+
+input ShortlinkEventInput {
+  installId: String
+  eventName: String
+  eventData: Map
+  timestamp: String
+  attributedLinkId: String
+  attributedClickId: String
+  linkOpenedAt: String
+  sessionId: String
+  sdkName: String
+  sdkVersion: String
+}
+
+extend type Query {
+  shortlinkLinks(userId: String): [ShortlinkLink!] @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/links")
+  shortlinkLink(id: String!, userId: String): ShortlinkLink @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/links/{id}")
+  shortlinkAnalyticsOverview(userId: String, days: Int): ShortlinkAnalytics @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/analytics/overview")
+  shortlinkLinkAnalytics(linkId: String!, userId: String, days: Int): ShortlinkAnalytics @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/analytics/links/{linkId}")
+  shortlinkResolve(shortCode: String!): ShortlinkResolve @public @rest(service: "shortlink-service", path: "/api/sdk/v1/resolve/{shortCode}")
+  shortlinkResolveWithTemplate(templateSlug: String!, shortCode: String!): ShortlinkResolve @public @rest(service: "shortlink-service", path: "/api/sdk/v1/resolve/{templateSlug}/{shortCode}")
+  shortlinkAttribution(fingerprint: String!): ShortlinkAttribution @public @rest(service: "shortlink-service", path: "/api/sdk/v1/attribution/{fingerprint}")
+  shortlinkSdkHealth: ShortlinkSdkHealth @public @rest(service: "shortlink-service", path: "/api/sdk/v1/health")
+  shortlinkWebhooks(userId: String): [ShortlinkWebhook!] @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/webhooks")
+  shortlinkWebhook(id: String!, userId: String): ShortlinkWebhook @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/webhooks/{id}")
+  shortlinkTemplates(userId: String): [ShortlinkTemplate!] @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/templates")
+  shortlinkTemplate(id: String!, userId: String): ShortlinkTemplate @hasPermission(object: "/graphql/shortlink-service", action: "QUERY") @rest(service: "shortlink-service", path: "/api/templates/{id}")
+  shortlinkAppleAppSiteAssociation: Map @public @rest(service: "shortlink-service", path: "/.well-known/apple-app-site-association")
+  shortlinkAssetLinks: [Map!] @public @rest(service: "shortlink-service", path: "/.well-known/assetlinks.json")
+}
+
+extend type Mutation {
+  shortlinkCreateLink(input: ShortlinkCreateLinkInput!): ShortlinkLink @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "POST", path: "/api/links")
+  shortlinkUpdateLink(id: String!, input: ShortlinkUpdateLinkInput!): ShortlinkLink @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "PUT", path: "/api/links/{id}")
+  shortlinkDeleteLink(id: String!): Boolean! @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "DELETE", path: "/api/links/{id}")
+  shortlinkDuplicateLink(id: String!): ShortlinkLink @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "POST", path: "/api/links/{id}/duplicate")
+  shortlinkSdkInstall(input: ShortlinkInstallInput!): ShortlinkAttribution @public @rest(service: "shortlink-service", method: "POST", path: "/api/sdk/v1/install")
+  shortlinkSdkEvent(input: ShortlinkEventInput!): Any @public @rest(service: "shortlink-service", method: "POST", path: "/api/sdk/v1/event")
+  shortlinkCreateWebhook(input: ShortlinkWebhookInput!): ShortlinkWebhook @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "POST", path: "/api/webhooks")
+  shortlinkUpdateWebhook(id: String!, input: ShortlinkWebhookInput!): ShortlinkWebhook @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "PUT", path: "/api/webhooks/{id}")
+  shortlinkDeleteWebhook(id: String!): Boolean! @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "DELETE", path: "/api/webhooks/{id}")
+  shortlinkTestWebhook(id: String!): Any @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "POST", path: "/api/webhooks/{id}/test")
+  shortlinkCreateTemplate(input: ShortlinkTemplateInput!): ShortlinkTemplate @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "POST", path: "/api/templates")
+  shortlinkUpdateTemplate(id: String!, input: ShortlinkTemplateInput!): ShortlinkTemplate @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "PUT", path: "/api/templates/{id}")
+  shortlinkDeleteTemplate(id: String!): Boolean! @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "DELETE", path: "/api/templates/{id}")
+  shortlinkSetDefaultTemplate(id: String!): Any @hasPermission(object: "/graphql/shortlink-service", action: "MUTATION") @rest(service: "shortlink-service", method: "PUT", path: "/api/templates/{id}/set-default")
+}

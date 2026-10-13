@@ -1,4 +1,5 @@
-mod handlers;
+pub mod auth;
+pub mod handlers;
 
 use actix_web::web;
 use handlers::{booking_handlers, passenger_handlers};

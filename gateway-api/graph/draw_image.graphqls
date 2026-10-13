@@ -1,0 +1,22 @@
+type DrawImageCollage {
+  id: String!
+  url: String!
+  bucket: String!
+  object_key: String!
+  content_type: String!
+  size: Int!
+  width: Int!
+  height: Int!
+  image_count: Int!
+  layout: String!
+  columns: Int!
+  created_at: String
+}
+
+extend type Query {
+  drawImageCollage(id: String!): DrawImageCollage @rest(service: "draw-image-service", path: "/images/{id}/info")
+}
+
+extend type Mutation {
+  drawImageCreateCollage(files: [Upload!]!, center: Upload, layout: String, columns: Int): DrawImageCollage @rest(service: "draw-image-service", method: "POST", path: "/upload", body: "query", multipart: true)
+}

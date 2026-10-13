@@ -2,25 +2,9945 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
+type AccountTxAccount struct {
+	ID          string  `json:"id"`
+	FirstName   string  `json:"firstName"`
+	LastName    string  `json:"lastName"`
+	DateCreated *string `json:"dateCreated,omitempty"`
+}
+
+type AccountTxAccountToAccountTransactionDetails struct {
+	SenderID   string `json:"senderId"`
+	ReceiverID string `json:"receiverId"`
+}
+
+type AccountTxCreateAccountRequestInput struct {
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+}
+
+type AccountTxCreateAccountToAccountTransactionRequestInput struct {
+	SenderID   *string  `json:"senderId,omitempty"`
+	ReceiverID *string  `json:"receiverId,omitempty"`
+	Amount     *float64 `json:"amount,omitempty"`
+}
+
+type AccountTxCreateDepositTransactionRequestInput struct {
+	AccountID *string  `json:"accountId,omitempty"`
+	Amount    *float64 `json:"amount,omitempty"`
+}
+
+type AccountTxCreatePaymentForServiceTransactionRequestInput struct {
+	AccountID   *string  `json:"accountId,omitempty"`
+	ServiceName *string  `json:"serviceName,omitempty"`
+	Amount      *float64 `json:"amount,omitempty"`
+}
+
+type AccountTxCreateWithdrawalTransactionRequestInput struct {
+	AccountID *string  `json:"accountId,omitempty"`
+	Amount    *float64 `json:"amount,omitempty"`
+}
+
+type AccountTxDepositTransactionDetails struct {
+	AccountID string `json:"accountId"`
+}
+
+type AccountTxGetAccountRequestInput struct {
+	ID *string `json:"id,omitempty"`
+}
+
+type AccountTxGetAccountTransactionsRequestInput struct {
+	AccountID *string `json:"accountId,omitempty"`
+	PageSize  *int    `json:"pageSize,omitempty"`
+	PageToken *string `json:"pageToken,omitempty"`
+}
+
+type AccountTxGetTransactionRequestInput struct {
+	ID *string `json:"id,omitempty"`
+}
+
+type AccountTxListAccountsRequestInput struct {
+	PageSize  *int    `json:"pageSize,omitempty"`
+	PageToken *string `json:"pageToken,omitempty"`
+}
+
+type AccountTxListAccountsResponse struct {
+	Accounts      []*AccountTxAccount `json:"accounts"`
+	NextPageToken string              `json:"nextPageToken"`
+}
+
+type AccountTxListTransactionsRequestInput struct {
+	PageSize  *int    `json:"pageSize,omitempty"`
+	PageToken *string `json:"pageToken,omitempty"`
+	Type      *string `json:"type,omitempty"`
+}
+
+type AccountTxListTransactionsResponse struct {
+	Transactions  []*AccountTxTransaction `json:"transactions"`
+	NextPageToken string                  `json:"nextPageToken"`
+}
+
+type AccountTxPaymentForServiceTransactionDetails struct {
+	AccountID   string `json:"accountId"`
+	ServiceName string `json:"serviceName"`
+}
+
+type AccountTxTransaction struct {
+	ID          string                                        `json:"id"`
+	Type        string                                        `json:"type"`
+	Amount      *float64                                      `json:"amount,omitempty"`
+	DateCreated *string                                       `json:"dateCreated,omitempty"`
+	Deposit     *AccountTxDepositTransactionDetails           `json:"deposit,omitempty"`
+	Withdrawal  *AccountTxWithdrawalTransactionDetails        `json:"withdrawal,omitempty"`
+	Transfer    *AccountTxAccountToAccountTransactionDetails  `json:"transfer,omitempty"`
+	Payment     *AccountTxPaymentForServiceTransactionDetails `json:"payment,omitempty"`
+}
+
+type AccountTxWithdrawalTransactionDetails struct {
+	AccountID string `json:"accountId"`
+}
+
+type AdAd struct {
+	ID          int     `json:"id"`
+	CampaignID  int     `json:"campaign_id"`
+	CategoryID  *int    `json:"category_id,omitempty"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	AdType      string  `json:"ad_type"`
+	ContentURL  string  `json:"content_url"`
+	TargetURL   string  `json:"target_url"`
+	FilePath    string  `json:"file_path"`
+	FileSize    int     `json:"file_size"`
+	MimeType    string  `json:"mime_type"`
+	Duration    int     `json:"duration"`
+	Priority    int     `json:"priority"`
+	IsActive    bool    `json:"is_active"`
+	StartDate   *string `json:"start_date,omitempty"`
+	EndDate     *string `json:"end_date,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type AdAdInput struct {
+	CampaignID  *int    `json:"campaign_id,omitempty"`
+	CategoryID  *int    `json:"category_id,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	Description *string `json:"description,omitempty"`
+	AdType      *string `json:"ad_type,omitempty"`
+	ContentURL  *string `json:"content_url,omitempty"`
+	TargetURL   *string `json:"target_url,omitempty"`
+	FilePath    *string `json:"file_path,omitempty"`
+	FileSize    *int    `json:"file_size,omitempty"`
+	MimeType    *string `json:"mime_type,omitempty"`
+	Duration    *int    `json:"duration,omitempty"`
+	Priority    *int    `json:"priority,omitempty"`
+	IsActive    *bool   `json:"is_active,omitempty"`
+	StartDate   *string `json:"start_date,omitempty"`
+	EndDate     *string `json:"end_date,omitempty"`
+}
+
+type AdCampaign struct {
+	ID          int     `json:"id"`
+	UserID      int     `json:"user_id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Budget      float64 `json:"budget"`
+	StartDate   *string `json:"start_date,omitempty"`
+	EndDate     *string `json:"end_date,omitempty"`
+	Status      string  `json:"status"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type AdCampaignInput struct {
+	UserID      *int     `json:"user_id,omitempty"`
+	Name        *string  `json:"name,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Budget      *float64 `json:"budget,omitempty"`
+	StartDate   *string  `json:"start_date,omitempty"`
+	EndDate     *string  `json:"end_date,omitempty"`
+	Status      *string  `json:"status,omitempty"`
+}
+
+type AdCampaignPerformance struct {
+	CampaignID  int     `json:"campaign_id"`
+	Impressions int     `json:"impressions"`
+	Clicks      int     `json:"clicks"`
+	Ctr         float64 `json:"ctr"`
+	Cost        float64 `json:"cost"`
+	Revenue     float64 `json:"revenue"`
+}
+
+type AdCampaignStatusInput struct {
+	Status string `json:"status"`
+}
+
+type AdCategory struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	ParentID    *int    `json:"parent_id,omitempty"`
+	IsActive    bool    `json:"is_active"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+}
+
+type AdCategoryInput struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	ParentID    *int    `json:"parent_id,omitempty"`
+	IsActive    *bool   `json:"is_active,omitempty"`
+}
+
+type AdClick struct {
+	ID           int     `json:"id"`
+	AdID         int     `json:"ad_id"`
+	ImpressionID *int    `json:"impression_id,omitempty"`
+	UserID       *int    `json:"user_id,omitempty"`
+	SessionID    string  `json:"session_id"`
+	IPAddress    string  `json:"ip_address"`
+	UserAgent    string  `json:"user_agent"`
+	ReferrerURL  string  `json:"referrer_url"`
+	TargetURL    string  `json:"target_url"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+}
+
+type AdClickResult struct {
+	TargetURL *string `json:"target_url,omitempty"`
+	Location  *string `json:"location,omitempty"`
+}
+
+type AdImpression struct {
+	ID          int     `json:"id"`
+	AdID        int     `json:"ad_id"`
+	UserID      *int    `json:"user_id,omitempty"`
+	SessionID   string  `json:"session_id"`
+	IPAddress   string  `json:"ip_address"`
+	UserAgent   string  `json:"user_agent"`
+	ReferrerURL string  `json:"referrer_url"`
+	PageURL     string  `json:"page_url"`
+	PositionID  *int    `json:"position_id,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+}
+
+type AdPerformanceSummary struct {
+	ID          int     `json:"id"`
+	AdID        int     `json:"ad_id"`
+	Date        *string `json:"date,omitempty"`
+	Impressions int     `json:"impressions"`
+	Clicks      int     `json:"clicks"`
+	Ctr         float64 `json:"ctr"`
+	Cost        float64 `json:"cost"`
+	Revenue     float64 `json:"revenue"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type AdPosition struct {
+	ID             int    `json:"id"`
+	Name           string `json:"name"`
+	Description    string `json:"description"`
+	Width          int    `json:"width"`
+	Height         int    `json:"height"`
+	MaxFileSize    int    `json:"max_file_size"`
+	AllowedFormats any    `json:"allowed_formats,omitempty"`
+	IsActive       bool   `json:"is_active"`
+}
+
+type AdPositionInput struct {
+	Name           *string `json:"name,omitempty"`
+	Description    *string `json:"description,omitempty"`
+	Width          *int    `json:"width,omitempty"`
+	Height         *int    `json:"height,omitempty"`
+	MaxFileSize    *int    `json:"max_file_size,omitempty"`
+	AllowedFormats any     `json:"allowed_formats,omitempty"`
+	IsActive       *bool   `json:"is_active,omitempty"`
+}
+
+type AdPositionMapping struct {
+	ID         int     `json:"id"`
+	AdID       int     `json:"ad_id"`
+	PositionID int     `json:"position_id"`
+	Weight     int     `json:"weight"`
+	IsActive   bool    `json:"is_active"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+}
+
+type AdPositionMappingInput struct {
+	AdID       *int  `json:"ad_id,omitempty"`
+	PositionID *int  `json:"position_id,omitempty"`
+	Weight     *int  `json:"weight,omitempty"`
+	IsActive   *bool `json:"is_active,omitempty"`
+}
+
+type AdServedAd struct {
+	Ad           *AdAd `json:"ad,omitempty"`
+	ImpressionID int   `json:"impression_id"`
+}
+
+type AdTargetingRule struct {
+	ID           int     `json:"id"`
+	AdID         int     `json:"ad_id"`
+	RuleType     string  `json:"rule_type"`
+	RuleOperator string  `json:"rule_operator"`
+	RuleValue    any     `json:"rule_value,omitempty"`
+	IsActive     bool    `json:"is_active"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+}
+
+type AdTargetingRuleInput struct {
+	AdID         *int    `json:"ad_id,omitempty"`
+	RuleType     *string `json:"rule_type,omitempty"`
+	RuleOperator *string `json:"rule_operator,omitempty"`
+	RuleValue    any     `json:"rule_value,omitempty"`
+	IsActive     *bool   `json:"is_active,omitempty"`
+}
+
+type AddressAdminUserAddressInput struct {
+	Title                *string `json:"title,omitempty"`
+	FirstName            *string `json:"first_name,omitempty"`
+	LastName             *string `json:"last_name,omitempty"`
+	Line1                *string `json:"line1,omitempty"`
+	Line2                *string `json:"line2,omitempty"`
+	Line3                *string `json:"line3,omitempty"`
+	Line4                *string `json:"line4,omitempty"`
+	State                *string `json:"state,omitempty"`
+	Postcode             *string `json:"postcode,omitempty"`
+	SearchText           *string `json:"search_text,omitempty"`
+	CountryID            *string `json:"country_id,omitempty"`
+	PhoneNumber          *string `json:"phone_number,omitempty"`
+	Notes                *string `json:"notes,omitempty"`
+	IsDefaultForShipping *bool   `json:"is_default_for_shipping,omitempty"`
+	IsDefaultForBilling  *bool   `json:"is_default_for_billing,omitempty"`
+	UserID               *int    `json:"user_id,omitempty"`
+}
+
+type AddressCountry struct {
+	Iso31661a2        string `json:"iso31661a2"`
+	PrinatableName    string `json:"prinatable_name"`
+	Name              string `json:"name"`
+	DisplayOrder      int    `json:"display_order"`
+	IsShippingCountry bool   `json:"is_shipping_country"`
+}
+
+type AddressCountryInput struct {
+	Iso31661a2        *string `json:"iso31661a2,omitempty"`
+	PrinatableName    *string `json:"prinatable_name,omitempty"`
+	Name              *string `json:"name,omitempty"`
+	DisplayOrder      *int    `json:"display_order,omitempty"`
+	IsShippingCountry *bool   `json:"is_shipping_country,omitempty"`
+}
+
+type AddressOrderBillingAddress struct {
+	ID             int             `json:"id"`
+	Title          string          `json:"title"`
+	FirstName      string          `json:"first_name"`
+	LastName       string          `json:"last_name"`
+	Line1          string          `json:"line1"`
+	Line2          string          `json:"line2"`
+	Line3          string          `json:"line3"`
+	Line4          string          `json:"line4"`
+	State          string          `json:"state"`
+	Postcode       string          `json:"postcode"`
+	SearchText     string          `json:"search_text"`
+	CountryID      string          `json:"country_id"`
+	AddressCountry *AddressCountry `json:"address_country,omitempty"`
+}
+
+type AddressOrderBillingAddressInput struct {
+	Title      *string `json:"title,omitempty"`
+	FirstName  *string `json:"first_name,omitempty"`
+	LastName   *string `json:"last_name,omitempty"`
+	Line1      *string `json:"line1,omitempty"`
+	Line2      *string `json:"line2,omitempty"`
+	Line3      *string `json:"line3,omitempty"`
+	Line4      *string `json:"line4,omitempty"`
+	State      *string `json:"state,omitempty"`
+	Postcode   *string `json:"postcode,omitempty"`
+	SearchText *string `json:"search_text,omitempty"`
+	CountryID  *string `json:"country_id,omitempty"`
+}
+
+type AddressOrderShippingAddress struct {
+	ID             int             `json:"id"`
+	Title          string          `json:"title"`
+	FirstName      string          `json:"first_name"`
+	LastName       string          `json:"last_name"`
+	Line1          string          `json:"line1"`
+	Line2          string          `json:"line2"`
+	Line3          string          `json:"line3"`
+	Line4          string          `json:"line4"`
+	State          string          `json:"state"`
+	Postcode       string          `json:"postcode"`
+	SearchText     string          `json:"search_text"`
+	CountryID      string          `json:"country_id"`
+	PhoneNumber    string          `json:"phone_number"`
+	Notes          string          `json:"notes"`
+	AddressCountry *AddressCountry `json:"address_country,omitempty"`
+}
+
+type AddressOrderShippingAddressInput struct {
+	Title       *string `json:"title,omitempty"`
+	FirstName   *string `json:"first_name,omitempty"`
+	LastName    *string `json:"last_name,omitempty"`
+	Line1       *string `json:"line1,omitempty"`
+	Line2       *string `json:"line2,omitempty"`
+	Line3       *string `json:"line3,omitempty"`
+	Line4       *string `json:"line4,omitempty"`
+	State       *string `json:"state,omitempty"`
+	Postcode    *string `json:"postcode,omitempty"`
+	SearchText  *string `json:"search_text,omitempty"`
+	CountryID   *string `json:"country_id,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+	Notes       *string `json:"notes,omitempty"`
+}
+
+type AddressPartnerAddress struct {
+	ID             int             `json:"id"`
+	Title          string          `json:"title"`
+	FirstName      string          `json:"first_name"`
+	LastName       string          `json:"last_name"`
+	Line1          string          `json:"line1"`
+	Line2          string          `json:"line2"`
+	Line3          string          `json:"line3"`
+	Line4          string          `json:"line4"`
+	State          string          `json:"state"`
+	Postcode       string          `json:"postcode"`
+	SearchText     string          `json:"search_text"`
+	CountryID      string          `json:"country_id"`
+	PartnerID      int             `json:"partner_id"`
+	AddressCountry *AddressCountry `json:"address_country,omitempty"`
+}
+
+type AddressPartnerAddressInput struct {
+	Title      *string `json:"title,omitempty"`
+	FirstName  *string `json:"first_name,omitempty"`
+	LastName   *string `json:"last_name,omitempty"`
+	Line1      *string `json:"line1,omitempty"`
+	Line2      *string `json:"line2,omitempty"`
+	Line3      *string `json:"line3,omitempty"`
+	Line4      *string `json:"line4,omitempty"`
+	State      *string `json:"state,omitempty"`
+	Postcode   *string `json:"postcode,omitempty"`
+	SearchText *string `json:"search_text,omitempty"`
+	CountryID  *string `json:"country_id,omitempty"`
+	PartnerID  *int    `json:"partner_id,omitempty"`
+}
+
+type AddressShippingOrderAndItemChangesCountry struct {
+	ID                    int             `json:"id"`
+	OrderanditemchangesID int             `json:"orderanditemchanges_id"`
+	CountryID             string          `json:"country_id"`
+	AddressCountry        *AddressCountry `json:"address_country,omitempty"`
+}
+
+type AddressShippingOrderAndItemChangesCountryInput struct {
+	OrderanditemchangesID *int    `json:"orderanditemchanges_id,omitempty"`
+	CountryID             *string `json:"country_id,omitempty"`
+}
+
+type AddressShippingWeightBasedCountry struct {
+	ID             int             `json:"id"`
+	WeightbasedID  int             `json:"weightbased_id"`
+	CountryID      string          `json:"country_id"`
+	AddressCountry *AddressCountry `json:"address_country,omitempty"`
+}
+
+type AddressShippingWeightBasedCountryInput struct {
+	WeightbasedID *int    `json:"weightbased_id,omitempty"`
+	CountryID     *string `json:"country_id,omitempty"`
+}
+
+type AddressUserAddress struct {
+	ID                            int             `json:"id"`
+	Title                         string          `json:"title"`
+	FirstName                     string          `json:"first_name"`
+	LastName                      string          `json:"last_name"`
+	Line1                         string          `json:"line1"`
+	Line2                         string          `json:"line2"`
+	Line3                         string          `json:"line3"`
+	Line4                         string          `json:"line4"`
+	State                         string          `json:"state"`
+	Postcode                      string          `json:"postcode"`
+	SearchText                    string          `json:"search_text"`
+	CountryID                     string          `json:"country_id"`
+	PhoneNumber                   string          `json:"phone_number"`
+	Notes                         string          `json:"notes"`
+	IsDefaultForShipping          bool            `json:"is_default_for_shipping"`
+	IsDefaultForBilling           bool            `json:"is_default_for_billing"`
+	NumberOrdersAsShippingAddress int             `json:"number_orders_as_shipping_address"`
+	NumberOrdersAsBillingAddress  int             `json:"number_orders_as_billing_address"`
+	Hash                          string          `json:"hash"`
+	DateCreated                   *string         `json:"date_created,omitempty"`
+	UserID                        int             `json:"user_id"`
+	AddressCountry                *AddressCountry `json:"address_country,omitempty"`
+}
+
+type AddressUserAddressInput struct {
+	Title                *string `json:"title,omitempty"`
+	FirstName            *string `json:"first_name,omitempty"`
+	LastName             *string `json:"last_name,omitempty"`
+	Line1                *string `json:"line1,omitempty"`
+	Line2                *string `json:"line2,omitempty"`
+	Line3                *string `json:"line3,omitempty"`
+	Line4                *string `json:"line4,omitempty"`
+	State                *string `json:"state,omitempty"`
+	Postcode             *string `json:"postcode,omitempty"`
+	SearchText           *string `json:"search_text,omitempty"`
+	CountryID            *string `json:"country_id,omitempty"`
+	PhoneNumber          *string `json:"phone_number,omitempty"`
+	Notes                *string `json:"notes,omitempty"`
+	IsDefaultForShipping *bool   `json:"is_default_for_shipping,omitempty"`
+	IsDefaultForBilling  *bool   `json:"is_default_for_billing,omitempty"`
+}
+
+type AdminUpdateProfileInput struct {
+	ID      int     `json:"id"`
+	Name    *string `json:"name,omitempty"`
+	Email   *string `json:"email,omitempty"`
+	Phone   *string `json:"phone,omitempty"`
+	Address *string `json:"address,omitempty"`
+	Sex     *string `json:"sex,omitempty"`
+}
+
+type AiAgentChatInput struct {
+	Model    *string                `json:"model,omitempty"`
+	Messages []*AiAgentMessageInput `json:"messages,omitempty"`
+}
+
+type AiAgentChatResponse struct {
+	Model              string          `json:"model"`
+	CreatedAt          string          `json:"created_at"`
+	Message            *AiAgentMessage `json:"message,omitempty"`
+	Done               bool            `json:"done"`
+	TotalDuration      int             `json:"total_duration"`
+	LoadDuration       int             `json:"load_duration"`
+	PromptEvalCount    int             `json:"prompt_eval_count"`
+	PromptEvalDuration int             `json:"prompt_eval_duration"`
+	EvalCount          int             `json:"eval_count"`
+	EvalDuration       int             `json:"eval_duration"`
+}
+
+type AiAgentGenerateInput struct {
+	Model  *string `json:"model,omitempty"`
+	Prompt *string `json:"prompt,omitempty"`
+}
+
+type AiAgentGenerateResponse struct {
+	Model              string `json:"model"`
+	CreatedAt          string `json:"created_at"`
+	Response           string `json:"response"`
+	Done               bool   `json:"done"`
+	TotalDuration      int    `json:"total_duration"`
+	LoadDuration       int    `json:"load_duration"`
+	PromptEvalCount    int    `json:"prompt_eval_count"`
+	PromptEvalDuration int    `json:"prompt_eval_duration"`
+	EvalCount          int    `json:"eval_count"`
+	EvalDuration       int    `json:"eval_duration"`
+}
+
+type AiAgentHistory struct {
+	Messages []*AiAgentHistoryMessage `json:"messages"`
+}
+
+type AiAgentHistoryMessage struct {
+	Role      string `json:"role"`
+	Content   string `json:"content"`
+	Source    string `json:"source"`
+	CreatedAt string `json:"created_at"`
+}
+
+type AiAgentMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type AiAgentMessageInput struct {
+	Role    *string `json:"role,omitempty"`
+	Content *string `json:"content,omitempty"`
+}
+
+type AiAgentModel struct {
+	Name       string               `json:"name"`
+	Model      string               `json:"model"`
+	ModifiedAt string               `json:"modified_at"`
+	Size       int                  `json:"size"`
+	Digest     string               `json:"digest"`
+	Details    *AiAgentModelDetails `json:"details,omitempty"`
+}
+
+type AiAgentModelDetails struct {
+	ParentModel       string   `json:"parent_model"`
+	Format            string   `json:"format"`
+	Family            string   `json:"family"`
+	Families          []string `json:"families,omitempty"`
+	ParameterSize     string   `json:"parameter_size"`
+	QuantizationLevel string   `json:"quantization_level"`
+}
+
+type AiAgentShowInput struct {
+	Model *string `json:"model,omitempty"`
+}
+
+type AiAgentShowResponse struct {
+	Modelfile    string               `json:"modelfile"`
+	Parameters   string               `json:"parameters"`
+	Template     string               `json:"template"`
+	Details      *AiAgentModelDetails `json:"details,omitempty"`
+	ModelInfo    map[string]any       `json:"model_info,omitempty"`
+	Capabilities []string             `json:"capabilities,omitempty"`
+}
+
+type AiAgentTags struct {
+	Models []*AiAgentModel `json:"models"`
+}
+
+type AirflowDag struct {
+	DagID       string   `json:"dag_id"`
+	IsPaused    bool     `json:"is_paused"`
+	IsActive    bool     `json:"is_active"`
+	IsSubdag    bool     `json:"is_subdag"`
+	Owners      []string `json:"owners,omitempty"`
+	Description string   `json:"description"`
+	Fileloc     string   `json:"fileloc"`
+}
+
+type AirflowDagList struct {
+	Dags         []*AirflowDag `json:"dags,omitempty"`
+	TotalEntries int           `json:"total_entries"`
+}
+
+type AirflowDagRun struct {
+	DagID           string         `json:"dag_id"`
+	DagRunID        string         `json:"dag_run_id"`
+	LogicalDate     *string        `json:"logical_date,omitempty"`
+	StartDate       *string        `json:"start_date,omitempty"`
+	EndDate         *string        `json:"end_date,omitempty"`
+	State           string         `json:"state"`
+	ExternalTrigger bool           `json:"external_trigger"`
+	Conf            map[string]any `json:"conf,omitempty"`
+	Note            string         `json:"note"`
+}
+
+type AirflowDagRunList struct {
+	DagRuns      []*AirflowDagRun `json:"dag_runs,omitempty"`
+	TotalEntries int              `json:"total_entries"`
+}
+
+type AirflowHealth struct {
+	MetadatabaseStatus       string `json:"metadatabase_status"`
+	SchedulerStatus          string `json:"scheduler_status"`
+	LatestSchedulerHeartbeat string `json:"latest_scheduler_heartbeat"`
+}
+
+type AirflowPool struct {
+	Name          string `json:"name"`
+	Slots         int    `json:"slots"`
+	OccupiedSlots int    `json:"occupied_slots"`
+	UsedSlots     int    `json:"used_slots"`
+	QueuedSlots   int    `json:"queued_slots"`
+	OpenSlots     int    `json:"open_slots"`
+	Description   string `json:"description"`
+}
+
+type AirflowPoolInput struct {
+	Name        *string `json:"name,omitempty"`
+	Slots       *int    `json:"slots,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type AirflowPoolList struct {
+	Pools        []*AirflowPool `json:"pools,omitempty"`
+	TotalEntries int            `json:"total_entries"`
+}
+
+type AirflowTaskInstance struct {
+	TaskID        string  `json:"task_id"`
+	DagID         string  `json:"dag_id"`
+	DagRunID      string  `json:"dag_run_id"`
+	ExecutionDate string  `json:"execution_date"`
+	StartDate     string  `json:"start_date"`
+	EndDate       string  `json:"end_date"`
+	Duration      float64 `json:"duration"`
+	State         string  `json:"state"`
+	TryNumber     int     `json:"try_number"`
+	MapIndex      int     `json:"map_index"`
+	Pool          string  `json:"pool"`
+	Operator      string  `json:"operator"`
+}
+
+type AirflowTaskInstanceList struct {
+	TaskInstances []*AirflowTaskInstance `json:"task_instances,omitempty"`
+	TotalEntries  int                    `json:"total_entries"`
+}
+
+type AirflowTriggerDagRunInput struct {
+	DagRunID    *string        `json:"dag_run_id,omitempty"`
+	LogicalDate *string        `json:"logical_date,omitempty"`
+	Conf        map[string]any `json:"conf,omitempty"`
+	Note        *string        `json:"note,omitempty"`
+}
+
+type AirflowVariable struct {
+	Key         string `json:"key"`
+	Value       string `json:"value"`
+	Description string `json:"description"`
+}
+
+type AirflowVariableInput struct {
+	Key         *string `json:"key,omitempty"`
+	Value       *string `json:"value,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type AirflowVariableList struct {
+	Variables    []*AirflowVariable `json:"variables,omitempty"`
+	TotalEntries int                `json:"total_entries"`
+}
+
+type ArrangeDispatchAssignment struct {
+	ID       int    `json:"id"`
+	OrderID  int    `json:"orderId"`
+	DriverID int    `json:"driverId"`
+	Sequence int    `json:"sequence"`
+	Status   string `json:"status"`
+}
+
+type ArrangeDispatchInput struct {
+	OrderID  *int `json:"orderId,omitempty"`
+	DriverID *int `json:"driverId,omitempty"`
+}
+
+type ArrangeShift struct {
+	ID         int    `json:"id"`
+	EmployeeID int    `json:"employeeId"`
+	StoreID    int    `json:"storeId"`
+	Role       string `json:"role"`
+	StartTime  string `json:"startTime"`
+	EndTime    string `json:"endTime"`
+	Status     string `json:"status"`
+}
+
+type ArrangeShiftInput struct {
+	EmployeeID *int    `json:"employeeId,omitempty"`
+	StoreID    *int    `json:"storeId,omitempty"`
+	Role       *string `json:"role,omitempty"`
+	StartTime  *string `json:"startTime,omitempty"`
+	EndTime    *string `json:"endTime,omitempty"`
+}
+
+type ArrangeSpace struct {
+	ID       int    `json:"id"`
+	StoreID  int    `json:"storeId"`
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Capacity int    `json:"capacity"`
+}
+
+type ArrangeSpaceAssignment struct {
+	ID           int    `json:"id"`
+	SpaceID      int    `json:"spaceId"`
+	ReferenceID  int    `json:"referenceId"`
+	PartySize    int    `json:"partySize"`
+	ArrangedFrom string `json:"arrangedFrom"`
+	ArrangedTo   string `json:"arrangedTo"`
+	Status       string `json:"status"`
+}
+
+type ArrangeSpaceInput struct {
+	StoreID     *int    `json:"storeId,omitempty"`
+	ReferenceID *int    `json:"referenceId,omitempty"`
+	PartySize   *int    `json:"partySize,omitempty"`
+	From        *string `json:"from,omitempty"`
+	To          *string `json:"to,omitempty"`
+}
+
+type AssignUserRoleInput struct {
+	UserID int `json:"userId"`
+	RoleID int `json:"roleId"`
+}
+
+type AuthToken struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    int    `json:"expiresIn"`
+}
+
+type AuthzPermission struct {
+	Object    string `json:"object"`
+	Action    string `json:"action"`
+	GrantedBy string `json:"grantedBy"`
+}
+
+type AuthzResult struct {
+	Message string `json:"message"`
+	Error   bool   `json:"error"`
+}
+
+type AuthzRole struct {
+	Name        string             `json:"name"`
+	Description string             `json:"description"`
+	Rank        int                `json:"rank"`
+	Inherits    []string           `json:"inherits"`
+	Permissions []*AuthzPermission `json:"permissions"`
+	Assignable  bool               `json:"assignable"`
+}
+
+type AuthzUserRoles struct {
+	UserID         string   `json:"userId"`
+	Roles          []string `json:"roles"`
+	EffectiveRoles []string `json:"effectiveRoles"`
+	PrimaryRole    string   `json:"primaryRole"`
+}
+
+type AutoPayInvoice struct {
+	InvoiceID      string  `json:"invoiceId"`
+	TransactionID  string  `json:"transactionId"`
+	SubscriptionID string  `json:"subscriptionId"`
+	UserID         string  `json:"userId"`
+	Amount         float64 `json:"amount"`
+	TaxAmount      float64 `json:"taxAmount"`
+	TotalAmount    float64 `json:"totalAmount"`
+	Status         string  `json:"status"`
+	DueDate        *string `json:"dueDate,omitempty"`
+	PaidDate       *string `json:"paidDate,omitempty"`
+	InvoiceNumber  string  `json:"invoiceNumber"`
+	CreatedAt      *string `json:"createdAt,omitempty"`
+}
+
+type AutoPayPaymentMethod struct {
+	PaymentMethodID string  `json:"paymentMethodId"`
+	UserID          string  `json:"userId"`
+	Provider        string  `json:"provider"`
+	TokenID         string  `json:"tokenId"`
+	LastFourDigits  string  `json:"lastFourDigits"`
+	ExpiryDate      string  `json:"expiryDate"`
+	IsDefault       bool    `json:"isDefault"`
+	CreatedAt       *string `json:"createdAt,omitempty"`
+	UpdatedAt       *string `json:"updatedAt,omitempty"`
+}
+
+type AutoPayPaymentMethodInput struct {
+	UserID         *string `json:"userId,omitempty"`
+	Provider       *string `json:"provider,omitempty"`
+	TokenID        *string `json:"tokenId,omitempty"`
+	LastFourDigits *string `json:"lastFourDigits,omitempty"`
+	ExpiryDate     *string `json:"expiryDate,omitempty"`
+	IsDefault      *bool   `json:"isDefault,omitempty"`
+}
+
+type AutoPaySubscription struct {
+	SubscriptionID      string  `json:"subscriptionId"`
+	UserID              string  `json:"userId"`
+	PlanID              string  `json:"planId"`
+	Status              string  `json:"status"`
+	Amount              float64 `json:"amount"`
+	Currency            string  `json:"currency"`
+	StartDate           *string `json:"startDate,omitempty"`
+	EndDate             *string `json:"endDate,omitempty"`
+	AutoRenewal         bool    `json:"autoRenewal"`
+	TrialEndDate        *string `json:"trialEndDate,omitempty"`
+	NextBillingDate     *string `json:"nextBillingDate,omitempty"`
+	PaymentFailureCount int     `json:"paymentFailureCount"`
+	CreatedAt           *string `json:"createdAt,omitempty"`
+	UpdatedAt           *string `json:"updatedAt,omitempty"`
+}
+
+type AutoPaySubscriptionInput struct {
+	UserID          *string  `json:"userId,omitempty"`
+	PlanID          *string  `json:"planId,omitempty"`
+	Amount          *float64 `json:"amount,omitempty"`
+	Currency        *string  `json:"currency,omitempty"`
+	AutoRenewal     *bool    `json:"autoRenewal,omitempty"`
+	TrialDays       *int     `json:"trialDays,omitempty"`
+	PaymentMethodID *string  `json:"paymentMethodId,omitempty"`
+}
+
+type AutoPayTransaction struct {
+	TransactionID        string  `json:"transactionId"`
+	SubscriptionID       string  `json:"subscriptionId"`
+	PaymentMethodID      string  `json:"paymentMethodId"`
+	Amount               float64 `json:"amount"`
+	Currency             string  `json:"currency"`
+	Status               string  `json:"status"`
+	GatewayTransactionID string  `json:"gatewayTransactionId"`
+	ErrorMessage         string  `json:"errorMessage"`
+	CreatedAt            *string `json:"createdAt,omitempty"`
+}
+
+type BankingAccount struct {
+	AccountID      int    `json:"account_id"`
+	AccountNumber  string `json:"account_number"`
+	AccountType    string `json:"account_type"`
+	CurrentBalance int    `json:"current_balance"`
+	DateOpened     int    `json:"date_opened"`
+	DateClosed     int    `json:"date_closed"`
+	AccountStatus  string `json:"account_status"`
+}
+
+type BankingAccountInput struct {
+	AccountNumber  *string `json:"account_number,omitempty"`
+	AccountType    *string `json:"account_type,omitempty"`
+	CurrentBalance *int    `json:"current_balance,omitempty"`
+	DateOpened     *int    `json:"date_opened,omitempty"`
+	DateClosed     *int    `json:"date_closed,omitempty"`
+	AccountStatus  *string `json:"account_status,omitempty"`
+}
+
+type BankingBranch struct {
+	BranchID    int    `json:"branch_id"`
+	BranchName  string `json:"branch_name"`
+	BranchCode  string `json:"branch_code"`
+	Address     string `json:"address"`
+	PhoneNumber string `json:"phone_number"`
+}
+
+type BankingBranchInput struct {
+	BranchName  *string `json:"branch_name,omitempty"`
+	BranchCode  *string `json:"branch_code,omitempty"`
+	Address     *string `json:"address,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+}
+
+type BankingCustomer struct {
+	CustomerID   int    `json:"customer_id"`
+	CustomerType string `json:"customer_type"`
+}
+
+type BankingCustomerInput struct {
+	CustomerType *string `json:"customer_type,omitempty"`
+}
+
+type BankingEmployee struct {
+	EmployeeID int    `json:"employee_id"`
+	Position   string `json:"position"`
+}
+
+type BankingEmployeeInput struct {
+	Position *string `json:"position,omitempty"`
+}
+
+type BankingLoan struct {
+	LoanID      int    `json:"loan_id"`
+	LoanType    string `json:"loan_type"`
+	LoanAmount  int    `json:"loan_amount"`
+	InteresRate int    `json:"interes_rate"`
+	Term        int    `json:"term"`
+	StartDate   int    `json:"start_date"`
+	EndDate     int    `json:"end_date"`
+	LoanStatus  string `json:"loan_status"`
+}
+
+type BankingLoanInput struct {
+	LoanType    *string `json:"loan_type,omitempty"`
+	LoanAmount  *int    `json:"loan_amount,omitempty"`
+	InteresRate *int    `json:"interes_rate,omitempty"`
+	Term        *int    `json:"term,omitempty"`
+	StartDate   *int    `json:"start_date,omitempty"`
+	EndDate     *int    `json:"end_date,omitempty"`
+	LoanStatus  *string `json:"loan_status,omitempty"`
+}
+
+type BankingLoanPayment struct {
+	LoanPaymentID        int `json:"loan_payment_id"`
+	ScheduledPaymentDate int `json:"scheduled_payment_date"`
+	PaymentAccount       int `json:"payment_account"`
+	PrincipalAmount      int `json:"principal_amount"`
+	InterestAmount       int `json:"interest_amount"`
+	PaidAmount           int `json:"paid_amount"`
+	PaidDate             int `json:"paid_date"`
+}
+
+type BankingLoanPaymentInput struct {
+	ScheduledPaymentDate *int `json:"scheduled_payment_date,omitempty"`
+	PaymentAccount       *int `json:"payment_account,omitempty"`
+	PrincipalAmount      *int `json:"principal_amount,omitempty"`
+	InterestAmount       *int `json:"interest_amount,omitempty"`
+	PaidAmount           *int `json:"paid_amount,omitempty"`
+	PaidDate             *int `json:"paid_date,omitempty"`
+}
+
+type BankingPerson struct {
+	PersonID      int    `json:"person_id"`
+	LastName      string `json:"last_name"`
+	FirstName     string `json:"first_name"`
+	DateOfBirth   int    `json:"date_of_birth"`
+	Email         string `json:"email"`
+	PhoneNumber   string `json:"phone_number"`
+	Address       string `json:"address"`
+	TaxIdentifier string `json:"tax_identifier"`
+}
+
+type BankingPersonInput struct {
+	LastName      *string `json:"last_name,omitempty"`
+	FirstName     *string `json:"first_name,omitempty"`
+	DateOfBirth   *int    `json:"date_of_birth,omitempty"`
+	Email         *string `json:"email,omitempty"`
+	PhoneNumber   *string `json:"phone_number,omitempty"`
+	Address       *string `json:"address,omitempty"`
+	TaxIdentifier *string `json:"tax_identifier,omitempty"`
+}
+
+type BankingTransaction struct {
+	TransactionID   int     `json:"transaction_id"`
+	AccountID       int     `json:"account_id"`
+	ExternalRef     *string `json:"external_ref,omitempty"`
+	TransactionType string  `json:"transaction_type"`
+	Amount          int     `json:"amount"`
+	TransactionDate int     `json:"transaction_date"`
+}
+
+type BankingTransactionInput struct {
+	AccountID       *int    `json:"account_id,omitempty"`
+	ExternalRef     *string `json:"external_ref,omitempty"`
+	TransactionType *string `json:"transaction_type,omitempty"`
+	Amount          *int    `json:"amount,omitempty"`
+	TransactionDate *int    `json:"transaction_date,omitempty"`
+}
+
+type BasketBasket struct {
+	ID                int    `json:"id"`
+	Status            string `json:"status"`
+	DatePlaced        string `json:"date_placed"`
+	DateCreated       string `json:"date_created"`
+	DateMerged        string `json:"date_merged"`
+	DateSubmitted     string `json:"date_submitted"`
+	BillingAddressID  int    `json:"billing_address_id"`
+	ShippingAddressID int    `json:"shipping_address_id"`
+	UserID            int    `json:"user_id"`
+}
+
+type BasketBasketInput struct {
+	Status            *string `json:"status,omitempty"`
+	DatePlaced        *string `json:"date_placed,omitempty"`
+	DateCreated       *string `json:"date_created,omitempty"`
+	DateMerged        *string `json:"date_merged,omitempty"`
+	DateSubmitted     *string `json:"date_submitted,omitempty"`
+	BillingAddressID  *int    `json:"billing_address_id,omitempty"`
+	ShippingAddressID *int    `json:"shipping_address_id,omitempty"`
+}
+
+type BasketLine struct {
+	ID            int     `json:"id"`
+	LineReference string  `json:"line_reference"`
+	Quantity      int     `json:"quantity"`
+	PriceCurrency string  `json:"price_currency"`
+	PriceExclTax  float64 `json:"price_excl_tax"`
+	PriceInclTax  float64 `json:"price_incl_tax"`
+	BasketID      int     `json:"basket_id"`
+	ProductID     int     `json:"product_id"`
+	StockrecordID int     `json:"stockrecord_id"`
+}
+
+type BasketLineAttribute struct {
+	ID       int    `json:"id"`
+	BasketID int    `json:"basket_id"`
+	LineID   int    `json:"line_id"`
+	OptionID int    `json:"option_id"`
+	Value    string `json:"value"`
+}
+
+type BasketLineAttributeInput struct {
+	BasketID *int    `json:"basket_id,omitempty"`
+	LineID   *int    `json:"line_id,omitempty"`
+	OptionID *int    `json:"option_id,omitempty"`
+	Value    *string `json:"value,omitempty"`
+}
+
+type BasketLineInput struct {
+	LineReference *string  `json:"line_reference,omitempty"`
+	Quantity      *int     `json:"quantity,omitempty"`
+	PriceCurrency *string  `json:"price_currency,omitempty"`
+	PriceExclTax  *float64 `json:"price_excl_tax,omitempty"`
+	PriceInclTax  *float64 `json:"price_incl_tax,omitempty"`
+	BasketID      *int     `json:"basket_id,omitempty"`
+	ProductID     *int     `json:"product_id,omitempty"`
+	StockrecordID *int     `json:"stockrecord_id,omitempty"`
+}
+
+type BasketOrder struct {
+	ID              int     `json:"id"`
+	Number          string  `json:"number"`
+	Currency        string  `json:"currency"`
+	TotalInclTax    float64 `json:"total_incl_tax"`
+	TotalExclTax    float64 `json:"total_excl_tax"`
+	ShippingInclTax float64 `json:"shipping_incl_tax"`
+	ShippingExclTax float64 `json:"shipping_excl_tax"`
+	ShippingMethod  string  `json:"shipping_method"`
+	ShippingCode    string  `json:"shipping_code"`
+	Status          string  `json:"status"`
+	GuestEmail      string  `json:"guest_email"`
+	SiteID          int     `json:"site_id"`
+	UserID          int     `json:"user_id"`
+	OwnerID         int     `json:"owner_id"`
+}
+
+type BasketUser struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Name     string `json:"name"`
+	Active   bool   `json:"active"`
+}
+
+type BillingAddress struct {
+	AddressID  int    `json:"address_id"`
+	Line1      string `json:"line1"`
+	Line2      string `json:"line2"`
+	City       string `json:"city"`
+	State      string `json:"state"`
+	PostalCode string `json:"postal_code"`
+	Country    string `json:"country"`
+}
+
+type BillingAddressInput struct {
+	Line1      *string `json:"line1,omitempty"`
+	Line2      *string `json:"line2,omitempty"`
+	City       *string `json:"city,omitempty"`
+	State      *string `json:"state,omitempty"`
+	PostalCode *string `json:"postal_code,omitempty"`
+	Country    *string `json:"country,omitempty"`
+}
+
+type BillingCustomer struct {
+	CustomerID  int    `json:"customer_id"`
+	Name        string `json:"name"`
+	Company     string `json:"company"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phone_number"`
+	AddressID   int    `json:"address_id"`
+}
+
+type BillingCustomerInput struct {
+	Name        *string `json:"name,omitempty"`
+	Company     *string `json:"company,omitempty"`
+	Email       *string `json:"email,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+	AddressID   *int    `json:"address_id,omitempty"`
+}
+
+type BillingInvoice struct {
+	InvoiceID      int     `json:"invoice_id"`
+	SubscriptionID int     `json:"subscription_id"`
+	InvoiceDate    int     `json:"invoice_date"`
+	DueDate        int     `json:"due_date"`
+	Amount         float64 `json:"amount"`
+	Tax            string  `json:"tax"`
+	Status         string  `json:"status"`
+}
+
+type BillingInvoiceInput struct {
+	SubscriptionID *int     `json:"subscription_id,omitempty"`
+	InvoiceDate    *int     `json:"invoice_date,omitempty"`
+	DueDate        *int     `json:"due_date,omitempty"`
+	Amount         *float64 `json:"amount,omitempty"`
+	Tax            *string  `json:"tax,omitempty"`
+	Status         *string  `json:"status,omitempty"`
+}
+
+type BillingPlan struct {
+	PlanID       int     `json:"plan_id"`
+	Name         string  `json:"name"`
+	Description  string  `json:"description"`
+	Price        float64 `json:"price"`
+	BillingCycle string  `json:"billing_cycle"`
+}
+
+type BillingPlanInput struct {
+	Name         *string  `json:"name,omitempty"`
+	Description  *string  `json:"description,omitempty"`
+	Price        *float64 `json:"price,omitempty"`
+	BillingCycle *string  `json:"billing_cycle,omitempty"`
+}
+
+type BillingSubscription struct {
+	SubscriptionID int    `json:"subscription_id"`
+	CustomerID     int    `json:"customer_id"`
+	PlanID         int    `json:"plan_id"`
+	StartDate      int    `json:"start_date"`
+	EndDate        int    `json:"end_date"`
+	Status         string `json:"status"`
+}
+
+type BillingSubscriptionInput struct {
+	CustomerID *int    `json:"customer_id,omitempty"`
+	PlanID     *int    `json:"plan_id,omitempty"`
+	StartDate  *int    `json:"start_date,omitempty"`
+	EndDate    *int    `json:"end_date,omitempty"`
+	Status     *string `json:"status,omitempty"`
+}
+
+type BillingTransaction struct {
+	TransactionID   int     `json:"transaction_id"`
+	InvoiceID       int     `json:"invoice_id"`
+	PaymentMethod   string  `json:"payment_method"`
+	TransactionDate int     `json:"transaction_date"`
+	Amount          float64 `json:"amount"`
+	Status          string  `json:"status"`
+}
+
+type BillingTransactionInput struct {
+	InvoiceID       *int     `json:"invoice_id,omitempty"`
+	PaymentMethod   *string  `json:"payment_method,omitempty"`
+	TransactionDate *int     `json:"transaction_date,omitempty"`
+	Amount          *float64 `json:"amount,omitempty"`
+	Status          *string  `json:"status,omitempty"`
+}
+
+type BonusBalance struct {
+	UserID      string  `json:"user_id"`
+	RewardType  string  `json:"reward_type"`
+	TotalValue  float64 `json:"total_value"`
+	RewardCount int     `json:"reward_count"`
+}
+
+type BonusRecordResult struct {
+	RewardID    *string  `json:"reward_id,omitempty"`
+	EventID     *string  `json:"event_id,omitempty"`
+	UserID      *string  `json:"user_id,omitempty"`
+	RefCode     *string  `json:"ref_code,omitempty"`
+	Source      *string  `json:"source,omitempty"`
+	RewardType  *string  `json:"reward_type,omitempty"`
+	RewardValue *float64 `json:"reward_value,omitempty"`
+	CreatedAt   *string  `json:"created_at,omitempty"`
+	Duplicate   *bool    `json:"duplicate,omitempty"`
+}
+
+type BonusRecordRewardInput struct {
+	EventID     *string  `json:"event_id,omitempty"`
+	UserID      *string  `json:"user_id,omitempty"`
+	RefCode     *string  `json:"ref_code,omitempty"`
+	Source      *string  `json:"source,omitempty"`
+	RewardType  *string  `json:"reward_type,omitempty"`
+	RewardValue *float64 `json:"reward_value,omitempty"`
+}
+
+type BonusReward struct {
+	RewardID    string  `json:"reward_id"`
+	EventID     string  `json:"event_id"`
+	UserID      string  `json:"user_id"`
+	RefCode     string  `json:"ref_code"`
+	Source      string  `json:"source"`
+	RewardType  string  `json:"reward_type"`
+	RewardValue float64 `json:"reward_value"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+}
+
+type BookBook struct {
+	ID            int             `json:"id"`
+	Title         string          `json:"title"`
+	Author        string          `json:"author"`
+	Isbn          *string         `json:"isbn,omitempty"`
+	Description   *string         `json:"description,omitempty"`
+	PublishedYear *int            `json:"publishedYear,omitempty"`
+	Categories    []*BookCategory `json:"categories"`
+	CoverURL      *string         `json:"coverUrl,omitempty"`
+	CreatedAt     *string         `json:"createdAt,omitempty"`
+	UpdatedAt     *string         `json:"updatedAt,omitempty"`
+	ChapterCount  *int            `json:"chapterCount,omitempty"`
+}
+
+type BookBookInput struct {
+	Title         *string  `json:"title,omitempty"`
+	Author        *string  `json:"author,omitempty"`
+	Isbn          *string  `json:"isbn,omitempty"`
+	Description   *string  `json:"description,omitempty"`
+	PublishedYear *int     `json:"publishedYear,omitempty"`
+	Categories    []string `json:"categories,omitempty"`
+}
+
+type BookBookPage struct {
+	Data       []*BookBook     `json:"data"`
+	Pagination *BookPagination `json:"pagination,omitempty"`
+}
+
+type BookCategory struct {
+	Slug string `json:"slug"`
+	Name string `json:"name"`
+}
+
+type BookCategoryInput struct {
+	Slug *string `json:"slug,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type BookChapter struct {
+	BookID      int     `json:"bookId"`
+	Number      int     `json:"number"`
+	Title       string  `json:"title"`
+	ContentType string  `json:"contentType"`
+	SizeBytes   *int    `json:"sizeBytes,omitempty"`
+	Content     *string `json:"content,omitempty"`
+}
+
+type BookChapterInput struct {
+	Title   *string `json:"title,omitempty"`
+	Content *string `json:"content,omitempty"`
+}
+
+type BookChapterPage struct {
+	Data       []*BookChapter  `json:"data"`
+	Pagination *BookPagination `json:"pagination,omitempty"`
+}
+
+type BookPagination struct {
+	Limit      int     `json:"limit"`
+	NextCursor *string `json:"nextCursor,omitempty"`
+	HasMore    bool    `json:"hasMore"`
+}
+
+type BookStoreAuthor struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Bio  string `json:"bio"`
+}
+
+type BookStoreAuthorInput struct {
+	Name *string `json:"name,omitempty"`
+	Bio  *string `json:"bio,omitempty"`
+}
+
+type BookStoreAuthorStat struct {
+	AuthorID       int    `json:"author_id"`
+	AuthorName     string `json:"author_name"`
+	TotalReads     int    `json:"total_reads"`
+	TotalPurchases int    `json:"total_purchases"`
+}
+
+type BookStoreBook struct {
+	ID                int                 `json:"id"`
+	Name              string              `json:"name"`
+	AuthorID          int                 `json:"author_id"`
+	Author            *BookStoreAuthor    `json:"author,omitempty"`
+	PublisherID       int                 `json:"publisher_id"`
+	Publisher         *BookStorePublisher `json:"publisher,omitempty"`
+	CategoryID        int                 `json:"category_id"`
+	Category          *BookStoreCategory  `json:"category,omitempty"`
+	Price             float64             `json:"price"`
+	Quantity          int                 `json:"quantity"`
+	UnitOfMeasurement string              `json:"unit_of_measurement"`
+	PurchaseCount     int                 `json:"purchase_count"`
+	ReadCount         int                 `json:"read_count"`
+}
+
+type BookStoreBookInput struct {
+	Name              *string  `json:"name,omitempty"`
+	AuthorID          *int     `json:"author_id,omitempty"`
+	PublisherID       *int     `json:"publisher_id,omitempty"`
+	CategoryID        *int     `json:"category_id,omitempty"`
+	Price             *float64 `json:"price,omitempty"`
+	Quantity          *int     `json:"quantity,omitempty"`
+	UnitOfMeasurement *string  `json:"unit_of_measurement,omitempty"`
+}
+
+type BookStoreCategory struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type BookStoreCategoryInput struct {
+	Name *string `json:"name,omitempty"`
+}
+
+type BookStoreCategoryPriceStat struct {
+	CategoryID   int     `json:"category_id"`
+	CategoryName string  `json:"category_name"`
+	MinPrice     float64 `json:"min_price"`
+	MaxPrice     float64 `json:"max_price"`
+	AvgPrice     float64 `json:"avg_price"`
+	BookCount    int     `json:"book_count"`
+}
+
+type BookStorePublisher struct {
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	Address string `json:"address"`
+}
+
+type BookStorePublisherInput struct {
+	Name    *string `json:"name,omitempty"`
+	Address *string `json:"address,omitempty"`
+}
+
+type BookingMiniBooking struct {
+	ID          int                   `json:"id"`
+	FromDate    string                `json:"from_date"`
+	ToDate      string                `json:"to_date"`
+	RoomNo      int                   `json:"room_no"`
+	PassengerID int                   `json:"passenger_id"`
+	Passenger   *BookingMiniPassenger `json:"passenger,omitempty"`
+	Room        *BookingMiniRoom      `json:"room,omitempty"`
+}
+
+type BookingMiniBookingInput struct {
+	PassengerID *int    `json:"passenger_id,omitempty"`
+	RoomNo      *int    `json:"room_no,omitempty"`
+	FromDate    *string `json:"from_date,omitempty"`
+	ToDate      *string `json:"to_date,omitempty"`
+}
+
+type BookingMiniPassenger struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type BookingMiniRoom struct {
+	RoomNo          int                         `json:"room_no"`
+	RoomType        string                      `json:"room_type"`
+	RoomTypeDetails *BookingMiniRoomTypeDetails `json:"room_type_details,omitempty"`
+	BedType         *string                     `json:"bed_type,omitempty"`
+	BedCount        *int                        `json:"bed_count,omitempty"`
+	Amenities       *string                     `json:"amenities,omitempty"`
+}
+
+type BookingMiniRoomTypeDetails struct {
+	ID          int    `json:"id"`
+	Description string `json:"description"`
+	Capacity    int    `json:"capacity"`
+}
+
+type BotChannelPublishResult struct {
+	Channel      string  `json:"channel"`
+	ExternalID   string  `json:"external_id"`
+	PublishedURL string  `json:"published_url"`
+	Error        string  `json:"error"`
+	PublishedAt  *string `json:"published_at,omitempty"`
+}
+
+type BotCreatePostInput struct {
+	SaveAsDraft     *bool            `json:"save_as_draft,omitempty"`
+	Title           *string          `json:"title,omitempty"`
+	Text            *string          `json:"text,omitempty"`
+	Hashtags        []string         `json:"hashtags,omitempty"`
+	Media           []*BotMediaInput `json:"media,omitempty"`
+	MediaKind       *string          `json:"media_kind,omitempty"`
+	Channels        []string         `json:"channels,omitempty"`
+	ScheduledAt     *string          `json:"scheduled_at,omitempty"`
+	Timezone        *string          `json:"timezone,omitempty"`
+	CronExpr        *string          `json:"cron_expr,omitempty"`
+	MaxRunsPerDay   *int             `json:"max_runs_per_day,omitempty"`
+	MaxRunsPerMonth *int             `json:"max_runs_per_month,omitempty"`
+	Campaign        *string          `json:"campaign,omitempty"`
+}
+
+type BotMedia struct {
+	URL       string `json:"url"`
+	Type      string `json:"type"`
+	Thumbnail string `json:"thumbnail"`
+}
+
+type BotMediaInput struct {
+	URL       *string `json:"url,omitempty"`
+	Type      *string `json:"type,omitempty"`
+	Thumbnail *string `json:"thumbnail,omitempty"`
+}
+
+type BotPost struct {
+	ID              string                     `json:"id"`
+	Title           string                     `json:"title"`
+	Text            string                     `json:"text"`
+	Hashtags        []string                   `json:"hashtags,omitempty"`
+	Media           []*BotMedia                `json:"media,omitempty"`
+	MediaKind       string                     `json:"media_kind"`
+	Channels        []string                   `json:"channels,omitempty"`
+	ScheduledAt     *string                    `json:"scheduled_at,omitempty"`
+	Timezone        string                     `json:"timezone"`
+	CronExpr        string                     `json:"cron_expr"`
+	MaxRunsPerDay   int                        `json:"max_runs_per_day"`
+	MaxRunsPerMonth int                        `json:"max_runs_per_month"`
+	RunsToday       int                        `json:"runs_today"`
+	RunsThisMonth   int                        `json:"runs_this_month"`
+	LastRunDate     string                     `json:"last_run_date"`
+	LastRunMonth    string                     `json:"last_run_month"`
+	LastRunAt       *string                    `json:"last_run_at,omitempty"`
+	Status          string                     `json:"status"`
+	RejectReason    string                     `json:"reject_reason"`
+	Results         []*BotChannelPublishResult `json:"results,omitempty"`
+	Campaign        string                     `json:"campaign"`
+	CreatedBy       string                     `json:"created_by"`
+	ApprovedBy      string                     `json:"approved_by"`
+	StatusChangedBy string                     `json:"status_changed_by"`
+	CreatedAt       *string                    `json:"created_at,omitempty"`
+	UpdatedAt       *string                    `json:"updated_at,omitempty"`
+}
+
+type BotPostList struct {
+	Posts []*BotPost `json:"posts"`
+}
+
+type BotUpdatePostInput struct {
+	Title           *string          `json:"title,omitempty"`
+	Text            *string          `json:"text,omitempty"`
+	Hashtags        []string         `json:"hashtags,omitempty"`
+	Media           []*BotMediaInput `json:"media,omitempty"`
+	MediaKind       *string          `json:"media_kind,omitempty"`
+	Channels        []string         `json:"channels,omitempty"`
+	ScheduledAt     *string          `json:"scheduled_at,omitempty"`
+	Timezone        *string          `json:"timezone,omitempty"`
+	CronExpr        *string          `json:"cron_expr,omitempty"`
+	MaxRunsPerDay   *int             `json:"max_runs_per_day,omitempty"`
+	MaxRunsPerMonth *int             `json:"max_runs_per_month,omitempty"`
+	Campaign        *string          `json:"campaign,omitempty"`
+}
+
+type CalcCoin struct {
+	ID                           string       `json:"id"`
+	Symbol                       string       `json:"symbol"`
+	Name                         string       `json:"name"`
+	Image                        string       `json:"image"`
+	CurrentPrice                 float64      `json:"current_price"`
+	MarketCap                    float64      `json:"market_cap"`
+	MarketCapRank                int          `json:"market_cap_rank"`
+	FullyDilutedValuation        float64      `json:"fully_diluted_valuation"`
+	TotalVolume                  float64      `json:"total_volume"`
+	High24h                      float64      `json:"high_24h"`
+	Low24h                       float64      `json:"low_24h"`
+	PriceChange24h               float64      `json:"price_change_24h"`
+	PriceChangePercentage24h     float64      `json:"price_change_percentage_24h"`
+	MarketCapChange24h           float64      `json:"market_cap_change_24h"`
+	MarketCapChangePercentage24h float64      `json:"market_cap_change_percentage_24h"`
+	CirculatingSupply            float64      `json:"circulating_supply"`
+	TotalSupply                  float64      `json:"total_supply"`
+	MaxSupply                    float64      `json:"max_supply"`
+	Ath                          float64      `json:"ath"`
+	AthChangePercentage          float64      `json:"ath_change_percentage"`
+	AthDate                      *string      `json:"ath_date,omitempty"`
+	Atl                          float64      `json:"atl"`
+	AtlChangePercentage          float64      `json:"atl_change_percentage"`
+	AtlDate                      *string      `json:"atl_date,omitempty"`
+	Roi                          *CalcCoinRoi `json:"roi,omitempty"`
+	LastUpdated                  *string      `json:"last_updated,omitempty"`
+}
+
+type CalcCoinRoi struct {
+	Times      float64 `json:"times"`
+	Currency   string  `json:"currency"`
+	Percentage float64 `json:"percentage"`
+}
+
+type CalcCoordinate struct {
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
+}
+
+type CalcForecast struct {
+	Coordinate  *CalcCoordinate      `json:"coordinate,omitempty"`
+	GeneratedAt *string              `json:"generated_at,omitempty"`
+	Source      string               `json:"source"`
+	Hourly      []*CalcForecastPoint `json:"hourly,omitempty"`
+}
+
+type CalcForecastPoint struct {
+	Time               *string `json:"time,omitempty"`
+	TemperatureC       float64 `json:"temperature_c"`
+	PrecipitationMm    float64 `json:"precipitation_mm"`
+	WindSpeedKmh       float64 `json:"wind_speed_kmh"`
+	WindDirectionDeg   float64 `json:"wind_direction_deg"`
+	SurfacePressureHpa float64 `json:"surface_pressure_hpa"`
+	PressureMslHpa     float64 `json:"pressure_msl_hpa"`
+}
+
+type CalcMarketSnapshot struct {
+	VsCurrency  string      `json:"vs_currency"`
+	GeneratedAt *string     `json:"generated_at,omitempty"`
+	Coins       []*CalcCoin `json:"coins,omitempty"`
+}
+
+type CalcRadarFrame struct {
+	Time    *string `json:"time,omitempty"`
+	TileURL string  `json:"tile_url"`
+}
+
+type CalcRainRadar struct {
+	GeneratedAt *string           `json:"generated_at,omitempty"`
+	Host        string            `json:"host"`
+	Past        []*CalcRadarFrame `json:"past,omitempty"`
+	Nowcast     []*CalcRadarFrame `json:"nowcast,omitempty"`
+	Source      string            `json:"source"`
+}
+
+type CalcTideEvent struct {
+	Time    *string `json:"time,omitempty"`
+	Type    string  `json:"type"`
+	HeightM float64 `json:"height_m"`
+}
+
+type CalcTidePrediction struct {
+	StationID string           `json:"station_id"`
+	Source    string           `json:"source"`
+	Events    []*CalcTideEvent `json:"events,omitempty"`
+}
+
+type CalcTrackedLocation struct {
+	Name          string          `json:"name"`
+	Coordinate    *CalcCoordinate `json:"coordinate,omitempty"`
+	TideStationID string          `json:"tide_station_id"`
+}
+
+type CalcWeatherSnapshot struct {
+	Location    string             `json:"location"`
+	Coordinate  *CalcCoordinate    `json:"coordinate,omitempty"`
+	GeneratedAt *string            `json:"generated_at,omitempty"`
+	Current     *CalcForecastPoint `json:"current,omitempty"`
+	NextTide    *CalcTideEvent     `json:"next_tide,omitempty"`
+	LatestRadar *CalcRadarFrame    `json:"latest_radar,omitempty"`
+}
+
+type CallCenterCall struct {
+	ID           int     `json:"id"`
+	CallSid      string  `json:"call_sid"`
+	FromNumber   string  `json:"from_number"`
+	ToNumber     string  `json:"to_number"`
+	Notes        *string `json:"notes,omitempty"`
+	Status       *string `json:"status,omitempty"`
+	Duration     *int    `json:"duration,omitempty"`
+	StartTime    *string `json:"start_time,omitempty"`
+	EndTime      *string `json:"end_time,omitempty"`
+	RecordingURL *string `json:"recording_url,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	UpdatedAt    *string `json:"updated_at,omitempty"`
+}
+
+type CallCenterCallDetail struct {
+	ID           int                  `json:"id"`
+	CallSid      string               `json:"call_sid"`
+	FromNumber   string               `json:"from_number"`
+	ToNumber     string               `json:"to_number"`
+	Notes        *string              `json:"notes,omitempty"`
+	Status       *string              `json:"status,omitempty"`
+	Duration     *int                 `json:"duration,omitempty"`
+	StartTime    *string              `json:"start_time,omitempty"`
+	EndTime      *string              `json:"end_time,omitempty"`
+	RecordingURL *string              `json:"recording_url,omitempty"`
+	CreatedAt    *string              `json:"created_at,omitempty"`
+	UpdatedAt    *string              `json:"updated_at,omitempty"`
+	Messages     []*CallCenterMessage `json:"messages,omitempty"`
+}
+
+type CallCenterCustomer struct {
+	ID           int     `json:"id"`
+	PhoneNumber  string  `json:"phone_number"`
+	Name         *string `json:"name,omitempty"`
+	Email        *string `json:"email,omitempty"`
+	Notes        *string `json:"notes,omitempty"`
+	TotalCalls   *int    `json:"total_calls,omitempty"`
+	LastCallDate *string `json:"last_call_date,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	UpdatedAt    *string `json:"updated_at,omitempty"`
+}
+
+type CallCenterMessage struct {
+	ID             int      `json:"id"`
+	CallID         int      `json:"call_id"`
+	Role           *string  `json:"role,omitempty"`
+	Content        *string  `json:"content,omitempty"`
+	AudioURL       *string  `json:"audio_url,omitempty"`
+	Timestamp      *string  `json:"timestamp,omitempty"`
+	ProcessingTime *float64 `json:"processing_time,omitempty"`
+}
+
+type CallCenterScenario struct {
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description *string `json:"description,omitempty"`
+	Prompt      *string `json:"prompt,omitempty"`
+	IsActive    *int    `json:"is_active,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type CallCenterScenarioInput struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Prompt      *string `json:"prompt,omitempty"`
+	IsActive    *int    `json:"is_active,omitempty"`
+}
+
+type CallCenterStatistics struct {
+	TotalCalls      int     `json:"total_calls"`
+	CompletedCalls  int     `json:"completed_calls"`
+	FailedCalls     int     `json:"failed_calls"`
+	AverageDuration float64 `json:"average_duration"`
+	TotalMessages   int     `json:"total_messages"`
+}
+
+type CarRentalBicycleDetails struct {
+	BicycleType string `json:"bicycleType"`
+	FrameSize   string `json:"frameSize"`
+	GearCount   int    `json:"gearCount"`
+	HasBasket   bool   `json:"hasBasket"`
+}
+
+type CarRentalBicycleDetailsInput struct {
+	BicycleType *string `json:"bicycleType,omitempty"`
+	FrameSize   *string `json:"frameSize,omitempty"`
+	GearCount   *int    `json:"gearCount,omitempty"`
+	HasBasket   *bool   `json:"hasBasket,omitempty"`
+}
+
+type CarRentalCancelReservationRequestInput struct {
+	ReservationID      *string `json:"reservationId,omitempty"`
+	CancellationReason *string `json:"cancellationReason,omitempty"`
+}
+
+type CarRentalCarDetails struct {
+	FuelType        string   `json:"fuelType"`
+	Transmission    string   `json:"transmission"`
+	SeatingCapacity int      `json:"seatingCapacity"`
+	TrunkCapacity   *float64 `json:"trunkCapacity,omitempty"`
+	AirConditioning bool     `json:"airConditioning"`
+}
+
+type CarRentalCarDetailsInput struct {
+	FuelType        *string  `json:"fuelType,omitempty"`
+	Transmission    *string  `json:"transmission,omitempty"`
+	SeatingCapacity *int     `json:"seatingCapacity,omitempty"`
+	TrunkCapacity   *float64 `json:"trunkCapacity,omitempty"`
+	AirConditioning *bool    `json:"airConditioning,omitempty"`
+}
+
+type CarRentalCompleteRentalRequestInput struct {
+	RentalID         *string        `json:"rentalId,omitempty"`
+	ReturnMileage    *float64       `json:"returnMileage,omitempty"`
+	StaffID          *string        `json:"staffId,omitempty"`
+	ReturnLocationID *string        `json:"returnLocationId,omitempty"`
+	AdditionalFees   map[string]any `json:"additionalFees,omitempty"`
+	Notes            *string        `json:"notes,omitempty"`
+}
+
+type CarRentalCreateReservationRequestInput struct {
+	UserID           *string `json:"userId,omitempty"`
+	VehicleID        *string `json:"vehicleId,omitempty"`
+	PickupLocationID *string `json:"pickupLocationId,omitempty"`
+	ReturnLocationID *string `json:"returnLocationId,omitempty"`
+	StartTime        *string `json:"startTime,omitempty"`
+	EndTime          *string `json:"endTime,omitempty"`
+}
+
+type CarRentalCreateVehicleRequestInput struct {
+	CategoryID         *string                          `json:"categoryId,omitempty"`
+	RegistrationNumber *string                          `json:"registrationNumber,omitempty"`
+	Make               *string                          `json:"make,omitempty"`
+	Model              *string                          `json:"model,omitempty"`
+	Year               *int                             `json:"year,omitempty"`
+	Color              *string                          `json:"color,omitempty"`
+	Mileage            *float64                         `json:"mileage,omitempty"`
+	Status             *CarRentalVehicleStatus          `json:"status,omitempty"`
+	HourlyRate         *float64                         `json:"hourlyRate,omitempty"`
+	DailyRate          *float64                         `json:"dailyRate,omitempty"`
+	LocationID         *string                          `json:"locationId,omitempty"`
+	Features           map[string]any                   `json:"features,omitempty"`
+	CarDetails         *CarRentalCarDetailsInput        `json:"carDetails,omitempty"`
+	MotorcycleDetails  *CarRentalMotorcycleDetailsInput `json:"motorcycleDetails,omitempty"`
+	BicycleDetails     *CarRentalBicycleDetailsInput    `json:"bicycleDetails,omitempty"`
+}
+
+type CarRentalGetRentalRequestInput struct {
+	RentalID *string `json:"rentalId,omitempty"`
+}
+
+type CarRentalGetReservationRequestInput struct {
+	ReservationID *string `json:"reservationId,omitempty"`
+}
+
+type CarRentalGetUserRequestInput struct {
+	UserID *string `json:"userId,omitempty"`
+}
+
+type CarRentalGetVehicleRequestInput struct {
+	VehicleID *string `json:"vehicleId,omitempty"`
+}
+
+type CarRentalListLocationsRequestInput struct {
+	City      *string `json:"city,omitempty"`
+	State     *string `json:"state,omitempty"`
+	Country   *string `json:"country,omitempty"`
+	PageSize  *int    `json:"pageSize,omitempty"`
+	PageToken *string `json:"pageToken,omitempty"`
+}
+
+type CarRentalListLocationsResponse struct {
+	Locations     []*CarRentalLocationResponse `json:"locations"`
+	NextPageToken string                       `json:"nextPageToken"`
+	TotalCount    int                          `json:"totalCount"`
+}
+
+type CarRentalListRentalsResponse struct {
+	Rentals       []*CarRentalRentalResponse `json:"rentals"`
+	NextPageToken string                     `json:"nextPageToken"`
+	TotalCount    int                        `json:"totalCount"`
+}
+
+type CarRentalListReservationsResponse struct {
+	Reservations  []*CarRentalReservationResponse `json:"reservations"`
+	NextPageToken string                          `json:"nextPageToken"`
+	TotalCount    int                             `json:"totalCount"`
+}
+
+type CarRentalListReviewsResponse struct {
+	Reviews       []*CarRentalReviewResponse `json:"reviews"`
+	NextPageToken string                     `json:"nextPageToken"`
+	TotalCount    int                        `json:"totalCount"`
+}
+
+type CarRentalListUserRentalsRequestInput struct {
+	UserID    *string                `json:"userId,omitempty"`
+	Status    *CarRentalRentalStatus `json:"status,omitempty"`
+	PageSize  *int                   `json:"pageSize,omitempty"`
+	PageToken *string                `json:"pageToken,omitempty"`
+}
+
+type CarRentalListUserReservationsRequestInput struct {
+	UserID    *string                     `json:"userId,omitempty"`
+	Status    *CarRentalReservationStatus `json:"status,omitempty"`
+	PageSize  *int                        `json:"pageSize,omitempty"`
+	PageToken *string                     `json:"pageToken,omitempty"`
+}
+
+type CarRentalListVehicleReviewsRequestInput struct {
+	VehicleID *string `json:"vehicleId,omitempty"`
+	PageSize  *int    `json:"pageSize,omitempty"`
+	PageToken *string `json:"pageToken,omitempty"`
+}
+
+type CarRentalListVehiclesRequestInput struct {
+	PageSize    *int                  `json:"pageSize,omitempty"`
+	PageToken   *string               `json:"pageToken,omitempty"`
+	VehicleType *CarRentalVehicleType `json:"vehicleType,omitempty"`
+	LocationID  *string               `json:"locationId,omitempty"`
+}
+
+type CarRentalListVehiclesResponse struct {
+	Vehicles      []*CarRentalVehicleResponse `json:"vehicles"`
+	NextPageToken string                      `json:"nextPageToken"`
+	TotalCount    int                         `json:"totalCount"`
+}
+
+type CarRentalLocationResponse struct {
+	LocationID   string         `json:"locationId"`
+	Name         string         `json:"name"`
+	Address      string         `json:"address"`
+	City         string         `json:"city"`
+	State        string         `json:"state"`
+	Country      string         `json:"country"`
+	ZipCode      string         `json:"zipCode"`
+	Latitude     *float64       `json:"latitude,omitempty"`
+	Longitude    *float64       `json:"longitude,omitempty"`
+	ContactPhone string         `json:"contactPhone"`
+	OpeningHours map[string]any `json:"openingHours"`
+}
+
+type CarRentalMotorcycleDetails struct {
+	EngineCapacity int    `json:"engineCapacity"`
+	MotorcycleType string `json:"motorcycleType"`
+	HelmetIncluded bool   `json:"helmetIncluded"`
+}
+
+type CarRentalMotorcycleDetailsInput struct {
+	EngineCapacity *int    `json:"engineCapacity,omitempty"`
+	MotorcycleType *string `json:"motorcycleType,omitempty"`
+	HelmetIncluded *bool   `json:"helmetIncluded,omitempty"`
+}
+
+type CarRentalPaymentResponse struct {
+	PaymentID     string                  `json:"paymentId"`
+	RentalID      string                  `json:"rentalId"`
+	UserID        string                  `json:"userId"`
+	Amount        *float64                `json:"amount,omitempty"`
+	PaymentMethod *CarRentalPaymentMethod `json:"paymentMethod,omitempty"`
+	TransactionID string                  `json:"transactionId"`
+	PaymentStatus *CarRentalPaymentStatus `json:"paymentStatus,omitempty"`
+	PaymentDate   *string                 `json:"paymentDate,omitempty"`
+}
+
+type CarRentalProcessPaymentRequestInput struct {
+	RentalID      *string                 `json:"rentalId,omitempty"`
+	UserID        *string                 `json:"userId,omitempty"`
+	Amount        *float64                `json:"amount,omitempty"`
+	PaymentMethod *CarRentalPaymentMethod `json:"paymentMethod,omitempty"`
+	TransactionID *string                 `json:"transactionId,omitempty"`
+}
+
+type CarRentalRegisterUserRequestInput struct {
+	Email          *string            `json:"email,omitempty"`
+	Password       *string            `json:"password,omitempty"`
+	FirstName      *string            `json:"firstName,omitempty"`
+	LastName       *string            `json:"lastName,omitempty"`
+	PhoneNumber    *string            `json:"phoneNumber,omitempty"`
+	Address        *string            `json:"address,omitempty"`
+	DrivingLicense *string            `json:"drivingLicense,omitempty"`
+	UserType       *CarRentalUserType `json:"userType,omitempty"`
+}
+
+type CarRentalRentalResponse struct {
+	RentalID         string                    `json:"rentalId"`
+	ReservationID    string                    `json:"reservationId"`
+	VehicleID        string                    `json:"vehicleId"`
+	UserID           string                    `json:"userId"`
+	PickupTime       *string                   `json:"pickupTime,omitempty"`
+	ActualReturnTime *string                   `json:"actualReturnTime,omitempty"`
+	PickupLocationID string                    `json:"pickupLocationId"`
+	ReturnLocationID string                    `json:"returnLocationId"`
+	PickupMileage    *float64                  `json:"pickupMileage,omitempty"`
+	ReturnMileage    *float64                  `json:"returnMileage,omitempty"`
+	Status           *CarRentalRentalStatus    `json:"status,omitempty"`
+	BaseFee          *float64                  `json:"baseFee,omitempty"`
+	AdditionalFees   *float64                  `json:"additionalFees,omitempty"`
+	PaymentStatus    *CarRentalPaymentStatus   `json:"paymentStatus,omitempty"`
+	Vehicle          *CarRentalVehicleResponse `json:"vehicle,omitempty"`
+	CreatedAt        *string                   `json:"createdAt,omitempty"`
+}
+
+type CarRentalReservationResponse struct {
+	ReservationID    string                      `json:"reservationId"`
+	UserID           string                      `json:"userId"`
+	VehicleID        string                      `json:"vehicleId"`
+	PickupLocationID string                      `json:"pickupLocationId"`
+	ReturnLocationID string                      `json:"returnLocationId"`
+	StartTime        *string                     `json:"startTime,omitempty"`
+	EndTime          *string                     `json:"endTime,omitempty"`
+	Status           *CarRentalReservationStatus `json:"status,omitempty"`
+	CreatedAt        *string                     `json:"createdAt,omitempty"`
+	UpdatedAt        *string                     `json:"updatedAt,omitempty"`
+	Vehicle          *CarRentalVehicleResponse   `json:"vehicle,omitempty"`
+}
+
+type CarRentalReviewResponse struct {
+	ReviewID  string                 `json:"reviewId"`
+	RentalID  string                 `json:"rentalId"`
+	UserID    string                 `json:"userId"`
+	VehicleID string                 `json:"vehicleId"`
+	Rating    int                    `json:"rating"`
+	Comment   string                 `json:"comment"`
+	CreatedAt *string                `json:"createdAt,omitempty"`
+	User      *CarRentalUserResponse `json:"user,omitempty"`
+}
+
+type CarRentalSearchVehiclesRequestInput struct {
+	StartTime        *string               `json:"startTime,omitempty"`
+	EndTime          *string               `json:"endTime,omitempty"`
+	PickupLocationID *string               `json:"pickupLocationId,omitempty"`
+	ReturnLocationID *string               `json:"returnLocationId,omitempty"`
+	VehicleType      *CarRentalVehicleType `json:"vehicleType,omitempty"`
+	CategoryID       *string               `json:"categoryId,omitempty"`
+	PageSize         *int                  `json:"pageSize,omitempty"`
+	PageToken        *string               `json:"pageToken,omitempty"`
+}
+
+type CarRentalStartRentalRequestInput struct {
+	ReservationID    *string  `json:"reservationId,omitempty"`
+	PickupMileage    *float64 `json:"pickupMileage,omitempty"`
+	StaffID          *string  `json:"staffId,omitempty"`
+	PickupLocationID *string  `json:"pickupLocationId,omitempty"`
+}
+
+type CarRentalSubmitReviewRequestInput struct {
+	RentalID  *string `json:"rentalId,omitempty"`
+	UserID    *string `json:"userId,omitempty"`
+	VehicleID *string `json:"vehicleId,omitempty"`
+	Rating    *int    `json:"rating,omitempty"`
+	Comment   *string `json:"comment,omitempty"`
+}
+
+type CarRentalUpdateReservationRequestInput struct {
+	ReservationID    *string `json:"reservationId,omitempty"`
+	PickupLocationID *string `json:"pickupLocationId,omitempty"`
+	ReturnLocationID *string `json:"returnLocationId,omitempty"`
+	StartTime        *string `json:"startTime,omitempty"`
+	EndTime          *string `json:"endTime,omitempty"`
+}
+
+type CarRentalUpdateUserRequestInput struct {
+	UserID         *string `json:"userId,omitempty"`
+	Email          *string `json:"email,omitempty"`
+	FirstName      *string `json:"firstName,omitempty"`
+	LastName       *string `json:"lastName,omitempty"`
+	PhoneNumber    *string `json:"phoneNumber,omitempty"`
+	Address        *string `json:"address,omitempty"`
+	DrivingLicense *string `json:"drivingLicense,omitempty"`
+}
+
+type CarRentalUpdateVehicleRequestInput struct {
+	VehicleID          *string                 `json:"vehicleId,omitempty"`
+	RegistrationNumber *string                 `json:"registrationNumber,omitempty"`
+	Mileage            *float64                `json:"mileage,omitempty"`
+	Status             *CarRentalVehicleStatus `json:"status,omitempty"`
+	HourlyRate         *float64                `json:"hourlyRate,omitempty"`
+	DailyRate          *float64                `json:"dailyRate,omitempty"`
+	LocationID         *string                 `json:"locationId,omitempty"`
+	Features           map[string]any          `json:"features,omitempty"`
+}
+
+type CarRentalUserResponse struct {
+	UserID         string             `json:"userId"`
+	Email          string             `json:"email"`
+	FirstName      string             `json:"firstName"`
+	LastName       string             `json:"lastName"`
+	PhoneNumber    string             `json:"phoneNumber"`
+	Address        string             `json:"address"`
+	UserType       *CarRentalUserType `json:"userType,omitempty"`
+	DrivingLicense string             `json:"drivingLicense"`
+	CreatedAt      *string            `json:"createdAt,omitempty"`
+	UpdatedAt      *string            `json:"updatedAt,omitempty"`
+}
+
+type CarRentalVehicleResponse struct {
+	VehicleID          string                      `json:"vehicleId"`
+	CategoryID         string                      `json:"categoryId"`
+	RegistrationNumber string                      `json:"registrationNumber"`
+	Make               string                      `json:"make"`
+	Model              string                      `json:"model"`
+	Year               int                         `json:"year"`
+	Color              string                      `json:"color"`
+	Mileage            *float64                    `json:"mileage,omitempty"`
+	Status             *CarRentalVehicleStatus     `json:"status,omitempty"`
+	HourlyRate         *float64                    `json:"hourlyRate,omitempty"`
+	DailyRate          *float64                    `json:"dailyRate,omitempty"`
+	LocationID         string                      `json:"locationId"`
+	VehicleType        *CarRentalVehicleType       `json:"vehicleType,omitempty"`
+	Features           map[string]any              `json:"features"`
+	CarDetails         *CarRentalCarDetails        `json:"carDetails,omitempty"`
+	MotorcycleDetails  *CarRentalMotorcycleDetails `json:"motorcycleDetails,omitempty"`
+	BicycleDetails     *CarRentalBicycleDetails    `json:"bicycleDetails,omitempty"`
+	CreatedAt          *string                     `json:"createdAt,omitempty"`
+	UpdatedAt          *string                     `json:"updatedAt,omitempty"`
+}
+
+type CasbinRule struct {
+	ID    int    `json:"id"`
+	Ptype string `json:"ptype"`
+	V0    string `json:"v0"`
+	V1    string `json:"v1"`
+	V2    string `json:"v2"`
+	V3    string `json:"v3"`
+	V4    string `json:"v4"`
+	V5    string `json:"v5"`
+}
+
+type CasbinRuleInput struct {
+	Ptype string  `json:"ptype"`
+	V0    *string `json:"v0,omitempty"`
+	V1    *string `json:"v1,omitempty"`
+	V2    *string `json:"v2,omitempty"`
+	V3    *string `json:"v3,omitempty"`
+	V4    *string `json:"v4,omitempty"`
+	V5    *string `json:"v5,omitempty"`
+}
+
+type CasbinRuleList struct {
+	Rows       []*CasbinRule `json:"rows"`
+	Limit      int           `json:"limit"`
+	Page       int           `json:"page"`
+	Sort       string        `json:"sort"`
+	TotalRows  int           `json:"totalRows"`
+	TotalPages int           `json:"totalPages"`
+}
+
+type CatalogueCategory struct {
+	ID                 int    `json:"id"`
+	ParentID           *int   `json:"parent_id,omitempty"`
+	Name               string `json:"name"`
+	Slug               string `json:"slug"`
+	Description        string `json:"description"`
+	Image              string `json:"image"`
+	IsPublic           bool   `json:"is_public"`
+	AncestorsArePublic bool   `json:"ancestors_are_public"`
+	MetaTitle          string `json:"meta_title"`
+	MetaDescription    string `json:"meta_description"`
+}
+
+type CatalogueCategoryInput struct {
+	ParentID        *int    `json:"parent_id,omitempty"`
+	Name            *string `json:"name,omitempty"`
+	Slug            *string `json:"slug,omitempty"`
+	Description     *string `json:"description,omitempty"`
+	Image           *string `json:"image,omitempty"`
+	IsPublic        *bool   `json:"is_public,omitempty"`
+	MetaTitle       *string `json:"meta_title,omitempty"`
+	MetaDescription *string `json:"meta_description,omitempty"`
+}
+
+type CatalogueImageInput struct {
+	Original     *string `json:"original,omitempty"`
+	Caption      *string `json:"caption,omitempty"`
+	DisplayOrder *int    `json:"display_order,omitempty"`
+}
+
+type CatalogueOption struct {
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Code     string `json:"code"`
+	Type     string `json:"type"`
+	Required bool   `json:"required"`
+}
+
+type CatalogueOptionInput struct {
+	Name     *string `json:"name,omitempty"`
+	Code     *string `json:"code,omitempty"`
+	Type     *string `json:"type,omitempty"`
+	Required *bool   `json:"required,omitempty"`
+}
+
+type CatalogueProduct struct {
+	ID              int                        `json:"id"`
+	Structure       string                     `json:"structure"`
+	Upc             *string                    `json:"upc,omitempty"`
+	Title           string                     `json:"title"`
+	Slug            string                     `json:"slug"`
+	Description     string                     `json:"description"`
+	Rating          *float64                   `json:"rating,omitempty"`
+	IsDiscountable  bool                       `json:"is_discountable"`
+	IsPublic        bool                       `json:"is_public"`
+	ParentID        *int                       `json:"parent_id,omitempty"`
+	ProductClassID  *int                       `json:"product_class_id,omitempty"`
+	MetaTitle       string                     `json:"meta_title"`
+	MetaDescription string                     `json:"meta_description"`
+	DateCreated     *string                    `json:"date_created,omitempty"`
+	DateUpdated     *string                    `json:"date_updated,omitempty"`
+	CategoryIds     []int                      `json:"category_ids,omitempty"`
+	OptionIds       []int                      `json:"option_ids,omitempty"`
+	Images          []*CatalogueProductImage   `json:"images,omitempty"`
+	Recommendations []*CatalogueRecommendation `json:"recommendations,omitempty"`
+}
+
+type CatalogueProductClass struct {
+	ID               int    `json:"id"`
+	Name             string `json:"name"`
+	Slug             string `json:"slug"`
+	RequiresShipping bool   `json:"requires_shipping"`
+	TrackStock       bool   `json:"track_stock"`
+	OptionIds        []int  `json:"option_ids,omitempty"`
+}
+
+type CatalogueProductClassInput struct {
+	Name             *string `json:"name,omitempty"`
+	Slug             *string `json:"slug,omitempty"`
+	RequiresShipping *bool   `json:"requires_shipping,omitempty"`
+	TrackStock       *bool   `json:"track_stock,omitempty"`
+	OptionIds        []int   `json:"option_ids,omitempty"`
+}
+
+type CatalogueProductImage struct {
+	ID           int     `json:"id"`
+	ProductID    int     `json:"product_id"`
+	Original     string  `json:"original"`
+	Caption      string  `json:"caption"`
+	DisplayOrder int     `json:"display_order"`
+	DateCreated  *string `json:"date_created,omitempty"`
+}
+
+type CatalogueProductInput struct {
+	Structure       *string  `json:"structure,omitempty"`
+	Upc             *string  `json:"upc,omitempty"`
+	Title           *string  `json:"title,omitempty"`
+	Slug            *string  `json:"slug,omitempty"`
+	Description     *string  `json:"description,omitempty"`
+	Rating          *float64 `json:"rating,omitempty"`
+	IsDiscountable  *bool    `json:"is_discountable,omitempty"`
+	IsPublic        *bool    `json:"is_public,omitempty"`
+	ParentID        *int     `json:"parent_id,omitempty"`
+	ProductClassID  *int     `json:"product_class_id,omitempty"`
+	MetaTitle       *string  `json:"meta_title,omitempty"`
+	MetaDescription *string  `json:"meta_description,omitempty"`
+	CategoryIds     []int    `json:"category_ids,omitempty"`
+	OptionIds       []int    `json:"option_ids,omitempty"`
+}
+
+type CatalogueRecommendation struct {
+	ProductID int `json:"product_id"`
+	Ranking   int `json:"ranking"`
+}
+
+type CatalogueRecommendationInput struct {
+	ProductID *int `json:"product_id,omitempty"`
+	Ranking   *int `json:"ranking,omitempty"`
+}
+
+type CdnDownload struct {
+	Location *string `json:"location,omitempty"`
+}
+
+type CdnFile struct {
+	ID          string  `json:"id"`
+	FileName    string  `json:"file_name"`
+	ContentType string  `json:"content_type"`
+	SizeBytes   int     `json:"size_bytes"`
+	Status      string  `json:"status"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type CdnFileList struct {
+	Files []*CdnFile `json:"files"`
+}
+
+type CdnPresign struct {
+	FileID    string  `json:"file_id"`
+	ObjectKey string  `json:"object_key"`
+	UploadURL string  `json:"upload_url"`
+	ExpiresAt *string `json:"expires_at,omitempty"`
+}
+
+type CdnPresignInput struct {
+	FileName    *string `json:"file_name,omitempty"`
+	ContentType *string `json:"content_type,omitempty"`
+	SizeBytes   *int    `json:"size_bytes,omitempty"`
+}
+
+type ChatCreatedReport struct {
+	ID         int     `json:"ID"`
+	UserID     int     `json:"UserId"`
+	ReportType string  `json:"ReportType"`
+	Notes      string  `json:"Notes"`
+	Status     string  `json:"Status"`
+	CreatedAt  *string `json:"CreatedAt,omitempty"`
+}
+
+type ChatMessage struct {
+	ID          int     `json:"_id"`
+	SenderID    int     `json:"sender_id"`
+	MessageType string  `json:"message_type"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	DeletedAt   *string `json:"deleted_at,omitempty"`
+}
+
+type ChatReport struct {
+	ID         int     `json:"_id"`
+	UsersID    int     `json:"users_id"`
+	ReportType string  `json:"report_type"`
+	Notes      string  `json:"notes"`
+	Status     string  `json:"status"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+}
+
+type ChatReportInput struct {
+	ReportType *string `json:"ReportType,omitempty"`
+	Notes      *string `json:"Notes,omitempty"`
+}
+
+type ChatbotConversation struct {
+	ID            int     `json:"id"`
+	User1ID       int     `json:"user1_id"`
+	User2ID       int     `json:"user2_id"`
+	IsAiChat      bool    `json:"is_ai_chat"`
+	ActiveAiModel *string `json:"active_ai_model,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	UpdatedAt     *string `json:"updated_at,omitempty"`
+}
+
+type ChatbotConversationList struct {
+	Conversations []*ChatbotConversation `json:"conversations"`
+	Count         int                    `json:"count"`
+}
+
+type ChatbotHistory struct {
+	Messages []*ChatbotMessage `json:"messages"`
+	Count    int               `json:"count"`
+}
+
+type ChatbotMessage struct {
+	ID             int     `json:"id"`
+	ConversationID int     `json:"conversation_id"`
+	SenderID       int     `json:"sender_id"`
+	Content        string  `json:"content"`
+	MessageType    string  `json:"message_type"`
+	AiModel        *string `json:"ai_model,omitempty"`
+	CreatedAt      *string `json:"created_at,omitempty"`
+}
+
+type CouponApplyInput struct {
+	Code           *string  `json:"code,omitempty"`
+	PurchaseAmount *float64 `json:"purchase_amount,omitempty"`
+	CategoryIds    []int    `json:"category_ids,omitempty"`
+	ProductIds     []int    `json:"product_ids,omitempty"`
+	OrderID        *int     `json:"order_id,omitempty"`
+}
+
+type CouponAssignInput struct {
+	UserID   *int `json:"user_id,omitempty"`
+	CouponID *int `json:"coupon_id,omitempty"`
+}
+
+type CouponCoupon struct {
+	ID                int      `json:"id"`
+	Code              string   `json:"code"`
+	Type              string   `json:"type"`
+	DiscountValue     float64  `json:"discount_value"`
+	MinimumPurchase   float64  `json:"minimum_purchase"`
+	MaxDiscountAmount *float64 `json:"max_discount_amount,omitempty"`
+	Description       string   `json:"description"`
+	StartDate         *string  `json:"start_date,omitempty"`
+	EndDate           *string  `json:"end_date,omitempty"`
+	IsActive          bool     `json:"is_active"`
+	MaxUses           *int     `json:"max_uses,omitempty"`
+	CurrentUses       int      `json:"current_uses"`
+	CreatedAt         *string  `json:"created_at,omitempty"`
+	UpdatedAt         *string  `json:"updated_at,omitempty"`
+}
+
+type CouponCouponInput struct {
+	Code              *string  `json:"code,omitempty"`
+	Type              *string  `json:"type,omitempty"`
+	DiscountValue     *float64 `json:"discount_value,omitempty"`
+	MinimumPurchase   *float64 `json:"minimum_purchase,omitempty"`
+	MaxDiscountAmount *float64 `json:"max_discount_amount,omitempty"`
+	Description       *string  `json:"description,omitempty"`
+	StartDate         *string  `json:"start_date,omitempty"`
+	EndDate           *string  `json:"end_date,omitempty"`
+	IsActive          *bool    `json:"is_active,omitempty"`
+	MaxUses           *int     `json:"max_uses,omitempty"`
+}
+
+type CouponRestriction struct {
+	ID                 int     `json:"id"`
+	CouponID           int     `json:"coupon_id"`
+	RestrictionType    string  `json:"restriction_type"`
+	RestrictedEntityID int     `json:"restricted_entity_id"`
+	IsExclude          bool    `json:"is_exclude"`
+	CreatedAt          *string `json:"created_at,omitempty"`
+}
+
+type CouponRestrictionInput struct {
+	RestrictionType    *string `json:"restriction_type,omitempty"`
+	RestrictedEntityID *int    `json:"restricted_entity_id,omitempty"`
+	IsExclude          *bool   `json:"is_exclude,omitempty"`
+}
+
+type CouponUsage struct {
+	ID             int     `json:"id"`
+	CouponID       int     `json:"coupon_id"`
+	UserID         int     `json:"user_id"`
+	OrderID        int     `json:"order_id"`
+	DiscountAmount float64 `json:"discount_amount"`
+	UsedAt         *string `json:"used_at,omitempty"`
+}
+
+type CouponUserCoupon struct {
+	ID         int     `json:"id"`
+	UserID     int     `json:"user_id"`
+	CouponID   int     `json:"coupon_id"`
+	IsUsed     bool    `json:"is_used"`
+	AssignedAt *string `json:"assigned_at,omitempty"`
+	UsedAt     *string `json:"used_at,omitempty"`
+}
+
+type CouponValidateInput struct {
+	Code           *string  `json:"code,omitempty"`
+	PurchaseAmount *float64 `json:"purchase_amount,omitempty"`
+	CategoryIds    []int    `json:"category_ids,omitempty"`
+	ProductIds     []int    `json:"product_ids,omitempty"`
+}
+
+type CouponValidation struct {
+	Coupon   *CouponCoupon `json:"coupon,omitempty"`
+	Discount float64       `json:"discount"`
+}
+
+type CrmAccount struct {
+	ID                  int     `json:"id"`
+	CreatedAt           *string `json:"created_at,omitempty"`
+	UpdatedAt           *string `json:"updated_at,omitempty"`
+	AccountName         string  `json:"account_name"`
+	AccountDescription  string  `json:"account_description"`
+	AccountPhone        string  `json:"account_phone"`
+	BillingAddress      string  `json:"billing_address"`
+	Email               string  `json:"email"`
+	TaxCode             string  `json:"tax_code"`
+	Representative      string  `json:"representative"`
+	RepresentativeTitle string  `json:"representative_title"`
+}
+
+type CrmAccountContactRole struct {
+	ID        int     `json:"id"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty"`
+	ContactID int     `json:"contact_id"`
+	AccountID int     `json:"account_id"`
+}
+
+type CrmAccountContactRoleInput struct {
+	ContactID *int `json:"contact_id,omitempty"`
+	AccountID *int `json:"account_id,omitempty"`
+}
+
+type CrmAccountInput struct {
+	AccountName         *string `json:"account_name,omitempty"`
+	AccountDescription  *string `json:"account_description,omitempty"`
+	AccountPhone        *string `json:"account_phone,omitempty"`
+	BillingAddress      *string `json:"billing_address,omitempty"`
+	Email               *string `json:"email,omitempty"`
+	TaxCode             *string `json:"tax_code,omitempty"`
+	Representative      *string `json:"representative,omitempty"`
+	RepresentativeTitle *string `json:"representative_title,omitempty"`
+}
+
+type CrmAccountOverview struct {
+	Account       *CrmAccount       `json:"account,omitempty"`
+	Contacts      []*CrmContact     `json:"contacts,omitempty"`
+	Contracts     []*CrmContract    `json:"contracts,omitempty"`
+	Opportunities []*CrmOpportunity `json:"opportunities,omitempty"`
+}
+
+type CrmCampaign struct {
+	ID                   int     `json:"id"`
+	CreatedAt            *string `json:"created_at,omitempty"`
+	UpdatedAt            *string `json:"updated_at,omitempty"`
+	CampaignName         string  `json:"campaign_name"`
+	CampaignObjectives   string  `json:"campaign_objectives"`
+	CampaignSponsor      string  `json:"campaign_sponsor"`
+	CampaignStartDate    *string `json:"campaign_start_date,omitempty"`
+	CampaignEndDate      *string `json:"campaign_end_date,omitempty"`
+	CampaignOtherDetails string  `json:"campaign_other_details"`
+}
+
+type CrmCampaignInput struct {
+	CampaignName         *string `json:"campaign_name,omitempty"`
+	CampaignObjectives   *string `json:"campaign_objectives,omitempty"`
+	CampaignSponsor      *string `json:"campaign_sponsor,omitempty"`
+	CampaignStartDate    *string `json:"campaign_start_date,omitempty"`
+	CampaignEndDate      *string `json:"campaign_end_date,omitempty"`
+	CampaignOtherDetails *string `json:"campaign_other_details,omitempty"`
+}
+
+type CrmCampaignMember struct {
+	ID         int     `json:"id"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+	UpdatedAt  *string `json:"updated_at,omitempty"`
+	CampaignID int     `json:"campaign_id"`
+	LeadID     int     `json:"lead_id"`
+	ContactID  int     `json:"contact_id"`
+}
+
+type CrmCampaignMemberInput struct {
+	CampaignID *int `json:"campaign_id,omitempty"`
+	LeadID     *int `json:"lead_id,omitempty"`
+	ContactID  *int `json:"contact_id,omitempty"`
+}
+
+type CrmCase struct {
+	ID          int     `json:"id"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+	ContactID   int     `json:"contact_id"`
+	Subject     string  `json:"subject"`
+	Description string  `json:"description"`
+	Priority    string  `json:"priority"`
+	Status      string  `json:"status"`
+	ClosedAt    *string `json:"closed_at,omitempty"`
+}
+
+type CrmCaseInput struct {
+	ContactID   *int    `json:"contact_id,omitempty"`
+	Subject     *string `json:"subject,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Priority    *string `json:"priority,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	ClosedAt    *string `json:"closed_at,omitempty"`
+}
+
+type CrmContact struct {
+	ID                    int     `json:"id"`
+	CreatedAt             *string `json:"created_at,omitempty"`
+	UpdatedAt             *string `json:"updated_at,omitempty"`
+	AccountID             int     `json:"account_id"`
+	Name                  string  `json:"name"`
+	Email                 string  `json:"email"`
+	Phone                 string  `json:"phone"`
+	ContactAddress        string  `json:"contact_address"`
+	ContactContactDetails string  `json:"contact_contact_details"`
+}
+
+type CrmContactInput struct {
+	AccountID             *int    `json:"account_id,omitempty"`
+	Name                  *string `json:"name,omitempty"`
+	Email                 *string `json:"email,omitempty"`
+	Phone                 *string `json:"phone,omitempty"`
+	ContactAddress        *string `json:"contact_address,omitempty"`
+	ContactContactDetails *string `json:"contact_contact_details,omitempty"`
+}
+
+type CrmContract struct {
+	ID                       int     `json:"id"`
+	CreatedAt                *string `json:"created_at,omitempty"`
+	UpdatedAt                *string `json:"updated_at,omitempty"`
+	AccountID                int     `json:"account_id"`
+	ContractNumber           string  `json:"contract_number"`
+	ContractTitle            string  `json:"contract_title"`
+	EndDate                  *string `json:"end_date,omitempty"`
+	ContractStatus           string  `json:"contract_status"`
+	ContractApproval         string  `json:"contract_approval"`
+	SignedBy                 string  `json:"signed_by"`
+	SignedAt                 *string `json:"signed_at,omitempty"`
+	SignatureAlgorithm       string  `json:"signature_algorithm"`
+	Signature                string  `json:"signature"`
+	SignerCertificate        string  `json:"signer_certificate"`
+	SignerSubject            string  `json:"signer_subject"`
+	SignerSerial             string  `json:"signer_serial"`
+	SignerFingerprint        string  `json:"signer_fingerprint"`
+	SignaturePayloadHash     string  `json:"signature_payload_hash"`
+	SignatureFormat          string  `json:"signature_format"`
+	RevocationStatus         string  `json:"revocation_status"`
+	CountersignerSubject     string  `json:"countersigner_subject"`
+	CountersignerSerial      string  `json:"countersigner_serial"`
+	CountersignerFingerprint string  `json:"countersigner_fingerprint"`
+	CountersignedAt          *string `json:"countersigned_at,omitempty"`
+	TimestampToken           string  `json:"timestamp_token"`
+	TimestampAt              *string `json:"timestamp_at,omitempty"`
+	TimestampAuthority       string  `json:"timestamp_authority"`
+}
+
+type CrmContractFile struct {
+	ID          int     `json:"id"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+	ContractID  int     `json:"contract_id"`
+	Kind        string  `json:"kind"`
+	Name        string  `json:"name"`
+	ContentType string  `json:"content_type"`
+	Format      string  `json:"format"`
+	Size        int     `json:"size"`
+	Sha256      string  `json:"sha256"`
+	Description string  `json:"description"`
+	UploadedBy  string  `json:"uploaded_by"`
+	UploaderID  string  `json:"uploader_id"`
+	Source      string  `json:"source"`
+	LineageID   int     `json:"lineage_id"`
+	Version     int     `json:"version"`
+	Latest      bool    `json:"latest"`
+	ReplacesID  *int    `json:"replaces_id,omitempty"`
+	ScanStatus  string  `json:"scan_status"`
+	ScanEngine  string  `json:"scan_engine"`
+	ScannedAt   *string `json:"scanned_at,omitempty"`
+}
+
+type CrmContractFileEvent struct {
+	ID           int     `json:"id"`
+	At           *string `json:"at,omitempty"`
+	ContractID   int     `json:"contract_id"`
+	FileID       int     `json:"file_id"`
+	LineageID    int     `json:"lineage_id"`
+	Version      int     `json:"version"`
+	FileName     string  `json:"file_name"`
+	Kind         string  `json:"kind"`
+	Action       string  `json:"action"`
+	ActorID      string  `json:"actor_id"`
+	ActorName    string  `json:"actor_name"`
+	ActorRoles   string  `json:"actor_roles"`
+	ActorService bool    `json:"actor_service"`
+	IP           string  `json:"ip"`
+	Detail       string  `json:"detail"`
+}
+
+type CrmContractInput struct {
+	AccountID                *int    `json:"account_id,omitempty"`
+	ContractNumber           *string `json:"contract_number,omitempty"`
+	ContractTitle            *string `json:"contract_title,omitempty"`
+	EndDate                  *string `json:"end_date,omitempty"`
+	ContractStatus           *string `json:"contract_status,omitempty"`
+	ContractApproval         *string `json:"contract_approval,omitempty"`
+	SignedBy                 *string `json:"signed_by,omitempty"`
+	SignedAt                 *string `json:"signed_at,omitempty"`
+	SignatureAlgorithm       *string `json:"signature_algorithm,omitempty"`
+	Signature                *string `json:"signature,omitempty"`
+	SignerCertificate        *string `json:"signer_certificate,omitempty"`
+	SignerSubject            *string `json:"signer_subject,omitempty"`
+	SignerSerial             *string `json:"signer_serial,omitempty"`
+	SignerFingerprint        *string `json:"signer_fingerprint,omitempty"`
+	SignaturePayloadHash     *string `json:"signature_payload_hash,omitempty"`
+	SignatureFormat          *string `json:"signature_format,omitempty"`
+	RevocationStatus         *string `json:"revocation_status,omitempty"`
+	CountersignerSubject     *string `json:"countersigner_subject,omitempty"`
+	CountersignerSerial      *string `json:"countersigner_serial,omitempty"`
+	CountersignerFingerprint *string `json:"countersigner_fingerprint,omitempty"`
+	CountersignedAt          *string `json:"countersigned_at,omitempty"`
+	TimestampToken           *string `json:"timestamp_token,omitempty"`
+	TimestampAt              *string `json:"timestamp_at,omitempty"`
+	TimestampAuthority       *string `json:"timestamp_authority,omitempty"`
+}
+
+type CrmConvertLeadInput struct {
+	AccountName            *string  `json:"account_name,omitempty"`
+	CreateOpportunity      *bool    `json:"create_opportunity,omitempty"`
+	OpportunityDescription *string  `json:"opportunity_description,omitempty"`
+	OpportunityAmount      *float64 `json:"opportunity_amount,omitempty"`
+}
+
+type CrmConvertLeadResult struct {
+	Lead        *CrmLead        `json:"lead,omitempty"`
+	Account     *CrmAccount     `json:"account,omitempty"`
+	Contact     *CrmContact     `json:"contact,omitempty"`
+	Opportunity *CrmOpportunity `json:"opportunity,omitempty"`
+}
+
+type CrmFileHistory struct {
+	Versions []*CrmContractFile      `json:"versions"`
+	Events   []*CrmContractFileEvent `json:"events"`
+}
+
+type CrmFileKind struct {
+	Kind    string   `json:"kind"`
+	Label   string   `json:"label"`
+	Formats []string `json:"formats,omitempty"`
+	System  bool     `json:"system"`
+}
+
+type CrmLead struct {
+	ID                 int     `json:"id"`
+	CreatedAt          *string `json:"created_at,omitempty"`
+	UpdatedAt          *string `json:"updated_at,omitempty"`
+	LeadFirstname      string  `json:"lead_firstname"`
+	LeadSurname        string  `json:"lead_surname"`
+	Email              string  `json:"email"`
+	Phone              string  `json:"phone"`
+	Source             string  `json:"source"`
+	LeadOtherDetails   string  `json:"lead_other_details"`
+	Status             string  `json:"status"`
+	ConvertedAccountID *int    `json:"converted_account_id,omitempty"`
+	ConvertedContactID *int    `json:"converted_contact_id,omitempty"`
+}
+
+type CrmLeadInput struct {
+	LeadFirstname      *string `json:"lead_firstname,omitempty"`
+	LeadSurname        *string `json:"lead_surname,omitempty"`
+	Email              *string `json:"email,omitempty"`
+	Phone              *string `json:"phone,omitempty"`
+	Source             *string `json:"source,omitempty"`
+	LeadOtherDetails   *string `json:"lead_other_details,omitempty"`
+	Status             *string `json:"status,omitempty"`
+	ConvertedAccountID *int    `json:"converted_account_id,omitempty"`
+	ConvertedContactID *int    `json:"converted_contact_id,omitempty"`
+}
+
+type CrmOpportunity struct {
+	ID                     int     `json:"id"`
+	CreatedAt              *string `json:"created_at,omitempty"`
+	UpdatedAt              *string `json:"updated_at,omitempty"`
+	AccountID              int     `json:"account_id"`
+	OpportunityDescription string  `json:"opportunity_description"`
+	OpportunityDetails     string  `json:"opportunity_details"`
+	Amount                 float64 `json:"amount"`
+	CloseDate              *string `json:"close_date,omitempty"`
+	OpportunityStage       string  `json:"opportunity_stage"`
+}
+
+type CrmOpportunityContactRole struct {
+	ID            int     `json:"id"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	UpdatedAt     *string `json:"updated_at,omitempty"`
+	ContactID     int     `json:"contact_id"`
+	OpportunityID int     `json:"opportunity_id"`
+	DateTime      *string `json:"date_time,omitempty"`
+	OtherDetails  string  `json:"other_details"`
+}
+
+type CrmOpportunityContactRoleInput struct {
+	ContactID     *int    `json:"contact_id,omitempty"`
+	OpportunityID *int    `json:"opportunity_id,omitempty"`
+	DateTime      *string `json:"date_time,omitempty"`
+	OtherDetails  *string `json:"other_details,omitempty"`
+}
+
+type CrmOpportunityInput struct {
+	AccountID              *int     `json:"account_id,omitempty"`
+	OpportunityDescription *string  `json:"opportunity_description,omitempty"`
+	OpportunityDetails     *string  `json:"opportunity_details,omitempty"`
+	Amount                 *float64 `json:"amount,omitempty"`
+	CloseDate              *string  `json:"close_date,omitempty"`
+	OpportunityStage       *string  `json:"opportunity_stage,omitempty"`
+}
+
+type CrmSignContractInput struct {
+	SignedBy    *string `json:"signed_by,omitempty"`
+	EndDate     *string `json:"end_date,omitempty"`
+	SigningTime *string `json:"signing_time,omitempty"`
+	Algorithm   *string `json:"algorithm,omitempty"`
+	Signature   *string `json:"signature,omitempty"`
+	Certificate *string `json:"certificate,omitempty"`
+	SignedPDF   *string `json:"signed_pdf,omitempty"`
+}
+
+type CrmStageSummary struct {
+	Stage  string  `json:"stage"`
+	Count  int     `json:"count"`
+	Amount float64 `json:"amount"`
+}
+
+type CrmSummary struct {
+	Counts        map[string]any     `json:"counts,omitempty"`
+	LeadsByStatus map[string]any     `json:"leads_by_status,omitempty"`
+	OpenCases     int                `json:"open_cases"`
+	Pipeline      []*CrmStageSummary `json:"pipeline,omitempty"`
+}
+
+type DoordashAssignment struct {
+	ID              int     `json:"id"`
+	DriverID        string  `json:"driver_id"`
+	OrderID         int     `json:"order_id"`
+	Status          string  `json:"status"`
+	AssignedAt      *string `json:"assigned_at,omitempty"`
+	AcceptedAt      *string `json:"accepted_at,omitempty"`
+	CompletedAt     *string `json:"completed_at,omitempty"`
+	RejectionReason string  `json:"rejection_reason"`
+}
+
+type DoordashOrder struct {
+	ID                    int                  `json:"id"`
+	CustomerID            string               `json:"customer_id"`
+	RestaurantID          string               `json:"restaurant_id"`
+	DriverID              *string              `json:"driver_id,omitempty"`
+	DeliveryAddressID     string               `json:"delivery_address_id"`
+	Status                string               `json:"status"`
+	PlacedAt              *string              `json:"placed_at,omitempty"`
+	EstimatedDeliveryTime *string              `json:"estimated_delivery_time,omitempty"`
+	ActualDeliveryTime    *string              `json:"actual_delivery_time,omitempty"`
+	Subtotal              float64              `json:"subtotal"`
+	DeliveryFee           float64              `json:"delivery_fee"`
+	ServiceFee            float64              `json:"service_fee"`
+	Tax                   float64              `json:"tax"`
+	Tip                   float64              `json:"tip"`
+	TotalAmount           float64              `json:"total_amount"`
+	PaymentMethodID       string               `json:"payment_method_id"`
+	PaymentStatus         string               `json:"payment_status"`
+	SpecialInstructions   string               `json:"special_instructions"`
+	CreatedAt             *string              `json:"created_at,omitempty"`
+	UpdatedAt             *string              `json:"updated_at,omitempty"`
+	Items                 []*DoordashOrderItem `json:"items,omitempty"`
+}
+
+type DoordashOrderInput struct {
+	RestaurantID        *string                   `json:"restaurant_id,omitempty"`
+	DeliveryAddressID   *string                   `json:"delivery_address_id,omitempty"`
+	PaymentMethodID     *string                   `json:"payment_method_id,omitempty"`
+	DeliveryFee         *float64                  `json:"delivery_fee,omitempty"`
+	ServiceFee          *float64                  `json:"service_fee,omitempty"`
+	Tax                 *float64                  `json:"tax,omitempty"`
+	Tip                 *float64                  `json:"tip,omitempty"`
+	SpecialInstructions *string                   `json:"special_instructions,omitempty"`
+	Items               []*DoordashOrderItemInput `json:"items,omitempty"`
+}
+
+type DoordashOrderItem struct {
+	ID                  int     `json:"id"`
+	OrderID             int     `json:"order_id"`
+	MenuItemID          string  `json:"menu_item_id"`
+	Name                string  `json:"name"`
+	Quantity            int     `json:"quantity"`
+	UnitPrice           float64 `json:"unit_price"`
+	Customizations      string  `json:"customizations"`
+	SpecialInstructions string  `json:"special_instructions"`
+	CreatedAt           *string `json:"created_at,omitempty"`
+}
+
+type DoordashOrderItemInput struct {
+	MenuItemID          *string `json:"menu_item_id,omitempty"`
+	Quantity            *int    `json:"quantity,omitempty"`
+	Customizations      *string `json:"customizations,omitempty"`
+	SpecialInstructions *string `json:"special_instructions,omitempty"`
+}
+
+type DoordashTracking struct {
+	ID        int      `json:"id"`
+	OrderID   int      `json:"order_id"`
+	Status    string   `json:"status"`
+	Latitude  *float64 `json:"latitude,omitempty"`
+	Longitude *float64 `json:"longitude,omitempty"`
+	Timestamp *string  `json:"timestamp,omitempty"`
+	Notes     string   `json:"notes"`
+}
+
+type DoordashTrackingInput struct {
+	Status    *string  `json:"status,omitempty"`
+	Latitude  *float64 `json:"latitude,omitempty"`
+	Longitude *float64 `json:"longitude,omitempty"`
+	Notes     *string  `json:"notes,omitempty"`
+}
+
+type DrawImageCollage struct {
+	ID          string  `json:"id"`
+	URL         string  `json:"url"`
+	Bucket      string  `json:"bucket"`
+	ObjectKey   string  `json:"object_key"`
+	ContentType string  `json:"content_type"`
+	Size        int     `json:"size"`
+	Width       int     `json:"width"`
+	Height      int     `json:"height"`
+	ImageCount  int     `json:"image_count"`
+	Layout      string  `json:"layout"`
+	Columns     int     `json:"columns"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+}
+
+type EkycCitizenIdentity struct {
+	ID             string  `json:"id"`
+	UserID         string  `json:"user_id"`
+	Source         string  `json:"source"`
+	DocumentNumber string  `json:"document_number"`
+	Surname        string  `json:"surname"`
+	GivenNames     string  `json:"given_names"`
+	Nationality    string  `json:"nationality"`
+	DateOfBirth    string  `json:"date_of_birth"`
+	Sex            string  `json:"sex"`
+	DateOfExpiry   string  `json:"date_of_expiry"`
+	MrzLine1       string  `json:"mrz_line1"`
+	MrzLine2       string  `json:"mrz_line2"`
+	MrzLine3       string  `json:"mrz_line3"`
+	ChecksumValid  bool    `json:"checksum_valid"`
+	Confidence     float64 `json:"confidence"`
+	NfcVerified    bool    `json:"nfc_verified"`
+	CreatedAt      *string `json:"created_at,omitempty"`
+	UpdatedAt      *string `json:"updated_at,omitempty"`
+}
+
+type EkycFaceBiometric struct {
+	ID           string  `json:"id"`
+	UserID       string  `json:"user_id"`
+	QualityScore float64 `json:"quality_score"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	UpdatedAt    *string `json:"updated_at,omitempty"`
+}
+
+type EkycStatus struct {
+	UserID       string               `json:"user_id"`
+	Identity     *EkycCitizenIdentity `json:"identity,omitempty"`
+	Face         *EkycFaceBiometric   `json:"face,omitempty"`
+	Verification *EkycVerification    `json:"verification,omitempty"`
+}
+
+type EkycVerification struct {
+	ID         string  `json:"id"`
+	UserID     string  `json:"user_id"`
+	Status     string  `json:"status"`
+	MatchScore float64 `json:"match_score"`
+	VerifiedAt *string `json:"verified_at,omitempty"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+	UpdatedAt  *string `json:"updated_at,omitempty"`
+}
+
+type FaceColorRect struct {
+	Color  string  `json:"color"`
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	Width  float64 `json:"width"`
+	Height float64 `json:"height"`
+}
+
+type FaceColorRectInput struct {
+	Color  *string  `json:"color,omitempty"`
+	X      *float64 `json:"x,omitempty"`
+	Y      *float64 `json:"y,omitempty"`
+	Width  *float64 `json:"width,omitempty"`
+	Height *float64 `json:"height,omitempty"`
+}
+
+type FacePositions struct {
+	Faces     []*FaceRect      `json:"faces"`
+	Colors    []*FaceColorRect `json:"colors"`
+	Frame     any              `json:"frame,omitempty"`
+	UpdatedAt *string          `json:"updatedAt,omitempty"`
+}
+
+type FacePositionsInput struct {
+	Faces  []*FaceRectInput      `json:"faces,omitempty"`
+	Colors []*FaceColorRectInput `json:"colors,omitempty"`
+	Frame  any                   `json:"frame,omitempty"`
+}
+
+type FaceRect struct {
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	Width  float64 `json:"width"`
+	Height float64 `json:"height"`
+}
+
+type FaceRectInput struct {
+	X      *float64 `json:"x,omitempty"`
+	Y      *float64 `json:"y,omitempty"`
+	Width  *float64 `json:"width,omitempty"`
+	Height *float64 `json:"height,omitempty"`
+}
+
+type FindUsersInput struct {
+	Username *string `json:"username,omitempty"`
+	Email    *string `json:"email,omitempty"`
+	Page     *int    `json:"page,omitempty"`
+	Limit    *int    `json:"limit,omitempty"`
+}
+
+type FoodAllergen struct {
+	ID   *int    `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type FoodFood struct {
+	ID          *int    `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Price       *int    `json:"price,omitempty"`
+	Category    *string `json:"category,omitempty"`
+}
+
+type FoodFoodInput struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Price       *int    `json:"price,omitempty"`
+	Category    *string `json:"category,omitempty"`
+}
+
+type FoodIngredient struct {
+	ID   *int    `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+	Unit *string `json:"unit,omitempty"`
+}
+
+type GeoDistrict struct {
+	Code         *string  `json:"code,omitempty"`
+	ProvinceCode *string  `json:"province_code,omitempty"`
+	Name         *string  `json:"name,omitempty"`
+	NameFull     *string  `json:"name_full,omitempty"`
+	NameEn       *string  `json:"name_en,omitempty"`
+	Type         *string  `json:"type,omitempty"`
+	Slug         *string  `json:"slug,omitempty"`
+	Gid          *string  `json:"gid,omitempty"`
+	AreaKm2      *float64 `json:"area_km2,omitempty"`
+}
+
+type GeoLocationResult struct {
+	Found     *bool        `json:"found,omitempty"`
+	Province  *GeoProvince `json:"province,omitempty"`
+	District  *GeoDistrict `json:"district,omitempty"`
+	Ward      *GeoWard     `json:"ward,omitempty"`
+	Street    *GeoStreet   `json:"street,omitempty"`
+	Point     *GeoPoint    `json:"point,omitempty"`
+	DistanceM *float64     `json:"distance_m,omitempty"`
+}
+
+type GeoPoint struct {
+	Lng *float64 `json:"lng,omitempty"`
+	Lat *float64 `json:"lat,omitempty"`
+}
+
+type GeoProvince struct {
+	Code     *string  `json:"code,omitempty"`
+	Name     *string  `json:"name,omitempty"`
+	NameFull *string  `json:"name_full,omitempty"`
+	NameEn   *string  `json:"name_en,omitempty"`
+	Type     *string  `json:"type,omitempty"`
+	Region   *string  `json:"region,omitempty"`
+	Slug     *string  `json:"slug,omitempty"`
+	Gid      *string  `json:"gid,omitempty"`
+	AreaKm2  *float64 `json:"area_km2,omitempty"`
+}
+
+type GeoStats struct {
+	Provinces *int `json:"provinces,omitempty"`
+	Districts *int `json:"districts,omitempty"`
+	Wards     *int `json:"wards,omitempty"`
+}
+
+type GeoStreet struct {
+	ID           *int     `json:"id,omitempty"`
+	ProvinceCode *string  `json:"province_code,omitempty"`
+	DistrictCode *string  `json:"district_code,omitempty"`
+	Name         *string  `json:"name,omitempty"`
+	NameFull     *string  `json:"name_full,omitempty"`
+	NameEn       *string  `json:"name_en,omitempty"`
+	Slug         *string  `json:"slug,omitempty"`
+	Gid          *string  `json:"gid,omitempty"`
+	LengthM      *float64 `json:"length_m,omitempty"`
+	DistanceM    *float64 `json:"distance_m,omitempty"`
+}
+
+type GeoWard struct {
+	Code         *string  `json:"code,omitempty"`
+	DistrictCode *string  `json:"district_code,omitempty"`
+	ProvinceCode *string  `json:"province_code,omitempty"`
+	Name         *string  `json:"name,omitempty"`
+	NameFull     *string  `json:"name_full,omitempty"`
+	NameEn       *string  `json:"name_en,omitempty"`
+	Type         *string  `json:"type,omitempty"`
+	Slug         *string  `json:"slug,omitempty"`
+	Gid          *string  `json:"gid,omitempty"`
+	AreaKm2      *float64 `json:"area_km2,omitempty"`
+}
+
+type GeoWhitelistCity struct {
+	ProvinceCode *string `json:"province_code,omitempty"`
+	Note         *string `json:"note,omitempty"`
+}
+
+type GeoWhitelistResult struct {
+	Whitelisted *bool        `json:"whitelisted,omitempty"`
+	Province    *GeoProvince `json:"province,omitempty"`
+	District    *GeoDistrict `json:"district,omitempty"`
+	Ward        *GeoWard     `json:"ward,omitempty"`
+	Street      *GeoStreet   `json:"street,omitempty"`
+	Point       *GeoPoint    `json:"point,omitempty"`
+}
+
+type GymClass struct {
+	ID          *string `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Day         *string `json:"day,omitempty"`
+	Time        *string `json:"time,omitempty"`
+	Coach       *string `json:"coach,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type GymClassInput struct {
+	Name        *string `json:"name,omitempty"`
+	Day         *string `json:"day,omitempty"`
+	Time        *string `json:"time,omitempty"`
+	Coach       *string `json:"coach,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type GymClient struct {
+	ID        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Status    string `json:"status"`
+}
+
+type GymClientInput struct {
+	FirstName *string `json:"first_name,omitempty"`
+	LastName  *string `json:"last_name,omitempty"`
+	Email     *string `json:"email,omitempty"`
+}
+
+type GymPass struct {
+	ID       *string `json:"id,omitempty"`
+	IsActive *bool   `json:"is_active,omitempty"`
+}
+
+type HospitalAppointment struct {
+	AppointmentID   int                        `json:"appointmentId"`
+	PatientID       int                        `json:"patientId"`
+	StaffID         int                        `json:"staffId"`
+	DepartmentID    int                        `json:"departmentId"`
+	AppointmentDate *string                    `json:"appointmentDate,omitempty"`
+	Status          *HospitalAppointmentStatus `json:"status,omitempty"`
+	Reason          string                     `json:"reason"`
+	Notes           string                     `json:"notes"`
+	CreatedAt       *string                    `json:"createdAt,omitempty"`
+	UpdatedAt       *string                    `json:"updatedAt,omitempty"`
+}
+
+type HospitalAppointmentInput struct {
+	AppointmentID   *int                       `json:"appointmentId,omitempty"`
+	PatientID       *int                       `json:"patientId,omitempty"`
+	StaffID         *int                       `json:"staffId,omitempty"`
+	DepartmentID    *int                       `json:"departmentId,omitempty"`
+	AppointmentDate *string                    `json:"appointmentDate,omitempty"`
+	Status          *HospitalAppointmentStatus `json:"status,omitempty"`
+	Reason          *string                    `json:"reason,omitempty"`
+	Notes           *string                    `json:"notes,omitempty"`
+	CreatedAt       *string                    `json:"createdAt,omitempty"`
+	UpdatedAt       *string                    `json:"updatedAt,omitempty"`
+}
+
+type HospitalAppointmentStatsRequestInput struct {
+	DateFrom     *string `json:"dateFrom,omitempty"`
+	DateTo       *string `json:"dateTo,omitempty"`
+	DepartmentID *int    `json:"departmentId,omitempty"`
+}
+
+type HospitalAppointmentStatsResponse struct {
+	TotalAppointments     int                                           `json:"totalAppointments"`
+	CompletedAppointments int                                           `json:"completedAppointments"`
+	CancelledAppointments int                                           `json:"cancelledAppointments"`
+	NoShowAppointments    int                                           `json:"noShowAppointments"`
+	DailyStats            []*HospitalAppointmentStatsResponseDailyStats `json:"dailyStats"`
+}
+
+type HospitalAppointmentStatsResponseDailyStats struct {
+	Date             string `json:"date"`
+	AppointmentCount int    `json:"appointmentCount"`
+}
+
+type HospitalBilling struct {
+	BillID                int      `json:"billId"`
+	PatientID             int      `json:"patientId"`
+	AppointmentID         int      `json:"appointmentId"`
+	Amount                *float64 `json:"amount,omitempty"`
+	InsuranceCovered      *float64 `json:"insuranceCovered,omitempty"`
+	PatientResponsibility *float64 `json:"patientResponsibility,omitempty"`
+	Status                string   `json:"status"`
+	DueDate               string   `json:"dueDate"`
+	PaidDate              string   `json:"paidDate"`
+	CreatedAt             *string  `json:"createdAt,omitempty"`
+	UpdatedAt             *string  `json:"updatedAt,omitempty"`
+}
+
+type HospitalBillingInput struct {
+	BillID                *int     `json:"billId,omitempty"`
+	PatientID             *int     `json:"patientId,omitempty"`
+	AppointmentID         *int     `json:"appointmentId,omitempty"`
+	Amount                *float64 `json:"amount,omitempty"`
+	InsuranceCovered      *float64 `json:"insuranceCovered,omitempty"`
+	PatientResponsibility *float64 `json:"patientResponsibility,omitempty"`
+	Status                *string  `json:"status,omitempty"`
+	DueDate               *string  `json:"dueDate,omitempty"`
+	PaidDate              *string  `json:"paidDate,omitempty"`
+	CreatedAt             *string  `json:"createdAt,omitempty"`
+	UpdatedAt             *string  `json:"updatedAt,omitempty"`
+}
+
+type HospitalBillingStatsRequestInput struct {
+	DateFrom *string `json:"dateFrom,omitempty"`
+	DateTo   *string `json:"dateTo,omitempty"`
+}
+
+type HospitalBillingStatsResponse struct {
+	TotalBilled                *float64                                    `json:"totalBilled,omitempty"`
+	TotalCollected             *float64                                    `json:"totalCollected,omitempty"`
+	TotalOutstanding           *float64                                    `json:"totalOutstanding,omitempty"`
+	TotalInsuranceCovered      *float64                                    `json:"totalInsuranceCovered,omitempty"`
+	TotalPatientResponsibility *float64                                    `json:"totalPatientResponsibility,omitempty"`
+	MonthlyStats               []*HospitalBillingStatsResponseMonthlyStats `json:"monthlyStats"`
+}
+
+type HospitalBillingStatsResponseMonthlyStats struct {
+	Month           string   `json:"month"`
+	AmountBilled    *float64 `json:"amountBilled,omitempty"`
+	AmountCollected *float64 `json:"amountCollected,omitempty"`
+}
+
+type HospitalCreateAppointmentRequestInput struct {
+	PatientID       *int    `json:"patientId,omitempty"`
+	StaffID         *int    `json:"staffId,omitempty"`
+	DepartmentID    *int    `json:"departmentId,omitempty"`
+	AppointmentDate *string `json:"appointmentDate,omitempty"`
+	Reason          *string `json:"reason,omitempty"`
+	Notes           *string `json:"notes,omitempty"`
+}
+
+type HospitalCreateBillingRequestInput struct {
+	PatientID             *int     `json:"patientId,omitempty"`
+	AppointmentID         *int     `json:"appointmentId,omitempty"`
+	Amount                *float64 `json:"amount,omitempty"`
+	InsuranceCovered      *float64 `json:"insuranceCovered,omitempty"`
+	PatientResponsibility *float64 `json:"patientResponsibility,omitempty"`
+	Status                *string  `json:"status,omitempty"`
+	DueDate               *string  `json:"dueDate,omitempty"`
+}
+
+type HospitalCreateDepartmentRequestInput struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type HospitalCreateLabResultRequestInput struct {
+	PatientID   *int    `json:"patientId,omitempty"`
+	OrderedBy   *int    `json:"orderedBy,omitempty"`
+	TestName    *string `json:"testName,omitempty"`
+	TestDate    *string `json:"testDate,omitempty"`
+	Results     *string `json:"results,omitempty"`
+	NormalRange *string `json:"normalRange,omitempty"`
+	Notes       *string `json:"notes,omitempty"`
+}
+
+type HospitalCreateMedicalRecordRequestInput struct {
+	PatientID     *int    `json:"patientId,omitempty"`
+	Diagnosis     *string `json:"diagnosis,omitempty"`
+	TreatmentPlan *string `json:"treatmentPlan,omitempty"`
+	Notes         *string `json:"notes,omitempty"`
+	CreatedBy     *int    `json:"createdBy,omitempty"`
+}
+
+type HospitalCreatePatientRequestInput struct {
+	FirstName             *string            `json:"firstName,omitempty"`
+	LastName              *string            `json:"lastName,omitempty"`
+	DateOfBirth           *string            `json:"dateOfBirth,omitempty"`
+	Gender                *HospitalGender    `json:"gender,omitempty"`
+	BloodType             *HospitalBloodType `json:"bloodType,omitempty"`
+	Address               *string            `json:"address,omitempty"`
+	Phone                 *string            `json:"phone,omitempty"`
+	Email                 *string            `json:"email,omitempty"`
+	EmergencyContactName  *string            `json:"emergencyContactName,omitempty"`
+	EmergencyContactPhone *string            `json:"emergencyContactPhone,omitempty"`
+	InsuranceProvider     *string            `json:"insuranceProvider,omitempty"`
+	InsurancePolicyNumber *string            `json:"insurancePolicyNumber,omitempty"`
+}
+
+type HospitalCreatePrescriptionRequestInput struct {
+	PatientID      *int    `json:"patientId,omitempty"`
+	PrescribedBy   *int    `json:"prescribedBy,omitempty"`
+	MedicationName *string `json:"medicationName,omitempty"`
+	Dosage         *string `json:"dosage,omitempty"`
+	Frequency      *string `json:"frequency,omitempty"`
+	StartDate      *string `json:"startDate,omitempty"`
+	EndDate        *string `json:"endDate,omitempty"`
+	Instructions   *string `json:"instructions,omitempty"`
+}
+
+type HospitalCreateStaffRequestInput struct {
+	DepartmentID   *int    `json:"departmentId,omitempty"`
+	FirstName      *string `json:"firstName,omitempty"`
+	LastName       *string `json:"lastName,omitempty"`
+	Role           *string `json:"role,omitempty"`
+	Specialization *string `json:"specialization,omitempty"`
+	Email          *string `json:"email,omitempty"`
+	Phone          *string `json:"phone,omitempty"`
+	HireDate       *string `json:"hireDate,omitempty"`
+	LicenseNumber  *string `json:"licenseNumber,omitempty"`
+}
+
+type HospitalDepartment struct {
+	DepartmentID int     `json:"departmentId"`
+	Name         string  `json:"name"`
+	Description  string  `json:"description"`
+	CreatedAt    *string `json:"createdAt,omitempty"`
+	UpdatedAt    *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalDepartmentInput struct {
+	DepartmentID *int    `json:"departmentId,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	CreatedAt    *string `json:"createdAt,omitempty"`
+	UpdatedAt    *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalDepartmentStatsResponse struct {
+	DepartmentStats []*HospitalDepartmentStatsResponseDepartmentStat `json:"departmentStats"`
+}
+
+type HospitalDepartmentStatsResponseDepartmentStat struct {
+	DepartmentID     int    `json:"departmentId"`
+	DepartmentName   string `json:"departmentName"`
+	StaffCount       int    `json:"staffCount"`
+	AppointmentCount int    `json:"appointmentCount"`
+}
+
+type HospitalLabResult struct {
+	ResultID    int     `json:"resultId"`
+	PatientID   int     `json:"patientId"`
+	OrderedBy   int     `json:"orderedBy"`
+	TestName    string  `json:"testName"`
+	TestDate    *string `json:"testDate,omitempty"`
+	Results     string  `json:"results"`
+	NormalRange string  `json:"normalRange"`
+	Notes       string  `json:"notes"`
+	CreatedAt   *string `json:"createdAt,omitempty"`
+	UpdatedAt   *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalLabResultInput struct {
+	ResultID    *int    `json:"resultId,omitempty"`
+	PatientID   *int    `json:"patientId,omitempty"`
+	OrderedBy   *int    `json:"orderedBy,omitempty"`
+	TestName    *string `json:"testName,omitempty"`
+	TestDate    *string `json:"testDate,omitempty"`
+	Results     *string `json:"results,omitempty"`
+	NormalRange *string `json:"normalRange,omitempty"`
+	Notes       *string `json:"notes,omitempty"`
+	CreatedAt   *string `json:"createdAt,omitempty"`
+	UpdatedAt   *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalListAppointmentsRequestInput struct {
+	PageSize   *int                       `json:"pageSize,omitempty"`
+	PageNumber *int                       `json:"pageNumber,omitempty"`
+	PatientID  *int                       `json:"patientId,omitempty"`
+	StaffID    *int                       `json:"staffId,omitempty"`
+	DateFrom   *string                    `json:"dateFrom,omitempty"`
+	DateTo     *string                    `json:"dateTo,omitempty"`
+	Status     *HospitalAppointmentStatus `json:"status,omitempty"`
+}
+
+type HospitalListAppointmentsResponse struct {
+	Appointments []*HospitalAppointment `json:"appointments"`
+	TotalCount   int                    `json:"totalCount"`
+}
+
+type HospitalListBillingsRequestInput struct {
+	PatientID  *int    `json:"patientId,omitempty"`
+	PageSize   *int    `json:"pageSize,omitempty"`
+	PageNumber *int    `json:"pageNumber,omitempty"`
+	Status     *string `json:"status,omitempty"`
+}
+
+type HospitalListBillingsResponse struct {
+	Billings   []*HospitalBilling `json:"billings"`
+	TotalCount int                `json:"totalCount"`
+}
+
+type HospitalListDepartmentsRequestInput struct {
+	PageSize   *int `json:"pageSize,omitempty"`
+	PageNumber *int `json:"pageNumber,omitempty"`
+}
+
+type HospitalListDepartmentsResponse struct {
+	Departments []*HospitalDepartment `json:"departments"`
+	TotalCount  int                   `json:"totalCount"`
+}
+
+type HospitalListLabResultsRequestInput struct {
+	PatientID  *int `json:"patientId,omitempty"`
+	PageSize   *int `json:"pageSize,omitempty"`
+	PageNumber *int `json:"pageNumber,omitempty"`
+}
+
+type HospitalListLabResultsResponse struct {
+	LabResults []*HospitalLabResult `json:"labResults"`
+	TotalCount int                  `json:"totalCount"`
+}
+
+type HospitalListMedicalRecordsRequestInput struct {
+	PatientID  *int `json:"patientId,omitempty"`
+	PageSize   *int `json:"pageSize,omitempty"`
+	PageNumber *int `json:"pageNumber,omitempty"`
+}
+
+type HospitalListMedicalRecordsResponse struct {
+	Records    []*HospitalMedicalRecord `json:"records"`
+	TotalCount int                      `json:"totalCount"`
+}
+
+type HospitalListPatientsRequestInput struct {
+	PageSize   *int    `json:"pageSize,omitempty"`
+	PageNumber *int    `json:"pageNumber,omitempty"`
+	SearchTerm *string `json:"searchTerm,omitempty"`
+}
+
+type HospitalListPatientsResponse struct {
+	Patients   []*HospitalPatient `json:"patients"`
+	TotalCount int                `json:"totalCount"`
+}
+
+type HospitalListPrescriptionsRequestInput struct {
+	PatientID  *int `json:"patientId,omitempty"`
+	PageSize   *int `json:"pageSize,omitempty"`
+	PageNumber *int `json:"pageNumber,omitempty"`
+}
+
+type HospitalListPrescriptionsResponse struct {
+	Prescriptions []*HospitalPrescription `json:"prescriptions"`
+	TotalCount    int                     `json:"totalCount"`
+}
+
+type HospitalListStaffRequestInput struct {
+	PageSize     *int `json:"pageSize,omitempty"`
+	PageNumber   *int `json:"pageNumber,omitempty"`
+	DepartmentID *int `json:"departmentId,omitempty"`
+}
+
+type HospitalListStaffResponse struct {
+	Staff      []*HospitalStaff `json:"staff"`
+	TotalCount int              `json:"totalCount"`
+}
+
+type HospitalMedicalRecord struct {
+	RecordID      int     `json:"recordId"`
+	PatientID     int     `json:"patientId"`
+	Diagnosis     string  `json:"diagnosis"`
+	TreatmentPlan string  `json:"treatmentPlan"`
+	Notes         string  `json:"notes"`
+	CreatedBy     int     `json:"createdBy"`
+	CreatedAt     *string `json:"createdAt,omitempty"`
+	UpdatedAt     *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalMedicalRecordInput struct {
+	RecordID      *int    `json:"recordId,omitempty"`
+	PatientID     *int    `json:"patientId,omitempty"`
+	Diagnosis     *string `json:"diagnosis,omitempty"`
+	TreatmentPlan *string `json:"treatmentPlan,omitempty"`
+	Notes         *string `json:"notes,omitempty"`
+	CreatedBy     *int    `json:"createdBy,omitempty"`
+	CreatedAt     *string `json:"createdAt,omitempty"`
+	UpdatedAt     *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalPatient struct {
+	PatientID             int                `json:"patientId"`
+	FirstName             string             `json:"firstName"`
+	LastName              string             `json:"lastName"`
+	DateOfBirth           string             `json:"dateOfBirth"`
+	Gender                *HospitalGender    `json:"gender,omitempty"`
+	BloodType             *HospitalBloodType `json:"bloodType,omitempty"`
+	Address               string             `json:"address"`
+	Phone                 string             `json:"phone"`
+	Email                 string             `json:"email"`
+	EmergencyContactName  string             `json:"emergencyContactName"`
+	EmergencyContactPhone string             `json:"emergencyContactPhone"`
+	InsuranceProvider     string             `json:"insuranceProvider"`
+	InsurancePolicyNumber string             `json:"insurancePolicyNumber"`
+	CreatedAt             *string            `json:"createdAt,omitempty"`
+	UpdatedAt             *string            `json:"updatedAt,omitempty"`
+}
+
+type HospitalPatientInput struct {
+	PatientID             *int               `json:"patientId,omitempty"`
+	FirstName             *string            `json:"firstName,omitempty"`
+	LastName              *string            `json:"lastName,omitempty"`
+	DateOfBirth           *string            `json:"dateOfBirth,omitempty"`
+	Gender                *HospitalGender    `json:"gender,omitempty"`
+	BloodType             *HospitalBloodType `json:"bloodType,omitempty"`
+	Address               *string            `json:"address,omitempty"`
+	Phone                 *string            `json:"phone,omitempty"`
+	Email                 *string            `json:"email,omitempty"`
+	EmergencyContactName  *string            `json:"emergencyContactName,omitempty"`
+	EmergencyContactPhone *string            `json:"emergencyContactPhone,omitempty"`
+	InsuranceProvider     *string            `json:"insuranceProvider,omitempty"`
+	InsurancePolicyNumber *string            `json:"insurancePolicyNumber,omitempty"`
+	CreatedAt             *string            `json:"createdAt,omitempty"`
+	UpdatedAt             *string            `json:"updatedAt,omitempty"`
+}
+
+type HospitalPrescription struct {
+	PrescriptionID int     `json:"prescriptionId"`
+	PatientID      int     `json:"patientId"`
+	PrescribedBy   int     `json:"prescribedBy"`
+	MedicationName string  `json:"medicationName"`
+	Dosage         string  `json:"dosage"`
+	Frequency      string  `json:"frequency"`
+	StartDate      string  `json:"startDate"`
+	EndDate        string  `json:"endDate"`
+	Instructions   string  `json:"instructions"`
+	CreatedAt      *string `json:"createdAt,omitempty"`
+	UpdatedAt      *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalPrescriptionInput struct {
+	PrescriptionID *int    `json:"prescriptionId,omitempty"`
+	PatientID      *int    `json:"patientId,omitempty"`
+	PrescribedBy   *int    `json:"prescribedBy,omitempty"`
+	MedicationName *string `json:"medicationName,omitempty"`
+	Dosage         *string `json:"dosage,omitempty"`
+	Frequency      *string `json:"frequency,omitempty"`
+	StartDate      *string `json:"startDate,omitempty"`
+	EndDate        *string `json:"endDate,omitempty"`
+	Instructions   *string `json:"instructions,omitempty"`
+	CreatedAt      *string `json:"createdAt,omitempty"`
+	UpdatedAt      *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalStaff struct {
+	StaffID        int     `json:"staffId"`
+	DepartmentID   int     `json:"departmentId"`
+	FirstName      string  `json:"firstName"`
+	LastName       string  `json:"lastName"`
+	Role           string  `json:"role"`
+	Specialization string  `json:"specialization"`
+	Email          string  `json:"email"`
+	Phone          string  `json:"phone"`
+	HireDate       string  `json:"hireDate"`
+	LicenseNumber  string  `json:"licenseNumber"`
+	CreatedAt      *string `json:"createdAt,omitempty"`
+	UpdatedAt      *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalStaffInput struct {
+	StaffID        *int    `json:"staffId,omitempty"`
+	DepartmentID   *int    `json:"departmentId,omitempty"`
+	FirstName      *string `json:"firstName,omitempty"`
+	LastName       *string `json:"lastName,omitempty"`
+	Role           *string `json:"role,omitempty"`
+	Specialization *string `json:"specialization,omitempty"`
+	Email          *string `json:"email,omitempty"`
+	Phone          *string `json:"phone,omitempty"`
+	HireDate       *string `json:"hireDate,omitempty"`
+	LicenseNumber  *string `json:"licenseNumber,omitempty"`
+	CreatedAt      *string `json:"createdAt,omitempty"`
+	UpdatedAt      *string `json:"updatedAt,omitempty"`
+}
+
+type HospitalUpdateAppointmentStatusRequestInput struct {
+	AppointmentID *int                       `json:"appointmentId,omitempty"`
+	Status        *HospitalAppointmentStatus `json:"status,omitempty"`
+}
+
+type HospitalUpdateBillingStatusRequestInput struct {
+	BillID   *int    `json:"billId,omitempty"`
+	Status   *string `json:"status,omitempty"`
+	PaidDate *string `json:"paidDate,omitempty"`
+}
+
+type HubChannel struct {
+	ID        *string `json:"id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	Type      *string `json:"type,omitempty"`
+	IsActive  *bool   `json:"is_active,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty"`
+}
+
+type HubChannelInput struct {
+	Name     *string `json:"name,omitempty"`
+	Type     *string `json:"type,omitempty"`
+	IsActive *bool   `json:"is_active,omitempty"`
+}
+
+type HubDataSource struct {
+	ID        *string        `json:"id,omitempty"`
+	Name      *string        `json:"name,omitempty"`
+	URL       *string        `json:"url,omitempty"`
+	Method    *string        `json:"method,omitempty"`
+	Headers   map[string]any `json:"headers,omitempty"`
+	Body      *string        `json:"body,omitempty"`
+	AuthType  *string        `json:"auth_type,omitempty"`
+	JSONPath  *string        `json:"json_path,omitempty"`
+	IsActive  *bool          `json:"is_active,omitempty"`
+	CreatedAt *string        `json:"created_at,omitempty"`
+	UpdatedAt *string        `json:"updated_at,omitempty"`
+}
+
+type HubDataSourceInput struct {
+	Name     *string        `json:"name,omitempty"`
+	URL      *string        `json:"url,omitempty"`
+	Method   *string        `json:"method,omitempty"`
+	Headers  map[string]any `json:"headers,omitempty"`
+	Body     *string        `json:"body,omitempty"`
+	AuthType *string        `json:"auth_type,omitempty"`
+	JSONPath *string        `json:"json_path,omitempty"`
+	IsActive *bool          `json:"is_active,omitempty"`
+}
+
+type HubHistoryPage struct {
+	Data      []*HubNotifyHistory `json:"data,omitempty"`
+	Total     *int                `json:"total,omitempty"`
+	Page      *int                `json:"page,omitempty"`
+	PageSize  *int                `json:"page_size,omitempty"`
+	Ts        *int                `json:"ts,omitempty"`
+	RequestID *string             `json:"request_id,omitempty"`
+}
+
+type HubJobPage struct {
+	Data      []*HubNotifyJob `json:"data,omitempty"`
+	Total     *int            `json:"total,omitempty"`
+	Page      *int            `json:"page,omitempty"`
+	PageSize  *int            `json:"page_size,omitempty"`
+	Ts        *int            `json:"ts,omitempty"`
+	RequestID *string         `json:"request_id,omitempty"`
+}
+
+type HubNotifyHistory struct {
+	ID          *string `json:"id,omitempty"`
+	JobID       *string `json:"job_id,omitempty"`
+	ChannelType *string `json:"channel_type,omitempty"`
+	Recipient   *string `json:"recipient,omitempty"`
+	Subject     *string `json:"subject,omitempty"`
+	Body        *string `json:"body,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	RetryCount  *int    `json:"retry_count,omitempty"`
+	Error       *string `json:"error,omitempty"`
+	SentAt      *string `json:"sent_at,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type HubNotifyJob struct {
+	ID            *string        `json:"id,omitempty"`
+	Name          *string        `json:"name,omitempty"`
+	Description   *string        `json:"description,omitempty"`
+	ChannelID     *string        `json:"channel_id,omitempty"`
+	TemplateID    *string        `json:"template_id,omitempty"`
+	DataSourceID  *string        `json:"data_source_id,omitempty"`
+	ScheduleType  *string        `json:"schedule_type,omitempty"`
+	CronExpr      *string        `json:"cron_expr,omitempty"`
+	RunAt         *string        `json:"run_at,omitempty"`
+	IntervalSec   *int           `json:"interval_sec,omitempty"`
+	Recipients    []string       `json:"recipients,omitempty"`
+	StaticPayload map[string]any `json:"static_payload,omitempty"`
+	Status        *string        `json:"status,omitempty"`
+	LastRunAt     *string        `json:"last_run_at,omitempty"`
+	NextRunAt     *string        `json:"next_run_at,omitempty"`
+	RunCount      *int           `json:"run_count,omitempty"`
+	FailCount     *int           `json:"fail_count,omitempty"`
+	MaxRuns       *int           `json:"max_runs,omitempty"`
+	CreatedAt     *string        `json:"created_at,omitempty"`
+	UpdatedAt     *string        `json:"updated_at,omitempty"`
+	Channel       *HubChannel    `json:"channel,omitempty"`
+	Template      *HubTemplate   `json:"template,omitempty"`
+	DataSource    *HubDataSource `json:"data_source,omitempty"`
+}
+
+type HubNotifyJobInput struct {
+	Name          *string        `json:"name,omitempty"`
+	Description   *string        `json:"description,omitempty"`
+	ChannelID     *string        `json:"channel_id,omitempty"`
+	TemplateID    *string        `json:"template_id,omitempty"`
+	DataSourceID  *string        `json:"data_source_id,omitempty"`
+	ScheduleType  *string        `json:"schedule_type,omitempty"`
+	CronExpr      *string        `json:"cron_expr,omitempty"`
+	RunAt         *string        `json:"run_at,omitempty"`
+	IntervalSec   *int           `json:"interval_sec,omitempty"`
+	Recipients    []string       `json:"recipients,omitempty"`
+	StaticPayload map[string]any `json:"static_payload,omitempty"`
+	Status        *string        `json:"status,omitempty"`
+	LastRunAt     *string        `json:"last_run_at,omitempty"`
+	NextRunAt     *string        `json:"next_run_at,omitempty"`
+	RunCount      *int           `json:"run_count,omitempty"`
+	FailCount     *int           `json:"fail_count,omitempty"`
+	MaxRuns       *int           `json:"max_runs,omitempty"`
+	Channel       map[string]any `json:"channel,omitempty"`
+	Template      map[string]any `json:"template,omitempty"`
+	DataSource    map[string]any `json:"data_source,omitempty"`
+}
+
+type HubSchedulerStatus struct {
+	ScheduledJobs []string `json:"scheduled_jobs,omitempty"`
+	Count         *int     `json:"count,omitempty"`
+	Ts            *int     `json:"ts,omitempty"`
+}
+
+type HubTemplate struct {
+	ID        *string  `json:"id,omitempty"`
+	Name      *string  `json:"name,omitempty"`
+	Channel   *string  `json:"channel,omitempty"`
+	Subject   *string  `json:"subject,omitempty"`
+	Body      *string  `json:"body,omitempty"`
+	Variables []string `json:"variables,omitempty"`
+	IsActive  *bool    `json:"is_active,omitempty"`
+	CreatedAt *string  `json:"created_at,omitempty"`
+	UpdatedAt *string  `json:"updated_at,omitempty"`
+}
+
+type HubTemplateInput struct {
+	Name      *string  `json:"name,omitempty"`
+	Channel   *string  `json:"channel,omitempty"`
+	Subject   *string  `json:"subject,omitempty"`
+	Body      *string  `json:"body,omitempty"`
+	Variables []string `json:"variables,omitempty"`
+	IsActive  *bool    `json:"is_active,omitempty"`
+}
+
+type IntPayCreatePaymentInput struct {
+	Amount        *float64 `json:"amount,omitempty"`
+	Currency      *string  `json:"currency,omitempty"`
+	PaymentMethod *string  `json:"payment_method,omitempty"`
+	Description   *string  `json:"description,omitempty"`
+	Metadata      *string  `json:"metadata,omitempty"`
+}
+
+type IntPayPayment struct {
+	ID                *string  `json:"id,omitempty"`
+	UserID            *string  `json:"user_id,omitempty"`
+	Amount            *float64 `json:"amount,omitempty"`
+	Currency          *string  `json:"currency,omitempty"`
+	PaymentMethod     *string  `json:"payment_method,omitempty"`
+	Status            *string  `json:"status,omitempty"`
+	Description       *string  `json:"description,omitempty"`
+	Metadata          *string  `json:"metadata,omitempty"`
+	ExternalID        *string  `json:"external_id,omitempty"`
+	ProcessorResponse *string  `json:"processor_response,omitempty"`
+	CreatedAt         *string  `json:"created_at,omitempty"`
+	UpdatedAt         *string  `json:"updated_at,omitempty"`
+}
+
+type IntPayPaymentResult struct {
+	ID            *string        `json:"id,omitempty"`
+	Status        *string        `json:"status,omitempty"`
+	Amount        *float64       `json:"amount,omitempty"`
+	Currency      *string        `json:"currency,omitempty"`
+	PaymentURL    *string        `json:"payment_url,omitempty"`
+	TransactionID *string        `json:"transaction_id,omitempty"`
+	ProcessorData map[string]any `json:"processor_data,omitempty"`
+	Message       *string        `json:"message,omitempty"`
+}
+
+type KcActiveKeys struct {
+	Hs256 *string `json:"HS256,omitempty"`
+	Rs256 *string `json:"RS256,omitempty"`
+	Aes   *string `json:"AES,omitempty"`
+}
+
+type KcAdapterConfiguration struct {
+	Realm            *string `json:"realm,omitempty"`
+	AuthServerURL    *string `json:"auth-server-url"`
+	SslRequired      *string `json:"ssl-required"`
+	Resource         *string `json:"resource,omitempty"`
+	Credentials      any     `json:"credentials,omitempty"`
+	ConfidentialPort *int    `json:"confidential-port"`
+}
+
+type KcAuthenticationExecutionRepresentation struct {
+	Authenticator       *string `json:"authenticator,omitempty"`
+	AuthenticatorConfig *string `json:"authenticatorConfig,omitempty"`
+	AuthenticatorFlow   *bool   `json:"authenticatorFlow,omitempty"`
+	AutheticatorFlow    *bool   `json:"autheticatorFlow,omitempty"`
+	FlowAlias           *string `json:"flowAlias,omitempty"`
+	Priority            *int    `json:"priority,omitempty"`
+	Requirement         *string `json:"requirement,omitempty"`
+	UserSetupAllowed    *bool   `json:"userSetupAllowed,omitempty"`
+}
+
+type KcAuthenticationFlowRepresentation struct {
+	Alias                    *string                                    `json:"alias,omitempty"`
+	AuthenticationExecutions []*KcAuthenticationExecutionRepresentation `json:"authenticationExecutions,omitempty"`
+	BuiltIn                  *bool                                      `json:"builtIn,omitempty"`
+	Description              *string                                    `json:"description,omitempty"`
+	ID                       *string                                    `json:"id,omitempty"`
+	ProviderID               *string                                    `json:"providerId,omitempty"`
+	TopLevel                 *bool                                      `json:"topLevel,omitempty"`
+}
+
+type KcBruteForceStatus struct {
+	NumFailures   *int    `json:"numFailures,omitempty"`
+	Disabled      *bool   `json:"disabled,omitempty"`
+	LastIPFailure *string `json:"lastIPFailure,omitempty"`
+	LastFailure   *int    `json:"lastFailure,omitempty"`
+}
+
+type KcBuiltinProtocolMappers struct {
+	Saml          []*KcProtocolMapperRepresentation `json:"saml,omitempty"`
+	OpenidConnect []*KcProtocolMapperRepresentation `json:"openid-connect"`
+}
+
+type KcCertResponse struct {
+	Keys []*KcCertResponseKey `json:"keys,omitempty"`
+}
+
+type KcCertResponseKey struct {
+	Kid     *string  `json:"kid,omitempty"`
+	Kty     *string  `json:"kty,omitempty"`
+	Alg     *string  `json:"alg,omitempty"`
+	Use     *string  `json:"use,omitempty"`
+	N       *string  `json:"n,omitempty"`
+	E       *string  `json:"e,omitempty"`
+	X       *string  `json:"x,omitempty"`
+	Y       *string  `json:"y,omitempty"`
+	Crv     *string  `json:"crv,omitempty"`
+	KeyOps  []string `json:"key_ops,omitempty"`
+	X5u     *string  `json:"x5u,omitempty"`
+	X5c     []string `json:"x5c,omitempty"`
+	X5t     *string  `json:"x5t,omitempty"`
+	X5tS256 *string  `json:"x5t#S256"`
+}
+
+type KcClient struct {
+	Access                             map[string]any                    `json:"access,omitempty"`
+	AdminURL                           *string                           `json:"adminUrl,omitempty"`
+	Attributes                         map[string]any                    `json:"attributes,omitempty"`
+	AuthenticationFlowBindingOverrides map[string]any                    `json:"authenticationFlowBindingOverrides,omitempty"`
+	AuthorizationServicesEnabled       *bool                             `json:"authorizationServicesEnabled,omitempty"`
+	AuthorizationSettings              *KcResourceServerRepresentation   `json:"authorizationSettings,omitempty"`
+	BaseURL                            *string                           `json:"baseUrl,omitempty"`
+	BearerOnly                         *bool                             `json:"bearerOnly,omitempty"`
+	ClientAuthenticatorType            *string                           `json:"clientAuthenticatorType,omitempty"`
+	ClientID                           *string                           `json:"clientId,omitempty"`
+	ConsentRequired                    *bool                             `json:"consentRequired,omitempty"`
+	DefaultClientScopes                []string                          `json:"defaultClientScopes,omitempty"`
+	DefaultRoles                       []string                          `json:"defaultRoles,omitempty"`
+	Description                        *string                           `json:"description,omitempty"`
+	DirectAccessGrantsEnabled          *bool                             `json:"directAccessGrantsEnabled,omitempty"`
+	Enabled                            *bool                             `json:"enabled,omitempty"`
+	FrontchannelLogout                 *bool                             `json:"frontchannelLogout,omitempty"`
+	FullScopeAllowed                   *bool                             `json:"fullScopeAllowed,omitempty"`
+	ID                                 *string                           `json:"id,omitempty"`
+	ImplicitFlowEnabled                *bool                             `json:"implicitFlowEnabled,omitempty"`
+	Name                               *string                           `json:"name,omitempty"`
+	NodeReRegistrationTimeout          *int                              `json:"nodeReRegistrationTimeout,omitempty"`
+	NotBefore                          *int                              `json:"notBefore,omitempty"`
+	OptionalClientScopes               []string                          `json:"optionalClientScopes,omitempty"`
+	Origin                             *string                           `json:"origin,omitempty"`
+	Protocol                           *string                           `json:"protocol,omitempty"`
+	ProtocolMappers                    []*KcProtocolMapperRepresentation `json:"protocolMappers,omitempty"`
+	PublicClient                       *bool                             `json:"publicClient,omitempty"`
+	RedirectUris                       []string                          `json:"redirectUris,omitempty"`
+	RegisteredNodes                    map[string]any                    `json:"registeredNodes,omitempty"`
+	RegistrationAccessToken            *string                           `json:"registrationAccessToken,omitempty"`
+	RootURL                            *string                           `json:"rootUrl,omitempty"`
+	Secret                             *string                           `json:"secret,omitempty"`
+	ServiceAccountsEnabled             *bool                             `json:"serviceAccountsEnabled,omitempty"`
+	StandardFlowEnabled                *bool                             `json:"standardFlowEnabled,omitempty"`
+	SurrogateAuthRequired              *bool                             `json:"surrogateAuthRequired,omitempty"`
+	WebOrigins                         []string                          `json:"webOrigins,omitempty"`
+}
+
+type KcClientScope struct {
+	ID              *string                  `json:"id,omitempty"`
+	Name            *string                  `json:"name,omitempty"`
+	Description     *string                  `json:"description,omitempty"`
+	Protocol        *string                  `json:"protocol,omitempty"`
+	Attributes      *KcClientScopeAttributes `json:"attributes,omitempty"`
+	ProtocolMappers []*KcProtocolMappers     `json:"protocolMappers,omitempty"`
+}
+
+type KcClientScopeAttributes struct {
+	ConsentScreenText      *string `json:"consent.screen.text"`
+	DisplayOnConsentScreen *string `json:"display.on.consent.screen"`
+	IncludeInTokenScope    *string `json:"include.in.token.scope"`
+}
+
+type KcComponent struct {
+	ID           *string        `json:"id,omitempty"`
+	Name         *string        `json:"name,omitempty"`
+	ProviderID   *string        `json:"providerId,omitempty"`
+	ProviderType *string        `json:"providerType,omitempty"`
+	ParentID     *string        `json:"parentId,omitempty"`
+	Config       map[string]any `json:"config,omitempty"`
+	SubType      *string        `json:"subType,omitempty"`
+}
+
+type KcCompositesRepresentation struct {
+	Client map[string]any `json:"client,omitempty"`
+	Realm  []string       `json:"realm,omitempty"`
+}
+
+type KcCredentialRepresentation struct {
+	CreatedDate       *int                  `json:"createdDate,omitempty"`
+	Temporary         *bool                 `json:"temporary,omitempty"`
+	Type              *string               `json:"type,omitempty"`
+	Value             *string               `json:"value,omitempty"`
+	Algorithm         *string               `json:"algorithm,omitempty"`
+	Config            *KcMultiValuedHashMap `json:"config,omitempty"`
+	Counter           *int                  `json:"counter,omitempty"`
+	Device            *string               `json:"device,omitempty"`
+	Digits            *int                  `json:"digits,omitempty"`
+	HashIterations    *int                  `json:"hashIterations,omitempty"`
+	HashedSaltedValue *string               `json:"hashedSaltedValue,omitempty"`
+	Period            *int                  `json:"period,omitempty"`
+	Salt              *string               `json:"salt,omitempty"`
+	CredentialData    *string               `json:"credentialData,omitempty"`
+	ID                *string               `json:"id,omitempty"`
+	Priority          *int                  `json:"priority,omitempty"`
+	SecretData        *string               `json:"secretData,omitempty"`
+	UserLabel         *string               `json:"userLabel,omitempty"`
+}
+
+type KcEventRepresentation struct {
+	Time      *int           `json:"time,omitempty"`
+	Type      *string        `json:"type,omitempty"`
+	RealmID   *string        `json:"realmId,omitempty"`
+	ClientID  *string        `json:"clientId,omitempty"`
+	UserID    *string        `json:"userId,omitempty"`
+	SessionID *string        `json:"sessionId,omitempty"`
+	IPAddress *string        `json:"ipAddress,omitempty"`
+	Details   map[string]any `json:"details,omitempty"`
+}
+
+type KcFederatedIdentityRepresentation struct {
+	IdentityProvider *string `json:"identityProvider,omitempty"`
+	UserID           *string `json:"userId,omitempty"`
+	UserName         *string `json:"userName,omitempty"`
+}
+
+type KcGroup struct {
+	ID          *string        `json:"id,omitempty"`
+	Name        *string        `json:"name,omitempty"`
+	Path        *string        `json:"path,omitempty"`
+	SubGroups   []*KcGroup     `json:"subGroups,omitempty"`
+	Attributes  map[string]any `json:"attributes,omitempty"`
+	Access      map[string]any `json:"access,omitempty"`
+	ClientRoles map[string]any `json:"clientRoles,omitempty"`
+	RealmRoles  []string       `json:"realmRoles,omitempty"`
+}
+
+type KcGroupDefinition struct {
+	ID             *string `json:"id,omitempty"`
+	Path           *string `json:"path,omitempty"`
+	ExtendChildren *bool   `json:"extendChildren,omitempty"`
+}
+
+type KcIdentityProviderMapper struct {
+	ID                     *string        `json:"id,omitempty"`
+	Name                   *string        `json:"name,omitempty"`
+	IdentityProviderMapper *string        `json:"identityProviderMapper,omitempty"`
+	IdentityProviderAlias  *string        `json:"identityProviderAlias,omitempty"`
+	Config                 map[string]any `json:"config,omitempty"`
+}
+
+type KcIdentityProviderRepresentation struct {
+	AddReadTokenRoleOnCreate  *bool          `json:"addReadTokenRoleOnCreate,omitempty"`
+	Alias                     *string        `json:"alias,omitempty"`
+	Config                    map[string]any `json:"config,omitempty"`
+	DisplayName               *string        `json:"displayName,omitempty"`
+	Enabled                   *bool          `json:"enabled,omitempty"`
+	FirstBrokerLoginFlowAlias *string        `json:"firstBrokerLoginFlowAlias,omitempty"`
+	InternalID                *string        `json:"internalId,omitempty"`
+	LinkOnly                  *bool          `json:"linkOnly,omitempty"`
+	PostBrokerLoginFlowAlias  *string        `json:"postBrokerLoginFlowAlias,omitempty"`
+	ProviderID                *string        `json:"providerId,omitempty"`
+	StoreToken                *bool          `json:"storeToken,omitempty"`
+	TrustEmail                *bool          `json:"trustEmail,omitempty"`
+}
+
+type KcIssuerResponse struct {
+	Realm           *string `json:"realm,omitempty"`
+	PublicKey       *string `json:"public_key,omitempty"`
+	TokenService    *string `json:"token-service"`
+	AccountService  *string `json:"account-service"`
+	TokensNotBefore *int    `json:"tokens-not-before"`
+}
+
+type KcKey struct {
+	ProviderID       *string `json:"providerId,omitempty"`
+	ProviderPriority *int    `json:"providerPriority,omitempty"`
+	Kid              *string `json:"kid,omitempty"`
+	Status           *string `json:"status,omitempty"`
+	Type             *string `json:"type,omitempty"`
+	Algorithm        *string `json:"algorithm,omitempty"`
+	PublicKey        *string `json:"publicKey,omitempty"`
+	Certificate      *string `json:"certificate,omitempty"`
+}
+
+type KcKeyStoreConfig struct {
+	Active *KcActiveKeys `json:"active,omitempty"`
+	Keys   []*KcKey      `json:"keys,omitempty"`
+}
+
+type KcMappingsRepresentation struct {
+	ClientMappings map[string]any `json:"clientMappings,omitempty"`
+	RealmMappings  []*KcRole      `json:"realmMappings,omitempty"`
+}
+
+type KcMemoryInfoRepresentation struct {
+	Free           *int    `json:"free,omitempty"`
+	FreeFormated   *string `json:"freeFormated,omitempty"`
+	FreePercentage *int    `json:"freePercentage,omitempty"`
+	Total          *int    `json:"total,omitempty"`
+	TotalFormated  *string `json:"totalFormated,omitempty"`
+	Used           *int    `json:"used,omitempty"`
+	UsedFormated   *string `json:"usedFormated,omitempty"`
+}
+
+type KcModifyAuthenticationExecutionRepresentation struct {
+	ID                   *string  `json:"id,omitempty"`
+	ProviderID           *string  `json:"providerId,omitempty"`
+	AuthenticationConfig *string  `json:"authenticationConfig,omitempty"`
+	AuthenticationFlow   *bool    `json:"authenticationFlow,omitempty"`
+	Requirement          *string  `json:"requirement,omitempty"`
+	FlowID               *string  `json:"flowId,omitempty"`
+	DisplayName          *string  `json:"displayName,omitempty"`
+	Alias                *string  `json:"alias,omitempty"`
+	RequirementChoices   []string `json:"requirementChoices,omitempty"`
+	Configurable         *bool    `json:"configurable,omitempty"`
+	Level                *int     `json:"level,omitempty"`
+	Index                *int     `json:"index,omitempty"`
+	Description          *string  `json:"description,omitempty"`
+}
+
+type KcMultiValuedHashMap struct {
+	Empty      *bool    `json:"empty,omitempty"`
+	LoadFactor *float64 `json:"loadFactor,omitempty"`
+	Threshold  *int     `json:"threshold,omitempty"`
+}
+
+type KcPasswordPolicy struct {
+	ConfigType        *string `json:"configType,omitempty"`
+	DefaultValue      *string `json:"defaultValue,omitempty"`
+	DisplayName       *string `json:"displayName,omitempty"`
+	ID                *string `json:"id,omitempty"`
+	MultipleSupported *bool   `json:"multipleSupported,omitempty"`
+}
+
+type KcPermissionGrantResponseRepresentation struct {
+	ID        *string `json:"id,omitempty"`
+	Owner     *string `json:"owner,omitempty"`
+	Resource  *string `json:"resource,omitempty"`
+	Scope     *string `json:"scope,omitempty"`
+	Granted   *bool   `json:"granted,omitempty"`
+	Requester *string `json:"requester,omitempty"`
+}
+
+type KcPermissionRepresentation struct {
+	DecisionStrategy *string  `json:"decisionStrategy,omitempty"`
+	Description      *string  `json:"description,omitempty"`
+	ID               *string  `json:"id,omitempty"`
+	Logic            *string  `json:"logic,omitempty"`
+	Name             *string  `json:"name,omitempty"`
+	Policies         []string `json:"policies,omitempty"`
+	Resources        []string `json:"resources,omitempty"`
+	ResourceType     *string  `json:"resourceType,omitempty"`
+	Scopes           []string `json:"scopes,omitempty"`
+	Type             *string  `json:"type,omitempty"`
+}
+
+type KcPermissionResource struct {
+	ID   *string `json:"_id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type KcPermissionScope struct {
+	ID   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type KcPolicyRepresentation struct {
+	Config           map[string]any       `json:"config,omitempty"`
+	DecisionStrategy *string              `json:"decisionStrategy,omitempty"`
+	Description      *string              `json:"description,omitempty"`
+	ID               *string              `json:"id,omitempty"`
+	Logic            *string              `json:"logic,omitempty"`
+	Name             *string              `json:"name,omitempty"`
+	Owner            *string              `json:"owner,omitempty"`
+	Policies         []string             `json:"policies,omitempty"`
+	Resources        []string             `json:"resources,omitempty"`
+	Scopes           []string             `json:"scopes,omitempty"`
+	Type             *string              `json:"type,omitempty"`
+	Roles            []*KcRoleDefinition  `json:"roles,omitempty"`
+	Code             *string              `json:"code,omitempty"`
+	Clients          []string             `json:"clients,omitempty"`
+	NotBefore        *string              `json:"notBefore,omitempty"`
+	NotOnOrAfter     *string              `json:"notOnOrAfter,omitempty"`
+	DayMonth         *string              `json:"dayMonth,omitempty"`
+	DayMonthEnd      *string              `json:"dayMonthEnd,omitempty"`
+	Month            *string              `json:"month,omitempty"`
+	MonthEnd         *string              `json:"monthEnd,omitempty"`
+	Year             *string              `json:"year,omitempty"`
+	YearEnd          *string              `json:"yearEnd,omitempty"`
+	Hour             *string              `json:"hour,omitempty"`
+	HourEnd          *string              `json:"hourEnd,omitempty"`
+	Minute           *string              `json:"minute,omitempty"`
+	MinuteEnd        *string              `json:"minuteEnd,omitempty"`
+	Users            []string             `json:"users,omitempty"`
+	Groups           []*KcGroupDefinition `json:"groups,omitempty"`
+	GroupsClaim      *string              `json:"groupsClaim,omitempty"`
+}
+
+type KcPolicyResourceRepresentation struct {
+	ID   *string `json:"_id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type KcPolicyScopeRepresentation struct {
+	ID   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type KcProtocolMapperRepresentation struct {
+	Config          map[string]any `json:"config,omitempty"`
+	ID              *string        `json:"id,omitempty"`
+	Name            *string        `json:"name,omitempty"`
+	Protocol        *string        `json:"protocol,omitempty"`
+	ProtocolMapper  *string        `json:"protocolMapper,omitempty"`
+	ConsentRequired *bool          `json:"consentRequired,omitempty"`
+}
+
+type KcProtocolMapperType struct {
+	ID         *string                         `json:"id,omitempty"`
+	Name       *string                         `json:"name,omitempty"`
+	Category   *string                         `json:"category,omitempty"`
+	HelpText   *string                         `json:"helpText,omitempty"`
+	Priority   *int                            `json:"priority,omitempty"`
+	Properties []*KcProtocolMapperTypeProperty `json:"properties,omitempty"`
+}
+
+type KcProtocolMapperTypeProperty struct {
+	Name         *string  `json:"name,omitempty"`
+	Label        *string  `json:"label,omitempty"`
+	HelpText     *string  `json:"helpText,omitempty"`
+	Type         *string  `json:"type,omitempty"`
+	Options      []string `json:"options,omitempty"`
+	DefaultValue *string  `json:"defaultValue,omitempty"`
+	Secret       *bool    `json:"secret,omitempty"`
+	ReadOnly     *bool    `json:"readOnly,omitempty"`
+}
+
+type KcProtocolMapperTypes struct {
+	DockerV2      []*KcProtocolMapperType `json:"docker-v2"`
+	Saml          []*KcProtocolMapperType `json:"saml,omitempty"`
+	OpenidConnect []*KcProtocolMapperType `json:"openid-connect"`
+}
+
+type KcProtocolMappers struct {
+	ID              *string                  `json:"id,omitempty"`
+	Name            *string                  `json:"name,omitempty"`
+	Protocol        *string                  `json:"protocol,omitempty"`
+	ProtocolMapper  *string                  `json:"protocolMapper,omitempty"`
+	ConsentRequired *bool                    `json:"consentRequired,omitempty"`
+	Config          *KcProtocolMappersConfig `json:"config,omitempty"`
+}
+
+type KcProtocolMappersConfig struct {
+	UserinfoTokenClaim                 *string `json:"userinfo.token.claim"`
+	UserAttribute                      *string `json:"user.attribute"`
+	IDTokenClaim                       *string `json:"id.token.claim"`
+	AccessTokenClaim                   *string `json:"access.token.claim"`
+	ClaimName                          *string `json:"claim.name"`
+	ClaimValue                         *string `json:"claim.value"`
+	JSONTypeLabel                      *string `json:"jsonType.label"`
+	Multivalued                        *string `json:"multivalued,omitempty"`
+	UsermodelClientRoleMappingClientID *string `json:"usermodel.clientRoleMapping.clientId"`
+	IncludedClientAudience             *string `json:"included.client.audience"`
+	FullPath                           *string `json:"full.path"`
+	AttributeName                      *string `json:"attribute.name"`
+	AttributeNameformat                *string `json:"attribute.nameformat"`
+	Single                             *string `json:"single,omitempty"`
+}
+
+type KcRealmRepresentation struct {
+	AccessCodeLifespan                                        *int                   `json:"accessCodeLifespan,omitempty"`
+	AccessCodeLifespanLogin                                   *int                   `json:"accessCodeLifespanLogin,omitempty"`
+	AccessCodeLifespanUserAction                              *int                   `json:"accessCodeLifespanUserAction,omitempty"`
+	AccessTokenLifespan                                       *int                   `json:"accessTokenLifespan,omitempty"`
+	AccessTokenLifespanForImplicitFlow                        *int                   `json:"accessTokenLifespanForImplicitFlow,omitempty"`
+	AccountTheme                                              *string                `json:"accountTheme,omitempty"`
+	ActionTokenGeneratedByAdminLifespan                       *int                   `json:"actionTokenGeneratedByAdminLifespan,omitempty"`
+	ActionTokenGeneratedByUserLifespan                        *int                   `json:"actionTokenGeneratedByUserLifespan,omitempty"`
+	AdminEventsDetailsEnabled                                 *bool                  `json:"adminEventsDetailsEnabled,omitempty"`
+	AdminEventsEnabled                                        *bool                  `json:"adminEventsEnabled,omitempty"`
+	AdminTheme                                                *string                `json:"adminTheme,omitempty"`
+	Attributes                                                map[string]any         `json:"attributes,omitempty"`
+	AuthenticationFlows                                       []any                  `json:"authenticationFlows,omitempty"`
+	AuthenticatorConfig                                       []any                  `json:"authenticatorConfig,omitempty"`
+	BrowserFlow                                               *string                `json:"browserFlow,omitempty"`
+	BrowserSecurityHeaders                                    map[string]any         `json:"browserSecurityHeaders,omitempty"`
+	BruteForceProtected                                       *bool                  `json:"bruteForceProtected,omitempty"`
+	ClientAuthenticationFlow                                  *string                `json:"clientAuthenticationFlow,omitempty"`
+	ClientScopeMappings                                       map[string]any         `json:"clientScopeMappings,omitempty"`
+	ClientScopes                                              []*KcClientScope       `json:"clientScopes,omitempty"`
+	Clients                                                   []*KcClient            `json:"clients,omitempty"`
+	Components                                                any                    `json:"components,omitempty"`
+	DefaultDefaultClientScopes                                []string               `json:"defaultDefaultClientScopes,omitempty"`
+	DefaultGroups                                             []string               `json:"defaultGroups,omitempty"`
+	DefaultLocale                                             *string                `json:"defaultLocale,omitempty"`
+	DefaultOptionalClientScopes                               []string               `json:"defaultOptionalClientScopes,omitempty"`
+	DefaultRole                                               *KcRole                `json:"defaultRole,omitempty"`
+	DefaultRoles                                              []string               `json:"defaultRoles,omitempty"`
+	DefaultSignatureAlgorithm                                 *string                `json:"defaultSignatureAlgorithm,omitempty"`
+	DirectGrantFlow                                           *string                `json:"directGrantFlow,omitempty"`
+	DisplayName                                               *string                `json:"displayName,omitempty"`
+	DisplayNameHTML                                           *string                `json:"displayNameHtml,omitempty"`
+	DockerAuthenticationFlow                                  *string                `json:"dockerAuthenticationFlow,omitempty"`
+	DuplicateEmailsAllowed                                    *bool                  `json:"duplicateEmailsAllowed,omitempty"`
+	EditUsernameAllowed                                       *bool                  `json:"editUsernameAllowed,omitempty"`
+	EmailTheme                                                *string                `json:"emailTheme,omitempty"`
+	Enabled                                                   *bool                  `json:"enabled,omitempty"`
+	EnabledEventTypes                                         []string               `json:"enabledEventTypes,omitempty"`
+	EventsEnabled                                             *bool                  `json:"eventsEnabled,omitempty"`
+	EventsExpiration                                          *int                   `json:"eventsExpiration,omitempty"`
+	EventsListeners                                           []string               `json:"eventsListeners,omitempty"`
+	FailureFactor                                             *int                   `json:"failureFactor,omitempty"`
+	FederatedUsers                                            []any                  `json:"federatedUsers,omitempty"`
+	Groups                                                    []any                  `json:"groups,omitempty"`
+	ID                                                        *string                `json:"id,omitempty"`
+	IdentityProviderMappers                                   []any                  `json:"identityProviderMappers,omitempty"`
+	IdentityProviders                                         []any                  `json:"identityProviders,omitempty"`
+	InternationalizationEnabled                               *bool                  `json:"internationalizationEnabled,omitempty"`
+	KeycloakVersion                                           *string                `json:"keycloakVersion,omitempty"`
+	LoginTheme                                                *string                `json:"loginTheme,omitempty"`
+	LoginWithEmailAllowed                                     *bool                  `json:"loginWithEmailAllowed,omitempty"`
+	MaxDeltaTimeSeconds                                       *int                   `json:"maxDeltaTimeSeconds,omitempty"`
+	MaxFailureWaitSeconds                                     *int                   `json:"maxFailureWaitSeconds,omitempty"`
+	MinimumQuickLoginWaitSeconds                              *int                   `json:"minimumQuickLoginWaitSeconds,omitempty"`
+	NotBefore                                                 *int                   `json:"notBefore,omitempty"`
+	OfflineSessionIdleTimeout                                 *int                   `json:"offlineSessionIdleTimeout,omitempty"`
+	OfflineSessionMaxLifespan                                 *int                   `json:"offlineSessionMaxLifespan,omitempty"`
+	OfflineSessionMaxLifespanEnabled                          *bool                  `json:"offlineSessionMaxLifespanEnabled,omitempty"`
+	OtpPolicyAlgorithm                                        *string                `json:"otpPolicyAlgorithm,omitempty"`
+	OtpPolicyDigits                                           *int                   `json:"otpPolicyDigits,omitempty"`
+	OtpPolicyInitialCounter                                   *int                   `json:"otpPolicyInitialCounter,omitempty"`
+	OtpPolicyLookAheadWindow                                  *int                   `json:"otpPolicyLookAheadWindow,omitempty"`
+	OtpPolicyPeriod                                           *int                   `json:"otpPolicyPeriod,omitempty"`
+	OtpPolicyType                                             *string                `json:"otpPolicyType,omitempty"`
+	OtpSupportedApplications                                  []string               `json:"otpSupportedApplications,omitempty"`
+	PasswordPolicy                                            *string                `json:"passwordPolicy,omitempty"`
+	PermanentLockout                                          *bool                  `json:"permanentLockout,omitempty"`
+	ProtocolMappers                                           []any                  `json:"protocolMappers,omitempty"`
+	QuickLoginCheckMilliSeconds                               *int                   `json:"quickLoginCheckMilliSeconds,omitempty"`
+	Realm                                                     *string                `json:"realm,omitempty"`
+	RefreshTokenMaxReuse                                      *int                   `json:"refreshTokenMaxReuse,omitempty"`
+	RegistrationAllowed                                       *bool                  `json:"registrationAllowed,omitempty"`
+	RegistrationEmailAsUsername                               *bool                  `json:"registrationEmailAsUsername,omitempty"`
+	RegistrationFlow                                          *string                `json:"registrationFlow,omitempty"`
+	RememberMe                                                *bool                  `json:"rememberMe,omitempty"`
+	RequiredActions                                           []any                  `json:"requiredActions,omitempty"`
+	ResetCredentialsFlow                                      *string                `json:"resetCredentialsFlow,omitempty"`
+	ResetPasswordAllowed                                      *bool                  `json:"resetPasswordAllowed,omitempty"`
+	RevokeRefreshToken                                        *bool                  `json:"revokeRefreshToken,omitempty"`
+	Roles                                                     *KcRolesRepresentation `json:"roles,omitempty"`
+	ScopeMappings                                             []any                  `json:"scopeMappings,omitempty"`
+	SMTPServer                                                map[string]any         `json:"smtpServer,omitempty"`
+	SslRequired                                               *string                `json:"sslRequired,omitempty"`
+	SsoSessionIdleTimeout                                     *int                   `json:"ssoSessionIdleTimeout,omitempty"`
+	SsoSessionIdleTimeoutRememberMe                           *int                   `json:"ssoSessionIdleTimeoutRememberMe,omitempty"`
+	SsoSessionMaxLifespan                                     *int                   `json:"ssoSessionMaxLifespan,omitempty"`
+	SsoSessionMaxLifespanRememberMe                           *int                   `json:"ssoSessionMaxLifespanRememberMe,omitempty"`
+	SupportedLocales                                          []string               `json:"supportedLocales,omitempty"`
+	UserFederationMappers                                     []any                  `json:"userFederationMappers,omitempty"`
+	UserFederationProviders                                   []any                  `json:"userFederationProviders,omitempty"`
+	UserManagedAccessAllowed                                  *bool                  `json:"userManagedAccessAllowed,omitempty"`
+	Users                                                     []*KcUser              `json:"users,omitempty"`
+	VerifyEmail                                               *bool                  `json:"verifyEmail,omitempty"`
+	WaitIncrementSeconds                                      *int                   `json:"waitIncrementSeconds,omitempty"`
+	WebAuthnPolicyAcceptableAaguids                           []string               `json:"webAuthnPolicyAcceptableAaguids,omitempty"`
+	WebAuthnPolicyAttestationConveyancePreference             *string                `json:"webAuthnPolicyAttestationConveyancePreference,omitempty"`
+	WebAuthnPolicyAuthenticatorAttachment                     *string                `json:"webAuthnPolicyAuthenticatorAttachment,omitempty"`
+	WebAuthnPolicyAvoidSameAuthenticatorRegister              *bool                  `json:"webAuthnPolicyAvoidSameAuthenticatorRegister,omitempty"`
+	WebAuthnPolicyCreateTimeout                               *int                   `json:"webAuthnPolicyCreateTimeout,omitempty"`
+	WebAuthnPolicyPasswordlessAcceptableAaguids               []string               `json:"webAuthnPolicyPasswordlessAcceptableAaguids,omitempty"`
+	WebAuthnPolicyPasswordlessAttestationConveyancePreference *string                `json:"webAuthnPolicyPasswordlessAttestationConveyancePreference,omitempty"`
+	WebAuthnPolicyPasswordlessAuthenticatorAttachment         *string                `json:"webAuthnPolicyPasswordlessAuthenticatorAttachment,omitempty"`
+	WebAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister  *bool                  `json:"webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister,omitempty"`
+	WebAuthnPolicyPasswordlessCreateTimeout                   *int                   `json:"webAuthnPolicyPasswordlessCreateTimeout,omitempty"`
+	WebAuthnPolicyPasswordlessRequireResidentKey              *string                `json:"webAuthnPolicyPasswordlessRequireResidentKey,omitempty"`
+	WebAuthnPolicyPasswordlessRpEntityName                    *string                `json:"webAuthnPolicyPasswordlessRpEntityName,omitempty"`
+	WebAuthnPolicyPasswordlessRpID                            *string                `json:"webAuthnPolicyPasswordlessRpId,omitempty"`
+	WebAuthnPolicyPasswordlessSignatureAlgorithms             []string               `json:"webAuthnPolicyPasswordlessSignatureAlgorithms,omitempty"`
+	WebAuthnPolicyPasswordlessUserVerificationRequirement     *string                `json:"webAuthnPolicyPasswordlessUserVerificationRequirement,omitempty"`
+	WebAuthnPolicyRequireResidentKey                          *string                `json:"webAuthnPolicyRequireResidentKey,omitempty"`
+	WebAuthnPolicyRpEntityName                                *string                `json:"webAuthnPolicyRpEntityName,omitempty"`
+	WebAuthnPolicyRpID                                        *string                `json:"webAuthnPolicyRpId,omitempty"`
+	WebAuthnPolicySignatureAlgorithms                         []string               `json:"webAuthnPolicySignatureAlgorithms,omitempty"`
+	WebAuthnPolicyUserVerificationRequirement                 *string                `json:"webAuthnPolicyUserVerificationRequirement,omitempty"`
+}
+
+type KcRequiredActionProviderRepresentation struct {
+	Alias         *string        `json:"alias,omitempty"`
+	Config        map[string]any `json:"config,omitempty"`
+	DefaultAction *bool          `json:"defaultAction,omitempty"`
+	Enabled       *bool          `json:"enabled,omitempty"`
+	Name          *string        `json:"name,omitempty"`
+	Priority      *int           `json:"priority,omitempty"`
+	ProviderID    *string        `json:"providerId,omitempty"`
+}
+
+type KcResourceOwnerRepresentation struct {
+	ID   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type KcResourcePolicyRepresentation struct {
+	Name             *string  `json:"name,omitempty"`
+	Description      *string  `json:"description,omitempty"`
+	Scopes           []string `json:"scopes,omitempty"`
+	Roles            []string `json:"roles,omitempty"`
+	Groups           []string `json:"groups,omitempty"`
+	Clients          []string `json:"clients,omitempty"`
+	ID               *string  `json:"id,omitempty"`
+	Logic            *string  `json:"logic,omitempty"`
+	DecisionStrategy *string  `json:"decisionStrategy,omitempty"`
+	Owner            *string  `json:"owner,omitempty"`
+	Type             *string  `json:"type,omitempty"`
+	Users            []string `json:"users,omitempty"`
+}
+
+type KcResourceRepresentation struct {
+	ID                 *string                        `json:"_id,omitempty"`
+	Attributes         map[string]any                 `json:"attributes,omitempty"`
+	DisplayName        *string                        `json:"displayName,omitempty"`
+	IconURI            *string                        `json:"icon_uri,omitempty"`
+	Name               *string                        `json:"name,omitempty"`
+	Owner              *KcResourceOwnerRepresentation `json:"owner,omitempty"`
+	OwnerManagedAccess *bool                          `json:"ownerManagedAccess,omitempty"`
+	ResourceScopes     []*KcScopeRepresentation       `json:"resource_scopes,omitempty"`
+	Scopes             []*KcScopeRepresentation       `json:"scopes,omitempty"`
+	Type               *string                        `json:"type,omitempty"`
+	Uris               []string                       `json:"uris,omitempty"`
+}
+
+type KcResourceServerRepresentation struct {
+	AllowRemoteResourceManagement *bool                       `json:"allowRemoteResourceManagement,omitempty"`
+	ClientID                      *string                     `json:"clientId,omitempty"`
+	ID                            *string                     `json:"id,omitempty"`
+	Name                          *string                     `json:"name,omitempty"`
+	Policies                      []*KcPolicyRepresentation   `json:"policies,omitempty"`
+	PolicyEnforcementMode         *string                     `json:"policyEnforcementMode,omitempty"`
+	Resources                     []*KcResourceRepresentation `json:"resources,omitempty"`
+	Scopes                        []*KcScopeRepresentation    `json:"scopes,omitempty"`
+	DecisionStrategy              *string                     `json:"decisionStrategy,omitempty"`
+}
+
+type KcRole struct {
+	ID                 *string                     `json:"id,omitempty"`
+	Name               *string                     `json:"name,omitempty"`
+	ScopeParamRequired *bool                       `json:"scopeParamRequired,omitempty"`
+	Composite          *bool                       `json:"composite,omitempty"`
+	Composites         *KcCompositesRepresentation `json:"composites,omitempty"`
+	ClientRole         *bool                       `json:"clientRole,omitempty"`
+	ContainerID        *string                     `json:"containerId,omitempty"`
+	Description        *string                     `json:"description,omitempty"`
+	Attributes         map[string]any              `json:"attributes,omitempty"`
+}
+
+type KcRoleDefinition struct {
+	ID       *string `json:"id,omitempty"`
+	Private  *bool   `json:"private,omitempty"`
+	Required *bool   `json:"required,omitempty"`
+}
+
+type KcRolesRepresentation struct {
+	Client map[string]any `json:"client,omitempty"`
+	Realm  []*KcRole      `json:"realm,omitempty"`
+}
+
+type KcScopeRepresentation struct {
+	DisplayName *string                     `json:"displayName,omitempty"`
+	IconURI     *string                     `json:"iconUri,omitempty"`
+	ID          *string                     `json:"id,omitempty"`
+	Name        *string                     `json:"name,omitempty"`
+	Policies    []*KcPolicyRepresentation   `json:"policies,omitempty"`
+	Resources   []*KcResourceRepresentation `json:"resources,omitempty"`
+}
+
+type KcServerInfoRepresentation struct {
+	SystemInfo             *KcSystemInfoRepresentation `json:"systemInfo,omitempty"`
+	MemoryInfo             *KcMemoryInfoRepresentation `json:"memoryInfo,omitempty"`
+	PasswordPolicies       []*KcPasswordPolicy         `json:"passwordPolicies,omitempty"`
+	ProtocolMapperTypes    *KcProtocolMapperTypes      `json:"protocolMapperTypes,omitempty"`
+	BuiltinProtocolMappers *KcBuiltinProtocolMappers   `json:"builtinProtocolMappers,omitempty"`
+	Themes                 *KcThemes                   `json:"themes,omitempty"`
+}
+
+type KcSystemInfoRepresentation struct {
+	FileEncoding   *string `json:"fileEncoding,omitempty"`
+	JavaHome       *string `json:"javaHome,omitempty"`
+	JavaRuntime    *string `json:"javaRuntime,omitempty"`
+	JavaVendor     *string `json:"javaVendor,omitempty"`
+	JavaVersion    *string `json:"javaVersion,omitempty"`
+	JavaVM         *string `json:"javaVm,omitempty"`
+	JavaVMVersion  *string `json:"javaVmVersion,omitempty"`
+	OsArchitecture *string `json:"osArchitecture,omitempty"`
+	OsName         *string `json:"osName,omitempty"`
+	OsVersion      *string `json:"osVersion,omitempty"`
+	ServerTime     *string `json:"serverTime,omitempty"`
+	Uptime         *string `json:"uptime,omitempty"`
+	UptimeMillis   *int    `json:"uptimeMillis,omitempty"`
+	UserDir        *string `json:"userDir,omitempty"`
+	UserLocale     *string `json:"userLocale,omitempty"`
+	UserName       *string `json:"userName,omitempty"`
+	UserTimezone   *string `json:"userTimezone,omitempty"`
+	Version        *string `json:"version,omitempty"`
+}
+
+type KcThemeRepresentation struct {
+	Name    *string  `json:"name,omitempty"`
+	Locales []string `json:"locales,omitempty"`
+}
+
+type KcThemes struct {
+	Account []*KcThemeRepresentation `json:"account,omitempty"`
+	Admin   []*KcThemeRepresentation `json:"admin,omitempty"`
+	Common  []*KcThemeRepresentation `json:"common,omitempty"`
+	Email   []*KcThemeRepresentation `json:"email,omitempty"`
+	Login   []*KcThemeRepresentation `json:"login,omitempty"`
+	Welcome []*KcThemeRepresentation `json:"welcome,omitempty"`
+}
+
+type KcTokenInfo struct {
+	AccessToken      *string `json:"AccessToken,omitempty"`
+	RefreshToken     *string `json:"RefreshToken,omitempty"`
+	TokenType        *string `json:"TokenType,omitempty"`
+	ExpiresIn        *int    `json:"ExpiresIn,omitempty"`
+	RefreshExpiresIn *int    `json:"RefreshExpiresIn,omitempty"`
+	Scope            *string `json:"Scope,omitempty"`
+}
+
+type KcUser struct {
+	ID                         *string                       `json:"id,omitempty"`
+	CreatedTimestamp           *int                          `json:"createdTimestamp,omitempty"`
+	Username                   *string                       `json:"username,omitempty"`
+	Enabled                    *bool                         `json:"enabled,omitempty"`
+	Totp                       *bool                         `json:"totp,omitempty"`
+	EmailVerified              *bool                         `json:"emailVerified,omitempty"`
+	FirstName                  *string                       `json:"firstName,omitempty"`
+	LastName                   *string                       `json:"lastName,omitempty"`
+	Email                      *string                       `json:"email,omitempty"`
+	FederationLink             *string                       `json:"federationLink,omitempty"`
+	Attributes                 map[string]any                `json:"attributes,omitempty"`
+	DisableableCredentialTypes []any                         `json:"disableableCredentialTypes,omitempty"`
+	RequiredActions            []string                      `json:"requiredActions,omitempty"`
+	Access                     map[string]any                `json:"access,omitempty"`
+	ClientRoles                map[string]any                `json:"clientRoles,omitempty"`
+	RealmRoles                 []string                      `json:"realmRoles,omitempty"`
+	Groups                     []string                      `json:"groups,omitempty"`
+	ServiceAccountClientID     *string                       `json:"serviceAccountClientId,omitempty"`
+	Credentials                []*KcCredentialRepresentation `json:"credentials,omitempty"`
+}
+
+type KcUserSessionRepresentation struct {
+	Clients    map[string]any `json:"clients,omitempty"`
+	ID         *string        `json:"id,omitempty"`
+	IPAddress  *string        `json:"ipAddress,omitempty"`
+	LastAccess *int           `json:"lastAccess,omitempty"`
+	Start      *int           `json:"start,omitempty"`
+	UserID     *string        `json:"userId,omitempty"`
+	Username   *string        `json:"username,omitempty"`
+}
+
+type KmsAuditLog struct {
+	ID         *string        `json:"id,omitempty"`
+	ActorID    *int           `json:"actor_id,omitempty"`
+	ActorName  *string        `json:"actor_name,omitempty"`
+	Action     *string        `json:"action,omitempty"`
+	Resource   *string        `json:"resource,omitempty"`
+	ResourceID *string        `json:"resource_id,omitempty"`
+	Timestamp  *string        `json:"timestamp,omitempty"`
+	IPAddress  *string        `json:"ip_address,omitempty"`
+	UserAgent  *string        `json:"user_agent,omitempty"`
+	Success    *bool          `json:"success,omitempty"`
+	ErrorMsg   *string        `json:"error_msg,omitempty"`
+	Metadata   map[string]any `json:"metadata,omitempty"`
+	Level      *string        `json:"level,omitempty"`
+}
+
+type KmsAuditLogs struct {
+	Logs   []*KmsAuditLog `json:"logs,omitempty"`
+	Limit  *int           `json:"limit,omitempty"`
+	Offset *int           `json:"offset,omitempty"`
+}
+
+type KmsCreateKeyInput struct {
+	Alias     *string        `json:"alias,omitempty"`
+	Algorithm *string        `json:"algorithm,omitempty"`
+	ExpiresIn *int           `json:"expires_in,omitempty"`
+	Tags      map[string]any `json:"tags,omitempty"`
+}
+
+type KmsKey struct {
+	ID            *string        `json:"id,omitempty"`
+	Alias         *string        `json:"alias,omitempty"`
+	Algorithm     *string        `json:"algorithm,omitempty"`
+	KeyLength     *int           `json:"key_length,omitempty"`
+	CreatedAt     *string        `json:"created_at,omitempty"`
+	UpdatedAt     *string        `json:"updated_at,omitempty"`
+	ExpiresAt     *string        `json:"expires_at,omitempty"`
+	LastRotatedAt *string        `json:"last_rotated_at,omitempty"`
+	Status        *string        `json:"status,omitempty"`
+	Version       *int           `json:"version,omitempty"`
+	CreatedBy     *int           `json:"created_by,omitempty"`
+	Tags          map[string]any `json:"tags,omitempty"`
+	UseCount      *int           `json:"use_count,omitempty"`
+}
+
+type KmsKeyAuditLogs struct {
+	KeyID  *string        `json:"key_id,omitempty"`
+	Logs   []*KmsAuditLog `json:"logs,omitempty"`
+	Limit  *int           `json:"limit,omitempty"`
+	Offset *int           `json:"offset,omitempty"`
+}
+
+type KmsKeyStats struct {
+	KeyID         *string `json:"key_id,omitempty"`
+	Alias         *string `json:"alias,omitempty"`
+	UseCount      *int    `json:"use_count,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	LastRotatedAt *string `json:"last_rotated_at,omitempty"`
+	ExpiresAt     *string `json:"expires_at,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	Version       *int    `json:"version,omitempty"`
+}
+
+type KmsKeyUse struct {
+	Key     *KmsKey `json:"key,omitempty"`
+	Message *string `json:"message,omitempty"`
+}
+
+type LiveCreateRoomInput struct {
+	Title       *string `json:"title,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type LivePlaybackInfo struct {
+	URL       *string `json:"URL,omitempty"`
+	ExpiresAt *string `json:"ExpiresAt,omitempty"`
+	IsLive    *bool   `json:"IsLive,omitempty"`
+}
+
+type LiveRecording struct {
+	ID              *string `json:"id,omitempty"`
+	StreamID        *string `json:"streamId,omitempty"`
+	RoomID          *string `json:"roomId,omitempty"`
+	ObjectKey       *string `json:"objectKey,omitempty"`
+	DurationSeconds *int    `json:"durationSeconds,omitempty"`
+	SizeBytes       *int    `json:"sizeBytes,omitempty"`
+	CreatedAt       *string `json:"createdAt,omitempty"`
+}
+
+type LiveRoom struct {
+	ID          *string `json:"id,omitempty"`
+	OwnerUserID *string `json:"ownerUserId,omitempty"`
+	Slug        *string `json:"slug,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	Description *string `json:"description,omitempty"`
+	StreamKey   *string `json:"streamKey,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	CreatedAt   *string `json:"createdAt,omitempty"`
+	UpdatedAt   *string `json:"updatedAt,omitempty"`
+}
+
+type LiveStream struct {
+	ID         *string `json:"id,omitempty"`
+	RoomID     *string `json:"roomId,omitempty"`
+	NodeID     *string `json:"nodeId,omitempty"`
+	Status     *string `json:"status,omitempty"`
+	StartedAt  *string `json:"startedAt,omitempty"`
+	EndedAt    *string `json:"endedAt,omitempty"`
+	PeakViewer *int    `json:"peakViewer,omitempty"`
+	CreatedAt  *string `json:"createdAt,omitempty"`
+}
+
+type LiveViewerCount struct {
+	Viewers *int `json:"viewers,omitempty"`
+}
+
+type LoginInput struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LotteryBackfill struct {
+	Start         string   `json:"start"`
+	End           string   `json:"end"`
+	DaysProcessed int      `json:"days_processed"`
+	DaysSkipped   int      `json:"days_skipped"`
+	Errors        []string `json:"errors"`
+}
+
+type LotteryCheck struct {
+	Won          bool                  `json:"won"`
+	PrizesWon    []string              `json:"prizes_won"`
+	Detail       []*LotteryPrizeDetail `json:"detail"`
+	ResultFound  bool                  `json:"result_found"`
+	HighestPrize *string               `json:"highest_prize,omitempty"`
+}
+
+type LotteryPrizeDetail struct {
+	Prize   string `json:"prize"`
+	Matched string `json:"matched"`
+	Rule    string `json:"rule"`
+}
+
+type LotteryResult struct {
+	Date         *string `json:"date,omitempty"`
+	Region       *string `json:"region,omitempty"`
+	Province     *string `json:"province,omitempty"`
+	ProvinceCode *string `json:"province_code,omitempty"`
+	// Prize name -> winning numbers.
+	Prizes map[string]any `json:"prizes,omitempty"`
+	Source *string        `json:"source,omitempty"`
+}
+
+type LotteryScrape struct {
+	Date           string   `json:"date"`
+	RegionsOk      []string `json:"regions_ok"`
+	RegionsFailed  []string `json:"regions_failed"`
+	ProvincesSaved int      `json:"provinces_saved"`
+}
+
+type MediaSearchResult struct {
+	Videos []*MediaVideo `json:"videos,omitempty"`
+	Total  *int          `json:"total,omitempty"`
+	Page   *int          `json:"page,omitempty"`
+	Size   *int          `json:"size,omitempty"`
+	Pages  *int          `json:"pages,omitempty"`
+}
+
+type MediaTag struct {
+	TagID   *int    `json:"tag_id,omitempty"`
+	VideoID *int    `json:"video_id,omitempty"`
+	Value   *string `json:"value,omitempty"`
+}
+
+type MediaVideo struct {
+	VideoID      *int      `json:"video_id,omitempty"`
+	Description  *string   `json:"description,omitempty"`
+	ThumbnailURL *string   `json:"thumbnail_url,omitempty"`
+	StreamURL    *string   `json:"stream_url,omitempty"`
+	TagID        *int      `json:"tag_id,omitempty"`
+	UploadedOn   *string   `json:"uploaded_on,omitempty"`
+	Tag          *MediaTag `json:"tag,omitempty"`
+}
+
+type MedicalAdjustInput struct {
+	Quantity *int    `json:"quantity,omitempty"`
+	Reason   *string `json:"reason,omitempty"`
+}
+
+type MedicalBatch struct {
+	ID               *int    `json:"id,omitempty"`
+	MedicineID       *int    `json:"medicine_id,omitempty"`
+	BatchNumber      *string `json:"batch_number,omitempty"`
+	ExpiryDate       *string `json:"expiry_date,omitempty"`
+	Quantity         *int    `json:"quantity,omitempty"`
+	ReceivedQuantity *int    `json:"received_quantity,omitempty"`
+	UnitCost         *int    `json:"unit_cost,omitempty"`
+	Supplier         *string `json:"supplier,omitempty"`
+	ReceivedAt       *string `json:"received_at,omitempty"`
+	CreatedAt        *string `json:"created_at,omitempty"`
+	UpdatedAt        *string `json:"updated_at,omitempty"`
+}
+
+type MedicalBatchInput struct {
+	BatchNumber *string `json:"batch_number,omitempty"`
+	ExpiryDate  *string `json:"expiry_date,omitempty"`
+	Quantity    *int    `json:"quantity,omitempty"`
+	UnitCost    *int    `json:"unit_cost,omitempty"`
+	Supplier    *string `json:"supplier,omitempty"`
+}
+
+type MedicalDispense struct {
+	ID              *int                   `json:"id,omitempty"`
+	PatientRef      *string                `json:"patient_ref,omitempty"`
+	PrescriptionRef *string                `json:"prescription_ref,omitempty"`
+	DispensedBy     *string                `json:"dispensed_by,omitempty"`
+	OverrideReason  *string                `json:"override_reason,omitempty"`
+	Warnings        []*MedicalWarning      `json:"warnings,omitempty"`
+	Items           []*MedicalDispenseItem `json:"items,omitempty"`
+	CreatedAt       *string                `json:"created_at,omitempty"`
+}
+
+type MedicalDispenseInput struct {
+	PatientRef         *string                     `json:"patient_ref,omitempty"`
+	PrescriptionRef    *string                     `json:"prescription_ref,omitempty"`
+	Items              []*MedicalDispenseItemInput `json:"items,omitempty"`
+	CurrentMedicineIds []int                       `json:"current_medicine_ids,omitempty"`
+	Allergies          []string                    `json:"allergies,omitempty"`
+	OverrideReason     *string                     `json:"override_reason,omitempty"`
+}
+
+type MedicalDispenseItem struct {
+	ID          *int    `json:"id,omitempty"`
+	DispenseID  *int    `json:"dispense_id,omitempty"`
+	MedicineID  *int    `json:"medicine_id,omitempty"`
+	BatchID     *int    `json:"batch_id,omitempty"`
+	BatchNumber *string `json:"batch_number,omitempty"`
+	ExpiryDate  *string `json:"expiry_date,omitempty"`
+	Quantity    *int    `json:"quantity,omitempty"`
+}
+
+type MedicalDispenseItemInput struct {
+	MedicineID *int `json:"medicine_id,omitempty"`
+	Quantity   *int `json:"quantity,omitempty"`
+}
+
+type MedicalIngredientAlias struct {
+	ID        *int    `json:"id,omitempty"`
+	Alias     *string `json:"alias,omitempty"`
+	Canonical *string `json:"canonical,omitempty"`
+	Source    *string `json:"source,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+}
+
+type MedicalIngredientAllergenGroup struct {
+	ID            *int    `json:"id,omitempty"`
+	Ingredient    *string `json:"ingredient,omitempty"`
+	AllergenGroup *string `json:"allergen_group,omitempty"`
+	Source        *string `json:"source,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+}
+
+type MedicalInteractionInput struct {
+	IngredientA *string `json:"ingredient_a,omitempty"`
+	IngredientB *string `json:"ingredient_b,omitempty"`
+	Severity    *string `json:"severity,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type MedicalInteractionRule struct {
+	ID          *int    `json:"id,omitempty"`
+	IngredientA *string `json:"ingredient_a,omitempty"`
+	IngredientB *string `json:"ingredient_b,omitempty"`
+	Severity    *string `json:"severity,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Source      *string `json:"source,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type MedicalLowStockItem struct {
+	Medicine  *MedicalMedicine `json:"medicine,omitempty"`
+	Available *int             `json:"available,omitempty"`
+}
+
+type MedicalMedicine struct {
+	ID                   *int     `json:"id,omitempty"`
+	Code                 *string  `json:"code,omitempty"`
+	Name                 *string  `json:"name,omitempty"`
+	Ingredients          []string `json:"ingredients,omitempty"`
+	AllergenGroups       []string `json:"allergen_groups,omitempty"`
+	DosageForm           *string  `json:"dosage_form,omitempty"`
+	Strength             *string  `json:"strength,omitempty"`
+	Unit                 *string  `json:"unit,omitempty"`
+	RequiresPrescription *bool    `json:"requires_prescription,omitempty"`
+	ReorderLevel         *int     `json:"reorder_level,omitempty"`
+	CreatedAt            *string  `json:"created_at,omitempty"`
+	UpdatedAt            *string  `json:"updated_at,omitempty"`
+}
+
+type MedicalMedicineInput struct {
+	Code                 *string  `json:"code,omitempty"`
+	Name                 *string  `json:"name,omitempty"`
+	Ingredients          []string `json:"ingredients,omitempty"`
+	AllergenGroups       []string `json:"allergen_groups,omitempty"`
+	DosageForm           *string  `json:"dosage_form,omitempty"`
+	Strength             *string  `json:"strength,omitempty"`
+	Unit                 *string  `json:"unit,omitempty"`
+	RequiresPrescription *bool    `json:"requires_prescription,omitempty"`
+	ReorderLevel         *int     `json:"reorder_level,omitempty"`
+}
+
+type MedicalMedicineList struct {
+	Items []*MedicalMedicine `json:"items,omitempty"`
+	Total *int               `json:"total,omitempty"`
+}
+
+type MedicalSafetyCheck struct {
+	Safe     *bool             `json:"safe,omitempty"`
+	Warnings []*MedicalWarning `json:"warnings,omitempty"`
+}
+
+type MedicalSafetyCheckInput struct {
+	MedicineIds        []int    `json:"medicine_ids,omitempty"`
+	CurrentMedicineIds []int    `json:"current_medicine_ids,omitempty"`
+	Allergies          []string `json:"allergies,omitempty"`
+}
+
+type MedicalStockMovement struct {
+	ID         *int    `json:"id,omitempty"`
+	MedicineID *int    `json:"medicine_id,omitempty"`
+	BatchID    *int    `json:"batch_id,omitempty"`
+	Type       *string `json:"type,omitempty"`
+	Quantity   *int    `json:"quantity,omitempty"`
+	Reason     *string `json:"reason,omitempty"`
+	Reference  *string `json:"reference,omitempty"`
+	CreatedBy  *string `json:"created_by,omitempty"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+}
+
+type MedicalStockSummary struct {
+	MedicineID *int            `json:"medicine_id,omitempty"`
+	Available  *int            `json:"available,omitempty"`
+	Expired    *int            `json:"expired,omitempty"`
+	Batches    []*MedicalBatch `json:"batches,omitempty"`
+}
+
+type MedicalTerminologyList struct {
+	Aliases        []*MedicalIngredientAlias         `json:"aliases,omitempty"`
+	AllergenGroups []*MedicalIngredientAllergenGroup `json:"allergen_groups,omitempty"`
+}
+
+type MedicalWarning struct {
+	Type        *string  `json:"type,omitempty"`
+	Severity    *string  `json:"severity,omitempty"`
+	Medicines   []string `json:"medicines,omitempty"`
+	Ingredients []string `json:"ingredients,omitempty"`
+	Description *string  `json:"description,omitempty"`
+}
+
+type MovieHome struct {
+	Sections []*MovieSection `json:"sections,omitempty"`
+}
+
+type MoviePage struct {
+	Items    []*MovieRecommendation `json:"items,omitempty"`
+	Total    *int                   `json:"total,omitempty"`
+	Page     *int                   `json:"page,omitempty"`
+	PageSize *int                   `json:"page_size,omitempty"`
+	Snapshot *string                `json:"snapshot,omitempty"`
+}
+
+type MovieRecommendation struct {
+	Video    *MovieVideo `json:"video,omitempty"`
+	Score    *float64    `json:"score,omitempty"`
+	Reason   *string     `json:"reason,omitempty"`
+	Because  *MovieVideo `json:"because,omitempty"`
+	Progress *float64    `json:"progress,omitempty"`
+	At       *string     `json:"at,omitempty"`
+}
+
+type MovieSection struct {
+	ID    *string                `json:"id,omitempty"`
+	Title *string                `json:"title,omitempty"`
+	Items []*MovieRecommendation `json:"items,omitempty"`
+}
+
+type MovieVideo struct {
+	ID          *string  `json:"id,omitempty"`
+	Title       *string  `json:"title,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	Status      *string  `json:"status,omitempty"`
+	Duration    *float64 `json:"duration,omitempty"`
+	Views       *int     `json:"views,omitempty"`
+	CreatedAt   *string  `json:"created_at,omitempty"`
+}
+
+type MovieVideoInput struct {
+	Title       *string  `json:"title,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	Status      *string  `json:"status,omitempty"`
+	Duration    *float64 `json:"duration,omitempty"`
+}
+
 type Mutation struct {
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type NotifAuditContent struct {
+	ID           *int           `json:"id,omitempty"`
+	Channel      *string        `json:"channel,omitempty"`
+	Title        *string        `json:"title,omitempty"`
+	Body         *string        `json:"body,omitempty"`
+	Data         map[string]any `json:"data,omitempty"`
+	TemplateType *string        `json:"template_type,omitempty"`
+	CreatedAt    *string        `json:"created_at,omitempty"`
+}
+
+type NotifAuditDelivery struct {
+	ID          *int    `json:"id,omitempty"`
+	ContentID   *int    `json:"content_id,omitempty"`
+	SourceType  *string `json:"source_type,omitempty"`
+	SourceID    *int    `json:"source_id,omitempty"`
+	BatchID     *int    `json:"batch_id,omitempty"`
+	Attempt     *int    `json:"attempt,omitempty"`
+	Channel     *string `json:"channel,omitempty"`
+	UserID      *int    `json:"user_id,omitempty"`
+	Recipient   *string `json:"recipient,omitempty"`
+	DeviceID    *int    `json:"device_id,omitempty"`
+	DeviceType  *string `json:"device_type,omitempty"`
+	TokenHash   *string `json:"token_hash,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	MessageID   *string `json:"message_id,omitempty"`
+	Error       *string `json:"error,omitempty"`
+	RequestedBy *string `json:"requested_by,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+}
+
+type NotifAuditPage struct {
+	Items        []*NotifAuditDelivery `json:"items,omitempty"`
+	Contents     map[string]any        `json:"contents,omitempty"`
+	NextBeforeID *int                  `json:"next_before_id,omitempty"`
+}
+
+type NotifCampaign struct {
+	ID             *int           `json:"id,omitempty"`
+	Channel        *string        `json:"channel,omitempty"`
+	Audience       *string        `json:"audience,omitempty"`
+	Topic          *string        `json:"topic,omitempty"`
+	Title          *string        `json:"title,omitempty"`
+	Message        *string        `json:"message,omitempty"`
+	Data           map[string]any `json:"data,omitempty"`
+	TemplateType   *string        `json:"template_type,omitempty"`
+	TemplateData   map[string]any `json:"template_data,omitempty"`
+	Status         *string        `json:"status,omitempty"`
+	Recipients     *int           `json:"recipients,omitempty"`
+	BatchesPlanned *int           `json:"batches_planned,omitempty"`
+	LastError      *string        `json:"last_error,omitempty"`
+	RequestedBy    *string        `json:"requested_by,omitempty"`
+	CreatedAt      *string        `json:"created_at,omitempty"`
+	UpdatedAt      *string        `json:"updated_at,omitempty"`
+	StartedAt      *string        `json:"started_at,omitempty"`
+	CompletedAt    *string        `json:"completed_at,omitempty"`
+}
+
+type NotifCampaignInput struct {
+	Channel      *string        `json:"channel,omitempty"`
+	Audience     *string        `json:"audience,omitempty"`
+	Title        *string        `json:"title,omitempty"`
+	Message      *string        `json:"message,omitempty"`
+	Data         map[string]any `json:"data,omitempty"`
+	TemplateType *string        `json:"template_type,omitempty"`
+	TemplateData map[string]any `json:"template_data,omitempty"`
+	Topic        *string        `json:"topic,omitempty"`
+	UserIds      []int          `json:"user_ids,omitempty"`
+	Emails       []string       `json:"emails,omitempty"`
+}
+
+type NotifCampaignProgress struct {
+	BatchesQueued    *int `json:"batches_queued,omitempty"`
+	BatchesSending   *int `json:"batches_sending,omitempty"`
+	BatchesSent      *int `json:"batches_sent,omitempty"`
+	BatchesFailed    *int `json:"batches_failed,omitempty"`
+	BatchesCancelled *int `json:"batches_cancelled,omitempty"`
+	Targets          *int `json:"targets,omitempty"`
+	Sent             *int `json:"sent,omitempty"`
+	Failed           *int `json:"failed,omitempty"`
+	InvalidTokens    *int `json:"invalid_tokens,omitempty"`
+}
+
+type NotifCampaignView struct {
+	Campaign *NotifCampaign         `json:"campaign,omitempty"`
+	Progress *NotifCampaignProgress `json:"progress,omitempty"`
+}
+
+type NotifDevice struct {
+	ID           *int    `json:"id,omitempty"`
+	UserID       *int    `json:"user_id,omitempty"`
+	DeviceID     *string `json:"device_id,omitempty"`
+	DeviceType   *string `json:"device_type,omitempty"`
+	IsActive     *bool   `json:"is_active,omitempty"`
+	LastUsedAt   *string `json:"last_used_at,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	TokenPreview *string `json:"token_preview,omitempty"`
+}
+
+type NotifDeviceInput struct {
+	DeviceToken *string `json:"device_token,omitempty"`
+	DeviceID    *string `json:"device_id,omitempty"`
+	DeviceType  *string `json:"device_type,omitempty"`
+	Email       *string `json:"email,omitempty"`
+	Phone       *string `json:"phone,omitempty"`
+}
+
+type NotifDeviceUpdateInput struct {
+	DeviceToken *string `json:"device_token,omitempty"`
+	DeviceID    *string `json:"device_id,omitempty"`
+	DeviceType  *string `json:"device_type,omitempty"`
+	Email       *string `json:"email,omitempty"`
+	Phone       *string `json:"phone,omitempty"`
+	IsActive    *bool   `json:"is_active,omitempty"`
+}
+
+type NotifEmailInput struct {
+	UserID       *int           `json:"user_id,omitempty"`
+	Recipient    *string        `json:"recipient,omitempty"`
+	TemplateType *string        `json:"template_type,omitempty"`
+	TemplateData map[string]any `json:"template_data,omitempty"`
+	Subject      *string        `json:"subject,omitempty"`
+	HTML         *string        `json:"html,omitempty"`
+	Text         *string        `json:"text,omitempty"`
+	RawData      map[string]any `json:"raw_data,omitempty"`
+	Priority     *int           `json:"priority,omitempty"`
+}
+
+type NotifNotification struct {
+	ID           *int           `json:"id,omitempty"`
+	UserID       *int           `json:"user_id,omitempty"`
+	Recipient    *string        `json:"recipient,omitempty"`
+	Email        *string        `json:"email,omitempty"`
+	Phone        *string        `json:"phone,omitempty"`
+	Data         map[string]any `json:"data,omitempty"`
+	RawData      map[string]any `json:"raw_data,omitempty"`
+	Title        *string        `json:"title,omitempty"`
+	Message      *string        `json:"message,omitempty"`
+	Type         *string        `json:"type,omitempty"`
+	Status       *string        `json:"status,omitempty"`
+	Priority     *int           `json:"priority,omitempty"`
+	CreatedAt    *string        `json:"created_at,omitempty"`
+	SentAt       *string        `json:"sent_at,omitempty"`
+	RetryCount   *int           `json:"retry_count,omitempty"`
+	LastError    *string        `json:"last_error,omitempty"`
+	RequestedBy  *string        `json:"requested_by,omitempty"`
+	TemplateType *string        `json:"template_type,omitempty"`
+	TemplateData map[string]any `json:"template_data,omitempty"`
+}
+
+type NotifNotificationInput struct {
+	UserID   *int    `json:"user_id,omitempty"`
+	Title    *string `json:"title,omitempty"`
+	Message  *string `json:"message,omitempty"`
+	Type     *string `json:"type,omitempty"`
+	Priority *int    `json:"priority,omitempty"`
+	Status   *string `json:"status,omitempty"`
+}
+
+type NotifPushInput struct {
+	UserID   *int           `json:"user_id,omitempty"`
+	Email    *string        `json:"email,omitempty"`
+	Phone    *string        `json:"phone,omitempty"`
+	Title    *string        `json:"title,omitempty"`
+	Message  *string        `json:"message,omitempty"`
+	Data     map[string]any `json:"data,omitempty"`
+	Priority *int           `json:"priority,omitempty"`
+}
+
+type NotifSlackInput struct {
+	UserID       *int           `json:"user_id,omitempty"`
+	TemplateType *string        `json:"template_type,omitempty"`
+	TemplateData map[string]any `json:"template_data,omitempty"`
+	Title        *string        `json:"title,omitempty"`
+	Text         *string        `json:"text,omitempty"`
+	RawData      map[string]any `json:"raw_data,omitempty"`
+	Priority     *int           `json:"priority,omitempty"`
+}
+
+type NotifUnregisterDeviceInput struct {
+	DeviceToken *string `json:"device_token,omitempty"`
+	DeviceID    *string `json:"device_id,omitempty"`
+}
+
+type NotifUserContact struct {
+	UserID    *int    `json:"user_id,omitempty"`
+	Email     *string `json:"email,omitempty"`
+	Phone     *string `json:"phone,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty"`
+}
+
+type OllamaChatContact struct {
+	ID       *int    `json:"id,omitempty"`
+	Username *string `json:"username,omitempty"`
+	Email    *string `json:"email,omitempty"`
+}
+
+type OllamaChatContacts struct {
+	Contacts []*OllamaChatContact `json:"contacts,omitempty"`
+}
+
+type OllamaChatGroup struct {
+	ID          *int    `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	CreatorID   *int    `json:"creator_id,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	Role        *string `json:"role,omitempty"`
+}
+
+type OllamaChatGroupMember struct {
+	ID       *int    `json:"id,omitempty"`
+	Username *string `json:"username,omitempty"`
+	Email    *string `json:"email,omitempty"`
+	Role     *string `json:"role,omitempty"`
+	JoinedAt *string `json:"joined_at,omitempty"`
+}
+
+type OllamaChatGroupMembers struct {
+	GroupID *int                     `json:"group_id,omitempty"`
+	Members []*OllamaChatGroupMember `json:"members,omitempty"`
+}
+
+type OllamaChatGroupSearch struct {
+	Groups []*OllamaChatGroupSearchHit `json:"groups,omitempty"`
+}
+
+type OllamaChatGroupSearchHit struct {
+	ID          *int    `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	CreatorID   *int    `json:"creator_id,omitempty"`
+	Type        *string `json:"type,omitempty"`
+	IsMember    *bool   `json:"is_member,omitempty"`
+}
+
+type OllamaChatGroups struct {
+	Groups []*OllamaChatGroup `json:"groups,omitempty"`
+}
+
+type OllamaChatHistory struct {
+	Messages []*OllamaChatMessage `json:"messages,omitempty"`
+	Count    *int                 `json:"count,omitempty"`
+	Offset   *int                 `json:"offset,omitempty"`
+	Limit    *int                 `json:"limit,omitempty"`
+}
+
+type OllamaChatMessage struct {
+	ID          *int    `json:"id,omitempty"`
+	MessageType *string `json:"message_type,omitempty"`
+	Content     *string `json:"content,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	SenderID    *int    `json:"sender_id,omitempty"`
+	RecipientID *int    `json:"recipient_id,omitempty"`
+	GroupID     *int    `json:"group_id,omitempty"`
+	URL         *string `json:"url,omitempty"`
+	SenderName  *string `json:"sender_name,omitempty"`
+}
+
+type OllamaPyChat struct {
+	Model         *string          `json:"model,omitempty"`
+	CreatedAt     *string          `json:"created_at,omitempty"`
+	Message       *OllamaPyMessage `json:"message,omitempty"`
+	Done          *bool            `json:"done,omitempty"`
+	TotalDuration *int             `json:"total_duration,omitempty"`
+	EvalCount     *int             `json:"eval_count,omitempty"`
+}
+
+type OllamaPyChatInput struct {
+	Model    *string                 `json:"model,omitempty"`
+	Messages []*OllamaPyMessageInput `json:"messages,omitempty"`
+}
+
+type OllamaPyGenerate struct {
+	Model         string `json:"model"`
+	CreatedAt     string `json:"created_at"`
+	Response      string `json:"response"`
+	Done          bool   `json:"done"`
+	TotalDuration int    `json:"total_duration"`
+	EvalCount     int    `json:"eval_count"`
+}
+
+type OllamaPyGenerateInput struct {
+	Model  *string `json:"model,omitempty"`
+	Prompt *string `json:"prompt,omitempty"`
+}
+
+type OllamaPyMessage struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}
+
+type OllamaPyMessageInput struct {
+	Role    *string `json:"role,omitempty"`
+	Content *string `json:"content,omitempty"`
+}
+
+type OllamaPyModelDetails struct {
+	ParentModel       *string  `json:"parent_model,omitempty"`
+	Format            *string  `json:"format,omitempty"`
+	Family            *string  `json:"family,omitempty"`
+	Families          []string `json:"families,omitempty"`
+	ParameterSize     *string  `json:"parameter_size,omitempty"`
+	QuantizationLevel *string  `json:"quantization_level,omitempty"`
+}
+
+type OllamaPyShowInput struct {
+	Model *string `json:"model,omitempty"`
+}
+
+type OllamaPyTags struct {
+	Models []*OllamaPyTagsModel `json:"models,omitempty"`
+}
+
+type OllamaPyTagsModel struct {
+	Name       *string               `json:"name,omitempty"`
+	Model      *string               `json:"model,omitempty"`
+	ModifiedAt *string               `json:"modified_at,omitempty"`
+	Size       *int                  `json:"size,omitempty"`
+	Digest     *string               `json:"digest,omitempty"`
+	Details    *OllamaPyModelDetails `json:"details,omitempty"`
+}
+
+type OtpToken struct {
+	Otp       string `json:"otp"`
+	ExpiresAt int    `json:"expiresAt"`
+}
+
+type OtpVerification struct {
+	Valid   bool   `json:"valid"`
+	Message string `json:"message"`
+}
+
+type ParkingCheckOut struct {
+	Ticket  *ParkingTicket `json:"ticket,omitempty"`
+	Payment any            `json:"payment,omitempty"`
+}
+
+type ParkingRate struct {
+	RateID        *string  `json:"RateID,omitempty"`
+	VehicleType   *string  `json:"VehicleType,omitempty"`
+	HourlyRate    *float64 `json:"HourlyRate,omitempty"`
+	DailyMaxRate  *float64 `json:"DailyMaxRate,omitempty"`
+	EffectiveFrom *string  `json:"EffectiveFrom,omitempty"`
+}
+
+type ParkingSpotAvailability struct {
+	Type      *string `json:"type,omitempty"`
+	Available *int    `json:"available,omitempty"`
+	Total     *int    `json:"total,omitempty"`
+}
+
+type ParkingTicket struct {
+	TicketID     *string `json:"TicketID,omitempty"`
+	VehiclePlate *string `json:"VehiclePlate,omitempty"`
+	SpotID       *string `json:"SpotID,omitempty"`
+	EntryGateID  *string `json:"EntryGateID,omitempty"`
+	ExitGateID   *string `json:"ExitGateID,omitempty"`
+	ParkedTime   *string `json:"ParkedTime,omitempty"`
+	LeaveTime    *string `json:"LeaveTime,omitempty"`
+	Status       *string `json:"Status,omitempty"`
+}
+
+type PartnerPartner struct {
+	ID        *string `json:"id,omitempty"`
+	Type      *string `json:"type,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	Email     *string `json:"email,omitempty"`
+	Phone     *string `json:"phone,omitempty"`
+	Address   *string `json:"address,omitempty"`
+	Status    *string `json:"status,omitempty"`
+	Score     *int    `json:"score,omitempty"`
+	UserID    *string `json:"user_id,omitempty"`
+	CreatedAt *int    `json:"created_at,omitempty"`
+	UpdatedAt *int    `json:"updated_at,omitempty"`
+	DeletedAt *int    `json:"deleted_at,omitempty"`
+}
+
+type PartnerPartnerActivity struct {
+	PartnerID          *string `json:"partner_id,omitempty"`
+	Status             *string `json:"status,omitempty"`
+	Score              *int    `json:"score,omitempty"`
+	HasOpenPartnership *bool   `json:"has_open_partnership,omitempty"`
+	LastActivityAt     *int    `json:"last_activity_at,omitempty"`
+	EligibleForClosure *bool   `json:"eligible_for_closure,omitempty"`
+	IsActive           *bool   `json:"is_active,omitempty"`
+}
+
+type PartnerPartnerInput struct {
+	Type    *string `json:"type,omitempty"`
+	Name    *string `json:"name,omitempty"`
+	Email   *string `json:"email,omitempty"`
+	Phone   *string `json:"phone,omitempty"`
+	Address *string `json:"address,omitempty"`
+	Status  *string `json:"status,omitempty"`
+	Score   *int    `json:"score,omitempty"`
+	UserID  *string `json:"user_id,omitempty"`
+}
+
+type PartnerPartnerPage struct {
+	Limit      *int              `json:"limit,omitempty"`
+	Page       *int              `json:"page,omitempty"`
+	Sort       *string           `json:"sort,omitempty"`
+	TotalRows  *int              `json:"total_rows,omitempty"`
+	TotalPages *int              `json:"total_pages,omitempty"`
+	Rows       []*PartnerPartner `json:"rows,omitempty"`
+}
+
+type PartnerPartnerStatistics struct {
+	Total    *int           `json:"total,omitempty"`
+	ByStatus map[string]any `json:"by_status,omitempty"`
+	ByType   map[string]any `json:"by_type,omitempty"`
+}
+
+type PartnerPartnership struct {
+	ID          *string           `json:"id,omitempty"`
+	ProjectID   *string           `json:"project_id,omitempty"`
+	Description *string           `json:"description,omitempty"`
+	StartedOn   *int              `json:"started_on,omitempty"`
+	ExpiresOn   *int              `json:"expires_on,omitempty"`
+	Projects    []*PartnerProject `json:"projects,omitempty"`
+	UserID      *string           `json:"user_id,omitempty"`
+	CreatedAt   *int              `json:"created_at,omitempty"`
+}
+
+type PartnerPartnershipInput struct {
+	ProjectID   *string          `json:"project_id,omitempty"`
+	Description *string          `json:"description,omitempty"`
+	StartedOn   *int             `json:"started_on,omitempty"`
+	ExpiresOn   *int             `json:"expires_on,omitempty"`
+	Projects    []map[string]any `json:"projects,omitempty"`
+	UserID      *string          `json:"user_id,omitempty"`
+}
+
+type PartnerPartnershipPage struct {
+	Limit      *int                  `json:"limit,omitempty"`
+	Page       *int                  `json:"page,omitempty"`
+	Sort       *string               `json:"sort,omitempty"`
+	TotalRows  *int                  `json:"total_rows,omitempty"`
+	TotalPages *int                  `json:"total_pages,omitempty"`
+	Rows       []*PartnerPartnership `json:"rows,omitempty"`
+}
+
+type PartnerPartnershipsPartner struct {
+	ID            *string               `json:"id,omitempty"`
+	PartnerID     *string               `json:"partner_id,omitempty"`
+	PartnershipID *string               `json:"partnership_id,omitempty"`
+	Content       *string               `json:"content,omitempty"`
+	JoinedOn      *int                  `json:"joined_on,omitempty"`
+	LeftOn        *int                  `json:"left_on,omitempty"`
+	Partners      []*PartnerPartner     `json:"partners,omitempty"`
+	Partnerships  []*PartnerPartnership `json:"partnerships,omitempty"`
+	UserID        *string               `json:"user_id,omitempty"`
+	CreatedAt     *int                  `json:"created_at,omitempty"`
+}
+
+type PartnerPartnershipsPartnerInput struct {
+	PartnerID     *string          `json:"partner_id,omitempty"`
+	PartnershipID *string          `json:"partnership_id,omitempty"`
+	Content       *string          `json:"content,omitempty"`
+	JoinedOn      *int             `json:"joined_on,omitempty"`
+	LeftOn        *int             `json:"left_on,omitempty"`
+	Partners      []map[string]any `json:"partners,omitempty"`
+	Partnerships  []map[string]any `json:"partnerships,omitempty"`
+	UserID        *string          `json:"user_id,omitempty"`
+}
+
+type PartnerPartnershipsPartnerPage struct {
+	Limit      *int                          `json:"limit,omitempty"`
+	Page       *int                          `json:"page,omitempty"`
+	Sort       *string                       `json:"sort,omitempty"`
+	TotalRows  *int                          `json:"total_rows,omitempty"`
+	TotalPages *int                          `json:"total_pages,omitempty"`
+	Rows       []*PartnerPartnershipsPartner `json:"rows,omitempty"`
+}
+
+type PartnerProject struct {
+	ID        *string `json:"id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	UserID    *string `json:"user_id,omitempty"`
+	CreatedAt *int    `json:"created_at,omitempty"`
+}
+
+type PartnerProjectInput struct {
+	Name   *string `json:"name,omitempty"`
+	UserID *string `json:"user_id,omitempty"`
+}
+
+type PartnerProjectPage struct {
+	Limit      *int              `json:"limit,omitempty"`
+	Page       *int              `json:"page,omitempty"`
+	Sort       *string           `json:"sort,omitempty"`
+	TotalRows  *int              `json:"total_rows,omitempty"`
+	TotalPages *int              `json:"total_pages,omitempty"`
+	Rows       []*PartnerProject `json:"rows,omitempty"`
+}
+
+type PayerBuyers struct {
+	BuyerID     *int    `json:"buyer_id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Email       *string `json:"email,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+}
+
+type PayerPayers struct {
+	PayerID     *int    `json:"payer_id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Email       *string `json:"email,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+}
+
+type PayerTransactionResponse struct {
+	Transaction *PayerTransactions `json:"transaction,omitempty"`
+	Payers      *PayerPayers       `json:"payers,omitempty"`
+	Buyers      *PayerBuyers       `json:"buyers,omitempty"`
+}
+
+type PayerTransactions struct {
+	TransactionID   *int     `json:"transaction_id,omitempty"`
+	PayerID         *int     `json:"payer_id,omitempty"`
+	BuyerID         *int     `json:"buyer_id,omitempty"`
+	Amount          *float64 `json:"amount,omitempty"`
+	TransactionDate *string  `json:"transaction_date,omitempty"`
+	TransactionType *int     `json:"transaction_type,omitempty"`
+	Description     *string  `json:"description,omitempty"`
+	Status          *int     `json:"status,omitempty"`
+}
+
+type PaymentCreateInput struct {
+	Provider       *string        `json:"provider,omitempty"`
+	Amount         *int           `json:"amount,omitempty"`
+	Currency       *string        `json:"currency,omitempty"`
+	PayerEmail     *string        `json:"payer_email,omitempty"`
+	Description    *string        `json:"description,omitempty"`
+	Metadata       map[string]any `json:"metadata,omitempty"`
+	IdempotencyKey *string        `json:"idempotency_key,omitempty"`
+}
+
+type PaymentPayment struct {
+	ID             *int    `json:"ID,omitempty"`
+	Provider       *string `json:"Provider,omitempty"`
+	ExternalID     *string `json:"ExternalID,omitempty"`
+	Amount         *int    `json:"Amount,omitempty"`
+	Currency       *string `json:"Currency,omitempty"`
+	Status         *string `json:"Status,omitempty"`
+	PayerEmail     *string `json:"PayerEmail,omitempty"`
+	Description    *string `json:"Description,omitempty"`
+	FailureReason  *string `json:"FailureReason,omitempty"`
+	IdempotencyKey *string `json:"IdempotencyKey,omitempty"`
+	RefundedAmount *int    `json:"RefundedAmount,omitempty"`
+	CreatedAt      *string `json:"CreatedAt,omitempty"`
+	UpdatedAt      *string `json:"UpdatedAt,omitempty"`
+}
+
+type PaymentPaymentList struct {
+	Items []*PaymentPayment `json:"Items,omitempty"`
+	Total *int              `json:"Total,omitempty"`
+}
+
+type PaymentTransaction struct {
+	ID           *int    `json:"ID,omitempty"`
+	PaymentID    *int    `json:"PaymentID,omitempty"`
+	Type         *string `json:"Type,omitempty"`
+	Status       *string `json:"Status,omitempty"`
+	Amount       *int    `json:"Amount,omitempty"`
+	ExternalID   *string `json:"ExternalID,omitempty"`
+	RawStatus    *string `json:"RawStatus,omitempty"`
+	ErrorMessage *string `json:"ErrorMessage,omitempty"`
+	CreatedAt    *string `json:"CreatedAt,omitempty"`
+}
+
+type PhotoComposition struct {
+	ID           *string           `json:"id,omitempty"`
+	Status       *string           `json:"status,omitempty"`
+	Layout       *PhotolayoutDto   `json:"layout,omitempty"`
+	Sources      []*PhotosourceDto `json:"sources,omitempty"`
+	ObjectKey    *string           `json:"object_key,omitempty"`
+	URL          *string           `json:"url,omitempty"`
+	Width        *int              `json:"width,omitempty"`
+	Height       *int              `json:"height,omitempty"`
+	Format       *string           `json:"format,omitempty"`
+	SizeBytes    *int              `json:"size_bytes,omitempty"`
+	ErrorMessage *string           `json:"error_message,omitempty"`
+	CreatedAt    *string           `json:"created_at,omitempty"`
+	UpdatedAt    *string           `json:"updated_at,omitempty"`
+}
+
+type PhotocellDto struct {
+	X          *int `json:"x,omitempty"`
+	Y          *int `json:"y,omitempty"`
+	Width      *int `json:"width,omitempty"`
+	Height     *int `json:"height,omitempty"`
+	ImageIndex *int `json:"image_index,omitempty"`
+}
+
+type PhotolayoutDto struct {
+	Type       *string         `json:"type,omitempty"`
+	Rows       *int            `json:"rows,omitempty"`
+	Cols       *int            `json:"cols,omitempty"`
+	Width      *int            `json:"width,omitempty"`
+	Height     *int            `json:"height,omitempty"`
+	Spacing    *int            `json:"spacing,omitempty"`
+	Padding    *int            `json:"padding,omitempty"`
+	Background *string         `json:"background,omitempty"`
+	CellFit    *string         `json:"cell_fit,omitempty"`
+	Cells      []*PhotocellDto `json:"cells,omitempty"`
+	Format     *string         `json:"format,omitempty"`
+	Quality    *int            `json:"quality,omitempty"`
+}
+
+type PhotosourceDto struct {
+	Type      *string `json:"type,omitempty"`
+	URL       *string `json:"url,omitempty"`
+	ObjectKey *string `json:"object_key,omitempty"`
+	Order     *int    `json:"order,omitempty"`
+}
+
+type PointConvertedRewardPoint struct {
+	RewConvertID          *string `json:"rew_convert_id,omitempty"`
+	RewConvertOrdDetailID *string `json:"rew_convert_ord_detail_id,omitempty"`
+	RewConvertDiscountID  *string `json:"rew_convert_discount_id,omitempty"`
+	RewConvertPoints      *int    `json:"rew_convert_points,omitempty"`
+	RewConvertDate        *int    `json:"rew_convert_date,omitempty"`
+	CreatedAt             *string `json:"created_at,omitempty"`
+	UpdatedAt             *string `json:"updated_at,omitempty"`
+}
+
+type PointConvertedRewardPointInput struct {
+	RewConvertID          *string `json:"rew_convert_id,omitempty"`
+	RewConvertOrdDetailID *string `json:"rew_convert_ord_detail_id,omitempty"`
+	RewConvertDiscountID  *string `json:"rew_convert_discount_id,omitempty"`
+	RewConvertPoints      *int    `json:"rew_convert_points,omitempty"`
+	RewConvertDate        *int    `json:"rew_convert_date,omitempty"`
+}
+
+type PointConvertedRewardPointPage struct {
+	Success    *bool                        `json:"success,omitempty"`
+	Data       []*PointConvertedRewardPoint `json:"data,omitempty"`
+	Pagination *PointPaginationInfo         `json:"pagination,omitempty"`
+}
+
+type PointPaginationInfo struct {
+	NextCursor *string `json:"next_cursor,omitempty"`
+	PrevCursor *string `json:"prev_cursor,omitempty"`
+}
+
+type PointRewardDiscount struct {
+	RewardDiscountID *string `json:"reward_discount_id,omitempty"`
+	TotalPoints      *int    `json:"total_points,omitempty"`
+	PointsPending    *int    `json:"points_pending,omitempty"`
+	PointsActive     *int    `json:"points_active,omitempty"`
+	PointsExpired    *int    `json:"points_expired,omitempty"`
+	PointsConverted  *int    `json:"points_converted,omitempty"`
+	PointsCancelled  *int    `json:"points_cancelled,omitempty"`
+	ActivateDate     *int    `json:"activate_date,omitempty"`
+	ExpireDate       *int    `json:"expire_date,omitempty"`
+	CreatedAt        *string `json:"created_at,omitempty"`
+	UpdatedAt        *string `json:"updated_at,omitempty"`
+}
+
+type PointRewardDiscountInput struct {
+	RewardDiscountID *string `json:"reward_discount_id,omitempty"`
+	TotalPoints      *int    `json:"total_points,omitempty"`
+	PointsPending    *int    `json:"points_pending,omitempty"`
+	PointsActive     *int    `json:"points_active,omitempty"`
+	PointsExpired    *int    `json:"points_expired,omitempty"`
+	PointsConverted  *int    `json:"points_converted,omitempty"`
+	PointsCancelled  *int    `json:"points_cancelled,omitempty"`
+	ActivateDate     *int    `json:"activate_date,omitempty"`
+	ExpireDate       *int    `json:"expire_date,omitempty"`
+}
+
+type PointRewardDiscountPage struct {
+	Success    *bool                  `json:"success,omitempty"`
+	Data       []*PointRewardDiscount `json:"data,omitempty"`
+	Pagination *PointPaginationInfo   `json:"pagination,omitempty"`
+}
+
+type PointRewardPoint struct {
+	RewardPointsID  *string `json:"reward_points_id,omitempty"`
+	TotalPoints     *int    `json:"total_points,omitempty"`
+	PointsPending   *int    `json:"points_pending,omitempty"`
+	PointsActive    *int    `json:"points_active,omitempty"`
+	PointsExpired   *int    `json:"points_expired,omitempty"`
+	PointsConverted *int    `json:"points_converted,omitempty"`
+	PointsCancelled *int    `json:"points_cancelled,omitempty"`
+	ActivateDate    *int    `json:"activate_date,omitempty"`
+	ExpireDate      *int    `json:"expire_date,omitempty"`
+	CreatedAt       *string `json:"created_at,omitempty"`
+	UpdatedAt       *string `json:"updated_at,omitempty"`
+}
+
+type PointRewardPointInput struct {
+	RewardPointsID  *string `json:"reward_points_id,omitempty"`
+	TotalPoints     *int    `json:"total_points,omitempty"`
+	PointsPending   *int    `json:"points_pending,omitempty"`
+	PointsActive    *int    `json:"points_active,omitempty"`
+	PointsExpired   *int    `json:"points_expired,omitempty"`
+	PointsConverted *int    `json:"points_converted,omitempty"`
+	PointsCancelled *int    `json:"points_cancelled,omitempty"`
+	ActivateDate    *int    `json:"activate_date,omitempty"`
+	ExpireDate      *int    `json:"expire_date,omitempty"`
+}
+
+type PointRewardPointPage struct {
+	Success    *bool                `json:"success,omitempty"`
+	Data       []*PointRewardPoint  `json:"data,omitempty"`
+	Pagination *PointPaginationInfo `json:"pagination,omitempty"`
+}
+
+type PolyActivity struct {
+	Type      *string `json:"type,omitempty"`
+	MarketID  *int    `json:"market_id,omitempty"`
+	Outcome   *string `json:"outcome,omitempty"`
+	Side      *string `json:"side,omitempty"`
+	Price     *int    `json:"price,omitempty"`
+	Size      *int    `json:"size,omitempty"`
+	Amount    *int    `json:"amount,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+}
+
+type PolyBalance struct {
+	UserID    *string `json:"user_id,omitempty"`
+	Available *int    `json:"available,omitempty"`
+	Locked    *int    `json:"locked,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty"`
+}
+
+type PolyBookLevel struct {
+	Price *int `json:"price,omitempty"`
+	Size  *int `json:"size,omitempty"`
+}
+
+type PolyCandle struct {
+	Time   *string `json:"time,omitempty"`
+	Open   *int    `json:"open,omitempty"`
+	High   *int    `json:"high,omitempty"`
+	Low    *int    `json:"low,omitempty"`
+	Close  *int    `json:"close,omitempty"`
+	Volume *int    `json:"volume,omitempty"`
+}
+
+type PolyCategoryCount struct {
+	Category *string `json:"category,omitempty"`
+	Events   *int    `json:"events,omitempty"`
+}
+
+type PolyComment struct {
+	ID        *int    `json:"id,omitempty"`
+	EventID   *int    `json:"event_id,omitempty"`
+	ParentID  *int    `json:"parent_id,omitempty"`
+	UserID    *string `json:"user_id,omitempty"`
+	Body      *string `json:"body,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	Likes     *int    `json:"likes,omitempty"`
+}
+
+type PolyCommentPage struct {
+	Items      []*PolyComment `json:"items,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+	IsLastPage *bool          `json:"is_last_page,omitempty"`
+}
+
+type PolyEvent struct {
+	Markets     []*PolyMarket `json:"markets,omitempty"`
+	ID          *int          `json:"id,omitempty"`
+	Slug        *string       `json:"slug,omitempty"`
+	Title       *string       `json:"title,omitempty"`
+	Description *string       `json:"description,omitempty"`
+	Category    *string       `json:"category,omitempty"`
+	Tags        []string      `json:"tags,omitempty"`
+	ImageURL    *string       `json:"image_url,omitempty"`
+	Featured    *bool         `json:"featured,omitempty"`
+	NegRisk     *bool         `json:"neg_risk,omitempty"`
+	Status      *string       `json:"status,omitempty"`
+	EndDate     *string       `json:"end_date,omitempty"`
+	Volume      *int          `json:"volume,omitempty"`
+	CreatedAt   *string       `json:"created_at,omitempty"`
+	UpdatedAt   *string       `json:"updated_at,omitempty"`
+}
+
+type PolyEventInput struct {
+	Slug        *string            `json:"slug,omitempty"`
+	Title       *string            `json:"title,omitempty"`
+	Description *string            `json:"description,omitempty"`
+	Category    *string            `json:"category,omitempty"`
+	Tags        []string           `json:"tags,omitempty"`
+	ImageURL    *string            `json:"image_url,omitempty"`
+	Featured    *bool              `json:"featured,omitempty"`
+	NegRisk     *bool              `json:"neg_risk,omitempty"`
+	EndDate     *string            `json:"end_date,omitempty"`
+	Markets     []*PolyMarketInput `json:"markets,omitempty"`
+}
+
+type PolyEventPage struct {
+	Items      []*PolyEvent `json:"items,omitempty"`
+	NextCursor *string      `json:"next_cursor,omitempty"`
+	IsLastPage *bool        `json:"is_last_page,omitempty"`
+}
+
+type PolyExchangeSummary struct {
+	Revenue  *int `json:"revenue,omitempty"`
+	BondHeld *int `json:"bond_held,omitempty"`
+}
+
+type PolyHolderEntry struct {
+	UserID   *string `json:"user_id,omitempty"`
+	Username *string `json:"username,omitempty"`
+	Shares   *int    `json:"shares,omitempty"`
+}
+
+type PolyLeaderboardEntry struct {
+	Rank     *int    `json:"rank,omitempty"`
+	UserID   *string `json:"user_id,omitempty"`
+	Username *string `json:"username,omitempty"`
+	Profit   *int    `json:"profit,omitempty"`
+	Volume   *int    `json:"volume,omitempty"`
+}
+
+type PolyMarket struct {
+	YesPrice        *float64 `json:"yes_price,omitempty"`
+	NoPrice         *float64 `json:"no_price,omitempty"`
+	ID              *int     `json:"id,omitempty"`
+	EventID         *int     `json:"event_id,omitempty"`
+	Slug            *string  `json:"slug,omitempty"`
+	Question        *string  `json:"question,omitempty"`
+	GroupItemTitle  *string  `json:"group_item_title,omitempty"`
+	Description     *string  `json:"description,omitempty"`
+	ShareValue      *int     `json:"share_value,omitempty"`
+	MinOrderSize    *int     `json:"min_order_size,omitempty"`
+	EndTime         *string  `json:"end_time,omitempty"`
+	Status          *string  `json:"status,omitempty"`
+	ProposedOutcome *string  `json:"proposed_outcome,omitempty"`
+	DisputeDeadline *string  `json:"dispute_deadline,omitempty"`
+	DisputedBy      *string  `json:"disputed_by,omitempty"`
+	DisputeReason   *string  `json:"dispute_reason,omitempty"`
+	ResolvedOutcome *string  `json:"resolved_outcome,omitempty"`
+	RewardPool      *int     `json:"reward_pool,omitempty"`
+	RewardMaxSpread *int     `json:"reward_max_spread,omitempty"`
+	RewardMinSize   *int     `json:"reward_min_size,omitempty"`
+	DisputeBond     *int     `json:"dispute_bond,omitempty"`
+	BestBid         *int     `json:"best_bid,omitempty"`
+	BestAsk         *int     `json:"best_ask,omitempty"`
+	LastPrice       *int     `json:"last_price,omitempty"`
+	Volume          *int     `json:"volume,omitempty"`
+	CreatedAt       *string  `json:"created_at,omitempty"`
+	UpdatedAt       *string  `json:"updated_at,omitempty"`
+}
+
+type PolyMarketBase struct {
+	ID              *int    `json:"id,omitempty"`
+	EventID         *int    `json:"event_id,omitempty"`
+	Slug            *string `json:"slug,omitempty"`
+	Question        *string `json:"question,omitempty"`
+	GroupItemTitle  *string `json:"group_item_title,omitempty"`
+	Description     *string `json:"description,omitempty"`
+	ShareValue      *int    `json:"share_value,omitempty"`
+	MinOrderSize    *int    `json:"min_order_size,omitempty"`
+	EndTime         *string `json:"end_time,omitempty"`
+	Status          *string `json:"status,omitempty"`
+	ProposedOutcome *string `json:"proposed_outcome,omitempty"`
+	DisputeDeadline *string `json:"dispute_deadline,omitempty"`
+	DisputedBy      *string `json:"disputed_by,omitempty"`
+	DisputeReason   *string `json:"dispute_reason,omitempty"`
+	ResolvedOutcome *string `json:"resolved_outcome,omitempty"`
+	RewardPool      *int    `json:"reward_pool,omitempty"`
+	RewardMaxSpread *int    `json:"reward_max_spread,omitempty"`
+	RewardMinSize   *int    `json:"reward_min_size,omitempty"`
+	DisputeBond     *int    `json:"dispute_bond,omitempty"`
+	BestBid         *int    `json:"best_bid,omitempty"`
+	BestAsk         *int    `json:"best_ask,omitempty"`
+	LastPrice       *int    `json:"last_price,omitempty"`
+	Volume          *int    `json:"volume,omitempty"`
+	CreatedAt       *string `json:"created_at,omitempty"`
+	UpdatedAt       *string `json:"updated_at,omitempty"`
+}
+
+type PolyMarketInput struct {
+	Slug            *string `json:"slug,omitempty"`
+	Question        *string `json:"question,omitempty"`
+	GroupItemTitle  *string `json:"group_item_title,omitempty"`
+	Description     *string `json:"description,omitempty"`
+	EndTime         *string `json:"end_time,omitempty"`
+	ShareValue      *int    `json:"share_value,omitempty"`
+	MinOrderSize    *int    `json:"min_order_size,omitempty"`
+	RewardPool      *int    `json:"reward_pool,omitempty"`
+	RewardMaxSpread *int    `json:"reward_max_spread,omitempty"`
+	RewardMinSize   *int    `json:"reward_min_size,omitempty"`
+}
+
+type PolyMarketRewards struct {
+	MarketID     *int `json:"market_id,omitempty"`
+	DailyPool    *int `json:"daily_pool,omitempty"`
+	MaxSpread    *int `json:"max_spread,omitempty"`
+	MinSize      *int `json:"min_size,omitempty"`
+	EpochSeconds *int `json:"epoch_seconds,omitempty"`
+	EpochPool    *int `json:"epoch_pool,omitempty"`
+}
+
+type PolyMarketSearch struct {
+	Items []*PolyMarket `json:"items,omitempty"`
+	Total *int          `json:"total,omitempty"`
+}
+
+type PolyOrder struct {
+	ID            *int    `json:"id,omitempty"`
+	MarketID      *int    `json:"market_id,omitempty"`
+	UserID        *string `json:"user_id,omitempty"`
+	ClientOrderID *string `json:"client_order_id,omitempty"`
+	Outcome       *string `json:"outcome,omitempty"`
+	Side          *string `json:"side,omitempty"`
+	Type          *string `json:"type,omitempty"`
+	TimeInForce   *string `json:"time_in_force,omitempty"`
+	Price         *int    `json:"price,omitempty"`
+	Size          *int    `json:"size,omitempty"`
+	Filled        *int    `json:"filled,omitempty"`
+	Budget        *int    `json:"budget,omitempty"`
+	Fee           *int    `json:"fee,omitempty"`
+	FilledCash    *int    `json:"filled_cash,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	ExpiresAt     *string `json:"expires_at,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	UpdatedAt     *string `json:"updated_at,omitempty"`
+}
+
+type PolyOrderBook struct {
+	MarketID       *int             `json:"market_id,omitempty"`
+	Outcome        *string          `json:"outcome,omitempty"`
+	Bids           []*PolyBookLevel `json:"bids,omitempty"`
+	Asks           []*PolyBookLevel `json:"asks,omitempty"`
+	BestBid        *int             `json:"best_bid,omitempty"`
+	BestAsk        *int             `json:"best_ask,omitempty"`
+	Spread         *int             `json:"spread,omitempty"`
+	Midpoint       *float64         `json:"midpoint,omitempty"`
+	LastTradePrice *int             `json:"last_trade_price,omitempty"`
+}
+
+type PolyOrderInput struct {
+	ClientOrderID *string `json:"client_order_id,omitempty"`
+	Outcome       *string `json:"outcome,omitempty"`
+	Side          *string `json:"side,omitempty"`
+	Type          *string `json:"type,omitempty"`
+	TimeInForce   *string `json:"time_in_force,omitempty"`
+	Price         *int    `json:"price,omitempty"`
+	Size          *int    `json:"size,omitempty"`
+	Amount        *int    `json:"amount,omitempty"`
+	ExpiresAt     *string `json:"expires_at,omitempty"`
+}
+
+type PolyOrderPage struct {
+	Items      []*PolyOrder `json:"items,omitempty"`
+	NextCursor *string      `json:"next_cursor,omitempty"`
+	IsLastPage *bool        `json:"is_last_page,omitempty"`
+}
+
+type PolyPortfolio struct {
+	Balance        *PolyBalance        `json:"balance,omitempty"`
+	Positions      []*PolyPositionView `json:"positions,omitempty"`
+	PositionsValue *float64            `json:"positions_value,omitempty"`
+	UnrealizedPnl  *float64            `json:"unrealized_pnl,omitempty"`
+	RealizedPnl    *int                `json:"realized_pnl,omitempty"`
+	TotalValue     *float64            `json:"total_value,omitempty"`
+}
+
+type PolyPosition struct {
+	ID           *int    `json:"id,omitempty"`
+	MarketID     *int    `json:"market_id,omitempty"`
+	UserID       *string `json:"user_id,omitempty"`
+	Outcome      *string `json:"outcome,omitempty"`
+	Shares       *int    `json:"shares,omitempty"`
+	LockedShares *int    `json:"locked_shares,omitempty"`
+	CostBasis    *int    `json:"cost_basis,omitempty"`
+	RealizedPnl  *int    `json:"realized_pnl,omitempty"`
+	Settled      *bool   `json:"settled,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	UpdatedAt    *string `json:"updated_at,omitempty"`
+}
+
+type PolyPositionView struct {
+	Question      *string  `json:"question,omitempty"`
+	EventID       *int     `json:"event_id,omitempty"`
+	AvgPrice      *float64 `json:"avg_price,omitempty"`
+	CurrentPrice  *float64 `json:"current_price,omitempty"`
+	Value         *float64 `json:"value,omitempty"`
+	UnrealizedPnl *float64 `json:"unrealized_pnl,omitempty"`
+	MarketStatus  *string  `json:"market_status,omitempty"`
+	ID            *int     `json:"id,omitempty"`
+	MarketID      *int     `json:"market_id,omitempty"`
+	UserID        *string  `json:"user_id,omitempty"`
+	Outcome       *string  `json:"outcome,omitempty"`
+	Shares        *int     `json:"shares,omitempty"`
+	LockedShares  *int     `json:"locked_shares,omitempty"`
+	CostBasis     *int     `json:"cost_basis,omitempty"`
+	RealizedPnl   *int     `json:"realized_pnl,omitempty"`
+	Settled       *bool    `json:"settled,omitempty"`
+	CreatedAt     *string  `json:"created_at,omitempty"`
+	UpdatedAt     *string  `json:"updated_at,omitempty"`
+}
+
+type PolyProfile struct {
+	UserID    *string `json:"user_id,omitempty"`
+	Username  *string `json:"username,omitempty"`
+	Bio       *string `json:"bio,omitempty"`
+	AvatarURL *string `json:"avatar_url,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty"`
+}
+
+type PolyQuote struct {
+	Shares     *float64 `json:"shares,omitempty"`
+	Cash       *float64 `json:"cash,omitempty"`
+	Fee        *float64 `json:"fee,omitempty"`
+	AvgPrice   *float64 `json:"avg_price,omitempty"`
+	WorstPrice *float64 `json:"worst_price,omitempty"`
+	Fillable   *bool    `json:"fillable,omitempty"`
+}
+
+type PolyReferralStats struct {
+	TotalInvited   *int     `json:"total_invited,omitempty"`
+	TotalInstalled *int     `json:"total_installed,omitempty"`
+	TotalRewarded  *int     `json:"total_rewarded,omitempty"`
+	TotalRewardAmt *float64 `json:"total_reward_amt,omitempty"`
+}
+
+type PolyReferralSummary struct {
+	RefCode       *string            `json:"ref_code,omitempty"`
+	DeepLink      *string            `json:"deep_link,omitempty"`
+	ReferredBy    *string            `json:"referred_by,omitempty"`
+	Referees      *int               `json:"referees,omitempty"`
+	Earnings      *int               `json:"earnings,omitempty"`
+	CommissionBps *int               `json:"commission_bps,omitempty"`
+	ServiceStats  *PolyReferralStats `json:"service_stats,omitempty"`
+}
+
+type PolyRewardPayout struct {
+	ID         *int     `json:"id,omitempty"`
+	EpochStart *string  `json:"epoch_start,omitempty"`
+	MarketID   *int     `json:"market_id,omitempty"`
+	UserID     *string  `json:"user_id,omitempty"`
+	Score      *float64 `json:"score,omitempty"`
+	Amount     *int     `json:"amount,omitempty"`
+	CreatedAt  *string  `json:"created_at,omitempty"`
+}
+
+type PolyTrade struct {
+	ID           *int    `json:"id,omitempty"`
+	MarketID     *int    `json:"market_id,omitempty"`
+	YesPrice     *int    `json:"yes_price,omitempty"`
+	Size         *int    `json:"size,omitempty"`
+	Kind         *string `json:"kind,omitempty"`
+	MakerOrderID *int    `json:"maker_order_id,omitempty"`
+	TakerOrderID *int    `json:"taker_order_id,omitempty"`
+	MakerUserID  *string `json:"maker_user_id,omitempty"`
+	TakerUserID  *string `json:"taker_user_id,omitempty"`
+	MakerOutcome *string `json:"maker_outcome,omitempty"`
+	MakerSide    *string `json:"maker_side,omitempty"`
+	TakerOutcome *string `json:"taker_outcome,omitempty"`
+	TakerSide    *string `json:"taker_side,omitempty"`
+	TakerFee     *int    `json:"taker_fee,omitempty"`
+	MakerRebate  *int    `json:"maker_rebate,omitempty"`
+	ReferralFee  *int    `json:"referral_fee,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+}
+
+type PolyUserRewardsPage struct {
+	Items      []*PolyRewardPayout `json:"items,omitempty"`
+	NextCursor *string             `json:"next_cursor,omitempty"`
+	IsLastPage *bool               `json:"is_last_page,omitempty"`
+	TotalPaid  *int                `json:"total_paid,omitempty"`
+}
+
+type PolyWallet struct {
+	WalletID *string `json:"wallet_id,omitempty"`
+	Balance  *int    `json:"balance,omitempty"`
+	Currency *string `json:"currency,omitempty"`
+	Status   *string `json:"status,omitempty"`
+}
+
+type PostCategory struct {
+	ID          *string     `json:"id,omitempty"`
+	Name        *string     `json:"name,omitempty"`
+	Description *string     `json:"description,omitempty"`
+	CreatedAt   *string     `json:"created_at,omitempty"`
+	UpdatedAt   *string     `json:"updated_at,omitempty"`
+	Posts       []*PostPost `json:"posts,omitempty"`
+}
+
+type PostCategoryPage struct {
+	Rows       []*PostCategory `json:"rows,omitempty"`
+	NextCursor *string         `json:"next_cursor,omitempty"`
+	HasMore    *bool           `json:"has_more,omitempty"`
+}
+
+type PostMedia struct {
+	ID          *string `json:"id,omitempty"`
+	URL         *string `json:"url,omitempty"`
+	Description *string `json:"description,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type PostPost struct {
+	ID          *string         `json:"id,omitempty"`
+	AuthorID    *string         `json:"author_id,omitempty"`
+	Name        *string         `json:"name,omitempty"`
+	Content     *string         `json:"content,omitempty"`
+	Description *string         `json:"description,omitempty"`
+	MediaID     *string         `json:"media_id,omitempty"`
+	CreatedAt   *string         `json:"created_at,omitempty"`
+	UpdatedAt   *string         `json:"updated_at,omitempty"`
+	Categories  []*PostCategory `json:"categories,omitempty"`
+	Media       *PostMedia      `json:"media,omitempty"`
+}
+
+type PostPostPage struct {
+	Rows       []*PostPost `json:"rows,omitempty"`
+	NextCursor *string     `json:"next_cursor,omitempty"`
+	HasMore    *bool       `json:"has_more,omitempty"`
+}
+
+type QRDailyScan struct {
+	Date  *string `json:"date,omitempty"`
+	Count *int    `json:"count,omitempty"`
+}
+
+type QRGenerateInput struct {
+	Title       *string `json:"title,omitempty"`
+	Type        *string `json:"type,omitempty"`
+	Content     *string `json:"content,omitempty"`
+	RedirectURL *string `json:"redirect_url,omitempty"`
+	Size        *int    `json:"size,omitempty"`
+	ForeColor   *string `json:"fore_color,omitempty"`
+	BackColor   *string `json:"back_color,omitempty"`
+	ExpiresAt   *string `json:"expires_at,omitempty"`
+}
+
+type QRQRCode struct {
+	ID          *string `json:"id,omitempty"`
+	ShortCode   *string `json:"short_code,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	Type        *string `json:"type,omitempty"`
+	Content     *string `json:"content,omitempty"`
+	RedirectURL *string `json:"redirect_url,omitempty"`
+	ImageBase64 *string `json:"image_base64,omitempty"`
+	ImageURL    *string `json:"image_url,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	ScanCount   *int    `json:"scan_count,omitempty"`
+	Size        *int    `json:"size,omitempty"`
+	ForeColor   *string `json:"fore_color,omitempty"`
+	BackColor   *string `json:"back_color,omitempty"`
+	ExpiresAt   *string `json:"expires_at,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+	CreatedBy   *string `json:"created_by,omitempty"`
+}
+
+type QRQRListResponse struct {
+	Data       []*QRQRCode `json:"data,omitempty"`
+	Total      *int        `json:"total,omitempty"`
+	Page       *int        `json:"page,omitempty"`
+	Limit      *int        `json:"limit,omitempty"`
+	TotalPages *int        `json:"total_pages,omitempty"`
+}
+
+type QRScanHistory struct {
+	ID         *string `json:"id,omitempty"`
+	QRCodeID   *string `json:"qr_code_id,omitempty"`
+	ShortCode  *string `json:"short_code,omitempty"`
+	IPAddress  *string `json:"ip_address,omitempty"`
+	UserAgent  *string `json:"user_agent,omitempty"`
+	Referer    *string `json:"referer,omitempty"`
+	Country    *string `json:"country,omitempty"`
+	City       *string `json:"city,omitempty"`
+	DeviceType *string `json:"device_type,omitempty"`
+	Os         *string `json:"os,omitempty"`
+	Browser    *string `json:"browser,omitempty"`
+	ScannedAt  *string `json:"scanned_at,omitempty"`
+}
+
+type QRScanHistoryResponse struct {
+	Data       []*QRScanHistory `json:"data,omitempty"`
+	Total      *int             `json:"total,omitempty"`
+	Page       *int             `json:"page,omitempty"`
+	Limit      *int             `json:"limit,omitempty"`
+	TotalPages *int             `json:"total_pages,omitempty"`
+}
+
+type QRScanStats struct {
+	TotalScans      *int           `json:"total_scans,omitempty"`
+	UniqueIps       *int           `json:"unique_ips,omitempty"`
+	DeviceBreakdown map[string]any `json:"device_breakdown,omitempty"`
+	OsBreakdown     map[string]any `json:"os_breakdown,omitempty"`
+	DailyScans      []*QRDailyScan `json:"daily_scans,omitempty"`
+}
+
+type QRUpdateInput struct {
+	Title     *string `json:"title,omitempty"`
+	Status    *string `json:"status,omitempty"`
+	ForeColor *string `json:"fore_color,omitempty"`
+	BackColor *string `json:"back_color,omitempty"`
+	ExpiresAt *string `json:"expires_at,omitempty"`
 }
 
 type Query struct {
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type RAccountingPayment struct {
+	ID      *int     `json:"id,omitempty"`
+	OrderID *int     `json:"order_id,omitempty"`
+	Amount  *float64 `json:"amount,omitempty"`
+	Method  *string  `json:"method,omitempty"`
+	Status  *string  `json:"status,omitempty"`
+}
+
+type RConsumerConsumer struct {
+	ID        *int    `json:"id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	KitchenID *int    `json:"kitchen_id,omitempty"`
+	Menu      *string `json:"menu,omitempty"`
+}
+
+type RConsumerPage struct {
+	Limit      *int                 `json:"limit,omitempty"`
+	Page       *int                 `json:"page,omitempty"`
+	Sort       *string              `json:"sort,omitempty"`
+	TotalRows  *int                 `json:"total_rows,omitempty"`
+	TotalPages *int                 `json:"total_pages,omitempty"`
+	Rows       []*RConsumerConsumer `json:"rows,omitempty"`
+}
+
+type RDeliveryDelivery struct {
+	ShipID     *int     `json:"ship_id,omitempty"`
+	Name       *string  `json:"name,omitempty"`
+	Address    *string  `json:"address,omitempty"`
+	KitchenID  *int     `json:"kitchen_id,omitempty"`
+	Status     *int     `json:"status,omitempty"`
+	DistanceKm *float64 `json:"distance_km,omitempty"`
+	Fee        *float64 `json:"fee,omitempty"`
+	EtaMinutes *int     `json:"eta_minutes,omitempty"`
+}
+
+type RDeliveryPage struct {
+	Limit      *int                 `json:"limit,omitempty"`
+	Page       *int                 `json:"page,omitempty"`
+	Sort       *string              `json:"sort,omitempty"`
+	TotalRows  *int                 `json:"total_rows,omitempty"`
+	TotalPages *int                 `json:"total_pages,omitempty"`
+	Rows       []*RDeliveryDelivery `json:"rows,omitempty"`
+}
+
+type RKitchenCategory struct {
+	ID   *int    `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type RKitchenFood struct {
+	ID         *int              `json:"id,omitempty"`
+	Name       *string           `json:"name,omitempty"`
+	CategoryID *int              `json:"category_id,omitempty"`
+	Price      *float64          `json:"price,omitempty"`
+	Status     *int              `json:"status,omitempty"`
+	Category   *RKitchenCategory `json:"category,omitempty"`
+}
+
+type RKitchenFoodPage struct {
+	Limit      *int            `json:"limit,omitempty"`
+	Page       *int            `json:"page,omitempty"`
+	Sort       *string         `json:"sort,omitempty"`
+	TotalRows  *int            `json:"total_rows,omitempty"`
+	TotalPages *int            `json:"total_pages,omitempty"`
+	Rows       []*RKitchenFood `json:"rows,omitempty"`
+}
+
+type RKitchenKitchen struct {
+	ID     *int            `json:"id,omitempty"`
+	Name   *string         `json:"name,omitempty"`
+	Status *string         `json:"status,omitempty"`
+	Foods  []*RKitchenFood `json:"foods,omitempty"`
+}
+
+type RKitchenKitchenPage struct {
+	Limit      *int               `json:"limit,omitempty"`
+	Page       *int               `json:"page,omitempty"`
+	Sort       *string            `json:"sort,omitempty"`
+	TotalRows  *int               `json:"total_rows,omitempty"`
+	TotalPages *int               `json:"total_pages,omitempty"`
+	Rows       []*RKitchenKitchen `json:"rows,omitempty"`
+}
+
+type ROrderOrder struct {
+	ID          *int               `json:"id,omitempty"`
+	TableName   *string            `json:"table_name,omitempty"`
+	Status      *string            `json:"status,omitempty"`
+	KitchenID   *int               `json:"kitchen_id,omitempty"`
+	TotalAmount *float64           `json:"total_amount,omitempty"`
+	Items       []*ROrderOrderItem `json:"items,omitempty"`
+	CreatedDate *string            `json:"created_date,omitempty"`
+	UpdatedTime *string            `json:"updated_time,omitempty"`
+}
+
+type ROrderOrderItem struct {
+	ID        *int     `json:"id,omitempty"`
+	OrderID   *int     `json:"order_id,omitempty"`
+	FoodID    *int     `json:"food_id,omitempty"`
+	FoodName  *string  `json:"food_name,omitempty"`
+	Quantity  *int     `json:"quantity,omitempty"`
+	UnitPrice *float64 `json:"unit_price,omitempty"`
+}
+
+type ROrderOrderPage struct {
+	Limit      *int           `json:"limit,omitempty"`
+	Page       *int           `json:"page,omitempty"`
+	Sort       *string        `json:"sort,omitempty"`
+	TotalRows  *int           `json:"total_rows,omitempty"`
+	TotalPages *int           `json:"total_pages,omitempty"`
+	Rows       []*ROrderOrder `json:"rows,omitempty"`
+}
+
+type ROrderReservation struct {
+	ID           *int    `json:"id,omitempty"`
+	TableName    *string `json:"table_name,omitempty"`
+	CustomerName *string `json:"customer_name,omitempty"`
+	PartySize    *int    `json:"party_size,omitempty"`
+	ReservedAt   *string `json:"reserved_at,omitempty"`
+	Status       *string `json:"status,omitempty"`
+	CreatedDate  *string `json:"created_date,omitempty"`
+}
+
+type ROrderReservationPage struct {
+	Limit      *int                 `json:"limit,omitempty"`
+	Page       *int                 `json:"page,omitempty"`
+	Sort       *string              `json:"sort,omitempty"`
+	TotalRows  *int                 `json:"total_rows,omitempty"`
+	TotalPages *int                 `json:"total_pages,omitempty"`
+	Rows       []*ROrderReservation `json:"rows,omitempty"`
+}
+
+type RecompMemberStatus struct {
+	MemberID         *int    `json:"MemberID,omitempty"`
+	Points           *int    `json:"Points,omitempty"`
+	Tier             *int    `json:"Tier,omitempty"`
+	TierName         *string `json:"TierName,omitempty"`
+	NextTier         *int    `json:"NextTier,omitempty"`
+	PointsToNextTier *int    `json:"PointsToNextTier,omitempty"`
+}
+
+type RecompRecompense struct {
+	ID                   *string `json:"ID,omitempty"`
+	MemberID             *int    `json:"MemberID,omitempty"`
+	Source               *string `json:"Source,omitempty"`
+	SourceID             *string `json:"SourceID,omitempty"`
+	Tier                 *int    `json:"Tier,omitempty"`
+	PointsPerPurchase    *int    `json:"PointsPerPurchase,omitempty"`
+	MinimumPoints        *int    `json:"MinimumPoints,omitempty"`
+	CodeDeReduction      *string `json:"CodeDeReduction,omitempty"`
+	ReductionDescription *string `json:"ReductionDescription,omitempty"`
+	// fixed or percent.
+	ReductionType  *string  `json:"ReductionType,omitempty"`
+	ReductionValue *float64 `json:"ReductionValue,omitempty"`
+	MaxReduction   *float64 `json:"MaxReduction,omitempty"`
+	ExpiryDate     *float64 `json:"ExpiryDate,omitempty"`
+}
+
+type RecompRecompenseInput struct {
+	ID                   *string  `json:"ID,omitempty"`
+	MemberID             *int     `json:"MemberID,omitempty"`
+	Source               *string  `json:"Source,omitempty"`
+	SourceID             *string  `json:"SourceID,omitempty"`
+	Tier                 *int     `json:"Tier,omitempty"`
+	PointsPerPurchase    *int     `json:"PointsPerPurchase,omitempty"`
+	MinimumPoints        *int     `json:"MinimumPoints,omitempty"`
+	CodeDeReduction      *string  `json:"CodeDeReduction,omitempty"`
+	ReductionDescription *string  `json:"ReductionDescription,omitempty"`
+	ReductionType        *string  `json:"ReductionType,omitempty"`
+	ReductionValue       *float64 `json:"ReductionValue,omitempty"`
+	MaxReduction         *float64 `json:"MaxReduction,omitempty"`
+	ExpiryDate           *float64 `json:"ExpiryDate,omitempty"`
+}
+
+type RecompRedemption struct {
+	Recompense *RecompRecompense `json:"Recompense,omitempty"`
+	Amount     *float64          `json:"Amount,omitempty"`
+	Discount   *float64          `json:"Discount,omitempty"`
+	Total      *float64          `json:"Total,omitempty"`
+}
+
+type RecruitAIScore struct {
+	Score      *float64       `json:"score,omitempty"`
+	Confidence *float64       `json:"confidence,omitempty"`
+	Breakdown  map[string]any `json:"breakdown,omitempty"`
+	ScoredAt   *string        `json:"scored_at,omitempty"`
+	ModelID    *string        `json:"model_id,omitempty"`
+}
+
+type RecruitAddress struct {
+	Street  *string `json:"street,omitempty"`
+	City    *string `json:"city,omitempty"`
+	Country *string `json:"country,omitempty"`
+}
+
+type RecruitApplication struct {
+	JobID               *string             `json:"job_id,omitempty"`
+	CandidateID         *string             `json:"candidate_id,omitempty"`
+	RecruiterID         *int                `json:"recruiter_id,omitempty"`
+	Status              *string             `json:"status,omitempty"`
+	CurrentStageID      *string             `json:"current_stage_id,omitempty"`
+	RejectionReason     *string             `json:"rejection_reason,omitempty"`
+	WithdrawReason      *string             `json:"withdraw_reason,omitempty"`
+	Interviews          []*RecruitInterview `json:"interviews,omitempty"`
+	Offer               *RecruitOffer       `json:"offer,omitempty"`
+	MatchScore          *RecruitAIScore     `json:"match_score,omitempty"`
+	Priority            *int                `json:"priority,omitempty"`
+	ReferredByPartnerID *string             `json:"referred_by_partner_id,omitempty"`
+	DaysInStage         *int                `json:"days_in_stage,omitempty"`
+	LastMovedAt         *string             `json:"last_moved_at,omitempty"`
+	ID                  *string             `json:"id,omitempty"`
+	CreatedAt           *string             `json:"created_at,omitempty"`
+	UpdatedAt           *string             `json:"updated_at,omitempty"`
+	DeletedAt           *string             `json:"deleted_at,omitempty"`
+}
+
+type RecruitApplicationPage struct {
+	Items      []*RecruitApplication `json:"items,omitempty"`
+	Total      *int                  `json:"total,omitempty"`
+	Page       *int                  `json:"page,omitempty"`
+	Limit      *int                  `json:"limit,omitempty"`
+	TotalPages *int                  `json:"total_pages,omitempty"`
+}
+
+type RecruitCandidate struct {
+	FullName          *string                  `json:"full_name,omitempty"`
+	Email             *string                  `json:"email,omitempty"`
+	Phone             *string                  `json:"phone,omitempty"`
+	AvatarURL         *string                  `json:"avatar_url,omitempty"`
+	LinkedinURL       *string                  `json:"linkedin_url,omitempty"`
+	ResumeURL         *string                  `json:"resume_url,omitempty"`
+	Location          *RecruitAddress          `json:"location,omitempty"`
+	CurrentTitle      *string                  `json:"current_title,omitempty"`
+	CurrentCompany    *string                  `json:"current_company,omitempty"`
+	YearsOfExperience *int                     `json:"years_of_experience,omitempty"`
+	ExperienceLevel   *string                  `json:"experience_level,omitempty"`
+	Skills            []string                 `json:"skills,omitempty"`
+	ExpectedSalary    *RecruitMoney            `json:"expected_salary,omitempty"`
+	NoticePeriodDays  *int                     `json:"notice_period_days,omitempty"`
+	Status            *string                  `json:"status,omitempty"`
+	Source            *string                  `json:"source,omitempty"`
+	ReferredByID      *string                  `json:"referred_by_id,omitempty"`
+	Tags              []string                 `json:"tags,omitempty"`
+	Notes             *string                  `json:"notes,omitempty"`
+	AiScore           *RecruitAIScore          `json:"ai_score,omitempty"`
+	Experiences       []*RecruitWorkExperience `json:"experiences,omitempty"`
+	Educations        []*RecruitEducation      `json:"educations,omitempty"`
+	ID                *string                  `json:"id,omitempty"`
+	CreatedAt         *string                  `json:"created_at,omitempty"`
+	UpdatedAt         *string                  `json:"updated_at,omitempty"`
+	DeletedAt         *string                  `json:"deleted_at,omitempty"`
+}
+
+type RecruitCandidateInput struct {
+	FullName      *string `json:"full_name,omitempty"`
+	Email         *string `json:"email,omitempty"`
+	Phone         *string `json:"phone,omitempty"`
+	Source        *string `json:"source,omitempty"`
+	ResumeURL     *string `json:"resume_url,omitempty"`
+	ReferralToken *string `json:"referral_token,omitempty"`
+}
+
+type RecruitCandidatePage struct {
+	Items      []*RecruitCandidate `json:"items,omitempty"`
+	Total      *int                `json:"total,omitempty"`
+	Page       *int                `json:"page,omitempty"`
+	Limit      *int                `json:"limit,omitempty"`
+	TotalPages *int                `json:"total_pages,omitempty"`
+}
+
+type RecruitCommissionConfig struct {
+	Type          *string       `json:"type,omitempty"`
+	FixedAmount   *RecruitMoney `json:"fixed_amount,omitempty"`
+	Percentage    *float64      `json:"percentage,omitempty"`
+	PayoutTrigger *string       `json:"payout_trigger,omitempty"`
+	ProbationDays *int          `json:"probation_days,omitempty"`
+}
+
+type RecruitEducation struct {
+	Institution *string `json:"institution,omitempty"`
+	Degree      *string `json:"degree,omitempty"`
+	Major       *string `json:"major,omitempty"`
+	GraduatedAt *string `json:"graduated_at,omitempty"`
+}
+
+type RecruitFeedbackInput struct {
+	Decision   *string `json:"decision,omitempty"`
+	Score      *int    `json:"score,omitempty"`
+	Strengths  *string `json:"strengths,omitempty"`
+	Weaknesses *string `json:"weaknesses,omitempty"`
+	Notes      *string `json:"notes,omitempty"`
+}
+
+type RecruitFunnel struct {
+	Funnel []*RecruitFunnelRow `json:"funnel,omitempty"`
+	Total  *int                `json:"total,omitempty"`
+}
+
+type RecruitFunnelRow struct {
+	JobID             *string  `json:"job_id,omitempty"`
+	JobTitle          *string  `json:"job_title,omitempty"`
+	JobCode           *string  `json:"job_code,omitempty"`
+	TotalApplications *int     `json:"total_applications,omitempty"`
+	CvReview          *int     `json:"cv_review,omitempty"`
+	PhoneScreen       *int     `json:"phone_screen,omitempty"`
+	Technical         *int     `json:"technical,omitempty"`
+	FinalRound        *int     `json:"final_round,omitempty"`
+	Offer             *int     `json:"offer,omitempty"`
+	Hired             *int     `json:"hired,omitempty"`
+	Rejected          *int     `json:"rejected,omitempty"`
+	Withdrawn         *int     `json:"withdrawn,omitempty"`
+	OfferRatePct      *float64 `json:"offer_rate_pct,omitempty"`
+	AvgDaysToHire     *float64 `json:"avg_days_to_hire,omitempty"`
+}
+
+type RecruitInterview struct {
+	ID             *string                   `json:"id,omitempty"`
+	Round          *int                      `json:"round,omitempty"`
+	Title          *string                   `json:"title,omitempty"`
+	InterviewerIds []int                     `json:"interviewer_ids,omitempty"`
+	ScheduledAt    *string                   `json:"scheduled_at,omitempty"`
+	DurationMin    *int                      `json:"duration_min,omitempty"`
+	MeetingURL     *string                   `json:"meeting_url,omitempty"`
+	Type           *string                   `json:"type,omitempty"`
+	Feedback       *RecruitInterviewFeedback `json:"feedback,omitempty"`
+}
+
+type RecruitInterviewFeedback struct {
+	SubmittedBy *int    `json:"submitted_by,omitempty"`
+	Decision    *string `json:"decision,omitempty"`
+	Score       *int    `json:"score,omitempty"`
+	Strengths   *string `json:"strengths,omitempty"`
+	Weaknesses  *string `json:"weaknesses,omitempty"`
+	Notes       *string `json:"notes,omitempty"`
+	SubmittedAt *string `json:"submitted_at,omitempty"`
+}
+
+type RecruitInterviewInput struct {
+	Round          *int    `json:"round,omitempty"`
+	Title          *string `json:"title,omitempty"`
+	InterviewerIds []int   `json:"interviewer_ids,omitempty"`
+	ScheduledAt    *string `json:"scheduled_at,omitempty"`
+	DurationMin    *int    `json:"duration_min,omitempty"`
+	MeetingURL     *string `json:"meeting_url,omitempty"`
+	Type           *string `json:"type,omitempty"`
+}
+
+type RecruitJob struct {
+	Title             *string                 `json:"title,omitempty"`
+	Code              *string                 `json:"code,omitempty"`
+	DepartmentID      *string                 `json:"department_id,omitempty"`
+	HiringManagerID   *int                    `json:"hiring_manager_id,omitempty"`
+	RecruiterIds      []int                   `json:"recruiter_ids,omitempty"`
+	Description       *string                 `json:"description,omitempty"`
+	Requirements      []string                `json:"requirements,omitempty"`
+	NiceToHave        []string                `json:"nice_to_have,omitempty"`
+	Skills            []string                `json:"skills,omitempty"`
+	JobType           *string                 `json:"job_type,omitempty"`
+	WorkMode          *string                 `json:"work_mode,omitempty"`
+	Location          *RecruitAddress         `json:"location,omitempty"`
+	SalaryMin         *RecruitMoney           `json:"salary_min,omitempty"`
+	SalaryMax         *RecruitMoney           `json:"salary_max,omitempty"`
+	SalaryVisible     *bool                   `json:"salary_visible,omitempty"`
+	Headcount         *int                    `json:"headcount,omitempty"`
+	PipelineStages    []*RecruitPipelineStage `json:"pipeline_stages,omitempty"`
+	Status            *string                 `json:"status,omitempty"`
+	Priority          *int                    `json:"priority,omitempty"`
+	Tags              []string                `json:"tags,omitempty"`
+	TotalApplications *int                    `json:"total_applications,omitempty"`
+	OpenApplications  *int                    `json:"open_applications,omitempty"`
+	ID                *string                 `json:"id,omitempty"`
+	CreatedAt         *string                 `json:"created_at,omitempty"`
+	UpdatedAt         *string                 `json:"updated_at,omitempty"`
+	DeletedAt         *string                 `json:"deleted_at,omitempty"`
+}
+
+type RecruitJobFunnel struct {
+	JobID             *string  `json:"job_id,omitempty"`
+	JobTitle          *string  `json:"job_title,omitempty"`
+	TotalApplications *int     `json:"total_applications,omitempty"`
+	CvReview          *int     `json:"cv_review,omitempty"`
+	PhoneScreen       *int     `json:"phone_screen,omitempty"`
+	Technical         *int     `json:"technical,omitempty"`
+	FinalRound        *int     `json:"final_round,omitempty"`
+	Offer             *int     `json:"offer,omitempty"`
+	Hired             *int     `json:"hired,omitempty"`
+	Rejected          *int     `json:"rejected,omitempty"`
+	OfferRatePct      *float64 `json:"offer_rate_pct,omitempty"`
+	AvgDaysToHire     *float64 `json:"avg_days_to_hire,omitempty"`
+}
+
+type RecruitJobInput struct {
+	Title           *string  `json:"title,omitempty"`
+	Code            *string  `json:"code,omitempty"`
+	DepartmentID    *string  `json:"department_id,omitempty"`
+	HiringManagerID *int     `json:"hiring_manager_id,omitempty"`
+	RecruiterIds    []int    `json:"recruiter_ids,omitempty"`
+	Description     *string  `json:"description,omitempty"`
+	Requirements    []string `json:"requirements,omitempty"`
+	Skills          []string `json:"skills,omitempty"`
+	JobType         *string  `json:"job_type,omitempty"`
+	WorkMode        *string  `json:"work_mode,omitempty"`
+	City            *string  `json:"city,omitempty"`
+	Country         *string  `json:"country,omitempty"`
+	SalaryMinAmount *int     `json:"salary_min_amount,omitempty"`
+	SalaryMaxAmount *int     `json:"salary_max_amount,omitempty"`
+	SalaryCurrency  *string  `json:"salary_currency,omitempty"`
+	Headcount       *int     `json:"headcount,omitempty"`
+}
+
+type RecruitJobPage struct {
+	Items      []*RecruitJob `json:"items,omitempty"`
+	Total      *int          `json:"total,omitempty"`
+	Page       *int          `json:"page,omitempty"`
+	Limit      *int          `json:"limit,omitempty"`
+	TotalPages *int          `json:"total_pages,omitempty"`
+}
+
+type RecruitMoney struct {
+	Amount   *int    `json:"amount,omitempty"`
+	Currency *string `json:"currency,omitempty"`
+}
+
+type RecruitNetworkRow struct {
+	PartnerID      *string `json:"partner_id,omitempty"`
+	FullName       *string `json:"full_name,omitempty"`
+	NetworkLevel   *int    `json:"network_level,omitempty"`
+	HiredReferrals *int    `json:"hired_referrals,omitempty"`
+	DirectDownline *int    `json:"direct_downline,omitempty"`
+}
+
+type RecruitOffer struct {
+	ID             *string       `json:"id,omitempty"`
+	Salary         *RecruitMoney `json:"salary,omitempty"`
+	StartDate      *string       `json:"start_date,omitempty"`
+	Title          *string       `json:"title,omitempty"`
+	Benefits       []string      `json:"benefits,omitempty"`
+	OfferLetterURL *string       `json:"offer_letter_url,omitempty"`
+	ExpiresAt      *string       `json:"expires_at,omitempty"`
+	SentAt         *string       `json:"sent_at,omitempty"`
+	RespondedAt    *string       `json:"responded_at,omitempty"`
+}
+
+type RecruitOfferInput struct {
+	SalaryAmount   *int     `json:"salary_amount,omitempty"`
+	SalaryCurrency *string  `json:"salary_currency,omitempty"`
+	StartDate      *string  `json:"start_date,omitempty"`
+	Title          *string  `json:"title,omitempty"`
+	Benefits       []string `json:"benefits,omitempty"`
+	ExpiresAt      *string  `json:"expires_at,omitempty"`
+}
+
+type RecruitPartner struct {
+	UserID              *int                     `json:"user_id,omitempty"`
+	FullName            *string                  `json:"full_name,omitempty"`
+	Email               *string                  `json:"email,omitempty"`
+	Phone               *string                  `json:"phone,omitempty"`
+	Company             *string                  `json:"company,omitempty"`
+	Bio                 *string                  `json:"bio,omitempty"`
+	ReferredByPartnerID *string                  `json:"referred_by_partner_id,omitempty"`
+	NetworkDepth        *int                     `json:"network_depth,omitempty"`
+	Status              *string                  `json:"status,omitempty"`
+	Tier                *string                  `json:"tier,omitempty"`
+	Commission          *RecruitCommissionConfig `json:"commission,omitempty"`
+	TotalReferrals      *int                     `json:"total_referrals,omitempty"`
+	HiredReferrals      *int                     `json:"hired_referrals,omitempty"`
+	ConversionRate      *float64                 `json:"conversion_rate,omitempty"`
+	TotalEarned         *RecruitMoney            `json:"total_earned,omitempty"`
+	PendingPayout       *RecruitMoney            `json:"pending_payout,omitempty"`
+	ID                  *string                  `json:"id,omitempty"`
+	CreatedAt           *string                  `json:"created_at,omitempty"`
+	UpdatedAt           *string                  `json:"updated_at,omitempty"`
+	DeletedAt           *string                  `json:"deleted_at,omitempty"`
+}
+
+type RecruitPartnerInput struct {
+	FullName        *string `json:"full_name,omitempty"`
+	Email           *string `json:"email,omitempty"`
+	Phone           *string `json:"phone,omitempty"`
+	Company         *string `json:"company,omitempty"`
+	ReferredByToken *string `json:"referred_by_token,omitempty"`
+}
+
+type RecruitPartnerNetwork struct {
+	PartnerID      *string `json:"partner_id,omitempty"`
+	Tier           *string `json:"tier,omitempty"`
+	NetworkDepth   *int    `json:"network_depth,omitempty"`
+	TotalReferrals *int    `json:"total_referrals,omitempty"`
+	HiredCount     *int    `json:"hired_count,omitempty"`
+}
+
+type RecruitPartnerStats struct {
+	Partner        *RecruitPartner `json:"partner,omitempty"`
+	TotalReferrals *int            `json:"total_referrals,omitempty"`
+	HiredCount     *int            `json:"hired_count,omitempty"`
+	ConversionRate *float64        `json:"conversion_rate,omitempty"`
+	PendingPayout  *RecruitMoney   `json:"pending_payout,omitempty"`
+	TotalEarned    *RecruitMoney   `json:"total_earned,omitempty"`
+	Rank           *int            `json:"rank,omitempty"`
+}
+
+type RecruitPipelineStage struct {
+	ID       *string `json:"id,omitempty"`
+	Name     *string `json:"name,omitempty"`
+	Order    *int    `json:"order,omitempty"`
+	IsSystem *bool   `json:"is_system,omitempty"`
+}
+
+type RecruitRecruiterRow struct {
+	RecruiterID        *int     `json:"recruiter_id,omitempty"`
+	TotalManaged       *int     `json:"total_managed,omitempty"`
+	Hired              *int     `json:"hired,omitempty"`
+	ActiveJobs         *int     `json:"active_jobs,omitempty"`
+	AvgTimeToCloseDays *float64 `json:"avg_time_to_close_days,omitempty"`
+	StaleApplications  *int     `json:"stale_applications,omitempty"`
+}
+
+type RecruitSLABreaches struct {
+	Applications  []*RecruitSLARow `json:"applications,omitempty"`
+	Total         *int             `json:"total,omitempty"`
+	BreachedCount *int             `json:"breached_count,omitempty"`
+}
+
+type RecruitSLARow struct {
+	ApplicationID *string `json:"application_id,omitempty"`
+	JobID         *string `json:"job_id,omitempty"`
+	CandidateID   *string `json:"candidate_id,omitempty"`
+	RecruiterID   *int    `json:"recruiter_id,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	DaysInStage   *int    `json:"days_in_stage,omitempty"`
+	SLADays       *int    `json:"sla_days,omitempty"`
+	IsBreached    *bool   `json:"is_breached,omitempty"`
+}
+
+type RecruitScoreRow struct {
+	JobID              *string  `json:"job_id,omitempty"`
+	JobTitle           *string  `json:"job_title,omitempty"`
+	ScoredApplications *int     `json:"scored_applications,omitempty"`
+	AvgScore           *float64 `json:"avg_score,omitempty"`
+	MinScore           *float64 `json:"min_score,omitempty"`
+	MaxScore           *float64 `json:"max_score,omitempty"`
+	HighMatch          *int     `json:"high_match,omitempty"`
+	MediumMatch        *int     `json:"medium_match,omitempty"`
+	LowMatch           *int     `json:"low_match,omitempty"`
+}
+
+type RecruitWorkExperience struct {
+	Company     *string `json:"company,omitempty"`
+	Title       *string `json:"title,omitempty"`
+	StartDate   *string `json:"start_date,omitempty"`
+	EndDate     *string `json:"end_date,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type ReferralLinkList struct {
+	Data []*ReferralReferralLink `json:"data,omitempty"`
+	Meta *ReferralPageMeta       `json:"meta,omitempty"`
+}
+
+type ReferralPageMeta struct {
+	Count      *int    `json:"count,omitempty"`
+	NextCursor *string `json:"next_cursor,omitempty"`
+}
+
+type ReferralReferralLink struct {
+	RefCode     *string `json:"ref_code,omitempty"`
+	CreatedAt   *int    `json:"created_at,omitempty"`
+	OwnerUserID *string `json:"owner_user_id,omitempty"`
+	Channel     *string `json:"channel,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	ExpiresAt   *int    `json:"expires_at,omitempty"`
+	DeepLink    *string `json:"deep_link,omitempty"`
+	Platform    *string `json:"platform,omitempty"`
+}
+
+type ReferralReferralStatusResponse struct {
+	RefCode          *string  `json:"ref_code,omitempty"`
+	Status           *string  `json:"status,omitempty"`
+	InvitationStatus *string  `json:"invitation_status,omitempty"`
+	OwnerUserID      *string  `json:"owner_user_id,omitempty"`
+	InvitedAt        *int     `json:"invited_at,omitempty"`
+	ActivatedAt      *int     `json:"activated_at,omitempty"`
+	TimeToInstallMs  *int     `json:"time_to_install_ms,omitempty"`
+	Platform         *string  `json:"platform,omitempty"`
+	NewUserID        *string  `json:"new_user_id,omitempty"`
+	RewardStatus     *string  `json:"reward_status,omitempty"`
+	RewardValue      *float64 `json:"reward_value,omitempty"`
+}
+
+type ReferralRewardProgram struct {
+	ProgramID *string               `json:"program_id,omitempty"`
+	Name      *string               `json:"name,omitempty"`
+	Status    *string               `json:"status,omitempty"`
+	Tiers     []*ReferralRewardTier `json:"tiers,omitempty"`
+	CreatedAt *int                  `json:"created_at,omitempty"`
+	UpdatedAt *int                  `json:"updated_at,omitempty"`
+}
+
+type ReferralRewardTier struct {
+	MinCount    *int     `json:"min_count,omitempty"`
+	MaxCount    *int     `json:"max_count,omitempty"`
+	RewardValue *float64 `json:"reward_value,omitempty"`
+}
+
+type ReferralRewardTierInput struct {
+	MinCount    *int     `json:"min_count,omitempty"`
+	MaxCount    *int     `json:"max_count,omitempty"`
+	RewardValue *float64 `json:"reward_value,omitempty"`
+}
+
+type ReferralShareTarget struct {
+	Channel  *string `json:"channel,omitempty"`
+	Label    *string `json:"label,omitempty"`
+	ShareURL *string `json:"share_url,omitempty"`
+	QRURL    *string `json:"qr_url,omitempty"`
+}
+
+type ReferralUserReferralStats struct {
+	UserID         *string  `json:"user_id,omitempty"`
+	TotalInvited   *int     `json:"total_invited,omitempty"`
+	TotalInstalled *int     `json:"total_installed,omitempty"`
+	TotalRewarded  *int     `json:"total_rewarded,omitempty"`
+	TotalRewardAmt *float64 `json:"total_reward_amt,omitempty"`
+	LastActiveAt   *int     `json:"last_active_at,omitempty"`
+}
+
+type RentAmenity struct {
+	ID   *int    `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+	Icon *string `json:"icon,omitempty"`
+}
+
+type RentAvailabilityInput struct {
+	From   *string  `json:"from,omitempty"`
+	To     *string  `json:"to,omitempty"`
+	Price  *float64 `json:"price,omitempty"`
+	Status *int     `json:"status,omitempty"`
+}
+
+type RentBooking struct {
+	ID            *int    `json:"id,omitempty"`
+	UserID        *int    `json:"user_id,omitempty"`
+	HomestayID    *int    `json:"homestay_id,omitempty"`
+	CheckinDate   *string `json:"checkin_date,omitempty"`
+	CheckoutDate  *string `json:"checkout_date,omitempty"`
+	Nights        *int    `json:"nights,omitempty"`
+	Guests        *int    `json:"guests,omitempty"`
+	Status        *int    `json:"status,omitempty"`
+	Currency      *string `json:"currency,omitempty"`
+	Subtotal      *string `json:"subtotal,omitempty"`
+	Discount      *string `json:"discount,omitempty"`
+	TotalAmount   *string `json:"total_amount,omitempty"`
+	Note          *string `json:"note,omitempty"`
+	RequestID     *string `json:"request_id,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	PaymentMethod *string `json:"payment_method,omitempty"`
+	PaymentRef    *string `json:"payment_ref,omitempty"`
+	PaidAt        *string `json:"paid_at,omitempty"`
+	ExpiresAt     *string `json:"expires_at,omitempty"`
+}
+
+type RentBookingInput struct {
+	HomestayID   *int    `json:"homestay_id,omitempty"`
+	CheckinDate  *string `json:"checkin_date,omitempty"`
+	CheckoutDate *string `json:"checkout_date,omitempty"`
+	Guests       *int    `json:"guests,omitempty"`
+	Currency     *string `json:"currency,omitempty"`
+	Note         *string `json:"note,omitempty"`
+	RequestID    *string `json:"request_id,omitempty"`
+}
+
+type RentHomestay struct {
+	ID                   *int        `json:"id,omitempty"`
+	Name                 *string     `json:"name,omitempty"`
+	Description          *string     `json:"description,omitempty"`
+	Type                 *int        `json:"type,omitempty"`
+	TypeName             *string     `json:"type_name,omitempty"`
+	Status               *int        `json:"status,omitempty"`
+	StatusName           *string     `json:"status_name,omitempty"`
+	ReviewNote           *string     `json:"review_note,omitempty"`
+	PhoneNumber          *string     `json:"phone_number,omitempty"`
+	Address              *string     `json:"address,omitempty"`
+	WardID               *int        `json:"ward_id,omitempty"`
+	DistrictID           *int        `json:"district_id,omitempty"`
+	ProvinceID           *int        `json:"province_id,omitempty"`
+	Images               []string    `json:"images,omitempty"`
+	Guests               *int        `json:"guests,omitempty"`
+	Bedrooms             *int        `json:"bedrooms,omitempty"`
+	Bathrooms            *int        `json:"bathrooms,omitempty"`
+	AmenityIds           []int       `json:"amenity_ids,omitempty"`
+	Version              *int        `json:"version,omitempty"`
+	CreatedAt            *string     `json:"created_at,omitempty"`
+	UpdatedAt            *string     `json:"updated_at,omitempty"`
+	HostID               *int        `json:"host_id,omitempty"`
+	AcceptsWalletPayment *bool       `json:"accepts_wallet_payment,omitempty"`
+	Rating               *float64    `json:"rating,omitempty"`
+	ReviewCount          *int        `json:"review_count,omitempty"`
+	Rates                []*RentRate `json:"rates,omitempty"`
+}
+
+type RentHomestayInput struct {
+	Name        *string  `json:"name,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Type        *int     `json:"type,omitempty"`
+	Status      *int     `json:"status,omitempty"`
+	PhoneNumber *string  `json:"phone_number,omitempty"`
+	Address     *string  `json:"address,omitempty"`
+	WardID      *int     `json:"ward_id,omitempty"`
+	DistrictID  *int     `json:"district_id,omitempty"`
+	ProvinceID  *int     `json:"province_id,omitempty"`
+	Images      []string `json:"images,omitempty"`
+	Guests      *int     `json:"guests,omitempty"`
+	Bedrooms    *int     `json:"bedrooms,omitempty"`
+	Bathrooms   *int     `json:"bathrooms,omitempty"`
+	AmenityIds  []int    `json:"amenity_ids,omitempty"`
+	WalletID    *string  `json:"wallet_id,omitempty"`
+}
+
+type RentHomestayPage struct {
+	Items      []*RentHomestay `json:"items,omitempty"`
+	HasMore    *bool           `json:"has_more,omitempty"`
+	NextCursor *string         `json:"next_cursor,omitempty"`
+}
+
+type RentInvoice struct {
+	ID            *int    `json:"id,omitempty"`
+	LeaseID       *int    `json:"lease_id,omitempty"`
+	UserID        *int    `json:"user_id,omitempty"`
+	HomestayID    *int    `json:"homestay_id,omitempty"`
+	Period        *int    `json:"period,omitempty"`
+	PeriodStart   *string `json:"period_start,omitempty"`
+	PeriodEnd     *string `json:"period_end,omitempty"`
+	DueDate       *string `json:"due_date,omitempty"`
+	Amount        *string `json:"amount,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	Overdue       *bool   `json:"overdue,omitempty"`
+	PaymentMethod *string `json:"payment_method,omitempty"`
+	PaymentRef    *string `json:"payment_ref,omitempty"`
+	PaidAt        *string `json:"paid_at,omitempty"`
+}
+
+type RentLease struct {
+	ID         *int           `json:"id,omitempty"`
+	UserID     *int           `json:"user_id,omitempty"`
+	HomestayID *int           `json:"homestay_id,omitempty"`
+	Model      *string        `json:"model,omitempty"`
+	StartDate  *string        `json:"start_date,omitempty"`
+	EndDate    *string        `json:"end_date,omitempty"`
+	Periods    *int           `json:"periods,omitempty"`
+	BillingDay *int           `json:"billing_day,omitempty"`
+	Currency   *string        `json:"currency,omitempty"`
+	Rent       *string        `json:"rent,omitempty"`
+	Status     *string        `json:"status,omitempty"`
+	Note       *string        `json:"note,omitempty"`
+	ExpiresAt  *string        `json:"expires_at,omitempty"`
+	CreatedAt  *string        `json:"created_at,omitempty"`
+	Invoices   []*RentInvoice `json:"invoices,omitempty"`
+}
+
+type RentLeaseInput struct {
+	HomestayID *int    `json:"homestay_id,omitempty"`
+	Model      *string `json:"model,omitempty"`
+	StartDate  *string `json:"start_date,omitempty"`
+	Periods    *int    `json:"periods,omitempty"`
+	BillingDay *int    `json:"billing_day,omitempty"`
+	Note       *string `json:"note,omitempty"`
+	RequestID  *string `json:"request_id,omitempty"`
+}
+
+type RentLoyalty struct {
+	Points   *int    `json:"points,omitempty"`
+	Tier     *int    `json:"tier,omitempty"`
+	TierName *string `json:"tier_name,omitempty"`
+}
+
+type RentRate struct {
+	Model      *string `json:"model,omitempty"`
+	Price      *string `json:"price,omitempty"`
+	Currency   *string `json:"currency,omitempty"`
+	MinPeriods *int    `json:"min_periods,omitempty"`
+	Active     *bool   `json:"active,omitempty"`
+}
+
+type RentRateInput struct {
+	Price      *float64 `json:"price,omitempty"`
+	Currency   *string  `json:"currency,omitempty"`
+	MinPeriods *int     `json:"min_periods,omitempty"`
+	Active     *bool    `json:"active,omitempty"`
+}
+
+type RentReview struct {
+	ID         *int    `json:"id,omitempty"`
+	HomestayID *int    `json:"homestay_id,omitempty"`
+	UserID     *int    `json:"user_id,omitempty"`
+	BookingID  *int    `json:"booking_id,omitempty"`
+	LeaseID    *int    `json:"lease_id,omitempty"`
+	Rating     *int    `json:"rating,omitempty"`
+	Comment    *string `json:"comment,omitempty"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+}
+
+type RentReviewInput struct {
+	BookingID *int    `json:"booking_id,omitempty"`
+	LeaseID   *int    `json:"lease_id,omitempty"`
+	Rating    *int    `json:"rating,omitempty"`
+	Comment   *string `json:"comment,omitempty"`
+}
+
+type RentSlot struct {
+	Date   *string `json:"date,omitempty"`
+	Price  *string `json:"price,omitempty"`
+	Status *int    `json:"status,omitempty"`
+}
+
+type RentWallet struct {
+	WalletID *string `json:"wallet_id,omitempty"`
+	Balance  *int    `json:"balance,omitempty"`
+	Currency *string `json:"currency,omitempty"`
+	Status   *string `json:"status,omitempty"`
+}
+
+type RentWalletTxn struct {
+	TransactionID *string `json:"transaction_id,omitempty"`
+	Type          *string `json:"type,omitempty"`
+	Amount        *int    `json:"amount,omitempty"`
+	Currency      *string `json:"currency,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	ReferenceID   *string `json:"reference_id,omitempty"`
+	Description   *string `json:"description,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+}
+
+type ResvAddon struct {
+	ServiceID *int    `json:"service_id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	Quantity  *int    `json:"quantity,omitempty"`
+	UnitPrice *string `json:"unit_price,omitempty"`
+	Amount    *string `json:"amount,omitempty"`
+}
+
+type ResvAddonInput struct {
+	ServiceID *int `json:"service_id,omitempty"`
+	Quantity  *int `json:"quantity,omitempty"`
+}
+
+type ResvCancellationQuote struct {
+	StatusName         *string        `json:"status_name,omitempty"`
+	HoursBeforeCheckIn *float64       `json:"hours_before_check_in,omitempty"`
+	FeePercent         *int           `json:"fee_percent,omitempty"`
+	Fee                *string        `json:"fee,omitempty"`
+	Refund             *string        `json:"refund,omitempty"`
+	Cancellable        *bool          `json:"cancellable,omitempty"`
+	Reason             *string        `json:"reason,omitempty"`
+	Policy             []*ResvtierDto `json:"policy,omitempty"`
+}
+
+type ResvHistoryEntry struct {
+	At         *string `json:"at,omitempty"`
+	By         *string `json:"by,omitempty"`
+	Event      *string `json:"event,omitempty"`
+	FromStatus *string `json:"from_status,omitempty"`
+	ToStatus   *string `json:"to_status,omitempty"`
+	Note       *string `json:"note,omitempty"`
+}
+
+type ResvHotel struct {
+	ID                   *int            `json:"id,omitempty"`
+	Name                 *string         `json:"name,omitempty"`
+	Description          *string         `json:"description,omitempty"`
+	Stars                *int            `json:"stars,omitempty"`
+	City                 *string         `json:"city,omitempty"`
+	Address              *string         `json:"address,omitempty"`
+	PhoneNumber          *string         `json:"phone_number,omitempty"`
+	Email                *string         `json:"email,omitempty"`
+	Images               []string        `json:"images,omitempty"`
+	Amenities            []string        `json:"amenities,omitempty"`
+	CheckInTime          *string         `json:"check_in_time,omitempty"`
+	CheckOutTime         *string         `json:"check_out_time,omitempty"`
+	Currency             *string         `json:"currency,omitempty"`
+	FreeCancelHours      *int            `json:"free_cancel_hours,omitempty"`
+	CancellationPolicy   []*ResvtierDto  `json:"cancellation_policy,omitempty"`
+	Status               *int            `json:"status,omitempty"`
+	StatusName           *string         `json:"status_name,omitempty"`
+	ReviewNote           *string         `json:"review_note,omitempty"`
+	ManagerID            *int            `json:"manager_id,omitempty"`
+	AcceptsWalletPayment *bool           `json:"accepts_wallet_payment,omitempty"`
+	Rating               *float64        `json:"rating,omitempty"`
+	ReviewCount          *int            `json:"review_count,omitempty"`
+	RoomTypes            []*ResvRoomType `json:"room_types,omitempty"`
+	CreatedAt            *string         `json:"created_at,omitempty"`
+}
+
+type ResvHotelInput struct {
+	Name              *string          `json:"name,omitempty"`
+	Description       *string          `json:"description,omitempty"`
+	Stars             *int             `json:"stars,omitempty"`
+	City              *string          `json:"city,omitempty"`
+	Address           *string          `json:"address,omitempty"`
+	PhoneNumber       *string          `json:"phone_number,omitempty"`
+	Email             *string          `json:"email,omitempty"`
+	Images            []string         `json:"images,omitempty"`
+	Amenities         []string         `json:"amenities,omitempty"`
+	CheckInTime       *string          `json:"check_in_time,omitempty"`
+	CheckOutTime      *string          `json:"check_out_time,omitempty"`
+	Currency          *string          `json:"currency,omitempty"`
+	FreeCancelHours   *int             `json:"free_cancel_hours,omitempty"`
+	CancellationTiers []map[string]any `json:"cancellation_tiers,omitempty"`
+	WalletID          *string          `json:"wallet_id,omitempty"`
+	Status            *int             `json:"status,omitempty"`
+}
+
+type ResvHotelPage struct {
+	Items      []*ResvHotel `json:"items,omitempty"`
+	HasMore    *bool        `json:"has_more,omitempty"`
+	NextCursor *string      `json:"next_cursor,omitempty"`
+}
+
+type ResvInventory struct {
+	Date           *string `json:"date,omitempty"`
+	TotalInventory *int    `json:"total_inventory,omitempty"`
+	TotalReserved  *int    `json:"total_reserved,omitempty"`
+	Left           *int    `json:"left,omitempty"`
+	Rate           *string `json:"rate,omitempty"`
+}
+
+type ResvInventoryInput struct {
+	From           *string  `json:"from,omitempty"`
+	To             *string  `json:"to,omitempty"`
+	TotalInventory *int     `json:"total_inventory,omitempty"`
+	Rate           *float64 `json:"rate,omitempty"`
+	RateOff        *bool    `json:"rate_off,omitempty"`
+}
+
+type ResvLoyalty struct {
+	Points   *int    `json:"points,omitempty"`
+	Tier     *int    `json:"tier,omitempty"`
+	TierName *string `json:"tier_name,omitempty"`
+}
+
+type ResvNotification struct {
+	ID            *int    `json:"id,omitempty"`
+	Kind          *string `json:"kind,omitempty"`
+	Title         *string `json:"title,omitempty"`
+	Body          *string `json:"body,omitempty"`
+	ReservationID *int    `json:"reservation_id,omitempty"`
+	HotelID       *int    `json:"hotel_id,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	Read          *bool   `json:"read,omitempty"`
+}
+
+type ResvNotificationPage struct {
+	Items      []*ResvNotification `json:"items,omitempty"`
+	HasMore    *bool               `json:"has_more,omitempty"`
+	NextCursor *string             `json:"next_cursor,omitempty"`
+}
+
+type ResvPromotion struct {
+	ID          *int    `json:"id,omitempty"`
+	Code        *string `json:"code,omitempty"`
+	Description *string `json:"description,omitempty"`
+	PercentOff  *int    `json:"percent_off,omitempty"`
+	AmountOff   *string `json:"amount_off,omitempty"`
+	MinNights   *int    `json:"min_nights,omitempty"`
+	MaxUses     *int    `json:"max_uses,omitempty"`
+	UsedCount   *int    `json:"used_count,omitempty"`
+	ValidFrom   *string `json:"valid_from,omitempty"`
+	ValidTo     *string `json:"valid_to,omitempty"`
+	Active      *bool   `json:"active,omitempty"`
+}
+
+type ResvQuote struct {
+	RoomType       *ResvRoomType `json:"room_type,omitempty"`
+	Nights         *int          `json:"nights,omitempty"`
+	RoomsAvailable *int          `json:"rooms_available,omitempty"`
+	Total          *string       `json:"total,omitempty"`
+	Bookable       *bool         `json:"bookable,omitempty"`
+}
+
+type ResvReport struct {
+	From                 *string              `json:"from,omitempty"`
+	To                   *string              `json:"to,omitempty"`
+	Occupancy            *ResvReportOccupancy `json:"occupancy,omitempty"`
+	Revenue              *ResvReportRevenue   `json:"revenue,omitempty"`
+	ReservationsByStatus map[string]any       `json:"reservations_by_status,omitempty"`
+	NoShows              *int                 `json:"no_shows,omitempty"`
+}
+
+type ResvReportOccupancy struct {
+	RoomNightsAvailable *int                `json:"room_nights_available,omitempty"`
+	RoomNightsSold      *int                `json:"room_nights_sold,omitempty"`
+	OccupancyPercent    *float64            `json:"occupancy_percent,omitempty"`
+	Days                []*ResvoccupancyDay `json:"days,omitempty"`
+}
+
+type ResvReportRevenue struct {
+	Currency             *string `json:"currency,omitempty"`
+	PaidReservations     *int    `json:"paid_reservations,omitempty"`
+	PaidRevenue          *string `json:"paid_revenue,omitempty"`
+	RefundedReservations *int    `json:"refunded_reservations,omitempty"`
+	RefundedAmount       *string `json:"refunded_amount,omitempty"`
+	CancellationFeesKept *string `json:"cancellation_fees_kept,omitempty"`
+	NetRevenue           *string `json:"net_revenue,omitempty"`
+}
+
+type ResvReservation struct {
+	ID              *int         `json:"id,omitempty"`
+	HotelID         *int         `json:"hotel_id,omitempty"`
+	RoomTypeID      *int         `json:"room_type_id,omitempty"`
+	GuestID         *int         `json:"guest_id,omitempty"`
+	CheckIn         *string      `json:"check_in,omitempty"`
+	CheckOut        *string      `json:"check_out,omitempty"`
+	Nights          *int         `json:"nights,omitempty"`
+	Rooms           *int         `json:"rooms,omitempty"`
+	Adults          *int         `json:"adults,omitempty"`
+	Children        *int         `json:"children,omitempty"`
+	Status          *int         `json:"status,omitempty"`
+	StatusName      *string      `json:"status_name,omitempty"`
+	StatusNote      *string      `json:"status_note,omitempty"`
+	Currency        *string      `json:"currency,omitempty"`
+	RoomTotal       *string      `json:"room_total,omitempty"`
+	PromoCode       *string      `json:"promo_code,omitempty"`
+	Discount        *string      `json:"discount,omitempty"`
+	ServicesTotal   *string      `json:"services_total,omitempty"`
+	TotalAmount     *string      `json:"total_amount,omitempty"`
+	CancellationFee *string      `json:"cancellation_fee,omitempty"`
+	RefundAmount    *string      `json:"refund_amount,omitempty"`
+	StayStatus      *string      `json:"stay_status,omitempty"`
+	CheckedInAt     *string      `json:"checked_in_at,omitempty"`
+	CheckedOutAt    *string      `json:"checked_out_at,omitempty"`
+	SpecialRequests *string      `json:"special_requests,omitempty"`
+	Services        []*ResvAddon `json:"services,omitempty"`
+	RequestID       *string      `json:"request_id,omitempty"`
+	PaymentMethod   *string      `json:"payment_method,omitempty"`
+	PaymentRef      *string      `json:"payment_ref,omitempty"`
+	PaidAt          *string      `json:"paid_at,omitempty"`
+	ExpiresAt       *string      `json:"expires_at,omitempty"`
+	CreatedAt       *string      `json:"created_at,omitempty"`
+}
+
+type ResvReservationInput struct {
+	HotelID         *int              `json:"hotel_id,omitempty"`
+	RoomTypeID      *int              `json:"room_type_id,omitempty"`
+	CheckIn         *string           `json:"check_in,omitempty"`
+	CheckOut        *string           `json:"check_out,omitempty"`
+	Rooms           *int              `json:"rooms,omitempty"`
+	Adults          *int              `json:"adults,omitempty"`
+	Children        *int              `json:"children,omitempty"`
+	SpecialRequests *string           `json:"special_requests,omitempty"`
+	Services        []*ResvAddonInput `json:"services,omitempty"`
+	PromoCode       *string           `json:"promo_code,omitempty"`
+	RequestID       *string           `json:"request_id,omitempty"`
+}
+
+type ResvReservationPage struct {
+	Items      []*ResvReservation `json:"items,omitempty"`
+	HasMore    *bool              `json:"has_more,omitempty"`
+	NextCursor *string            `json:"next_cursor,omitempty"`
+}
+
+type ResvReview struct {
+	ID            *int    `json:"id,omitempty"`
+	HotelID       *int    `json:"hotel_id,omitempty"`
+	UserID        *int    `json:"user_id,omitempty"`
+	ReservationID *int    `json:"reservation_id,omitempty"`
+	Rating        *int    `json:"rating,omitempty"`
+	Comment       *string `json:"comment,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+}
+
+type ResvReviewPage struct {
+	Items      []*ResvReview `json:"items,omitempty"`
+	HasMore    *bool         `json:"has_more,omitempty"`
+	NextCursor *string       `json:"next_cursor,omitempty"`
+}
+
+type ResvRoom struct {
+	ID         *int    `json:"id,omitempty"`
+	RoomTypeID *int    `json:"room_type_id,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	Floor      *int    `json:"floor,omitempty"`
+	Available  *bool   `json:"available,omitempty"`
+}
+
+type ResvRoomInput struct {
+	RoomTypeID *int    `json:"room_type_id,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	Floor      *int    `json:"floor,omitempty"`
+	Available  *bool   `json:"available,omitempty"`
+}
+
+type ResvRoomType struct {
+	ID          *int     `json:"id,omitempty"`
+	Name        *string  `json:"name,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Capacity    *int     `json:"capacity,omitempty"`
+	Bed         *string  `json:"bed,omitempty"`
+	SizeM2      *int     `json:"size_m2,omitempty"`
+	View        *string  `json:"view,omitempty"`
+	Amenities   []string `json:"amenities,omitempty"`
+	Active      *bool    `json:"active,omitempty"`
+}
+
+type ResvRoomTypeInput struct {
+	Name        *string  `json:"name,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Capacity    *int     `json:"capacity,omitempty"`
+	Bed         *string  `json:"bed,omitempty"`
+	SizeM2      *int     `json:"size_m2,omitempty"`
+	View        *string  `json:"view,omitempty"`
+	Amenities   []string `json:"amenities,omitempty"`
+	Active      *bool    `json:"active,omitempty"`
+}
+
+type ResvService struct {
+	ID          *int    `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Price       *string `json:"price,omitempty"`
+	Unit        *string `json:"unit,omitempty"`
+	Active      *bool   `json:"active,omitempty"`
+}
+
+type ResvServiceInput struct {
+	Name        *string  `json:"name,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Price       *float64 `json:"price,omitempty"`
+	Unit        *string  `json:"unit,omitempty"`
+	Active      *bool    `json:"active,omitempty"`
+}
+
+type ResvTierInput struct {
+	HoursBefore *int     `json:"hours_before,omitempty"`
+	FeePercent  *float64 `json:"fee_percent,omitempty"`
+}
+
+type ResvUnreadCount struct {
+	Unread *int `json:"unread,omitempty"`
+}
+
+type ResvWait struct {
+	ID            *int    `json:"id,omitempty"`
+	HotelID       *int    `json:"hotel_id,omitempty"`
+	RoomTypeID    *int    `json:"room_type_id,omitempty"`
+	CheckIn       *string `json:"check_in,omitempty"`
+	CheckOut      *string `json:"check_out,omitempty"`
+	Rooms         *int    `json:"rooms,omitempty"`
+	Adults        *int    `json:"adults,omitempty"`
+	Children      *int    `json:"children,omitempty"`
+	State         *string `json:"state,omitempty"`
+	ReservationID *int    `json:"reservation_id,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	OfferedAt     *string `json:"offered_at,omitempty"`
+}
+
+type ResvWaitPage struct {
+	Items      []*ResvWait `json:"items,omitempty"`
+	HasMore    *bool       `json:"has_more,omitempty"`
+	NextCursor *string     `json:"next_cursor,omitempty"`
+}
+
+type ResvWallet struct {
+	WalletID *string `json:"wallet_id,omitempty"`
+	Balance  *int    `json:"balance,omitempty"`
+	Currency *string `json:"currency,omitempty"`
+	Status   *string `json:"status,omitempty"`
+}
+
+type ResvWalletTxn struct {
+	TransactionID *string `json:"transaction_id,omitempty"`
+	Type          *string `json:"type,omitempty"`
+	Amount        *int    `json:"amount,omitempty"`
+	Currency      *string `json:"currency,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	ReferenceID   *string `json:"reference_id,omitempty"`
+	Description   *string `json:"description,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+}
+
+type ResvoccupancyDay struct {
+	Date             *string  `json:"date,omitempty"`
+	Rooms            *int     `json:"rooms,omitempty"`
+	Reserved         *int     `json:"reserved,omitempty"`
+	OccupancyPercent *float64 `json:"occupancy_percent,omitempty"`
+}
+
+type ResvtierDto struct {
+	HoursBefore *int `json:"hours_before,omitempty"`
+	FeePercent  *int `json:"fee_percent,omitempty"`
+}
+
+type RewardMeta struct {
+	Count *int `json:"count,omitempty"`
+	Page  *int `json:"page,omitempty"`
+	Pages *int `json:"pages,omitempty"`
+}
+
+type RewardPage struct {
+	Meta    *RewardMeta     `json:"meta,omitempty"`
+	Records []*RewardReward `json:"records,omitempty"`
+}
+
+type RewardReward struct {
+	ID          *string `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Points      *int    `json:"points,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type RewardRewardInput struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Points      *int    `json:"points,omitempty"`
+}
+
+type RoomMember struct {
+	RoomID   *int    `json:"room_id,omitempty"`
+	Username *string `json:"username,omitempty"`
+	Role     *string `json:"role,omitempty"`
+	JoinedAt *string `json:"joined_at,omitempty"`
+}
+
+type RoomMessage struct {
+	ID        *int    `json:"id,omitempty"`
+	RoomID    *int    `json:"room_id,omitempty"`
+	Username  *string `json:"username,omitempty"`
+	Content   *string `json:"content,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+}
+
+type RoomRoom struct {
+	ID          *int    `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Owner       *string `json:"owner,omitempty"`
+	MemberCount *int    `json:"member_count,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+}
+
+type RoomUser struct {
+	ID       *int    `json:"id,omitempty"`
+	Username *string `json:"username,omitempty"`
+}
+
+type SardAccount struct {
+	ID           string  `json:"id"`
+	CustomerID   string  `json:"customer_id"`
+	ProgramCode  string  `json:"program_code"`
+	Mode         string  `json:"mode"`
+	Currency     string  `json:"currency"`
+	HolderName   string  `json:"holder_name"`
+	Status       string  `json:"status"`
+	StatusReason string  `json:"status_reason"`
+	CreditLimit  int     `json:"credit_limit"`
+	Balance      int     `json:"balance"`
+	Held         int     `json:"held"`
+	Available    int     `json:"available"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	UpdatedAt    *string `json:"updated_at,omitempty"`
+}
+
+type SardAuthorization struct {
+	ID               string  `json:"id"`
+	AccountID        string  `json:"account_id"`
+	CardID           string  `json:"card_id"`
+	ProcessingCode   string  `json:"processing_code"`
+	Status           string  `json:"status"`
+	Approved         bool    `json:"approved"`
+	ResponseCode     string  `json:"response_code"`
+	Reason           string  `json:"reason"`
+	AuthCode         string  `json:"auth_code"`
+	Amount           int     `json:"amount"`
+	ConfirmedAmount  int     `json:"confirmed_amount"`
+	Currency         string  `json:"currency"`
+	Channel          string  `json:"channel"`
+	Merchant         string  `json:"merchant"`
+	Mcc              string  `json:"mcc"`
+	AuthenticationID string  `json:"authentication_id"`
+	CreatedAt        *string `json:"created_at,omitempty"`
+	UpdatedAt        *string `json:"updated_at,omitempty"`
+}
+
+type SardCard struct {
+	ID               string        `json:"id"`
+	AccountID        string        `json:"account_id"`
+	CustomerID       string        `json:"customer_id"`
+	ProgramCode      string        `json:"program_code"`
+	Type             string        `json:"type"`
+	CardholderName   string        `json:"cardholder_name"`
+	MaskedPan        string        `json:"masked_pan"`
+	Last4            string        `json:"last4"`
+	Expiry           string        `json:"expiry"`
+	ValidUntil       *string       `json:"valid_until,omitempty"`
+	Status           string        `json:"status"`
+	StatusReason     string        `json:"status_reason"`
+	Limits           *SardLimits   `json:"limits,omitempty"`
+	Controls         *SardControls `json:"controls,omitempty"`
+	SpentToday       *int          `json:"spent_today,omitempty"`
+	PinSet           bool          `json:"pin_set"`
+	PinLocked        bool          `json:"pin_locked"`
+	ReplacesCardID   string        `json:"replaces_card_id"`
+	ReplacedByCardID string        `json:"replaced_by_card_id"`
+	CreatedAt        *string       `json:"created_at,omitempty"`
+	UpdatedAt        *string       `json:"updated_at,omitempty"`
+	ActivatedAt      *string       `json:"activated_at,omitempty"`
+}
+
+type SardChallenge struct {
+	ID              string  `json:"id"`
+	Status          string  `json:"status"`
+	CardID          string  `json:"card_id"`
+	MaskedPan       string  `json:"masked_pan"`
+	Amount          int     `json:"amount"`
+	Currency        string  `json:"currency"`
+	Merchant        string  `json:"merchant"`
+	Mcc             string  `json:"mcc"`
+	AttemptsLeft    int     `json:"attempts_left"`
+	Resends         int     `json:"resends"`
+	OtpExpiresAt    *string `json:"otp_expires_at,omitempty"`
+	FailureReason   string  `json:"failure_reason"`
+	ExpiresAt       *string `json:"expires_at,omitempty"`
+	AuthenticatedAt *string `json:"authenticated_at,omitempty"`
+	ValidUntil      *string `json:"valid_until,omitempty"`
+	UsedAt          *string `json:"used_at,omitempty"`
+	CreatedAt       *string `json:"created_at,omitempty"`
+	Otp             string  `json:"otp"`
+}
+
+type SardControls struct {
+	Pos         bool `json:"pos"`
+	Contactless bool `json:"contactless"`
+	Ecommerce   bool `json:"ecommerce"`
+	Atm         bool `json:"atm"`
+}
+
+type SardCustomer struct {
+	ID              string           `json:"id"`
+	UserID          int              `json:"user_id"`
+	Username        string           `json:"username"`
+	FullName        string           `json:"full_name"`
+	Email           string           `json:"email"`
+	Phone           string           `json:"phone"`
+	Address         string           `json:"address"`
+	Gender          string           `json:"gender"`
+	Status          string           `json:"status"`
+	Kyc             *SardKyc         `json:"kyc,omitempty"`
+	CardEligibility *SardEligibility `json:"card_eligibility,omitempty"`
+	CreatedAt       *string          `json:"created_at,omitempty"`
+	UpdatedAt       *string          `json:"updated_at,omitempty"`
+	SyncedAt        *string          `json:"synced_at,omitempty"`
+}
+
+type SardDocument struct {
+	Type          string  `json:"type"`
+	Source        string  `json:"source"`
+	NumberLast4   string  `json:"number_last4"`
+	FullName      string  `json:"full_name"`
+	DateOfBirth   string  `json:"date_of_birth"`
+	Gender        string  `json:"gender"`
+	Nationality   string  `json:"nationality"`
+	ExpiryDate    string  `json:"expiry_date"`
+	ChecksumValid bool    `json:"checksum_valid"`
+	NfcVerified   bool    `json:"nfc_verified"`
+	Confidence    float64 `json:"confidence"`
+}
+
+type SardEligibility struct {
+	Eligible bool     `json:"eligible"`
+	Reasons  []string `json:"reasons,omitempty"`
+}
+
+type SardIssuedCard struct {
+	Card   *SardCard `json:"card,omitempty"`
+	Pan    *string   `json:"pan,omitempty"`
+	Cvv    *string   `json:"cvv,omitempty"`
+	Notice *string   `json:"notice,omitempty"`
+}
+
+type SardKyc struct {
+	Status       string        `json:"status"`
+	FaceVerified bool          `json:"face_verified"`
+	Document     *SardDocument `json:"document,omitempty"`
+	Reasons      []string      `json:"reasons,omitempty"`
+	SubmittedAt  *string       `json:"submitted_at,omitempty"`
+	VerifiedAt   *string       `json:"verified_at,omitempty"`
+}
+
+type SardLimits struct {
+	PerTransaction int `json:"per_transaction"`
+	Daily          int `json:"daily"`
+}
+
+type SardProgram struct {
+	Code               string        `json:"code"`
+	Name               string        `json:"name"`
+	Mode               string        `json:"mode"`
+	Bin                string        `json:"bin"`
+	Currency           string        `json:"currency"`
+	ValidityYears      int           `json:"validity_years"`
+	CardTypes          []string      `json:"card_types,omitempty"`
+	MaxActiveVirtual   int           `json:"max_active_virtual"`
+	DefaultCreditLimit int           `json:"default_credit_limit"`
+	MaxCreditLimit     int           `json:"max_credit_limit"`
+	DefaultLimits      *SardLimits   `json:"default_limits,omitempty"`
+	MaxLimits          *SardLimits   `json:"max_limits,omitempty"`
+	SupportedChannels  *SardControls `json:"supported_channels,omitempty"`
+	StepUpThreshold    int           `json:"step_up_threshold"`
+}
+
+type SardTransaction struct {
+	ID              string  `json:"id"`
+	CardID          string  `json:"card_id"`
+	AuthorizationID string  `json:"authorization_id"`
+	Type            string  `json:"type"`
+	ProcessingCode  string  `json:"processing_code"`
+	Amount          int     `json:"amount"`
+	BalanceAfter    int     `json:"balance_after"`
+	Description     string  `json:"description"`
+	CreatedAt       *string `json:"created_at,omitempty"`
+}
+
+type SearchDocument struct {
+	Index     string         `json:"index"`
+	ID        string         `json:"id"`
+	Score     *float64       `json:"score,omitempty"`
+	Source    map[string]any `json:"source,omitempty"`
+	Highlight map[string]any `json:"highlight,omitempty"`
+}
+
+type SearchDocumentPage struct {
+	Items      []*SearchDocument `json:"items"`
+	Total      *int              `json:"total,omitempty"`
+	NextCursor *string           `json:"next_cursor,omitempty"`
+	HasMore    *bool             `json:"has_more,omitempty"`
+	Facets     map[string]any    `json:"facets,omitempty"`
+	Suggestion *string           `json:"suggestion,omitempty"`
+}
+
+type SearchFieldInfo struct {
+	Name         string   `json:"name"`
+	Types        []string `json:"types,omitempty"`
+	Searchable   bool     `json:"searchable"`
+	Aggregatable bool     `json:"aggregatable"`
+}
+
+type SearchIndexInfo struct {
+	Name         string `json:"name"`
+	Index        string `json:"index"`
+	DocsCount    int    `json:"docs_count"`
+	Managed      bool   `json:"managed"`
+	WriteBlocked bool   `json:"write_blocked"`
+}
+
+type SearchReindexResult struct {
+	Name   string `json:"name"`
+	From   string `json:"from"`
+	To     string `json:"to"`
+	Copied int    `json:"copied"`
+	Error  string `json:"error"`
+}
+
+type SearchSchemaStatus struct {
+	Template *string            `json:"template,omitempty"`
+	Applied  *bool              `json:"applied,omitempty"`
+	Version  *int               `json:"version,omitempty"`
+	Indices  []*SearchIndexInfo `json:"indices,omitempty"`
+}
+
+type SerpBatch struct {
+	Results []*SerpBatchItem `json:"results"`
+}
+
+type SerpBatchItem struct {
+	Status   *int    `json:"status,omitempty"`
+	SearchID *string `json:"search_id,omitempty"`
+	Cached   *bool   `json:"cached,omitempty"`
+	Error    *string `json:"error,omitempty"`
+	Data     any     `json:"data,omitempty"`
+}
+
+type SerpSearchInput struct {
+	Engine  *string        `json:"engine,omitempty"`
+	Params  map[string]any `json:"params,omitempty"`
+	Output  *string        `json:"output,omitempty"`
+	NoCache *bool          `json:"no_cache,omitempty"`
+	Async   *bool          `json:"async,omitempty"`
+}
+
+type ShareAnswer struct {
+	Result string  `json:"result"`
+	Model  *string `json:"model,omitempty"`
+}
+
+type ShipAddress struct {
+	Name       *string `json:"name,omitempty"`
+	Phone      *string `json:"phone,omitempty"`
+	Street     *string `json:"street,omitempty"`
+	WardCode   *string `json:"ward_code,omitempty"`
+	DistrictID *int    `json:"district_id,omitempty"`
+	ProvinceID *int    `json:"province_id,omitempty"`
+}
+
+type ShipAddressInput struct {
+	Name       *string `json:"name,omitempty"`
+	Phone      *string `json:"phone,omitempty"`
+	Street     *string `json:"street,omitempty"`
+	WardCode   *string `json:"ward_code,omitempty"`
+	DistrictID *int    `json:"district_id,omitempty"`
+	ProvinceID *int    `json:"province_id,omitempty"`
+	Address    *string `json:"address,omitempty"`
+}
+
+type ShipCreateShipmentInput struct {
+	ClientOrderCode *string           `json:"client_order_code,omitempty"`
+	Recipient       *ShipAddressInput `json:"recipient,omitempty"`
+	Parcel          *ShipParcelInput  `json:"parcel,omitempty"`
+	CodAmount       *int              `json:"cod_amount,omitempty"`
+	InsuranceValue  *int              `json:"insurance_value,omitempty"`
+	PaymentType     *int              `json:"payment_type,omitempty"`
+	RequiredNote    *string           `json:"required_note,omitempty"`
+	Note            *string           `json:"note,omitempty"`
+	Strategy        *string           `json:"strategy,omitempty"`
+	WarehouseIds    []int             `json:"warehouse_ids,omitempty"`
+	WarehouseID     *int              `json:"warehouse_id,omitempty"`
+	ServiceID       *int              `json:"service_id,omitempty"`
+	Customer        map[string]any    `json:"customer,omitempty"`
+	CallbackURL     *string           `json:"callback_url,omitempty"`
+}
+
+type ShipCustomer struct {
+	UserID *int    `json:"user_id,omitempty"`
+	Email  *string `json:"email,omitempty"`
+}
+
+type ShipDistrict struct {
+	ID         *int    `json:"id,omitempty"`
+	ProvinceID *int    `json:"province_id,omitempty"`
+	Name       *string `json:"name,omitempty"`
+}
+
+type ShipItem struct {
+	Name       *string `json:"name,omitempty"`
+	Code       *string `json:"code,omitempty"`
+	Quantity   *int    `json:"quantity,omitempty"`
+	WeightGram *int    `json:"weight_gram,omitempty"`
+	Price      *int    `json:"price,omitempty"`
+}
+
+type ShipParcel struct {
+	WeightGram *int        `json:"weight_gram,omitempty"`
+	LengthCm   *int        `json:"length_cm,omitempty"`
+	WidthCm    *int        `json:"width_cm,omitempty"`
+	HeightCm   *int        `json:"height_cm,omitempty"`
+	Content    *string     `json:"content,omitempty"`
+	Items      []*ShipItem `json:"items,omitempty"`
+}
+
+type ShipParcelInput struct {
+	Weight *int             `json:"weight,omitempty"`
+	Length *int             `json:"length,omitempty"`
+	Width  *int             `json:"width,omitempty"`
+	Height *int             `json:"height,omitempty"`
+	Items  []map[string]any `json:"items,omitempty"`
+}
+
+type ShipProvince struct {
+	ID   *int    `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type ShipQuoteInput struct {
+	Recipient      *ShipAddressInput `json:"recipient,omitempty"`
+	Parcel         *ShipParcelInput  `json:"parcel,omitempty"`
+	CodAmount      *int              `json:"cod_amount,omitempty"`
+	InsuranceValue *int              `json:"insurance_value,omitempty"`
+	WarehouseIds   []int             `json:"warehouse_ids,omitempty"`
+}
+
+type ShipShipment struct {
+	ID                 *int          `json:"id,omitempty"`
+	Code               *string       `json:"code,omitempty"`
+	ClientService      *string       `json:"client_service,omitempty"`
+	ClientOrderCode    *string       `json:"client_order_code,omitempty"`
+	Status             *string       `json:"status,omitempty"`
+	CarrierStatus      *string       `json:"carrier_status,omitempty"`
+	CarrierOrderCode   *string       `json:"carrier_order_code,omitempty"`
+	WarehouseID        *int          `json:"warehouse_id,omitempty"`
+	CarrierShopID      *int          `json:"carrier_shop_id,omitempty"`
+	ServiceID          *int          `json:"service_id,omitempty"`
+	ServiceTypeID      *int          `json:"service_type_id,omitempty"`
+	ServiceName        *string       `json:"service_name,omitempty"`
+	Strategy           *string       `json:"strategy,omitempty"`
+	Recipient          *ShipAddress  `json:"recipient,omitempty"`
+	Parcel             *ShipParcel   `json:"parcel,omitempty"`
+	Customer           *ShipCustomer `json:"customer,omitempty"`
+	CodAmount          *int          `json:"cod_amount,omitempty"`
+	InsuranceValue     *int          `json:"insurance_value,omitempty"`
+	PaymentType        *string       `json:"payment_type,omitempty"`
+	RequiredNote       *string       `json:"required_note,omitempty"`
+	Note               *string       `json:"note,omitempty"`
+	QuotedFee          *int          `json:"quoted_fee,omitempty"`
+	ShippingFee        *int          `json:"shipping_fee,omitempty"`
+	ExpectedDeliveryAt *string       `json:"expected_delivery_at,omitempty"`
+	DeliveredAt        *string       `json:"delivered_at,omitempty"`
+	CallbackURL        *string       `json:"callback_url,omitempty"`
+	PlaceAttempts      *int          `json:"place_attempts,omitempty"`
+	LastError          *string       `json:"last_error,omitempty"`
+	CreatedAt          *string       `json:"created_at,omitempty"`
+	UpdatedAt          *string       `json:"updated_at,omitempty"`
+}
+
+type ShipShipmentDetail struct {
+	Shipment *ShipShipment        `json:"shipment,omitempty"`
+	Events   []*ShipShipmentEvent `json:"events,omitempty"`
+}
+
+type ShipShipmentEvent struct {
+	ID            *int    `json:"id,omitempty"`
+	ShipmentID    *int    `json:"shipment_id,omitempty"`
+	Source        *string `json:"source,omitempty"`
+	FromStatus    *string `json:"from_status,omitempty"`
+	ToStatus      *string `json:"to_status,omitempty"`
+	CarrierStatus *string `json:"carrier_status,omitempty"`
+	Reason        *string `json:"reason,omitempty"`
+	Applied       *bool   `json:"applied,omitempty"`
+	OccurredAt    *string `json:"occurred_at,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+}
+
+type ShipShipmentList struct {
+	Items []*ShipShipment `json:"items,omitempty"`
+	Total *int            `json:"total,omitempty"`
+}
+
+type ShipWard struct {
+	Code       *string `json:"code,omitempty"`
+	DistrictID *int    `json:"district_id,omitempty"`
+	Name       *string `json:"name,omitempty"`
+}
+
+type ShipWarehouse struct {
+	ID            *int    `json:"id,omitempty"`
+	Code          *string `json:"code,omitempty"`
+	Name          *string `json:"name,omitempty"`
+	Phone         *string `json:"phone,omitempty"`
+	Street        *string `json:"street,omitempty"`
+	WardCode      *string `json:"ward_code,omitempty"`
+	DistrictID    *int    `json:"district_id,omitempty"`
+	ProvinceID    *int    `json:"province_id,omitempty"`
+	CarrierShopID *int    `json:"carrier_shop_id,omitempty"`
+	Active        *bool   `json:"active,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	UpdatedAt     *string `json:"updated_at,omitempty"`
+}
+
+type ShopifyLineItem struct {
+	ID               *int    `json:"id,omitempty"`
+	OrderID          *int    `json:"order_id,omitempty"`
+	ShopifyID        *string `json:"shopify_id,omitempty"`
+	VariantShopifyID *string `json:"variant_shopify_id,omitempty"`
+	Title            *string `json:"title,omitempty"`
+	Sku              *string `json:"sku,omitempty"`
+	Quantity         *int    `json:"quantity,omitempty"`
+	UnitPrice        *string `json:"unit_price,omitempty"`
+	CreatedAt        *string `json:"created_at,omitempty"`
+	UpdatedAt        *string `json:"updated_at,omitempty"`
+}
+
+type ShopifyOrder struct {
+	ID                *int               `json:"id,omitempty"`
+	ShopifyID         *string            `json:"shopify_id,omitempty"`
+	Name              *string            `json:"name,omitempty"`
+	Email             *string            `json:"email,omitempty"`
+	FinancialStatus   *string            `json:"financial_status,omitempty"`
+	FulfillmentStatus *string            `json:"fulfillment_status,omitempty"`
+	Currency          *string            `json:"currency,omitempty"`
+	TotalPrice        *string            `json:"total_price,omitempty"`
+	CancelledAt       *string            `json:"cancelled_at,omitempty"`
+	ProcessedAt       *string            `json:"processed_at,omitempty"`
+	LineItems         []*ShopifyLineItem `json:"line_items,omitempty"`
+	ShopifyCreatedAt  *string            `json:"shopify_created_at,omitempty"`
+	ShopifyUpdatedAt  *string            `json:"shopify_updated_at,omitempty"`
+	CreatedAt         *string            `json:"created_at,omitempty"`
+	UpdatedAt         *string            `json:"updated_at,omitempty"`
+}
+
+type ShopifyOrderList struct {
+	Items []*ShopifyOrder `json:"items,omitempty"`
+	Total *int            `json:"total,omitempty"`
+}
+
+type ShopifyProduct struct {
+	ID               *int                     `json:"id,omitempty"`
+	ShopifyID        *string                  `json:"shopify_id,omitempty"`
+	Title            *string                  `json:"title,omitempty"`
+	Handle           *string                  `json:"handle,omitempty"`
+	Status           *string                  `json:"status,omitempty"`
+	Vendor           *string                  `json:"vendor,omitempty"`
+	ProductType      *string                  `json:"product_type,omitempty"`
+	Tags             *string                  `json:"tags,omitempty"`
+	Variants         []*ShopifyProductVariant `json:"variants,omitempty"`
+	ShopifyCreatedAt *string                  `json:"shopify_created_at,omitempty"`
+	ShopifyUpdatedAt *string                  `json:"shopify_updated_at,omitempty"`
+	CreatedAt        *string                  `json:"created_at,omitempty"`
+	UpdatedAt        *string                  `json:"updated_at,omitempty"`
+}
+
+type ShopifyProductList struct {
+	Items []*ShopifyProduct `json:"items,omitempty"`
+	Total *int              `json:"total,omitempty"`
+}
+
+type ShopifyProductVariant struct {
+	ID                *int    `json:"id,omitempty"`
+	ProductID         *int    `json:"product_id,omitempty"`
+	ShopifyID         *string `json:"shopify_id,omitempty"`
+	Title             *string `json:"title,omitempty"`
+	Sku               *string `json:"sku,omitempty"`
+	Price             *string `json:"price,omitempty"`
+	InventoryQuantity *int    `json:"inventory_quantity,omitempty"`
+	CreatedAt         *string `json:"created_at,omitempty"`
+	UpdatedAt         *string `json:"updated_at,omitempty"`
+}
+
+type ShortlinkAnalytics struct {
+	TotalClicks      *int                      `json:"totalClicks,omitempty"`
+	UniqueClicks     *int                      `json:"uniqueClicks,omitempty"`
+	ClicksByDate     []*ShortlinkDateCount     `json:"clicksByDate,omitempty"`
+	ClicksByCountry  []*ShortlinkCountryCount  `json:"clicksByCountry,omitempty"`
+	ClicksByDevice   []*ShortlinkDeviceCount   `json:"clicksByDevice,omitempty"`
+	ClicksByPlatform []*ShortlinkPlatformCount `json:"clicksByPlatform,omitempty"`
+	TopLinks         []*ShortlinkTopLink       `json:"topLinks,omitempty"`
+}
+
+type ShortlinkAttribution struct {
+	Fingerprint  *string                       `json:"fingerprint,omitempty"`
+	Attributed   *bool                         `json:"attributed,omitempty"`
+	InstallEvent *ShortlinkInstallEvent        `json:"installEvent,omitempty"`
+	ClickEvent   *ShortlinkClickEvent          `json:"clickEvent,omitempty"`
+	LinkData     *ShortlinkAttributionLinkData `json:"linkData,omitempty"`
+}
+
+type ShortlinkAttributionLinkData struct {
+	ShortCode          *string                 `json:"shortCode,omitempty"`
+	OriginalURL        *string                 `json:"originalUrl,omitempty"`
+	IosURL             *string                 `json:"iosUrl,omitempty"`
+	AndroidURL         *string                 `json:"androidUrl,omitempty"`
+	WebFallbackURL     *string                 `json:"webFallbackUrl,omitempty"`
+	UtmParameters      *ShortlinkUTMParameters `json:"utmParameters,omitempty"`
+	DeepLinkParameters map[string]any          `json:"deepLinkParameters,omitempty"`
+}
+
+type ShortlinkClickEvent struct {
+	ID          *string `json:"id,omitempty"`
+	ClickedAt   *string `json:"clickedAt,omitempty"`
+	DeviceType  *string `json:"deviceType,omitempty"`
+	Platform    *string `json:"platform,omitempty"`
+	CountryCode *string `json:"countryCode,omitempty"`
+	City        *string `json:"city,omitempty"`
+}
+
+type ShortlinkCountryCount struct {
+	CountryCode *string `json:"countryCode,omitempty"`
+	Country     *string `json:"country,omitempty"`
+	Clicks      *int    `json:"clicks,omitempty"`
+}
+
+type ShortlinkCreateLinkInput struct {
+	UserID                 *string                  `json:"userId,omitempty"`
+	CustomCode             *string                  `json:"customCode,omitempty"`
+	TemplateID             *string                  `json:"templateId,omitempty"`
+	OriginalURL            *string                  `json:"originalUrl,omitempty"`
+	Title                  *string                  `json:"title,omitempty"`
+	Description            *string                  `json:"description,omitempty"`
+	IosAppStoreURL         *string                  `json:"iosAppStoreUrl,omitempty"`
+	AndroidAppStoreURL     *string                  `json:"androidAppStoreUrl,omitempty"`
+	WebFallbackURL         *string                  `json:"webFallbackUrl,omitempty"`
+	AppScheme              *string                  `json:"appScheme,omitempty"`
+	IosUniversalLink       *string                  `json:"iosUniversalLink,omitempty"`
+	AndroidAppLink         *string                  `json:"androidAppLink,omitempty"`
+	DeepLinkPath           *string                  `json:"deepLinkPath,omitempty"`
+	DeepLinkParameters     map[string]any           `json:"deepLinkParameters,omitempty"`
+	UtmParameters          *ShortlinkUtmInput       `json:"utmParameters,omitempty"`
+	TargetingRules         *ShortlinkTargetingInput `json:"targetingRules,omitempty"`
+	OgTitle                *string                  `json:"ogTitle,omitempty"`
+	OgDescription          *string                  `json:"ogDescription,omitempty"`
+	OgImageURL             *string                  `json:"ogImageUrl,omitempty"`
+	OgType                 *string                  `json:"ogType,omitempty"`
+	AttributionWindowHours *int                     `json:"attributionWindowHours,omitempty"`
+	ExpiresAt              *string                  `json:"expiresAt,omitempty"`
+}
+
+type ShortlinkDateCount struct {
+	Date   *string `json:"date,omitempty"`
+	Clicks *int    `json:"clicks,omitempty"`
+}
+
+type ShortlinkDeviceCount struct {
+	Device *string `json:"device,omitempty"`
+	Clicks *int    `json:"clicks,omitempty"`
+}
+
+type ShortlinkEventInput struct {
+	InstallID         *string        `json:"installId,omitempty"`
+	EventName         *string        `json:"eventName,omitempty"`
+	EventData         map[string]any `json:"eventData,omitempty"`
+	Timestamp         *string        `json:"timestamp,omitempty"`
+	AttributedLinkID  *string        `json:"attributedLinkId,omitempty"`
+	AttributedClickID *string        `json:"attributedClickId,omitempty"`
+	LinkOpenedAt      *string        `json:"linkOpenedAt,omitempty"`
+	SessionID         *string        `json:"sessionId,omitempty"`
+	SdkName           *string        `json:"sdkName,omitempty"`
+	SdkVersion        *string        `json:"sdkVersion,omitempty"`
+}
+
+type ShortlinkInstallEvent struct {
+	ID                *string  `json:"id,omitempty"`
+	InstalledAt       *string  `json:"installedAt,omitempty"`
+	FirstOpenAt       *string  `json:"firstOpenAt,omitempty"`
+	ConfidenceScore   *float64 `json:"confidenceScore,omitempty"`
+	DeepLinkRetrieved *bool    `json:"deepLinkRetrieved,omitempty"`
+}
+
+type ShortlinkInstallInput struct {
+	IPAddress              *string `json:"ipAddress,omitempty"`
+	UserAgent              *string `json:"userAgent,omitempty"`
+	Timezone               *string `json:"timezone,omitempty"`
+	Language               *string `json:"language,omitempty"`
+	ScreenWidth            *int    `json:"screenWidth,omitempty"`
+	ScreenHeight           *int    `json:"screenHeight,omitempty"`
+	Platform               *string `json:"platform,omitempty"`
+	PlatformVersion        *string `json:"platformVersion,omitempty"`
+	DeviceID               *string `json:"deviceId,omitempty"`
+	AttributionWindowHours *int    `json:"attributionWindowHours,omitempty"`
+	SdkName                *string `json:"sdkName,omitempty"`
+	SdkVersion             *string `json:"sdkVersion,omitempty"`
+	AppToken               *string `json:"appToken,omitempty"`
+}
+
+type ShortlinkLink struct {
+	ID                     *string                  `json:"id,omitempty"`
+	UserID                 *string                  `json:"user_id,omitempty"`
+	TemplateID             *string                  `json:"template_id,omitempty"`
+	ShortCode              *string                  `json:"short_code,omitempty"`
+	OriginalURL            *string                  `json:"original_url,omitempty"`
+	Title                  *string                  `json:"title,omitempty"`
+	Description            *string                  `json:"description,omitempty"`
+	IosAppStoreURL         *string                  `json:"ios_app_store_url,omitempty"`
+	AndroidAppStoreURL     *string                  `json:"android_app_store_url,omitempty"`
+	WebFallbackURL         *string                  `json:"web_fallback_url,omitempty"`
+	AppScheme              *string                  `json:"app_scheme,omitempty"`
+	IosUniversalLink       *string                  `json:"ios_universal_link,omitempty"`
+	AndroidAppLink         *string                  `json:"android_app_link,omitempty"`
+	DeepLinkPath           *string                  `json:"deep_link_path,omitempty"`
+	DeepLinkParameters     map[string]any           `json:"deep_link_parameters,omitempty"`
+	UtmParameters          *ShortlinkUTMParameters  `json:"utm_parameters,omitempty"`
+	TargetingRules         *ShortlinkTargetingRules `json:"targeting_rules,omitempty"`
+	OgTitle                *string                  `json:"og_title,omitempty"`
+	OgDescription          *string                  `json:"og_description,omitempty"`
+	OgImageURL             *string                  `json:"og_image_url,omitempty"`
+	OgType                 *string                  `json:"og_type,omitempty"`
+	AttributionWindowHours *int                     `json:"attribution_window_hours,omitempty"`
+	IsActive               *bool                    `json:"is_active,omitempty"`
+	ExpiresAt              *string                  `json:"expires_at,omitempty"`
+	AppendClickID          *bool                    `json:"append_click_id,omitempty"`
+	CreatedAt              *string                  `json:"created_at,omitempty"`
+	UpdatedAt              *string                  `json:"updated_at,omitempty"`
+	OrganizationID         *string                  `json:"organization_id,omitempty"`
+	WarnAt                 *string                  `json:"warn_at,omitempty"`
+	DisabledAt             *string                  `json:"disabled_at,omitempty"`
+	DisabledReason         *string                  `json:"disabled_reason,omitempty"`
+	ClickCount             *int                     `json:"click_count,omitempty"`
+	TemplateSlug           *string                  `json:"template_slug,omitempty"`
+}
+
+type ShortlinkPlatformCount struct {
+	Platform *string `json:"platform,omitempty"`
+	Clicks   *int    `json:"clicks,omitempty"`
+}
+
+type ShortlinkResolve struct {
+	ShortCode        *string                 `json:"shortCode,omitempty"`
+	LinkID           *string                 `json:"linkId,omitempty"`
+	DeepLinkPath     *string                 `json:"deepLinkPath,omitempty"`
+	AppScheme        *string                 `json:"appScheme,omitempty"`
+	IosURL           *string                 `json:"iosUrl,omitempty"`
+	AndroidURL       *string                 `json:"androidUrl,omitempty"`
+	WebURL           *string                 `json:"webUrl,omitempty"`
+	UtmParameters    *ShortlinkUTMParameters `json:"utmParameters,omitempty"`
+	CustomParameters map[string]any          `json:"customParameters,omitempty"`
+	ClickedAt        *string                 `json:"clickedAt,omitempty"`
+}
+
+type ShortlinkSdkHealth struct {
+	Status    *string `json:"status,omitempty"`
+	Version   *string `json:"version,omitempty"`
+	Timestamp *string `json:"timestamp,omitempty"`
+}
+
+type ShortlinkTargetingInput struct {
+	Countries []string `json:"countries,omitempty"`
+	Devices   []string `json:"devices,omitempty"`
+	Languages []string `json:"languages,omitempty"`
+}
+
+type ShortlinkTargetingRules struct {
+	Countries []string `json:"countries,omitempty"`
+	Devices   []string `json:"devices,omitempty"`
+	Languages []string `json:"languages,omitempty"`
+}
+
+type ShortlinkTemplate struct {
+	ID          *string `json:"id,omitempty"`
+	UserID      *string `json:"user_id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Slug        *string `json:"slug,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Settings    any     `json:"settings,omitempty"`
+	IsDefault   *bool   `json:"is_default,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
+type ShortlinkTemplateInput struct {
+	UserID      *string                         `json:"userId,omitempty"`
+	Name        *string                         `json:"name,omitempty"`
+	Description *string                         `json:"description,omitempty"`
+	Settings    *ShortlinkTemplateSettingsInput `json:"settings,omitempty"`
+	IsDefault   *bool                           `json:"isDefault,omitempty"`
+}
+
+type ShortlinkTemplateSettingsInput struct {
+	DefaultIosURL                 *string                  `json:"defaultIosUrl,omitempty"`
+	DefaultAndroidURL             *string                  `json:"defaultAndroidUrl,omitempty"`
+	DefaultWebFallbackURL         *string                  `json:"defaultWebFallbackUrl,omitempty"`
+	DefaultAttributionWindowHours *int                     `json:"defaultAttributionWindowHours,omitempty"`
+	UtmParameters                 *ShortlinkUtmInput       `json:"utmParameters,omitempty"`
+	TargetingRules                *ShortlinkTargetingInput `json:"targetingRules,omitempty"`
+	ExpiresAfterDays              *int                     `json:"expiresAfterDays,omitempty"`
+}
+
+type ShortlinkTopLink struct {
+	ID           *string `json:"id,omitempty"`
+	ShortCode    *string `json:"shortCode,omitempty"`
+	Title        *string `json:"title,omitempty"`
+	OriginalURL  *string `json:"originalUrl,omitempty"`
+	TotalClicks  *int    `json:"totalClicks,omitempty"`
+	UniqueClicks *int    `json:"uniqueClicks,omitempty"`
+}
+
+type ShortlinkUTMParameters struct {
+	Source   *string `json:"source,omitempty"`
+	Medium   *string `json:"medium,omitempty"`
+	Campaign *string `json:"campaign,omitempty"`
+	Term     *string `json:"term,omitempty"`
+	Content  *string `json:"content,omitempty"`
+}
+
+type ShortlinkUpdateLinkInput struct {
+	TemplateID             *string                  `json:"templateId,omitempty"`
+	OriginalURL            *string                  `json:"originalUrl,omitempty"`
+	Title                  *string                  `json:"title,omitempty"`
+	Description            *string                  `json:"description,omitempty"`
+	IosAppStoreURL         *string                  `json:"iosAppStoreUrl,omitempty"`
+	AndroidAppStoreURL     *string                  `json:"androidAppStoreUrl,omitempty"`
+	WebFallbackURL         *string                  `json:"webFallbackUrl,omitempty"`
+	AppScheme              *string                  `json:"appScheme,omitempty"`
+	IosUniversalLink       *string                  `json:"iosUniversalLink,omitempty"`
+	AndroidAppLink         *string                  `json:"androidAppLink,omitempty"`
+	DeepLinkPath           *string                  `json:"deepLinkPath,omitempty"`
+	DeepLinkParameters     map[string]any           `json:"deepLinkParameters,omitempty"`
+	UtmParameters          *ShortlinkUtmInput       `json:"utmParameters,omitempty"`
+	TargetingRules         *ShortlinkTargetingInput `json:"targetingRules,omitempty"`
+	OgTitle                *string                  `json:"ogTitle,omitempty"`
+	OgDescription          *string                  `json:"ogDescription,omitempty"`
+	OgImageURL             *string                  `json:"ogImageUrl,omitempty"`
+	OgType                 *string                  `json:"ogType,omitempty"`
+	AttributionWindowHours *int                     `json:"attributionWindowHours,omitempty"`
+	ExpiresAt              *string                  `json:"expiresAt,omitempty"`
+	IsActive               *bool                    `json:"isActive,omitempty"`
+}
+
+type ShortlinkUtmInput struct {
+	Source   *string `json:"source,omitempty"`
+	Medium   *string `json:"medium,omitempty"`
+	Campaign *string `json:"campaign,omitempty"`
+	Term     *string `json:"term,omitempty"`
+	Content  *string `json:"content,omitempty"`
+}
+
+type ShortlinkWebhook struct {
+	ID         *string        `json:"id,omitempty"`
+	UserID     *string        `json:"user_id,omitempty"`
+	Name       *string        `json:"name,omitempty"`
+	URL        *string        `json:"url,omitempty"`
+	Events     []string       `json:"events,omitempty"`
+	IsActive   *bool          `json:"is_active,omitempty"`
+	RetryCount *int           `json:"retry_count,omitempty"`
+	TimeoutMs  *int           `json:"timeout_ms,omitempty"`
+	Headers    map[string]any `json:"headers,omitempty"`
+	CreatedAt  *string        `json:"created_at,omitempty"`
+	UpdatedAt  *string        `json:"updated_at,omitempty"`
+}
+
+type ShortlinkWebhookInput struct {
+	UserID     *string        `json:"userId,omitempty"`
+	Name       *string        `json:"name,omitempty"`
+	URL        *string        `json:"url,omitempty"`
+	Events     []string       `json:"events,omitempty"`
+	Headers    map[string]any `json:"headers,omitempty"`
+	RetryCount *int           `json:"retryCount,omitempty"`
+	TimeoutMs  *int           `json:"timeoutMs,omitempty"`
+	IsActive   *bool          `json:"isActive,omitempty"`
+}
+
+type SignUpInput struct {
+	Username string  `json:"username"`
+	Password string  `json:"password"`
+	Email    string  `json:"email"`
+	Name     string  `json:"name"`
+	Phone    *string `json:"phone,omitempty"`
+	Address  *string `json:"address,omitempty"`
+	Sex      *string `json:"sex,omitempty"`
+}
+
+type SolABIParameter struct {
+	Name  *string `json:"name,omitempty"`
+	Type  *string `json:"type,omitempty"`
+	Value any     `json:"value,omitempty"`
+}
+
+type SolAccountInfo struct {
+	Address    *string `json:"Address,omitempty"`
+	Balance    *int    `json:"Balance,omitempty"`
+	Owner      *string `json:"Owner,omitempty"`
+	Executable *bool   `json:"Executable,omitempty"`
+	RentEpoch  *int    `json:"RentEpoch,omitempty"`
+}
+
+type SolBalance struct {
+	Balance *int `json:"balance,omitempty"`
+}
+
+type SolBridgeTransfer struct {
+	ID                *string `json:"id,omitempty"`
+	SolanaAddress     *string `json:"solanaAddress,omitempty"`
+	CircleWalletID    *string `json:"circleWalletId,omitempty"`
+	Direction         *string `json:"direction,omitempty"`
+	Amount            *string `json:"amount,omitempty"`
+	TokenID           *string `json:"tokenId,omitempty"`
+	Status            *string `json:"status,omitempty"`
+	SolanaTxSignature *string `json:"solanaTxSignature,omitempty"`
+	CircleTxID        *string `json:"circleTxId,omitempty"`
+	CreateDate        *string `json:"createDate,omitempty"`
+	CompleteDate      *string `json:"completeDate,omitempty"`
+	ErrorMessage      *string `json:"errorMessage,omitempty"`
+}
+
+type SolCircleBalance struct {
+	TokenID    *string   `json:"tokenId,omitempty"`
+	Token      *SolToken `json:"token,omitempty"`
+	Amount     *string   `json:"amount,omitempty"`
+	UpdateDate *string   `json:"updateDate,omitempty"`
+}
+
+type SolCircleTransaction struct {
+	ID                 *string            `json:"id,omitempty"`
+	Blockchain         *string            `json:"blockchain,omitempty"`
+	TokenID            *string            `json:"tokenId,omitempty"`
+	WalletID           *string            `json:"walletId,omitempty"`
+	SourceAddress      *string            `json:"sourceAddress,omitempty"`
+	DestinationAddress *string            `json:"destinationAddress,omitempty"`
+	TransactionType    *string            `json:"transactionType,omitempty"`
+	CustodyType        *string            `json:"custodyType,omitempty"`
+	State              *string            `json:"state,omitempty"`
+	Amounts            []string           `json:"amounts,omitempty"`
+	NftTokenIds        []string           `json:"nftTokenIds,omitempty"`
+	TxHash             *string            `json:"txHash,omitempty"`
+	BlockHash          *string            `json:"blockHash,omitempty"`
+	BlockHeight        *int               `json:"blockHeight,omitempty"`
+	NetworkFee         *string            `json:"networkFee,omitempty"`
+	FirstConfirmDate   *string            `json:"firstConfirmDate,omitempty"`
+	Operation          *string            `json:"operation,omitempty"`
+	AbiParameters      []*SolABIParameter `json:"abiParameters,omitempty"`
+	CreateDate         *string            `json:"createDate,omitempty"`
+	UpdateDate         *string            `json:"updateDate,omitempty"`
+	UserID             *string            `json:"userId,omitempty"`
+	ErrorReason        *string            `json:"errorReason,omitempty"`
+}
+
+type SolCircleWallet struct {
+	ID          *string `json:"id,omitempty"`
+	WalletSetID *string `json:"walletSetId,omitempty"`
+	CustodyType *string `json:"custodyType,omitempty"`
+	Address     *string `json:"address,omitempty"`
+	Blockchain  *string `json:"blockchain,omitempty"`
+	State       *string `json:"state,omitempty"`
+	AccountType *string `json:"accountType,omitempty"`
+	CreateDate  *string `json:"createDate,omitempty"`
+	UpdateDate  *string `json:"updateDate,omitempty"`
+}
+
+type SolCircleWalletSet struct {
+	ID          *string `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	CustodyType *string `json:"custodyType,omitempty"`
+	CreateDate  *string `json:"createDate,omitempty"`
+	UpdateDate  *string `json:"updateDate,omitempty"`
+}
+
+type SolFeeEstimate struct {
+	Low    *SolFeeLevel `json:"low,omitempty"`
+	Medium *SolFeeLevel `json:"medium,omitempty"`
+	High   *SolFeeLevel `json:"high,omitempty"`
+}
+
+type SolFeeInput struct {
+	Type   *string        `json:"type,omitempty"`
+	Config map[string]any `json:"config,omitempty"`
+}
+
+type SolFeeLevel struct {
+	MaxFee      *string `json:"maxFee,omitempty"`
+	GasLimit    *string `json:"gasLimit,omitempty"`
+	BaseFee     *string `json:"baseFee,omitempty"`
+	PriorityFee *string `json:"priorityFee,omitempty"`
+}
+
+type SolInstruction struct {
+	ProgramID *string  `json:"ProgramID,omitempty"`
+	Accounts  []string `json:"Accounts,omitempty"`
+	Data      *string  `json:"Data,omitempty"`
+}
+
+type SolNFTBalance struct {
+	TokenID    *string `json:"tokenId,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	Standard   *string `json:"standard,omitempty"`
+	Blockchain *string `json:"blockchain,omitempty"`
+	TokenCount *string `json:"tokenCount,omitempty"`
+	UpdateDate *string `json:"updateDate,omitempty"`
+}
+
+type SolProgram struct {
+	ID         *string `json:"ID,omitempty"`
+	Name       *string `json:"Name,omitempty"`
+	Executable *bool   `json:"Executable,omitempty"`
+	Owner      *string `json:"Owner,omitempty"`
+}
+
+type SolToken struct {
+	ID           *string `json:"id,omitempty"`
+	Blockchain   *string `json:"blockchain,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Symbol       *string `json:"symbol,omitempty"`
+	Decimals     *int    `json:"decimals,omitempty"`
+	IsNative     *bool   `json:"isNative,omitempty"`
+	TokenAddress *string `json:"tokenAddress,omitempty"`
+	Standard     *string `json:"standard,omitempty"`
+	CreateDate   *string `json:"createDate,omitempty"`
+	UpdateDate   *string `json:"updateDate,omitempty"`
+}
+
+type SolTransaction struct {
+	Signature    *string           `json:"Signature,omitempty"`
+	BlockTime    *int              `json:"BlockTime,omitempty"`
+	Slot         *int              `json:"Slot,omitempty"`
+	Fee          *int              `json:"Fee,omitempty"`
+	Status       *string           `json:"Status,omitempty"`
+	Instructions []*SolInstruction `json:"Instructions,omitempty"`
+}
+
+type ThreadsAuthor struct {
+	ID              *string `json:"id,omitempty"`
+	Username        *string `json:"username,omitempty"`
+	ProfileImageURL *string `json:"profile_image_url,omitempty"`
+}
+
+type ThreadsAuthorPage struct {
+	Rows       []*ThreadsAuthor `json:"rows,omitempty"`
+	NextCursor *string          `json:"next_cursor,omitempty"`
+	HasMore    *bool            `json:"has_more,omitempty"`
+}
+
+type ThreadsComment struct {
+	ID              *string        `json:"id,omitempty"`
+	PostID          *string        `json:"post_id,omitempty"`
+	UserID          *string        `json:"user_id,omitempty"`
+	ParentCommentID *string        `json:"parent_comment_id,omitempty"`
+	Content         *string        `json:"content,omitempty"`
+	MediaUrls       []string       `json:"media_urls,omitempty"`
+	CreatedAt       *string        `json:"created_at,omitempty"`
+	UpdatedAt       *string        `json:"updated_at,omitempty"`
+	Author          *ThreadsAuthor `json:"author,omitempty"`
+}
+
+type ThreadsCommentPage struct {
+	Rows       []*ThreadsComment `json:"rows,omitempty"`
+	NextCursor *string           `json:"next_cursor,omitempty"`
+	HasMore    *bool             `json:"has_more,omitempty"`
+}
+
+type ThreadsPost struct {
+	ID           *string        `json:"id,omitempty"`
+	UserID       *string        `json:"user_id,omitempty"`
+	Content      *string        `json:"content,omitempty"`
+	MediaUrls    []string       `json:"media_urls,omitempty"`
+	LikeCount    *int           `json:"like_count,omitempty"`
+	CommentCount *int           `json:"comment_count,omitempty"`
+	RepostOfID   *string        `json:"repost_of_id,omitempty"`
+	RepostCount  *int           `json:"repost_count,omitempty"`
+	CreatedAt    *string        `json:"created_at,omitempty"`
+	UpdatedAt    *string        `json:"updated_at,omitempty"`
+	Author       *ThreadsAuthor `json:"author,omitempty"`
+	Tags         []string       `json:"tags,omitempty"`
+	OriginalPost *ThreadsPost   `json:"original_post,omitempty"`
+}
+
+type ThreadsPostPage struct {
+	Rows       []*ThreadsPost `json:"rows,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+	HasMore    *bool          `json:"has_more,omitempty"`
+}
+
+type ThreadsTagCount struct {
+	Name  *string `json:"name,omitempty"`
+	Count *int    `json:"count,omitempty"`
+}
+
+type TicketAttendee struct {
+	BuyerName     *string `json:"buyer_name,omitempty"`
+	BuyerEmail    *string `json:"buyer_email,omitempty"`
+	ID            *int    `json:"id,omitempty"`
+	OrderID       *int    `json:"order_id,omitempty"`
+	EventID       *int    `json:"event_id,omitempty"`
+	EventTitle    *string `json:"event_title,omitempty"`
+	EventStartsAt *string `json:"event_starts_at,omitempty"`
+	EventEndsAt   *string `json:"event_ends_at,omitempty"`
+	SessionID     *int    `json:"session_id,omitempty"`
+	SessionLabel  *string `json:"session_label,omitempty"`
+	Venue         *string `json:"venue,omitempty"`
+	TicketTypeID  *int    `json:"ticket_type_id,omitempty"`
+	TypeName      *string `json:"type_name,omitempty"`
+	SeatID        *int    `json:"seat_id,omitempty"`
+	Seat          *string `json:"seat,omitempty"`
+	Code          *string `json:"code,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	HolderID      *int    `json:"holder_id,omitempty"`
+	HolderName    *string `json:"holder_name,omitempty"`
+	HolderEmail   *string `json:"holder_email,omitempty"`
+	TransferCount *int    `json:"transfer_count,omitempty"`
+	CheckedInAt   *string `json:"checked_in_at,omitempty"`
+}
+
+type TicketAttendeePage struct {
+	Items      []*TicketAttendee `json:"items,omitempty"`
+	NextCursor *string           `json:"next_cursor,omitempty"`
+}
+
+type TicketDailySales struct {
+	Day     *string `json:"day,omitempty"`
+	Orders  *int    `json:"orders,omitempty"`
+	Tickets *int    `json:"tickets,omitempty"`
+	Revenue *int    `json:"revenue,omitempty"`
+}
+
+type TicketDocument struct {
+	Kind      *string `json:"kind,omitempty"`
+	FileName  *string `json:"file_name,omitempty"`
+	Size      *int    `json:"size,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	URL       *string `json:"url,omitempty"`
+}
+
+type TicketDuplicateInput struct {
+	Title          *string `json:"title,omitempty"`
+	StartsAt       *string `json:"starts_at,omitempty"`
+	EndsAt         *string `json:"ends_at,omitempty"`
+	CopyPromotions *bool   `json:"copy_promotions,omitempty"`
+}
+
+type TicketEvent struct {
+	ID                *int                `json:"id,omitempty"`
+	OrganizerID       *int                `json:"organizer_id,omitempty"`
+	Title             *string             `json:"title,omitempty"`
+	Description       *string             `json:"description,omitempty"`
+	Category          *string             `json:"category,omitempty"`
+	City              *string             `json:"city,omitempty"`
+	Venue             *string             `json:"venue,omitempty"`
+	Address           *string             `json:"address,omitempty"`
+	BannerURL         *string             `json:"banner_url,omitempty"`
+	StartsAt          *string             `json:"starts_at,omitempty"`
+	EndsAt            *string             `json:"ends_at,omitempty"`
+	Currency          *string             `json:"currency,omitempty"`
+	Status            *string             `json:"status,omitempty"`
+	ReviewNote        *string             `json:"review_note,omitempty"`
+	Featured          *bool               `json:"featured,omitempty"`
+	WalletID          *string             `json:"wallet_id,omitempty"`
+	RefundCutoffHours *int                `json:"refund_cutoff_hours,omitempty"`
+	Transferable      *bool               `json:"transferable,omitempty"`
+	ResaleCapPercent  *int                `json:"resale_cap_percent,omitempty"`
+	SeriesID          *int                `json:"series_id,omitempty"`
+	VenueID           *int                `json:"venue_id,omitempty"`
+	MinPrice          *int                `json:"min_price,omitempty"`
+	SoldOut           *bool               `json:"sold_out,omitempty"`
+	NextSessionAt     *string             `json:"next_session_at,omitempty"`
+	Sessions          []*TicketSession    `json:"sessions,omitempty"`
+	TicketTypes       []*TicketTicketType `json:"ticket_types,omitempty"`
+}
+
+type TicketEventInput struct {
+	Title             *string `json:"title,omitempty"`
+	Description       *string `json:"description,omitempty"`
+	Category          *string `json:"category,omitempty"`
+	City              *string `json:"city,omitempty"`
+	Venue             *string `json:"venue,omitempty"`
+	Address           *string `json:"address,omitempty"`
+	BannerURL         *string `json:"banner_url,omitempty"`
+	StartsAt          *string `json:"starts_at,omitempty"`
+	EndsAt            *string `json:"ends_at,omitempty"`
+	Currency          *string `json:"currency,omitempty"`
+	WalletID          *string `json:"wallet_id,omitempty"`
+	RefundCutoffHours *int    `json:"refund_cutoff_hours,omitempty"`
+	Transferable      *bool   `json:"transferable,omitempty"`
+	ResaleCapPercent  *int    `json:"resale_cap_percent,omitempty"`
+}
+
+type TicketEventPage struct {
+	Items      []*TicketEvent `json:"items,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+}
+
+type TicketGeneratedSeat struct {
+	Section    *string  `json:"section,omitempty"`
+	Row        *string  `json:"row,omitempty"`
+	Number     *int     `json:"number,omitempty"`
+	X          *float64 `json:"x,omitempty"`
+	Y          *float64 `json:"y,omitempty"`
+	Accessible *bool    `json:"accessible,omitempty"`
+}
+
+type TicketInviteInput struct {
+	TicketTypeID *int    `json:"ticket_type_id,omitempty"`
+	Quantity     *int    `json:"quantity,omitempty"`
+	SeatIds      []int   `json:"seat_ids,omitempty"`
+	UserID       *int    `json:"user_id,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Email        *string `json:"email,omitempty"`
+	Note         *string `json:"note,omitempty"`
+}
+
+type TicketInvoice struct {
+	Number        *string              `json:"number,omitempty"`
+	IssuedAt      *string              `json:"issued_at,omitempty"`
+	OrderID       *int                 `json:"order_id,omitempty"`
+	SellerName    *string              `json:"seller_name,omitempty"`
+	SellerTaxID   *string              `json:"seller_tax_id,omitempty"`
+	SellerAddress *string              `json:"seller_address,omitempty"`
+	BuyerName     *string              `json:"buyer_name,omitempty"`
+	BuyerEmail    *string              `json:"buyer_email,omitempty"`
+	EventTitle    *string              `json:"event_title,omitempty"`
+	EventDate     *string              `json:"event_date,omitempty"`
+	Venue         *string              `json:"venue,omitempty"`
+	Currency      *string              `json:"currency,omitempty"`
+	Lines         []*TicketInvoiceLine `json:"lines,omitempty"`
+	Subtotal      *int                 `json:"subtotal,omitempty"`
+	Discount      *int                 `json:"discount,omitempty"`
+	PromoCode     *string              `json:"promo_code,omitempty"`
+	Total         *int                 `json:"total,omitempty"`
+	VatPercent    *int                 `json:"vat_percent,omitempty"`
+	Vat           *int                 `json:"vat,omitempty"`
+	PaymentMethod *string              `json:"payment_method,omitempty"`
+	Status        *string              `json:"status,omitempty"`
+	RefundAmount  *int                 `json:"refund_amount,omitempty"`
+}
+
+type TicketInvoiceLine struct {
+	Description *string `json:"description,omitempty"`
+	Quantity    *int    `json:"quantity,omitempty"`
+	UnitPrice   *int    `json:"unit_price,omitempty"`
+	Amount      *int    `json:"amount,omitempty"`
+}
+
+type TicketMapRect struct {
+	Label *string  `json:"label,omitempty"`
+	X     *float64 `json:"x,omitempty"`
+	Y     *float64 `json:"y,omitempty"`
+	W     *float64 `json:"w,omitempty"`
+	H     *float64 `json:"h,omitempty"`
+}
+
+type TicketNotification struct {
+	ID        *int    `json:"id,omitempty"`
+	Kind      *string `json:"kind,omitempty"`
+	Title     *string `json:"title,omitempty"`
+	Body      *string `json:"body,omitempty"`
+	OrderID   *int    `json:"order_id,omitempty"`
+	EventID   *int    `json:"event_id,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	ReadAt    *string `json:"read_at,omitempty"`
+}
+
+type TicketNotificationPage struct {
+	Items      []*TicketNotification `json:"items,omitempty"`
+	NextCursor *string               `json:"next_cursor,omitempty"`
+}
+
+type TicketOrder struct {
+	ID            *int               `json:"id,omitempty"`
+	EventID       *int               `json:"event_id,omitempty"`
+	UserID        *int               `json:"user_id,omitempty"`
+	Status        *string            `json:"status,omitempty"`
+	Currency      *string            `json:"currency,omitempty"`
+	Subtotal      *int               `json:"subtotal,omitempty"`
+	Discount      *int               `json:"discount,omitempty"`
+	Total         *int               `json:"total,omitempty"`
+	PromoCode     *string            `json:"promo_code,omitempty"`
+	BuyerName     *string            `json:"buyer_name,omitempty"`
+	BuyerEmail    *string            `json:"buyer_email,omitempty"`
+	BuyerPhone    *string            `json:"buyer_phone,omitempty"`
+	SessionID     *int               `json:"session_id,omitempty"`
+	ExpiresAt     *string            `json:"expires_at,omitempty"`
+	PaymentMethod *string            `json:"payment_method,omitempty"`
+	PaidAt        *string            `json:"paid_at,omitempty"`
+	RefundAmount  *int               `json:"refund_amount,omitempty"`
+	StatusNote    *string            `json:"status_note,omitempty"`
+	CreatedAt     *string            `json:"created_at,omitempty"`
+	Items         []*TicketOrderItem `json:"items,omitempty"`
+	Tickets       []*TicketTicket    `json:"tickets,omitempty"`
+}
+
+type TicketOrderItem struct {
+	TicketTypeID *int    `json:"ticket_type_id,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Quantity     *int    `json:"quantity,omitempty"`
+	UnitPrice    *int    `json:"unit_price,omitempty"`
+	SeatIds      []int   `json:"seat_ids,omitempty"`
+}
+
+type TicketOrderPage struct {
+	Items      []*TicketOrder `json:"items,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+}
+
+type TicketPoint struct {
+	X *float64 `json:"x,omitempty"`
+	Y *float64 `json:"y,omitempty"`
+}
+
+type TicketPromotion struct {
+	ID         *int    `json:"id,omitempty"`
+	Code       *string `json:"code,omitempty"`
+	Kind       *string `json:"kind,omitempty"`
+	Value      *int    `json:"value,omitempty"`
+	MaxUses    *int    `json:"max_uses,omitempty"`
+	Used       *int    `json:"used,omitempty"`
+	MinTickets *int    `json:"min_tickets,omitempty"`
+	ValidFrom  *string `json:"valid_from,omitempty"`
+	ValidTo    *string `json:"valid_to,omitempty"`
+	Active     *bool   `json:"active,omitempty"`
+}
+
+type TicketPromotionInput struct {
+	Code       *string `json:"code,omitempty"`
+	Kind       *string `json:"kind,omitempty"`
+	Value      *int    `json:"value,omitempty"`
+	MaxUses    *int    `json:"max_uses,omitempty"`
+	MinTickets *int    `json:"min_tickets,omitempty"`
+	ValidFrom  *string `json:"valid_from,omitempty"`
+	ValidTo    *string `json:"valid_to,omitempty"`
+	Active     *bool   `json:"active,omitempty"`
+}
+
+type TicketReport struct {
+	EventID     *int                `json:"event_id,omitempty"`
+	Orders      *int                `json:"orders,omitempty"`
+	TicketsSold *int                `json:"tickets_sold,omitempty"`
+	Revenue     *int                `json:"revenue,omitempty"`
+	Refunded    *int                `json:"refunded,omitempty"`
+	CheckedIn   *int                `json:"checked_in,omitempty"`
+	Invited     *int                `json:"invited,omitempty"`
+	ByType      []*TicketTypeSales  `json:"by_type,omitempty"`
+	Daily       []*TicketDailySales `json:"daily,omitempty"`
+}
+
+type TicketResale struct {
+	ID        *int    `json:"id,omitempty"`
+	TicketID  *int    `json:"ticket_id,omitempty"`
+	EventID   *int    `json:"event_id,omitempty"`
+	TypeName  *string `json:"type_name,omitempty"`
+	Seat      *string `json:"seat,omitempty"`
+	Price     *int    `json:"price,omitempty"`
+	FacePrice *int    `json:"face_price,omitempty"`
+	Currency  *string `json:"currency,omitempty"`
+	Status    *string `json:"status,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	SellerID  *int    `json:"seller_id,omitempty"`
+	Fee       *int    `json:"fee,omitempty"`
+}
+
+type TicketResalePage struct {
+	Items      []*TicketResale `json:"items,omitempty"`
+	NextCursor *string         `json:"next_cursor,omitempty"`
+}
+
+type TicketReserveInput struct {
+	EventID    *int                      `json:"event_id,omitempty"`
+	Items      []*TicketReserveItemInput `json:"items,omitempty"`
+	PromoCode  *string                   `json:"promo_code,omitempty"`
+	BuyerName  *string                   `json:"buyer_name,omitempty"`
+	BuyerEmail *string                   `json:"buyer_email,omitempty"`
+	BuyerPhone *string                   `json:"buyer_phone,omitempty"`
+	RequestID  *string                   `json:"request_id,omitempty"`
+}
+
+type TicketReserveItemInput struct {
+	TicketTypeID *int  `json:"ticket_type_id,omitempty"`
+	Quantity     *int  `json:"quantity,omitempty"`
+	SeatIds      []int `json:"seat_ids,omitempty"`
+}
+
+type TicketSeat struct {
+	ID           *int     `json:"id,omitempty"`
+	TicketTypeID *int     `json:"ticket_type_id,omitempty"`
+	Accessible   *bool    `json:"accessible,omitempty"`
+	Section      *string  `json:"section,omitempty"`
+	Row          *string  `json:"row,omitempty"`
+	Number       *int     `json:"number,omitempty"`
+	Label        *string  `json:"label,omitempty"`
+	Status       *string  `json:"status,omitempty"`
+	X            *float64 `json:"x,omitempty"`
+	Y            *float64 `json:"y,omitempty"`
+}
+
+type TicketSeatList struct {
+	Layout *TicketSeatMapLayout `json:"layout,omitempty"`
+	Items  []*TicketSeat        `json:"items,omitempty"`
+}
+
+type TicketSeatMap struct {
+	Layout      *TicketSeatMapLayout `json:"layout,omitempty"`
+	TicketTypes []*TicketTicketType  `json:"ticket_types,omitempty"`
+	Seats       []*TicketSeat        `json:"seats,omitempty"`
+}
+
+type TicketSeatMapLayout struct {
+	Width    *float64              `json:"width,omitempty"`
+	Height   *float64              `json:"height,omitempty"`
+	Stage    *TicketMapRect        `json:"stage,omitempty"`
+	Stages   []*TicketStageShape   `json:"stages,omitempty"`
+	Sections []*TicketSectionShape `json:"sections,omitempty"`
+}
+
+type TicketSectionCount struct {
+	Key        *string `json:"key,omitempty"`
+	Name       *string `json:"name,omitempty"`
+	Seats      *int    `json:"seats,omitempty"`
+	Accessible *int    `json:"accessible,omitempty"`
+}
+
+type TicketSectionShape struct {
+	Key          *string `json:"key,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Label        *string `json:"label,omitempty"`
+	Color        *string `json:"color,omitempty"`
+	Points       any     `json:"points,omitempty"`
+	TicketTypeID *int    `json:"ticket_type_id,omitempty"`
+}
+
+type TicketSectionSpec struct {
+	Key         *string      `json:"key,omitempty"`
+	Name        *string      `json:"name,omitempty"`
+	Label       *string      `json:"label,omitempty"`
+	Color       *string      `json:"color,omitempty"`
+	Layout      *string      `json:"layout,omitempty"`
+	Outline     any          `json:"outline,omitempty"`
+	Rows        *int         `json:"rows,omitempty"`
+	SeatsPerRow *int         `json:"seats_per_row,omitempty"`
+	RowSeats    []int        `json:"row_seats,omitempty"`
+	RowStart    *string      `json:"row_start,omitempty"`
+	NumberFrom  *string      `json:"number_from,omitempty"`
+	Skip        []string     `json:"skip,omitempty"`
+	Accessible  []string     `json:"accessible,omitempty"`
+	Origin      *TicketPoint `json:"origin,omitempty"`
+	SeatPitch   *float64     `json:"seat_pitch,omitempty"`
+	RowPitch    *float64     `json:"row_pitch,omitempty"`
+	Align       *string      `json:"align,omitempty"`
+	AisleAfter  []int        `json:"aisle_after,omitempty"`
+	Rotation    *float64     `json:"rotation,omitempty"`
+	Center      *TicketPoint `json:"center,omitempty"`
+	Radius      *float64     `json:"radius,omitempty"`
+	AngleStart  *float64     `json:"angle_start,omitempty"`
+	AngleEnd    *float64     `json:"angle_end,omitempty"`
+}
+
+type TicketSession struct {
+	ID           *int    `json:"id,omitempty"`
+	EventID      *int    `json:"event_id,omitempty"`
+	StartsAt     *string `json:"starts_at,omitempty"`
+	EndsAt       *string `json:"ends_at,omitempty"`
+	Label        *string `json:"label,omitempty"`
+	Status       *string `json:"status,omitempty"`
+	CancelReason *string `json:"cancel_reason,omitempty"`
+}
+
+type TicketSessionInput struct {
+	StartsAt *string `json:"starts_at,omitempty"`
+	EndsAt   *string `json:"ends_at,omitempty"`
+	Label    *string `json:"label,omitempty"`
+	CopyFrom *int    `json:"copy_from,omitempty"`
+}
+
+type TicketStaff struct {
+	UserID    *int    `json:"user_id,omitempty"`
+	AddedBy   *int    `json:"added_by,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+}
+
+type TicketStageShape struct {
+	Label  *string  `json:"label,omitempty"`
+	Shape  *string  `json:"shape,omitempty"`
+	X      *float64 `json:"x,omitempty"`
+	Y      *float64 `json:"y,omitempty"`
+	W      *float64 `json:"w,omitempty"`
+	H      *float64 `json:"h,omitempty"`
+	Points any      `json:"points,omitempty"`
+}
+
+type TicketTemplate struct {
+	Name        *string                `json:"name,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Params      []*TicketTemplateParam `json:"params,omitempty"`
+}
+
+type TicketTemplateParam struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Default     *int    `json:"default,omitempty"`
+	Min         *int    `json:"min,omitempty"`
+	Max         *int    `json:"max,omitempty"`
+}
+
+type TicketTicket struct {
+	ID            *int    `json:"id,omitempty"`
+	OrderID       *int    `json:"order_id,omitempty"`
+	EventID       *int    `json:"event_id,omitempty"`
+	EventTitle    *string `json:"event_title,omitempty"`
+	EventStartsAt *string `json:"event_starts_at,omitempty"`
+	EventEndsAt   *string `json:"event_ends_at,omitempty"`
+	SessionID     *int    `json:"session_id,omitempty"`
+	SessionLabel  *string `json:"session_label,omitempty"`
+	Venue         *string `json:"venue,omitempty"`
+	TicketTypeID  *int    `json:"ticket_type_id,omitempty"`
+	TypeName      *string `json:"type_name,omitempty"`
+	SeatID        *int    `json:"seat_id,omitempty"`
+	Seat          *string `json:"seat,omitempty"`
+	Code          *string `json:"code,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	HolderID      *int    `json:"holder_id,omitempty"`
+	HolderName    *string `json:"holder_name,omitempty"`
+	HolderEmail   *string `json:"holder_email,omitempty"`
+	TransferCount *int    `json:"transfer_count,omitempty"`
+	CheckedInAt   *string `json:"checked_in_at,omitempty"`
+}
+
+type TicketTicketEvent struct {
+	ID         *int    `json:"id,omitempty"`
+	Event      *string `json:"event,omitempty"`
+	FromStatus *string `json:"from_status,omitempty"`
+	ToStatus   *string `json:"to_status,omitempty"`
+	Actor      *int    `json:"actor,omitempty"`
+	Note       *string `json:"note,omitempty"`
+	CreatedAt  *string `json:"created_at,omitempty"`
+}
+
+type TicketTicketPage struct {
+	Items      []*TicketTicket `json:"items,omitempty"`
+	NextCursor *string         `json:"next_cursor,omitempty"`
+}
+
+type TicketTicketType struct {
+	ID           *int    `json:"id,omitempty"`
+	EventID      *int    `json:"event_id,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	Price        *int    `json:"price,omitempty"`
+	Total        *int    `json:"total,omitempty"`
+	Available    *int    `json:"available,omitempty"`
+	Sold         *int    `json:"sold,omitempty"`
+	Held         *int    `json:"held,omitempty"`
+	MinPerOrder  *int    `json:"min_per_order,omitempty"`
+	MaxPerOrder  *int    `json:"max_per_order,omitempty"`
+	MaxPerUser   *int    `json:"max_per_user,omitempty"`
+	SaleStartsAt *string `json:"sale_starts_at,omitempty"`
+	SaleEndsAt   *string `json:"sale_ends_at,omitempty"`
+	Seated       *bool   `json:"seated,omitempty"`
+	Active       *bool   `json:"active,omitempty"`
+	SortOrder    *int    `json:"sort_order,omitempty"`
+	SessionID    *int    `json:"session_id,omitempty"`
+	OnSale       *bool   `json:"on_sale,omitempty"`
+	SoldOut      *bool   `json:"sold_out,omitempty"`
+}
+
+type TicketTransfer struct {
+	ID         *int          `json:"id,omitempty"`
+	TicketID   *int          `json:"ticket_id,omitempty"`
+	FromUser   *int          `json:"from_user,omitempty"`
+	ToUser     *int          `json:"to_user,omitempty"`
+	ToEmail    *string       `json:"to_email,omitempty"`
+	Status     *string       `json:"status,omitempty"`
+	Message    *string       `json:"message,omitempty"`
+	CreatedAt  *string       `json:"created_at,omitempty"`
+	ExpiresAt  *string       `json:"expires_at,omitempty"`
+	ResolvedAt *string       `json:"resolved_at,omitempty"`
+	Ticket     *TicketTicket `json:"ticket,omitempty"`
+}
+
+type TicketTransferPage struct {
+	Items      []*TicketTransfer `json:"items,omitempty"`
+	NextCursor *string           `json:"next_cursor,omitempty"`
+}
+
+type TicketTypeInput struct {
+	Name         *string `json:"name,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	Price        *int    `json:"price,omitempty"`
+	Total        *int    `json:"total,omitempty"`
+	MinPerOrder  *int    `json:"min_per_order,omitempty"`
+	MaxPerOrder  *int    `json:"max_per_order,omitempty"`
+	MaxPerUser   *int    `json:"max_per_user,omitempty"`
+	SaleStartsAt *string `json:"sale_starts_at,omitempty"`
+	SaleEndsAt   *string `json:"sale_ends_at,omitempty"`
+	Seated       *bool   `json:"seated,omitempty"`
+	Active       *bool   `json:"active,omitempty"`
+	SortOrder    *int    `json:"sort_order,omitempty"`
+	SessionID    *int    `json:"session_id,omitempty"`
+}
+
+type TicketTypeSales struct {
+	TicketTypeID *int    `json:"ticket_type_id,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Total        *int    `json:"total,omitempty"`
+	Sold         *int    `json:"sold,omitempty"`
+	Held         *int    `json:"held,omitempty"`
+	Revenue      *int    `json:"revenue,omitempty"`
+}
+
+type TicketUnreadCount struct {
+	Unread *int `json:"unread,omitempty"`
+}
+
+type TicketVenue struct {
+	ID          *int            `json:"id,omitempty"`
+	OwnerID     *int            `json:"owner_id,omitempty"`
+	Name        *string         `json:"name,omitempty"`
+	City        *string         `json:"city,omitempty"`
+	Address     *string         `json:"address,omitempty"`
+	Description *string         `json:"description,omitempty"`
+	Shared      *bool           `json:"shared,omitempty"`
+	Seats       *int            `json:"seats,omitempty"`
+	Sections    *int            `json:"sections,omitempty"`
+	CreatedAt   *string         `json:"created_at,omitempty"`
+	Map         *TicketVenueMap `json:"map,omitempty"`
+}
+
+type TicketVenueDetail struct {
+	Venue   *TicketVenue        `json:"venue,omitempty"`
+	Preview *TicketVenuePreview `json:"preview,omitempty"`
+}
+
+type TicketVenueMap struct {
+	Width    *float64             `json:"width,omitempty"`
+	Height   *float64             `json:"height,omitempty"`
+	Stages   []*TicketStageShape  `json:"stages,omitempty"`
+	Sections []*TicketSectionSpec `json:"sections,omitempty"`
+}
+
+type TicketVenuePage struct {
+	Items      []*TicketVenue `json:"items,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+}
+
+type TicketVenuePreview struct {
+	Total    *int                   `json:"total,omitempty"`
+	Sections []*TicketSectionCount  `json:"sections,omitempty"`
+	Layout   *TicketSeatMapLayout   `json:"layout,omitempty"`
+	Seats    []*TicketGeneratedSeat `json:"seats,omitempty"`
+}
+
+type TicketWaitlist struct {
+	TicketTypeID *int    `json:"ticket_type_id,omitempty"`
+	EventID      *int    `json:"event_id,omitempty"`
+	EventTitle   *string `json:"event_title,omitempty"`
+	TypeName     *string `json:"type_name,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+}
+
+type ToggleAPIToken struct {
+	ID            *string `json:"id,omitempty"`
+	Name          *string `json:"name,omitempty"`
+	TokenPrefix   *string `json:"tokenPrefix,omitempty"`
+	Type          *string `json:"type,omitempty"`
+	ProjectID     *string `json:"projectId,omitempty"`
+	EnvironmentID *string `json:"environmentId,omitempty"`
+	ExpiresAt     *string `json:"expiresAt,omitempty"`
+	CreatedBy     *string `json:"createdBy,omitempty"`
+	CreatedAt     *string `json:"createdAt,omitempty"`
+}
+
+type ToggleActivationStrategy struct {
+	ID                       *string             `json:"id,omitempty"`
+	FeatureFlagEnvironmentID *string             `json:"featureFlagEnvironmentId,omitempty"`
+	StrategyType             *string             `json:"strategyType,omitempty"`
+	Parameters               any                 `json:"parameters,omitempty"`
+	SortOrder                *int                `json:"sortOrder,omitempty"`
+	Constraints              []*ToggleConstraint `json:"constraints,omitempty"`
+	CreatedAt                *string             `json:"createdAt,omitempty"`
+	UpdatedAt                *string             `json:"updatedAt,omitempty"`
+}
+
+type ToggleAuditEvent struct {
+	ID            *string `json:"id,omitempty"`
+	EntityType    *string `json:"entityType,omitempty"`
+	EntityID      *string `json:"entityId,omitempty"`
+	Action        *string `json:"action,omitempty"`
+	ProjectID     *string `json:"projectId,omitempty"`
+	EnvironmentID *string `json:"environmentId,omitempty"`
+	UserID        *string `json:"userId,omitempty"`
+	Before        any     `json:"before,omitempty"`
+	After         any     `json:"after,omitempty"`
+	CreatedAt     *string `json:"createdAt,omitempty"`
+}
+
+type ToggleClientFeature struct {
+	Name        *string                     `json:"name,omitempty"`
+	Description *string                     `json:"description,omitempty"`
+	Type        *string                     `json:"type,omitempty"`
+	Enabled     *bool                       `json:"enabled,omitempty"`
+	Strategies  []*ToggleActivationStrategy `json:"strategies,omitempty"`
+}
+
+type ToggleClientFeaturesResponse struct {
+	Version  *int                   `json:"version,omitempty"`
+	Features []*ToggleClientFeature `json:"features,omitempty"`
+}
+
+type ToggleConstraint struct {
+	ID              *string `json:"id,omitempty"`
+	StrategyID      *string `json:"strategyId,omitempty"`
+	ContextField    *string `json:"contextField,omitempty"`
+	Operator        *string `json:"operator,omitempty"`
+	Values          any     `json:"values,omitempty"`
+	CaseInsensitive *bool   `json:"caseInsensitive,omitempty"`
+}
+
+type ToggleConstraintInput struct {
+	ContextField    *string  `json:"contextField,omitempty"`
+	Operator        *string  `json:"operator,omitempty"`
+	Values          []string `json:"values,omitempty"`
+	CaseInsensitive *bool    `json:"caseInsensitive,omitempty"`
+}
+
+type ToggleEnvironment struct {
+	ID        *string `json:"id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	Type      *string `json:"type,omitempty"`
+	SortOrder *int    `json:"sortOrder,omitempty"`
+	Enabled   *bool   `json:"enabled,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+}
+
+type ToggleFeatureFlag struct {
+	ID          *string `json:"id,omitempty"`
+	ProjectID   *string `json:"projectId,omitempty"`
+	Key         *string `json:"key,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Type        *string `json:"type,omitempty"`
+	Archived    *bool   `json:"archived,omitempty"`
+	CreatedBy   *string `json:"createdBy,omitempty"`
+	CreatedAt   *string `json:"createdAt,omitempty"`
+	UpdatedAt   *string `json:"updatedAt,omitempty"`
+}
+
+type ToggleProject struct {
+	ID          *string `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	CreatedBy   *string `json:"createdBy,omitempty"`
+	CreatedAt   *string `json:"createdAt,omitempty"`
+	UpdatedAt   *string `json:"updatedAt,omitempty"`
+}
+
+type ToggleProjectMembership struct {
+	ID        *string `json:"id,omitempty"`
+	ProjectID *string `json:"projectId,omitempty"`
+	UserID    *string `json:"userId,omitempty"`
+	RoleID    *string `json:"roleId,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+}
+
+type ToggleRole struct {
+	ID          *string `json:"id,omitempty"`
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+}
+
+type ToggleStrategyInput struct {
+	StrategyType *string                  `json:"strategyType,omitempty"`
+	Parameters   map[string]any           `json:"parameters,omitempty"`
+	SortOrder    *int                     `json:"sortOrder,omitempty"`
+	Constraints  []*ToggleConstraintInput `json:"constraints,omitempty"`
+}
+
+type ToolAndroidDevices struct {
+	Available *bool         `json:"available,omitempty"`
+	Error     *string       `json:"error,omitempty"`
+	Devices   []*ToolDevice `json:"devices,omitempty"`
+}
+
+type ToolApproved struct {
+	Hash       *string       `json:"hash,omitempty"`
+	Case       *ToolTestCase `json:"case,omitempty"`
+	ApprovedAt *string       `json:"approved_at,omitempty"`
+	FromAi     *bool         `json:"from_ai,omitempty"`
+}
+
+type ToolDevice struct {
+	Serial         *string `json:"serial,omitempty"`
+	State          *string `json:"state,omitempty"`
+	Model          *string `json:"model,omitempty"`
+	Product        *string `json:"product,omitempty"`
+	AndroidVersion *string `json:"android_version,omitempty"`
+	Sdk            *int    `json:"sdk,omitempty"`
+	Screen         *string `json:"screen,omitempty"`
+	DensityDpi     *int    `json:"density_dpi,omitempty"`
+}
+
+type ToolExperience struct {
+	ID        *string        `json:"id,omitempty"`
+	Kind      *string        `json:"kind,omitempty"`
+	Input     *string        `json:"input,omitempty"`
+	Output    any            `json:"output,omitempty"`
+	Model     *string        `json:"model,omitempty"`
+	Verdict   *string        `json:"verdict,omitempty"`
+	Source    *string        `json:"source,omitempty"`
+	Score     *float64       `json:"score,omitempty"`
+	Note      *string        `json:"note,omitempty"`
+	Corrected any            `json:"corrected,omitempty"`
+	Signals   map[string]any `json:"signals,omitempty"`
+	Embedding []float64      `json:"embedding,omitempty"`
+	CreatedAt *string        `json:"created_at,omitempty"`
+}
+
+type ToolIosSimulators struct {
+	Available  *bool            `json:"available,omitempty"`
+	Error      *string          `json:"error,omitempty"`
+	Simulators []*ToolSimulator `json:"simulators,omitempty"`
+}
+
+type ToolJob struct {
+	ID         *string `json:"id,omitempty"`
+	Kind       *string `json:"kind,omitempty"`
+	Status     *string `json:"status,omitempty"`
+	Progress   *string `json:"progress,omitempty"`
+	StartedAt  *string `json:"started_at,omitempty"`
+	FinishedAt *string `json:"finished_at,omitempty"`
+	Result     any     `json:"result,omitempty"`
+	Error      *string `json:"error,omitempty"`
+}
+
+type ToolMobileDevices struct {
+	Android *ToolAndroidDevices `json:"android,omitempty"`
+	Ios     *ToolIosSimulators  `json:"ios,omitempty"`
+}
+
+type ToolSimulator struct {
+	Udid    *string `json:"udid,omitempty"`
+	Name    *string `json:"name,omitempty"`
+	State   *string `json:"state,omitempty"`
+	Runtime *string `json:"runtime,omitempty"`
+}
+
+type ToolSnapshot struct {
+	At           *string        `json:"at,omitempty"`
+	Model        *string        `json:"model,omitempty"`
+	ApprovalRate *float64       `json:"approval_rate,omitempty"`
+	HumanRate    *float64       `json:"human_rate,omitempty"`
+	AutoRate     *float64       `json:"auto_rate,omitempty"`
+	Reviews      *int           `json:"reviews,omitempty"`
+	ByModel      map[string]any `json:"by_model,omitempty"`
+}
+
+type ToolStats struct {
+	ActiveModel          *string        `json:"active_model,omitempty"`
+	BaseModel            *string        `json:"base_model,omitempty"`
+	ByModel              map[string]any `json:"by_model,omitempty"`
+	ByModelHumanOnly     map[string]any `json:"by_model_human_only,omitempty"`
+	Total                *int           `json:"total,omitempty"`
+	Good                 *int           `json:"good,omitempty"`
+	Bad                  *int           `json:"bad,omitempty"`
+	Pending              *int           `json:"pending,omitempty"`
+	ApprovalRate         *float64       `json:"approval_rate,omitempty"`
+	FeedbackSinceReflect *int           `json:"feedback_since_reflect,omitempty"`
+	Playbook             *string        `json:"playbook,omitempty"`
+}
+
+type ToolSuite struct {
+	Name       *string         `json:"name,omitempty"`
+	Cases      []*ToolApproved `json:"cases,omitempty"`
+	AiAccepted *int            `json:"ai_accepted,omitempty"`
+	AiRejected *int            `json:"ai_rejected,omitempty"`
+}
+
+type ToolSuiteResult struct {
+	Suite     *ToolSuite `json:"suite,omitempty"`
+	Precision *float64   `json:"precision,omitempty"`
+}
+
+type ToolTestCase struct {
+	Name               *string        `json:"name,omitempty"`
+	Method             *string        `json:"method,omitempty"`
+	Path               *string        `json:"path,omitempty"`
+	Headers            map[string]any `json:"headers,omitempty"`
+	Body               any            `json:"body,omitempty"`
+	ExpectStatus       *int           `json:"expect_status,omitempty"`
+	ExpectBodyContains []string       `json:"expect_body_contains,omitempty"`
+	ExpectJSON         map[string]any `json:"expect_json,omitempty"`
+	MaxLatencyMs       *int           `json:"max_latency_ms,omitempty"`
+	SpecQuote          *string        `json:"spec_quote,omitempty"`
+}
+
+type UpdateProfileInput struct {
+	Name    *string `json:"name,omitempty"`
+	Email   *string `json:"email,omitempty"`
+	Phone   *string `json:"phone,omitempty"`
+	Address *string `json:"address,omitempty"`
+	Sex     *string `json:"sex,omitempty"`
+}
+
+type UploadFile struct {
+	ID          *string `json:"id,omitempty"`
+	ReceiverID  *string `json:"receiver_id,omitempty"`
+	FileName    *string `json:"file_name,omitempty"`
+	ContentType *string `json:"content_type,omitempty"`
+	Size        *int    `json:"size,omitempty"`
+	Sha256      *string `json:"sha256,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+	URL         *string `json:"url,omitempty"`
+}
+
+type UploadFileList struct {
+	Files      []*UploadFile `json:"files,omitempty"`
+	TotalCount *int          `json:"total_count,omitempty"`
 }
 
 type User struct {
-	ID   string `json:"id"`
+	ID         int         `json:"id"`
+	Username   string      `json:"username"`
+	Email      string      `json:"email"`
+	Name       string      `json:"name"`
+	Phone      string      `json:"phone"`
+	Address    string      `json:"address"`
+	Sex        string      `json:"sex"`
+	Active     bool        `json:"active"`
+	CreateTime *string     `json:"createTime,omitempty"`
+	UpdateTime *string     `json:"updateTime,omitempty"`
+	Roles      []*UserRole `json:"roles"`
+}
+
+type UserList struct {
+	Users []*User `json:"users"`
+	Total int     `json:"total"`
+}
+
+type UserMessage struct {
+	Message string `json:"message"`
+	User    *User  `json:"user,omitempty"`
+}
+
+type UserRole struct {
+	ID    int     `json:"id"`
+	Name  string  `json:"name"`
+	Users []*User `json:"users"`
+}
+
+type UserRoleInput struct {
+	ID   *int   `json:"id,omitempty"`
 	Name string `json:"name"`
+}
+
+type UserRoleList struct {
+	Roles      []*UserRole `json:"roles"`
+	Limit      int         `json:"limit"`
+	Page       int         `json:"page"`
+	Sort       string      `json:"sort"`
+	TotalRows  int         `json:"totalRows"`
+	TotalPages int         `json:"totalPages"`
+}
+
+type UserRoleMessage struct {
+	Message string    `json:"message"`
+	Role    *UserRole `json:"role,omitempty"`
+}
+
+type VendCategory struct {
+	ID           *string `json:"id,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	DisplayOrder *int    `json:"display_order,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+}
+
+type VendCategoryPage struct {
+	Items      []*VendCategory `json:"items,omitempty"`
+	NextCursor *string         `json:"next_cursor,omitempty"`
+	IsLastPage *bool           `json:"is_last_page,omitempty"`
+	Limit      *int            `json:"limit,omitempty"`
+}
+
+type VendEvent struct {
+	ID            *string        `json:"id,omitempty"`
+	EventType     *string        `json:"event_type,omitempty"`
+	RelatedEntity *string        `json:"related_entity,omitempty"`
+	EntityID      *string        `json:"entity_id,omitempty"`
+	MachineID     *string        `json:"machine_id,omitempty"`
+	Data          map[string]any `json:"data,omitempty"`
+	OccurredAt    *string        `json:"occurred_at,omitempty"`
+}
+
+type VendInventory struct {
+	ID              *string      `json:"id,omitempty"`
+	MachineID       *string      `json:"machine_id,omitempty"`
+	Slot            *string      `json:"slot,omitempty"`
+	ProductID       *string      `json:"product_id,omitempty"`
+	Product         *VendProduct `json:"product,omitempty"`
+	Quantity        *int         `json:"quantity,omitempty"`
+	MaxCapacity     *int         `json:"max_capacity,omitempty"`
+	LowThreshold    *int         `json:"low_threshold,omitempty"`
+	IsLow           *bool        `json:"is_low,omitempty"`
+	LastRestockedAt *string      `json:"last_restocked_at,omitempty"`
+	UpdatedAt       *string      `json:"updated_at,omitempty"`
+}
+
+type VendInventoryPage struct {
+	Items      []*VendInventory `json:"items,omitempty"`
+	NextCursor *string          `json:"next_cursor,omitempty"`
+	IsLastPage *bool            `json:"is_last_page,omitempty"`
+	Limit      *int             `json:"limit,omitempty"`
+}
+
+type VendMachine struct {
+	ID                *string `json:"id,omitempty"`
+	Location          *string `json:"location,omitempty"`
+	Model             *string `json:"model,omitempty"`
+	Status            *string `json:"status,omitempty"`
+	LastMaintenanceAt *string `json:"last_maintenance_at,omitempty"`
+	CreatedAt         *string `json:"created_at,omitempty"`
+	UpdatedAt         *string `json:"updated_at,omitempty"`
+}
+
+type VendMachinePage struct {
+	Items      []*VendMachine `json:"items,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+	IsLastPage *bool          `json:"is_last_page,omitempty"`
+	Limit      *int           `json:"limit,omitempty"`
+}
+
+type VendMaintenance struct {
+	ID              *string `json:"id,omitempty"`
+	MachineID       *string `json:"machine_id,omitempty"`
+	TechnicianID    *string `json:"technician_id,omitempty"`
+	MaintenanceType *string `json:"maintenance_type,omitempty"`
+	Notes           *string `json:"notes,omitempty"`
+	PerformedAt     *string `json:"performed_at,omitempty"`
+}
+
+type VendOrder struct {
+	ID            *string `json:"id,omitempty"`
+	OrderNo       *int    `json:"order_no,omitempty"`
+	SessionID     *string `json:"session_id,omitempty"`
+	ReservationID *string `json:"reservation_id,omitempty"`
+	PaymentID     *string `json:"payment_id,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	FulfilledAt   *string `json:"fulfilled_at,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+}
+
+type VendPayment struct {
+	ID            *string `json:"id,omitempty"`
+	AmountCents   *int    `json:"amount_cents,omitempty"`
+	DiscountCents *int    `json:"discount_cents,omitempty"`
+	CouponCode    *string `json:"coupon_code,omitempty"`
+	Currency      *string `json:"currency,omitempty"`
+	PaymentMethod *string `json:"payment_method,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	TransactionID *string `json:"transaction_id,omitempty"`
+	CompletedAt   *string `json:"completed_at,omitempty"`
+}
+
+type VendPaymentStatus struct {
+	Payment *VendPayment `json:"payment,omitempty"`
+	Order   *VendOrder   `json:"order,omitempty"`
+}
+
+type VendProduct struct {
+	ID          *string        `json:"id,omitempty"`
+	Name        *string        `json:"name,omitempty"`
+	Description *string        `json:"description,omitempty"`
+	PriceCents  *int           `json:"price_cents,omitempty"`
+	CategoryID  *string        `json:"category_id,omitempty"`
+	ImageURL    *string        `json:"image_url,omitempty"`
+	Barcode     *string        `json:"barcode,omitempty"`
+	IsActive    *bool          `json:"is_active,omitempty"`
+	Attributes  map[string]any `json:"attributes,omitempty"`
+	CreatedAt   *string        `json:"created_at,omitempty"`
+}
+
+type VendProductInput struct {
+	Name        *string        `json:"name,omitempty"`
+	Description *string        `json:"description,omitempty"`
+	PriceCents  *int           `json:"price_cents,omitempty"`
+	CategoryID  *string        `json:"category_id,omitempty"`
+	ImageURL    *string        `json:"image_url,omitempty"`
+	Barcode     *string        `json:"barcode,omitempty"`
+	IsActive    *bool          `json:"is_active,omitempty"`
+	Attributes  map[string]any `json:"attributes,omitempty"`
+}
+
+type VendProductPage struct {
+	Items      []*VendProduct `json:"items,omitempty"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+	IsLastPage *bool          `json:"is_last_page,omitempty"`
+	Limit      *int           `json:"limit,omitempty"`
+}
+
+type VendProductPatchInput struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	PriceCents  *int    `json:"price_cents,omitempty"`
+	ImageURL    *string `json:"image_url,omitempty"`
+	Barcode     *string `json:"barcode,omitempty"`
+	IsActive    *bool   `json:"is_active,omitempty"`
+}
+
+type VendProductSales struct {
+	ProductID     *string `json:"product_id,omitempty"`
+	ProductName   *string `json:"product_name,omitempty"`
+	Units         *int    `json:"units,omitempty"`
+	RevenueCents  *int    `json:"revenue_cents,omitempty"`
+	DiscountCents *int    `json:"discount_cents,omitempty"`
+}
+
+type VendSalesReport struct {
+	MachineID     *string             `json:"machine_id,omitempty"`
+	From          *string             `json:"from,omitempty"`
+	To            *string             `json:"to,omitempty"`
+	Orders        *int                `json:"orders,omitempty"`
+	RevenueCents  *int                `json:"revenue_cents,omitempty"`
+	DiscountCents *int                `json:"discount_cents,omitempty"`
+	Products      []*VendProductSales `json:"products,omitempty"`
+}
+
+type VendSession struct {
+	ID        *string `json:"id,omitempty"`
+	MachineID *string `json:"machine_id,omitempty"`
+	Status    *string `json:"status,omitempty"`
+	StartedAt *string `json:"started_at,omitempty"`
+	ExpiresAt *string `json:"expires_at,omitempty"`
+}
+
+type VendSlotInput struct {
+	ProductID    *string `json:"product_id,omitempty"`
+	Quantity     *int    `json:"quantity,omitempty"`
+	MaxCapacity  *int    `json:"max_capacity,omitempty"`
+	LowThreshold *int    `json:"low_threshold,omitempty"`
+}
+
+type VideoVideo struct {
+	ID          *string  `json:"id,omitempty"`
+	Title       *string  `json:"title,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	ContentType *string  `json:"content_type,omitempty"`
+	Size        *int     `json:"size,omitempty"`
+	Status      *string  `json:"status,omitempty"`
+	Duration    *float64 `json:"duration,omitempty"`
+	Width       *int     `json:"width,omitempty"`
+	Height      *int     `json:"height,omitempty"`
+	CreatedAt   *string  `json:"created_at,omitempty"`
+	Views       *int     `json:"views,omitempty"`
+}
+
+type VideoVideoList struct {
+	Items []*VideoVideo `json:"items,omitempty"`
+	Total *int          `json:"total,omitempty"`
+}
+
+type VoucherBalance struct {
+	Amount   *int    `json:"amount,omitempty"`
+	Currency *string `json:"currency,omitempty"`
+}
+
+type VoucherCorporateSpendReport struct {
+	CorporateID  *string `json:"corporate_id,omitempty"`
+	TotalSpent   *int    `json:"total_spent,omitempty"`
+	Currency     *string `json:"currency,omitempty"`
+	VouchersSent *int    `json:"vouchers_sent,omitempty"`
+}
+
+type VoucherMerchant struct {
+	ID           *string `json:"id,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	ProviderType *string `json:"provider_type,omitempty"`
+	Status       *string `json:"status,omitempty"`
+}
+
+type VoucherMoney struct {
+	Amount   *int    `json:"amount,omitempty"`
+	Currency *string `json:"currency,omitempty"`
+}
+
+type VoucherOrder struct {
+	ID          *string `json:"id,omitempty"`
+	Status      *string `json:"status,omitempty"`
+	TotalAmount *int    `json:"total_amount,omitempty"`
+	Currency    *string `json:"currency,omitempty"`
+}
+
+type VoucherOrderItemInput struct {
+	MerchantID *string `json:"merchant_id,omitempty"`
+	ProductSku *string `json:"product_sku,omitempty"`
+	Quantity   *int    `json:"quantity,omitempty"`
+	UnitPrice  *int    `json:"unit_price,omitempty"`
+}
+
+type VoucherRedemptionReport struct {
+	MerchantID     *string  `json:"merchant_id,omitempty"`
+	TotalIssued    *int     `json:"total_issued,omitempty"`
+	TotalRedeemed  *int     `json:"total_redeemed,omitempty"`
+	RedemptionRate *float64 `json:"redemption_rate,omitempty"`
+	PeriodStart    *string  `json:"period_start,omitempty"`
+	PeriodEnd      *string  `json:"period_end,omitempty"`
+}
+
+type VoucherValidationResult struct {
+	Valid   *bool         `json:"valid,omitempty"`
+	Balance *VoucherMoney `json:"balance,omitempty"`
+	Reason  *string       `json:"reason,omitempty"`
+}
+
+type VoucherVoucher struct {
+	ID         *string `json:"id,omitempty"`
+	MerchantID *string `json:"merchant_id,omitempty"`
+	Code       *string `json:"code,omitempty"`
+	Status     *string `json:"status,omitempty"`
+	Version    *int    `json:"version,omitempty"`
+}
+
+type WalletPaymentMethod struct {
+	PaymentMethodID *string `json:"payment_method_id,omitempty"`
+	UserID          *string `json:"user_id,omitempty"`
+	Type            *string `json:"type,omitempty"`
+	Provider        *string `json:"provider,omitempty"`
+	AccountNumber   *string `json:"account_number,omitempty"`
+	IsDefault       *bool   `json:"is_default,omitempty"`
+	IsActive        *bool   `json:"is_active,omitempty"`
+	CreatedAt       *string `json:"created_at,omitempty"`
+}
+
+type WalletPaymentRequest struct {
+	PaymentRequestID  *string `json:"payment_request_id,omitempty"`
+	RequesterWalletID *string `json:"requester_wallet_id,omitempty"`
+	PayerWalletID     *string `json:"payer_wallet_id,omitempty"`
+	Amount            *int    `json:"amount,omitempty"`
+	Currency          *string `json:"currency,omitempty"`
+	Status            *string `json:"status,omitempty"`
+	Description       *string `json:"description,omitempty"`
+	TransferID        *string `json:"transfer_id,omitempty"`
+	ExpiresAt         *string `json:"expires_at,omitempty"`
+	CreatedAt         *string `json:"created_at,omitempty"`
+}
+
+type WalletPaymentRequestQR struct {
+	PaymentRequestID *string `json:"payment_request_id,omitempty"`
+	Payload          *string `json:"payload,omitempty"`
+}
+
+type WalletPocket struct {
+	PocketID  *string `json:"pocket_id,omitempty"`
+	WalletID  *string `json:"wallet_id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	Balance   *int    `json:"balance,omitempty"`
+	Currency  *string `json:"currency,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty"`
+}
+
+type WalletSvcTransaction struct {
+	ID                *string        `json:"id,omitempty"`
+	IdempotencyKey    *string        `json:"idempotency_key,omitempty"`
+	WalletID          *string        `json:"wallet_id,omitempty"`
+	MerchantID        *string        `json:"merchant_id,omitempty"`
+	AcquirerBankID    *string        `json:"acquirer_bank_id,omitempty"`
+	IssuerBankID      *string        `json:"issuer_bank_id,omitempty"`
+	CardID            *string        `json:"card_id,omitempty"`
+	CardNetwork       *string        `json:"card_network,omitempty"`
+	Amount            *string        `json:"amount,omitempty"`
+	Currency          *string        `json:"currency,omitempty"`
+	Fee               *string        `json:"fee,omitempty"`
+	Type              *string        `json:"type,omitempty"`
+	Status            *string        `json:"status,omitempty"`
+	Description       *string        `json:"description,omitempty"`
+	AuthorizationCode *string        `json:"authorization_code,omitempty"`
+	BatchID           *string        `json:"batch_id,omitempty"`
+	Metadata          map[string]any `json:"metadata,omitempty"`
+	CreatedAt         *string        `json:"created_at,omitempty"`
+	UpdatedAt         *string        `json:"updated_at,omitempty"`
+}
+
+type WalletSvcWallet struct {
+	ID           *string `json:"id,omitempty"`
+	UserID       *string `json:"user_id,omitempty"`
+	Balance      *string `json:"balance,omitempty"`
+	FrozenAmount *string `json:"frozen_amount,omitempty"`
+	Currency     *string `json:"currency,omitempty"`
+	Status       *string `json:"status,omitempty"`
+	Version      *int    `json:"version,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	UpdatedAt    *string `json:"updated_at,omitempty"`
+}
+
+type WalletTransaction struct {
+	TransactionID        *string `json:"transaction_id,omitempty"`
+	WalletID             *string `json:"wallet_id,omitempty"`
+	Type                 *string `json:"type,omitempty"`
+	Amount               *int    `json:"amount,omitempty"`
+	Currency             *string `json:"currency,omitempty"`
+	Status               *string `json:"status,omitempty"`
+	ReferenceID          *string `json:"reference_id,omitempty"`
+	CounterpartyWalletID *string `json:"counterparty_wallet_id,omitempty"`
+	PocketID             *string `json:"pocket_id,omitempty"`
+	Description          *string `json:"description,omitempty"`
+	CreatedAt            *string `json:"created_at,omitempty"`
+}
+
+type WalletTransfer struct {
+	TransferID       *string `json:"transfer_id,omitempty"`
+	SenderWalletID   *string `json:"sender_wallet_id,omitempty"`
+	ReceiverWalletID *string `json:"receiver_wallet_id,omitempty"`
+	Amount           *int    `json:"amount,omitempty"`
+	Currency         *string `json:"currency,omitempty"`
+	Status           *string `json:"status,omitempty"`
+	ReferenceID      *string `json:"reference_id,omitempty"`
+	OutTransactionID *string `json:"out_transaction_id,omitempty"`
+	InTransactionID  *string `json:"in_transaction_id,omitempty"`
+	Description      *string `json:"description,omitempty"`
+	CreatedAt        *string `json:"created_at,omitempty"`
+}
+
+type WalletWallet struct {
+	WalletID            *string `json:"wallet_id,omitempty"`
+	UserID              *string `json:"user_id,omitempty"`
+	Balance             *int    `json:"balance,omitempty"`
+	Currency            *string `json:"currency,omitempty"`
+	Status              *string `json:"status,omitempty"`
+	DailyLimit          *int    `json:"daily_limit,omitempty"`
+	PerTransactionLimit *int    `json:"per_transaction_limit,omitempty"`
+	FrozenReason        *string `json:"frozen_reason,omitempty"`
+	CreatedAt           *string `json:"created_at,omitempty"`
+	UpdatedAt           *string `json:"updated_at,omitempty"`
+}
+
+type WebrtcIceServer struct {
+	Urls       []string `json:"urls"`
+	Username   *string  `json:"username,omitempty"`
+	Credential *string  `json:"credential,omitempty"`
+}
+
+type WebrtcIceServers struct {
+	IceServers []*WebrtcIceServer `json:"ice_servers"`
+}
+
+type WebrtcMediaState struct {
+	Audio  bool `json:"audio"`
+	Video  bool `json:"video"`
+	Screen bool `json:"screen"`
+}
+
+type WebrtcParticipant struct {
+	UserID string            `json:"user_id"`
+	Media  *WebrtcMediaState `json:"media"`
+}
+
+type WebrtcRoomInfo struct {
+	RoomID       string               `json:"room_id"`
+	Capacity     int                  `json:"capacity"`
+	Participants []*WebrtcParticipant `json:"participants"`
+}
+
+type WishlistCustomer struct {
+	ID   *int    `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type CarRentalPaymentMethod string
+
+const (
+	CarRentalPaymentMethodPaymentMethodUnspecified CarRentalPaymentMethod = "PAYMENT_METHOD_UNSPECIFIED"
+	CarRentalPaymentMethodPaymentMethodCreditCard  CarRentalPaymentMethod = "PAYMENT_METHOD_CREDIT_CARD"
+	CarRentalPaymentMethodPaymentMethodDebitCard   CarRentalPaymentMethod = "PAYMENT_METHOD_DEBIT_CARD"
+	CarRentalPaymentMethodPaymentMethodCash        CarRentalPaymentMethod = "PAYMENT_METHOD_CASH"
+	CarRentalPaymentMethodPaymentMethodOnline      CarRentalPaymentMethod = "PAYMENT_METHOD_ONLINE"
+)
+
+var AllCarRentalPaymentMethod = []CarRentalPaymentMethod{
+	CarRentalPaymentMethodPaymentMethodUnspecified,
+	CarRentalPaymentMethodPaymentMethodCreditCard,
+	CarRentalPaymentMethodPaymentMethodDebitCard,
+	CarRentalPaymentMethodPaymentMethodCash,
+	CarRentalPaymentMethodPaymentMethodOnline,
+}
+
+func (e CarRentalPaymentMethod) IsValid() bool {
+	switch e {
+	case CarRentalPaymentMethodPaymentMethodUnspecified, CarRentalPaymentMethodPaymentMethodCreditCard, CarRentalPaymentMethodPaymentMethodDebitCard, CarRentalPaymentMethodPaymentMethodCash, CarRentalPaymentMethodPaymentMethodOnline:
+		return true
+	}
+	return false
+}
+
+func (e CarRentalPaymentMethod) String() string {
+	return string(e)
+}
+
+func (e *CarRentalPaymentMethod) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CarRentalPaymentMethod(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CarRentalPaymentMethod", str)
+	}
+	return nil
+}
+
+func (e CarRentalPaymentMethod) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CarRentalPaymentStatus string
+
+const (
+	CarRentalPaymentStatusPaymentStatusUnspecified CarRentalPaymentStatus = "PAYMENT_STATUS_UNSPECIFIED"
+	CarRentalPaymentStatusPaymentStatusPending     CarRentalPaymentStatus = "PAYMENT_STATUS_PENDING"
+	CarRentalPaymentStatusPaymentStatusCompleted   CarRentalPaymentStatus = "PAYMENT_STATUS_COMPLETED"
+	CarRentalPaymentStatusPaymentStatusFailed      CarRentalPaymentStatus = "PAYMENT_STATUS_FAILED"
+	CarRentalPaymentStatusPaymentStatusRefunded    CarRentalPaymentStatus = "PAYMENT_STATUS_REFUNDED"
+)
+
+var AllCarRentalPaymentStatus = []CarRentalPaymentStatus{
+	CarRentalPaymentStatusPaymentStatusUnspecified,
+	CarRentalPaymentStatusPaymentStatusPending,
+	CarRentalPaymentStatusPaymentStatusCompleted,
+	CarRentalPaymentStatusPaymentStatusFailed,
+	CarRentalPaymentStatusPaymentStatusRefunded,
+}
+
+func (e CarRentalPaymentStatus) IsValid() bool {
+	switch e {
+	case CarRentalPaymentStatusPaymentStatusUnspecified, CarRentalPaymentStatusPaymentStatusPending, CarRentalPaymentStatusPaymentStatusCompleted, CarRentalPaymentStatusPaymentStatusFailed, CarRentalPaymentStatusPaymentStatusRefunded:
+		return true
+	}
+	return false
+}
+
+func (e CarRentalPaymentStatus) String() string {
+	return string(e)
+}
+
+func (e *CarRentalPaymentStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CarRentalPaymentStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CarRentalPaymentStatus", str)
+	}
+	return nil
+}
+
+func (e CarRentalPaymentStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CarRentalRentalStatus string
+
+const (
+	CarRentalRentalStatusRentalStatusUnspecified CarRentalRentalStatus = "RENTAL_STATUS_UNSPECIFIED"
+	CarRentalRentalStatusRentalStatusActive      CarRentalRentalStatus = "RENTAL_STATUS_ACTIVE"
+	CarRentalRentalStatusRentalStatusCompleted   CarRentalRentalStatus = "RENTAL_STATUS_COMPLETED"
+	CarRentalRentalStatusRentalStatusOverdue     CarRentalRentalStatus = "RENTAL_STATUS_OVERDUE"
+)
+
+var AllCarRentalRentalStatus = []CarRentalRentalStatus{
+	CarRentalRentalStatusRentalStatusUnspecified,
+	CarRentalRentalStatusRentalStatusActive,
+	CarRentalRentalStatusRentalStatusCompleted,
+	CarRentalRentalStatusRentalStatusOverdue,
+}
+
+func (e CarRentalRentalStatus) IsValid() bool {
+	switch e {
+	case CarRentalRentalStatusRentalStatusUnspecified, CarRentalRentalStatusRentalStatusActive, CarRentalRentalStatusRentalStatusCompleted, CarRentalRentalStatusRentalStatusOverdue:
+		return true
+	}
+	return false
+}
+
+func (e CarRentalRentalStatus) String() string {
+	return string(e)
+}
+
+func (e *CarRentalRentalStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CarRentalRentalStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CarRentalRentalStatus", str)
+	}
+	return nil
+}
+
+func (e CarRentalRentalStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CarRentalReservationStatus string
+
+const (
+	CarRentalReservationStatusReservationStatusUnspecified CarRentalReservationStatus = "RESERVATION_STATUS_UNSPECIFIED"
+	CarRentalReservationStatusReservationStatusPending     CarRentalReservationStatus = "RESERVATION_STATUS_PENDING"
+	CarRentalReservationStatusReservationStatusConfirmed   CarRentalReservationStatus = "RESERVATION_STATUS_CONFIRMED"
+	CarRentalReservationStatusReservationStatusCancelled   CarRentalReservationStatus = "RESERVATION_STATUS_CANCELLED"
+	CarRentalReservationStatusReservationStatusCompleted   CarRentalReservationStatus = "RESERVATION_STATUS_COMPLETED"
+)
+
+var AllCarRentalReservationStatus = []CarRentalReservationStatus{
+	CarRentalReservationStatusReservationStatusUnspecified,
+	CarRentalReservationStatusReservationStatusPending,
+	CarRentalReservationStatusReservationStatusConfirmed,
+	CarRentalReservationStatusReservationStatusCancelled,
+	CarRentalReservationStatusReservationStatusCompleted,
+}
+
+func (e CarRentalReservationStatus) IsValid() bool {
+	switch e {
+	case CarRentalReservationStatusReservationStatusUnspecified, CarRentalReservationStatusReservationStatusPending, CarRentalReservationStatusReservationStatusConfirmed, CarRentalReservationStatusReservationStatusCancelled, CarRentalReservationStatusReservationStatusCompleted:
+		return true
+	}
+	return false
+}
+
+func (e CarRentalReservationStatus) String() string {
+	return string(e)
+}
+
+func (e *CarRentalReservationStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CarRentalReservationStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CarRentalReservationStatus", str)
+	}
+	return nil
+}
+
+func (e CarRentalReservationStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CarRentalUserType string
+
+const (
+	CarRentalUserTypeUserTypeUnspecified CarRentalUserType = "USER_TYPE_UNSPECIFIED"
+	CarRentalUserTypeUserTypeCustomer    CarRentalUserType = "USER_TYPE_CUSTOMER"
+	CarRentalUserTypeUserTypeStaff       CarRentalUserType = "USER_TYPE_STAFF"
+	CarRentalUserTypeUserTypeAdmin       CarRentalUserType = "USER_TYPE_ADMIN"
+)
+
+var AllCarRentalUserType = []CarRentalUserType{
+	CarRentalUserTypeUserTypeUnspecified,
+	CarRentalUserTypeUserTypeCustomer,
+	CarRentalUserTypeUserTypeStaff,
+	CarRentalUserTypeUserTypeAdmin,
+}
+
+func (e CarRentalUserType) IsValid() bool {
+	switch e {
+	case CarRentalUserTypeUserTypeUnspecified, CarRentalUserTypeUserTypeCustomer, CarRentalUserTypeUserTypeStaff, CarRentalUserTypeUserTypeAdmin:
+		return true
+	}
+	return false
+}
+
+func (e CarRentalUserType) String() string {
+	return string(e)
+}
+
+func (e *CarRentalUserType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CarRentalUserType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CarRentalUserType", str)
+	}
+	return nil
+}
+
+func (e CarRentalUserType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CarRentalVehicleStatus string
+
+const (
+	CarRentalVehicleStatusVehicleStatusUnspecified CarRentalVehicleStatus = "VEHICLE_STATUS_UNSPECIFIED"
+	CarRentalVehicleStatusVehicleStatusAvailable   CarRentalVehicleStatus = "VEHICLE_STATUS_AVAILABLE"
+	CarRentalVehicleStatusVehicleStatusRented      CarRentalVehicleStatus = "VEHICLE_STATUS_RENTED"
+	CarRentalVehicleStatusVehicleStatusMaintenance CarRentalVehicleStatus = "VEHICLE_STATUS_MAINTENANCE"
+	CarRentalVehicleStatusVehicleStatusRetired     CarRentalVehicleStatus = "VEHICLE_STATUS_RETIRED"
+)
+
+var AllCarRentalVehicleStatus = []CarRentalVehicleStatus{
+	CarRentalVehicleStatusVehicleStatusUnspecified,
+	CarRentalVehicleStatusVehicleStatusAvailable,
+	CarRentalVehicleStatusVehicleStatusRented,
+	CarRentalVehicleStatusVehicleStatusMaintenance,
+	CarRentalVehicleStatusVehicleStatusRetired,
+}
+
+func (e CarRentalVehicleStatus) IsValid() bool {
+	switch e {
+	case CarRentalVehicleStatusVehicleStatusUnspecified, CarRentalVehicleStatusVehicleStatusAvailable, CarRentalVehicleStatusVehicleStatusRented, CarRentalVehicleStatusVehicleStatusMaintenance, CarRentalVehicleStatusVehicleStatusRetired:
+		return true
+	}
+	return false
+}
+
+func (e CarRentalVehicleStatus) String() string {
+	return string(e)
+}
+
+func (e *CarRentalVehicleStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CarRentalVehicleStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CarRentalVehicleStatus", str)
+	}
+	return nil
+}
+
+func (e CarRentalVehicleStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type CarRentalVehicleType string
+
+const (
+	CarRentalVehicleTypeVehicleTypeUnspecified CarRentalVehicleType = "VEHICLE_TYPE_UNSPECIFIED"
+	CarRentalVehicleTypeVehicleTypeCar         CarRentalVehicleType = "VEHICLE_TYPE_CAR"
+	CarRentalVehicleTypeVehicleTypeMotorcycle  CarRentalVehicleType = "VEHICLE_TYPE_MOTORCYCLE"
+	CarRentalVehicleTypeVehicleTypeBicycle     CarRentalVehicleType = "VEHICLE_TYPE_BICYCLE"
+)
+
+var AllCarRentalVehicleType = []CarRentalVehicleType{
+	CarRentalVehicleTypeVehicleTypeUnspecified,
+	CarRentalVehicleTypeVehicleTypeCar,
+	CarRentalVehicleTypeVehicleTypeMotorcycle,
+	CarRentalVehicleTypeVehicleTypeBicycle,
+}
+
+func (e CarRentalVehicleType) IsValid() bool {
+	switch e {
+	case CarRentalVehicleTypeVehicleTypeUnspecified, CarRentalVehicleTypeVehicleTypeCar, CarRentalVehicleTypeVehicleTypeMotorcycle, CarRentalVehicleTypeVehicleTypeBicycle:
+		return true
+	}
+	return false
+}
+
+func (e CarRentalVehicleType) String() string {
+	return string(e)
+}
+
+func (e *CarRentalVehicleType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = CarRentalVehicleType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid CarRentalVehicleType", str)
+	}
+	return nil
+}
+
+func (e CarRentalVehicleType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type HospitalAppointmentStatus string
+
+const (
+	HospitalAppointmentStatusAppointmentStatusUnspecified HospitalAppointmentStatus = "APPOINTMENT_STATUS_UNSPECIFIED"
+	HospitalAppointmentStatusAppointmentStatusScheduled   HospitalAppointmentStatus = "APPOINTMENT_STATUS_SCHEDULED"
+	HospitalAppointmentStatusAppointmentStatusCompleted   HospitalAppointmentStatus = "APPOINTMENT_STATUS_COMPLETED"
+	HospitalAppointmentStatusAppointmentStatusCancelled   HospitalAppointmentStatus = "APPOINTMENT_STATUS_CANCELLED"
+	HospitalAppointmentStatusAppointmentStatusNoShow      HospitalAppointmentStatus = "APPOINTMENT_STATUS_NO_SHOW"
+)
+
+var AllHospitalAppointmentStatus = []HospitalAppointmentStatus{
+	HospitalAppointmentStatusAppointmentStatusUnspecified,
+	HospitalAppointmentStatusAppointmentStatusScheduled,
+	HospitalAppointmentStatusAppointmentStatusCompleted,
+	HospitalAppointmentStatusAppointmentStatusCancelled,
+	HospitalAppointmentStatusAppointmentStatusNoShow,
+}
+
+func (e HospitalAppointmentStatus) IsValid() bool {
+	switch e {
+	case HospitalAppointmentStatusAppointmentStatusUnspecified, HospitalAppointmentStatusAppointmentStatusScheduled, HospitalAppointmentStatusAppointmentStatusCompleted, HospitalAppointmentStatusAppointmentStatusCancelled, HospitalAppointmentStatusAppointmentStatusNoShow:
+		return true
+	}
+	return false
+}
+
+func (e HospitalAppointmentStatus) String() string {
+	return string(e)
+}
+
+func (e *HospitalAppointmentStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = HospitalAppointmentStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid HospitalAppointmentStatus", str)
+	}
+	return nil
+}
+
+func (e HospitalAppointmentStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type HospitalBloodType string
+
+const (
+	HospitalBloodTypeBloodTypeUnspecified HospitalBloodType = "BLOOD_TYPE_UNSPECIFIED"
+	HospitalBloodTypeBloodTypeAPositive   HospitalBloodType = "BLOOD_TYPE_A_POSITIVE"
+	HospitalBloodTypeBloodTypeANegative   HospitalBloodType = "BLOOD_TYPE_A_NEGATIVE"
+	HospitalBloodTypeBloodTypeBPositive   HospitalBloodType = "BLOOD_TYPE_B_POSITIVE"
+	HospitalBloodTypeBloodTypeBNegative   HospitalBloodType = "BLOOD_TYPE_B_NEGATIVE"
+	HospitalBloodTypeBloodTypeAbPositive  HospitalBloodType = "BLOOD_TYPE_AB_POSITIVE"
+	HospitalBloodTypeBloodTypeAbNegative  HospitalBloodType = "BLOOD_TYPE_AB_NEGATIVE"
+	HospitalBloodTypeBloodTypeOPositive   HospitalBloodType = "BLOOD_TYPE_O_POSITIVE"
+	HospitalBloodTypeBloodTypeONegative   HospitalBloodType = "BLOOD_TYPE_O_NEGATIVE"
+)
+
+var AllHospitalBloodType = []HospitalBloodType{
+	HospitalBloodTypeBloodTypeUnspecified,
+	HospitalBloodTypeBloodTypeAPositive,
+	HospitalBloodTypeBloodTypeANegative,
+	HospitalBloodTypeBloodTypeBPositive,
+	HospitalBloodTypeBloodTypeBNegative,
+	HospitalBloodTypeBloodTypeAbPositive,
+	HospitalBloodTypeBloodTypeAbNegative,
+	HospitalBloodTypeBloodTypeOPositive,
+	HospitalBloodTypeBloodTypeONegative,
+}
+
+func (e HospitalBloodType) IsValid() bool {
+	switch e {
+	case HospitalBloodTypeBloodTypeUnspecified, HospitalBloodTypeBloodTypeAPositive, HospitalBloodTypeBloodTypeANegative, HospitalBloodTypeBloodTypeBPositive, HospitalBloodTypeBloodTypeBNegative, HospitalBloodTypeBloodTypeAbPositive, HospitalBloodTypeBloodTypeAbNegative, HospitalBloodTypeBloodTypeOPositive, HospitalBloodTypeBloodTypeONegative:
+		return true
+	}
+	return false
+}
+
+func (e HospitalBloodType) String() string {
+	return string(e)
+}
+
+func (e *HospitalBloodType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = HospitalBloodType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid HospitalBloodType", str)
+	}
+	return nil
+}
+
+func (e HospitalBloodType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type HospitalGender string
+
+const (
+	HospitalGenderGenderUnspecified HospitalGender = "GENDER_UNSPECIFIED"
+	HospitalGenderGenderMale        HospitalGender = "GENDER_MALE"
+	HospitalGenderGenderFemale      HospitalGender = "GENDER_FEMALE"
+	HospitalGenderGenderOther       HospitalGender = "GENDER_OTHER"
+)
+
+var AllHospitalGender = []HospitalGender{
+	HospitalGenderGenderUnspecified,
+	HospitalGenderGenderMale,
+	HospitalGenderGenderFemale,
+	HospitalGenderGenderOther,
+}
+
+func (e HospitalGender) IsValid() bool {
+	switch e {
+	case HospitalGenderGenderUnspecified, HospitalGenderGenderMale, HospitalGenderGenderFemale, HospitalGenderGenderOther:
+		return true
+	}
+	return false
+}
+
+func (e HospitalGender) String() string {
+	return string(e)
+}
+
+func (e *HospitalGender) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = HospitalGender(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid HospitalGender", str)
+	}
+	return nil
+}
+
+func (e HospitalGender) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -1,0 +1,40 @@
+type FoodFood {
+  id: Int
+  name: String
+  description: String
+  price: Int
+  category: String
+}
+
+input FoodFoodInput {
+  name: String
+  description: String
+  price: Int
+  category: String
+}
+
+type FoodAllergen {
+  id: Int
+  name: String
+}
+
+type FoodIngredient {
+  id: Int
+  name: String
+  unit: String
+}
+
+extend type Query {
+  food(id: Int!): FoodFood @public @rest(service: "food-service", path: "/api/food/{id}")
+  foods: [FoodFood!] @public @rest(service: "food-service", path: "/api/food/")
+  foodSearchFoods(name: String!): [FoodFood!] @public @rest(service: "food-service", path: "/api/food/search")
+}
+
+extend type Mutation {
+  foodCreateFood(input: FoodFoodInput!): FoodFood @hasPermission(object: "/graphql/food-service", action: "MUTATION") @rest(service: "food-service", method: "POST", path: "/api/food")
+  foodUpdateFood(id: Int!, input: FoodFoodInput!): FoodFood @hasPermission(object: "/graphql/food-service", action: "MUTATION") @rest(service: "food-service", method: "PUT", path: "/api/food/{id}")
+  foodDeleteFood(id: Int!): Boolean! @hasPermission(object: "/graphql/food-service", action: "MUTATION") @rest(service: "food-service", method: "DELETE", path: "/api/food/{id}")
+  foodDeleteAllFoods: Boolean! @hasPermission(object: "/graphql/food-service", action: "MUTATION") @rest(service: "food-service", method: "DELETE", path: "/api/food/")
+  foodCreateAllergen(name: String!): FoodAllergen @hasPermission(object: "/graphql/food-service", action: "MUTATION") @rest(service: "food-service", method: "POST", path: "/api/allergens")
+  foodCreateIngredient(name: String!, unit: String): FoodIngredient @hasPermission(object: "/graphql/food-service", action: "MUTATION") @rest(service: "food-service", method: "POST", path: "/api/ingredient")
+}

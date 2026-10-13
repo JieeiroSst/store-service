@@ -3,6 +3,7 @@ use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
+use crate::adapters::api::auth::Principal;
 use crate::adapters::db::PostgresRepository;
 use crate::core::domain::DomainError;
 use crate::core::services::BookingServiceImpl;
@@ -53,9 +54,13 @@ pub async fn get_available_rooms(
 }
 
 pub async fn create_booking(
+    principal: Principal,
     booking_req: web::Json<BookingRequest>,
     repo: web::Data<Arc<PostgresRepository>>,
 ) -> Result<HttpResponse, actix_web::Error> {
+    let owner = repo.passenger_owner(booking_req.passenger_id).await.map_err(internal_error)?;
+    super::authorize_owner(&principal, owner, DomainError::PassengerNotFound(booking_req.passenger_id))?;
+
     let service = BookingServiceImpl::new(repo.get_ref().clone());
 
     let booking = service.make_booking(
@@ -82,9 +87,13 @@ pub async fn create_booking(
 }
 
 pub async fn get_booking(
+    principal: Principal,
     id: web::Path<i32>,
     repo: web::Data<Arc<PostgresRepository>>,
 ) -> Result<HttpResponse, actix_web::Error> {
+    let owner = repo.booking_owner(*id).await.map_err(internal_error)?;
+    super::authorize_owner(&principal, owner, DomainError::BookingNotFound(*id))?;
+
     let booking = repo.get_booking(*id)
         .await
         .map_err(|e| {
@@ -99,9 +108,13 @@ pub async fn get_booking(
 }
 
 pub async fn cancel_booking(
+    principal: Principal,
     id: web::Path<i32>,
     repo: web::Data<Arc<PostgresRepository>>,
 ) -> Result<HttpResponse, actix_web::Error> {
+    let owner = repo.booking_owner(*id).await.map_err(internal_error)?;
+    super::authorize_owner(&principal, owner, DomainError::BookingNotFound(*id))?;
+
     let service = BookingServiceImpl::new(repo.get_ref().clone());
 
     let result = service.cancel_booking(*id)
@@ -116,4 +129,8 @@ pub async fn cancel_booking(
     } else {
         Ok(HttpResponse::NotFound().finish())
     }
+}
+fn internal_error(e: Box<dyn std::error::Error>) -> actix_web::Error {
+    log::error!("Error checking ownership: {:?}", e);
+    actix_web::error::ErrorInternalServerError(e.to_string())
 }

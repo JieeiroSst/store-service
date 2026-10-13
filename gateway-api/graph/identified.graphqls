@@ -1,0 +1,54 @@
+type GymClass {
+  id: String
+  name: String
+  day: String
+  time: String
+  coach: String
+  description: String
+}
+
+type GymPass {
+  id: String
+  is_active: Boolean
+}
+
+type GymClient {
+  id: String!
+  first_name: String!
+  last_name: String!
+  email: String!
+  status: String!
+}
+
+input GymClientInput {
+  first_name: String
+  last_name: String
+  email: String
+}
+
+input GymClassInput {
+  name: String
+  day: String
+  time: String
+  coach: String
+  description: String
+}
+
+extend type Query {
+  gymClasses: [GymClass!] @public @rest(service: "identified-service", path: "/classes")
+  gymClass(class_id: String!): GymClass @public @rest(service: "identified-service", path: "/classes/{class_id}")
+  gymPassVerification(gym_pass_id: String!): GymPass @rest(service: "identified-service", path: "/gym-passes/{gym_pass_id}/verification")
+}
+
+extend type Mutation {
+  gymCreateClient(input: GymClientInput!): GymClient @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "POST", path: "/clients")
+  gymUpdateClient(client_id: String!, input: GymClientInput!): GymClient @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "PUT", path: "/clients/{client_id}")
+  gymArchiveClient(client_id: String!): Boolean! @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "DELETE", path: "/clients/{client_id}")
+  gymExportClients(format: String!): Any @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "POST", path: "/clients/exports")
+  gymCreatePass(validity: String!): GymPass @rest(service: "identified-service", method: "POST", path: "/gym-passes", userField: "owner")
+  gymPausePass(gym_pass_id: String!, days: Int!): GymPass @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "POST", path: "/gym-passes/{gym_pass_id}/pauses")
+  gymRenewPass(gym_pass_id: String!): GymPass @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "PUT", path: "/gym-passes/{gym_pass_id}/renewal")
+  gymCreateClass(input: GymClassInput!): GymClass @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "POST", path: "/classes")
+  gymUpdateClass(class_id: String!, input: GymClassInput!): GymClass @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "PUT", path: "/classes/{class_id}")
+  gymDeleteClass(class_id: String!): Boolean! @hasPermission(object: "/graphql/identified-service", action: "MUTATION") @rest(service: "identified-service", method: "DELETE", path: "/classes/{class_id}")
+}

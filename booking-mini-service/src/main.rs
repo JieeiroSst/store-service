@@ -1,5 +1,6 @@
 use actix_web::{web, App, HttpServer};
 use env_logger::Env;
+use booking_mini_service::adapters::api::auth::Authenticator;
 use booking_mini_service::adapters::api::config_routes;
 use booking_mini_service::adapters::db::PostgresRepository;
 use booking_mini_service::adapters::migrations;
@@ -27,11 +28,14 @@ async fn main() -> io::Result<()> {
 
     let repo = Arc::new(PostgresRepository::new(&db_url).await.expect("Failed to connect to database"));
 
+    let auth = web::Data::new(Authenticator::from_env());
+
     let port = config.port;
     // Start HTTP server
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(repo.clone()))
+            .app_data(auth.clone())
             .configure(config_routes)
     })
         .bind(("0.0.0.0", port))?

@@ -1,0 +1,34 @@
+input SerpSearchInput {
+  engine: String
+  params: Map
+  output: String
+  no_cache: Boolean
+  async: Boolean
+}
+
+type SerpBatchItem {
+  status: Int
+  search_id: String
+  cached: Boolean
+  error: String
+  data: Any
+}
+
+type SerpBatch {
+  results: [SerpBatchItem!]!
+}
+
+extend type Query {
+  serpEngines: Any @rest(service: "serpapi-service", path: "/api/v1/engines")
+  serpEngine(engine: String!): Any @rest(service: "serpapi-service", path: "/api/v1/engines/{engine}")
+  serpSearch(engine: String, params: Map): Any @rest(service: "serpapi-service", path: "/api/v1/search")
+  serpSearchBody(input: SerpSearchInput!): Any @rest(service: "serpapi-service", method: "POST", path: "/api/v1/search")
+  serpSearchBatch(searches: [SerpSearchInput!]!): SerpBatch @rest(service: "serpapi-service", method: "POST", path: "/api/v1/search/batch")
+  serpArchive(id: String!): Any @rest(service: "serpapi-service", path: "/api/v1/searches/{id}")
+  serpAccount: Any @hasPermission(object: "/graphql/serpapi-service", action: "QUERY") @rest(service: "serpapi-service", path: "/api/v1/account")
+  serpLocations(q: String, limit: Int): Any @rest(service: "serpapi-service", path: "/api/v1/locations")
+}
+
+extend type Mutation {
+  serpUploadImage(image: Upload!): Any @rest(service: "serpapi-service", method: "POST", path: "/api/v1/images", multipart: true)
+}

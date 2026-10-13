@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/JIeeroSst/hospital-patient-management-service/config"
 	"github.com/JIeeroSst/hospital-patient-management-service/internal/adapter/secondary/httpx"
@@ -15,7 +16,7 @@ import (
 type Client struct{ http *httpx.Client }
 
 func New(cfg *config.Config) *Client {
-	return &Client{http: httpx.New(cfg.Notification.BaseURL, cfg.Notification.Timeout)}
+	return &Client{http: httpx.New(cfg.Notification.BaseURL, cfg.Notification.Timeout).WithHeader("X-Internal-Token", os.Getenv("INTERNAL_API_TOKEN"))}
 }
 
 // Notify is a no-op when notification-service is not configured.

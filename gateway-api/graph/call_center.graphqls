@@ -1,0 +1,93 @@
+type CallCenterCall {
+  id: Int!
+  call_sid: String!
+  from_number: String!
+  to_number: String!
+  notes: String
+  status: String
+  duration: Int
+  start_time: String
+  end_time: String
+  recording_url: String
+  created_at: String
+  updated_at: String
+}
+
+type CallCenterMessage {
+  id: Int!
+  call_id: Int!
+  role: String
+  content: String
+  audio_url: String
+  timestamp: String
+  processing_time: Float
+}
+
+type CallCenterCallDetail {
+  id: Int!
+  call_sid: String!
+  from_number: String!
+  to_number: String!
+  notes: String
+  status: String
+  duration: Int
+  start_time: String
+  end_time: String
+  recording_url: String
+  created_at: String
+  updated_at: String
+  messages: [CallCenterMessage!]
+}
+
+type CallCenterScenario {
+  id: Int!
+  name: String!
+  description: String
+  prompt: String
+  is_active: Int
+  created_at: String
+  updated_at: String
+}
+
+input CallCenterScenarioInput {
+  name: String
+  description: String
+  prompt: String
+  is_active: Int
+}
+
+type CallCenterCustomer {
+  id: Int!
+  phone_number: String!
+  name: String
+  email: String
+  notes: String
+  total_calls: Int
+  last_call_date: String
+  created_at: String
+  updated_at: String
+}
+
+type CallCenterStatistics {
+  total_calls: Int!
+  completed_calls: Int!
+  failed_calls: Int!
+  average_duration: Float!
+  total_messages: Int!
+}
+
+extend type Query {
+  callCenterCalls(skip: Int, limit: Int, status: String, from_number: String): [CallCenterCall!]! @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/calls")
+  callCenterCall(call_id: Int!): CallCenterCallDetail @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/calls/{call_id}")
+  callCenterScenarios(skip: Int, limit: Int): [CallCenterScenario!]! @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/scenarios")
+  callCenterScenario(scenario_id: Int!): CallCenterScenario @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/scenarios/{scenario_id}")
+  callCenterCustomer(phone_number: String!): CallCenterCustomer @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/customers/{phone_number}")
+  callCenterStatistics(days: Int): CallCenterStatistics @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/analytics/statistics")
+}
+
+extend type Mutation {
+  callCenterDeleteCall(call_id: Int!): Boolean! @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "DELETE", path: "/api/calls/{call_id}")
+  callCenterCreateScenario(input: CallCenterScenarioInput!): CallCenterScenario @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "POST", path: "/api/scenarios")
+  callCenterUpdateScenario(scenario_id: Int!, input: CallCenterScenarioInput!): CallCenterScenario @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "PUT", path: "/api/scenarios/{scenario_id}")
+  callCenterDeleteScenario(scenario_id: Int!): Boolean! @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "DELETE", path: "/api/scenarios/{scenario_id}")
+}

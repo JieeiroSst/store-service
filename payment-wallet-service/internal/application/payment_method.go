@@ -46,6 +46,10 @@ func (s *paymentMethodService) ListPaymentMethods(ctx context.Context, userID st
 	return s.methods.ListByUser(ctx, userID)
 }
 
+func (s *paymentMethodService) GetPaymentMethod(ctx context.Context, id string) (*model.PaymentMethod, error) {
+	return s.methods.GetByID(ctx, id)
+}
+
 func (s *paymentMethodService) RemovePaymentMethod(ctx context.Context, id string) error {
 	return s.methods.Delete(ctx, id)
 }

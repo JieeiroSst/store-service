@@ -1,0 +1,82 @@
+type KmsKeyUse {
+  key: KmsKey
+  message: String
+}
+
+type KmsKeyStats {
+  key_id: String
+  alias: String
+  use_count: Int
+  created_at: String
+  last_rotated_at: String
+  expires_at: String
+  status: String
+  version: Int
+}
+
+type KmsKeyAuditLogs {
+  key_id: String
+  logs: [KmsAuditLog!]
+  limit: Int
+  offset: Int
+}
+
+type KmsAuditLogs {
+  logs: [KmsAuditLog!]
+  limit: Int
+  offset: Int
+}
+
+type KmsKey {
+  id: String
+  alias: String
+  algorithm: String
+  key_length: Int
+  created_at: String
+  updated_at: String
+  expires_at: String
+  last_rotated_at: String
+  status: String
+  version: Int
+  created_by: Int
+  tags: Map
+  use_count: Int
+}
+
+type KmsAuditLog {
+  id: String
+  actor_id: Int
+  actor_name: String
+  action: String
+  resource: String
+  resource_id: String
+  timestamp: String
+  ip_address: String
+  user_agent: String
+  success: Boolean
+  error_msg: String
+  metadata: Map
+  level: String
+}
+
+input KmsCreateKeyInput {
+  alias: String
+  algorithm: String
+  expires_in: Int
+  tags: Map
+}
+
+extend type Query {
+  kmsKeys: [KmsKey!] @hasPermission(object: "/graphql/kms-service", action: "QUERY") @rest(service: "kms-service", path: "/api/v1/keys")
+  kmsKey(id: String!): KmsKey @hasPermission(object: "/graphql/kms-service", action: "QUERY") @rest(service: "kms-service", path: "/api/v1/keys/{id}")
+  kmsKeyForUse(id: String!): KmsKeyUse @hasPermission(object: "/graphql/kms-service", action: "QUERY") @rest(service: "kms-service", path: "/api/v1/keys/{id}/use")
+  kmsKeyUsageStats(id: String!): KmsKeyStats @hasPermission(object: "/graphql/kms-service", action: "QUERY") @rest(service: "kms-service", path: "/api/v1/keys/{id}/stats")
+  kmsKeyAuditLogs(id: String!, limit: Int, offset: Int): KmsKeyAuditLogs @hasPermission(object: "/graphql/kms-service", action: "QUERY") @rest(service: "kms-service", path: "/api/v1/keys/{id}/audit")
+  kmsAuditLogs(limit: Int, offset: Int): KmsAuditLogs @hasPermission(object: "/graphql/kms-service", action: "QUERY") @rest(service: "kms-service", path: "/api/v1/audit/logs")
+}
+
+extend type Mutation {
+  kmsCreateKey(input: KmsCreateKeyInput!): KmsKey @hasPermission(object: "/graphql/kms-service", action: "MUTATION") @rest(service: "kms-service", method: "POST", path: "/api/v1/keys")
+  kmsRotateKey(id: String!, force: Boolean): String @hasPermission(object: "/graphql/kms-service", action: "MUTATION") @rest(service: "kms-service", method: "PUT", path: "/api/v1/keys/{id}/rotate", unwrap: "message")
+  kmsDeleteKey(id: String!): Boolean! @hasPermission(object: "/graphql/kms-service", action: "MUTATION") @rest(service: "kms-service", method: "DELETE", path: "/api/v1/keys/{id}")
+}

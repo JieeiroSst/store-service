@@ -6,7 +6,9 @@ import (
 )
 
 func NewMiddlware() gin.HandlerFunc {
-	config := cors.Default()
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowHeaders = append(config.AllowHeaders, "Authorization")
 
-	return config
+	return cors.New(config)
 }

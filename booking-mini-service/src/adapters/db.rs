@@ -21,6 +21,33 @@ impl PostgresRepository {
         info!("Connected to database");
         Ok(Self { pool })
     }
+
+    pub async fn create_owned_passenger(&self, name: String, owner: Option<String>) -> Result<Passenger, Box<dyn Error>> {
+        let id: i32 = sqlx::query_scalar("INSERT INTO Passengers (Name, UserId) VALUES ($1, $2) RETURNING PassengerId")
+            .bind(&name)
+            .bind(owner)
+            .fetch_one(&self.pool)
+            .await?;
+        Ok(Passenger { id, name })
+    }
+
+    pub async fn passenger_owner(&self, passenger_id: i32) -> Result<Option<Option<String>>, Box<dyn Error>> {
+        let owner: Option<Option<String>> = sqlx::query_scalar("SELECT UserId FROM Passengers WHERE PassengerId = $1")
+            .bind(passenger_id)
+            .fetch_optional(&self.pool)
+            .await?;
+        Ok(owner)
+    }
+
+    pub async fn booking_owner(&self, booking_id: i32) -> Result<Option<Option<String>>, Box<dyn Error>> {
+        let owner: Option<Option<String>> = sqlx::query_scalar(
+            "SELECT p.UserId FROM Bookings b JOIN Passengers p ON b.PassengerId = p.PassengerId WHERE b.BookingId = $1",
+        )
+            .bind(booking_id)
+            .fetch_optional(&self.pool)
+            .await?;
+        Ok(owner)
+    }
 }
 
 #[async_trait]

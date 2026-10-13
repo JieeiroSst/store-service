@@ -1,0 +1,166 @@
+type PartnerPartnerPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerPartner!]
+}
+
+type PartnerPartnershipPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerPartnership!]
+}
+
+type PartnerPartnershipsPartnerPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerPartnershipsPartner!]
+}
+
+type PartnerProjectPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [PartnerProject!]
+}
+
+type PartnerPartner {
+  id: String
+  type: String
+  name: String
+  email: String
+  phone: String
+  address: String
+  status: String
+  score: Int
+  user_id: String
+  created_at: Int
+  updated_at: Int
+  deleted_at: Int
+}
+
+type PartnerPartnership {
+  id: String
+  project_id: String
+  description: String
+  started_on: Int
+  expires_on: Int
+  projects: [PartnerProject!]
+  user_id: String
+  created_at: Int
+}
+
+type PartnerPartnershipsPartner {
+  id: String
+  partner_id: String
+  partnership_id: String
+  content: String
+  joined_on: Int
+  left_on: Int
+  partners: [PartnerPartner!]
+  partnerships: [PartnerPartnership!]
+  user_id: String
+  created_at: Int
+}
+
+type PartnerProject {
+  id: String
+  name: String
+  user_id: String
+  created_at: Int
+}
+
+type PartnerPartnerStatistics {
+  total: Int
+  by_status: Map
+  by_type: Map
+}
+
+type PartnerPartnerActivity {
+  partner_id: String
+  status: String
+  score: Int
+  has_open_partnership: Boolean
+  last_activity_at: Int
+  eligible_for_closure: Boolean
+  is_active: Boolean
+}
+
+input PartnerPartnerInput {
+  type: String
+  name: String
+  email: String
+  phone: String
+  address: String
+  status: String
+  score: Int
+  user_id: String
+}
+
+input PartnerPartnershipInput {
+  project_id: String
+  description: String
+  started_on: Int
+  expires_on: Int
+  projects: [Map!]
+  user_id: String
+}
+
+input PartnerPartnershipsPartnerInput {
+  partner_id: String
+  partnership_id: String
+  content: String
+  joined_on: Int
+  left_on: Int
+  partners: [Map!]
+  partnerships: [Map!]
+  user_id: String
+}
+
+input PartnerProjectInput {
+  name: String
+  user_id: String
+}
+
+extend type Query {
+  partners(limit: Int, page: Int, sort: String): PartnerPartnerPage @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partner/")
+  partnerSearchPartners(limit: Int, page: Int, sort: String, type: String, status: String, name: String, user_id: String): PartnerPartnerPage @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partner/search")
+  partnerStatistics: PartnerPartnerStatistics @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partner/statistics")
+  partnerActivity(id: String!): PartnerPartnerActivity @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partner/active")
+  partner(id: String!): PartnerPartner @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partner/{id}")
+  partnership(id: String!): PartnerPartnership @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partnership/{id}")
+  partnerships(limit: Int, page: Int, sort: String): PartnerPartnershipPage @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partnership/")
+  partnershipsPartner(id: String!): PartnerPartnershipsPartner @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partnerships-partner/{id}")
+  partnershipsPartners(limit: Int, page: Int, sort: String): PartnerPartnershipsPartnerPage @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/partnerships-partner/")
+  partnerProjects(limit: Int, page: Int, sort: String): PartnerProjectPage @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/project/")
+  partnerProject(id: String!): PartnerProject @hasPermission(object: "/graphql/partner-service", action: "QUERY") @rest(service: "partner-service", path: "/v1/project/{id}")
+}
+
+extend type Mutation {
+  partnerCreatePartner(input: PartnerPartnerInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "POST", path: "/v1/partner/", userQuery: "user_id")
+  partnerUpdatePartner(id: String!, input: PartnerPartnerInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "PUT", path: "/v1/partner/", queryArgs: "id")
+  partnerDeletePartner(id: String!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "DELETE", path: "/v1/partner/")
+  partnerCreatePartnership(input: PartnerPartnershipInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "POST", path: "/v1/partnership/", userQuery: "user_id")
+  partnerUpdatePartnership(id: String!, input: PartnerPartnershipInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "PUT", path: "/v1/partnership/", queryArgs: "id")
+  partnerDeletePartnership(id: String!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "DELETE", path: "/v1/partnership/")
+  partnerCreatePartnershipsPartner(input: PartnerPartnershipsPartnerInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "POST", path: "/v1/partnerships-partner/", userQuery: "user_id")
+  partnerUpdatePartnershipsPartner(id: String!, input: PartnerPartnershipsPartnerInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "PUT", path: "/v1/partnerships-partner/", queryArgs: "id")
+  partnerDeletePartnershipsPartner(id: String!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "DELETE", path: "/v1/partnerships-partner/")
+  partnerCreateProject(input: PartnerProjectInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "POST", path: "/v1/project/", userQuery: "user_id")
+  partnerUpdateProject(id: String!, input: PartnerProjectInput!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "PUT", path: "/v1/project/", queryArgs: "id")
+  partnerDeleteProject(id: String!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "DELETE", path: "/v1/project/")
+  partnerUpdateStatus(id: String!, status: String!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "PATCH", path: "/v1/partner/status", queryArgs: "id")
+  partnerRestore(id: String!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "PATCH", path: "/v1/partner/restore", body: "query")
+  partnerAdjustScore(id: String!, points: Int!): Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "PATCH", path: "/v1/partner/score", queryArgs: "id")
+  partnerCloseInactive: Any @hasPermission(object: "/graphql/partner-service", action: "MUTATION") @rest(service: "partner-service", method: "POST", path: "/v1/partner/close-inactive")
+}

@@ -1,0 +1,356 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./pb";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service UserService {
+    rpc Login(LoginRequest) returns (LoginResponse) {
+        option (google.api.http) = {
+          post: "/api/v1/login"
+          body: "*"
+        };
+    }
+
+    rpc Logout (LogoutRequest) returns (LogoutResponse) {
+        option (google.api.http) = {
+          post: "/api/v1/logout"
+          body: "*"
+        };
+    }
+
+    rpc ValidateSession (ValidateRequest) returns (ValidateResponse) {
+        option (google.api.http) = {
+          post: "/api/v1/validate"
+          body: "*"
+        };
+    }
+
+    rpc RefreshToken (RefreshRequest) returns (RefreshResponse) {
+        option (google.api.http) = {
+          post: "/api/v1/refresh"
+          body: "*"
+        };
+    }
+    
+    rpc SignUp(SignUpRequest) returns (SignUpResponse) {
+        option (google.api.http) = {
+          post: "/user/sign-up"
+          body: "*"
+        };
+    }
+    
+    rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse) {
+        option (google.api.http) = {
+          put: "/user/{id}"
+          body: "*"
+        };
+    }
+    
+    rpc Refresh(RefreshTokenRequest) returns (RefreshTokenResponse) {
+        option (google.api.http) = {
+          post: "/user/refresh"
+          body: "*"
+        };
+    }
+
+    rpc FindUser(FindUserRequest) returns (FindUserResponse) {
+        option (google.api.http) = {
+          get: "/user"
+        };
+    }
+
+    rpc AddRole(AddRoleItemRequest) returns (AddRoleItemResponse) {
+        option (google.api.http) = {
+          post: "/api/v1/role-item"
+          body: "*"
+        };
+    }
+    
+    rpc UpdateItemRole(UpdateRoleItemRequest) returns (UpdateRoleItemResponse) {
+        option (google.api.http) = {
+          put: "/api/v1/role-item"
+          body: "*"
+        };
+    }
+    
+    rpc RemoveRole(RemoveRoleItemRequest) returns (RemoveRoleItemResponse) {
+        option (google.api.http) = {
+          delete: "/api/v1/role-item"
+        };
+    }
+    
+    rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
+        option (google.api.http) = {
+          get: "/api/v1/role/{id}"
+        };
+    }
+    
+    rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {
+        option (google.api.http) = {
+          get: "/api/v1/role"
+        };
+    }
+    
+    rpc CreateRole(CreateRoleResquest) returns (CreateRoleResponse) {
+        option (google.api.http) = {
+          post: "/api/v1/role"
+          body: "*"
+        };
+    }
+    
+    rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse) {
+        option (google.api.http) = {
+          put: "/api/v1/role"
+          body: "*"
+        };
+    }
+    
+    rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse) {
+        option (google.api.http) = {
+          delete: "/api/v1/role"
+        };
+    }
+
+}
+
+message UserRoles {
+    int32 role_id = 1;
+    int32 users_id = 2;
+}
+  
+message Role {
+    int32 id = 1;
+    string name = 2;
+    repeated User users = 3;  
+}
+
+message Token {
+    string encode_token = 1;
+}
+  
+message ParseToken {
+    string username = 1;
+}
+  
+message Session {
+    string username = 1;
+    google.protobuf.Timestamp expiry = 2;
+}
+  
+message User {
+    int32 id = 1;
+    string username = 2;
+    string password = 3;
+    string email = 4;
+    string name = 5;
+    string phone = 6;
+    string address = 7;
+    string sex = 8;
+    bool checked = 9;
+    google.protobuf.Timestamp create_time = 10;
+    google.protobuf.Timestamp update_time = 11;
+    repeated Role roles = 12;  
+}
+  
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+  
+message LoginResponse {
+    string session_token = 1;
+    string refresh_token = 2;
+    int64 expiry_time = 3;
+}
+  
+message CreateUserResponse {
+    User user = 1;
+    string message = 2;
+}
+  
+message GetUserResponse {
+    User user = 1;
+}
+  
+message UpdateUserResponse {
+    User user = 1;
+    string message = 2;
+}
+  
+message DeleteUserResponse {
+    string message = 1;
+}
+
+message RoleResponse {
+    Role role = 1;
+    string message = 2;
+}
+  
+  message RemoveRoleItemResponse {
+    string message = 1;
+}
+
+message AddRoleItemRequest {
+    int32 user_id = 1;
+    int32 role_id = 2;
+}
+  
+message AddRoleItemResponse {
+    Role role = 1;
+    string message = 2;
+}
+  
+message UpdateRoleItemRequest {
+    int32 user_id = 1;
+    int32 role_id = 2;
+}
+  
+message UpdateRoleItemResponse {
+    Role role = 1;
+    string message = 2;
+}
+  
+message RemoveRoleItemRequest {
+    int32 user_id = 1;
+}
+
+message ListRolesResponse {
+    int32 limit = 1;
+    int32 page = 2;
+    string sort = 3;
+    int64 total_rows = 4;
+    int32 total_pages = 5;
+    repeated Role roles = 6;
+}
+  
+message CreateRoleResponse {
+    Role role = 1;
+    string message = 2;
+}
+  
+message DeleteRoleResponse {
+    string message = 1;
+}
+  
+message GetRoleRequest {
+    int32 id = 1;
+}
+
+message ListRolesRequest {
+    int32 limit = 1;
+    int32 page = 2;
+}
+
+message SignUpRequest {
+    string username = 1;
+    string password = 2;
+    string email = 3;
+    string name = 4;
+    string phone = 5;
+    string address = 6;
+    string sex = 7;
+}
+  
+message SignUpResponse {
+    string message = 1;
+    User user = 2;
+}
+
+message LockAccountRequest {
+    int32 id = 1;
+}
+  
+message LockAccountResponse {
+    string message = 1;
+}
+
+message UpdateProfileRequest {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+    string phone = 4;
+    string address = 5;
+    string sex = 6;
+}
+  
+message UpdateProfileResponse {
+    string message = 1;
+    User user = 2;
+}
+
+message RefreshTokenRequest {
+    string refresh_token = 1;
+}
+  
+message RefreshTokenResponse {
+    string token = 1;
+    string refresh_token = 2;
+    string message = 3;
+}
+
+message LogoutRequest {
+    string session_token = 1;
+}
+
+message LogoutResponse {
+    string message = 1;
+}
+  
+message FindUserRequest {
+    optional string username = 1;
+    optional string email = 2;
+    optional int32 page = 3;
+    optional int32 limit = 4;
+}
+  
+message FindUserResponse {
+    repeated User users = 1;
+    int32 total = 2;
+}
+
+message ValidateRequest {
+    string session_token = 1;
+  }
+  
+message ValidateResponse {
+    bool valid = 1;
+    string user_id = 2;
+}
+
+message RefreshRequest {
+    string refresh_token = 1;
+}
+  
+message RefreshResponse {
+    string new_session_token = 1;
+    string new_refresh_token = 2;
+    int64 expiry_time = 3;
+}
+
+message GetRoleResponse {
+    Role role = 1;
+    string message = 2;
+}
+
+message UpdateRoleRequest {
+    int32 id = 1;
+    string name = 2;
+}
+
+message UpdateRoleResponse {
+    Role role = 1;
+    string message = 2;
+}
+
+message DeleteRoleRequest {
+    int32 id = 1;
+}
+
+message CreateRoleResquest {
+    int32 id = 1;
+    string name = 2;
+}

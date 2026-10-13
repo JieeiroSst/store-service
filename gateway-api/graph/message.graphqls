@@ -1,0 +1,4 @@
+extend type Mutation {
+  queuePublish(topic: String!, payload: Any!): String @hasPermission(object: "/graphql/message-service", action: "MUTATION") @rest(service: "message-service", method: "POST", path: "/api/v1/queue/pub", body: "payload")
+  queueConsume(topic: String!): String @hasPermission(object: "/graphql/message-service", action: "MUTATION") @rest(service: "message-service", method: "POST", path: "/api/v1/queue/sub", body: "query")
+}

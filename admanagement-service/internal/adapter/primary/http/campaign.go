@@ -78,7 +78,7 @@ func (h *Handler) ListCampaigns(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, campaigns)
 }
- 
+
 func (h *Handler) ChangeCampaignStatus(w http.ResponseWriter, r *http.Request) {
 	id, err := parseID(r)
 	if err != nil {

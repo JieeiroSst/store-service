@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/JIeeiroSst/medical-service/pkg/authn"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,7 @@ func NewRouter(h *Handler) *gin.Engine {
 
 	engine.GET("/health", getHealth)
 
-	api := engine.Group("/api/v1")
+	api := engine.Group("/api/v1", authenticate(authn.FromEnv()), requireAdmin())
 	{
 		medicines := api.Group("/medicines")
 		{

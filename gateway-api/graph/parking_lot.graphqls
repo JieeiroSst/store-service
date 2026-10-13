@@ -1,0 +1,41 @@
+type ParkingSpotAvailability {
+  type: String
+  available: Int
+  total: Int
+}
+
+type ParkingRate {
+  RateID: String
+  VehicleType: String
+  HourlyRate: Float
+  DailyMaxRate: Float
+  EffectiveFrom: String
+}
+
+type ParkingTicket {
+  TicketID: String
+  VehiclePlate: String
+  SpotID: String
+  EntryGateID: String
+  ExitGateID: String
+  ParkedTime: String
+  LeaveTime: String
+  Status: String
+}
+
+type ParkingCheckOut {
+  ticket: ParkingTicket
+  payment: Any
+}
+
+extend type Query {
+  parkingAvailableSpots: [ParkingSpotAvailability!] @public @rest(service: "parking-lot-service", path: "/api/v1/spots/available")
+  parkingRates: [ParkingRate!] @public @rest(service: "parking-lot-service", path: "/api/v1/rates")
+  parkingTicket(id: String!): ParkingTicket @rest(service: "parking-lot-service", path: "/api/v1/tickets/{id}")
+  parkingHistory(plate: String!, limit: Int, offset: Int): [ParkingTicket!] @hasPermission(object: "/graphql/parking-lot-service", action: "QUERY") @rest(service: "parking-lot-service", path: "/api/v1/history")
+}
+
+extend type Mutation {
+  parkingCheckIn(license_plate: String!, vehicle_type: String!, entry_gate_id: String): ParkingTicket @hasPermission(object: "/graphql/parking-lot-service", action: "MUTATION") @rest(service: "parking-lot-service", method: "POST", path: "/api/v1/check-in")
+  parkingCheckOut(ticket_id: String!, method: String!, exit_gate_id: String): ParkingCheckOut @hasPermission(object: "/graphql/parking-lot-service", action: "MUTATION") @rest(service: "parking-lot-service", method: "POST", path: "/api/v1/check-out")
+}

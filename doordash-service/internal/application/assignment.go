@@ -43,6 +43,10 @@ func (s *driverAssignmentService) AssignDriver(ctx context.Context, orderID int6
 	})
 }
 
+func (s *driverAssignmentService) GetAssignment(ctx context.Context, assignmentID int64) (*model.DriverAssignment, error) {
+	return s.assignments.GetByID(ctx, assignmentID)
+}
+
 func (s *driverAssignmentService) AcceptAssignment(ctx context.Context, assignmentID int64) (*model.DriverAssignment, error) {
 	assignment, err := s.pendingAssignment(ctx, assignmentID)
 	if err != nil {

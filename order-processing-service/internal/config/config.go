@@ -39,7 +39,7 @@ func Load() *Config {
 			ShippingBaseURL:     getEnv("SHIPPING_SERVICE_URL", "http://localhost:8083"),
 			ShippingAPIKey:      getEnv("SHIPPING_SERVICE_API_KEY", ""),
 			NotificationBaseURL: getEnv("NOTIFICATION_SERVICE_URL", "http://localhost:8084"),
-			NotificationAPIKey:  getEnv("NOTIFICATION_SERVICE_API_KEY", ""),
+			NotificationAPIKey:  getEnv("NOTIFICATION_SERVICE_API_KEY", getEnv("INTERNAL_API_TOKEN", "")),
 		},
 	}
 }

@@ -1,0 +1,33 @@
+type MediaVideo {
+  video_id: Int
+  description: String
+  thumbnail_url: String
+  stream_url: String
+  tag_id: Int
+  uploaded_on: String
+  tag: MediaTag
+}
+
+type MediaTag {
+  tag_id: Int
+  video_id: Int
+  value: String
+}
+
+type MediaSearchResult {
+  videos: [MediaVideo!]
+  total: Int64
+  page: Int
+  size: Int
+  pages: Int
+}
+
+extend type Query {
+  mediaVideo(video_id: Int!, user_id: Int!): MediaVideo @hasPermission(object: "/graphql/media-service", action: "QUERY") @rest(service: "media-service", path: "/api/internal/v1/videos/{video_id}/user/{user_id}", unwrap: "data")
+  mediaSearchVideos(query: String, page: Int, size: Int): MediaSearchResult @rest(service: "media-service", method: "POST", path: "/api/internal/v1/videos/search", unwrap: "data")
+}
+
+extend type Mutation {
+  mediaUploadVideo(video: Upload!): String @hasPermission(object: "/graphql/media-service", action: "MUTATION") @rest(service: "media-service", method: "POST", path: "/api/internal/v1/videos/upload", unwrap: "data", multipart: true)
+  mediaSaveVideo(video: Map!, tag: Map): Boolean! @hasPermission(object: "/graphql/media-service", action: "MUTATION") @rest(service: "media-service", method: "POST", path: "/api/internal/v1/videos/")
+}

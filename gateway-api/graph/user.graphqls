@@ -1,0 +1,120 @@
+type User {
+  id: Int!
+  username: String!
+  email: String!
+  name: String!
+  phone: String!
+  address: String!
+  sex: String!
+  active: Boolean!
+  createTime: String
+  updateTime: String
+  roles: [UserRole!]!
+}
+
+type UserRole {
+  id: Int!
+  name: String!
+  users: [User!]!
+}
+
+type AuthToken {
+  accessToken: String!
+  refreshToken: String!
+  expiresIn: Int64!
+}
+
+type UserList {
+  users: [User!]!
+  total: Int!
+}
+
+type UserRoleList {
+  roles: [UserRole!]!
+  limit: Int!
+  page: Int!
+  sort: String!
+  totalRows: Int64!
+  totalPages: Int!
+}
+
+type UserMessage {
+  message: String!
+  user: User
+}
+
+type UserRoleMessage {
+  message: String!
+  role: UserRole
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+input SignUpInput {
+  username: String!
+  password: String!
+  email: String!
+  name: String!
+  phone: String
+  address: String
+  sex: String
+}
+
+input UpdateProfileInput {
+  name: String
+  email: String
+  phone: String
+  address: String
+  sex: String
+}
+
+input AdminUpdateProfileInput {
+  id: Int!
+  name: String
+  email: String
+  phone: String
+  address: String
+  sex: String
+}
+
+input FindUsersInput {
+  username: String
+  email: String
+  page: Int
+  limit: Int
+}
+
+input UserRoleInput {
+  id: Int
+  name: String!
+}
+
+input AssignUserRoleInput {
+  userId: Int!
+  roleId: Int!
+}
+
+extend type Query {
+  me: User
+  users(input: FindUsersInput): UserList! @hasPermission(object: "/graphql/users", action: "QUERY")
+  userRole(id: Int!): UserRole @hasPermission(object: "/graphql/user-roles", action: "QUERY")
+  userRoles(page: Int, limit: Int): UserRoleList! @hasPermission(object: "/graphql/user-roles", action: "QUERY")
+}
+
+extend type Mutation {
+  login(input: LoginInput!): AuthToken! @public
+  signUp(input: SignUpInput!): UserMessage! @public
+  refreshToken(refreshToken: String!): AuthToken! @public
+  logout: Boolean!
+  updateProfile(input: UpdateProfileInput!): UserMessage!
+  adminUpdateProfile(input: AdminUpdateProfileInput!): UserMessage! @hasPermission(object: "/graphql/users", action: "MUTATION")
+  createUserRole(input: UserRoleInput!): UserRoleMessage! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
+  updateUserRole(id: Int!, name: String!): UserRoleMessage! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
+  deleteUserRole(id: Int!): String! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
+  assignUserRole(input: AssignUserRoleInput!): UserRoleMessage! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
+  addUserRole(input: AssignUserRoleInput!): UserRoleMessage! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
+  removeUserRoles(userId: Int!): String! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
+}

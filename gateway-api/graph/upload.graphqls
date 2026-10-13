@@ -1,0 +1,27 @@
+type UploadFileList {
+  files: [UploadFile!]
+  total_count: Int
+}
+
+type UploadFile {
+  id: String
+  receiver_id: String
+  file_name: String
+  content_type: String
+  size: Int
+  sha256: String
+  created_at: String
+  updated_at: String
+  url: String
+}
+
+extend type Query {
+  uploadFiles(receiver_id: String, limit: Int, offset: Int): UploadFileList @rest(service: "upload-service", path: "/api/v1/upload")
+  uploadFile(id: String!): UploadFile @rest(service: "upload-service", path: "/api/v1/upload/{id}")
+}
+
+extend type Mutation {
+  uploadFile(file: Upload!, receiver_id: String): UploadFile @rest(service: "upload-service", method: "POST", path: "/api/v1/upload", body: "query", multipart: true)
+  uploadReplaceFile(id: String!, file: Upload!): UploadFile @rest(service: "upload-service", method: "PUT", path: "/api/v1/upload/{id}", multipart: true)
+  uploadDeleteFile(id: String!): Boolean! @rest(service: "upload-service", method: "DELETE", path: "/api/v1/upload/{id}")
+}

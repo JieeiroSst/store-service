@@ -54,4 +54,5 @@ type DriverAssignmentUsecase interface {
 	RejectAssignment(ctx context.Context, assignmentID int64, reason string) (*model.DriverAssignment, error)
 	CompleteAssignment(ctx context.Context, assignmentID int64) (*model.DriverAssignment, error)
 	ListAssignmentsByDriver(ctx context.Context, driverID string) ([]model.DriverAssignment, error)
+	GetAssignment(ctx context.Context, assignmentID int64) (*model.DriverAssignment, error)
 }

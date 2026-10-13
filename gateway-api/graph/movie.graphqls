@@ -1,0 +1,66 @@
+type MoviePage {
+  items: [MovieRecommendation!]
+  total: Int
+  page: Int
+  page_size: Int
+  snapshot: String
+}
+
+type MovieHome {
+  sections: [MovieSection!]
+}
+
+type MovieRecommendation {
+  video: MovieVideo
+  score: Float
+  reason: String
+  because: MovieVideo
+  progress: Float
+  at: String
+}
+
+type MovieSection {
+  id: String
+  title: String
+  items: [MovieRecommendation!]
+}
+
+type MovieVideo {
+  id: String
+  title: String
+  description: String
+  tags: [String!]
+  status: String
+  duration: Float
+  views: Int
+  created_at: String
+}
+
+input MovieVideoInput {
+  title: String
+  description: String
+  tags: [String!]
+  status: String
+  duration: Float
+}
+
+extend type Query {
+  movieForUser(user_id: String!, page: Int, page_size: Int, snapshot: String): MoviePage @hasPermission(object: "/graphql/movie-recommendation-service", action: "QUERY") @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{user_id}")
+  movieHome(user_id: String!): MovieHome @hasPermission(object: "/graphql/movie-recommendation-service", action: "QUERY") @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{user_id}/home")
+  movieContinueWatching(user_id: String!, page: Int, page_size: Int, snapshot: String): MoviePage @hasPermission(object: "/graphql/movie-recommendation-service", action: "QUERY") @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{user_id}/continue-watching")
+  movieHistory(user_id: String!, page: Int, page_size: Int, snapshot: String): MoviePage @hasPermission(object: "/graphql/movie-recommendation-service", action: "QUERY") @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{user_id}/history")
+  movieNewReleases(page: Int, page_size: Int, snapshot: String): MoviePage @public @rest(service: "movie-recommendation-service", path: "/api/recommendations/new")
+  movieSimilar(id: String!, page: Int, page_size: Int, snapshot: String): MoviePage @public @rest(service: "movie-recommendation-service", path: "/api/recommendations/videos/{id}/similar")
+  movieTrending(page: Int, page_size: Int, snapshot: String): MoviePage @public @rest(service: "movie-recommendation-service", path: "/api/recommendations/trending")
+  myMovieForUser(page: Int, page_size: Int, snapshot: String): MoviePage @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{$userId}")
+  myMovieHome: MovieHome @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{$userId}/home")
+  myMovieContinueWatching(page: Int, page_size: Int, snapshot: String): MoviePage @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{$userId}/continue-watching")
+  myMovieHistory(page: Int, page_size: Int, snapshot: String): MoviePage @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{$userId}/history")
+}
+
+extend type Mutation {
+  movieRecordEvent(video_id: String!, type: String!, value: Float): Boolean! @rest(service: "movie-recommendation-service", method: "POST", path: "/api/recommendations/events", userField: "user_id")
+  movieRemoveFromMyHistory(video_id: String!): Boolean! @rest(service: "movie-recommendation-service", method: "DELETE", path: "/api/recommendations/users/{$userId}/history/{video_id}")
+  movieUpsertVideo(id: String!, input: MovieVideoInput!): Boolean! @hasPermission(object: "/graphql/movie-recommendation-service", action: "MUTATION") @rest(service: "movie-recommendation-service", method: "PUT", path: "/api/recommendations/videos/{id}")
+  movieDeleteVideo(id: String!): Boolean! @hasPermission(object: "/graphql/movie-recommendation-service", action: "MUTATION") @rest(service: "movie-recommendation-service", method: "DELETE", path: "/api/recommendations/videos/{id}")
+}

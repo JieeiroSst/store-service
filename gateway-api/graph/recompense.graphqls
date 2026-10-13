@@ -1,0 +1,68 @@
+type RecompRecompense {
+  ID: String
+  MemberID: Int
+  Source: String
+  SourceID: String
+  Tier: Int
+  PointsPerPurchase: Int
+  MinimumPoints: Int
+  CodeDeReduction: String
+  ReductionDescription: String
+  """fixed or percent."""
+  ReductionType: String
+  ReductionValue: Float
+  MaxReduction: Float
+  ExpiryDate: Float
+}
+
+type RecompMemberStatus {
+  MemberID: Int
+  Points: Int
+  Tier: Int
+  TierName: String
+  NextTier: Int
+  PointsToNextTier: Int
+}
+
+type RecompRedemption {
+  Recompense: RecompRecompense
+  Amount: Float
+  Discount: Float
+  Total: Float
+}
+
+input RecompRecompenseInput {
+  ID: String
+  MemberID: Int
+  Source: String
+  SourceID: String
+  Tier: Int
+  PointsPerPurchase: Int
+  MinimumPoints: Int
+  CodeDeReduction: String
+  ReductionDescription: String
+  ReductionType: String
+  ReductionValue: Float
+  MaxReduction: Float
+  ExpiryDate: Float
+}
+
+extend type Query {
+  recompenses(page: Int, limit: Int): [RecompRecompense!] @public @rest(service: "recompense-service", path: "/api/recompenses")
+  recompense(id: String!): RecompRecompense @public @rest(service: "recompense-service", path: "/api/recompenses/{id}")
+  recompMemberRecompenses(memberId: Int!, page: Int, limit: Int): [RecompRecompense!] @hasPermission(object: "/graphql/recompense-service", action: "QUERY") @rest(service: "recompense-service", path: "/api/recompenses/member/{memberId}")
+  recompMemberPoints(memberId: Int!): RecompMemberStatus @hasPermission(object: "/graphql/recompense-service", action: "QUERY") @rest(service: "recompense-service", path: "/api/members/{memberId}/points")
+  recompBestRecompense(memberId: Int!, amount: Float!): RecompRedemption @hasPermission(object: "/graphql/recompense-service", action: "QUERY") @rest(service: "recompense-service", path: "/api/members/{memberId}/recompenses/best")
+  myRecompensePoints: RecompMemberStatus @rest(service: "recompense-service", path: "/api/members/{$userId}/points")
+  myBestRecompense(amount: Float!): RecompRecompense @rest(service: "recompense-service", path: "/api/members/{$userId}/recompenses/best")
+  myRecompenses(page: Int, limit: Int): Any @rest(service: "recompense-service", path: "/api/recompenses/member/{$userId}")
+}
+
+extend type Mutation {
+  recompCreateRecompense(input: RecompRecompenseInput!): RecompRecompense @hasPermission(object: "/graphql/recompense-service", action: "MUTATION") @rest(service: "recompense-service", method: "POST", path: "/api/recompenses")
+  recompUpdateRecompense(id: Int!, input: RecompRecompenseInput!): RecompRecompense @hasPermission(object: "/graphql/recompense-service", action: "MUTATION") @rest(service: "recompense-service", method: "PUT", path: "/api/recompenses/{id}")
+  recompDeleteRecompense(id: Int!): Boolean! @hasPermission(object: "/graphql/recompense-service", action: "MUTATION") @rest(service: "recompense-service", method: "DELETE", path: "/api/recompenses/{id}")
+  recompEarnPoints(memberId: Int!, amount: Float!, idempotencyKey: String!): RecompMemberStatus @hasPermission(object: "/graphql/recompense-service", action: "MUTATION") @rest(service: "recompense-service", method: "POST", path: "/api/members/{memberId}/points/earn")
+  recompRedeem(id: Int!, memberId: Int!, amount: Float!): RecompRedemption @hasPermission(object: "/graphql/recompense-service", action: "MUTATION") @rest(service: "recompense-service", method: "POST", path: "/api/recompenses/{id}/redeem")
+  redeemMyRecompense(id: Int!, amount: Float!): RecompRedemption @rest(service: "recompense-service", method: "POST", path: "/api/recompenses/{id}/redeem", userField: "memberId:int")
+}

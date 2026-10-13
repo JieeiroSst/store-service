@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse, Response
 from kink import di
 
+from identified_service.building_blocks.auth_deps import require_admin
 from identified_service.building_blocks.errors import APIErrorMessage
 from identified_service.clients.application.client_service import ClientService
 from identified_service.clients.application.dto import (
@@ -12,7 +13,7 @@ from identified_service.clients.application.dto import (
     ExportClientsDTO,
 )
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_admin)])
 
 
 @router.post(

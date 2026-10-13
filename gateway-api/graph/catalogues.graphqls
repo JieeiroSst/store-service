@@ -1,0 +1,149 @@
+type CatalogueCategory {
+  id: Int!
+  parent_id: Int
+  name: String!
+  slug: String!
+  description: String!
+  image: String!
+  is_public: Boolean!
+  ancestors_are_public: Boolean!
+  meta_title: String!
+  meta_description: String!
+}
+
+input CatalogueCategoryInput {
+  parent_id: Int
+  name: String
+  slug: String
+  description: String
+  image: String
+  is_public: Boolean
+  meta_title: String
+  meta_description: String
+}
+
+type CatalogueOption {
+  id: Int!
+  name: String!
+  code: String!
+  type: String!
+  required: Boolean!
+}
+
+input CatalogueOptionInput {
+  name: String
+  code: String
+  type: String
+  required: Boolean
+}
+
+type CatalogueProductClass {
+  id: Int!
+  name: String!
+  slug: String!
+  requires_shipping: Boolean!
+  track_stock: Boolean!
+  option_ids: [Int!]
+}
+
+input CatalogueProductClassInput {
+  name: String
+  slug: String
+  requires_shipping: Boolean
+  track_stock: Boolean
+  option_ids: [Int!]
+}
+
+type CatalogueProductImage {
+  id: Int!
+  product_id: Int!
+  original: String!
+  caption: String!
+  display_order: Int!
+  date_created: String
+}
+
+type CatalogueRecommendation {
+  product_id: Int!
+  ranking: Int!
+}
+
+input CatalogueRecommendationInput {
+  product_id: Int
+  ranking: Int
+}
+
+type CatalogueProduct {
+  id: Int!
+  structure: String!
+  upc: String
+  title: String!
+  slug: String!
+  description: String!
+  rating: Float
+  is_discountable: Boolean!
+  is_public: Boolean!
+  parent_id: Int
+  product_class_id: Int
+  meta_title: String!
+  meta_description: String!
+  date_created: String
+  date_updated: String
+  category_ids: [Int!]
+  option_ids: [Int!]
+  images: [CatalogueProductImage!]
+  recommendations: [CatalogueRecommendation!]
+}
+
+input CatalogueProductInput {
+  structure: String
+  upc: String
+  title: String
+  slug: String
+  description: String
+  rating: Float
+  is_discountable: Boolean
+  is_public: Boolean
+  parent_id: Int
+  product_class_id: Int
+  meta_title: String
+  meta_description: String
+  category_ids: [Int!]
+  option_ids: [Int!]
+}
+
+input CatalogueImageInput {
+  original: String
+  caption: String
+  display_order: Int
+}
+
+extend type Query {
+  catalogueCategories: [CatalogueCategory!]! @public @rest(service: "catalogues-service", path: "/v1/categories")
+  catalogueCategory(id: Int!): CatalogueCategory @public @rest(service: "catalogues-service", path: "/v1/categories/{id}")
+  catalogueOptions: [CatalogueOption!]! @public @rest(service: "catalogues-service", path: "/v1/options")
+  catalogueOption(id: Int!): CatalogueOption @public @rest(service: "catalogues-service", path: "/v1/options/{id}")
+  catalogueProductClasses: [CatalogueProductClass!]! @public @rest(service: "catalogues-service", path: "/v1/product-classes")
+  catalogueProductClass(id: Int!): CatalogueProductClass @public @rest(service: "catalogues-service", path: "/v1/product-classes/{id}")
+  catalogueProducts(q: String, category_id: Int, limit: Int, offset: Int): [CatalogueProduct!]! @public @rest(service: "catalogues-service", path: "/v1/products", fixed: "{\"public\":\"true\"}")
+  catalogueAdminProducts(q: String, category_id: Int, public: Boolean, limit: Int, offset: Int): [CatalogueProduct!]! @hasPermission(object: "/graphql/catalogues-service", action: "QUERY") @rest(service: "catalogues-service", path: "/v1/products")
+  catalogueProduct(id: Int!): CatalogueProduct @public @rest(service: "catalogues-service", path: "/v1/products/{id}")
+}
+
+extend type Mutation {
+  catalogueCreateCategory(input: CatalogueCategoryInput!): CatalogueCategory @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "POST", path: "/v1/categories")
+  catalogueUpdateCategory(id: Int!, input: CatalogueCategoryInput!): CatalogueCategory @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "PUT", path: "/v1/categories/{id}")
+  catalogueDeleteCategory(id: Int!): Boolean! @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "DELETE", path: "/v1/categories/{id}")
+  catalogueCreateOption(input: CatalogueOptionInput!): CatalogueOption @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "POST", path: "/v1/options")
+  catalogueUpdateOption(id: Int!, input: CatalogueOptionInput!): CatalogueOption @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "PUT", path: "/v1/options/{id}")
+  catalogueDeleteOption(id: Int!): Boolean! @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "DELETE", path: "/v1/options/{id}")
+  catalogueCreateProductClass(input: CatalogueProductClassInput!): CatalogueProductClass @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "POST", path: "/v1/product-classes")
+  catalogueUpdateProductClass(id: Int!, input: CatalogueProductClassInput!): CatalogueProductClass @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "PUT", path: "/v1/product-classes/{id}")
+  catalogueDeleteProductClass(id: Int!): Boolean! @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "DELETE", path: "/v1/product-classes/{id}")
+  catalogueCreateProduct(input: CatalogueProductInput!): CatalogueProduct @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "POST", path: "/v1/products")
+  catalogueUpdateProduct(id: Int!, input: CatalogueProductInput!): CatalogueProduct @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "PUT", path: "/v1/products/{id}")
+  catalogueDeleteProduct(id: Int!): Boolean! @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "DELETE", path: "/v1/products/{id}")
+  catalogueAddProductImage(id: Int!, input: CatalogueImageInput!): CatalogueProductImage @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "POST", path: "/v1/products/{id}/images")
+  catalogueDeleteProductImage(id: Int!, image_id: Int!): Boolean! @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "DELETE", path: "/v1/products/{id}/images/{image_id}")
+  catalogueSetRecommendations(id: Int!, recommendations: [CatalogueRecommendationInput!]!): CatalogueProduct @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "PUT", path: "/v1/products/{id}/recommendations")
+}

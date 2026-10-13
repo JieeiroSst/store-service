@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/JIeeiroSSt/reservation-service/config"
@@ -17,7 +18,7 @@ type Client struct{ c *httpx.Client }
 var _ outbound.LoyaltyGateway = (*Client)(nil)
 
 func NewClient(cfg config.Config) *Client {
-	return &Client{c: httpx.New("recompense-service", cfg.RecompenseServiceURL, cfg.PaymentServiceTimeout)}
+	return &Client{c: httpx.New("recompense-service", cfg.RecompenseServiceURL, cfg.PaymentServiceTimeout).WithHeader("X-Internal-Token", os.Getenv("INTERNAL_API_TOKEN"))}
 }
 
 func member(id int64) string { return "/api/members/" + strconv.FormatInt(id, 10) + "/points" }

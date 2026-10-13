@@ -1,0 +1,83 @@
+type OllamaChatContact {
+  id: Int
+  username: String
+  email: String
+}
+
+type OllamaChatContacts {
+  contacts: [OllamaChatContact!]
+}
+
+type OllamaChatGroupSearchHit {
+  id: Int
+  name: String
+  description: String
+  creator_id: Int
+  type: String
+  is_member: Boolean
+}
+
+type OllamaChatGroupSearch {
+  groups: [OllamaChatGroupSearchHit!]
+}
+
+type OllamaChatGroup {
+  id: Int
+  name: String
+  description: String
+  creator_id: Int
+  created_at: String
+  role: String
+}
+
+type OllamaChatGroups {
+  groups: [OllamaChatGroup!]
+}
+
+type OllamaChatGroupMember {
+  id: Int
+  username: String
+  email: String
+  role: String
+  joined_at: String
+}
+
+type OllamaChatGroupMembers {
+  group_id: Int
+  members: [OllamaChatGroupMember!]
+}
+
+type OllamaChatMessage {
+  id: Int
+  message_type: String
+  content: String
+  created_at: String
+  sender_id: Int
+  recipient_id: Int
+  group_id: Int
+  url: String
+  sender_name: String
+}
+
+type OllamaChatHistory {
+  messages: [OllamaChatMessage!]
+  count: Int
+  offset: Int
+  limit: Int
+}
+
+extend type Query {
+  ollamaChatContacts: OllamaChatContacts @rest(service: "ollama-service", path: "/users/contacts")
+  ollamaChatSearchGroups(q: String!): OllamaChatGroupSearch @rest(service: "ollama-service", path: "/users/search")
+  ollamaChatGroups: OllamaChatGroups @rest(service: "ollama-service", path: "/groups/")
+  ollamaChatGroupMembers(groupId: Int!): OllamaChatGroupMembers @rest(service: "ollama-service", path: "/groups/{groupId}/members")
+  ollamaChatChatHistory(limit: Int, offset: Int, group_id: Int, recipient_id: Int): OllamaChatHistory @rest(service: "ollama-service", path: "/chat/history")
+}
+
+extend type Mutation {
+  ollamaChatCreateGroup(name: String!, description: String): Any @rest(service: "ollama-service", method: "POST", path: "/groups/create")
+  ollamaChatInviteToGroup(group_id: Int!, user_id: Int!, role: String!): Any @rest(service: "ollama-service", method: "POST", path: "/groups/invite")
+  ollamaChatLeaveGroup(groupId: Int!): Any @rest(service: "ollama-service", method: "DELETE", path: "/groups/{groupId}/leave")
+  ollamaChatPromoteMember(groupId: Int!, userId: Int!): Any @rest(service: "ollama-service", method: "POST", path: "/groups/{groupId}/members/{userId}/promote")
+  ollamaChatRemoveMember(groupId: Int!, userId: Int!): Any @rest(service: "ollama-service", method: "DELETE", path: "/groups/{groupId}/members/{userId}")
+}

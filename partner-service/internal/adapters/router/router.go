@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/JIeeiroSst/partner-service/internal/adapters/handler"
+	"github.com/JIeeiroSst/partner-service/pkg/authn"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
@@ -14,9 +15,10 @@ func NewRouter(
 ) *gin.Engine {
 	router := gin.Default()
 
-	v1 := router.Group("/v1")
+	admin := []gin.HandlerFunc{authenticate(authn.FromEnv()), requireAdmin()}
+	v1 := router.Group("/v1", admin...)
 
-	pprof.Register(router)
+	pprof.RouteRegister(router.Group("/debug/pprof", admin...), "")
 
 	partnerGroup := v1.Group("/partner")
 	{

@@ -6,6 +6,7 @@ import (
 	"math"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/JIeeroSst/hospital-patient-management-service/config"
@@ -25,7 +26,7 @@ type Client struct {
 func New(cfg *config.Config) *Client {
 	w := cfg.Wallet
 	return &Client{
-		http:       httpx.New(w.BaseURL, w.Timeout),
+		http:       httpx.New(w.BaseURL, w.Timeout).WithHeader("X-Internal-Token", os.Getenv("INTERNAL_API_TOKEN")),
 		hospitalID: w.HospitalWalletID,
 		minorUnit:  w.MinorUnit,
 		userPrefix: w.UserPrefix,

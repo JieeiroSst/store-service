@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -28,7 +29,7 @@ type Client struct {
 
 func New(cfg *config.Config) *Client {
 	return &Client{
-		http:     httpx.New(cfg.Billing.BaseURL, cfg.Billing.Timeout),
+		http:     httpx.New(cfg.Billing.BaseURL, cfg.Billing.Timeout).WithHeader("X-Internal-Token", os.Getenv("INTERNAL_API_TOKEN")),
 		planName: cfg.Billing.PlanName,
 	}
 }

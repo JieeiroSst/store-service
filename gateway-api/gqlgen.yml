@@ -15,8 +15,11 @@ resolver:
   layout: follow-schema 
   dir: graph
   filename_template: "{name}.resolvers.go"
+  omit_template_comment: true
 
 call_argument_directives_with_null: true
+omit_gqlgen_file_notice: true
+omit_slice_element_pointers: false
 autobind:
 models:
   ID:
@@ -30,8 +33,14 @@ models:
       - github.com/99designs/gqlgen/graphql.UUID
   Int:
     model:
+      - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int32
+      - github.com/99designs/gqlgen/graphql.Int64
   Int64:
     model:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
+
+directives:
+  rest:
+    skip_runtime: true

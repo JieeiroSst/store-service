@@ -2,6 +2,7 @@ import type { RecompenseService } from "../../../application/port/inbound/recomp
 import type { LoyaltyService } from "../../../application/port/inbound/loyalty";
 import { NotEligibleError, ValidationError } from "../../../domain/recompense";
 import type { RecompenseRequest } from "./dto";
+import { AuthError, Authenticator, requireAdmin, requireOwner } from "./authn";
 
 function json(body: unknown, status = 200): Response {
     return Response.json(body, { status });
@@ -11,6 +12,7 @@ export class RecompenseHandler {
     constructor(
         private readonly service: RecompenseService,
         private readonly loyalty: LoyaltyService,
+        private readonly auth: Authenticator = Authenticator.fromEnv(),
     ) { }
 
     async handle(request: Request): Promise<Response> {
@@ -25,6 +27,8 @@ export class RecompenseHandler {
                 return json({ status: "ready" });
             }
 
+            const principal = await this.auth.authenticate(request);
+
             if (path === "/api/recompenses") {
                 if (method === "GET") {
                     return json(await this.service.list(
@@ -33,6 +37,7 @@ export class RecompenseHandler {
                     ));
                 }
                 if (method === "POST") {
+                    requireAdmin(principal);
                     const dto = (await request.json()) as RecompenseRequest;
                     return json(await this.service.create(dto), 201);
                 }
@@ -40,16 +45,21 @@ export class RecompenseHandler {
             }
 
             const points = path.match(/^\/api\/members\/(\d+)\/points$/);
-            if (points && method === "GET") return json(await this.loyalty.status(Number(points[1])));
+            if (points && method === "GET") {
+                requireOwner(principal, points[1]!);
+                return json(await this.loyalty.status(Number(points[1])));
+            }
 
             const earn = path.match(/^\/api\/members\/(\d+)\/points\/earn$/);
             if (earn && method === "POST") {
+                requireAdmin(principal);
                 const body = (await request.json()) as { amount: number; idempotencyKey: string };
                 return json(await this.loyalty.earn(Number(earn[1]), body.idempotencyKey, Number(body.amount)));
             }
 
             const best = path.match(/^\/api\/members\/(\d+)\/recompenses\/best$/);
             if (best && method === "GET") {
+                requireOwner(principal, best[1]!);
                 const found = await this.loyalty.best(Number(best[1]), Number(url.searchParams.get("amount")));
                 return found ? json(found) : json({ error: "no usable recompense" }, 404);
             }
@@ -57,12 +67,14 @@ export class RecompenseHandler {
             const redeem = path.match(/^\/api\/recompenses\/(\d+)\/redeem$/);
             if (redeem && method === "POST") {
                 const body = (await request.json()) as { memberId: number; amount: number };
+                requireOwner(principal, body.memberId);
                 const result = await this.loyalty.redeem(redeem[1]!, Number(body.memberId), Number(body.amount));
                 return result ? json(result) : json({ error: "not found" }, 404);
             }
 
             const member = path.match(/^\/api\/recompenses\/member\/(\d+)$/);
             if (member && method === "GET") {
+                requireOwner(principal, member[1]!);
                 return json(await this.service.listByMember(
                     Number(member[1]),
                     Number(url.searchParams.get("page") ?? 1),
@@ -78,11 +90,13 @@ export class RecompenseHandler {
                     return found ? json(found) : json({ error: "not found" }, 404);
                 }
                 if (method === "PUT") {
+                    requireAdmin(principal);
                     const dto = (await request.json()) as RecompenseRequest;
                     const updated = await this.service.update(id, dto);
                     return updated ? json(updated) : json({ error: "not found" }, 404);
                 }
                 if (method === "DELETE") {
+                    requireAdmin(principal);
                     return (await this.service.delete(id)) ? new Response(null, { status: 204 }) : json({ error: "not found" }, 404);
                 }
                 return json({ error: "method not allowed" }, 405);
@@ -90,6 +104,7 @@ export class RecompenseHandler {
 
             return json({ error: "not found" }, 404);
         } catch (error) {
+            if (error instanceof AuthError) return json({ error: error.message }, error.status);
             if (error instanceof ValidationError || error instanceof SyntaxError) {
                 return json({ error: error.message }, 400);
             }

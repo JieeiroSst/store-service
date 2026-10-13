@@ -35,6 +35,7 @@ type TransactionUsecase interface {
 type PaymentMethodUsecase interface {
 	AddPaymentMethod(ctx context.Context, userID string, methodType model.PaymentMethodType, provider, accountNumber string) (*model.PaymentMethod, error)
 	ListPaymentMethods(ctx context.Context, userID string) ([]model.PaymentMethod, error)
+	GetPaymentMethod(ctx context.Context, id string) (*model.PaymentMethod, error)
 	RemovePaymentMethod(ctx context.Context, id string) error
 	SetDefaultPaymentMethod(ctx context.Context, id string) (*model.PaymentMethod, error)
 }
@@ -42,6 +43,7 @@ type PaymentMethodUsecase interface {
 type PocketUsecase interface {
 	CreatePocket(ctx context.Context, walletID, name string) (*model.Pocket, error)
 	ListPockets(ctx context.Context, walletID string) ([]model.Pocket, error)
+	GetPocket(ctx context.Context, pocketID string) (*model.Pocket, error)
 	DepositToPocket(ctx context.Context, pocketID string, amount int64) (*model.Pocket, error)
 	WithdrawFromPocket(ctx context.Context, pocketID string, amount int64) (*model.Pocket, error)
 	ClosePocket(ctx context.Context, pocketID string) (*model.Wallet, error)

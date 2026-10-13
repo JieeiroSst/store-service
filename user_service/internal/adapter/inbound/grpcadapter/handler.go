@@ -96,6 +96,18 @@ func (h *Handler) RefreshToken(ctx context.Context, in *userServiceGrpc.RefreshR
 	return &res, nil
 }
 
+func (h *Handler) Refresh(ctx context.Context, in *userServiceGrpc.RefreshTokenRequest) (*userServiceGrpc.RefreshTokenResponse, error) {
+	resp, err := h.auth.RefreshToken(ctx, dto.RefreshRequest{RefreshToken: in.GetRefreshToken()})
+	if err != nil {
+		return &userServiceGrpc.RefreshTokenResponse{Message: "failed"}, err
+	}
+	return &userServiceGrpc.RefreshTokenResponse{
+		Token:        resp.NewSessionToken,
+		RefreshToken: resp.NewRefreshToken,
+		Message:      "success",
+	}, nil
+}
+
 func (h *Handler) SignUp(ctx context.Context, in *userServiceGrpc.SignUpRequest) (*userServiceGrpc.SignUpResponse, error) {
 	var req dto.SignUpRequest
 	if err := copy.CopyObject(in, &req); err != nil {
@@ -161,7 +173,7 @@ func (h *Handler) FindUser(ctx context.Context, in *userServiceGrpc.FindUserRequ
 	return res, nil
 }
 
-func (h *Handler) AddRoleItem(ctx context.Context, in *userServiceGrpc.AddRoleItemRequest) (*userServiceGrpc.AddRoleItemResponse, error) {
+func (h *Handler) AddRole(ctx context.Context, in *userServiceGrpc.AddRoleItemRequest) (*userServiceGrpc.AddRoleItemResponse, error) {
 	var req dto.AddRoleItemRequest
 	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err
@@ -199,7 +211,7 @@ func (h *Handler) UpdateItemRole(ctx context.Context, in *userServiceGrpc.Update
 	return &res, nil
 }
 
-func (h *Handler) RemoveRoleItem(ctx context.Context, in *userServiceGrpc.RemoveRoleItemRequest) (*userServiceGrpc.RemoveRoleItemResponse, error) {
+func (h *Handler) RemoveRole(ctx context.Context, in *userServiceGrpc.RemoveRoleItemRequest) (*userServiceGrpc.RemoveRoleItemResponse, error) {
 	var req dto.RemoveRoleItemRequest
 	if err := copy.CopyObject(in, &req); err != nil {
 		return nil, err

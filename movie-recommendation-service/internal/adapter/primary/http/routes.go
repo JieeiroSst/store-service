@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/JIeeiroSst/movie-recommendation-service/pkg/authn"
 	"net/http"
 
 	"github.com/JIeeiroSst/movie-recommendation-service/config"
@@ -17,18 +18,21 @@ func NewRouter(h *Handler, cfg *config.Config) *gin.Engine {
 	r.GET("/healthz", func(c *gin.Context) { c.String(http.StatusOK, "ok") })
 	r.GET("/readyz", h.Readyz)
 
-	api := r.Group("/api/recommendations")
-	api.GET("/users/:user_id", h.ForUser)
-	api.GET("/users/:user_id/home", h.Home)
-	api.GET("/users/:user_id/continue-watching", h.ContinueWatching)
-	api.GET("/users/:user_id/history", h.History)
-	api.DELETE("/users/:user_id/history/:video_id", h.RemoveFromHistory)
+	api := r.Group("/api/recommendations", authenticate(authn.FromEnv()))
 	api.GET("/new", h.NewReleases)
 	api.GET("/videos/:id/similar", h.Similar)
 	api.GET("/trending", h.Trending)
-	api.POST("/events", h.RecordEvent)
-	api.PUT("/videos/:id", h.UpsertVideo)
-	api.DELETE("/videos/:id", h.DeleteVideo)
+
+	users := api.Group("/users/:user_id", requireUser(), ownerParam("user_id"))
+	users.GET("", h.ForUser)
+	users.GET("/home", h.Home)
+	users.GET("/continue-watching", h.ContinueWatching)
+	users.GET("/history", h.History)
+	users.DELETE("/history/:video_id", h.RemoveFromHistory)
+
+	api.POST("/events", requireUser(), forceOwnerBody("user_id", false), h.RecordEvent)
+	api.PUT("/videos/:id", requireAdmin(), h.UpsertVideo)
+	api.DELETE("/videos/:id", requireAdmin(), h.DeleteVideo)
 	return r
 }
 

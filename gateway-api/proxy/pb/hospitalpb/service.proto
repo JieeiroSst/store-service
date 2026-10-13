@@ -1,0 +1,666 @@
+syntax = "proto3";
+
+package hospital;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "./proto";
+
+enum Gender {
+  GENDER_UNSPECIFIED = 0;
+  GENDER_MALE = 1;
+  GENDER_FEMALE = 2;
+  GENDER_OTHER = 3;
+}
+
+enum BloodType {
+  BLOOD_TYPE_UNSPECIFIED = 0;
+  BLOOD_TYPE_A_POSITIVE = 1;
+  BLOOD_TYPE_A_NEGATIVE = 2;
+  BLOOD_TYPE_B_POSITIVE = 3;
+  BLOOD_TYPE_B_NEGATIVE = 4;
+  BLOOD_TYPE_AB_POSITIVE = 5;
+  BLOOD_TYPE_AB_NEGATIVE = 6;
+  BLOOD_TYPE_O_POSITIVE = 7;
+  BLOOD_TYPE_O_NEGATIVE = 8;
+}
+
+enum AppointmentStatus {
+  APPOINTMENT_STATUS_UNSPECIFIED = 0;
+  APPOINTMENT_STATUS_SCHEDULED = 1;
+  APPOINTMENT_STATUS_COMPLETED = 2;
+  APPOINTMENT_STATUS_CANCELLED = 3;
+  APPOINTMENT_STATUS_NO_SHOW = 4;
+}
+
+message Department {
+  int32 department_id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message Staff {
+  int32 staff_id = 1;
+  int32 department_id = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string role = 5;
+  string specialization = 6;
+  string email = 7;
+  string phone = 8;
+  string hire_date = 9; 
+  string license_number = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+message Patient {
+  int32 patient_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string date_of_birth = 4;  
+  Gender gender = 5;
+  BloodType blood_type = 6;
+  string address = 7;
+  string phone = 8;
+  string email = 9;
+  string emergency_contact_name = 10;
+  string emergency_contact_phone = 11;
+  string insurance_provider = 12;
+  string insurance_policy_number = 13;
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp updated_at = 15;
+}
+
+message MedicalRecord {
+  int32 record_id = 1;
+  int32 patient_id = 2;
+  string diagnosis = 3;
+  string treatment_plan = 4;
+  string notes = 5;
+  int32 created_by = 6;  // staff_id
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message Appointment {
+  int32 appointment_id = 1;
+  int32 patient_id = 2;
+  int32 staff_id = 3;
+  int32 department_id = 4;
+  google.protobuf.Timestamp appointment_date = 5;
+  AppointmentStatus status = 6;
+  string reason = 7;
+  string notes = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message Prescription {
+  int32 prescription_id = 1;
+  int32 patient_id = 2;
+  int32 prescribed_by = 3; 
+  string medication_name = 4;
+  string dosage = 5;
+  string frequency = 6;
+  string start_date = 7;  
+  string end_date = 8;    
+  string instructions = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message LabResult {
+  int32 result_id = 1;
+  int32 patient_id = 2;
+  int32 ordered_by = 3; 
+  string test_name = 4;
+  google.protobuf.Timestamp test_date = 5;
+  string results = 6;
+  string normal_range = 7;
+  string notes = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message Billing {
+  int32 bill_id = 1;
+  int32 patient_id = 2;
+  int32 appointment_id = 3;
+  float amount = 4;
+  float insurance_covered = 5;
+  float patient_responsibility = 6;
+  string status = 7;
+  string due_date = 8;    
+  string paid_date = 9;   
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message CreateDepartmentRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message ListDepartmentsRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+}
+
+message ListDepartmentsResponse {
+  repeated Department departments = 1;
+  int32 total_count = 2;
+}
+
+message CreateStaffRequest {
+  int32 department_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string role = 4;
+  string specialization = 5;
+  string email = 6;
+  string phone = 7;
+  string hire_date = 8; 
+  string license_number = 9;
+}
+
+message ListStaffRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+  int32 department_id = 3;  
+}
+
+message ListStaffResponse {
+  repeated Staff staff = 1;
+  int32 total_count = 2;
+}
+
+message CreatePatientRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string date_of_birth = 3;  
+  Gender gender = 4;
+  BloodType blood_type = 5;
+  string address = 6;
+  string phone = 7;
+  string email = 8;
+  string emergency_contact_name = 9;
+  string emergency_contact_phone = 10;
+  string insurance_provider = 11;
+  string insurance_policy_number = 12;
+}
+
+message ListPatientsRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+  string search_term = 3;  
+}
+
+message ListPatientsResponse {
+  repeated Patient patients = 1;
+  int32 total_count = 2;
+}
+
+message CreateMedicalRecordRequest {
+  int32 patient_id = 1;
+  string diagnosis = 2;
+  string treatment_plan = 3;
+  string notes = 4;
+  int32 created_by = 5;  
+}
+
+message ListMedicalRecordsRequest {
+  int32 patient_id = 1;
+  int32 page_size = 2;
+  int32 page_number = 3;
+}
+
+message ListMedicalRecordsResponse {
+  repeated MedicalRecord records = 1;
+  int32 total_count = 2;
+}
+
+message CreateAppointmentRequest {
+  int32 patient_id = 1;
+  int32 staff_id = 2;
+  int32 department_id = 3;
+  google.protobuf.Timestamp appointment_date = 4;
+  string reason = 5;
+  string notes = 6;
+}
+
+message UpdateAppointmentStatusRequest {
+  int32 appointment_id = 1;
+  AppointmentStatus status = 2;
+}
+
+message ListAppointmentsRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+  int32 patient_id = 3;           
+  int32 staff_id = 4;             
+  google.protobuf.Timestamp date_from = 5; 
+  google.protobuf.Timestamp date_to = 6;  
+  AppointmentStatus status = 7;      
+}
+
+message ListAppointmentsResponse {
+  repeated Appointment appointments = 1;
+  int32 total_count = 2;
+}
+
+service HospotalService {
+  rpc CreateDepartment(CreateDepartmentRequest) returns (Department) {
+    option (google.api.http) = {
+      post: "/v1/departments"
+      body: "*"
+    };
+  }
+
+  rpc GetDepartment(Department) returns (Department) {
+    option (google.api.http) = {
+      get: "/v1/departments/{department_id}"
+    };
+  }
+
+  rpc ListDepartments(ListDepartmentsRequest) returns (ListDepartmentsResponse) {
+    option (google.api.http) = {
+      get: "/v1/departments"
+    };
+  }
+
+  rpc UpdateDepartment(Department) returns (Department) {
+    option (google.api.http) = {
+      put: "/v1/departments/{department_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteDepartment(Department) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/departments/{department_id}"
+    };
+  }
+
+  rpc CreateStaff(CreateStaffRequest) returns (Staff) {
+    option (google.api.http) = {
+      post: "/v1/staff"
+      body: "*"
+    };
+  }
+
+  rpc GetStaff(Staff) returns (Staff) {
+    option (google.api.http) = {
+      get: "/v1/staff/{staff_id}"
+    };
+  }
+
+  rpc ListStaff(ListStaffRequest) returns (ListStaffResponse) {
+    option (google.api.http) = {
+      get: "/v1/staff"
+    };
+  }
+
+  rpc UpdateStaff(Staff) returns (Staff) {
+    option (google.api.http) = {
+      put: "/v1/staff/{staff_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteStaff(Staff) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/staff/{staff_id}"
+    };
+  }
+
+  rpc CreatePatient(CreatePatientRequest) returns (Patient) {
+    option (google.api.http) = {
+      post: "/v1/patients"
+      body: "*"
+    };
+  }
+
+  rpc GetPatient(Patient) returns (Patient) {
+    option (google.api.http) = {
+      get: "/v1/patients/{patient_id}"
+    };
+  }
+
+  rpc ListPatients(ListPatientsRequest) returns (ListPatientsResponse) {
+    option (google.api.http) = {
+      get: "/v1/patients"
+    };
+  }
+
+  rpc UpdatePatient(Patient) returns (Patient) {
+    option (google.api.http) = {
+      put: "/v1/patients/{patient_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeletePatient(Patient) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/patients/{patient_id}"
+    };
+  }
+
+  rpc CreateMedicalRecord(CreateMedicalRecordRequest) returns (MedicalRecord) {
+    option (google.api.http) = {
+      post: "/v1/medical-records"
+      body: "*"
+    };
+  }
+
+  rpc GetMedicalRecord(MedicalRecord) returns (MedicalRecord) {
+    option (google.api.http) = {
+      get: "/v1/medical-records/{record_id}"
+    };
+  }
+
+  rpc ListMedicalRecords(ListMedicalRecordsRequest) returns (ListMedicalRecordsResponse) {
+    option (google.api.http) = {
+      get: "/v1/patients/{patient_id}/medical-records"
+    };
+  }
+
+  rpc UpdateMedicalRecord(MedicalRecord) returns (MedicalRecord) {
+    option (google.api.http) = {
+      put: "/v1/medical-records/{record_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteMedicalRecord(MedicalRecord) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/medical-records/{record_id}"
+    };
+  }
+}
+
+service AppointmentService {
+  rpc CreateAppointment(CreateAppointmentRequest) returns (Appointment) {
+    option (google.api.http) = {
+      post: "/v1/appointments"
+      body: "*"
+    };
+  }
+
+  rpc GetAppointment(Appointment) returns (Appointment) {
+    option (google.api.http) = {
+      get: "/v1/appointments/{appointment_id}"
+    };
+  }
+
+  rpc UpdateAppointmentStatus(UpdateAppointmentStatusRequest) returns (Appointment) {
+    option (google.api.http) = {
+      patch: "/v1/appointments/{appointment_id}/status"
+      body: "*"
+    };
+  }
+
+  rpc ListAppointments(ListAppointmentsRequest) returns (ListAppointmentsResponse) {
+    option (google.api.http) = {
+      get: "/v1/appointments"
+    };
+  }
+
+rpc UpdateAppointment(Appointment) returns (Appointment) {
+    option (google.api.http) = {
+      put: "/v1/appointments/{appointment_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteAppointment(Appointment) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/appointments/{appointment_id}"
+    };
+  }
+
+  rpc CreatePrescription(CreatePrescriptionRequest) returns (Prescription) {
+    option (google.api.http) = {
+      post: "/v1/prescriptions"
+      body: "*"
+    };
+  }
+
+  rpc GetPrescription(Prescription) returns (Prescription) {
+    option (google.api.http) = {
+      get: "/v1/prescriptions/{prescription_id}"
+    };
+  }
+
+  rpc ListPrescriptions(ListPrescriptionsRequest) returns (ListPrescriptionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/patients/{patient_id}/prescriptions"
+    };
+  }
+
+  rpc UpdatePrescription(Prescription) returns (Prescription) {
+    option (google.api.http) = {
+      put: "/v1/prescriptions/{prescription_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeletePrescription(Prescription) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/prescriptions/{prescription_id}"
+    };
+  }
+
+  rpc CreateLabResult(CreateLabResultRequest) returns (LabResult) {
+    option (google.api.http) = {
+      post: "/v1/lab-results"
+      body: "*"
+    };
+  }
+
+  rpc GetLabResult(LabResult) returns (LabResult) {
+    option (google.api.http) = {
+      get: "/v1/lab-results/{result_id}"
+    };
+  }
+
+  rpc ListLabResults(ListLabResultsRequest) returns (ListLabResultsResponse) {
+    option (google.api.http) = {
+      get: "/v1/patients/{patient_id}/lab-results"
+    };
+  }
+
+  rpc UpdateLabResult(LabResult) returns (LabResult) {
+    option (google.api.http) = {
+      put: "/v1/lab-results/{result_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteLabResult(LabResult) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/lab-results/{result_id}"
+    };
+  }
+
+  rpc CreateBilling(CreateBillingRequest) returns (Billing) {
+    option (google.api.http) = {
+      post: "/v1/billings"
+      body: "*"
+    };
+  }
+
+  rpc GetBilling(Billing) returns (Billing) {
+    option (google.api.http) = {
+      get: "/v1/billings/{bill_id}"
+    };
+  }
+
+  rpc UpdateBillingStatus(UpdateBillingStatusRequest) returns (Billing) {
+    option (google.api.http) = {
+      patch: "/v1/billings/{bill_id}/status"
+      body: "*"
+    };
+  }
+
+  rpc ListBillings(ListBillingsRequest) returns (ListBillingsResponse) {
+    option (google.api.http) = {
+      get: "/v1/patients/{patient_id}/billings"
+    };
+  }
+
+  rpc UpdateBilling(Billing) returns (Billing) {
+    option (google.api.http) = {
+      put: "/v1/billings/{bill_id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteBilling(Billing) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/billings/{bill_id}"
+    };
+  }
+
+  rpc GetDepartmentStats(google.protobuf.Empty) returns (DepartmentStatsResponse) {
+    option (google.api.http) = {
+      get: "/v1/analytics/departments"
+    };
+  }
+
+  rpc GetAppointmentStats(AppointmentStatsRequest) returns (AppointmentStatsResponse) {
+    option (google.api.http) = {
+      get: "/v1/analytics/appointments"
+    };
+  }
+
+  rpc GetBillingStats(BillingStatsRequest) returns (BillingStatsResponse) {
+    option (google.api.http) = {
+      get: "/v1/analytics/billings"
+    };
+  }
+}
+
+message CreatePrescriptionRequest {
+  int32 patient_id = 1;
+  int32 prescribed_by = 2; 
+  string medication_name = 3;
+  string dosage = 4;
+  string frequency = 5;
+  string start_date = 6;  
+  string end_date = 7;   
+  string instructions = 8;
+}
+
+message ListPrescriptionsRequest {
+  int32 patient_id = 1;
+  int32 page_size = 2;
+  int32 page_number = 3;
+}
+
+message ListPrescriptionsResponse {
+  repeated Prescription prescriptions = 1;
+  int32 total_count = 2;
+}
+
+message CreateLabResultRequest {
+  int32 patient_id = 1;
+  int32 ordered_by = 2;  
+  string test_name = 3;
+  google.protobuf.Timestamp test_date = 4;
+  string results = 5;
+  string normal_range = 6;
+  string notes = 7;
+}
+
+message ListLabResultsRequest {
+  int32 patient_id = 1;
+  int32 page_size = 2;
+  int32 page_number = 3;
+}
+
+message ListLabResultsResponse {
+  repeated LabResult lab_results = 1;
+  int32 total_count = 2;
+}
+
+message CreateBillingRequest {
+  int32 patient_id = 1;
+  int32 appointment_id = 2;
+  float amount = 3;
+  float insurance_covered = 4;
+  float patient_responsibility = 5;
+  string status = 6;
+  string due_date = 7;  
+}
+
+message UpdateBillingStatusRequest {
+  int32 bill_id = 1;
+  string status = 2;
+  string paid_date = 3; 
+}
+
+message ListBillingsRequest {
+  int32 patient_id = 1;
+  int32 page_size = 2;
+  int32 page_number = 3;
+  string status = 4; 
+}
+
+message ListBillingsResponse {
+  repeated Billing billings = 1;
+  int32 total_count = 2;
+}
+
+message DepartmentStatsResponse {
+  message DepartmentStat {
+    int32 department_id = 1;
+    string department_name = 2;
+    int32 staff_count = 3;
+    int32 appointment_count = 4;
+  }
+  repeated DepartmentStat department_stats = 1;
+}
+
+message AppointmentStatsRequest {
+  google.protobuf.Timestamp date_from = 1;
+  google.protobuf.Timestamp date_to = 2;
+  int32 department_id = 3; 
+}
+
+message AppointmentStatsResponse {
+  int32 total_appointments = 1;
+  int32 completed_appointments = 2;
+  int32 cancelled_appointments = 3;
+  int32 no_show_appointments = 4;
+  
+  message DailyStats {
+    string date = 1; 
+    int32 appointment_count = 2;
+  }
+  repeated DailyStats daily_stats = 5;
+}
+
+message BillingStatsRequest {
+  google.protobuf.Timestamp date_from = 1;
+  google.protobuf.Timestamp date_to = 2;
+}
+
+message BillingStatsResponse {
+  float total_billed = 1;
+  float total_collected = 2;
+  float total_outstanding = 3;
+  float total_insurance_covered = 4;
+  float total_patient_responsibility = 5;
+  
+  message MonthlyStats {
+    string month = 1; 
+    float amount_billed = 2;
+    float amount_collected = 3;
+  }
+  repeated MonthlyStats monthly_stats = 6;
+}

@@ -41,6 +41,10 @@ func (s *pocketService) ListPockets(ctx context.Context, walletID string) ([]mod
 	return s.pockets.ListByWallet(ctx, walletID)
 }
 
+func (s *pocketService) GetPocket(ctx context.Context, pocketID string) (*model.Pocket, error) {
+	return s.pockets.GetByID(ctx, pocketID)
+}
+
 func (s *pocketService) DepositToPocket(ctx context.Context, pocketID string, amount int64) (*model.Pocket, error) {
 	if amount <= 0 {
 		return nil, port.ErrInvalidAmount
