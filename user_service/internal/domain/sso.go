@@ -6,4 +6,7 @@ type ExternalIdentity struct {
 	EmailVerified bool
 	Name          string
 	Username      string
+	AvatarURL     string
+	Scopes        []string
+	Profile       []byte
 }

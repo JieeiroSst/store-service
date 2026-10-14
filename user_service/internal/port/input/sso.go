@@ -7,6 +7,7 @@ import (
 )
 
 type SSOService interface {
-	LoginURL(ctx context.Context, state string) (string, error)
-	Callback(ctx context.Context, code string) (dto.LoginResponse, error)
+	LoginURL(ctx context.Context, state, verifier string) (string, error)
+	Callback(ctx context.Context, code, verifier string) (dto.LoginResponse, error)
+	LoginWithToken(ctx context.Context, token string) (dto.LoginResponse, error)
 }

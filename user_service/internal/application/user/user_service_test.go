@@ -53,7 +53,7 @@ var signUpReq = dto.SignUpRequest{Username: "alice", Password: "Secret123", Emai
 
 func TestSignUpAssignsDefaultRole(t *testing.T) {
 	repo, authz := &fakeUserRepo{}, &fakeAuthorizer{}
-	svc := New(repo, fakeHasher{}, nil, authz)
+	svc := New(repo, fakeHasher{}, nil, authz, nil)
 
 	if _, err := svc.SignUp(context.Background(), signUpReq); err != nil {
 		t.Fatalf("SignUp: %v", err)
@@ -69,7 +69,7 @@ func TestSignUpAssignsDefaultRole(t *testing.T) {
 
 func TestSignUpRollsBackWhenAuthorizeFails(t *testing.T) {
 	repo := &fakeUserRepo{}
-	svc := New(repo, fakeHasher{}, nil, &fakeAuthorizer{err: errors.New("unavailable")})
+	svc := New(repo, fakeHasher{}, nil, &fakeAuthorizer{err: errors.New("unavailable")}, nil)
 
 	_, err := svc.SignUp(context.Background(), signUpReq)
 	if !errors.Is(err, domain.ErrAssignRoleFailed) {
@@ -111,7 +111,7 @@ func TestFindUser(t *testing.T) {
 		1: {Id: 1, Username: "alice", Email: "alice@mail.com", Password: "hash", Checked: true},
 		2: {Id: 2, Username: "bob", Email: "bob@mail.com"},
 	}}
-	svc := New(repo, fakeHasher{}, nil, &fakeAuthorizer{})
+	svc := New(repo, fakeHasher{}, nil, &fakeAuthorizer{}, nil)
 	ctx := context.Background()
 
 	byID, err := svc.FindUser(ctx, dto.FindUserRequest{UserId: 2})

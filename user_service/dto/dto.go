@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -215,4 +217,23 @@ type LockAccountResponse struct {
 type GetRoleResponse struct {
 	Role    *Role  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+type SessionInfo struct {
+	ID           string    `json:"id"`
+	Provider     string    `json:"provider"`
+	IP           string    `json:"ip"`
+	UserAgent    string    `json:"user_agent"`
+	CreatedAt    time.Time `json:"created_at"`
+	LastActiveAt time.Time `json:"last_active_at"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	Current      bool      `json:"current"`
+}
+
+type ListSessionsResponse struct {
+	Sessions []SessionInfo `json:"sessions"`
+}
+
+type RevokeSessionsResponse struct {
+	Revoked int `json:"revoked"`
 }

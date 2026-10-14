@@ -299,6 +299,99 @@ Gộp từ `sso-service` cũ. Chỉ bật khi `sso.enabled = true` trong Consul
 Lỗi SSO (state sai, code không hợp lệ, email chưa verify, IdP từ chối):
 `AUTH_SSO_FAILED` (401).
 
+#### Đăng ký / đăng nhập mạng xã hội (`/api/v1/auth/{provider}/*`)
+
+`provider` ∈ `google`, `facebook`, `twitter`, `microsoft`. Mỗi provider bật riêng
+qua `social_login.<provider>.enabled` trong Consul (`client_id`, `client_secret`,
+`redirect_url`, `scopes`, `extra_audiences`; Microsoft thêm `tenant`). Secret có
+thể ghi đè bằng env `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`,
+`TWITTER_CLIENT_SECRET`, `MICROSOFT_CLIENT_SECRET`. `redirect_url` phải được khai
+báo ở console của provider.
+
+| Provider  | Giao thức                    | PKCE | `POST .../token` (mobile/SPA)            |
+|-----------|------------------------------|------|------------------------------------------|
+| google    | OIDC `accounts.google.com`   | có   | `{"id_token"}` - aud = client_id hoặc `extra_audiences` |
+| microsoft | OIDC Entra ID v2.0           | có   | `{"id_token"}` - như trên                 |
+| facebook  | OAuth2 + Graph API v21.0     | không| `{"access_token"}` - kiểm `debug_token` app_id |
+| twitter   | OAuth2 (X API v2)            | bắt buộc | không hỗ trợ → `NOT_IMPLEMENTED` (501) |
+
+Luồng redirect: `GET /api/v1/auth/{provider}/login` → `302` sang provider (cookie
+`sso_state` lưu `state` + PKCE verifier, path `/api/v1/auth/{provider}`) →
+`GET /api/v1/auth/{provider}/callback?code&state` → `200` giống `POST /api/v1/login`.
+
+Chỉ **lần đầu** user đồng ý (consent) ở màn hình của provider, thông tin được lưu
+một lần vào bảng `social_logins` (unique `(provider, subject)`, SSO Keycloak dùng `provider = sso`):
+
+| Cột | Ý nghĩa |
+|-----|---------|
+| `user_id` | user nội bộ được liên kết |
+| `provider`, `subject` | định danh ở provider (`sub` / Facebook id / X id) |
+| `email`, `email_verified` | email provider trả về và đã xác minh hay chưa |
+| `name`, `username`, `avatar_url` | hồ sơ công khai (Google `picture`, Facebook `picture`, X `profile_image_url`) |
+| `scopes` | quyền user đã cấp, cách nhau bằng dấu cách |
+| `profile` | `jsonb` - claims ID token (OIDC) hoặc response `/me` (Facebook, X), tối đa 64KB; không chứa token |
+| `consent_ip`, `consented_at` | IP và thời điểm user đồng ý lần đầu |
+
+Các lần đăng nhập sau chỉ đọc bản ghi này để tìm user, **không** ghi/cập nhật lại
+(thông tin là ảnh chụp tại thời điểm consent; lịch sử đăng nhập nằm ở
+`user_sessions`). Access/refresh token của provider **không** được lưu.
+
+Liên kết tài khoản:
+
+1. Đã có liên kết `(provider, subject)` → đăng nhập vào user đó (kể cả khi email ở
+   provider đã đổi).
+2. Provider trả email **đã xác minh** → gắn vào user có cùng email, chưa có thì
+   tạo user mới (username = username provider → email → `{provider}_{subject}`).
+3. Không có email đã xác minh (X không cấp `users.email`, tài khoản công ty
+   Microsoft không có `xms_edov`) → luôn tạo user mới, không lưu email, **không
+   bao giờ** gắn vào tài khoản có sẵn (chống chiếm tài khoản kiểu nOAuth).
+
+Microsoft `tenant`: `common` / `organizations` / `consumers` (đa tenant, kiểm
+`iss` khớp `tid`) hoặc GUID tenant cụ thể.
+
+### Phiên đăng nhập (session lifecycle)
+
+Mỗi lần đăng nhập (mật khẩu, SSO, mạng xã hội) tạo một phiên trong bảng
+`user_sessions` (`id`, `provider`, `ip`, `user_agent`, `created_at`,
+`last_active_at`, `expires_at`, `revoked_at`, `revoke_reason`); token vẫn nằm ở
+Redis để validate nhanh.
+
+- **Refresh**: giữ nguyên `id` phiên, xoay access/refresh token, cập nhật
+  `last_active_at` và gia hạn `expires_at` (sliding, `refresh_token_exp_hours`).
+  Refresh token cũ dùng lại → `AUTH_REFRESH_TOKEN_INVALID`. Phiên đã thu hồi
+  không refresh được.
+- **Giới hạn**: `token.max_sessions_per_user` (0 = không giới hạn); vượt quá thì
+  phiên ít hoạt động nhất bị thu hồi (`evicted`).
+- **Kết thúc**: logout (`logout`), user tự thu hồi (`revoked_by_user`), khoá tài
+  khoản thu hồi mọi phiên (`account_locked`); user bị khoá không đăng nhập bằng
+  mật khẩu được nữa (`AUTH_ACCOUNT_LOCKED`).
+- IP/User-Agent lấy từ `X-Forwarded-For` (phần tử đầu) / `User-Agent`
+  (`grpcgateway-user-agent` với gRPC).
+
+Tất cả cần `Authorization: Bearer <session_token>`:
+
+| Method | Path | Mô tả |
+|--------|------|-------|
+| `GET` | `/api/v1/sessions` | Danh sách phiên còn hiệu lực, `current: true` là phiên đang gọi |
+| `DELETE` | `/api/v1/sessions/{id}` | Thu hồi một phiên của chính mình → `204`; không phải của mình → `SESSION_NOT_FOUND` (404) |
+| `DELETE` | `/api/v1/sessions` | Đăng xuất mọi thiết bị khác; `?include_current=true` thu hồi cả phiên hiện tại → `{ "revoked": n }` |
+
+```json
+{
+  "sessions": [
+    {
+      "id": "pX3...", "provider": "google", "ip": "203.0.113.5",
+      "user_agent": "Mozilla/5.0 ...", "created_at": "2026-10-14T09:00:00Z",
+      "last_active_at": "2026-10-14T09:30:00Z", "expires_at": "2026-10-21T09:30:00Z",
+      "current": true
+    }
+  ]
+}
+```
+
+Token phát hành trước bản này (chưa có `id` phiên) vẫn dùng được; lần refresh đầu
+tiên sẽ chuyển thành phiên có theo dõi.
+
 ### Tài khoản
 
 #### `POST /user/sign-up` - Đăng ký

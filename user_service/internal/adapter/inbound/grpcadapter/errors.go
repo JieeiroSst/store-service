@@ -33,6 +33,7 @@ var grpcCodes = map[domain.ErrorCode]codes.Code{
 	domain.CodeInvalidEmail:        codes.InvalidArgument,    // 400
 	domain.CodeWeakPassword:        codes.InvalidArgument,    // 400
 	domain.CodeUserNotFound:        codes.NotFound,           // 404
+	domain.CodeSessionNotFound:     codes.NotFound,           // 404
 	domain.CodeRoleNotFound:        codes.NotFound,           // 404
 	domain.CodeRoleNotDefined:      codes.FailedPrecondition, // 400
 }

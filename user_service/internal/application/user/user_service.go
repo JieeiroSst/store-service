@@ -17,15 +17,20 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+type SessionRevoker interface {
+	RevokeAll(ctx context.Context, userID int, reason string) error
+}
+
 type Service struct {
 	userRepo   output.UserRepository
 	hasher     output.Hasher
 	cache      expire.CacheHelper
 	authorizer output.Authorizer
+	sessions   SessionRevoker
 }
 
-func New(userRepo output.UserRepository, hasher output.Hasher, cache expire.CacheHelper, authorizer output.Authorizer) *Service {
-	return &Service{userRepo: userRepo, hasher: hasher, cache: cache, authorizer: authorizer}
+func New(userRepo output.UserRepository, hasher output.Hasher, cache expire.CacheHelper, authorizer output.Authorizer, sessions SessionRevoker) *Service {
+	return &Service{userRepo: userRepo, hasher: hasher, cache: cache, authorizer: authorizer, sessions: sessions}
 }
 
 func (s *Service) SignUp(ctx context.Context, req dto.SignUpRequest) (dto.SignUpResponse, error) {
@@ -98,6 +103,11 @@ func (s *Service) LockAccount(ctx context.Context, req dto.LockAccountRequest) (
 		return dto.LockAccountResponse{Message: "failed"}, err
 	}
 	s.refreshCache(ctx, int(req.Id))
+	if s.sessions != nil {
+		if err := s.sessions.RevokeAll(ctx, int(req.Id), domain.RevokeAccountLocked); err != nil {
+			log.Printf("LockAccount: revoke sessions of %d: %v", req.Id, err)
+		}
+	}
 	return dto.LockAccountResponse{Message: "success"}, nil
 }
 

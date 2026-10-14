@@ -7,6 +7,7 @@ import (
 )
 
 type IdentityProvider interface {
-	AuthCodeURL(ctx context.Context, state string) (string, error)
-	Exchange(ctx context.Context, code string) (domain.ExternalIdentity, error)
+	AuthCodeURL(ctx context.Context, state, verifier string) (string, error)
+	Exchange(ctx context.Context, code, verifier string) (domain.ExternalIdentity, error)
+	VerifyToken(ctx context.Context, token string) (domain.ExternalIdentity, error)
 }

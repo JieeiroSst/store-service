@@ -23,6 +23,24 @@ type Config struct {
 	AuthorizeService AuthorizeServiceConfig `json:"authorize_service"`
 	Internal         InternalConfig         `json:"internal"`
 	SSO              SSOConfig              `json:"sso"`
+	Social           SocialConfig           `json:"social_login"`
+}
+
+type SocialConfig struct {
+	Google    OAuthProviderConfig `json:"google"`
+	Facebook  OAuthProviderConfig `json:"facebook"`
+	Twitter   OAuthProviderConfig `json:"twitter"`
+	Microsoft OAuthProviderConfig `json:"microsoft"`
+}
+
+type OAuthProviderConfig struct {
+	Enabled        bool     `json:"enabled"`
+	ClientID       string   `json:"client_id"`
+	ClientSecret   string   `json:"client_secret"`
+	RedirectURL    string   `json:"redirect_url"`
+	Scopes         []string `json:"scopes"`
+	ExtraAudiences []string `json:"extra_audiences"`
+	Tenant         string   `json:"tenant"`
 }
 
 type SSOConfig struct {
@@ -53,6 +71,7 @@ func (a AuthorizeServiceConfig) Timeout() time.Duration {
 type TokenPolicy struct {
 	AccessTokenExpMinutes int `json:"access_token_exp_minutes"`
 	RefreshTokenExpHours  int `json:"refresh_token_exp_hours"`
+	MaxSessionsPerUser    int `json:"max_sessions_per_user"`
 }
 
 func (t TokenPolicy) AccessTokenTTL() time.Duration {
@@ -158,6 +177,16 @@ func InitializeConfiguration(dir string) (*Config, error) {
 	}
 	if v, ok := os.LookupEnv("SSO_CLIENT_SECRET"); ok {
 		config.SSO.ClientSecret = v
+	}
+	for env, target := range map[string]*string{
+		"GOOGLE_CLIENT_SECRET":    &config.Social.Google.ClientSecret,
+		"FACEBOOK_CLIENT_SECRET":  &config.Social.Facebook.ClientSecret,
+		"TWITTER_CLIENT_SECRET":   &config.Social.Twitter.ClientSecret,
+		"MICROSOFT_CLIENT_SECRET": &config.Social.Microsoft.ClientSecret,
+	} {
+		if v, ok := os.LookupEnv(env); ok {
+			*target = v
+		}
 	}
 
 	return &config, nil

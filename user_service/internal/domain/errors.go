@@ -21,6 +21,8 @@ const (
 	CodeWeakPassword     ErrorCode = "USER_WEAK_PASSWORD"
 	CodeUserNotFound     ErrorCode = "USER_NOT_FOUND"
 
+	CodeSessionNotFound ErrorCode = "SESSION_NOT_FOUND"
+
 	CodeRoleNotFound   ErrorCode = "ROLE_NOT_FOUND"
 	CodeRoleNotDefined ErrorCode = "ROLE_NOT_DEFINED"
 )
@@ -50,6 +52,9 @@ var (
 	ErrSSOExchangeFailed   = newError(CodeSSOFailed, "sso authorization code could not be verified")
 	ErrSSODenied           = newError(CodeSSOFailed, "sso login was denied by the identity provider")
 	ErrSSOEmailUnverified  = newError(CodeSSOFailed, "identity provider did not return a verified email")
+	ErrSSOIDTokenInvalid   = newError(CodeSSOFailed, "id_token is invalid or expired")
+	ErrSSOTokenUnsupported = newError(CodeNotImplemented, "token login is not supported by this provider, use the redirect flow")
+	ErrSSONoIdentity       = newError(CodeSSOFailed, "identity provider did not return a user id")
 
 	ErrUsernameRequired = newError(CodeUsernameRequired, "username is required")
 	ErrUserExist        = newError(CodeUsernameTaken, "username already exists")
@@ -57,6 +62,8 @@ var (
 	ErrPasswordFailed   = newError(CodeWeakPassword, "password does not satisfy the condition")
 	ErrIPFailed         = newError(CodeInvalidRequest, "IP does not satisfy the condition")
 	ErrUserNotExist     = newError(CodeUserNotFound, "user does not exist")
+
+	ErrSessionNotFound = newError(CodeSessionNotFound, "session not found")
 
 	ErrRoleNotFound       = newError(CodeRoleNotFound, "role not found")
 	ErrRoleNotInAuthorize = newError(CodeRoleNotDefined, "role is not defined in authorize service")

@@ -8,8 +8,10 @@ import (
 	"net/http"
 
 	"github.com/JIeeiroSst/user-service/config"
+	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/clientinfo"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/internalhttp"
+	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/sessionhttp"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/ssohttp"
 	"github.com/JIeeiroSst/user-service/internal/port/input"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -19,22 +21,48 @@ import (
 	userServiceGrpc "github.com/JIeeiroSst/lib-gateway/user-service/gateway/user-service"
 )
 
-func RegisterServer(lc fx.Lifecycle, cfg *config.Config, handler *grpcadapter.Handler, users input.UserService, auth input.AuthService, sso input.SSOService) error {
+type SocialLogin struct {
+	Name    string
+	Service input.SSOService
+}
+
+type ServerParams struct {
+	fx.In
+	Lifecycle fx.Lifecycle
+	Config    *config.Config
+	Handler   *grpcadapter.Handler
+	Users     input.UserService
+	Auth      input.AuthService
+	Sessions  input.SessionService
+	SSO       input.SSOService
+	Social    []SocialLogin
+}
+
+func RegisterServer(p ServerParams) error {
+	lc, cfg, handler := p.Lifecycle, p.Config, p.Handler
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", cfg.Server.PortGrpcServer))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpcadapter.UnaryErrorInterceptor))
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(clientinfo.UnaryInterceptor, grpcadapter.UnaryErrorInterceptor))
 	userServiceGrpc.RegisterUserServiceServer(grpcServer, handler)
 
 	mux := runtime.NewServeMux(runtime.WithErrorHandler(grpcadapter.HTTPErrorHandler))
-	if err := internalhttp.New(users, auth, cfg.Internal.ApiTokens).Register(mux); err != nil {
+	if err := internalhttp.New(p.Users, p.Auth, cfg.Internal.ApiTokens).Register(mux); err != nil {
 		return fmt.Errorf("failed to register internal routes: %w", err)
 	}
-	if sso != nil {
-		if err := ssohttp.New(sso).Register(mux); err != nil {
+	if err := sessionhttp.New(p.Sessions).Register(mux); err != nil {
+		return fmt.Errorf("failed to register session routes: %w", err)
+	}
+	if p.SSO != nil {
+		if err := ssohttp.New(p.SSO, ssohttp.SSOBasePath).Register(mux); err != nil {
 			return fmt.Errorf("failed to register sso routes: %w", err)
+		}
+	}
+	for _, s := range p.Social {
+		if err := ssohttp.New(s.Service, ssohttp.SocialBasePath+s.Name).Register(mux); err != nil {
+			return fmt.Errorf("failed to register %s login routes: %w", s.Name, err)
 		}
 	}
 	httpServer := &http.Server{

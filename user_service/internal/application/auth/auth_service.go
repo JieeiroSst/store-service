@@ -3,10 +3,8 @@ package auth
 import (
 	"context"
 	"errors"
-	"log"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/JIeeiroSst/user-service/dto"
 	"github.com/JIeeiroSst/user-service/internal/domain"
@@ -14,25 +12,27 @@ import (
 	"github.com/JIeeiroSst/utils/copy"
 )
 
+type Sessions interface {
+	Start(ctx context.Context, userID int, username, provider string) (dto.LoginResponse, error)
+	Refresh(ctx context.Context, refreshToken string) (dto.RefreshResponse, error)
+	End(ctx context.Context, accessToken string) error
+}
+
 type Service struct {
 	userRepo   output.UserRepository
-	authorizer output.Authorizer
 	hasher     output.Hasher
 	tokenGen   output.TokenGenerator
 	tokenStore output.TokenStore
-	accessTTL  time.Duration
-	refreshTTL time.Duration
+	sessions   Sessions
 }
 
-func New(userRepo output.UserRepository, authorizer output.Authorizer, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, accessTTL, refreshTTL time.Duration) *Service {
+func New(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, sessions Sessions) *Service {
 	return &Service{
 		userRepo:   userRepo,
-		authorizer: authorizer,
 		hasher:     hasher,
 		tokenGen:   tokenGen,
 		tokenStore: tokenStore,
-		accessTTL:  accessTTL,
-		refreshTTL: refreshTTL,
+		sessions:   sessions,
 	}
 }
 
@@ -52,29 +52,19 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 	if err := s.hasher.CheckPassword(user.Password, hashedPassword); err != nil {
 		return dto.LoginResponse{}, domain.ErrInvalidCredentials
 	}
-
-	return s.IssueSession(ctx, userID, user.Username)
-}
-
-func (s *Service) IssueSession(ctx context.Context, userID int, username string) (dto.LoginResponse, error) {
-	pair, err := s.issueTokenPair(ctx, userID, username, s.userRoles(ctx, userID))
+	account, err := s.userRepo.FindUser(ctx, userID)
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
+	if !account.Checked {
+		return dto.LoginResponse{}, domain.ErrAccountLocked
+	}
 
-	return dto.LoginResponse{
-		SessionToken: pair.AccessToken,
-		RefreshToken: pair.RefreshToken,
-		ExpiryTime:   pair.ExpiresIn,
-	}, nil
+	return s.sessions.Start(ctx, userID, user.Username, domain.ProviderPassword)
 }
 
 func (s *Service) Logout(ctx context.Context, req dto.LogoutRequest) (dto.LogoutResponse, error) {
-	session, err := s.tokenStore.GetSessionByAccessToken(ctx, req.SessionToken)
-	if err != nil {
-		return dto.LogoutResponse{Message: "false"}, nil
-	}
-	if err := s.tokenStore.DeleteSession(ctx, session.AccessToken, session.RefreshToken); err != nil {
+	if err := s.sessions.End(ctx, req.SessionToken); err != nil {
 		return dto.LogoutResponse{Message: "false"}, nil
 	}
 	return dto.LogoutResponse{Message: "true"}, nil
@@ -96,24 +86,7 @@ func (s *Service) ValidateSession(ctx context.Context, req dto.ValidateRequest) 
 }
 
 func (s *Service) RefreshToken(ctx context.Context, req dto.RefreshRequest) (dto.RefreshResponse, error) {
-	session, err := s.tokenStore.GetSessionByRefreshToken(ctx, req.RefreshToken)
-	if err != nil {
-		return dto.RefreshResponse{}, domain.ErrRefreshTokenInvalid
-	}
-
-	// Re-read the role so grants/revocations take effect on refresh.
-	pair, err := s.issueTokenPair(ctx, session.UserID, session.Username, s.userRoles(ctx, session.UserID))
-	if err != nil {
-		return dto.RefreshResponse{}, err
-	}
-
-	_ = s.tokenStore.DeleteSession(ctx, session.AccessToken, session.RefreshToken)
-
-	return dto.RefreshResponse{
-		NewSessionToken: pair.AccessToken,
-		NewRefreshToken: pair.RefreshToken,
-		ExpiryTime:      pair.ExpiresIn,
-	}, nil
+	return s.sessions.Refresh(ctx, req.RefreshToken)
 }
 
 func (s *Service) Authentication(ctx context.Context, req dto.AuthenticationRequest) (dto.AuthenticationResponse, error) {
@@ -134,46 +107,4 @@ func (s *Service) Authentication(ctx context.Context, req dto.AuthenticationRequ
 	}
 
 	return dto.AuthenticationResponse{Valid: true, Message: "success"}, nil
-}
-
-// userRoles reads the user's roles from authorize-service for the token's
-// informational "role" (primary) and "roles" (every effective role) claims.
-// It fails open to no roles rather than blocking login: real access
-// decisions are made by authorize-service.
-func (s *Service) userRoles(ctx context.Context, userID int) domain.UserRoles {
-	roles, err := s.authorizer.GetUserRoles(ctx, userID)
-	if err != nil {
-		log.Printf("auth: get roles for user %d from authorize-service: %v", userID, err)
-		return domain.UserRoles{}
-	}
-	return roles
-}
-
-func (s *Service) issueTokenPair(ctx context.Context, userID int, username string, roles domain.UserRoles) (domain.TokenPair, error) {
-	role := roles.PrimaryRole
-	accessToken, err := s.tokenGen.GenerateAccessToken(ctx, userID, username, role, roles.EffectiveRoles)
-	if err != nil {
-		return domain.TokenPair{}, err
-	}
-	refreshToken, err := s.tokenGen.GenerateRefreshToken(ctx)
-	if err != nil {
-		return domain.TokenPair{}, err
-	}
-
-	session := domain.Session{
-		UserID:       userID,
-		Username:     username,
-		Role:         role,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-	if err := s.tokenStore.SaveSession(ctx, session, s.accessTTL, s.refreshTTL); err != nil {
-		return domain.TokenPair{}, err
-	}
-
-	return domain.TokenPair{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		ExpiresIn:    int64(s.accessTTL.Seconds()),
-	}, nil
 }

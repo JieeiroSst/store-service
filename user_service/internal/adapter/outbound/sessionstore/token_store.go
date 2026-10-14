@@ -12,6 +12,7 @@ import (
 const (
 	accessKeyPrefix  = "user_service:session:access:"
 	refreshKeyPrefix = "user_service:session:refresh:"
+	idKeyPrefix      = "user_service:session:id:"
 )
 
 type TokenStore struct {
@@ -33,6 +34,11 @@ func (t *TokenStore) SaveSession(ctx context.Context, session domain.Session, ac
 	if err := t.cache.SetInterface(ctx, refreshKeyPrefix+session.RefreshToken, string(payload), refreshTTL); err != nil {
 		return err
 	}
+	if session.ID != "" {
+		if err := t.cache.SetInterface(ctx, idKeyPrefix+session.ID, string(payload), refreshTTL); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -44,7 +50,18 @@ func (t *TokenStore) GetSessionByRefreshToken(ctx context.Context, refreshToken 
 	return t.get(ctx, refreshKeyPrefix+refreshToken)
 }
 
-func (t *TokenStore) DeleteSession(ctx context.Context, accessToken, refreshToken string) error {
+func (t *TokenStore) DeleteSession(ctx context.Context, sessionID string) error {
+	if sessionID == "" {
+		return nil
+	}
+	session, err := t.get(ctx, idKeyPrefix+sessionID)
+	if err == nil {
+		_ = t.DeleteTokens(ctx, session.AccessToken, session.RefreshToken)
+	}
+	return t.cache.Removekey(ctx, idKeyPrefix+sessionID)
+}
+
+func (t *TokenStore) DeleteTokens(ctx context.Context, accessToken, refreshToken string) error {
 	if accessToken != "" {
 		_ = t.cache.Removekey(ctx, accessKeyPrefix+accessToken)
 	}
