@@ -1,0 +1,91 @@
+type ReferralLinkList {
+  data: [ReferralReferralLink!]
+  meta: ReferralPageMeta
+}
+
+type ReferralPageMeta {
+  count: Int
+  next_cursor: String
+}
+
+type ReferralReferralLink {
+  ref_code: String
+  created_at: Int
+  owner_user_id: String
+  channel: String
+  status: String
+  expires_at: Int
+  deep_link: String
+  platform: String
+}
+
+type ReferralReferralStatusResponse {
+  ref_code: String
+  status: String
+  invitation_status: String
+  owner_user_id: String
+  invited_at: Int
+  activated_at: Int
+  time_to_install_ms: Int
+  platform: String
+  new_user_id: String
+  reward_status: String
+  reward_value: Float
+}
+
+type ReferralUserReferralStats {
+  user_id: String
+  total_invited: Int
+  total_installed: Int
+  total_rewarded: Int
+  total_reward_amt: Float
+  last_active_at: Int
+}
+
+type ReferralShareTarget {
+  channel: String
+  label: String
+  share_url: String
+  qr_url: String
+}
+
+type ReferralRewardProgram {
+  program_id: String
+  name: String
+  status: String
+  tiers: [ReferralRewardTier!]
+  created_at: Int
+  updated_at: Int
+}
+
+type ReferralRewardTier {
+  min_count: Int
+  max_count: Int
+  reward_value: Float
+}
+
+input ReferralRewardTierInput {
+  min_count: Int64
+  max_count: Int64
+  reward_value: Float
+}
+
+extend type Query {
+  referralLink(ref_code: String!): ReferralReferralLink @public @rest(service: "referral-service", path: "/api/v1/referral/link/{ref_code}", unwrap: "data")
+  referralUserLinks(user_id: String!, limit: Int, cursor: String): ReferralLinkList @hasPermission(object: "/graphql/referral-service", action: "QUERY") @rest(service: "referral-service", path: "/api/v1/referral/user/{user_id}/links")
+  referralStatus(ref_code: String!): ReferralReferralStatusResponse @rest(service: "referral-service", path: "/api/v1/referral/status", unwrap: "data")
+  referralUserStats(user_id: String!): ReferralUserReferralStats @hasPermission(object: "/graphql/referral-service", action: "QUERY") @rest(service: "referral-service", path: "/api/v1/referral/user/{user_id}/stats", unwrap: "data")
+  referralShareTargets(ref_code: String!): [ReferralShareTarget!] @public @rest(service: "referral-service", path: "/api/v1/referral/share/{ref_code}", unwrap: "data")
+  referralActiveRewardProgram: ReferralRewardProgram @public @rest(service: "referral-service", path: "/api/v1/programs/active", unwrap: "data")
+  myReferralLinks(limit: Int, cursor: String): ReferralLinkList @rest(service: "referral-service", path: "/api/v1/referral/user/{$userId}/links")
+  myReferralStats: ReferralUserReferralStats @rest(service: "referral-service", path: "/api/v1/referral/user/{$userId}/stats")
+}
+
+extend type Mutation {
+  generateMyReferralLink(channel: String, platform: String): ReferralReferralLink @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/generate", userField: "owner_user_id")
+  referralTrackEvent(ref_code: String!, event_type: String!, platform: String, channel: String, device_id: String, firebase_instance_id: String): Any @public @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/event")
+  referralConfirmInstall(ref_code: String!, platform: String, device_id: String, firebase_instance_id: String): Any @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/confirm-install", userField: "new_user_id")
+  referralActivate(ref_code: String!, platform: String, device_id: String, firebase_instance_id: String): Any @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/activate", userField: "user_id")
+  referralCreateRewardProgram(name: String!, activate: Boolean, tiers: [ReferralRewardTierInput!]): ReferralRewardProgram @hasPermission(object: "/graphql/referral-service", action: "MUTATION") @rest(service: "referral-service", method: "POST", path: "/api/v1/programs")
+  referralSetRewardProgramStatus(program_id: String!, active: Boolean!): ReferralRewardProgram @hasPermission(object: "/graphql/referral-service", action: "MUTATION") @rest(service: "referral-service", method: "PATCH", path: "/api/v1/programs/{program_id}/status")
+}

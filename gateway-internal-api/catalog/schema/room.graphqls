@@ -1,0 +1,41 @@
+type RoomUser {
+  id: Int
+  username: String
+}
+
+type RoomRoom {
+  id: Int
+  name: String
+  owner: String
+  member_count: Int
+  created_at: String
+}
+
+type RoomMember {
+  room_id: Int
+  username: String
+  role: String
+  joined_at: String
+}
+
+type RoomMessage {
+  id: Int
+  room_id: Int
+  username: String
+  content: String
+  created_at: String
+}
+
+extend type Query {
+  roomMe: RoomUser @rest(service: "room-service", path: "/api/me")
+  rooms: [RoomRoom!] @rest(service: "room-service", path: "/api/rooms")
+  room(id: Int!): RoomRoom @rest(service: "room-service", path: "/api/rooms/{id}")
+  roomMembers(id: Int!): [RoomMember!] @rest(service: "room-service", path: "/api/rooms/{id}/members")
+  roomMessages(id: Int!, before: Int, limit: Int): [RoomMessage!] @rest(service: "room-service", path: "/api/rooms/{id}/messages")
+}
+
+extend type Mutation {
+  roomCreateRoom(name: String!): RoomRoom @rest(service: "room-service", method: "POST", path: "/api/rooms")
+  roomAddMember(id: String!, username: String!): Any @rest(service: "room-service", method: "POST", path: "/api/rooms/{id}/members")
+  roomRemoveMember(id: String!, username: String!): Any @rest(service: "room-service", method: "DELETE", path: "/api/rooms/{id}/members/{username}")
+}

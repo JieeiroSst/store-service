@@ -1,0 +1,120 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+gatewayInternalApi:
+  name: gateway-internal-api
+  selectorApp: gateway-internal-api
+  containerName: gateway-internal-api
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/gateway-internal-api
+    tag: latest
+    port: 8081
+    pullPolicy: IfNotPresent
+
+  service:
+    name: gateway-internal-api-svc
+    type: ClusterIP
+    port: 8081
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: api-catalog.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  containerEnv:
+    - name: PORT
+      value: '{{ .Values.gatewayInternalApi.image.port }}'
+    - name: GIN_MODE
+      value: release
+  probes:
+    startup:
+      httpGet:
+        path: /healthz
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      httpGet:
+        path: /healthz
+        port: http
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    liveness:
+      httpGet:
+        path: /healthz
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

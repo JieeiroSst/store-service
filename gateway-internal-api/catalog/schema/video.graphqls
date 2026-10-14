@@ -1,0 +1,30 @@
+type VideoVideoList {
+  items: [VideoVideo!]
+  total: Int
+}
+
+type VideoVideo {
+  id: String
+  title: String
+  description: String
+  content_type: String
+  size: Int
+  status: String
+  duration: Float
+  width: Int
+  height: Int
+  created_at: String
+  views: Int
+}
+
+extend type Query {
+  videos(page: Int, page_size: Int, sort: String, q: String): VideoVideoList @public @rest(service: "video-service", path: "/api/videos")
+  video(id: String!): VideoVideo @public @rest(service: "video-service", path: "/api/videos/{id}")
+  videoRelated(id: String!, limit: Int): [VideoVideo!] @public @rest(service: "video-service", path: "/api/videos/{id}/related", unwrap: "items")
+}
+
+extend type Mutation {
+  videoUpload(file: Upload!, title: String, description: String): VideoVideo @hasPermission(object: "/graphql/video-service", action: "MUTATION") @rest(service: "video-service", method: "POST", path: "/api/videos", multipart: true)
+  videoView(id: String!): Any @public @rest(service: "video-service", method: "POST", path: "/api/videos/{id}/view")
+  videoDelete(id: String!): Boolean! @hasPermission(object: "/graphql/video-service", action: "MUTATION") @rest(service: "video-service", method: "DELETE", path: "/api/videos/{id}")
+}

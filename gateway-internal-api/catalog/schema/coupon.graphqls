@@ -1,0 +1,115 @@
+type CouponCoupon {
+  id: Int!
+  code: String!
+  type: String!
+  discount_value: Float!
+  minimum_purchase: Float!
+  max_discount_amount: Float
+  description: String!
+  start_date: String
+  end_date: String
+  is_active: Boolean!
+  max_uses: Int
+  current_uses: Int!
+  created_at: String
+  updated_at: String
+}
+
+input CouponCouponInput {
+  code: String
+  type: String
+  discount_value: Float
+  minimum_purchase: Float
+  max_discount_amount: Float
+  description: String
+  start_date: String
+  end_date: String
+  is_active: Boolean
+  max_uses: Int
+}
+
+type CouponRestriction {
+  id: Int!
+  coupon_id: Int!
+  restriction_type: String!
+  restricted_entity_id: Int!
+  is_exclude: Boolean!
+  created_at: String
+}
+
+input CouponRestrictionInput {
+  restriction_type: String
+  restricted_entity_id: Int
+  is_exclude: Boolean
+}
+
+type CouponUsage {
+  id: Int!
+  coupon_id: Int!
+  user_id: Int!
+  order_id: Int!
+  discount_amount: Float!
+  used_at: String
+}
+
+type CouponUserCoupon {
+  id: Int!
+  user_id: Int!
+  coupon_id: Int!
+  is_used: Boolean!
+  assigned_at: String
+  used_at: String
+}
+
+type CouponValidation {
+  coupon: CouponCoupon
+  discount: Float!
+}
+
+input CouponValidateInput {
+  code: String
+  purchase_amount: Float
+  category_ids: [Int!]
+  product_ids: [Int!]
+}
+
+input CouponApplyInput {
+  code: String
+  purchase_amount: Float
+  category_ids: [Int!]
+  product_ids: [Int!]
+  order_id: Int
+}
+
+input CouponAssignInput {
+  user_id: Int
+  coupon_id: Int
+}
+
+extend type Query {
+  couponCoupons: [CouponCoupon!]! @hasPermission(object: "/graphql/coupon-service", action: "QUERY") @rest(service: "coupon-service", path: "/api/v1/coupons")
+  couponCoupon(id: Int!): CouponCoupon @hasPermission(object: "/graphql/coupon-service", action: "QUERY") @rest(service: "coupon-service", path: "/api/v1/coupons/{id}")
+  couponByCode(code: String!): CouponCoupon @rest(service: "coupon-service", path: "/api/v1/coupons/code/{code}")
+  couponRestrictions(id: Int!): [CouponRestriction!]! @hasPermission(object: "/graphql/coupon-service", action: "QUERY") @rest(service: "coupon-service", path: "/api/v1/coupons/{id}/restrictions")
+  couponUsages(id: Int!): [CouponUsage!]! @hasPermission(object: "/graphql/coupon-service", action: "QUERY") @rest(service: "coupon-service", path: "/api/v1/coupons/{id}/usages")
+  couponUserCouponsByCoupon(id: Int!): [CouponUserCoupon!]! @hasPermission(object: "/graphql/coupon-service", action: "QUERY") @rest(service: "coupon-service", path: "/api/v1/coupons/{id}/user-coupons")
+  validateCoupon(input: CouponValidateInput!): CouponValidation @rest(service: "coupon-service", method: "POST", path: "/api/v1/coupons/validate", userField: "user_id:int")
+  couponUserCoupons(user_id: Int!): [CouponUserCoupon!]! @hasPermission(object: "/graphql/coupon-service", action: "QUERY") @rest(service: "coupon-service", path: "/api/v1/user-coupons")
+  myCoupons: [CouponUserCoupon!]! @rest(service: "coupon-service", path: "/api/v1/user-coupons", userQuery: "user_id")
+  couponUserUsages(user_id: Int!): [CouponUsage!]! @hasPermission(object: "/graphql/coupon-service", action: "QUERY") @rest(service: "coupon-service", path: "/api/v1/users/{user_id}/coupon-usages")
+  myCouponUsages: [CouponUsage!]! @rest(service: "coupon-service", path: "/api/v1/users/{$userId}/coupon-usages")
+}
+
+extend type Mutation {
+  couponCreateCoupon(input: CouponCouponInput!): CouponCoupon @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "POST", path: "/api/v1/coupons")
+  couponUpdateCoupon(id: Int!, input: CouponCouponInput!): CouponCoupon @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "PUT", path: "/api/v1/coupons/{id}")
+  couponDeleteCoupon(id: Int!): Boolean! @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "DELETE", path: "/api/v1/coupons/{id}")
+  couponCreateRestriction(id: Int!, input: CouponRestrictionInput!): CouponRestriction @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "POST", path: "/api/v1/coupons/{id}/restrictions")
+  couponUpdateRestriction(id: Int!, input: CouponRestrictionInput!): CouponRestriction @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "PUT", path: "/api/v1/restrictions/{id}")
+  couponDeleteRestriction(id: Int!): Boolean! @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "DELETE", path: "/api/v1/restrictions/{id}", unwrap: "success")
+  applyCoupon(input: CouponApplyInput!): CouponUsage @rest(service: "coupon-service", method: "POST", path: "/api/v1/coupons/apply", userField: "user_id:int")
+  couponAssign(input: CouponAssignInput!): CouponUserCoupon @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "POST", path: "/api/v1/user-coupons")
+  couponUseUserCoupon(id: Int!): CouponUserCoupon @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "POST", path: "/api/v1/user-coupons/{id}/use")
+  couponUnuseUserCoupon(id: Int!): CouponUserCoupon @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "POST", path: "/api/v1/user-coupons/{id}/unuse")
+  couponDeleteUserCoupon(id: Int!): Boolean! @hasPermission(object: "/graphql/coupon-service", action: "MUTATION") @rest(service: "coupon-service", method: "DELETE", path: "/api/v1/user-coupons/{id}", unwrap: "success")
+}

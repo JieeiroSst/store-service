@@ -1,0 +1,73 @@
+type OllamaPyTags {
+  models: [OllamaPyTagsModel!]
+}
+
+type OllamaPyTagsModel {
+  name: String
+  model: String
+  modified_at: String
+  size: Int
+  digest: String
+  details: OllamaPyModelDetails
+}
+
+type OllamaPyModelDetails {
+  parent_model: String
+  format: String
+  family: String
+  families: [String!]
+  parameter_size: String
+  quantization_level: String
+}
+
+type OllamaPyMessage {
+  role: String!
+  content: String!
+}
+
+input OllamaPyMessageInput {
+  role: String
+  content: String
+}
+
+input OllamaPyGenerateInput {
+  model: String
+  prompt: String
+}
+
+input OllamaPyChatInput {
+  model: String
+  messages: [OllamaPyMessageInput!]
+}
+
+input OllamaPyShowInput {
+  model: String
+}
+
+type OllamaPyGenerate {
+  model: String!
+  created_at: String!
+  response: String!
+  done: Boolean!
+  total_duration: Int!
+  eval_count: Int!
+}
+
+type OllamaPyChat {
+  model: String
+  created_at: String
+  message: OllamaPyMessage
+  done: Boolean
+  total_duration: Int64
+  eval_count: Int64
+}
+
+extend type Query {
+  ollamaPyTags: OllamaPyTags @rest(service: "ollama-model-py", path: "/api/tags")
+  ollamaPyShow(input: OllamaPyShowInput!): Any @rest(service: "ollama-model-py", method: "POST", path: "/api/show")
+}
+
+extend type Mutation {
+  ollamaPyGenerate(input: OllamaPyGenerateInput!): OllamaPyGenerate @rest(service: "ollama-model-py", method: "POST", path: "/api/generate", fixed: "{\"stream\":false}", userField: "user_id")
+  ollamaPyChat(input: OllamaPyChatInput!): OllamaPyChat @rest(service: "ollama-model-py", method: "POST", path: "/api/chat", fixed: "{\"stream\":false}", userField: "user_id")
+}

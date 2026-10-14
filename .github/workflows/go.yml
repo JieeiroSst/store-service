@@ -1372,3 +1372,26 @@ jobs:
         WISHLISTS_TEST_DB_PASSWORD: wishlists
         WISHLISTS_TEST_DB_NAME: wishlists
       run: cd wishlists-service && make test
+
+  gateway_internal_api:
+    name: gateway_internal_api
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.25"
+
+    - name: Catalog is in sync with gateway-api
+      run: cd gateway-internal-api && make sync-check
+
+    - name: Build
+      run: cd gateway-internal-api && make build
+
+    - name: Vet
+      run: cd gateway-internal-api && make vet
+
+    - name: Test
+      run: cd gateway-internal-api && make test

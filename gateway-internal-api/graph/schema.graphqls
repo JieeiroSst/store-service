@@ -1,28 +1,162 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
-
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
+enum OperationKind {
+  QUERY
+  MUTATION
+  SUBSCRIPTION
 }
 
-type User {
+enum AuthMode {
+  PUBLIC
+  AUTHENTICATED
+  PERMISSION
+}
+
+enum Transport {
+  REST
+  GRPC
+  GATEWAY
+}
+
+enum TypeKind {
+  SCALAR
+  OBJECT
+  INTERFACE
+  UNION
+  ENUM
+  INPUT_OBJECT
+}
+
+type Option {
+  key: String!
+  value: String!
+}
+
+type Auth {
+  mode: AuthMode!
+  object: String
+  action: String
+}
+
+type Upstream {
+  transport: Transport!
+  service: String!
+  method: String
+  path: String
+  options: [Option!]!
+}
+
+type Argument {
+  name: String!
+  type: String!
+  namedType: String!
+  required: Boolean!
+  defaultValue: String
+  description: String
+}
+
+type Example {
+  query: String!
+  variables: String!
+  curl: String!
+}
+
+type Operation {
   id: ID!
   name: String!
+  kind: OperationKind!
+  service: String!
+  description: String
+  args: [Argument!]!
+  returnType: String!
+  returnNamedType: String!
+  auth: Auth!
+  transport: Transport!
+  upstreams: [Upstream!]!
+  example: Example!
+  sdl: String!
+}
+
+type FieldDef {
+  name: String!
+  type: String!
+  namedType: String!
+  required: Boolean!
+  description: String
+  args: [Argument!]!
+}
+
+type TypeDef {
+  name: String!
+  kind: TypeKind!
+  service: String!
+  description: String
+  fields: [FieldDef!]!
+  enumValues: [String!]!
+  possibleTypes: [String!]!
+  sdl: String!
+}
+
+type Service {
+  name: String!
+  schemaFile: String!
+  upstreams: [String!]!
+  queryCount: Int!
+  mutationCount: Int!
+  operations: [Operation!]!
+  types: [TypeDef!]!
+}
+
+type OperationPage {
+  items: [Operation!]!
+  total: Int!
+  limit: Int!
+  offset: Int!
+}
+
+type TypePage {
+  items: [TypeDef!]!
+  total: Int!
+  limit: Int!
+  offset: Int!
+}
+
+type CountByKey {
+  key: String!
+  count: Int!
+}
+
+type CatalogStats {
+  services: Int!
+  operations: Int!
+  queries: Int!
+  mutations: Int!
+  types: Int!
+  byAuth: [CountByKey!]!
+  byTransport: [CountByKey!]!
+  syncedAt: String!
+}
+
+input OperationFilter {
+  service: String
+  kind: OperationKind
+  auth: AuthMode
+  transport: Transport
+  upstream: String
+  search: String
+}
+
+input TypeFilter {
+  service: String
+  kind: TypeKind
+  search: String
 }
 
 type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
-}
-
-type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  stats: CatalogStats!
+  services(search: String): [Service!]!
+  service(name: String!): Service
+  operations(filter: OperationFilter, limit: Int, offset: Int): OperationPage!
+  operation(name: String!, kind: OperationKind): Operation
+  types(filter: TypeFilter, limit: Int, offset: Int): TypePage!
+  type(name: String!): TypeDef
+  sdl(service: String): String!
 }

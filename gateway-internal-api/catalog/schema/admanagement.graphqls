@@ -1,0 +1,244 @@
+type AdAd {
+  id: Int!
+  campaign_id: Int!
+  category_id: Int
+  title: String!
+  description: String!
+  ad_type: String!
+  content_url: String!
+  target_url: String!
+  file_path: String!
+  file_size: Int!
+  mime_type: String!
+  duration: Int!
+  priority: Int!
+  is_active: Boolean!
+  start_date: String
+  end_date: String
+  created_at: String
+  updated_at: String
+}
+
+input AdAdInput {
+  campaign_id: Int
+  category_id: Int
+  title: String
+  description: String
+  ad_type: String
+  content_url: String
+  target_url: String
+  file_path: String
+  file_size: Int
+  mime_type: String
+  duration: Int
+  priority: Int
+  is_active: Boolean
+  start_date: String
+  end_date: String
+}
+
+type AdCampaign {
+  id: Int!
+  user_id: Int!
+  name: String!
+  description: String!
+  budget: Float!
+  start_date: String
+  end_date: String
+  status: String!
+  created_at: String
+  updated_at: String
+}
+
+input AdCampaignInput {
+  user_id: Int
+  name: String
+  description: String
+  budget: Float
+  start_date: String
+  end_date: String
+  status: String
+}
+
+type AdCategory {
+  id: Int!
+  name: String!
+  description: String!
+  parent_id: Int
+  is_active: Boolean!
+  created_at: String
+}
+
+input AdCategoryInput {
+  name: String
+  description: String
+  parent_id: Int
+  is_active: Boolean
+}
+
+type AdClick {
+  id: Int!
+  ad_id: Int!
+  impression_id: Int
+  user_id: Int
+  session_id: String!
+  ip_address: String!
+  user_agent: String!
+  referrer_url: String!
+  target_url: String!
+  created_at: String
+}
+
+type AdImpression {
+  id: Int!
+  ad_id: Int!
+  user_id: Int
+  session_id: String!
+  ip_address: String!
+  user_agent: String!
+  referrer_url: String!
+  page_url: String!
+  position_id: Int
+  created_at: String
+}
+
+type AdPerformanceSummary {
+  id: Int!
+  ad_id: Int!
+  date: String
+  impressions: Int!
+  clicks: Int!
+  ctr: Float!
+  cost: Float!
+  revenue: Float!
+  created_at: String
+  updated_at: String
+}
+
+type AdCampaignPerformance {
+  campaign_id: Int!
+  impressions: Int!
+  clicks: Int!
+  ctr: Float!
+  cost: Float!
+  revenue: Float!
+}
+
+type AdPosition {
+  id: Int!
+  name: String!
+  description: String!
+  width: Int!
+  height: Int!
+  max_file_size: Int!
+  allowed_formats: Any
+  is_active: Boolean!
+}
+
+input AdPositionInput {
+  name: String
+  description: String
+  width: Int
+  height: Int
+  max_file_size: Int
+  allowed_formats: Any
+  is_active: Boolean
+}
+
+type AdPositionMapping {
+  id: Int!
+  ad_id: Int!
+  position_id: Int!
+  weight: Int!
+  is_active: Boolean!
+  created_at: String
+}
+
+input AdPositionMappingInput {
+  ad_id: Int
+  position_id: Int
+  weight: Int
+  is_active: Boolean
+}
+
+type AdTargetingRule {
+  id: Int!
+  ad_id: Int!
+  rule_type: String!
+  rule_operator: String!
+  rule_value: Any
+  is_active: Boolean!
+  created_at: String
+}
+
+input AdTargetingRuleInput {
+  ad_id: Int
+  rule_type: String
+  rule_operator: String
+  rule_value: Any
+  is_active: Boolean
+}
+
+type AdServedAd {
+  ad: AdAd
+  impression_id: Int!
+}
+
+type AdClickResult {
+  target_url: String
+  location: String
+}
+
+input AdCampaignStatusInput {
+  status: String!
+}
+
+extend type Query {
+  adCampaigns: [AdCampaign!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/campaigns")
+  adCampaign(id: Int!): AdCampaign @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/campaigns/{id}")
+  adCampaignAds(id: Int!): [AdAd!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/campaigns/{id}/ads")
+  adCampaignPerformance(id: Int!, from: String, to: String): AdCampaignPerformance @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/campaigns/{id}/performance")
+  adCategories: [AdCategory!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/categories")
+  adCategory(id: Int!): AdCategory @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/categories/{id}")
+  adPositions: [AdPosition!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/positions")
+  adPosition(id: Int!): AdPosition @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/positions/{id}")
+  adAds: [AdAd!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/ads")
+  adAd(id: Int!): AdAd @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/ads/{id}")
+  adAdImpressions(id: Int!): [AdImpression!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/ads/{id}/impressions")
+  adAdClicks(id: Int!): [AdClick!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/ads/{id}/clicks")
+  adPositionMappings: [AdPositionMapping!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/position-mappings")
+  adPositionMapping(id: Int!): AdPositionMapping @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/position-mappings/{id}")
+  adImpressions: [AdImpression!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/impressions")
+  adImpression(id: Int!): AdImpression @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/impressions/{id}")
+  adClicks: [AdClick!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/clicks")
+  adClick(id: Int!): AdClick @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/clicks/{id}")
+  adTargetingRules: [AdTargetingRule!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/targeting-rules")
+  adTargetingRule(id: Int!): AdTargetingRule @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/targeting-rules/{id}")
+  adPerformanceSummaries: [AdPerformanceSummary!]! @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/performance-summaries")
+  adPerformanceSummary(id: Int!): AdPerformanceSummary @hasPermission(object: "/graphql/admanagement", action: "QUERY") @rest(service: "admanagement", path: "/performance-summaries/{id}")
+  adServe(positionId: Int!, session_id: String, country: String, device: String, gender: String, age: Int, referrer_url: String, page_url: String): AdServedAd @public @rest(service: "admanagement", path: "/positions/{positionId}/serve")
+  adTrackClick(ad_id: Int!, impression_id: Int, session_id: String, referrer_url: String): AdClickResult @public @rest(service: "admanagement", path: "/clicks/track")
+}
+
+extend type Mutation {
+  adCreateCampaign(input: AdCampaignInput!): AdCampaign @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "POST", path: "/campaigns")
+  adUpdateCampaign(id: Int!, input: AdCampaignInput!): AdCampaign @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "PUT", path: "/campaigns/{id}")
+  adDeleteCampaign(id: Int!): Boolean! @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "DELETE", path: "/campaigns/{id}")
+  adChangeCampaignStatus(id: Int!, input: AdCampaignStatusInput!): AdCampaign @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "PATCH", path: "/campaigns/{id}")
+  adCreateCategory(input: AdCategoryInput!): AdCategory @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "POST", path: "/categories")
+  adUpdateCategory(id: Int!, input: AdCategoryInput!): AdCategory @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "PUT", path: "/categories/{id}")
+  adDeleteCategory(id: Int!): Boolean! @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "DELETE", path: "/categories/{id}")
+  adCreatePosition(input: AdPositionInput!): AdPosition @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "POST", path: "/positions")
+  adUpdatePosition(id: Int!, input: AdPositionInput!): AdPosition @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "PUT", path: "/positions/{id}")
+  adDeletePosition(id: Int!): Boolean! @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "DELETE", path: "/positions/{id}")
+  adCreateAd(input: AdAdInput!): AdAd @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "POST", path: "/ads")
+  adUpdateAd(id: Int!, input: AdAdInput!): AdAd @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "PUT", path: "/ads/{id}")
+  adDeleteAd(id: Int!): Boolean! @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "DELETE", path: "/ads/{id}")
+  adRecomputePerformance(id: Int!, date: String): AdPerformanceSummary @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "POST", path: "/ads/{id}/performance/recompute")
+  adCreatePositionMapping(input: AdPositionMappingInput!): AdPositionMapping @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "POST", path: "/position-mappings")
+  adUpdatePositionMapping(id: Int!, input: AdPositionMappingInput!): AdPositionMapping @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "PUT", path: "/position-mappings/{id}")
+  adDeletePositionMapping(id: Int!): Boolean! @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "DELETE", path: "/position-mappings/{id}")
+  adCreateTargetingRule(input: AdTargetingRuleInput!): AdTargetingRule @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "POST", path: "/targeting-rules")
+  adUpdateTargetingRule(id: Int!, input: AdTargetingRuleInput!): AdTargetingRule @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "PUT", path: "/targeting-rules/{id}")
+  adDeleteTargetingRule(id: Int!): Boolean! @hasPermission(object: "/graphql/admanagement", action: "MUTATION") @rest(service: "admanagement", method: "DELETE", path: "/targeting-rules/{id}")
+}

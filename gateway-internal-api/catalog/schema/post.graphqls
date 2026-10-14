@@ -1,0 +1,56 @@
+type PostPostPage {
+  rows: [PostPost!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type PostCategoryPage {
+  rows: [PostCategory!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type PostPost {
+  id: String
+  author_id: String
+  name: String
+  content: String
+  description: String
+  media_id: String
+  created_at: String
+  updated_at: String
+  categories: [PostCategory!]
+  media: PostMedia
+}
+
+type PostCategory {
+  id: String
+  name: String
+  description: String
+  created_at: String
+  updated_at: String
+  posts: [PostPost!]
+}
+
+type PostMedia {
+  id: String
+  url: String
+  description: String
+  created_at: String
+  updated_at: String
+}
+
+extend type Query {
+  posts(cursor: String, limit: Int): PostPostPage @public @rest(service: "post-service", path: "/api/v1/post")
+  post(id: String!): PostPost @public @rest(service: "post-service", path: "/api/v1/post/{id}")
+  postCategories(cursor: String, limit: Int): PostCategoryPage @public @rest(service: "post-service", path: "/api/v1/category")
+  postCategory(id: String!): PostCategory @public @rest(service: "post-service", path: "/api/v1/category/{id}")
+}
+
+extend type Mutation {
+  postCreatePost(name: String!, content: String!, description: String, category_id: String, file: Upload): PostPost @rest(service: "post-service", method: "POST", path: "/api/v1/post", multipart: true)
+  postUpdatePost(id: String!, name: String, content: String, description: String): PostPost @rest(service: "post-service", method: "PUT", path: "/api/v1/post/{id}")
+  postCreateCategory(name: String!, description: String): PostCategory @rest(service: "post-service", method: "POST", path: "/api/v1/category")
+  postUpdateCategory(id: String!, name: String, description: String): PostCategory @rest(service: "post-service", method: "PUT", path: "/api/v1/category/{id}")
+  postDeleteCategory(id: String!): Boolean! @rest(service: "post-service", method: "DELETE", path: "/api/v1/category/{id}")
+}

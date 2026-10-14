@@ -1,0 +1,98 @@
+type BotMedia {
+  url: String!
+  type: String!
+  thumbnail: String!
+}
+
+input BotMediaInput {
+  url: String
+  type: String
+  thumbnail: String
+}
+
+type BotChannelPublishResult {
+  channel: String!
+  external_id: String!
+  published_url: String!
+  error: String!
+  published_at: String
+}
+
+type BotPost {
+  id: String!
+  title: String!
+  text: String!
+  hashtags: [String!]
+  media: [BotMedia!]
+  media_kind: String!
+  channels: [String!]
+  scheduled_at: String
+  timezone: String!
+  cron_expr: String!
+  max_runs_per_day: Int!
+  max_runs_per_month: Int!
+  runs_today: Int!
+  runs_this_month: Int!
+  last_run_date: String!
+  last_run_month: String!
+  last_run_at: String
+  status: String!
+  reject_reason: String!
+  results: [BotChannelPublishResult!]
+  campaign: String!
+  created_by: String!
+  approved_by: String!
+  status_changed_by: String!
+  created_at: String
+  updated_at: String
+}
+
+type BotPostList {
+  posts: [BotPost!]!
+}
+
+input BotCreatePostInput {
+  save_as_draft: Boolean
+  title: String
+  text: String
+  hashtags: [String!]
+  media: [BotMediaInput!]
+  media_kind: String
+  channels: [String!]
+  scheduled_at: String
+  timezone: String
+  cron_expr: String
+  max_runs_per_day: Int
+  max_runs_per_month: Int
+  campaign: String
+}
+
+input BotUpdatePostInput {
+  title: String
+  text: String
+  hashtags: [String!]
+  media: [BotMediaInput!]
+  media_kind: String
+  channels: [String!]
+  scheduled_at: String
+  timezone: String
+  cron_expr: String
+  max_runs_per_day: Int
+  max_runs_per_month: Int
+  campaign: String
+}
+
+extend type Query {
+  botPosts(limit: Int, offset: Int, status: String, campaign: String): BotPostList @hasPermission(object: "/graphql/bot-service", action: "QUERY") @rest(service: "bot-service", path: "/bot-content/v1/posts")
+  botPost(id: String!): BotPost @hasPermission(object: "/graphql/bot-service", action: "QUERY") @rest(service: "bot-service", path: "/bot-content/v1/posts/{id}")
+}
+
+extend type Mutation {
+  botCreatePost(input: BotCreatePostInput!): BotPost @hasPermission(object: "/graphql/bot-service", action: "MUTATION") @rest(service: "bot-service", method: "POST", path: "/bot-content/v1/posts", userField: "created_by")
+  botUpdatePost(id: String!, input: BotUpdatePostInput!): BotPost @hasPermission(object: "/graphql/bot-service", action: "MUTATION") @rest(service: "bot-service", method: "PATCH", path: "/bot-content/v1/posts/{id}")
+  botSubmitPost(id: String!): BotPost @hasPermission(object: "/graphql/bot-service", action: "MUTATION") @rest(service: "bot-service", method: "POST", path: "/bot-content/v1/posts/{id}/submit", userField: "changed_by")
+  botApprovePost(id: String!): BotPost @hasPermission(object: "/graphql/bot-service", action: "MUTATION") @rest(service: "bot-service", method: "POST", path: "/bot-content/v1/posts/{id}/approve", userField: "changed_by")
+  botPublishPost(id: String!): BotPost @hasPermission(object: "/graphql/bot-service", action: "MUTATION") @rest(service: "bot-service", method: "POST", path: "/bot-content/v1/posts/{id}/publish", userField: "changed_by")
+  botCancelPost(id: String!): BotPost @hasPermission(object: "/graphql/bot-service", action: "MUTATION") @rest(service: "bot-service", method: "POST", path: "/bot-content/v1/posts/{id}/cancel", userField: "changed_by")
+  botRejectPost(id: String!, reason: String!): BotPost @hasPermission(object: "/graphql/bot-service", action: "MUTATION") @rest(service: "bot-service", method: "POST", path: "/bot-content/v1/posts/{id}/reject", userField: "changed_by")
+}

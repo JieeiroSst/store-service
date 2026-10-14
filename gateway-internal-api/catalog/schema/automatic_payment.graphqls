@@ -1,0 +1,92 @@
+type AutoPayInvoice {
+  invoiceId: String!
+  transactionId: String!
+  subscriptionId: String!
+  userId: String!
+  amount: Float!
+  taxAmount: Float!
+  totalAmount: Float!
+  status: String!
+  dueDate: String
+  paidDate: String
+  invoiceNumber: String!
+  createdAt: String
+}
+
+type AutoPayPaymentMethod {
+  paymentMethodId: String!
+  userId: String!
+  provider: String!
+  tokenId: String!
+  lastFourDigits: String!
+  expiryDate: String!
+  isDefault: Boolean!
+  createdAt: String
+  updatedAt: String
+}
+
+type AutoPaySubscription {
+  subscriptionId: String!
+  userId: String!
+  planId: String!
+  status: String!
+  amount: Float!
+  currency: String!
+  startDate: String
+  endDate: String
+  autoRenewal: Boolean!
+  trialEndDate: String
+  nextBillingDate: String
+  paymentFailureCount: Int!
+  createdAt: String
+  updatedAt: String
+}
+
+type AutoPayTransaction {
+  transactionId: String!
+  subscriptionId: String!
+  paymentMethodId: String!
+  amount: Float!
+  currency: String!
+  status: String!
+  gatewayTransactionId: String!
+  errorMessage: String!
+  createdAt: String
+}
+
+input AutoPayPaymentMethodInput {
+  userId: String
+  provider: String
+  tokenId: String
+  lastFourDigits: String
+  expiryDate: String
+  isDefault: Boolean
+}
+
+input AutoPaySubscriptionInput {
+  userId: String
+  planId: String
+  amount: Float
+  currency: String
+  autoRenewal: Boolean
+  trialDays: Int
+  paymentMethodId: String
+}
+
+extend type Query {
+  autoPaySubscription(id: String!): AutoPaySubscription @hasPermission(object: "/graphql/automatic-payment-service", action: "QUERY") @rest(service: "automatic-payment-service", path: "/subscriptions/{id}", unwrap: "data")
+  autoPaySubscriptionTransactions(id: String!): [AutoPayTransaction!]! @hasPermission(object: "/graphql/automatic-payment-service", action: "QUERY") @rest(service: "automatic-payment-service", path: "/subscriptions/{id}/transactions", unwrap: "data")
+  autoPaySubscriptionInvoices(id: String!): [AutoPayInvoice!]! @hasPermission(object: "/graphql/automatic-payment-service", action: "QUERY") @rest(service: "automatic-payment-service", path: "/subscriptions/{id}/invoices", unwrap: "data")
+  autoPayPaymentMethods(userId: String!): [AutoPayPaymentMethod!]! @hasPermission(object: "/graphql/automatic-payment-service", action: "QUERY") @rest(service: "automatic-payment-service", path: "/payment-methods", unwrap: "data")
+  autoPayInvoices(userId: String!): [AutoPayInvoice!]! @hasPermission(object: "/graphql/automatic-payment-service", action: "QUERY") @rest(service: "automatic-payment-service", path: "/invoices", unwrap: "data")
+  autoPayInvoice(id: String!): AutoPayInvoice @hasPermission(object: "/graphql/automatic-payment-service", action: "QUERY") @rest(service: "automatic-payment-service", path: "/invoices/{id}", unwrap: "data")
+}
+
+extend type Mutation {
+  autoPayCreateSubscription(input: AutoPaySubscriptionInput!): AutoPaySubscription @hasPermission(object: "/graphql/automatic-payment-service", action: "MUTATION") @rest(service: "automatic-payment-service", method: "POST", path: "/subscriptions", unwrap: "data")
+  autoPayCancelSubscription(id: String!): AutoPaySubscription @hasPermission(object: "/graphql/automatic-payment-service", action: "MUTATION") @rest(service: "automatic-payment-service", method: "POST", path: "/subscriptions/{id}/cancel", unwrap: "data")
+  autoPayProcessRenewals: Any @hasPermission(object: "/graphql/automatic-payment-service", action: "MUTATION") @rest(service: "automatic-payment-service", method: "POST", path: "/subscriptions/renewals/process", unwrap: "data")
+  autoPayAddPaymentMethod(input: AutoPayPaymentMethodInput!): AutoPayPaymentMethod @hasPermission(object: "/graphql/automatic-payment-service", action: "MUTATION") @rest(service: "automatic-payment-service", method: "POST", path: "/payment-methods", unwrap: "data")
+  autoPayDeletePaymentMethod(id: String!): Boolean! @hasPermission(object: "/graphql/automatic-payment-service", action: "MUTATION") @rest(service: "automatic-payment-service", method: "DELETE", path: "/payment-methods/{id}")
+  autoPaySetDefaultPaymentMethod(id: String!, userId: String!): Any @hasPermission(object: "/graphql/automatic-payment-service", action: "MUTATION") @rest(service: "automatic-payment-service", method: "POST", path: "/payment-methods/{id}/default", unwrap: "data")
+}

@@ -1,0 +1,242 @@
+type AddressCountry {
+  iso31661a2: String!
+  prinatable_name: String!
+  name: String!
+  display_order: Int!
+  is_shipping_country: Boolean!
+}
+
+type AddressOrderBillingAddress {
+  id: Int!
+  title: String!
+  first_name: String!
+  last_name: String!
+  line1: String!
+  line2: String!
+  line3: String!
+  line4: String!
+  state: String!
+  postcode: String!
+  search_text: String!
+  country_id: String!
+  address_country: AddressCountry
+}
+
+type AddressOrderShippingAddress {
+  id: Int!
+  title: String!
+  first_name: String!
+  last_name: String!
+  line1: String!
+  line2: String!
+  line3: String!
+  line4: String!
+  state: String!
+  postcode: String!
+  search_text: String!
+  country_id: String!
+  phone_number: String!
+  notes: String!
+  address_country: AddressCountry
+}
+
+type AddressPartnerAddress {
+  id: Int!
+  title: String!
+  first_name: String!
+  last_name: String!
+  line1: String!
+  line2: String!
+  line3: String!
+  line4: String!
+  state: String!
+  postcode: String!
+  search_text: String!
+  country_id: String!
+  partner_id: Int!
+  address_country: AddressCountry
+}
+
+type AddressShippingOrderAndItemChangesCountry {
+  id: Int!
+  orderanditemchanges_id: Int!
+  country_id: String!
+  address_country: AddressCountry
+}
+
+type AddressShippingWeightBasedCountry {
+  id: Int!
+  weightbased_id: Int!
+  country_id: String!
+  address_country: AddressCountry
+}
+
+type AddressUserAddress {
+  id: Int!
+  title: String!
+  first_name: String!
+  last_name: String!
+  line1: String!
+  line2: String!
+  line3: String!
+  line4: String!
+  state: String!
+  postcode: String!
+  search_text: String!
+  country_id: String!
+  phone_number: String!
+  notes: String!
+  is_default_for_shipping: Boolean!
+  is_default_for_billing: Boolean!
+  number_orders_as_shipping_address: Int!
+  number_orders_as_billing_address: Int!
+  hash: String!
+  date_created: String
+  user_id: Int!
+  address_country: AddressCountry
+}
+
+input AddressCountryInput {
+  iso31661a2: String
+  prinatable_name: String
+  name: String
+  display_order: Int
+  is_shipping_country: Boolean
+}
+
+input AddressOrderBillingAddressInput {
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+}
+
+input AddressOrderShippingAddressInput {
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  phone_number: String
+  notes: String
+}
+
+input AddressPartnerAddressInput {
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  partner_id: Int
+}
+
+input AddressShippingOrderAndItemChangesCountryInput {
+  orderanditemchanges_id: Int
+  country_id: String
+}
+
+input AddressShippingWeightBasedCountryInput {
+  weightbased_id: Int
+  country_id: String
+}
+
+input AddressUserAddressInput {
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  phone_number: String
+  notes: String
+  is_default_for_shipping: Boolean
+  is_default_for_billing: Boolean
+}
+
+input AddressAdminUserAddressInput {
+  title: String
+  first_name: String
+  last_name: String
+  line1: String
+  line2: String
+  line3: String
+  line4: String
+  state: String
+  postcode: String
+  search_text: String
+  country_id: String
+  phone_number: String
+  notes: String
+  is_default_for_shipping: Boolean
+  is_default_for_billing: Boolean
+  user_id: Int
+}
+
+extend type Query {
+  addressCountries: [AddressCountry!]! @public @rest(service: "address-country", path: "/address-countries", unwrap: "data")
+  addressCountry(id: Int!): AddressCountry @public @rest(service: "address-country", path: "/address-countries/{id}", unwrap: "data")
+  addressOrderBillingAddresses: [AddressOrderBillingAddress!]! @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/order-billing-addresses", unwrap: "data")
+  addressOrderBillingAddress(id: Int!): AddressOrderBillingAddress @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/order-billing-addresses/{id}", unwrap: "data")
+  addressOrderShippingAddresses: [AddressOrderShippingAddress!]! @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/order-shipping-addresses", unwrap: "data")
+  addressOrderShippingAddress(id: Int!): AddressOrderShippingAddress @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/order-shipping-addresses/{id}", unwrap: "data")
+  addressPartnerAddresses: [AddressPartnerAddress!]! @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/partner-addresses", unwrap: "data")
+  addressPartnerAddress(id: Int!): AddressPartnerAddress @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/partner-addresses/{id}", unwrap: "data")
+  addressShippingOrderAndItemChangesCountries: [AddressShippingOrderAndItemChangesCountry!]! @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/shipping-orderanditemchanges-countries", unwrap: "data")
+  addressShippingOrderAndItemChangesCountry(id: Int!): AddressShippingOrderAndItemChangesCountry @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/shipping-orderanditemchanges-countries/{id}", unwrap: "data")
+  addressShippingWeightBasedCountries: [AddressShippingWeightBasedCountry!]! @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/shipping-weightbased-countries", unwrap: "data")
+  addressShippingWeightBasedCountry(id: Int!): AddressShippingWeightBasedCountry @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/shipping-weightbased-countries/{id}", unwrap: "data")
+  addressUserAddresses: [AddressUserAddress!]! @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/user-addresses", unwrap: "data")
+  addressUserAddress(id: Int!): AddressUserAddress @hasPermission(object: "/graphql/address-country", action: "QUERY") @rest(service: "address-country", path: "/user-addresses/{id}", unwrap: "data")
+  myUserAddresses: [AddressUserAddress!]!
+}
+
+extend type Mutation {
+  addressCreateCountry(input: AddressCountryInput!): AddressCountry @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "POST", path: "/address-countries", unwrap: "data")
+  addressUpdateCountry(id: Int!, input: AddressCountryInput!): AddressCountry @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "PUT", path: "/address-countries/{id}", unwrap: "data")
+  addressDeleteCountry(id: Int!): Boolean! @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "DELETE", path: "/address-countries/{id}")
+  addressCreateOrderBillingAddress(input: AddressOrderBillingAddressInput!): AddressOrderBillingAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "POST", path: "/order-billing-addresses", unwrap: "data")
+  addressUpdateOrderBillingAddress(id: Int!, input: AddressOrderBillingAddressInput!): AddressOrderBillingAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "PUT", path: "/order-billing-addresses/{id}", unwrap: "data")
+  addressDeleteOrderBillingAddress(id: Int!): Boolean! @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "DELETE", path: "/order-billing-addresses/{id}")
+  addressCreateOrderShippingAddress(input: AddressOrderShippingAddressInput!): AddressOrderShippingAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "POST", path: "/order-shipping-addresses", unwrap: "data")
+  addressUpdateOrderShippingAddress(id: Int!, input: AddressOrderShippingAddressInput!): AddressOrderShippingAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "PUT", path: "/order-shipping-addresses/{id}", unwrap: "data")
+  addressDeleteOrderShippingAddress(id: Int!): Boolean! @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "DELETE", path: "/order-shipping-addresses/{id}")
+  addressCreatePartnerAddress(input: AddressPartnerAddressInput!): AddressPartnerAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "POST", path: "/partner-addresses", unwrap: "data")
+  addressUpdatePartnerAddress(id: Int!, input: AddressPartnerAddressInput!): AddressPartnerAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "PUT", path: "/partner-addresses/{id}", unwrap: "data")
+  addressDeletePartnerAddress(id: Int!): Boolean! @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "DELETE", path: "/partner-addresses/{id}")
+  addressCreateShippingOrderAndItemChangesCountry(input: AddressShippingOrderAndItemChangesCountryInput!): AddressShippingOrderAndItemChangesCountry @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "POST", path: "/shipping-orderanditemchanges-countries", unwrap: "data")
+  addressUpdateShippingOrderAndItemChangesCountry(id: Int!, input: AddressShippingOrderAndItemChangesCountryInput!): AddressShippingOrderAndItemChangesCountry @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "PUT", path: "/shipping-orderanditemchanges-countries/{id}", unwrap: "data")
+  addressDeleteShippingOrderAndItemChangesCountry(id: Int!): Boolean! @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "DELETE", path: "/shipping-orderanditemchanges-countries/{id}")
+  addressCreateShippingWeightBasedCountry(input: AddressShippingWeightBasedCountryInput!): AddressShippingWeightBasedCountry @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "POST", path: "/shipping-weightbased-countries", unwrap: "data")
+  addressUpdateShippingWeightBasedCountry(id: Int!, input: AddressShippingWeightBasedCountryInput!): AddressShippingWeightBasedCountry @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "PUT", path: "/shipping-weightbased-countries/{id}", unwrap: "data")
+  addressDeleteShippingWeightBasedCountry(id: Int!): Boolean! @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "DELETE", path: "/shipping-weightbased-countries/{id}")
+  addressCreateUserAddress(input: AddressAdminUserAddressInput!): AddressUserAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "POST", path: "/user-addresses", unwrap: "data")
+  addressUpdateUserAddress(id: Int!, input: AddressAdminUserAddressInput!): AddressUserAddress @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "PUT", path: "/user-addresses/{id}", unwrap: "data")
+  addressDeleteUserAddress(id: Int!): Boolean! @hasPermission(object: "/graphql/address-country", action: "MUTATION") @rest(service: "address-country", method: "DELETE", path: "/user-addresses/{id}")
+  createMyUserAddress(input: AddressUserAddressInput!): AddressUserAddress
+  updateMyUserAddress(id: Int!, input: AddressUserAddressInput!): AddressUserAddress
+  deleteMyUserAddress(id: Int!): Boolean!
+}

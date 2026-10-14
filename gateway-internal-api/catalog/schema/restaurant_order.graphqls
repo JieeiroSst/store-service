@@ -1,0 +1,59 @@
+type ROrderOrderPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [ROrderOrder!]
+}
+
+type ROrderReservationPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [ROrderReservation!]
+}
+
+type ROrderOrder {
+  id: Int
+  table_name: String
+  status: String
+  kitchen_id: Int
+  total_amount: Float
+  items: [ROrderOrderItem!]
+  created_date: String
+  updated_time: String
+}
+
+type ROrderReservation {
+  id: Int
+  table_name: String
+  customer_name: String
+  party_size: Int
+  reserved_at: String
+  status: String
+  created_date: String
+}
+
+type ROrderOrderItem {
+  id: Int
+  order_id: Int
+  food_id: Int
+  food_name: String
+  quantity: Int
+  unit_price: Float
+}
+
+extend type Query {
+  rOrderOrder(id: Int!): ROrderOrder @hasPermission(object: "/graphql/restaurant-order", action: "QUERY") @rest(service: "order-service", path: "/api/v1/order/{id}", unwrap: "data")
+  rOrderOrders(Limit: Int, Page: Int, Sort: String): ROrderOrderPage @hasPermission(object: "/graphql/restaurant-order", action: "QUERY") @rest(service: "order-service", path: "/api/v1/order", unwrap: "data")
+  rOrderReservations(Limit: Int, Page: Int, Sort: String): ROrderReservationPage @hasPermission(object: "/graphql/restaurant-order", action: "QUERY") @rest(service: "order-service", path: "/api/v1/reservations", unwrap: "data")
+  rOrderReservation(id: Int!): ROrderReservation @hasPermission(object: "/graphql/restaurant-order", action: "QUERY") @rest(service: "order-service", path: "/api/v1/reservations/{id}", unwrap: "data")
+}
+
+extend type Mutation {
+  rOrderCreateReservation(input: Map!): Any @rest(service: "order-service", method: "POST", path: "/api/v1/reservations")
+  rOrderCancelReservation(id: String!): Any @rest(service: "order-service", method: "DELETE", path: "/api/v1/reservations/{id}")
+}

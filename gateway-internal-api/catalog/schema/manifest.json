@@ -1,0 +1,813 @@
+{
+  "source": "gateway-api/graph",
+  "synced_at": "2026-10-14T22:01:12Z",
+  "calls": {
+    "Mutation.accountTxCreateAccount": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/CreateAccount"
+      }
+    ],
+    "Mutation.accountTxCreateAccountToAccountTransaction": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/CreateAccountToAccountTransaction"
+      }
+    ],
+    "Mutation.accountTxCreateDepositTransaction": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/CreateDepositTransaction"
+      }
+    ],
+    "Mutation.accountTxCreatePaymentForServiceTransaction": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/CreatePaymentForServiceTransaction"
+      }
+    ],
+    "Mutation.accountTxCreateWithdrawalTransaction": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/CreateWithdrawalTransaction"
+      }
+    ],
+    "Mutation.addUserRole": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "AddRole"
+      }
+    ],
+    "Mutation.adminUpdateProfile": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "UpdateProfile"
+      }
+    ],
+    "Mutation.assignUserRole": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "UpdateItemRole"
+      }
+    ],
+    "Mutation.authzAssignRoles": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/AssignRoles"
+      }
+    ],
+    "Mutation.authzRemoveUser": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/RemoveUser"
+      }
+    ],
+    "Mutation.authzRevokeRoles": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/RevokeRoles"
+      }
+    ],
+    "Mutation.authzSetUserRoles": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/SetUserRoles"
+      }
+    ],
+    "Mutation.carRentalCancelReservation": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/CancelReservation"
+      }
+    ],
+    "Mutation.carRentalCompleteRental": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/CompleteRental"
+      }
+    ],
+    "Mutation.carRentalCreateReservation": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/CreateReservation"
+      }
+    ],
+    "Mutation.carRentalCreateVehicle": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/CreateVehicle"
+      }
+    ],
+    "Mutation.carRentalProcessPayment": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/ProcessPayment"
+      }
+    ],
+    "Mutation.carRentalRegisterUser": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/RegisterUser"
+      }
+    ],
+    "Mutation.carRentalStartRental": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/StartRental"
+      }
+    ],
+    "Mutation.carRentalSubmitReview": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/SubmitReview"
+      }
+    ],
+    "Mutation.carRentalUpdateReservation": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/UpdateReservation"
+      }
+    ],
+    "Mutation.carRentalUpdateUser": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/UpdateUser"
+      }
+    ],
+    "Mutation.carRentalUpdateVehicle": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/UpdateVehicle"
+      }
+    ],
+    "Mutation.createCasbinRule": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/AuthorizeService/CreateCasbinRule"
+      }
+    ],
+    "Mutation.createMyUserAddress": [
+      {
+        "transport": "rest",
+        "service": "address-country",
+        "method": "POST",
+        "path": "/user-addresses"
+      }
+    ],
+    "Mutation.createOtp": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/AuthorizeService/CreateOTP"
+      }
+    ],
+    "Mutation.createUserRole": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "CreateRole"
+      }
+    ],
+    "Mutation.deleteCasbinRule": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/AuthorizeService/DeleteCasbinRule"
+      }
+    ],
+    "Mutation.deleteMyUserAddress": [
+      {
+        "transport": "rest",
+        "service": "address-country",
+        "method": "GET",
+        "path": "/user-addresses/{id}"
+      },
+      {
+        "transport": "rest",
+        "service": "address-country",
+        "method": "DELETE",
+        "path": "/user-addresses/{id}"
+      }
+    ],
+    "Mutation.deleteUserRole": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "DeleteRole"
+      }
+    ],
+    "Mutation.hospitalCreateAppointment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/CreateAppointment"
+      }
+    ],
+    "Mutation.hospitalCreateBilling": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/CreateBilling"
+      }
+    ],
+    "Mutation.hospitalCreateDepartment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/CreateDepartment"
+      }
+    ],
+    "Mutation.hospitalCreateLabResult": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/CreateLabResult"
+      }
+    ],
+    "Mutation.hospitalCreateMedicalRecord": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/CreateMedicalRecord"
+      }
+    ],
+    "Mutation.hospitalCreatePatient": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/CreatePatient"
+      }
+    ],
+    "Mutation.hospitalCreatePrescription": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/CreatePrescription"
+      }
+    ],
+    "Mutation.hospitalCreateStaff": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/CreateStaff"
+      }
+    ],
+    "Mutation.hospitalDeleteAppointment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/DeleteAppointment"
+      }
+    ],
+    "Mutation.hospitalDeleteBilling": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/DeleteBilling"
+      }
+    ],
+    "Mutation.hospitalDeleteDepartment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/DeleteDepartment"
+      }
+    ],
+    "Mutation.hospitalDeleteLabResult": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/DeleteLabResult"
+      }
+    ],
+    "Mutation.hospitalDeleteMedicalRecord": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/DeleteMedicalRecord"
+      }
+    ],
+    "Mutation.hospitalDeletePatient": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/DeletePatient"
+      }
+    ],
+    "Mutation.hospitalDeletePrescription": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/DeletePrescription"
+      }
+    ],
+    "Mutation.hospitalDeleteStaff": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/DeleteStaff"
+      }
+    ],
+    "Mutation.hospitalUpdateAppointment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/UpdateAppointment"
+      }
+    ],
+    "Mutation.hospitalUpdateAppointmentStatus": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/UpdateAppointmentStatus"
+      }
+    ],
+    "Mutation.hospitalUpdateBilling": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/UpdateBilling"
+      }
+    ],
+    "Mutation.hospitalUpdateBillingStatus": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/UpdateBillingStatus"
+      }
+    ],
+    "Mutation.hospitalUpdateDepartment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/UpdateDepartment"
+      }
+    ],
+    "Mutation.hospitalUpdateLabResult": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/UpdateLabResult"
+      }
+    ],
+    "Mutation.hospitalUpdateMedicalRecord": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/UpdateMedicalRecord"
+      }
+    ],
+    "Mutation.hospitalUpdatePatient": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/UpdatePatient"
+      }
+    ],
+    "Mutation.hospitalUpdatePrescription": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/UpdatePrescription"
+      }
+    ],
+    "Mutation.hospitalUpdateStaff": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/UpdateStaff"
+      }
+    ],
+    "Mutation.login": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "Login"
+      }
+    ],
+    "Mutation.logout": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "Logout"
+      }
+    ],
+    "Mutation.refreshToken": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "RefreshToken"
+      }
+    ],
+    "Mutation.removeUserRoles": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "RemoveRole"
+      }
+    ],
+    "Mutation.signUp": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "SignUp"
+      }
+    ],
+    "Mutation.updateCasbinRule": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/AuthorizeService/UpdateCasbinRule"
+      }
+    ],
+    "Mutation.updateMyUserAddress": [
+      {
+        "transport": "rest",
+        "service": "address-country",
+        "method": "GET",
+        "path": "/user-addresses/{id}"
+      },
+      {
+        "transport": "rest",
+        "service": "address-country",
+        "method": "PUT",
+        "path": "/user-addresses/{id}"
+      }
+    ],
+    "Mutation.updateProfile": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "UpdateProfile"
+      }
+    ],
+    "Mutation.updateUserRole": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "UpdateRole"
+      }
+    ],
+    "Mutation.verifyOtp": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/AuthorizeService/AuthorizeOTP"
+      }
+    ],
+    "Query.accountTxGetAccount": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/GetAccount"
+      }
+    ],
+    "Query.accountTxGetAccountTransactions": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/GetAccountTransactions"
+      }
+    ],
+    "Query.accountTxGetTransaction": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/GetTransaction"
+      }
+    ],
+    "Query.accountTxListAccounts": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/ListAccounts"
+      }
+    ],
+    "Query.accountTxListTransactions": [
+      {
+        "transport": "grpc",
+        "service": "AccountTransactionService",
+        "method": "/banking.BankingService/ListTransactions"
+      }
+    ],
+    "Query.authzRoles": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/ListRoles"
+      }
+    ],
+    "Query.authzUserPermissions": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/GetUserPermissions"
+      }
+    ],
+    "Query.authzUserRoles": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/GetUserRoles"
+      }
+    ],
+    "Query.carRentalGetRental": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/GetRental"
+      }
+    ],
+    "Query.carRentalGetReservation": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/GetReservation"
+      }
+    ],
+    "Query.carRentalGetUser": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/GetUser"
+      }
+    ],
+    "Query.carRentalGetVehicle": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/GetVehicle"
+      }
+    ],
+    "Query.carRentalListLocations": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/ListLocations"
+      }
+    ],
+    "Query.carRentalListUserRentals": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/ListUserRentals"
+      }
+    ],
+    "Query.carRentalListUserReservations": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/ListUserReservations"
+      }
+    ],
+    "Query.carRentalListVehicleReviews": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/ListVehicleReviews"
+      }
+    ],
+    "Query.carRentalListVehicles": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/ListVehicles"
+      }
+    ],
+    "Query.carRentalSearchAvailableVehicles": [
+      {
+        "transport": "grpc",
+        "service": "CarRentalService",
+        "method": "/vehicle_rental.VehicleRentalService/SearchAvailableVehicles"
+      }
+    ],
+    "Query.casbinRule": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/AuthorizeService/GetCasbinRuleById"
+      }
+    ],
+    "Query.casbinRules": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/AuthorizeService/GetCasbinRules"
+      }
+    ],
+    "Query.checkMyPermission": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/CheckPermission"
+      }
+    ],
+    "Query.hospitalGetAppointment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/GetAppointment"
+      }
+    ],
+    "Query.hospitalGetAppointmentStats": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/GetAppointmentStats"
+      }
+    ],
+    "Query.hospitalGetBilling": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/GetBilling"
+      }
+    ],
+    "Query.hospitalGetBillingStats": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/GetBillingStats"
+      }
+    ],
+    "Query.hospitalGetDepartment": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/GetDepartment"
+      }
+    ],
+    "Query.hospitalGetDepartmentStats": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/GetDepartmentStats"
+      }
+    ],
+    "Query.hospitalGetLabResult": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/GetLabResult"
+      }
+    ],
+    "Query.hospitalGetMedicalRecord": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/GetMedicalRecord"
+      }
+    ],
+    "Query.hospitalGetPatient": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/GetPatient"
+      }
+    ],
+    "Query.hospitalGetPrescription": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/GetPrescription"
+      }
+    ],
+    "Query.hospitalGetStaff": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/GetStaff"
+      }
+    ],
+    "Query.hospitalListAppointments": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/ListAppointments"
+      }
+    ],
+    "Query.hospitalListBillings": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/ListBillings"
+      }
+    ],
+    "Query.hospitalListDepartments": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/ListDepartments"
+      }
+    ],
+    "Query.hospitalListLabResults": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/ListLabResults"
+      }
+    ],
+    "Query.hospitalListMedicalRecords": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/ListMedicalRecords"
+      }
+    ],
+    "Query.hospitalListPatients": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/ListPatients"
+      }
+    ],
+    "Query.hospitalListPrescriptions": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.AppointmentService/ListPrescriptions"
+      }
+    ],
+    "Query.hospitalListStaff": [
+      {
+        "transport": "grpc",
+        "service": "HospitalService",
+        "method": "/hospital.HospotalService/ListStaff"
+      }
+    ],
+    "Query.me": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "FindUser"
+      }
+    ],
+    "Query.myPermissions": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/GetUserPermissions"
+      }
+    ],
+    "Query.myRoles": [
+      {
+        "transport": "grpc",
+        "service": "AuthorizeService",
+        "method": "/PermissionService/GetUserRoles"
+      }
+    ],
+    "Query.myUserAddresses": [
+      {
+        "transport": "rest",
+        "service": "address-country",
+        "method": "GET",
+        "path": "/user-addresses"
+      }
+    ],
+    "Query.userRole": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "GetRole"
+      }
+    ],
+    "Query.userRoles": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "ListRoles"
+      }
+    ],
+    "Query.users": [
+      {
+        "transport": "grpc",
+        "service": "User",
+        "method": "FindUser"
+      }
+    ]
+  }
+}

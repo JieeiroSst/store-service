@@ -1,0 +1,56 @@
+type EkycCitizenIdentity {
+  id: String!
+  user_id: String!
+  source: String!
+  document_number: String!
+  surname: String!
+  given_names: String!
+  nationality: String!
+  date_of_birth: String!
+  sex: String!
+  date_of_expiry: String!
+  mrz_line1: String!
+  mrz_line2: String!
+  mrz_line3: String!
+  checksum_valid: Boolean!
+  confidence: Float!
+  nfc_verified: Boolean!
+  created_at: String
+  updated_at: String
+}
+
+type EkycFaceBiometric {
+  id: String!
+  user_id: String!
+  quality_score: Float!
+  created_at: String
+  updated_at: String
+}
+
+type EkycVerification {
+  id: String!
+  user_id: String!
+  status: String!
+  match_score: Float!
+  verified_at: String
+  created_at: String
+  updated_at: String
+}
+
+type EkycStatus {
+  user_id: String!
+  identity: EkycCitizenIdentity
+  face: EkycFaceBiometric
+  verification: EkycVerification
+}
+
+extend type Query {
+  myEkycStatus: EkycStatus @rest(service: "ekyc-service", path: "/api/v1/ekyc/{$userId}")
+}
+
+extend type Mutation {
+  ekycSubmitCitizenCard(front: Upload!, back: Upload!): EkycCitizenIdentity @rest(service: "ekyc-service", method: "POST", path: "/api/v1/ekyc/{$userId}/citizen-card", multipart: true)
+  ekycSubmitNfcChip(ef_com: Upload, dg1: Upload, dg2: Upload, ef_sod: Upload): EkycCitizenIdentity @rest(service: "ekyc-service", method: "POST", path: "/api/v1/ekyc/{$userId}/nfc-chip", multipart: true)
+  ekycSubmitFaceScan(frames: [Upload!]!): EkycFaceBiometric @rest(service: "ekyc-service", method: "POST", path: "/api/v1/ekyc/{$userId}/face-scan", multipart: true)
+  ekycVerify: EkycVerification @rest(service: "ekyc-service", method: "POST", path: "/api/v1/ekyc/{$userId}/verify")
+}

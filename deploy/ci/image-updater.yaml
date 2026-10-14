@@ -240,6 +240,14 @@ spec:
         helm:
           name: ekycService.image.name
           tag: ekycService.image.tag
+  - namePattern: gateway-internal-api-dev
+    images:
+    - alias: gatewayInternalApi
+      imageName: localhost:5000/gateway-internal-api
+      manifestTargets:
+        helm:
+          name: gatewayInternalApi.image.name
+          tag: gatewayInternalApi.image.tag
   - namePattern: gateway-service-dev
     images:
     - alias: gatewayService

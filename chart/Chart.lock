@@ -329,6 +329,9 @@ dependencies:
 - name: wishlists-service
   repository: file://wishlists-service
   version: 0.2.0
+- name: gateway-internal-api
+  repository: file://gateway-internal-api
+  version: 0.1.0
 - name: sard-auth-service
   repository: file://sard-auth-service
   version: 0.2.0
@@ -353,5 +356,5 @@ dependencies:
 - name: food-service
   repository: file://food-service
   version: 0.2.0
-digest: sha256:72b7fd9fcf5c9119be321afadca5b3040da1ee7c9abbde72772ca99075de277e
-generated: "2026-10-13T04:36:10.196394+07:00"
+digest: sha256:d5cea03cd0a488b6cda0b935e72b5d6b19662ba0502096f66f7e0886db223e39
+generated: "2026-10-15T05:09:08.037644+07:00"

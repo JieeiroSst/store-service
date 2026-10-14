@@ -1,0 +1,179 @@
+type SolBalance {
+  balance: Int
+}
+
+type SolAccountInfo {
+  Address: String
+  Balance: Int
+  Owner: String
+  Executable: Boolean
+  RentEpoch: Int
+}
+
+type SolTransaction {
+  Signature: String
+  BlockTime: Int
+  Slot: Int
+  Fee: Int
+  Status: String
+  Instructions: [SolInstruction!]
+}
+
+type SolProgram {
+  ID: String
+  Name: String
+  Executable: Boolean
+  Owner: String
+}
+
+type SolCircleWalletSet {
+  id: String
+  name: String
+  custodyType: String
+  createDate: String
+  updateDate: String
+}
+
+type SolCircleWallet {
+  id: String
+  walletSetId: String
+  custodyType: String
+  address: String
+  blockchain: String
+  state: String
+  accountType: String
+  createDate: String
+  updateDate: String
+}
+
+type SolCircleBalance {
+  tokenId: String
+  token: SolToken
+  amount: String
+  updateDate: String
+}
+
+type SolNFTBalance {
+  tokenId: String
+  name: String
+  standard: String
+  blockchain: String
+  tokenCount: String
+  updateDate: String
+}
+
+type SolCircleTransaction {
+  id: String
+  blockchain: String
+  tokenId: String
+  walletId: String
+  sourceAddress: String
+  destinationAddress: String
+  transactionType: String
+  custodyType: String
+  state: String
+  amounts: [String!]
+  nftTokenIds: [String!]
+  txHash: String
+  blockHash: String
+  blockHeight: Int
+  networkFee: String
+  firstConfirmDate: String
+  operation: String
+  abiParameters: [SolABIParameter!]
+  createDate: String
+  updateDate: String
+  userId: String
+  errorReason: String
+}
+
+type SolFeeEstimate {
+  low: SolFeeLevel
+  medium: SolFeeLevel
+  high: SolFeeLevel
+}
+
+type SolToken {
+  id: String
+  blockchain: String
+  name: String
+  symbol: String
+  decimals: Int
+  isNative: Boolean
+  tokenAddress: String
+  standard: String
+  createDate: String
+  updateDate: String
+}
+
+type SolBridgeTransfer {
+  id: String
+  solanaAddress: String
+  circleWalletId: String
+  direction: String
+  amount: String
+  tokenId: String
+  status: String
+  solanaTxSignature: String
+  circleTxId: String
+  createDate: String
+  completeDate: String
+  errorMessage: String
+}
+
+type SolInstruction {
+  ProgramID: String
+  Accounts: [String!]
+  Data: String
+}
+
+type SolABIParameter {
+  name: String
+  type: String
+  value: Any
+}
+
+type SolFeeLevel {
+  maxFee: String
+  gasLimit: String
+  baseFee: String
+  priorityFee: String
+}
+
+input SolFeeInput {
+  type: String
+  config: Map
+}
+
+extend type Query {
+  solAccount(address: String!): SolAccountInfo @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/solana/accounts/{address}")
+  solBalance(address: String!): SolBalance @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/solana/accounts/{address}/balance")
+  solTransaction(signature: String!): SolTransaction @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/solana/transactions/{signature}")
+  solProgram(id: String!): SolProgram @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/solana/programs/{id}")
+  solCircleWalletSet(id: String!): SolCircleWalletSet @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/wallet-sets/{id}")
+  solCircleWalletSets: [SolCircleWalletSet!] @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/wallet-sets", unwrap: "walletSets")
+  solCircleWallet(id: String!): SolCircleWallet @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/wallets/{id}")
+  solCircleWallets(walletSetId: String, blockchain: String): [SolCircleWallet!] @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/wallets", unwrap: "wallets")
+  solCircleWalletBalance(id: String!): [SolCircleBalance!] @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/wallets/{id}/balance", unwrap: "balances")
+  solCircleWalletNFTs(id: String!): [SolNFTBalance!] @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/wallets/{id}/nfts", unwrap: "nfts")
+  solCircleTransaction(id: String!): SolCircleTransaction @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/transactions/{id}")
+  solCircleEstimateFee(walletId: String!, destinationAddress: String!, tokenId: String!, amount: String!): SolFeeEstimate @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/transactions/estimate-fee")
+  solCircleToken(id: String!): SolToken @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/tokens/{id}")
+  solCircleTokens(blockchain: String): [SolToken!] @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/circle/tokens", unwrap: "tokens")
+  solBridgeTransfer(id: String!): SolBridgeTransfer @hasPermission(object: "/graphql/solana-service", action: "QUERY") @rest(service: "solana-service", path: "/api/v1/bridge/transfers/{id}")
+}
+
+extend type Mutation {
+  solEstimateTransferFee(from: String!, to: String!, amount: Int64!): Any @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/solana/transactions/estimate-fee")
+  solFindPda(program_id: String!, user_pubkey: String!, identifier: String!): Any @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/solana/programs/pda")
+  circleCreateWalletSet(name: String!, custodyType: String): SolCircleWalletSet @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/circle/wallet-sets")
+  circleCreateWallet(walletSetId: String!, blockchain: String!, accountType: String): Any @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/circle/wallets")
+  circleFreezeWallet(id: String!): Any @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "PUT", path: "/api/v1/circle/wallets/{id}/freeze")
+  circleUnfreezeWallet(id: String!): Any @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "PUT", path: "/api/v1/circle/wallets/{id}/unfreeze")
+  circleCreateTransfer(wallet_id: String!, destination_address: String!, token_id: String!, amount: String!, fee: SolFeeInput, idempotency_key: String): SolCircleTransaction @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/circle/transactions/transfer")
+  circleCreateNftTransfer(input: Map!): SolCircleTransaction @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/circle/transactions/nft-transfer")
+  circleExecuteContract(input: Map!): SolCircleTransaction @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/circle/transactions/contract-execution")
+  circleImportToken(input: Map!): SolToken @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/circle/tokens/import")
+  bridgeSolanaToCircle(fromSolanaAddress: String!, toCircleWalletId: String!, amount: Int64!, privateKey: String!): SolBridgeTransfer @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/bridge/solana-to-circle")
+  bridgeCircleToSolana(fromCircleWalletId: String!, toSolanaAddress: String!, amount: String!): SolBridgeTransfer @hasPermission(object: "/graphql/solana-service", action: "MUTATION") @rest(service: "solana-service", method: "POST", path: "/api/v1/bridge/circle-to-solana")
+}

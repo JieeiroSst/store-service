@@ -1,0 +1,42 @@
+type CdnFile {
+  id: String!
+  file_name: String!
+  content_type: String!
+  size_bytes: Int!
+  status: String!
+  created_at: String
+  updated_at: String
+}
+
+type CdnFileList {
+  files: [CdnFile!]!
+}
+
+type CdnPresign {
+  file_id: String!
+  object_key: String!
+  upload_url: String!
+  expires_at: String
+}
+
+type CdnDownload {
+  location: String
+}
+
+input CdnPresignInput {
+  file_name: String
+  content_type: String
+  size_bytes: Int64
+}
+
+extend type Query {
+  cdnFiles(limit: Int, offset: Int): CdnFileList @hasPermission(object: "/graphql/cdn-service", action: "QUERY") @rest(service: "cdn-service", path: "/api/v1/files")
+  cdnFile(id: String!): CdnFile @rest(service: "cdn-service", path: "/api/v1/files/{id}")
+  cdnDownloadUrl(id: String!, direct: Boolean): CdnDownload @rest(service: "cdn-service", path: "/api/v1/files/{id}/download")
+}
+
+extend type Mutation {
+  cdnPresign(input: CdnPresignInput!): CdnPresign @rest(service: "cdn-service", method: "POST", path: "/api/v1/files/presign")
+  cdnConfirm(id: String!): CdnFile @rest(service: "cdn-service", method: "POST", path: "/api/v1/files/{id}/confirm")
+  cdnDeleteFile(id: String!): Boolean! @hasPermission(object: "/graphql/cdn-service", action: "MUTATION") @rest(service: "cdn-service", method: "DELETE", path: "/api/v1/files/{id}")
+}

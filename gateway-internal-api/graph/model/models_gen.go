@@ -2,25 +2,314 @@
 
 package model
 
-type Mutation struct {
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
+type Argument struct {
+	Name         string  `json:"name"`
+	Type         string  `json:"type"`
+	NamedType    string  `json:"namedType"`
+	Required     bool    `json:"required"`
+	DefaultValue *string `json:"defaultValue,omitempty"`
+	Description  *string `json:"description,omitempty"`
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type Auth struct {
+	Mode   AuthMode `json:"mode"`
+	Object *string  `json:"object,omitempty"`
+	Action *string  `json:"action,omitempty"`
+}
+
+type CatalogStats struct {
+	Services    int           `json:"services"`
+	Operations  int           `json:"operations"`
+	Queries     int           `json:"queries"`
+	Mutations   int           `json:"mutations"`
+	Types       int           `json:"types"`
+	ByAuth      []*CountByKey `json:"byAuth"`
+	ByTransport []*CountByKey `json:"byTransport"`
+	SyncedAt    string        `json:"syncedAt"`
+}
+
+type CountByKey struct {
+	Key   string `json:"key"`
+	Count int    `json:"count"`
+}
+
+type Example struct {
+	Query     string `json:"query"`
+	Variables string `json:"variables"`
+	Curl      string `json:"curl"`
+}
+
+type FieldDef struct {
+	Name        string      `json:"name"`
+	Type        string      `json:"type"`
+	NamedType   string      `json:"namedType"`
+	Required    bool        `json:"required"`
+	Description *string     `json:"description,omitempty"`
+	Args        []*Argument `json:"args"`
+}
+
+type Operation struct {
+	ID              string        `json:"id"`
+	Name            string        `json:"name"`
+	Kind            OperationKind `json:"kind"`
+	Service         string        `json:"service"`
+	Description     *string       `json:"description,omitempty"`
+	Args            []*Argument   `json:"args"`
+	ReturnType      string        `json:"returnType"`
+	ReturnNamedType string        `json:"returnNamedType"`
+	Auth            *Auth         `json:"auth"`
+	Transport       Transport     `json:"transport"`
+	Upstreams       []*Upstream   `json:"upstreams"`
+	Example         *Example      `json:"example"`
+	Sdl             string        `json:"sdl"`
+}
+
+type OperationFilter struct {
+	Service   *string        `json:"service,omitempty"`
+	Kind      *OperationKind `json:"kind,omitempty"`
+	Auth      *AuthMode      `json:"auth,omitempty"`
+	Transport *Transport     `json:"transport,omitempty"`
+	Upstream  *string        `json:"upstream,omitempty"`
+	Search    *string        `json:"search,omitempty"`
+}
+
+type OperationPage struct {
+	Items  []*Operation `json:"items"`
+	Total  int          `json:"total"`
+	Limit  int          `json:"limit"`
+	Offset int          `json:"offset"`
+}
+
+type Option struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 type Query struct {
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type Service struct {
+	Name          string       `json:"name"`
+	SchemaFile    string       `json:"schemaFile"`
+	Upstreams     []string     `json:"upstreams"`
+	QueryCount    int          `json:"queryCount"`
+	MutationCount int          `json:"mutationCount"`
+	Operations    []*Operation `json:"operations"`
+	Types         []*TypeDef   `json:"types"`
 }
 
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+type TypeDef struct {
+	Name          string      `json:"name"`
+	Kind          TypeKind    `json:"kind"`
+	Service       string      `json:"service"`
+	Description   *string     `json:"description,omitempty"`
+	Fields        []*FieldDef `json:"fields"`
+	EnumValues    []string    `json:"enumValues"`
+	PossibleTypes []string    `json:"possibleTypes"`
+	Sdl           string      `json:"sdl"`
+}
+
+type TypeFilter struct {
+	Service *string   `json:"service,omitempty"`
+	Kind    *TypeKind `json:"kind,omitempty"`
+	Search  *string   `json:"search,omitempty"`
+}
+
+type TypePage struct {
+	Items  []*TypeDef `json:"items"`
+	Total  int        `json:"total"`
+	Limit  int        `json:"limit"`
+	Offset int        `json:"offset"`
+}
+
+type Upstream struct {
+	Transport Transport `json:"transport"`
+	Service   string    `json:"service"`
+	Method    *string   `json:"method,omitempty"`
+	Path      *string   `json:"path,omitempty"`
+	Options   []*Option `json:"options"`
+}
+
+type AuthMode string
+
+const (
+	AuthModePublic        AuthMode = "PUBLIC"
+	AuthModeAuthenticated AuthMode = "AUTHENTICATED"
+	AuthModePermission    AuthMode = "PERMISSION"
+)
+
+var AllAuthMode = []AuthMode{
+	AuthModePublic,
+	AuthModeAuthenticated,
+	AuthModePermission,
+}
+
+func (e AuthMode) IsValid() bool {
+	switch e {
+	case AuthModePublic, AuthModeAuthenticated, AuthModePermission:
+		return true
+	}
+	return false
+}
+
+func (e AuthMode) String() string {
+	return string(e)
+}
+
+func (e *AuthMode) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AuthMode(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AuthMode", str)
+	}
+	return nil
+}
+
+func (e AuthMode) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type OperationKind string
+
+const (
+	OperationKindQuery        OperationKind = "QUERY"
+	OperationKindMutation     OperationKind = "MUTATION"
+	OperationKindSubscription OperationKind = "SUBSCRIPTION"
+)
+
+var AllOperationKind = []OperationKind{
+	OperationKindQuery,
+	OperationKindMutation,
+	OperationKindSubscription,
+}
+
+func (e OperationKind) IsValid() bool {
+	switch e {
+	case OperationKindQuery, OperationKindMutation, OperationKindSubscription:
+		return true
+	}
+	return false
+}
+
+func (e OperationKind) String() string {
+	return string(e)
+}
+
+func (e *OperationKind) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OperationKind(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OperationKind", str)
+	}
+	return nil
+}
+
+func (e OperationKind) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Transport string
+
+const (
+	TransportRest    Transport = "REST"
+	TransportGrpc    Transport = "GRPC"
+	TransportGateway Transport = "GATEWAY"
+)
+
+var AllTransport = []Transport{
+	TransportRest,
+	TransportGrpc,
+	TransportGateway,
+}
+
+func (e Transport) IsValid() bool {
+	switch e {
+	case TransportRest, TransportGrpc, TransportGateway:
+		return true
+	}
+	return false
+}
+
+func (e Transport) String() string {
+	return string(e)
+}
+
+func (e *Transport) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Transport(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Transport", str)
+	}
+	return nil
+}
+
+func (e Transport) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type TypeKind string
+
+const (
+	TypeKindScalar      TypeKind = "SCALAR"
+	TypeKindObject      TypeKind = "OBJECT"
+	TypeKindInterface   TypeKind = "INTERFACE"
+	TypeKindUnion       TypeKind = "UNION"
+	TypeKindEnum        TypeKind = "ENUM"
+	TypeKindInputObject TypeKind = "INPUT_OBJECT"
+)
+
+var AllTypeKind = []TypeKind{
+	TypeKindScalar,
+	TypeKindObject,
+	TypeKindInterface,
+	TypeKindUnion,
+	TypeKindEnum,
+	TypeKindInputObject,
+}
+
+func (e TypeKind) IsValid() bool {
+	switch e {
+	case TypeKindScalar, TypeKindObject, TypeKindInterface, TypeKindUnion, TypeKindEnum, TypeKindInputObject:
+		return true
+	}
+	return false
+}
+
+func (e TypeKind) String() string {
+	return string(e)
+}
+
+func (e *TypeKind) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = TypeKind(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid TypeKind", str)
+	}
+	return nil
+}
+
+func (e TypeKind) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -1,0 +1,48 @@
+type LotteryResult {
+  date: String
+  region: String
+  province: String
+  province_code: String
+  """Prize name -> winning numbers."""
+  prizes: Map
+  source: String
+}
+
+type LotteryPrizeDetail {
+  prize: String!
+  matched: String!
+  rule: String!
+}
+
+type LotteryCheck {
+  won: Boolean!
+  prizes_won: [String!]!
+  detail: [LotteryPrizeDetail!]!
+  result_found: Boolean!
+  highest_prize: String
+}
+
+type LotteryScrape {
+  date: String!
+  regions_ok: [String!]!
+  regions_failed: [String!]!
+  provinces_saved: Int!
+}
+
+type LotteryBackfill {
+  start: String!
+  end: String!
+  days_processed: Int!
+  days_skipped: Int!
+  errors: [String!]!
+}
+
+extend type Query {
+  lotteryResults(date: String!, province: String!): LotteryResult @public @rest(service: "lottery-service", path: "/api/v1/results")
+  lotteryCheck(date: String!, province: String!, ticket_number: String!): LotteryCheck @public @rest(service: "lottery-service", method: "POST", path: "/api/v1/check")
+}
+
+extend type Mutation {
+  lotteryScrape(date: String!): LotteryScrape @hasPermission(object: "/graphql/lottery-service", action: "MUTATION") @rest(service: "lottery-service", method: "POST", path: "/api/v1/scrape")
+  lotteryBackfill(start: String!, end: String!, force: Boolean): LotteryBackfill @hasPermission(object: "/graphql/lottery-service", action: "MUTATION") @rest(service: "lottery-service", method: "POST", path: "/api/v1/backfill")
+}

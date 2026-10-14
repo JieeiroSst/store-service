@@ -1,0 +1,44 @@
+type IntPayPayment {
+  id: String
+  user_id: String
+  amount: Float
+  currency: String
+  payment_method: String
+  status: String
+  description: String
+  metadata: String
+  external_id: String
+  processor_response: String
+  created_at: String
+  updated_at: String
+}
+
+type IntPayPaymentResult {
+  id: String
+  status: String
+  amount: Float
+  currency: String
+  payment_url: String
+  transaction_id: String
+  processor_data: Map
+  message: String
+}
+
+input IntPayCreatePaymentInput {
+  amount: Float
+  currency: String
+  payment_method: String
+  description: String
+  metadata: String
+}
+
+extend type Query {
+  intPayPayment(id: String!): IntPayPayment @rest(service: "integrated-payment-service", path: "/api/v1/payments/{id}", unwrap: "data")
+  intPayPaymentStatus(id: String!): String @rest(service: "integrated-payment-service", path: "/api/v1/payments/{id}/status", unwrap: "data")
+}
+
+extend type Mutation {
+  intPayCreatePayment(input: IntPayCreatePaymentInput!): IntPayPaymentResult @rest(service: "integrated-payment-service", method: "POST", path: "/api/v1/payments/", unwrap: "data")
+  intPayProcessPayment(id: String!): Any @rest(service: "integrated-payment-service", method: "POST", path: "/api/v1/payments/{id}/process", unwrap: "data")
+  intPayRefundPayment(id: String!, amount: Float!): Any @rest(service: "integrated-payment-service", method: "POST", path: "/api/v1/payments/{id}/refund", unwrap: "data")
+}

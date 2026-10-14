@@ -66,6 +66,20 @@ def set_state(sha):
                        check=True, capture_output=True)
 
 
+def watched(s):
+    """Paths whose changes rebuild a service: its context plus services.yaml `include`."""
+    return [s["context"]] + list(s.get("include") or [])
+
+
+def export(sha, path, dest):
+    os.makedirs(dest, exist_ok=True)
+    archive = subprocess.Popen(["git", "-C", MIRROR, "archive", "--format=tar", f"{sha}:{path}"],
+                               stdout=subprocess.PIPE)
+    subprocess.run(["tar", "-x", "-C", dest], stdin=archive.stdout, check=True)
+    if archive.wait() != 0:
+        raise SystemExit(f"git archive failed for {path}")
+
+
 def catalog_at(sha):
     try:
         return yaml.safe_load(sh("git", "-C", MIRROR, "show", f"{sha}:deploy/ci/services.yaml"))["services"]
@@ -95,7 +109,7 @@ def main():
         selected = []
     else:
         changed = sh("git", "-C", MIRROR, "diff", "--name-only", last, sha).splitlines()
-        selected = [s for s in services if any(f.startswith(s["context"].rstrip("/") + "/") for f in changed)]
+        selected = [s for s in services if any(f.startswith(p.rstrip("/") + "/") for p in watched(s) for f in changed)]
         log(f"{len(changed)} files changed")
 
     if not FORCE:
@@ -106,12 +120,10 @@ def main():
     builds = []
     for s in selected:
         src = f"{WORKSPACE}/src/{RUN_ID}/{s['name']}"
-        os.makedirs(src, exist_ok=True)
-        archive = subprocess.Popen(["git", "-C", MIRROR, "archive", "--format=tar", f"{sha}:{s['context']}"],
-                                   stdout=subprocess.PIPE)
-        subprocess.run(["tar", "-x", "-C", src], stdin=archive.stdout, check=True)
-        if archive.wait() != 0:
-            raise SystemExit(f"git archive failed for {s['name']}")
+        export(sha, s["context"], src)
+        # Extra repo paths a build reads land under <src>/.upstream/<path>.
+        for path in s.get("include") or []:
+            export(sha, path, f"{src}/.upstream/{path.rstrip('/')}")
         builds.append({
             "name": s["name"],
             "image": f"{REGISTRY}/{s['image']}",

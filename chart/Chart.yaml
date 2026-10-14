@@ -530,6 +530,11 @@ dependencies:
     version: "0.2.0"
     repository: file://wishlists-service
     condition: wishlistsService.enabled
+  - alias: gatewayInternalApi
+    name: gateway-internal-api
+    version: "0.1.0"
+    repository: file://gateway-internal-api
+    condition: gatewayInternalApi.enabled
   - alias: sardAuthService
     name: sard-auth-service
     version: "0.2.0"

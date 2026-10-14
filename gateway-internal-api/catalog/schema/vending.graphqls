@@ -1,0 +1,208 @@
+type VendMachinePage {
+  items: [VendMachine!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendInventoryPage {
+  items: [VendInventory!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendCategoryPage {
+  items: [VendCategory!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendProductPage {
+  items: [VendProduct!]
+  next_cursor: String
+  is_last_page: Boolean
+  limit: Int
+}
+
+type VendMachine {
+  id: String
+  location: String
+  model: String
+  status: String
+  last_maintenance_at: String
+  created_at: String
+  updated_at: String
+}
+
+type VendMaintenance {
+  id: String
+  machine_id: String
+  technician_id: String
+  maintenance_type: String
+  notes: String
+  performed_at: String
+}
+
+type VendEvent {
+  id: String
+  event_type: String
+  related_entity: String
+  entity_id: String
+  machine_id: String
+  data: Map
+  occurred_at: String
+}
+
+type VendSalesReport {
+  machine_id: String
+  from: String
+  to: String
+  orders: Int
+  revenue_cents: Int
+  discount_cents: Int
+  products: [VendProductSales!]
+}
+
+type VendInventory {
+  id: String
+  machine_id: String
+  slot: String
+  product_id: String
+  product: VendProduct
+  quantity: Int
+  max_capacity: Int
+  low_threshold: Int
+  is_low: Boolean
+  last_restocked_at: String
+  updated_at: String
+}
+
+type VendCategory {
+  id: String
+  name: String
+  description: String
+  display_order: Int
+  created_at: String
+}
+
+type VendProduct {
+  id: String
+  name: String
+  description: String
+  price_cents: Int
+  category_id: String
+  image_url: String
+  barcode: String
+  is_active: Boolean
+  attributes: Map
+  created_at: String
+}
+
+type VendSession {
+  id: String
+  machine_id: String
+  status: String
+  started_at: String
+  expires_at: String
+}
+
+type VendOrder {
+  id: String
+  order_no: Int
+  session_id: String
+  reservation_id: String
+  payment_id: String
+  status: String
+  fulfilled_at: String
+  created_at: String
+}
+
+type VendPaymentStatus {
+  payment: VendPayment
+  order: VendOrder
+}
+
+type VendProductSales {
+  product_id: String
+  product_name: String
+  units: Int
+  revenue_cents: Int
+  discount_cents: Int
+}
+
+type VendPayment {
+  id: String
+  amount_cents: Int
+  discount_cents: Int
+  coupon_code: String
+  currency: String
+  payment_method: String
+  status: String
+  transaction_id: String
+  completed_at: String
+}
+
+input VendProductInput {
+  name: String
+  description: String
+  price_cents: Int
+  category_id: String
+  image_url: String
+  barcode: String
+  is_active: Boolean
+  attributes: Map
+}
+
+input VendProductPatchInput {
+  name: String
+  description: String
+  price_cents: Int
+  image_url: String
+  barcode: String
+  is_active: Boolean
+}
+
+input VendSlotInput {
+  product_id: String
+  quantity: Int
+  max_capacity: Int
+  low_threshold: Int
+}
+
+extend type Query {
+  vendMachines(status: String, cursor: String, limit: Int): VendMachinePage @public @rest(service: "vending-machine-service", path: "/api/v1/machines")
+  vendMachine(id: String!): VendMachine @public @rest(service: "vending-machine-service", path: "/api/v1/machines/{id}")
+  vendMaintenance(id: String!): [VendMaintenance!] @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/machines/{id}/maintenance")
+  vendEvents(id: String!, limit: Int): [VendEvent!] @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/machines/{id}/events")
+  vendSalesReport(id: String!, from: String, to: String): VendSalesReport @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/machines/{id}/sales")
+  vendInventory(id: String!, cursor: String, limit: Int): VendInventoryPage @public @rest(service: "vending-machine-service", path: "/api/v1/machines/{id}/inventory")
+  vendLowInventory(machine_id: String, cursor: String, limit: Int): VendInventoryPage @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/inventory/low")
+  vendCategories(cursor: String, limit: Int): VendCategoryPage @public @rest(service: "vending-machine-service", path: "/api/v1/categories")
+  vendProducts(category_id: String, cursor: String, limit: Int): VendProductPage @public @rest(service: "vending-machine-service", path: "/api/v1/products")
+  vendProduct(id: String!): VendProduct @public @rest(service: "vending-machine-service", path: "/api/v1/products/{id}")
+  vendSession(id: String!): VendSession @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/sessions/{id}")
+  vendSessionOrders(id: String!): [VendOrder!] @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/sessions/{id}/orders")
+  vendPayment(id: String!): VendPaymentStatus @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/payments/{id}")
+  vendOrder(id: String!): VendOrder @hasPermission(object: "/graphql/vending-machine-service", action: "QUERY") @rest(service: "vending-machine-service", path: "/api/v1/orders/{id}")
+}
+
+extend type Mutation {
+  vendRegisterMachine(location: String!, machineModel: String!, status: String): VendMachine @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/machines", keys: "machineModel:model")
+  vendUpdateMachine(id: String!, location: String, machineModel: String): VendMachine @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "PATCH", path: "/api/v1/machines/{id}", keys: "machineModel:model")
+  vendChangeMachineStatus(id: String!, status: String!): VendMachine @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "PATCH", path: "/api/v1/machines/{id}/status")
+  vendRecordMaintenance(id: String!, technician_id: String!, maintenance_type: String!, notes: String): VendMaintenance @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/machines/{id}/maintenance")
+  vendAssignSlot(id: String!, slot: String!, input: VendSlotInput!): VendInventory @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "PUT", path: "/api/v1/machines/{id}/slots/{slot}")
+  vendRestock(id: String!, quantity: Int!): VendInventory @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/inventory/{id}/restock")
+  vendCreateCategory(name: String!, description: String, display_order: Int): VendCategory @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/categories")
+  vendCreateProduct(input: VendProductInput!): VendProduct @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/products")
+  vendUpdateProduct(id: String!, input: VendProductPatchInput!): VendProduct @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "PATCH", path: "/api/v1/products/{id}")
+  vendStartSession(machine_id: String!): VendSession @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/sessions")
+  vendEndSession(id: String!): VendSession @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/sessions/{id}/end")
+  vendReserve(id: String!, slot: String!): Any @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/sessions/{id}/reservations")
+  vendCancelReservation(id: String!): Any @rest(service: "vending-machine-service", method: "DELETE", path: "/api/v1/reservations/{id}")
+  vendCheckout(id: String!, payment_method: String!, wallet_id: String, coupon_code: String): VendOrder @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/reservations/{id}/checkout")
+  vendReportDispense(id: String!, dispensed: Boolean!): VendOrder @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/orders/{id}/dispense")
+  vendRefundOrder(id: String!, reason: String): VendOrder @hasPermission(object: "/graphql/vending-machine-service", action: "MUTATION") @rest(service: "vending-machine-service", method: "POST", path: "/api/v1/orders/{id}/refund")
+}

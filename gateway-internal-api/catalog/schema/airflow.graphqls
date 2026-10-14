@@ -1,0 +1,128 @@
+type AirflowDag {
+  dag_id: String!
+  is_paused: Boolean!
+  is_active: Boolean!
+  is_subdag: Boolean!
+  owners: [String!]
+  description: String!
+  fileloc: String!
+}
+
+type AirflowDagList {
+  dags: [AirflowDag!]
+  total_entries: Int!
+}
+
+type AirflowDagRun {
+  dag_id: String!
+  dag_run_id: String!
+  logical_date: String
+  start_date: String
+  end_date: String
+  state: String!
+  external_trigger: Boolean!
+  conf: Map
+  note: String!
+}
+
+type AirflowDagRunList {
+  dag_runs: [AirflowDagRun!]
+  total_entries: Int!
+}
+
+input AirflowTriggerDagRunInput {
+  dag_run_id: String
+  logical_date: String
+  conf: Map
+  note: String
+}
+
+type AirflowHealth {
+  metadatabase_status: String!
+  scheduler_status: String!
+  latest_scheduler_heartbeat: String!
+}
+
+type AirflowPool {
+  name: String!
+  slots: Int!
+  occupied_slots: Int!
+  used_slots: Int!
+  queued_slots: Int!
+  open_slots: Int!
+  description: String!
+}
+
+type AirflowPoolList {
+  pools: [AirflowPool!]
+  total_entries: Int!
+}
+
+input AirflowPoolInput {
+  name: String
+  slots: Int
+  description: String
+}
+
+type AirflowTaskInstance {
+  task_id: String!
+  dag_id: String!
+  dag_run_id: String!
+  execution_date: String!
+  start_date: String!
+  end_date: String!
+  duration: Float!
+  state: String!
+  try_number: Int!
+  map_index: Int!
+  pool: String!
+  operator: String!
+}
+
+type AirflowTaskInstanceList {
+  task_instances: [AirflowTaskInstance!]
+  total_entries: Int!
+}
+
+type AirflowVariable {
+  key: String!
+  value: String!
+  description: String!
+}
+
+type AirflowVariableList {
+  variables: [AirflowVariable!]
+  total_entries: Int!
+}
+
+input AirflowVariableInput {
+  key: String
+  value: String
+  description: String
+}
+
+extend type Query {
+  airflowHealth: AirflowHealth @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/health", unwrap: "data")
+  airflowDags(limit: Int, offset: Int): AirflowDagList @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/dags", unwrap: "data")
+  airflowDag(dagId: String!): AirflowDag @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/dags/{dagId}", unwrap: "data")
+  airflowDagRuns(dagId: String!, limit: Int, offset: Int): AirflowDagRunList @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/dags/{dagId}/dagRuns", unwrap: "data")
+  airflowDagRun(dagId: String!, dagRunId: String!): AirflowDagRun @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/dags/{dagId}/dagRuns/{dagRunId}", unwrap: "data")
+  airflowTaskInstances(dagId: String!, dagRunId: String!, limit: Int, offset: Int): AirflowTaskInstanceList @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/dags/{dagId}/dagRuns/{dagRunId}/taskInstances", unwrap: "data")
+  airflowTaskInstance(dagId: String!, dagRunId: String!, taskId: String!): AirflowTaskInstance @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/dags/{dagId}/dagRuns/{dagRunId}/taskInstances/{taskId}", unwrap: "data")
+  airflowVariables(limit: Int, offset: Int): AirflowVariableList @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/variables", unwrap: "data")
+  airflowVariable(key: String!): AirflowVariable @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/variables/{key}", unwrap: "data")
+  airflowPools(limit: Int, offset: Int): AirflowPoolList @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/pools", unwrap: "data")
+  airflowPool(name: String!): AirflowPool @hasPermission(object: "/graphql/airflow-service", action: "QUERY") @rest(service: "airflow-service", path: "/pools/{name}", unwrap: "data")
+}
+
+extend type Mutation {
+  airflowSetDagPaused(dagId: String!, is_paused: Boolean!): AirflowDag @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "PATCH", path: "/dags/{dagId}", unwrap: "data")
+  airflowTriggerDagRun(dagId: String!, input: AirflowTriggerDagRunInput!): AirflowDagRun @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "POST", path: "/dags/{dagId}/dagRuns", unwrap: "data")
+  airflowDeleteDagRun(dagId: String!, dagRunId: String!): Boolean! @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "DELETE", path: "/dags/{dagId}/dagRuns/{dagRunId}")
+  airflowCreateVariable(input: AirflowVariableInput!): AirflowVariable @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "POST", path: "/variables", unwrap: "data")
+  airflowUpdateVariable(key: String!, input: AirflowVariableInput!): AirflowVariable @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "PATCH", path: "/variables/{key}", unwrap: "data")
+  airflowDeleteVariable(key: String!): Boolean! @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "DELETE", path: "/variables/{key}")
+  airflowCreatePool(input: AirflowPoolInput!): AirflowPool @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "POST", path: "/pools", unwrap: "data")
+  airflowUpdatePool(name: String!, input: AirflowPoolInput!): AirflowPool @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "PATCH", path: "/pools/{name}", unwrap: "data")
+  airflowDeletePool(name: String!): Boolean! @hasPermission(object: "/graphql/airflow-service", action: "MUTATION") @rest(service: "airflow-service", method: "DELETE", path: "/pools/{name}")
+}

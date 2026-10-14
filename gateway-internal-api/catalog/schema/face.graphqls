@@ -1,0 +1,52 @@
+type FaceRect {
+  x: Float!
+  y: Float!
+  width: Float!
+  height: Float!
+}
+
+type FaceColorRect {
+  color: String!
+  x: Float!
+  y: Float!
+  width: Float!
+  height: Float!
+}
+
+type FacePositions {
+  faces: [FaceRect!]!
+  colors: [FaceColorRect!]!
+  frame: Any
+  updatedAt: String
+}
+
+input FaceRectInput {
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+}
+
+input FaceColorRectInput {
+  color: String
+  x: Float
+  y: Float
+  width: Float
+  height: Float
+}
+
+input FacePositionsInput {
+  faces: [FaceRectInput!]
+  colors: [FaceColorRectInput!]
+  frame: Any
+}
+
+extend type Query {
+  facePositions: FacePositions @rest(service: "face-recognition-service", path: "/face/position")
+}
+
+extend type Mutation {
+  faceReportPositions(input: FacePositionsInput!): Boolean! @rest(service: "face-recognition-service", method: "POST", path: "/face/position", unwrap: "ok")
+  faceUploadFile(avatar: Upload!): String @rest(service: "face-recognition-service", method: "POST", path: "/upload-single-file", multipart: true)
+  faceUploadFiles(avatar: Upload, boop: [Upload!]): String @rest(service: "face-recognition-service", method: "POST", path: "/upload-multiple-files", multipart: true)
+}

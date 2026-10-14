@@ -1,0 +1,220 @@
+type NotifNotification {
+  id: Int
+  user_id: Int
+  recipient: String
+  email: String
+  phone: String
+  data: Map
+  raw_data: Map
+  title: String
+  message: String
+  type: String
+  status: String
+  priority: Int
+  created_at: String
+  sent_at: String
+  retry_count: Int
+  last_error: String
+  requested_by: String
+  template_type: String
+  template_data: Map
+}
+
+type NotifCampaign {
+  id: Int
+  channel: String
+  audience: String
+  topic: String
+  title: String
+  message: String
+  data: Map
+  template_type: String
+  template_data: Map
+  status: String
+  recipients: Int
+  batches_planned: Int
+  last_error: String
+  requested_by: String
+  created_at: String
+  updated_at: String
+  started_at: String
+  completed_at: String
+}
+
+type NotifCampaignView {
+  campaign: NotifCampaign
+  progress: NotifCampaignProgress
+}
+
+type NotifAuditPage {
+  items: [NotifAuditDelivery!]
+  contents: Map
+  next_before_id: Int
+}
+
+type NotifAuditContent {
+  id: Int
+  channel: String
+  title: String
+  body: String
+  data: Map
+  template_type: String
+  created_at: String
+}
+
+type NotifUserContact {
+  user_id: Int
+  email: String
+  phone: String
+  updated_at: String
+}
+
+type NotifDevice {
+  id: Int
+  user_id: Int
+  device_id: String
+  device_type: String
+  is_active: Boolean
+  last_used_at: String
+  created_at: String
+  token_preview: String
+}
+
+type NotifCampaignProgress {
+  batches_queued: Int
+  batches_sending: Int
+  batches_sent: Int
+  batches_failed: Int
+  batches_cancelled: Int
+  targets: Int
+  sent: Int
+  failed: Int
+  invalid_tokens: Int
+}
+
+type NotifAuditDelivery {
+  id: Int
+  content_id: Int
+  source_type: String
+  source_id: Int
+  batch_id: Int
+  attempt: Int
+  channel: String
+  user_id: Int
+  recipient: String
+  device_id: Int
+  device_type: String
+  token_hash: String
+  status: String
+  message_id: String
+  error: String
+  requested_by: String
+  created_at: String
+}
+
+input NotifNotificationInput {
+  user_id: Int
+  title: String
+  message: String
+  type: String
+  priority: Int
+  status: String
+}
+
+input NotifEmailInput {
+  user_id: Int
+  recipient: String
+  template_type: String
+  template_data: Map
+  subject: String
+  html: String
+  text: String
+  raw_data: Map
+  priority: Int
+}
+
+input NotifSlackInput {
+  user_id: Int
+  template_type: String
+  template_data: Map
+  title: String
+  text: String
+  raw_data: Map
+  priority: Int
+}
+
+input NotifPushInput {
+  user_id: Int
+  email: String
+  phone: String
+  title: String
+  message: String
+  data: Map
+  priority: Int
+}
+
+input NotifCampaignInput {
+  channel: String
+  audience: String
+  title: String
+  message: String
+  data: Map
+  template_type: String
+  template_data: Map
+  topic: String
+  user_ids: [Int!]
+  emails: [String!]
+}
+
+input NotifDeviceInput {
+  device_token: String
+  device_id: String
+  device_type: String
+  email: String
+  phone: String
+}
+
+input NotifUnregisterDeviceInput {
+  device_token: String
+  device_id: String
+}
+
+input NotifDeviceUpdateInput {
+  device_token: String
+  device_id: String
+  device_type: String
+  email: String
+  phone: String
+  is_active: Boolean
+}
+
+extend type Query {
+  notifications: [NotifNotification!] @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/notifications")
+  notification(id: Int!): NotifNotification @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/notifications/{id}")
+  notifCampaigns(limit: Int, offset: Int): [NotifCampaign!] @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/campaigns", unwrap: "items")
+  notifCampaign(id: Int!): NotifCampaignView @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/campaigns/{id}")
+  notifAuditDeliveries(email: String, phone: String, channel: String, status: String, source_type: String, requested_by: String, user_id: Int, source_id: Int, before_id: Int, limit: Int, from: String, to: String): NotifAuditPage @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/audit/deliveries")
+  notifAuditContent(id: Int!): NotifAuditContent @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/audit/contents/{id}")
+  notifUserContact(id: Int!): NotifUserContact @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/users/{id}/contact")
+  notifDevices(user_id: Int!): [NotifDevice!] @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/devices")
+  notifDevice(id: Int!): NotifDevice @hasPermission(object: "/graphql/notification-service", action: "QUERY") @rest(service: "notification-service", path: "/api/v1/devices/{id}")
+  myDevices: [NotifDevice!] @rest(service: "notification-service", path: "/api/v1/devices", userQuery: "user_id")
+  myContact: NotifUserContact @rest(service: "notification-service", path: "/api/v1/users/{$userId}/contact")
+}
+
+extend type Mutation {
+  notifCreateNotification(input: NotifNotificationInput!): NotifNotification @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "POST", path: "/api/v1/notifications")
+  notifUpdateNotification(id: Int!, input: NotifNotificationInput!): NotifNotification @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "PUT", path: "/api/v1/notifications/{id}")
+  notifDeleteNotification(id: Int!): Boolean! @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "DELETE", path: "/api/v1/notifications/{id}")
+  notifSendEmail(input: NotifEmailInput!): Any @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "POST", path: "/api/v1/notifications/email")
+  notifSendSlack(input: NotifSlackInput!): Any @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "POST", path: "/api/v1/notifications/slack")
+  notifSendPush(input: NotifPushInput!): Any @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "POST", path: "/api/v1/notifications/push")
+  notifCreateCampaign(input: NotifCampaignInput!): NotifCampaign @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "POST", path: "/api/v1/campaigns")
+  notifCancelCampaign(id: Int!): NotifCampaignView @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "POST", path: "/api/v1/campaigns/{id}/cancel")
+  notifUpsertContact(id: Int!, email: String, phone: String): NotifUserContact @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "PUT", path: "/api/v1/users/{id}/contact")
+  notifUpdateDevice(id: Int!, input: NotifDeviceUpdateInput!): NotifDevice @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "PUT", path: "/api/v1/devices/{id}")
+  notifDeleteDevice(id: Int!): Boolean! @hasPermission(object: "/graphql/notification-service", action: "MUTATION") @rest(service: "notification-service", method: "DELETE", path: "/api/v1/devices/{id}")
+  registerMyDevice(input: NotifDeviceInput!): NotifDevice @rest(service: "notification-service", method: "POST", path: "/api/v1/devices", userField: "user_id:int")
+  unregisterMyDevice(input: NotifUnregisterDeviceInput!): Any @rest(service: "notification-service", method: "POST", path: "/api/v1/devices/unregister", userField: "user_id:int")
+  updateMyContact(email: String, phone: String): NotifUserContact @rest(service: "notification-service", method: "PUT", path: "/api/v1/users/{$userId}/contact")
+}

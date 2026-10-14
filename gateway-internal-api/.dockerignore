@@ -1,0 +1,10 @@
+*
+!go.mod
+!go.sum
+!*.go
+!catalog/
+!cmd/
+!config/
+!graph/
+!middlware/
+!.upstream/

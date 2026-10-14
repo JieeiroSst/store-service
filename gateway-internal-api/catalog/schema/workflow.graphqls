@@ -1,0 +1,4 @@
+extend type Mutation {
+  workflowProcessOrder(id: String!): String @hasPermission(object: "/graphql/workflow-service", action: "MUTATION") @rest(service: "workflow-service", method: "POST", path: "/orders/{id}/process", unwrap: "message")
+  workflowStartOrderWorkflow(id: String!): Any @hasPermission(object: "/graphql/workflow-service", action: "MUTATION") @rest(service: "workflow-service", method: "POST", path: "/orders/{id}/workflow")
+}

@@ -1,0 +1,32 @@
+type SardChallenge {
+  id: String!
+  status: String!
+  card_id: String!
+  masked_pan: String!
+  amount: Int!
+  currency: String!
+  merchant: String!
+  mcc: String!
+  attempts_left: Int!
+  resends: Int!
+  otp_expires_at: String
+  failure_reason: String!
+  expires_at: String
+  authenticated_at: String
+  valid_until: String
+  used_at: String
+  created_at: String
+  otp: String!
+}
+
+extend type Query {
+  mySardPaymentAuthentications: Any @rest(service: "sard-auth-service", path: "/api/v1/me/payment-authentications")
+  sardPaymentAuthentication(id: String!): SardChallenge @hasPermission(object: "/graphql/sard-auth-service", action: "QUERY") @rest(service: "sard-auth-service", path: "/api/v1/payment-authentications/{id}")
+}
+
+extend type Mutation {
+  sardVerifyPaymentAuthentication(id: String!, otp: String!): SardChallenge @rest(service: "sard-auth-service", method: "POST", path: "/api/v1/me/payment-authentications/{id}/verify")
+  sardResendPaymentAuthentication(id: String!): SardChallenge @rest(service: "sard-auth-service", method: "POST", path: "/api/v1/me/payment-authentications/{id}/resend")
+  sardDeclinePaymentAuthentication(id: String!): SardChallenge @rest(service: "sard-auth-service", method: "POST", path: "/api/v1/me/payment-authentications/{id}/decline")
+  sardInitiatePaymentAuthentication(input: Map!): SardChallenge @hasPermission(object: "/graphql/sard-auth-service", action: "MUTATION") @rest(service: "sard-auth-service", method: "POST", path: "/api/v1/payment-authentications")
+}

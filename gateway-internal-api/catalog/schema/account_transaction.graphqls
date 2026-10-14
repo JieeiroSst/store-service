@@ -1,0 +1,113 @@
+type AccountTxAccount {
+  id: String!
+  firstName: String!
+  lastName: String!
+  dateCreated: String
+}
+
+type AccountTxAccountToAccountTransactionDetails {
+  senderId: String!
+  receiverId: String!
+}
+
+type AccountTxDepositTransactionDetails {
+  accountId: String!
+}
+
+type AccountTxListAccountsResponse {
+  accounts: [AccountTxAccount!]!
+  nextPageToken: String!
+}
+
+type AccountTxListTransactionsResponse {
+  transactions: [AccountTxTransaction!]!
+  nextPageToken: String!
+}
+
+type AccountTxPaymentForServiceTransactionDetails {
+  accountId: String!
+  serviceName: String!
+}
+
+type AccountTxTransaction {
+  id: String!
+  type: String!
+  amount: Float
+  dateCreated: String
+  deposit: AccountTxDepositTransactionDetails
+  withdrawal: AccountTxWithdrawalTransactionDetails
+  transfer: AccountTxAccountToAccountTransactionDetails
+  payment: AccountTxPaymentForServiceTransactionDetails
+}
+
+type AccountTxWithdrawalTransactionDetails {
+  accountId: String!
+}
+
+input AccountTxCreateAccountRequestInput {
+  firstName: String
+  lastName: String
+}
+
+input AccountTxCreateAccountToAccountTransactionRequestInput {
+  senderId: String
+  receiverId: String
+  amount: Float
+}
+
+input AccountTxCreateDepositTransactionRequestInput {
+  accountId: String
+  amount: Float
+}
+
+input AccountTxCreatePaymentForServiceTransactionRequestInput {
+  accountId: String
+  serviceName: String
+  amount: Float
+}
+
+input AccountTxCreateWithdrawalTransactionRequestInput {
+  accountId: String
+  amount: Float
+}
+
+input AccountTxGetAccountRequestInput {
+  id: String
+}
+
+input AccountTxGetAccountTransactionsRequestInput {
+  accountId: String
+  pageSize: Int
+  pageToken: String
+}
+
+input AccountTxGetTransactionRequestInput {
+  id: String
+}
+
+input AccountTxListAccountsRequestInput {
+  pageSize: Int
+  pageToken: String
+}
+
+input AccountTxListTransactionsRequestInput {
+  pageSize: Int
+  pageToken: String
+  type: String
+}
+
+extend type Query {
+  accountTxGetAccount(input: AccountTxGetAccountRequestInput!): AccountTxAccount @hasPermission(object: "/graphql/account-transaction", action: "QUERY")
+  accountTxListAccounts(input: AccountTxListAccountsRequestInput!): AccountTxListAccountsResponse @hasPermission(object: "/graphql/account-transaction", action: "QUERY")
+  accountTxGetTransaction(input: AccountTxGetTransactionRequestInput!): AccountTxTransaction @hasPermission(object: "/graphql/account-transaction", action: "QUERY")
+  accountTxListTransactions(input: AccountTxListTransactionsRequestInput!): AccountTxListTransactionsResponse @hasPermission(object: "/graphql/account-transaction", action: "QUERY")
+  accountTxGetAccountTransactions(input: AccountTxGetAccountTransactionsRequestInput!): AccountTxListTransactionsResponse @hasPermission(object: "/graphql/account-transaction", action: "QUERY")
+}
+
+extend type Mutation {
+  accountTxCreateAccount(input: AccountTxCreateAccountRequestInput!): AccountTxAccount @hasPermission(object: "/graphql/account-transaction", action: "MUTATION")
+  accountTxCreateDepositTransaction(input: AccountTxCreateDepositTransactionRequestInput!): AccountTxTransaction @hasPermission(object: "/graphql/account-transaction", action: "MUTATION")
+  accountTxCreateWithdrawalTransaction(input: AccountTxCreateWithdrawalTransactionRequestInput!): AccountTxTransaction @hasPermission(object: "/graphql/account-transaction", action: "MUTATION")
+  accountTxCreateAccountToAccountTransaction(input: AccountTxCreateAccountToAccountTransactionRequestInput!): AccountTxTransaction @hasPermission(object: "/graphql/account-transaction", action: "MUTATION")
+  accountTxCreatePaymentForServiceTransaction(input: AccountTxCreatePaymentForServiceTransactionRequestInput!): AccountTxTransaction @hasPermission(object: "/graphql/account-transaction", action: "MUTATION")
+}

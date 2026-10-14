@@ -14,6 +14,15 @@ type Config struct {
 	Server ServerConfig `json:"server"`
 }
 
+func (c *Config) ApplyDefaults() {
+	if v := os.Getenv("PORT"); v != "" {
+		c.Server.PortServer = v
+	}
+	if c.Server.PortServer == "" {
+		c.Server.PortServer = "8081"
+	}
+}
+
 type Dir struct {
 	HostConsul    string
 	KeyConsul     string

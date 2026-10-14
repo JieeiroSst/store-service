@@ -1,0 +1,27 @@
+type RDeliveryPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RDeliveryDelivery!]
+}
+
+type RDeliveryDelivery {
+  ship_id: Int
+  name: String
+  address: String
+  kitchen_id: Int
+  status: Int
+  distance_km: Float
+  fee: Float
+  eta_minutes: Int
+}
+
+extend type Query {
+  rDeliveryDeliveries(Limit: Int, Page: Int, Sort: String): RDeliveryPage @hasPermission(object: "/graphql/restaurant-delivery", action: "QUERY") @rest(service: "delivery-service", path: "/api/v1/delivery/", unwrap: "data")
+}
+
+extend type Mutation {
+  rDeliveryRegister(input: Map!): Any @hasPermission(object: "/graphql/restaurant-delivery", action: "MUTATION") @rest(service: "delivery-service", method: "POST", path: "/api/v1/delivery/")
+}

@@ -1,0 +1,31 @@
+type WebrtcIceServers {
+  ice_servers: [WebrtcIceServer!]!
+}
+
+type WebrtcIceServer {
+  urls: [String!]!
+  username: String
+  credential: String
+}
+
+type WebrtcRoomInfo {
+  room_id: String!
+  capacity: Int!
+  participants: [WebrtcParticipant!]!
+}
+
+type WebrtcParticipant {
+  user_id: String!
+  media: WebrtcMediaState!
+}
+
+type WebrtcMediaState {
+  audio: Boolean!
+  video: Boolean!
+  screen: Boolean!
+}
+
+extend type Query {
+  webrtcIceServers(user_id: String): WebrtcIceServers @rest(service: "webrtc-service", path: "/api/ice-servers")
+  webrtcRoom(room_id: String!): WebrtcRoomInfo @rest(service: "webrtc-service", path: "/api/rooms/{room_id}")
+}

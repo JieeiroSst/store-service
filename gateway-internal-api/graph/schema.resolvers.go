@@ -8,24 +8,66 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/JIeeiroSst/gateway-api/catalog"
 	"github.com/JIeeiroSst/gateway-api/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// Stats is the resolver for the stats field.
+func (r *queryResolver) Stats(ctx context.Context) (*model.CatalogStats, error) {
+	return r.Catalog.Stats(), nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Services is the resolver for the services field.
+func (r *queryResolver) Services(ctx context.Context, search *string) ([]*model.Service, error) {
+	if search == nil {
+		return r.Catalog.Services, nil
+	}
+	return r.Catalog.SearchServices(*search), nil
 }
 
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+// Service is the resolver for the service field.
+func (r *queryResolver) Service(ctx context.Context, name string) (*model.Service, error) {
+	return r.Catalog.Service(name), nil
+}
+
+// Operations is the resolver for the operations field.
+func (r *queryResolver) Operations(ctx context.Context, filter *model.OperationFilter, limit *int, offset *int) (*model.OperationPage, error) {
+	items := r.Catalog.FilterOperations(filter)
+	start, end, l, o := catalog.Page(len(items), limit, offset)
+	return &model.OperationPage{Items: items[start:end], Total: len(items), Limit: l, Offset: o}, nil
+}
+
+// Operation is the resolver for the operation field.
+func (r *queryResolver) Operation(ctx context.Context, name string, kind *model.OperationKind) (*model.Operation, error) {
+	return r.Catalog.Operation(name, kind), nil
+}
+
+// Types is the resolver for the types field.
+func (r *queryResolver) Types(ctx context.Context, filter *model.TypeFilter, limit *int, offset *int) (*model.TypePage, error) {
+	items := r.Catalog.FilterTypes(filter)
+	start, end, l, o := catalog.Page(len(items), limit, offset)
+	return &model.TypePage{Items: items[start:end], Total: len(items), Limit: l, Offset: o}, nil
+}
+
+// Type is the resolver for the type field.
+func (r *queryResolver) Type(ctx context.Context, name string) (*model.TypeDef, error) {
+	return r.Catalog.Type(name), nil
+}
+
+// Sdl is the resolver for the sdl field.
+func (r *queryResolver) Sdl(ctx context.Context, service *string) (string, error) {
+	name := ""
+	if service != nil {
+		name = *service
+	}
+	sdl, ok := r.Catalog.SDL(name)
+	if !ok {
+		return "", fmt.Errorf("unknown service %q", name)
+	}
+	return sdl, nil
+}
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

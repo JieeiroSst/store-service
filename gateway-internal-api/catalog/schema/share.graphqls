@@ -1,0 +1,8 @@
+type ShareAnswer {
+  result: String!
+  model: String
+}
+
+extend type Mutation {
+  shareAsk(content: String!): ShareAnswer @rest(service: "share-service", method: "POST", path: "/")
+}

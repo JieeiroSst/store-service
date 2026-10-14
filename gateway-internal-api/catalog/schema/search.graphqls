@@ -1,0 +1,62 @@
+type SearchDocument {
+  index: String!
+  id: String!
+  score: Float
+  source: Map
+  highlight: Map
+}
+
+type SearchDocumentPage {
+  items: [SearchDocument!]!
+  total: Int64
+  next_cursor: String
+  has_more: Boolean
+  facets: Map
+  suggestion: String
+}
+
+type SearchIndexInfo {
+  name: String!
+  index: String!
+  docs_count: Int!
+  managed: Boolean!
+  write_blocked: Boolean!
+}
+
+type SearchFieldInfo {
+  name: String!
+  types: [String!]
+  searchable: Boolean!
+  aggregatable: Boolean!
+}
+
+type SearchSchemaStatus {
+  template: String
+  applied: Boolean
+  version: Int
+  indices: [SearchIndexInfo!]
+}
+
+type SearchReindexResult {
+  name: String!
+  from: String!
+  to: String!
+  copied: Int!
+  error: String!
+}
+
+extend type Query {
+  search(q: String, index: [String!], sort: String, facets: [String!], cursor: String, size: Int, filters: Map): SearchDocumentPage @rest(service: "search-service", path: "/api/v1/search")
+  searchAutocomplete(q: String!, index: [String!], size: Int): Any @rest(service: "search-service", path: "/api/v1/autocomplete")
+  searchDocuments(q: String, index: [String!], sort: String, facets: [String!], cursor: String, size: Int, filters: Map): SearchDocumentPage @rest(service: "search-service", path: "/api/v1/documents")
+  searchDocument(index: String!, id: String!): SearchDocument @rest(service: "search-service", path: "/api/v1/documents/{index}/{id}")
+  searchSimilar(index: String!, id: String!, size: Int): Any @rest(service: "search-service", path: "/api/v1/documents/{index}/{id}/similar")
+  searchIndices: [SearchIndexInfo!] @rest(service: "search-service", path: "/api/v1/indices")
+  searchFields(index: String!): [SearchFieldInfo!] @rest(service: "search-service", path: "/api/v1/indices/{index}/fields")
+  searchSchemaStatus: SearchSchemaStatus @hasPermission(object: "/graphql/search-service", action: "QUERY") @rest(service: "search-service", path: "/api/v1/admin/schema")
+}
+
+extend type Mutation {
+  searchApplySchema: SearchSchemaStatus @hasPermission(object: "/graphql/search-service", action: "MUTATION") @rest(service: "search-service", method: "PUT", path: "/api/v1/admin/schema")
+  searchReindex(index: [String!], unmanaged: Boolean): [SearchReindexResult!] @hasPermission(object: "/graphql/search-service", action: "MUTATION") @rest(service: "search-service", method: "POST", path: "/api/v1/admin/reindex", body: "query")
+}

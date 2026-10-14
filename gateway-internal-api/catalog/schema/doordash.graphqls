@@ -1,0 +1,105 @@
+type DoordashOrderItem {
+  id: Int!
+  order_id: Int!
+  menu_item_id: String!
+  name: String!
+  quantity: Int!
+  unit_price: Float!
+  customizations: String!
+  special_instructions: String!
+  created_at: String
+}
+
+type DoordashOrder {
+  id: Int!
+  customer_id: String!
+  restaurant_id: String!
+  driver_id: String
+  delivery_address_id: String!
+  status: String!
+  placed_at: String
+  estimated_delivery_time: String
+  actual_delivery_time: String
+  subtotal: Float!
+  delivery_fee: Float!
+  service_fee: Float!
+  tax: Float!
+  tip: Float!
+  total_amount: Float!
+  payment_method_id: String!
+  payment_status: String!
+  special_instructions: String!
+  created_at: String
+  updated_at: String
+  items: [DoordashOrderItem!]
+}
+
+type DoordashTracking {
+  id: Int!
+  order_id: Int!
+  status: String!
+  latitude: Float
+  longitude: Float
+  timestamp: String
+  notes: String!
+}
+
+type DoordashAssignment {
+  id: Int!
+  driver_id: String!
+  order_id: Int!
+  status: String!
+  assigned_at: String
+  accepted_at: String
+  completed_at: String
+  rejection_reason: String!
+}
+
+input DoordashOrderItemInput {
+  menu_item_id: String
+  quantity: Int
+  customizations: String
+  special_instructions: String
+}
+
+input DoordashOrderInput {
+  restaurant_id: String
+  delivery_address_id: String
+  payment_method_id: String
+  delivery_fee: Float
+  service_fee: Float
+  tax: Float
+  tip: Float
+  special_instructions: String
+  items: [DoordashOrderItemInput!]
+}
+
+input DoordashTrackingInput {
+  status: String
+  latitude: Float
+  longitude: Float
+  notes: String
+}
+
+extend type Query {
+  myDoordashOrders: [DoordashOrder!]! @rest(service: "doordash-service", path: "/api/v1/orders", userQuery: "customer_id")
+  doordashMyOrder(id: Int!): DoordashOrder @rest(service: "doordash-service", path: "/api/v1/orders/{id}", owner: "customer_id")
+  doordashMyOrderTracking(id: Int!): [DoordashTracking!]! @rest(service: "doordash-service", path: "/api/v1/orders/{id}/tracking", owner: "customer_id", ownerPath: "/api/v1/orders/{id}")
+  doordashOrders(customer_id: String, restaurant_id: String): [DoordashOrder!]! @hasPermission(object: "/graphql/doordash", action: "QUERY") @rest(service: "doordash-service", path: "/api/v1/orders")
+  doordashOrder(id: Int!): DoordashOrder @hasPermission(object: "/graphql/doordash", action: "QUERY") @rest(service: "doordash-service", path: "/api/v1/orders/{id}")
+  doordashOrderTracking(id: Int!): [DoordashTracking!]! @hasPermission(object: "/graphql/doordash", action: "QUERY") @rest(service: "doordash-service", path: "/api/v1/orders/{id}/tracking")
+  doordashDriverAssignments(driver_id: String!): [DoordashAssignment!]! @hasPermission(object: "/graphql/doordash", action: "QUERY") @rest(service: "doordash-service", path: "/api/v1/driver-assignments")
+  myDriverAssignments: [DoordashAssignment!]! @rest(service: "doordash-service", path: "/api/v1/driver-assignments", userQuery: "driver_id")
+}
+
+extend type Mutation {
+  doordashPlaceOrder(input: DoordashOrderInput!): DoordashOrder @rest(service: "doordash-service", method: "POST", path: "/api/v1/orders", userField: "customer_id")
+  doordashCancelMyOrder(id: Int!, reason: String): DoordashOrder @rest(service: "doordash-service", method: "POST", path: "/api/v1/orders/{id}/cancel", owner: "customer_id", ownerPath: "/api/v1/orders/{id}")
+  doordashUpdateOrderStatus(id: Int!, status: String!): DoordashOrder @hasPermission(object: "/graphql/doordash", action: "MUTATION") @rest(service: "doordash-service", method: "PATCH", path: "/api/v1/orders/{id}/status")
+  doordashCancelOrder(id: Int!, reason: String): DoordashOrder @hasPermission(object: "/graphql/doordash", action: "MUTATION") @rest(service: "doordash-service", method: "POST", path: "/api/v1/orders/{id}/cancel")
+  doordashAssignDriver(id: Int!, driver_id: String!): DoordashAssignment @hasPermission(object: "/graphql/doordash", action: "MUTATION") @rest(service: "doordash-service", method: "POST", path: "/api/v1/orders/{id}/assign-driver")
+  doordashAddTrackingEvent(id: Int!, input: DoordashTrackingInput!): DoordashTracking @hasPermission(object: "/graphql/doordash", action: "MUTATION") @rest(service: "doordash-service", method: "POST", path: "/api/v1/orders/{id}/tracking")
+  doordashAcceptAssignment(id: Int!): DoordashAssignment @hasPermission(object: "/graphql/doordash", action: "MUTATION") @rest(service: "doordash-service", method: "POST", path: "/api/v1/driver-assignments/{id}/accept")
+  doordashRejectAssignment(id: Int!, reason: String): DoordashAssignment @hasPermission(object: "/graphql/doordash", action: "MUTATION") @rest(service: "doordash-service", method: "POST", path: "/api/v1/driver-assignments/{id}/reject")
+  doordashCompleteAssignment(id: Int!): DoordashAssignment @hasPermission(object: "/graphql/doordash", action: "MUTATION") @rest(service: "doordash-service", method: "POST", path: "/api/v1/driver-assignments/{id}/complete")
+}

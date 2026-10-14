@@ -1,0 +1,51 @@
+type RKitchenFoodPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RKitchenFood!]
+}
+
+type RKitchenKitchenPage {
+  limit: Int
+  page: Int
+  sort: String
+  total_rows: Int
+  total_pages: Int
+  rows: [RKitchenKitchen!]
+}
+
+type RKitchenCategory {
+  id: Int
+  name: String
+}
+
+type RKitchenFood {
+  id: Int
+  name: String
+  category_id: Int
+  price: Float
+  status: Int
+  category: RKitchenCategory
+}
+
+type RKitchenKitchen {
+  id: Int
+  name: String
+  status: String
+  foods: [RKitchenFood!]
+}
+
+extend type Query {
+  rKitchenCategories: [RKitchenCategory!] @public @rest(service: "kitchen-service", path: "/api/v1/category", unwrap: "data")
+  rKitchenFoods(Limit: Int, Page: Int, Sort: String): RKitchenFoodPage @public @rest(service: "kitchen-service", path: "/api/v1/food", unwrap: "data")
+  rKitchenFoodsByIDs(ids: String!): [RKitchenFood!] @public @rest(service: "kitchen-service", path: "/api/v1/food/batch", unwrap: "data")
+  rKitchenKitchens(Limit: Int, Page: Int, Sort: String): RKitchenKitchenPage @public @rest(service: "kitchen-service", path: "/api/v1/kitchen", unwrap: "data")
+}
+
+extend type Mutation {
+  rKitchenCreateCategory(input: Map!): Any @hasPermission(object: "/graphql/restaurant-kitchen", action: "MUTATION") @rest(service: "kitchen-service", method: "POST", path: "/api/v1/category")
+  rKitchenCreateFood(input: Map!): Any @hasPermission(object: "/graphql/restaurant-kitchen", action: "MUTATION") @rest(service: "kitchen-service", method: "POST", path: "/api/v1/food")
+  rKitchenUpdateStatus(id: String!, status: String!): Any @hasPermission(object: "/graphql/restaurant-kitchen", action: "MUTATION") @rest(service: "kitchen-service", method: "PATCH", path: "/api/v1/kitchen/{id}/status")
+}

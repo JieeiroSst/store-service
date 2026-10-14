@@ -1,0 +1,84 @@
+type ThreadsPostPage {
+  rows: [ThreadsPost!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type ThreadsCommentPage {
+  rows: [ThreadsComment!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type ThreadsAuthorPage {
+  rows: [ThreadsAuthor!]
+  next_cursor: String
+  has_more: Boolean
+}
+
+type ThreadsPost {
+  id: String
+  user_id: String
+  content: String
+  media_urls: [String!]
+  like_count: Int
+  comment_count: Int
+  repost_of_id: String
+  repost_count: Int
+  created_at: String
+  updated_at: String
+  author: ThreadsAuthor
+  tags: [String!]
+  original_post: ThreadsPost
+}
+
+type ThreadsComment {
+  id: String
+  post_id: String
+  user_id: String
+  parent_comment_id: String
+  content: String
+  media_urls: [String!]
+  created_at: String
+  updated_at: String
+  author: ThreadsAuthor
+}
+
+type ThreadsAuthor {
+  id: String
+  username: String
+  profile_image_url: String
+}
+
+type ThreadsTagCount {
+  name: String
+  count: Int
+}
+
+extend type Query {
+  threadsPosts(author_id: String, cursor: String, limit: Int): ThreadsPostPage @public @rest(service: "threads-service", path: "/api/v1/posts")
+  threadsPost(id: String!): ThreadsPost @public @rest(service: "threads-service", path: "/api/v1/posts/{id}")
+  threadsComments(id: String!, cursor: String, limit: Int): ThreadsCommentPage @public @rest(service: "threads-service", path: "/api/v1/posts/{id}/comments")
+  threadsFollowers(id: String!, cursor: String, limit: Int): ThreadsAuthorPage @public @rest(service: "threads-service", path: "/api/v1/users/{id}/followers")
+  threadsFollowing(id: String!, cursor: String, limit: Int): ThreadsAuthorPage @public @rest(service: "threads-service", path: "/api/v1/users/{id}/following")
+  threadsHomeFeed(cursor: String, limit: Int): ThreadsPostPage @rest(service: "threads-service", path: "/api/v1/feed")
+  threadsBookmarks(cursor: String, limit: Int): ThreadsPostPage @rest(service: "threads-service", path: "/api/v1/bookmarks")
+  threadsTrendingTags(limit: Int): [ThreadsTagCount!] @public @rest(service: "threads-service", path: "/api/v1/tags/trending", unwrap: "tags")
+}
+
+extend type Mutation {
+  threadsCreatePost(content: String!, media_urls: [String!], tags: [String!]): ThreadsPost @rest(service: "threads-service", method: "POST", path: "/api/v1/posts")
+  threadsDeletePost(id: String!): Boolean! @rest(service: "threads-service", method: "DELETE", path: "/api/v1/posts/{id}")
+  threadsLikePost(id: String!): Any @rest(service: "threads-service", method: "POST", path: "/api/v1/posts/{id}/likes")
+  threadsLikeComment(id: String!): Any @rest(service: "threads-service", method: "POST", path: "/api/v1/comments/{id}/likes")
+  threadsUnlikePost(id: String!): Any @rest(service: "threads-service", method: "DELETE", path: "/api/v1/posts/{id}/likes")
+  threadsUnlikeComment(id: String!): Any @rest(service: "threads-service", method: "DELETE", path: "/api/v1/comments/{id}/likes")
+  threadsCreateComment(id: String!, content: String!, media_urls: [String!], parent_comment_id: String): ThreadsComment @rest(service: "threads-service", method: "POST", path: "/api/v1/posts/{id}/comments")
+  threadsRepost(id: String!): Any @rest(service: "threads-service", method: "POST", path: "/api/v1/posts/{id}/repost")
+  threadsUnrepost(id: String!): Any @rest(service: "threads-service", method: "DELETE", path: "/api/v1/posts/{id}/repost")
+  threadsBookmark(id: String!): Any @rest(service: "threads-service", method: "POST", path: "/api/v1/posts/{id}/bookmark")
+  threadsUnbookmark(id: String!): Any @rest(service: "threads-service", method: "DELETE", path: "/api/v1/posts/{id}/bookmark")
+  threadsDeleteComment(id: String!): Boolean! @rest(service: "threads-service", method: "DELETE", path: "/api/v1/comments/{id}")
+  threadsFollowUser(id: String!): Any @rest(service: "threads-service", method: "POST", path: "/api/v1/users/{id}/follow")
+  threadsUnfollowUser(id: String!): Any @rest(service: "threads-service", method: "DELETE", path: "/api/v1/users/{id}/follow")
+}

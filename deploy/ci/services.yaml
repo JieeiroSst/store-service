@@ -1,6 +1,8 @@
 # Services the in-cluster CI (deploy/ci) builds. Generated from
 # .github/workflows/*-cicd.yml; one entry per chart.
 #   context      Docker build context (repo-relative); a push touching it rebuilds the service
+#   include      extra repo paths that also rebuild the service; exported into the
+#                build context as .upstream/<path>
 #   image        repository name in the local registry (localhost:5000/<image>)
 #   helmKeys     values keys whose image.name/tag Argo CD Image Updater overrides in store-dev
 #   lang/goVersion, testEnv, testServices   how the test step runs (go: go vet + go test,
@@ -205,6 +207,15 @@ services:
   image: ekyc-service
   helmKeys:
   - ekycService
+  lang: go
+  goVersion: '1.25'
+- name: gateway-internal-api
+  context: gateway-internal-api
+  include:
+  - gateway-api/graph
+  image: gateway-internal-api
+  helmKeys:
+  - gatewayInternalApi
   lang: go
   goVersion: '1.25'
 - name: gateway-service
