@@ -2,10 +2,29 @@ package http
 
 import "github.com/referral/service/internal/core/domain"
 
+type utmParams struct {
+	UTMSource   string `json:"utm_source"   form:"utm_source"`
+	UTMMedium   string `json:"utm_medium"   form:"utm_medium"`
+	UTMCampaign string `json:"utm_campaign" form:"utm_campaign"`
+	UTMTerm     string `json:"utm_term"     form:"utm_term"`
+	UTMContent  string `json:"utm_content"  form:"utm_content"`
+}
+
+func (p utmParams) toDomain() domain.UTM {
+	return domain.UTM{
+		Source:   p.UTMSource,
+		Medium:   p.UTMMedium,
+		Campaign: p.UTMCampaign,
+		Term:     p.UTMTerm,
+		Content:  p.UTMContent,
+	}.Normalize()
+}
+
 type generateLinkRequest struct {
 	OwnerUserID string `json:"owner_user_id" binding:"required"`
 	Channel     string `json:"channel"`  // "copy" | "whatsapp" | "facebook" | "instagram"
 	Platform    string `json:"platform"` // "ios" | "android" | "universal"
+	utmParams
 }
 
 type trackEventRequest struct {
@@ -18,22 +37,27 @@ type trackEventRequest struct {
 	DeviceID           string `json:"device_id"`
 	UserAgent          string `json:"user_agent"`
 	FirebaseInstanceID string `json:"firebase_instance_id"`
+	utmParams
 }
 
 type confirmInstallRequest struct {
 	RefCode            string `json:"ref_code"`
+	ClickID            string `json:"click_id"`
 	NewUserID          string `json:"new_user_id" binding:"required"`
 	Platform           string `json:"platform"`
 	DeviceID           string `json:"device_id"`
 	FirebaseInstanceID string `json:"firebase_instance_id"`
+	utmParams
 }
 
 type activateReferralRequest struct {
 	RefCode            string `json:"ref_code"  binding:"required"`
+	ClickID            string `json:"click_id"`
 	UserID             string `json:"user_id"   binding:"required"`
 	Platform           string `json:"platform"`
 	DeviceID           string `json:"device_id"`
 	FirebaseInstanceID string `json:"firebase_instance_id"`
+	utmParams
 }
 
 type rewardTierInput struct {
@@ -86,7 +110,16 @@ var validEventTypes = map[domain.EventType]bool{
 type generateLinkResponse struct {
 	RefCode   string `json:"ref_code"`
 	DeepLink  string `json:"deep_link"`
+	ShareURL  string `json:"share_url"`
 	ExpiresAt int64  `json:"expires_at"`
+	domain.UTM
+}
+
+type utmReportQuery struct {
+	OwnerUserID string `form:"owner_user_id"`
+	From        int64  `form:"from"`
+	To          int64  `form:"to"`
+	utmParams
 }
 
 type attributionResponse struct {
@@ -100,4 +133,5 @@ type shareTarget struct {
 	Label    string `json:"label"`
 	ShareURL string `json:"share_url"`
 	QRURL    string `json:"qr_url"`
+	domain.UTM
 }

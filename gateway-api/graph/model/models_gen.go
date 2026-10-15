@@ -6524,6 +6524,21 @@ type RecruitWorkExperience struct {
 	Description *string `json:"description,omitempty"`
 }
 
+type ReferralAttribution struct {
+	OwnerUserID        *string `json:"owner_user_id,omitempty"`
+	NewUserID          *string `json:"new_user_id,omitempty"`
+	RefCode            *string `json:"ref_code,omitempty"`
+	Platform           *string `json:"platform,omitempty"`
+	DeviceID           *string `json:"device_id,omitempty"`
+	AttributedAt       *int    `json:"attributed_at,omitempty"`
+	FirebaseInstanceID *string `json:"firebase_instance_id,omitempty"`
+	UtmSource          *string `json:"utm_source,omitempty"`
+	UtmMedium          *string `json:"utm_medium,omitempty"`
+	UtmCampaign        *string `json:"utm_campaign,omitempty"`
+	UtmTerm            *string `json:"utm_term,omitempty"`
+	UtmContent         *string `json:"utm_content,omitempty"`
+}
+
 type ReferralLinkList struct {
 	Data []*ReferralReferralLink `json:"data,omitempty"`
 	Meta *ReferralPageMeta       `json:"meta,omitempty"`
@@ -6543,6 +6558,12 @@ type ReferralReferralLink struct {
 	ExpiresAt   *int    `json:"expires_at,omitempty"`
 	DeepLink    *string `json:"deep_link,omitempty"`
 	Platform    *string `json:"platform,omitempty"`
+	ShareURL    *string `json:"share_url,omitempty"`
+	UtmSource   *string `json:"utm_source,omitempty"`
+	UtmMedium   *string `json:"utm_medium,omitempty"`
+	UtmCampaign *string `json:"utm_campaign,omitempty"`
+	UtmTerm     *string `json:"utm_term,omitempty"`
+	UtmContent  *string `json:"utm_content,omitempty"`
 }
 
 type ReferralReferralStatusResponse struct {
@@ -6557,6 +6578,11 @@ type ReferralReferralStatusResponse struct {
 	NewUserID        *string  `json:"new_user_id,omitempty"`
 	RewardStatus     *string  `json:"reward_status,omitempty"`
 	RewardValue      *float64 `json:"reward_value,omitempty"`
+	UtmSource        *string  `json:"utm_source,omitempty"`
+	UtmMedium        *string  `json:"utm_medium,omitempty"`
+	UtmCampaign      *string  `json:"utm_campaign,omitempty"`
+	UtmTerm          *string  `json:"utm_term,omitempty"`
+	UtmContent       *string  `json:"utm_content,omitempty"`
 }
 
 type ReferralRewardProgram struct {
@@ -6581,10 +6607,26 @@ type ReferralRewardTierInput struct {
 }
 
 type ReferralShareTarget struct {
-	Channel  *string `json:"channel,omitempty"`
-	Label    *string `json:"label,omitempty"`
-	ShareURL *string `json:"share_url,omitempty"`
-	QRURL    *string `json:"qr_url,omitempty"`
+	Channel     *string `json:"channel,omitempty"`
+	Label       *string `json:"label,omitempty"`
+	ShareURL    *string `json:"share_url,omitempty"`
+	QRURL       *string `json:"qr_url,omitempty"`
+	UtmSource   *string `json:"utm_source,omitempty"`
+	UtmMedium   *string `json:"utm_medium,omitempty"`
+	UtmCampaign *string `json:"utm_campaign,omitempty"`
+	UtmTerm     *string `json:"utm_term,omitempty"`
+	UtmContent  *string `json:"utm_content,omitempty"`
+}
+
+type ReferralUTMPerformance struct {
+	UtmSource      *string  `json:"utm_source,omitempty"`
+	UtmMedium      *string  `json:"utm_medium,omitempty"`
+	UtmCampaign    *string  `json:"utm_campaign,omitempty"`
+	Clicks         *int     `json:"clicks,omitempty"`
+	UniqueClicks   *int     `json:"unique_clicks,omitempty"`
+	Installs       *int     `json:"installs,omitempty"`
+	Rewards        *int     `json:"rewards,omitempty"`
+	ConversionRate *float64 `json:"conversion_rate,omitempty"`
 }
 
 type ReferralUserReferralStats struct {

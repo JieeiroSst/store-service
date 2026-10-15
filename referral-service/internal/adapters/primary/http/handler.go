@@ -1,15 +1,20 @@
 package http
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/mileusna/useragent"
 	qrcode "github.com/skip2/go-qrcode"
+	"github.com/x-way/crawlerdetect"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 
@@ -44,8 +49,10 @@ func (h *Handler) Register(r *gin.Engine) {
 		ref.POST("/activate", h.ActivateReferral)
 		ref.GET("/status", h.GetReferralStatus)
 		ref.GET("/user/:user_id/stats", h.GetUserStats)
+		ref.GET("/user/:user_id/attribution", h.GetUserAttribution)
 		ref.GET("/qr/:ref_code", h.GetShareQRCode)
 		ref.GET("/share/:ref_code", h.GetShareTargets)
+		ref.GET("/utm/report", h.GetUTMReport)
 
 		programs := v1.Group("/programs")
 		programs.POST("", h.CreateRewardProgram)
@@ -86,6 +93,7 @@ func (h *Handler) GenerateLink(c *gin.Context) {
 		OwnerUserID: req.OwnerUserID,
 		Channel:     channel,
 		Platform:    platform,
+		UTM:         req.toDomain(),
 	})
 	if err != nil {
 		if errors.Is(err, domain.ErrRateLimitExceeded) {
@@ -100,7 +108,9 @@ func (h *Handler) GenerateLink(c *gin.Context) {
 	respCreated(c, generateLinkResponse{
 		RefCode:   resp.RefCode,
 		DeepLink:  resp.DeepLink,
+		ShareURL:  buildShareURL(resp.DeepLink, channel, resp.UTM),
 		ExpiresAt: resp.ExpiresAt,
+		UTM:       resp.UTM,
 	})
 }
 
@@ -168,6 +178,7 @@ func (h *Handler) TrackEvent(c *gin.Context) {
 		DeviceID:           req.DeviceID,
 		UserAgent:          req.UserAgent,
 		FirebaseInstanceID: req.FirebaseInstanceID,
+		UTM:                req.toDomain(),
 	}); err != nil {
 		if errors.Is(err, domain.ErrNotFound) {
 			respNotFound(c, "link not found")
@@ -195,10 +206,13 @@ func (h *Handler) ConfirmInstall(c *gin.Context) {
 
 	resp, err := h.svc.ConfirmInstall(c.Request.Context(), ports.ConfirmInstallRequest{
 		RefCode:            req.RefCode,
+		ClickID:            req.ClickID,
 		NewUserID:          req.NewUserID,
 		Platform:           req.Platform,
 		DeviceID:           req.DeviceID,
+		IPAddress:          c.ClientIP(),
 		FirebaseInstanceID: req.FirebaseInstanceID,
+		UTM:                req.toDomain(),
 	})
 	if err != nil {
 		if errors.Is(err, domain.ErrSelfReferral) {
@@ -231,10 +245,13 @@ func (h *Handler) ActivateReferral(c *gin.Context) {
 
 	resp, err := h.svc.ActivateReferral(c.Request.Context(), ports.ActivateReferralRequest{
 		RefCode:            req.RefCode,
+		ClickID:            req.ClickID,
 		UserID:             req.UserID,
 		Platform:           req.Platform,
 		DeviceID:           req.DeviceID,
+		IPAddress:          c.ClientIP(),
 		FirebaseInstanceID: req.FirebaseInstanceID,
+		UTM:                req.toDomain(),
 	})
 	if err != nil {
 		if errors.Is(err, domain.ErrSelfReferral) {
@@ -299,6 +316,50 @@ func (h *Handler) GetUserStats(c *gin.Context) {
 	}
 
 	respOK(c, stats)
+}
+
+func (h *Handler) GetUserAttribution(c *gin.Context) {
+	attr, err := h.svc.GetUserAttribution(c.Request.Context(), c.Param("user_id"))
+	if err != nil {
+		if errors.Is(err, domain.ErrNotFound) {
+			respNotFound(c, "attribution not found")
+			return
+		}
+		h.log.Error("get user attribution failed", zap.Error(err))
+		respInternal(c)
+		return
+	}
+
+	respOK(c, attr)
+}
+
+func (h *Handler) GetUTMReport(c *gin.Context) {
+	var q utmReportQuery
+	if err := c.ShouldBindQuery(&q); err != nil {
+		respBadRequest(c, codeValidation, err.Error())
+		return
+	}
+	if q.From > 0 && q.To > 0 && q.From >= q.To {
+		respBadRequest(c, codeInvalidField, "from must be before to")
+		return
+	}
+
+	utm := q.toDomain()
+	rows, err := h.svc.GetUTMReport(c.Request.Context(), domain.UTMReportFilter{
+		OwnerUserID: q.OwnerUserID,
+		Source:      utm.Source,
+		Medium:      utm.Medium,
+		Campaign:    utm.Campaign,
+		FromMs:      q.From,
+		ToMs:        q.To,
+	})
+	if err != nil {
+		h.log.Error("get utm report failed", zap.Error(err))
+		respInternal(c)
+		return
+	}
+
+	respOK(c, rows)
 }
 
 // CreateRewardProgram POST /api/v1/programs
@@ -386,7 +447,9 @@ func (h *Handler) GetShareQRCode(c *gin.Context) {
 		return
 	}
 
-	shareURL := withChannel(link.DeepLink, channel)
+	var q utmParams
+	_ = c.ShouldBindQuery(&q)
+	shareURL := buildShareURL(link.DeepLink, channel, shareUTM(link.UTM, channel, q.toDomain()))
 
 	png, err := qrcode.Encode(shareURL, qrcode.Medium, size)
 	if err != nil {
@@ -423,13 +486,14 @@ func (h *Handler) GetShareTargets(c *gin.Context) {
 
 	targets := make([]shareTarget, 0, len(shareChannels))
 	for _, sc := range shareChannels {
-		shareURL := withChannel(link.DeepLink, sc.Channel)
+		utm := shareUTM(link.UTM, sc.Channel, domain.UTM{})
 		qrURL := fmt.Sprintf("%s/api/v1/referral/qr/%s?channel=%s", h.cfg.DeepLink.PublicURL, refCode, sc.Channel)
 		targets = append(targets, shareTarget{
 			Channel:  string(sc.Channel),
 			Label:    sc.Label,
-			ShareURL: shareURL,
+			ShareURL: buildShareURL(link.DeepLink, sc.Channel, utm),
 			QRURL:    qrURL,
+			UTM:      utm,
 		})
 	}
 
@@ -439,12 +503,12 @@ func (h *Handler) GetShareTargets(c *gin.Context) {
 // HandleShareRedirect GET /r/:ref_code
 // The landing page behind every generated deep_link. Records the link_clicked event (the
 // "invited at" timestamp), then routes the visitor to the right store:
-//   - Android: redirects straight to Play Store with ref_code/channel embedded in the
-//     `referrer` param, readable by the app via the Play Install Referrer API after install.
+//   - Android: redirects straight to Play Store with ref_code/channel/click_id/utm_* embedded in
+//     the `referrer` param, readable by the app via the Play Install Referrer API after install.
 //   - iOS: Apple has no install-referrer equivalent, so this serves a tiny HTML page that
-//     copies the ref_code to the clipboard before redirecting to the App Store. The app must
-//     read the clipboard on first open and strip the "REF:" prefix to recover the ref_code.
-//   - Other/unknown UA: redirects to the public site.
+//     copies "REF:{ref_code}:{click_id}" to the clipboard before redirecting to the App Store. The
+//     app strips the "REF:" prefix and sends the rest as ref_code; the server splits off click_id.
+//   - Other/unknown UA: redirects to the public site with the utm_* params preserved.
 func (h *Handler) HandleShareRedirect(c *gin.Context) {
 	refCode := c.Param("ref_code")
 	channel := domain.Channel(c.Query("channel"))
@@ -458,22 +522,47 @@ func (h *Handler) HandleShareRedirect(c *gin.Context) {
 		return
 	}
 
-	platform := detectPlatform(c.GetHeader("User-Agent"))
+	userAgent := c.GetHeader("User-Agent")
+	ua := useragent.Parse(userAgent)
+	platform := detectPlatform(ua)
+
+	var q utmParams
+	_ = c.ShouldBindQuery(&q)
+	utm := shareUTM(link.UTM, channel, q.toDomain())
+
+	if isBot(userAgent, ua) {
+		c.Header("Cache-Control", "no-store")
+		c.Redirect(http.StatusFound, buildShareURL(h.cfg.DeepLink.PublicURL, "", utm))
+		return
+	}
+
+	clickID := uuid.New().String()
 
 	if err := h.svc.TrackEvent(c.Request.Context(), ports.TrackEventRequest{
+		EventID:   clickID,
 		RefCode:   refCode,
 		EventType: domain.EventLinkClicked,
 		Platform:  platform,
 		Channel:   channel,
 		IPAddress: c.ClientIP(),
-		UserAgent: c.GetHeader("User-Agent"),
+		UserAgent: userAgent,
+		UTM:       utm,
 	}); err != nil {
 		h.log.Warn("share redirect: failed to track click", zap.String("ref_code", refCode), zap.Error(err))
 	}
 
+	if h.cfg.DeepLink.Branch.Enabled() {
+		c.Header("Cache-Control", "no-store")
+		c.Redirect(http.StatusFound, buildBranchURL(h.cfg.DeepLink, refCode, clickID, channel, utm))
+		return
+	}
+
 	switch platform {
 	case "android":
-		referrer := fmt.Sprintf("ref_code=%s&channel=%s", refCode, channel)
+		referrer := "ref_code=" + url.QueryEscape(refCode) + "&channel=" + url.QueryEscape(string(channel)) + "&click_id=" + clickID
+		if extra := utmValues(utm).Encode(); extra != "" {
+			referrer += "&" + extra
+		}
 		sep := "?"
 		if strings.Contains(h.cfg.DeepLink.PlayStoreURL, "?") {
 			sep = "&"
@@ -481,57 +570,155 @@ func (h *Handler) HandleShareRedirect(c *gin.Context) {
 		c.Redirect(http.StatusFound, h.cfg.DeepLink.PlayStoreURL+sep+"referrer="+url.QueryEscape(referrer))
 	case "ios":
 		c.Header("Cache-Control", "no-store")
-		c.Data(http.StatusOK, "text/html; charset=utf-8", buildClipboardRedirectHTML(refCode, h.cfg.DeepLink.AppStoreURL))
+		c.Data(http.StatusOK, "text/html; charset=utf-8", buildClipboardRedirectHTML(refCode+":"+clickID, h.cfg.DeepLink.AppStoreURL, ""))
+	case "macos":
+		c.Header("Cache-Control", "no-store")
+		c.Data(http.StatusOK, "text/html; charset=utf-8", buildClipboardRedirectHTML(refCode+":"+clickID, h.cfg.DeepLink.AppStoreURL, buildShareURL(h.cfg.DeepLink.PublicURL, "", utm)))
 	default:
-		c.Redirect(http.StatusFound, h.cfg.DeepLink.PublicURL)
+		c.Redirect(http.StatusFound, buildShareURL(h.cfg.DeepLink.PublicURL, "", utm))
 	}
 }
 
-// withChannel appends a channel query param to a deep link, if channel is non-empty.
-func withChannel(deepLink string, channel domain.Channel) string {
-	if channel == "" {
+func buildShareURL(deepLink string, channel domain.Channel, utm domain.UTM) string {
+	u, err := url.Parse(deepLink)
+	if err != nil {
 		return deepLink
 	}
-	sep := "?"
-	if strings.Contains(deepLink, "?") {
-		sep = "&"
+	q := u.Query()
+	if channel != "" {
+		q.Set("channel", string(channel))
 	}
-	return deepLink + sep + "channel=" + url.QueryEscape(string(channel))
+	for k, v := range utmValues(utm) {
+		q[k] = v
+	}
+	u.RawQuery = q.Encode()
+	return u.String()
 }
 
-// detectPlatform sniffs the User-Agent header for a coarse "ios" | "android" | "universal" classification.
-func detectPlatform(userAgent string) string {
-	ua := strings.ToLower(userAgent)
-	switch {
-	case strings.Contains(ua, "iphone"), strings.Contains(ua, "ipad"), strings.Contains(ua, "ipod"):
+func buildBranchURL(cfg appconfig.DeepLinkConfig, refCode, clickID string, channel domain.Channel, utm domain.UTM) string {
+	q := utmValues(utm)
+	q.Set("ref_code", refCode)
+	q.Set("click_id", clickID)
+	if channel != "" {
+		q.Set("channel", string(channel))
+	}
+	q.Set("~feature", "referral")
+	if utm.Source != "" {
+		q.Set("~channel", utm.Source)
+	}
+	if utm.Campaign != "" {
+		q.Set("~campaign", utm.Campaign)
+	}
+	if utm.Medium != "" {
+		q.Set("~tags", utm.Medium)
+	}
+	q.Set("$desktop_url", buildShareURL(cfg.PublicURL, "", utm))
+	if cfg.AppStoreURL != "" {
+		q.Set("$ios_url", cfg.AppStoreURL)
+	}
+	if cfg.PlayStoreURL != "" {
+		q.Set("$android_url", cfg.PlayStoreURL)
+	}
+	u := url.URL{Scheme: "https", Host: cfg.Branch.LinkDomain, Path: "/a/" + cfg.Branch.Key, RawQuery: q.Encode()}
+	return u.String()
+}
+
+func shareUTM(linkUTM domain.UTM, channel domain.Channel, override domain.UTM) domain.UTM {
+	if channel != "" {
+		linkUTM.Source = string(channel)
+	}
+	return override.Normalize().WithDefaults(linkUTM)
+}
+
+func utmValues(utm domain.UTM) url.Values {
+	v := url.Values{}
+	for _, kv := range [][2]string{
+		{"utm_source", utm.Source},
+		{"utm_medium", utm.Medium},
+		{"utm_campaign", utm.Campaign},
+		{"utm_term", utm.Term},
+		{"utm_content", utm.Content},
+	} {
+		if kv[1] != "" {
+			v.Set(kv[0], kv[1])
+		}
+	}
+	return v
+}
+
+// detectPlatform maps the parsed User-Agent to "ios" | "android" | "macos" | "universal"; "macos" may be an iPad in desktop mode.
+func detectPlatform(ua useragent.UserAgent) string {
+	switch ua.OS {
+	case useragent.IOS:
 		return "ios"
-	case strings.Contains(ua, "android"):
+	case useragent.Android:
 		return "android"
+	case useragent.MacOS:
+		return "macos"
 	default:
 		return "universal"
 	}
 }
 
-// buildClipboardRedirectHTML renders a minimal landing page that copies the ref_code marker to
-// the clipboard before redirecting to the App Store — the deferred deep-link workaround for iOS.
-func buildClipboardRedirectHTML(refCode, appStoreURL string) []byte {
+var extraPreviewBots = regexp.MustCompile(`(?i)link-?preview|zalo[^ ]*(bot|crawler|preview)`)
+
+func isBot(raw string, ua useragent.UserAgent) bool {
+	return strings.TrimSpace(raw) == "" || ua.Bot || crawlerdetect.IsCrawler(raw) || extraPreviewBots.MatchString(raw)
+}
+
+// buildClipboardRedirectHTML renders a landing page that copies the ref_code marker to the clipboard
+// before redirecting to the App Store — the deferred deep-link workaround for iOS. Safari only allows
+// clipboard writes on a user gesture, so a button is shown when the automatic copy is rejected.
+// A non-empty desktopURL sends non-touch devices (real Macs) there instead.
+func buildClipboardRedirectHTML(marker, appStoreURL, desktopURL string) []byte {
+	markerJS, _ := json.Marshal("REF:" + marker)
+	destJS, _ := json.Marshal(appStoreURL)
+	desktopJS, _ := json.Marshal(desktopURL)
 	return []byte(fmt.Sprintf(`<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Opening app store…</title></head>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Opening app store…</title>
+<style>body{font-family:-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+button{font-size:18px;padding:14px 28px;border:0;border-radius:12px;background:#0a84ff;color:#fff}</style></head>
 <body>
+<button id="open" hidden>Mở App Store</button>
 <script>
   (function () {
-    var marker = "REF:%s";
-    var dest = %q;
+    var marker = %s;
+    var dest = %s;
+    var desktop = %s;
+    var touch = navigator.maxTouchPoints > 1 || /iPhone|iPad|iPod/.test(navigator.userAgent);
+    if (desktop && !touch) { window.location.replace(desktop); return; }
     function go() { window.location.replace(dest); }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(marker).then(go, go);
-    } else {
+    function copyThenGo() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(marker).then(go, fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    }
+    function fallbackCopy() {
+      var t = document.createElement("textarea");
+      t.value = marker;
+      t.setAttribute("readonly", "");
+      t.style.position = "fixed";
+      t.style.opacity = "0";
+      document.body.appendChild(t);
+      t.select();
+      t.setSelectionRange(0, marker.length);
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(t);
       go();
     }
-    setTimeout(go, 800);
+    var btn = document.getElementById("open");
+    btn.addEventListener("click", copyThenGo);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(marker).then(go, function () { btn.hidden = false; });
+    } else {
+      btn.hidden = false;
+    }
   })();
 </script>
-</body></html>`, refCode, appStoreURL))
+</body></html>`, markerJS, destJS, desktopJS))
 }
 
 // SetRewardProgramStatus PATCH /api/v1/programs/:program_id/status

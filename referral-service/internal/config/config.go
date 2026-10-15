@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -47,11 +48,23 @@ type DeepLinkConfig struct {
 	PublicURL    string
 	AppStoreURL  string
 	PlayStoreURL string
+	Branch       BranchConfig
+}
+
+type BranchConfig struct {
+	Key        string
+	LinkDomain string
+}
+
+func (b BranchConfig) Enabled() bool {
+	return b.Key != "" && b.LinkDomain != ""
 }
 
 type ReferralConfig struct {
-	TTLDays   int
-	MaxPerDay int
+	TTLDays     int
+	MaxPerDay   int
+	UTMMedium   string
+	UTMCampaign string
 }
 
 type RabbitMQConfig struct {
@@ -150,10 +163,16 @@ func Load() (*Config, error) {
 			PublicURL:    getEnv("APP_PUBLIC_URL", fmt.Sprintf("http://localhost:%d", port)),
 			AppStoreURL:  getEnv("APP_STORE_URL", ""),
 			PlayStoreURL: getEnv("PLAY_STORE_URL", ""),
+			Branch: BranchConfig{
+				Key:        getEnv("BRANCH_KEY", ""),
+				LinkDomain: strings.TrimSuffix(strings.TrimPrefix(strings.TrimPrefix(getEnv("BRANCH_LINK_DOMAIN", ""), "https://"), "http://"), "/"),
+			},
 		},
 		Referral: ReferralConfig{
-			TTLDays:   ttl,
-			MaxPerDay: maxPerDay,
+			TTLDays:     ttl,
+			MaxPerDay:   maxPerDay,
+			UTMMedium:   getEnv("REFERRAL_UTM_MEDIUM", "referral"),
+			UTMCampaign: getEnv("REFERRAL_UTM_CAMPAIGN", "referral_program"),
 		},
 		Logger: LoggerConfig{
 			Level:      getEnv("LOG_LEVEL", "info"),

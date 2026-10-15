@@ -16,6 +16,8 @@ type ReferralService interface {
 	ActivateReferral(ctx context.Context, req ActivateReferralRequest) (*ActivateReferralResponse, error)
 	GetReferralStatus(ctx context.Context, refCode string) (*ReferralStatusResponse, error)
 	GetUserStats(ctx context.Context, userID string) (*domain.UserReferralStats, error)
+	GetUserAttribution(ctx context.Context, newUserID string) (*domain.ReferralAttribution, error)
+	GetUTMReport(ctx context.Context, filter domain.UTMReportFilter) ([]*domain.UTMPerformance, error)
 
 	CreateRewardProgram(ctx context.Context, req CreateRewardProgramRequest) (*domain.RewardProgram, error)
 	GetActiveRewardProgram(ctx context.Context) (*domain.RewardProgram, error)
@@ -26,15 +28,18 @@ type GenerateLinkRequest struct {
 	OwnerUserID string
 	Channel     domain.Channel
 	Platform    string // "ios" | "android" | "universal"
+	UTM         domain.UTM
 }
 
 type GenerateLinkResponse struct {
 	RefCode   string
 	DeepLink  string
 	ExpiresAt int64 // Unix ms
+	UTM       domain.UTM
 }
 
 type TrackEventRequest struct {
+	EventID            string
 	RefCode            string
 	EventType          domain.EventType
 	Platform           string
@@ -44,14 +49,18 @@ type TrackEventRequest struct {
 	DeviceID           string
 	UserAgent          string
 	FirebaseInstanceID string
+	UTM                domain.UTM
 }
 
 type ConfirmInstallRequest struct {
 	RefCode            string
+	ClickID            string
 	NewUserID          string
 	Platform           string
 	DeviceID           string
+	IPAddress          string
 	FirebaseInstanceID string
+	UTM                domain.UTM
 }
 
 type ConfirmInstallResponse struct {
@@ -62,10 +71,13 @@ type ConfirmInstallResponse struct {
 
 type ActivateReferralRequest struct {
 	RefCode            string
+	ClickID            string
 	UserID             string
 	Platform           string
 	DeviceID           string
+	IPAddress          string
 	FirebaseInstanceID string
+	UTM                domain.UTM
 }
 
 type ActivateReferralResponse struct {
@@ -86,6 +98,7 @@ type ReferralStatusResponse struct {
 	NewUserID        string                  `json:"new_user_id,omitempty"`
 	RewardStatus     domain.RewardStatus     `json:"reward_status,omitempty"`
 	RewardValue      float64                 `json:"reward_value,omitempty"`
+	domain.UTM
 }
 
 type ReferralLinkRepository interface {
@@ -100,6 +113,9 @@ type ReferralEventRepository interface {
 	Save(ctx context.Context, event *domain.ReferralEvent) error
 	FindByRefCode(ctx context.Context, refCode string) ([]*domain.ReferralEvent, error)
 	FindByNewUserID(ctx context.Context, newUserID string) ([]*domain.ReferralEvent, error)
+	FindByID(ctx context.Context, eventID string) (*domain.ReferralEvent, error)
+	AssignNewUser(ctx context.Context, eventID, newUserID string) error
+	AggregateByUTM(ctx context.Context, filter domain.UTMReportFilter) ([]*domain.UTMPerformance, error)
 }
 
 type ReferralAttributionRepository interface {

@@ -14,6 +14,10 @@ func Channel(v string) zap.Field { return zap.String("channel", v) }
 
 func Platform(v string) zap.Field { return zap.String("platform", v) }
 
+func UTMSource(v string) zap.Field { return zap.String("utm_source", v) }
+
+func UTMCampaign(v string) zap.Field { return zap.String("utm_campaign", v) }
+
 func DeepLink(v string) zap.Field { return zap.String("deep_link", v) }
 
 func RewardValue(v float64) zap.Field { return zap.Float64("reward_value", v) }

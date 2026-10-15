@@ -100,6 +100,7 @@ func (s *referralService) GenerateLink(ctx context.Context, req ports.GenerateLi
 	}
 
 	expiresAt := now.AddDate(0, 0, s.cfg.Referral.TTLDays)
+	utm := req.UTM.Normalize().WithDefaults(s.defaultUTM(req.Channel))
 
 	var link *domain.ReferralLink
 	var refCode, deepLink string
@@ -120,6 +121,7 @@ func (s *referralService) GenerateLink(ctx context.Context, req ports.GenerateLi
 			ExpiresAt:   expiresAt.UnixMilli(),
 			DeepLink:    deepLink,
 			Platform:    req.Platform,
+			UTM:         utm,
 		}
 
 		err = s.linkRepo.Save(ctx, link)
@@ -158,6 +160,8 @@ func (s *referralService) GenerateLink(ctx context.Context, req ports.GenerateLi
 		OccurredAt:  now.UnixMilli(),
 		OwnerUserID: req.OwnerUserID,
 		Platform:    req.Platform,
+		Channel:     req.Channel,
+		UTM:         utm,
 	}); err != nil {
 		log.Warn("generate link: failed to save link_created event",
 			logger.RefCode(refCode),
@@ -171,6 +175,7 @@ func (s *referralService) GenerateLink(ctx context.Context, req ports.GenerateLi
 		logger.Channel(string(req.Channel)),
 		logger.Platform(req.Platform),
 		logger.DeepLink(deepLink),
+		logger.UTMCampaign(utm.Campaign),
 		zap.Int64("expires_at_ms", expiresAt.UnixMilli()),
 	)
 
@@ -178,6 +183,7 @@ func (s *referralService) GenerateLink(ctx context.Context, req ports.GenerateLi
 		RefCode:   refCode,
 		DeepLink:  deepLink,
 		ExpiresAt: expiresAt.UnixMilli(),
+		UTM:       utm,
 	}, nil
 }
 
@@ -260,9 +266,20 @@ func (s *referralService) TrackEvent(ctx context.Context, req ports.TrackEventRe
 		channel = link.Channel
 	}
 
+	linkUTM := link.UTM
+	if req.Channel != "" {
+		linkUTM.Source = string(req.Channel)
+	}
+	utm := req.UTM.Normalize().WithDefaults(linkUTM)
+
+	eventID := req.EventID
+	if eventID == "" {
+		eventID = uuid.New().String()
+	}
+
 	event := &domain.ReferralEvent{
 		RefCode:            req.RefCode,
-		EventID:            uuid.New().String(),
+		EventID:            eventID,
 		EventType:          req.EventType,
 		OccurredAt:         time.Now().UnixMilli(),
 		Platform:           req.Platform,
@@ -273,6 +290,7 @@ func (s *referralService) TrackEvent(ctx context.Context, req ports.TrackEventRe
 		DeviceID:           req.DeviceID,
 		UserAgent:          req.UserAgent,
 		FirebaseInstanceID: req.FirebaseInstanceID,
+		UTM:                utm,
 	}
 
 	if err := s.eventRepo.Save(ctx, event); err != nil {
@@ -298,6 +316,8 @@ func (s *referralService) TrackEvent(ctx context.Context, req ports.TrackEventRe
 		logger.EventType(string(req.EventType)),
 		logger.Platform(req.Platform),
 		logger.Channel(string(channel)),
+		logger.UTMSource(utm.Source),
+		logger.UTMCampaign(utm.Campaign),
 		logger.NewUserID(req.NewUserID),
 	)
 
@@ -306,6 +326,12 @@ func (s *referralService) TrackEvent(ctx context.Context, req ports.TrackEventRe
 
 func (s *referralService) ConfirmInstall(ctx context.Context, req ports.ConfirmInstallRequest) (*ports.ConfirmInstallResponse, error) {
 	log := s.logWithTrace(ctx)
+
+	refCode, clickID := domain.SplitRefCode(req.RefCode)
+	req.RefCode = refCode
+	if req.ClickID == "" {
+		req.ClickID = clickID
+	}
 
 	if req.RefCode == "" {
 		return &ports.ConfirmInstallResponse{Attributed: false}, nil
@@ -358,6 +384,12 @@ func (s *referralService) ConfirmInstall(ctx context.Context, req ports.ConfirmI
 	}
 
 	now := time.Now().UTC()
+	click := s.findRecipientClick(ctx, link, req)
+	utm := link.UTM
+	if click != nil {
+		utm = click.UTM.WithDefaults(link.UTM)
+	}
+	utm = req.UTM.Normalize().WithDefaults(utm)
 
 	if err := s.linkRepo.UpdateStatus(ctx, req.RefCode, domain.StatusUsed); err != nil {
 		if errors.Is(err, domain.ErrLinkNotActive) {
@@ -381,11 +413,22 @@ func (s *referralService) ConfirmInstall(ctx context.Context, req ports.ConfirmI
 		OwnerUserID:        link.OwnerUserID,
 		DeviceID:           req.DeviceID,
 		FirebaseInstanceID: req.FirebaseInstanceID,
+		UTM:                utm,
 	}); err != nil {
 		log.Warn("confirm install: failed to save app_installed event",
 			logger.RefCode(req.RefCode),
 			zap.Error(err),
 		)
+	}
+
+	if click != nil && req.NewUserID != "" {
+		if err := s.eventRepo.AssignNewUser(ctx, click.EventID, req.NewUserID); err != nil {
+			log.Warn("confirm install: failed to link click to new user",
+				logger.RefCode(req.RefCode),
+				zap.String("click_id", click.EventID),
+				zap.Error(err),
+			)
+		}
 	}
 
 	rewardValue := s.resolveRewardValue(ctx, link.OwnerUserID)
@@ -422,6 +465,7 @@ func (s *referralService) ConfirmInstall(ctx context.Context, req ports.ConfirmI
 				Platform:    req.Platform,
 				NewUserID:   req.NewUserID,
 				OwnerUserID: link.OwnerUserID,
+				UTM:         utm,
 			}); err != nil {
 				log.Warn("confirm install: failed to save reward_given event",
 					logger.RefCode(req.RefCode),
@@ -439,6 +483,7 @@ func (s *referralService) ConfirmInstall(ctx context.Context, req ports.ConfirmI
 		DeviceID:           req.DeviceID,
 		AttributedAt:       now.UnixMilli(),
 		FirebaseInstanceID: req.FirebaseInstanceID,
+		UTM:                utm,
 	}); err != nil {
 		log.Error("confirm install: failed to save attribution",
 			logger.RefCode(req.RefCode),
@@ -462,6 +507,9 @@ func (s *referralService) ConfirmInstall(ctx context.Context, req ports.ConfirmI
 		logger.Platform(req.Platform),
 		logger.RewardType(string(domain.RewardCredit)),
 		logger.RewardValue(rewardValue),
+		logger.UTMSource(utm.Source),
+		logger.UTMCampaign(utm.Campaign),
+		zap.Bool("click_matched", click != nil),
 	)
 
 	return &ports.ConfirmInstallResponse{
@@ -486,10 +534,13 @@ func (s *referralService) GetUserStats(ctx context.Context, userID string) (*dom
 func (s *referralService) ActivateReferral(ctx context.Context, req ports.ActivateReferralRequest) (*ports.ActivateReferralResponse, error) {
 	resp, err := s.ConfirmInstall(ctx, ports.ConfirmInstallRequest{
 		RefCode:            req.RefCode,
+		ClickID:            req.ClickID,
 		NewUserID:          req.UserID,
 		Platform:           req.Platform,
 		DeviceID:           req.DeviceID,
+		IPAddress:          req.IPAddress,
 		FirebaseInstanceID: req.FirebaseInstanceID,
+		UTM:                req.UTM,
 	})
 	if err != nil {
 		return nil, err
@@ -553,6 +604,7 @@ func (s *referralService) GetReferralStatus(ctx context.Context, refCode string)
 			resp.ActivatedAt = &t
 			resp.Platform = evt.Platform
 			resp.NewUserID = evt.NewUserID
+			resp.UTM = evt.UTM
 		}
 	}
 
@@ -616,6 +668,92 @@ func (s *referralService) getDailyLinkCount(ctx context.Context, cacheKey, owner
 	}
 
 	return count, nil
+}
+
+func (s *referralService) GetUTMReport(ctx context.Context, filter domain.UTMReportFilter) ([]*domain.UTMPerformance, error) {
+	normalized := domain.UTM{Source: filter.Source, Medium: filter.Medium, Campaign: filter.Campaign}.Normalize()
+	filter.Source, filter.Medium, filter.Campaign = normalized.Source, normalized.Medium, normalized.Campaign
+
+	rows, err := s.eventRepo.AggregateByUTM(ctx, filter)
+	if err != nil {
+		s.logWithTrace(ctx).Error("get utm report failed",
+			logger.OwnerUserID(filter.OwnerUserID),
+			zap.Error(err),
+		)
+		return nil, fmt.Errorf("get utm report: %w", err)
+	}
+	for _, r := range rows {
+		if r.UniqueClicks > 0 {
+			r.ConversionRate = float64(r.Installs) / float64(r.UniqueClicks)
+		}
+	}
+	return rows, nil
+}
+
+func (s *referralService) defaultUTM(channel domain.Channel) domain.UTM {
+	return domain.UTM{
+		Source:   string(channel),
+		Medium:   s.cfg.Referral.UTMMedium,
+		Campaign: s.cfg.Referral.UTMCampaign,
+	}.Normalize()
+}
+
+func (s *referralService) findRecipientClick(ctx context.Context, link *domain.ReferralLink, req ports.ConfirmInstallRequest) *domain.ReferralEvent {
+	log := s.logWithTrace(ctx)
+
+	if req.ClickID != "" {
+		click, err := s.eventRepo.FindByID(ctx, req.ClickID)
+		switch {
+		case err != nil:
+			log.Warn("find recipient click: click_id lookup failed",
+				logger.RefCode(link.RefCode),
+				zap.String("click_id", req.ClickID),
+				zap.Error(err),
+			)
+		case click.RefCode == link.RefCode && click.EventType == domain.EventLinkClicked:
+			return click
+		default:
+			log.Warn("find recipient click: click_id does not belong to ref_code",
+				logger.RefCode(link.RefCode),
+				zap.String("click_id", req.ClickID),
+			)
+		}
+	}
+
+	if req.DeviceID == "" && req.IPAddress == "" {
+		return nil
+	}
+	events, err := s.eventRepo.FindByRefCode(ctx, link.RefCode)
+	if err != nil {
+		log.Warn("find recipient click: failed to fetch click events",
+			logger.RefCode(link.RefCode),
+			zap.Error(err),
+		)
+		return nil
+	}
+	for _, e := range events {
+		if e.EventType != domain.EventLinkClicked || e.NewUserID != "" {
+			continue
+		}
+		if (req.DeviceID != "" && e.DeviceID == req.DeviceID) || (req.IPAddress != "" && e.IPAddress == req.IPAddress) {
+			return e
+		}
+	}
+	return nil
+}
+
+func (s *referralService) GetUserAttribution(ctx context.Context, newUserID string) (*domain.ReferralAttribution, error) {
+	attr, err := s.attributionRepo.FindByNewUserID(ctx, newUserID)
+	if err != nil {
+		if !errors.Is(err, domain.ErrNotFound) {
+			s.logWithTrace(ctx).Error("get user attribution failed",
+				logger.NewUserID(newUserID),
+				zap.Error(err),
+			)
+		}
+		return nil, fmt.Errorf("get attribution for %s: %w", newUserID, err)
+	}
+	return attr, nil
 }
 
 func (s *referralService) buildDeepLink(refCode, _ string) string {

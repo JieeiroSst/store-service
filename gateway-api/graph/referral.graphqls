@@ -17,6 +17,12 @@ type ReferralReferralLink {
   expires_at: Int
   deep_link: String
   platform: String
+  share_url: String
+  utm_source: String
+  utm_medium: String
+  utm_campaign: String
+  utm_term: String
+  utm_content: String
 }
 
 type ReferralReferralStatusResponse {
@@ -31,6 +37,11 @@ type ReferralReferralStatusResponse {
   new_user_id: String
   reward_status: String
   reward_value: Float
+  utm_source: String
+  utm_medium: String
+  utm_campaign: String
+  utm_term: String
+  utm_content: String
 }
 
 type ReferralUserReferralStats {
@@ -47,6 +58,37 @@ type ReferralShareTarget {
   label: String
   share_url: String
   qr_url: String
+  utm_source: String
+  utm_medium: String
+  utm_campaign: String
+  utm_term: String
+  utm_content: String
+}
+
+type ReferralAttribution {
+  owner_user_id: String
+  new_user_id: String
+  ref_code: String
+  platform: String
+  device_id: String
+  attributed_at: Int
+  firebase_instance_id: String
+  utm_source: String
+  utm_medium: String
+  utm_campaign: String
+  utm_term: String
+  utm_content: String
+}
+
+type ReferralUTMPerformance {
+  utm_source: String
+  utm_medium: String
+  utm_campaign: String
+  clicks: Int
+  unique_clicks: Int
+  installs: Int
+  rewards: Int
+  conversion_rate: Float
 }
 
 type ReferralRewardProgram {
@@ -79,13 +121,17 @@ extend type Query {
   referralActiveRewardProgram: ReferralRewardProgram @public @rest(service: "referral-service", path: "/api/v1/programs/active", unwrap: "data")
   myReferralLinks(limit: Int, cursor: String): ReferralLinkList @rest(service: "referral-service", path: "/api/v1/referral/user/{$userId}/links")
   myReferralStats: ReferralUserReferralStats @rest(service: "referral-service", path: "/api/v1/referral/user/{$userId}/stats")
+  referralUserAttribution(user_id: String!): ReferralAttribution @hasPermission(object: "/graphql/referral-service", action: "QUERY") @rest(service: "referral-service", path: "/api/v1/referral/user/{user_id}/attribution", unwrap: "data")
+  myReferralAttribution: ReferralAttribution @rest(service: "referral-service", path: "/api/v1/referral/user/{$userId}/attribution", unwrap: "data")
+  referralUTMReport(owner_user_id: String, utm_source: String, utm_medium: String, utm_campaign: String, from: Int, to: Int): [ReferralUTMPerformance!] @hasPermission(object: "/graphql/referral-service", action: "QUERY") @rest(service: "referral-service", path: "/api/v1/referral/utm/report", unwrap: "data")
+  myReferralUTMReport(utm_source: String, utm_medium: String, utm_campaign: String, from: Int, to: Int): [ReferralUTMPerformance!] @rest(service: "referral-service", path: "/api/v1/referral/utm/report", userQuery: "owner_user_id", unwrap: "data")
 }
 
 extend type Mutation {
-  generateMyReferralLink(channel: String, platform: String): ReferralReferralLink @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/generate", userField: "owner_user_id")
-  referralTrackEvent(ref_code: String!, event_type: String!, platform: String, channel: String, device_id: String, firebase_instance_id: String): Any @public @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/event")
-  referralConfirmInstall(ref_code: String!, platform: String, device_id: String, firebase_instance_id: String): Any @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/confirm-install", userField: "new_user_id")
-  referralActivate(ref_code: String!, platform: String, device_id: String, firebase_instance_id: String): Any @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/activate", userField: "user_id")
+  generateMyReferralLink(channel: String, platform: String, utm_source: String, utm_medium: String, utm_campaign: String, utm_term: String, utm_content: String): ReferralReferralLink @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/generate", userField: "owner_user_id")
+  referralTrackEvent(ref_code: String!, event_type: String!, platform: String, channel: String, device_id: String, firebase_instance_id: String, utm_source: String, utm_medium: String, utm_campaign: String, utm_term: String, utm_content: String): Any @public @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/event")
+  referralConfirmInstall(ref_code: String!, click_id: String, platform: String, device_id: String, firebase_instance_id: String, utm_source: String, utm_medium: String, utm_campaign: String, utm_term: String, utm_content: String): Any @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/confirm-install", userField: "new_user_id")
+  referralActivate(ref_code: String!, click_id: String, platform: String, device_id: String, firebase_instance_id: String, utm_source: String, utm_medium: String, utm_campaign: String, utm_term: String, utm_content: String): Any @rest(service: "referral-service", method: "POST", path: "/api/v1/referral/activate", userField: "user_id")
   referralCreateRewardProgram(name: String!, activate: Boolean, tiers: [ReferralRewardTierInput!]): ReferralRewardProgram @hasPermission(object: "/graphql/referral-service", action: "MUTATION") @rest(service: "referral-service", method: "POST", path: "/api/v1/programs")
   referralSetRewardProgramStatus(program_id: String!, active: Boolean!): ReferralRewardProgram @hasPermission(object: "/graphql/referral-service", action: "MUTATION") @rest(service: "referral-service", method: "PATCH", path: "/api/v1/programs/{program_id}/status")
 }

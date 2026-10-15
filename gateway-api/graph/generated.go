@@ -3657,7 +3657,7 @@ type ComplexityRoot struct {
 		FoodDeleteAllFoods                                      func(childComplexity int) int
 		FoodDeleteFood                                          func(childComplexity int, id int) int
 		FoodUpdateFood                                          func(childComplexity int, id int, input model.FoodFoodInput) int
-		GenerateMyReferralLink                                  func(childComplexity int, channel *string, platform *string) int
+		GenerateMyReferralLink                                  func(childComplexity int, channel *string, platform *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) int
 		GymArchiveClient                                        func(childComplexity int, clientID string) int
 		GymCreateClass                                          func(childComplexity int, input model.GymClassInput) int
 		GymCreateClient                                         func(childComplexity int, input model.GymClientInput) int
@@ -3999,11 +3999,11 @@ type ComplexityRoot struct {
 		RecruitUpdateCandidate                                  func(childComplexity int, id string, input map[string]any) int
 		RecruitUpdateJob                                        func(childComplexity int, id string, input model.RecruitJobInput) int
 		RedeemMyRecompense                                      func(childComplexity int, id int, amount float64) int
-		ReferralActivate                                        func(childComplexity int, refCode string, platform *string, deviceID *string, firebaseInstanceID *string) int
-		ReferralConfirmInstall                                  func(childComplexity int, refCode string, platform *string, deviceID *string, firebaseInstanceID *string) int
+		ReferralActivate                                        func(childComplexity int, refCode string, clickID *string, platform *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) int
+		ReferralConfirmInstall                                  func(childComplexity int, refCode string, clickID *string, platform *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) int
 		ReferralCreateRewardProgram                             func(childComplexity int, name string, activate *bool, tiers []*model.ReferralRewardTierInput) int
 		ReferralSetRewardProgramStatus                          func(childComplexity int, programID string, active bool) int
-		ReferralTrackEvent                                      func(childComplexity int, refCode string, eventType string, platform *string, channel *string, deviceID *string, firebaseInstanceID *string) int
+		ReferralTrackEvent                                      func(childComplexity int, refCode string, eventType string, platform *string, channel *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) int
 		RefreshToken                                            func(childComplexity int, refreshToken string) int
 		RegenerateMyQRCode                                      func(childComplexity int, id string) int
 		RegisterMyDevice                                        func(childComplexity int, input model.NotifDeviceInput) int
@@ -5711,8 +5711,10 @@ type ComplexityRoot struct {
 		MyQRScanStats                               func(childComplexity int, id string) int
 		MyRecompensePoints                          func(childComplexity int) int
 		MyRecompenses                               func(childComplexity int, page *int, limit *int) int
+		MyReferralAttribution                       func(childComplexity int) int
 		MyReferralLinks                             func(childComplexity int, limit *int, cursor *string) int
 		MyReferralStats                             func(childComplexity int) int
+		MyReferralUTMReport                         func(childComplexity int, utmSource *string, utmMedium *string, utmCampaign *string, from *int, to *int) int
 		MyRoles                                     func(childComplexity int) int
 		MySardPaymentAuthentications                func(childComplexity int) int
 		MyUserAddresses                             func(childComplexity int) int
@@ -5860,6 +5862,8 @@ type ComplexityRoot struct {
 		ReferralLink                                func(childComplexity int, refCode string) int
 		ReferralShareTargets                        func(childComplexity int, refCode string) int
 		ReferralStatus                              func(childComplexity int, refCode string) int
+		ReferralUTMReport                           func(childComplexity int, ownerUserID *string, utmSource *string, utmMedium *string, utmCampaign *string, from *int, to *int) int
+		ReferralUserAttribution                     func(childComplexity int, userID string) int
 		ReferralUserLinks                           func(childComplexity int, userID string, limit *int, cursor *string) int
 		ReferralUserStats                           func(childComplexity int, userID string) int
 		RentAmenities                               func(childComplexity int) int
@@ -6578,6 +6582,21 @@ type ComplexityRoot struct {
 		Title       func(childComplexity int) int
 	}
 
+	ReferralAttribution struct {
+		AttributedAt       func(childComplexity int) int
+		DeviceID           func(childComplexity int) int
+		FirebaseInstanceID func(childComplexity int) int
+		NewUserID          func(childComplexity int) int
+		OwnerUserID        func(childComplexity int) int
+		Platform           func(childComplexity int) int
+		RefCode            func(childComplexity int) int
+		UtmCampaign        func(childComplexity int) int
+		UtmContent         func(childComplexity int) int
+		UtmMedium          func(childComplexity int) int
+		UtmSource          func(childComplexity int) int
+		UtmTerm            func(childComplexity int) int
+	}
+
 	ReferralLinkList struct {
 		Data func(childComplexity int) int
 		Meta func(childComplexity int) int
@@ -6596,7 +6615,13 @@ type ComplexityRoot struct {
 		OwnerUserID func(childComplexity int) int
 		Platform    func(childComplexity int) int
 		RefCode     func(childComplexity int) int
+		ShareURL    func(childComplexity int) int
 		Status      func(childComplexity int) int
+		UtmCampaign func(childComplexity int) int
+		UtmContent  func(childComplexity int) int
+		UtmMedium   func(childComplexity int) int
+		UtmSource   func(childComplexity int) int
+		UtmTerm     func(childComplexity int) int
 	}
 
 	ReferralReferralStatusResponse struct {
@@ -6611,6 +6636,11 @@ type ComplexityRoot struct {
 		RewardValue      func(childComplexity int) int
 		Status           func(childComplexity int) int
 		TimeToInstallMs  func(childComplexity int) int
+		UtmCampaign      func(childComplexity int) int
+		UtmContent       func(childComplexity int) int
+		UtmMedium        func(childComplexity int) int
+		UtmSource        func(childComplexity int) int
+		UtmTerm          func(childComplexity int) int
 	}
 
 	ReferralRewardProgram struct {
@@ -6629,10 +6659,26 @@ type ComplexityRoot struct {
 	}
 
 	ReferralShareTarget struct {
-		Channel  func(childComplexity int) int
-		Label    func(childComplexity int) int
-		QRURL    func(childComplexity int) int
-		ShareURL func(childComplexity int) int
+		Channel     func(childComplexity int) int
+		Label       func(childComplexity int) int
+		QRURL       func(childComplexity int) int
+		ShareURL    func(childComplexity int) int
+		UtmCampaign func(childComplexity int) int
+		UtmContent  func(childComplexity int) int
+		UtmMedium   func(childComplexity int) int
+		UtmSource   func(childComplexity int) int
+		UtmTerm     func(childComplexity int) int
+	}
+
+	ReferralUTMPerformance struct {
+		Clicks         func(childComplexity int) int
+		ConversionRate func(childComplexity int) int
+		Installs       func(childComplexity int) int
+		Rewards        func(childComplexity int) int
+		UniqueClicks   func(childComplexity int) int
+		UtmCampaign    func(childComplexity int) int
+		UtmMedium      func(childComplexity int) int
+		UtmSource      func(childComplexity int) int
 	}
 
 	ReferralUserReferralStats struct {
@@ -9750,10 +9796,10 @@ type MutationResolver interface {
 	RecruitUpdateCandidate(ctx context.Context, id string, input map[string]any) (*model.RecruitCandidate, error)
 	RecruitTransitionCandidate(ctx context.Context, id string, status string, reason *string) (*model.RecruitCandidate, error)
 	RecruitEnrichCandidate(ctx context.Context, id string) (any, error)
-	GenerateMyReferralLink(ctx context.Context, channel *string, platform *string) (*model.ReferralReferralLink, error)
-	ReferralTrackEvent(ctx context.Context, refCode string, eventType string, platform *string, channel *string, deviceID *string, firebaseInstanceID *string) (any, error)
-	ReferralConfirmInstall(ctx context.Context, refCode string, platform *string, deviceID *string, firebaseInstanceID *string) (any, error)
-	ReferralActivate(ctx context.Context, refCode string, platform *string, deviceID *string, firebaseInstanceID *string) (any, error)
+	GenerateMyReferralLink(ctx context.Context, channel *string, platform *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) (*model.ReferralReferralLink, error)
+	ReferralTrackEvent(ctx context.Context, refCode string, eventType string, platform *string, channel *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) (any, error)
+	ReferralConfirmInstall(ctx context.Context, refCode string, clickID *string, platform *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) (any, error)
+	ReferralActivate(ctx context.Context, refCode string, clickID *string, platform *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) (any, error)
 	ReferralCreateRewardProgram(ctx context.Context, name string, activate *bool, tiers []*model.ReferralRewardTierInput) (*model.ReferralRewardProgram, error)
 	ReferralSetRewardProgramStatus(ctx context.Context, programID string, active bool) (*model.ReferralRewardProgram, error)
 	RentApproveHomestay(ctx context.Context, id int) (*model.RentHomestay, error)
@@ -10640,6 +10686,10 @@ type QueryResolver interface {
 	ReferralActiveRewardProgram(ctx context.Context) (*model.ReferralRewardProgram, error)
 	MyReferralLinks(ctx context.Context, limit *int, cursor *string) (*model.ReferralLinkList, error)
 	MyReferralStats(ctx context.Context) (*model.ReferralUserReferralStats, error)
+	ReferralUserAttribution(ctx context.Context, userID string) (*model.ReferralAttribution, error)
+	MyReferralAttribution(ctx context.Context) (*model.ReferralAttribution, error)
+	ReferralUTMReport(ctx context.Context, ownerUserID *string, utmSource *string, utmMedium *string, utmCampaign *string, from *int, to *int) ([]*model.ReferralUTMPerformance, error)
+	MyReferralUTMReport(ctx context.Context, utmSource *string, utmMedium *string, utmCampaign *string, from *int, to *int) ([]*model.ReferralUTMPerformance, error)
 	RentHomestay(ctx context.Context, id int) (*model.RentHomestay, error)
 	RentHomestays(ctx context.Context, provinceID *int, districtID *int, wardID *int, typeArg *int, guests *int, q *string, modelArg *string, minPrice *string, maxPrice *string, sort *string, limit *int, cursor *string, amenityIds *string, checkin *string, checkout *string) (*model.RentHomestayPage, error)
 	RentAvailability(ctx context.Context, id int, from *string, to *string) ([]*model.RentSlot, error)
@@ -30627,7 +30677,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.GenerateMyReferralLink(childComplexity, args["channel"].(*string), args["platform"].(*string)), true
+		return e.complexity.Mutation.GenerateMyReferralLink(childComplexity, args["channel"].(*string), args["platform"].(*string), args["utm_source"].(*string), args["utm_medium"].(*string), args["utm_campaign"].(*string), args["utm_term"].(*string), args["utm_content"].(*string)), true
 
 	case "Mutation.gymArchiveClient":
 		if e.complexity.Mutation.GymArchiveClient == nil {
@@ -34711,7 +34761,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ReferralActivate(childComplexity, args["ref_code"].(string), args["platform"].(*string), args["device_id"].(*string), args["firebase_instance_id"].(*string)), true
+		return e.complexity.Mutation.ReferralActivate(childComplexity, args["ref_code"].(string), args["click_id"].(*string), args["platform"].(*string), args["device_id"].(*string), args["firebase_instance_id"].(*string), args["utm_source"].(*string), args["utm_medium"].(*string), args["utm_campaign"].(*string), args["utm_term"].(*string), args["utm_content"].(*string)), true
 
 	case "Mutation.referralConfirmInstall":
 		if e.complexity.Mutation.ReferralConfirmInstall == nil {
@@ -34723,7 +34773,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ReferralConfirmInstall(childComplexity, args["ref_code"].(string), args["platform"].(*string), args["device_id"].(*string), args["firebase_instance_id"].(*string)), true
+		return e.complexity.Mutation.ReferralConfirmInstall(childComplexity, args["ref_code"].(string), args["click_id"].(*string), args["platform"].(*string), args["device_id"].(*string), args["firebase_instance_id"].(*string), args["utm_source"].(*string), args["utm_medium"].(*string), args["utm_campaign"].(*string), args["utm_term"].(*string), args["utm_content"].(*string)), true
 
 	case "Mutation.referralCreateRewardProgram":
 		if e.complexity.Mutation.ReferralCreateRewardProgram == nil {
@@ -34759,7 +34809,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ReferralTrackEvent(childComplexity, args["ref_code"].(string), args["event_type"].(string), args["platform"].(*string), args["channel"].(*string), args["device_id"].(*string), args["firebase_instance_id"].(*string)), true
+		return e.complexity.Mutation.ReferralTrackEvent(childComplexity, args["ref_code"].(string), args["event_type"].(string), args["platform"].(*string), args["channel"].(*string), args["device_id"].(*string), args["firebase_instance_id"].(*string), args["utm_source"].(*string), args["utm_medium"].(*string), args["utm_campaign"].(*string), args["utm_term"].(*string), args["utm_content"].(*string)), true
 
 	case "Mutation.refreshToken":
 		if e.complexity.Mutation.RefreshToken == nil {
@@ -47789,6 +47839,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.MyRecompenses(childComplexity, args["page"].(*int), args["limit"].(*int)), true
 
+	case "Query.myReferralAttribution":
+		if e.complexity.Query.MyReferralAttribution == nil {
+			break
+		}
+
+		return e.complexity.Query.MyReferralAttribution(childComplexity), true
+
 	case "Query.myReferralLinks":
 		if e.complexity.Query.MyReferralLinks == nil {
 			break
@@ -47807,6 +47864,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.MyReferralStats(childComplexity), true
+
+	case "Query.myReferralUTMReport":
+		if e.complexity.Query.MyReferralUTMReport == nil {
+			break
+		}
+
+		args, err := ec.field_Query_myReferralUTMReport_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.MyReferralUTMReport(childComplexity, args["utm_source"].(*string), args["utm_medium"].(*string), args["utm_campaign"].(*string), args["from"].(*int), args["to"].(*int)), true
 
 	case "Query.myRoles":
 		if e.complexity.Query.MyRoles == nil {
@@ -49461,6 +49530,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.ReferralStatus(childComplexity, args["ref_code"].(string)), true
+
+	case "Query.referralUTMReport":
+		if e.complexity.Query.ReferralUTMReport == nil {
+			break
+		}
+
+		args, err := ec.field_Query_referralUTMReport_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReferralUTMReport(childComplexity, args["owner_user_id"].(*string), args["utm_source"].(*string), args["utm_medium"].(*string), args["utm_campaign"].(*string), args["from"].(*int), args["to"].(*int)), true
+
+	case "Query.referralUserAttribution":
+		if e.complexity.Query.ReferralUserAttribution == nil {
+			break
+		}
+
+		args, err := ec.field_Query_referralUserAttribution_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ReferralUserAttribution(childComplexity, args["user_id"].(string)), true
 
 	case "Query.referralUserLinks":
 		if e.complexity.Query.ReferralUserLinks == nil {
@@ -54549,6 +54642,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RecruitWorkExperience.Title(childComplexity), true
 
+	case "ReferralAttribution.attributed_at":
+		if e.complexity.ReferralAttribution.AttributedAt == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.AttributedAt(childComplexity), true
+
+	case "ReferralAttribution.device_id":
+		if e.complexity.ReferralAttribution.DeviceID == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.DeviceID(childComplexity), true
+
+	case "ReferralAttribution.firebase_instance_id":
+		if e.complexity.ReferralAttribution.FirebaseInstanceID == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.FirebaseInstanceID(childComplexity), true
+
+	case "ReferralAttribution.new_user_id":
+		if e.complexity.ReferralAttribution.NewUserID == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.NewUserID(childComplexity), true
+
+	case "ReferralAttribution.owner_user_id":
+		if e.complexity.ReferralAttribution.OwnerUserID == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.OwnerUserID(childComplexity), true
+
+	case "ReferralAttribution.platform":
+		if e.complexity.ReferralAttribution.Platform == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.Platform(childComplexity), true
+
+	case "ReferralAttribution.ref_code":
+		if e.complexity.ReferralAttribution.RefCode == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.RefCode(childComplexity), true
+
+	case "ReferralAttribution.utm_campaign":
+		if e.complexity.ReferralAttribution.UtmCampaign == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.UtmCampaign(childComplexity), true
+
+	case "ReferralAttribution.utm_content":
+		if e.complexity.ReferralAttribution.UtmContent == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.UtmContent(childComplexity), true
+
+	case "ReferralAttribution.utm_medium":
+		if e.complexity.ReferralAttribution.UtmMedium == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.UtmMedium(childComplexity), true
+
+	case "ReferralAttribution.utm_source":
+		if e.complexity.ReferralAttribution.UtmSource == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.UtmSource(childComplexity), true
+
+	case "ReferralAttribution.utm_term":
+		if e.complexity.ReferralAttribution.UtmTerm == nil {
+			break
+		}
+
+		return e.complexity.ReferralAttribution.UtmTerm(childComplexity), true
+
 	case "ReferralLinkList.data":
 		if e.complexity.ReferralLinkList.Data == nil {
 			break
@@ -54626,12 +54803,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ReferralReferralLink.RefCode(childComplexity), true
 
+	case "ReferralReferralLink.share_url":
+		if e.complexity.ReferralReferralLink.ShareURL == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralLink.ShareURL(childComplexity), true
+
 	case "ReferralReferralLink.status":
 		if e.complexity.ReferralReferralLink.Status == nil {
 			break
 		}
 
 		return e.complexity.ReferralReferralLink.Status(childComplexity), true
+
+	case "ReferralReferralLink.utm_campaign":
+		if e.complexity.ReferralReferralLink.UtmCampaign == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralLink.UtmCampaign(childComplexity), true
+
+	case "ReferralReferralLink.utm_content":
+		if e.complexity.ReferralReferralLink.UtmContent == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralLink.UtmContent(childComplexity), true
+
+	case "ReferralReferralLink.utm_medium":
+		if e.complexity.ReferralReferralLink.UtmMedium == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralLink.UtmMedium(childComplexity), true
+
+	case "ReferralReferralLink.utm_source":
+		if e.complexity.ReferralReferralLink.UtmSource == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralLink.UtmSource(childComplexity), true
+
+	case "ReferralReferralLink.utm_term":
+		if e.complexity.ReferralReferralLink.UtmTerm == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralLink.UtmTerm(childComplexity), true
 
 	case "ReferralReferralStatusResponse.activated_at":
 		if e.complexity.ReferralReferralStatusResponse.ActivatedAt == nil {
@@ -54709,6 +54928,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ReferralReferralStatusResponse.TimeToInstallMs(childComplexity), true
+
+	case "ReferralReferralStatusResponse.utm_campaign":
+		if e.complexity.ReferralReferralStatusResponse.UtmCampaign == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralStatusResponse.UtmCampaign(childComplexity), true
+
+	case "ReferralReferralStatusResponse.utm_content":
+		if e.complexity.ReferralReferralStatusResponse.UtmContent == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralStatusResponse.UtmContent(childComplexity), true
+
+	case "ReferralReferralStatusResponse.utm_medium":
+		if e.complexity.ReferralReferralStatusResponse.UtmMedium == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralStatusResponse.UtmMedium(childComplexity), true
+
+	case "ReferralReferralStatusResponse.utm_source":
+		if e.complexity.ReferralReferralStatusResponse.UtmSource == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralStatusResponse.UtmSource(childComplexity), true
+
+	case "ReferralReferralStatusResponse.utm_term":
+		if e.complexity.ReferralReferralStatusResponse.UtmTerm == nil {
+			break
+		}
+
+		return e.complexity.ReferralReferralStatusResponse.UtmTerm(childComplexity), true
 
 	case "ReferralRewardProgram.created_at":
 		if e.complexity.ReferralRewardProgram.CreatedAt == nil {
@@ -54800,6 +55054,97 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ReferralShareTarget.ShareURL(childComplexity), true
+
+	case "ReferralShareTarget.utm_campaign":
+		if e.complexity.ReferralShareTarget.UtmCampaign == nil {
+			break
+		}
+
+		return e.complexity.ReferralShareTarget.UtmCampaign(childComplexity), true
+
+	case "ReferralShareTarget.utm_content":
+		if e.complexity.ReferralShareTarget.UtmContent == nil {
+			break
+		}
+
+		return e.complexity.ReferralShareTarget.UtmContent(childComplexity), true
+
+	case "ReferralShareTarget.utm_medium":
+		if e.complexity.ReferralShareTarget.UtmMedium == nil {
+			break
+		}
+
+		return e.complexity.ReferralShareTarget.UtmMedium(childComplexity), true
+
+	case "ReferralShareTarget.utm_source":
+		if e.complexity.ReferralShareTarget.UtmSource == nil {
+			break
+		}
+
+		return e.complexity.ReferralShareTarget.UtmSource(childComplexity), true
+
+	case "ReferralShareTarget.utm_term":
+		if e.complexity.ReferralShareTarget.UtmTerm == nil {
+			break
+		}
+
+		return e.complexity.ReferralShareTarget.UtmTerm(childComplexity), true
+
+	case "ReferralUTMPerformance.clicks":
+		if e.complexity.ReferralUTMPerformance.Clicks == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.Clicks(childComplexity), true
+
+	case "ReferralUTMPerformance.conversion_rate":
+		if e.complexity.ReferralUTMPerformance.ConversionRate == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.ConversionRate(childComplexity), true
+
+	case "ReferralUTMPerformance.installs":
+		if e.complexity.ReferralUTMPerformance.Installs == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.Installs(childComplexity), true
+
+	case "ReferralUTMPerformance.rewards":
+		if e.complexity.ReferralUTMPerformance.Rewards == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.Rewards(childComplexity), true
+
+	case "ReferralUTMPerformance.unique_clicks":
+		if e.complexity.ReferralUTMPerformance.UniqueClicks == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.UniqueClicks(childComplexity), true
+
+	case "ReferralUTMPerformance.utm_campaign":
+		if e.complexity.ReferralUTMPerformance.UtmCampaign == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.UtmCampaign(childComplexity), true
+
+	case "ReferralUTMPerformance.utm_medium":
+		if e.complexity.ReferralUTMPerformance.UtmMedium == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.UtmMedium(childComplexity), true
+
+	case "ReferralUTMPerformance.utm_source":
+		if e.complexity.ReferralUTMPerformance.UtmSource == nil {
+			break
+		}
+
+		return e.complexity.ReferralUTMPerformance.UtmSource(childComplexity), true
 
 	case "ReferralUserReferralStats.last_active_at":
 		if e.complexity.ReferralUserReferralStats.LastActiveAt == nil {
@@ -76118,6 +76463,31 @@ func (ec *executionContext) field_Mutation_generateMyReferralLink_args(ctx conte
 		return nil, err
 	}
 	args["platform"] = arg1
+	arg2, err := ec.field_Mutation_generateMyReferralLink_argsUtmSource(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_source"] = arg2
+	arg3, err := ec.field_Mutation_generateMyReferralLink_argsUtmMedium(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_medium"] = arg3
+	arg4, err := ec.field_Mutation_generateMyReferralLink_argsUtmCampaign(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_campaign"] = arg4
+	arg5, err := ec.field_Mutation_generateMyReferralLink_argsUtmTerm(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_term"] = arg5
+	arg6, err := ec.field_Mutation_generateMyReferralLink_argsUtmContent(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_content"] = arg6
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_generateMyReferralLink_argsChannel(
@@ -76139,6 +76509,71 @@ func (ec *executionContext) field_Mutation_generateMyReferralLink_argsPlatform(
 ) (*string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
 	if tmp, ok := rawArgs["platform"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_generateMyReferralLink_argsUtmSource(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_source"))
+	if tmp, ok := rawArgs["utm_source"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_generateMyReferralLink_argsUtmMedium(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_medium"))
+	if tmp, ok := rawArgs["utm_medium"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_generateMyReferralLink_argsUtmCampaign(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_campaign"))
+	if tmp, ok := rawArgs["utm_campaign"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_generateMyReferralLink_argsUtmTerm(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_term"))
+	if tmp, ok := rawArgs["utm_term"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_generateMyReferralLink_argsUtmContent(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_content"))
+	if tmp, ok := rawArgs["utm_content"]; ok {
 		return ec.unmarshalOString2ᚖstring(ctx, tmp)
 	}
 
@@ -89341,21 +89776,51 @@ func (ec *executionContext) field_Mutation_referralActivate_args(ctx context.Con
 		return nil, err
 	}
 	args["ref_code"] = arg0
-	arg1, err := ec.field_Mutation_referralActivate_argsPlatform(ctx, rawArgs)
+	arg1, err := ec.field_Mutation_referralActivate_argsClickID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["platform"] = arg1
-	arg2, err := ec.field_Mutation_referralActivate_argsDeviceID(ctx, rawArgs)
+	args["click_id"] = arg1
+	arg2, err := ec.field_Mutation_referralActivate_argsPlatform(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["device_id"] = arg2
-	arg3, err := ec.field_Mutation_referralActivate_argsFirebaseInstanceID(ctx, rawArgs)
+	args["platform"] = arg2
+	arg3, err := ec.field_Mutation_referralActivate_argsDeviceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["firebase_instance_id"] = arg3
+	args["device_id"] = arg3
+	arg4, err := ec.field_Mutation_referralActivate_argsFirebaseInstanceID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["firebase_instance_id"] = arg4
+	arg5, err := ec.field_Mutation_referralActivate_argsUtmSource(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_source"] = arg5
+	arg6, err := ec.field_Mutation_referralActivate_argsUtmMedium(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_medium"] = arg6
+	arg7, err := ec.field_Mutation_referralActivate_argsUtmCampaign(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_campaign"] = arg7
+	arg8, err := ec.field_Mutation_referralActivate_argsUtmTerm(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_term"] = arg8
+	arg9, err := ec.field_Mutation_referralActivate_argsUtmContent(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_content"] = arg9
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_referralActivate_argsRefCode(
@@ -89368,6 +89833,19 @@ func (ec *executionContext) field_Mutation_referralActivate_argsRefCode(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralActivate_argsClickID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("click_id"))
+	if tmp, ok := rawArgs["click_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
 	return zeroVal, nil
 }
 
@@ -89410,6 +89888,71 @@ func (ec *executionContext) field_Mutation_referralActivate_argsFirebaseInstance
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_referralActivate_argsUtmSource(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_source"))
+	if tmp, ok := rawArgs["utm_source"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralActivate_argsUtmMedium(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_medium"))
+	if tmp, ok := rawArgs["utm_medium"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralActivate_argsUtmCampaign(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_campaign"))
+	if tmp, ok := rawArgs["utm_campaign"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralActivate_argsUtmTerm(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_term"))
+	if tmp, ok := rawArgs["utm_term"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralActivate_argsUtmContent(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_content"))
+	if tmp, ok := rawArgs["utm_content"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_referralConfirmInstall_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -89418,21 +89961,51 @@ func (ec *executionContext) field_Mutation_referralConfirmInstall_args(ctx conte
 		return nil, err
 	}
 	args["ref_code"] = arg0
-	arg1, err := ec.field_Mutation_referralConfirmInstall_argsPlatform(ctx, rawArgs)
+	arg1, err := ec.field_Mutation_referralConfirmInstall_argsClickID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["platform"] = arg1
-	arg2, err := ec.field_Mutation_referralConfirmInstall_argsDeviceID(ctx, rawArgs)
+	args["click_id"] = arg1
+	arg2, err := ec.field_Mutation_referralConfirmInstall_argsPlatform(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["device_id"] = arg2
-	arg3, err := ec.field_Mutation_referralConfirmInstall_argsFirebaseInstanceID(ctx, rawArgs)
+	args["platform"] = arg2
+	arg3, err := ec.field_Mutation_referralConfirmInstall_argsDeviceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["firebase_instance_id"] = arg3
+	args["device_id"] = arg3
+	arg4, err := ec.field_Mutation_referralConfirmInstall_argsFirebaseInstanceID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["firebase_instance_id"] = arg4
+	arg5, err := ec.field_Mutation_referralConfirmInstall_argsUtmSource(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_source"] = arg5
+	arg6, err := ec.field_Mutation_referralConfirmInstall_argsUtmMedium(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_medium"] = arg6
+	arg7, err := ec.field_Mutation_referralConfirmInstall_argsUtmCampaign(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_campaign"] = arg7
+	arg8, err := ec.field_Mutation_referralConfirmInstall_argsUtmTerm(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_term"] = arg8
+	arg9, err := ec.field_Mutation_referralConfirmInstall_argsUtmContent(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_content"] = arg9
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_referralConfirmInstall_argsRefCode(
@@ -89445,6 +90018,19 @@ func (ec *executionContext) field_Mutation_referralConfirmInstall_argsRefCode(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralConfirmInstall_argsClickID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("click_id"))
+	if tmp, ok := rawArgs["click_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
 	return zeroVal, nil
 }
 
@@ -89480,6 +90066,71 @@ func (ec *executionContext) field_Mutation_referralConfirmInstall_argsFirebaseIn
 ) (*string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("firebase_instance_id"))
 	if tmp, ok := rawArgs["firebase_instance_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralConfirmInstall_argsUtmSource(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_source"))
+	if tmp, ok := rawArgs["utm_source"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralConfirmInstall_argsUtmMedium(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_medium"))
+	if tmp, ok := rawArgs["utm_medium"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralConfirmInstall_argsUtmCampaign(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_campaign"))
+	if tmp, ok := rawArgs["utm_campaign"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralConfirmInstall_argsUtmTerm(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_term"))
+	if tmp, ok := rawArgs["utm_term"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralConfirmInstall_argsUtmContent(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_content"))
+	if tmp, ok := rawArgs["utm_content"]; ok {
 		return ec.unmarshalOString2ᚖstring(ctx, tmp)
 	}
 
@@ -89620,6 +90271,31 @@ func (ec *executionContext) field_Mutation_referralTrackEvent_args(ctx context.C
 		return nil, err
 	}
 	args["firebase_instance_id"] = arg5
+	arg6, err := ec.field_Mutation_referralTrackEvent_argsUtmSource(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_source"] = arg6
+	arg7, err := ec.field_Mutation_referralTrackEvent_argsUtmMedium(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_medium"] = arg7
+	arg8, err := ec.field_Mutation_referralTrackEvent_argsUtmCampaign(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_campaign"] = arg8
+	arg9, err := ec.field_Mutation_referralTrackEvent_argsUtmTerm(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_term"] = arg9
+	arg10, err := ec.field_Mutation_referralTrackEvent_argsUtmContent(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_content"] = arg10
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_referralTrackEvent_argsRefCode(
@@ -89693,6 +90369,71 @@ func (ec *executionContext) field_Mutation_referralTrackEvent_argsFirebaseInstan
 ) (*string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("firebase_instance_id"))
 	if tmp, ok := rawArgs["firebase_instance_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralTrackEvent_argsUtmSource(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_source"))
+	if tmp, ok := rawArgs["utm_source"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralTrackEvent_argsUtmMedium(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_medium"))
+	if tmp, ok := rawArgs["utm_medium"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralTrackEvent_argsUtmCampaign(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_campaign"))
+	if tmp, ok := rawArgs["utm_campaign"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralTrackEvent_argsUtmTerm(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_term"))
+	if tmp, ok := rawArgs["utm_term"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_referralTrackEvent_argsUtmContent(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_content"))
+	if tmp, ok := rawArgs["utm_content"]; ok {
 		return ec.unmarshalOString2ᚖstring(ctx, tmp)
 	}
 
@@ -116724,6 +117465,101 @@ func (ec *executionContext) field_Query_myReferralLinks_argsCursor(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_myReferralUTMReport_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_myReferralUTMReport_argsUtmSource(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_source"] = arg0
+	arg1, err := ec.field_Query_myReferralUTMReport_argsUtmMedium(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_medium"] = arg1
+	arg2, err := ec.field_Query_myReferralUTMReport_argsUtmCampaign(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_campaign"] = arg2
+	arg3, err := ec.field_Query_myReferralUTMReport_argsFrom(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from"] = arg3
+	arg4, err := ec.field_Query_myReferralUTMReport_argsTo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to"] = arg4
+	return args, nil
+}
+func (ec *executionContext) field_Query_myReferralUTMReport_argsUtmSource(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_source"))
+	if tmp, ok := rawArgs["utm_source"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_myReferralUTMReport_argsUtmMedium(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_medium"))
+	if tmp, ok := rawArgs["utm_medium"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_myReferralUTMReport_argsUtmCampaign(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_campaign"))
+	if tmp, ok := rawArgs["utm_campaign"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_myReferralUTMReport_argsFrom(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+	if tmp, ok := rawArgs["from"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_myReferralUTMReport_argsTo(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+	if tmp, ok := rawArgs["to"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_myWalletPockets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -121986,6 +122822,142 @@ func (ec *executionContext) field_Query_referralStatus_argsRefCode(
 ) (string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("ref_code"))
 	if tmp, ok := rawArgs["ref_code"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_referralUTMReport_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_referralUTMReport_argsOwnerUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["owner_user_id"] = arg0
+	arg1, err := ec.field_Query_referralUTMReport_argsUtmSource(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_source"] = arg1
+	arg2, err := ec.field_Query_referralUTMReport_argsUtmMedium(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_medium"] = arg2
+	arg3, err := ec.field_Query_referralUTMReport_argsUtmCampaign(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["utm_campaign"] = arg3
+	arg4, err := ec.field_Query_referralUTMReport_argsFrom(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from"] = arg4
+	arg5, err := ec.field_Query_referralUTMReport_argsTo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to"] = arg5
+	return args, nil
+}
+func (ec *executionContext) field_Query_referralUTMReport_argsOwnerUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("owner_user_id"))
+	if tmp, ok := rawArgs["owner_user_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_referralUTMReport_argsUtmSource(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_source"))
+	if tmp, ok := rawArgs["utm_source"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_referralUTMReport_argsUtmMedium(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_medium"))
+	if tmp, ok := rawArgs["utm_medium"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_referralUTMReport_argsUtmCampaign(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("utm_campaign"))
+	if tmp, ok := rawArgs["utm_campaign"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_referralUTMReport_argsFrom(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+	if tmp, ok := rawArgs["from"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_referralUTMReport_argsTo(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+	if tmp, ok := rawArgs["to"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_referralUserAttribution_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_referralUserAttribution_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_referralUserAttribution_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
 		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
@@ -289404,7 +290376,7 @@ func (ec *executionContext) _Mutation_generateMyReferralLink(ctx context.Context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().GenerateMyReferralLink(rctx, fc.Args["channel"].(*string), fc.Args["platform"].(*string))
+		return ec.resolvers.Mutation().GenerateMyReferralLink(rctx, fc.Args["channel"].(*string), fc.Args["platform"].(*string), fc.Args["utm_source"].(*string), fc.Args["utm_medium"].(*string), fc.Args["utm_campaign"].(*string), fc.Args["utm_term"].(*string), fc.Args["utm_content"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -289442,6 +290414,18 @@ func (ec *executionContext) fieldContext_Mutation_generateMyReferralLink(ctx con
 				return ec.fieldContext_ReferralReferralLink_deep_link(ctx, field)
 			case "platform":
 				return ec.fieldContext_ReferralReferralLink_platform(ctx, field)
+			case "share_url":
+				return ec.fieldContext_ReferralReferralLink_share_url(ctx, field)
+			case "utm_source":
+				return ec.fieldContext_ReferralReferralLink_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralReferralLink_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralReferralLink_utm_campaign(ctx, field)
+			case "utm_term":
+				return ec.fieldContext_ReferralReferralLink_utm_term(ctx, field)
+			case "utm_content":
+				return ec.fieldContext_ReferralReferralLink_utm_content(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ReferralReferralLink", field.Name)
 		},
@@ -289475,7 +290459,7 @@ func (ec *executionContext) _Mutation_referralTrackEvent(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		directive0 := func(rctx context.Context) (any, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().ReferralTrackEvent(rctx, fc.Args["ref_code"].(string), fc.Args["event_type"].(string), fc.Args["platform"].(*string), fc.Args["channel"].(*string), fc.Args["device_id"].(*string), fc.Args["firebase_instance_id"].(*string))
+			return ec.resolvers.Mutation().ReferralTrackEvent(rctx, fc.Args["ref_code"].(string), fc.Args["event_type"].(string), fc.Args["platform"].(*string), fc.Args["channel"].(*string), fc.Args["device_id"].(*string), fc.Args["firebase_instance_id"].(*string), fc.Args["utm_source"].(*string), fc.Args["utm_medium"].(*string), fc.Args["utm_campaign"].(*string), fc.Args["utm_term"].(*string), fc.Args["utm_content"].(*string))
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
@@ -289548,7 +290532,7 @@ func (ec *executionContext) _Mutation_referralConfirmInstall(ctx context.Context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ReferralConfirmInstall(rctx, fc.Args["ref_code"].(string), fc.Args["platform"].(*string), fc.Args["device_id"].(*string), fc.Args["firebase_instance_id"].(*string))
+		return ec.resolvers.Mutation().ReferralConfirmInstall(rctx, fc.Args["ref_code"].(string), fc.Args["click_id"].(*string), fc.Args["platform"].(*string), fc.Args["device_id"].(*string), fc.Args["firebase_instance_id"].(*string), fc.Args["utm_source"].(*string), fc.Args["utm_medium"].(*string), fc.Args["utm_campaign"].(*string), fc.Args["utm_term"].(*string), fc.Args["utm_content"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -289600,7 +290584,7 @@ func (ec *executionContext) _Mutation_referralActivate(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ReferralActivate(rctx, fc.Args["ref_code"].(string), fc.Args["platform"].(*string), fc.Args["device_id"].(*string), fc.Args["firebase_instance_id"].(*string))
+		return ec.resolvers.Mutation().ReferralActivate(rctx, fc.Args["ref_code"].(string), fc.Args["click_id"].(*string), fc.Args["platform"].(*string), fc.Args["device_id"].(*string), fc.Args["firebase_instance_id"].(*string), fc.Args["utm_source"].(*string), fc.Args["utm_medium"].(*string), fc.Args["utm_campaign"].(*string), fc.Args["utm_term"].(*string), fc.Args["utm_content"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -394284,6 +395268,18 @@ func (ec *executionContext) fieldContext_Query_referralLink(ctx context.Context,
 				return ec.fieldContext_ReferralReferralLink_deep_link(ctx, field)
 			case "platform":
 				return ec.fieldContext_ReferralReferralLink_platform(ctx, field)
+			case "share_url":
+				return ec.fieldContext_ReferralReferralLink_share_url(ctx, field)
+			case "utm_source":
+				return ec.fieldContext_ReferralReferralLink_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralReferralLink_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralReferralLink_utm_campaign(ctx, field)
+			case "utm_term":
+				return ec.fieldContext_ReferralReferralLink_utm_term(ctx, field)
+			case "utm_content":
+				return ec.fieldContext_ReferralReferralLink_utm_content(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ReferralReferralLink", field.Name)
 		},
@@ -394450,6 +395446,16 @@ func (ec *executionContext) fieldContext_Query_referralStatus(ctx context.Contex
 				return ec.fieldContext_ReferralReferralStatusResponse_reward_status(ctx, field)
 			case "reward_value":
 				return ec.fieldContext_ReferralReferralStatusResponse_reward_value(ctx, field)
+			case "utm_source":
+				return ec.fieldContext_ReferralReferralStatusResponse_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralReferralStatusResponse_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralReferralStatusResponse_utm_campaign(ctx, field)
+			case "utm_term":
+				return ec.fieldContext_ReferralReferralStatusResponse_utm_term(ctx, field)
+			case "utm_content":
+				return ec.fieldContext_ReferralReferralStatusResponse_utm_content(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ReferralReferralStatusResponse", field.Name)
 		},
@@ -394632,6 +395638,16 @@ func (ec *executionContext) fieldContext_Query_referralShareTargets(ctx context.
 				return ec.fieldContext_ReferralShareTarget_share_url(ctx, field)
 			case "qr_url":
 				return ec.fieldContext_ReferralShareTarget_qr_url(ctx, field)
+			case "utm_source":
+				return ec.fieldContext_ReferralShareTarget_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralShareTarget_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralShareTarget_utm_campaign(ctx, field)
+			case "utm_term":
+				return ec.fieldContext_ReferralShareTarget_utm_term(ctx, field)
+			case "utm_content":
+				return ec.fieldContext_ReferralShareTarget_utm_content(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ReferralShareTarget", field.Name)
 		},
@@ -394836,6 +395852,355 @@ func (ec *executionContext) fieldContext_Query_myReferralStats(_ context.Context
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ReferralUserReferralStats", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_referralUserAttribution(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_referralUserAttribution(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ReferralUserAttribution(rctx, fc.Args["user_id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/referral-service")
+			if err != nil {
+				var zeroVal *model.ReferralAttribution
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.ReferralAttribution
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.ReferralAttribution
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ReferralAttribution); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.ReferralAttribution`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ReferralAttribution)
+	fc.Result = res
+	return ec.marshalOReferralAttribution2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralAttribution(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_referralUserAttribution(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "owner_user_id":
+				return ec.fieldContext_ReferralAttribution_owner_user_id(ctx, field)
+			case "new_user_id":
+				return ec.fieldContext_ReferralAttribution_new_user_id(ctx, field)
+			case "ref_code":
+				return ec.fieldContext_ReferralAttribution_ref_code(ctx, field)
+			case "platform":
+				return ec.fieldContext_ReferralAttribution_platform(ctx, field)
+			case "device_id":
+				return ec.fieldContext_ReferralAttribution_device_id(ctx, field)
+			case "attributed_at":
+				return ec.fieldContext_ReferralAttribution_attributed_at(ctx, field)
+			case "firebase_instance_id":
+				return ec.fieldContext_ReferralAttribution_firebase_instance_id(ctx, field)
+			case "utm_source":
+				return ec.fieldContext_ReferralAttribution_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralAttribution_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralAttribution_utm_campaign(ctx, field)
+			case "utm_term":
+				return ec.fieldContext_ReferralAttribution_utm_term(ctx, field)
+			case "utm_content":
+				return ec.fieldContext_ReferralAttribution_utm_content(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ReferralAttribution", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_referralUserAttribution_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_myReferralAttribution(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_myReferralAttribution(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().MyReferralAttribution(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ReferralAttribution)
+	fc.Result = res
+	return ec.marshalOReferralAttribution2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralAttribution(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_myReferralAttribution(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "owner_user_id":
+				return ec.fieldContext_ReferralAttribution_owner_user_id(ctx, field)
+			case "new_user_id":
+				return ec.fieldContext_ReferralAttribution_new_user_id(ctx, field)
+			case "ref_code":
+				return ec.fieldContext_ReferralAttribution_ref_code(ctx, field)
+			case "platform":
+				return ec.fieldContext_ReferralAttribution_platform(ctx, field)
+			case "device_id":
+				return ec.fieldContext_ReferralAttribution_device_id(ctx, field)
+			case "attributed_at":
+				return ec.fieldContext_ReferralAttribution_attributed_at(ctx, field)
+			case "firebase_instance_id":
+				return ec.fieldContext_ReferralAttribution_firebase_instance_id(ctx, field)
+			case "utm_source":
+				return ec.fieldContext_ReferralAttribution_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralAttribution_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralAttribution_utm_campaign(ctx, field)
+			case "utm_term":
+				return ec.fieldContext_ReferralAttribution_utm_term(ctx, field)
+			case "utm_content":
+				return ec.fieldContext_ReferralAttribution_utm_content(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ReferralAttribution", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_referralUTMReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_referralUTMReport(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ReferralUTMReport(rctx, fc.Args["owner_user_id"].(*string), fc.Args["utm_source"].(*string), fc.Args["utm_medium"].(*string), fc.Args["utm_campaign"].(*string), fc.Args["from"].(*int), fc.Args["to"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/referral-service")
+			if err != nil {
+				var zeroVal []*model.ReferralUTMPerformance
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal []*model.ReferralUTMPerformance
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal []*model.ReferralUTMPerformance
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.ReferralUTMPerformance); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/JIeeiroSst/gateway-api/graph/model.ReferralUTMPerformance`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ReferralUTMPerformance)
+	fc.Result = res
+	return ec.marshalOReferralUTMPerformance2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralUTMPerformanceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_referralUTMReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "utm_source":
+				return ec.fieldContext_ReferralUTMPerformance_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralUTMPerformance_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralUTMPerformance_utm_campaign(ctx, field)
+			case "clicks":
+				return ec.fieldContext_ReferralUTMPerformance_clicks(ctx, field)
+			case "unique_clicks":
+				return ec.fieldContext_ReferralUTMPerformance_unique_clicks(ctx, field)
+			case "installs":
+				return ec.fieldContext_ReferralUTMPerformance_installs(ctx, field)
+			case "rewards":
+				return ec.fieldContext_ReferralUTMPerformance_rewards(ctx, field)
+			case "conversion_rate":
+				return ec.fieldContext_ReferralUTMPerformance_conversion_rate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ReferralUTMPerformance", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_referralUTMReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_myReferralUTMReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_myReferralUTMReport(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().MyReferralUTMReport(rctx, fc.Args["utm_source"].(*string), fc.Args["utm_medium"].(*string), fc.Args["utm_campaign"].(*string), fc.Args["from"].(*int), fc.Args["to"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ReferralUTMPerformance)
+	fc.Result = res
+	return ec.marshalOReferralUTMPerformance2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralUTMPerformanceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_myReferralUTMReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "utm_source":
+				return ec.fieldContext_ReferralUTMPerformance_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralUTMPerformance_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralUTMPerformance_utm_campaign(ctx, field)
+			case "clicks":
+				return ec.fieldContext_ReferralUTMPerformance_clicks(ctx, field)
+			case "unique_clicks":
+				return ec.fieldContext_ReferralUTMPerformance_unique_clicks(ctx, field)
+			case "installs":
+				return ec.fieldContext_ReferralUTMPerformance_installs(ctx, field)
+			case "rewards":
+				return ec.fieldContext_ReferralUTMPerformance_rewards(ctx, field)
+			case "conversion_rate":
+				return ec.fieldContext_ReferralUTMPerformance_conversion_rate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ReferralUTMPerformance", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_myReferralUTMReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -428498,6 +429863,498 @@ func (ec *executionContext) fieldContext_RecruitWorkExperience_description(_ con
 	return fc, nil
 }
 
+func (ec *executionContext) _ReferralAttribution_owner_user_id(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_owner_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OwnerUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_owner_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_new_user_id(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_new_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NewUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_new_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_ref_code(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_ref_code(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_ref_code(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_platform(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_platform(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Platform, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_platform(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_device_id(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_device_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeviceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_device_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_attributed_at(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_attributed_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AttributedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_attributed_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_firebase_instance_id(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_firebase_instance_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FirebaseInstanceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_firebase_instance_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_utm_source(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_utm_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmSource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_utm_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_utm_medium(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_utm_medium(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmMedium, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_utm_medium(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_utm_campaign(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_utm_campaign(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmCampaign, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_utm_campaign(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_utm_term(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_utm_term(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmTerm, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_utm_term(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralAttribution_utm_content(ctx context.Context, field graphql.CollectedField, obj *model.ReferralAttribution) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralAttribution_utm_content(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmContent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralAttribution_utm_content(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralAttribution",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ReferralLinkList_data(ctx context.Context, field graphql.CollectedField, obj *model.ReferralLinkList) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ReferralLinkList_data(ctx, field)
 	if err != nil {
@@ -428550,6 +430407,18 @@ func (ec *executionContext) fieldContext_ReferralLinkList_data(_ context.Context
 				return ec.fieldContext_ReferralReferralLink_deep_link(ctx, field)
 			case "platform":
 				return ec.fieldContext_ReferralReferralLink_platform(ctx, field)
+			case "share_url":
+				return ec.fieldContext_ReferralReferralLink_share_url(ctx, field)
+			case "utm_source":
+				return ec.fieldContext_ReferralReferralLink_utm_source(ctx, field)
+			case "utm_medium":
+				return ec.fieldContext_ReferralReferralLink_utm_medium(ctx, field)
+			case "utm_campaign":
+				return ec.fieldContext_ReferralReferralLink_utm_campaign(ctx, field)
+			case "utm_term":
+				return ec.fieldContext_ReferralReferralLink_utm_term(ctx, field)
+			case "utm_content":
+				return ec.fieldContext_ReferralReferralLink_utm_content(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ReferralReferralLink", field.Name)
 		},
@@ -429014,6 +430883,252 @@ func (ec *executionContext) fieldContext_ReferralReferralLink_platform(_ context
 	return fc, nil
 }
 
+func (ec *executionContext) _ReferralReferralLink_share_url(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralLink_share_url(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ShareURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralLink_share_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralLink_utm_source(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralLink_utm_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmSource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralLink_utm_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralLink_utm_medium(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralLink_utm_medium(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmMedium, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralLink_utm_medium(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralLink_utm_campaign(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralLink_utm_campaign(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmCampaign, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralLink_utm_campaign(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralLink_utm_term(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralLink_utm_term(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmTerm, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralLink_utm_term(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralLink_utm_content(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralLink_utm_content(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmContent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralLink_utm_content(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ReferralReferralStatusResponse_ref_code(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralStatusResponse) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ReferralReferralStatusResponse_ref_code(ctx, field)
 	if err != nil {
@@ -429460,6 +431575,211 @@ func (ec *executionContext) fieldContext_ReferralReferralStatusResponse_reward_v
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralStatusResponse_utm_source(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralStatusResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralStatusResponse_utm_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmSource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralStatusResponse_utm_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralStatusResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralStatusResponse_utm_medium(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralStatusResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralStatusResponse_utm_medium(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmMedium, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralStatusResponse_utm_medium(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralStatusResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralStatusResponse_utm_campaign(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralStatusResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralStatusResponse_utm_campaign(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmCampaign, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralStatusResponse_utm_campaign(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralStatusResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralStatusResponse_utm_term(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralStatusResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralStatusResponse_utm_term(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmTerm, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralStatusResponse_utm_term(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralStatusResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralReferralStatusResponse_utm_content(ctx context.Context, field graphql.CollectedField, obj *model.ReferralReferralStatusResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralReferralStatusResponse_utm_content(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmContent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralReferralStatusResponse_utm_content(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralReferralStatusResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -430001,6 +432321,539 @@ func (ec *executionContext) fieldContext_ReferralShareTarget_qr_url(_ context.Co
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralShareTarget_utm_source(ctx context.Context, field graphql.CollectedField, obj *model.ReferralShareTarget) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralShareTarget_utm_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmSource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralShareTarget_utm_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralShareTarget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralShareTarget_utm_medium(ctx context.Context, field graphql.CollectedField, obj *model.ReferralShareTarget) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralShareTarget_utm_medium(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmMedium, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralShareTarget_utm_medium(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralShareTarget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralShareTarget_utm_campaign(ctx context.Context, field graphql.CollectedField, obj *model.ReferralShareTarget) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralShareTarget_utm_campaign(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmCampaign, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralShareTarget_utm_campaign(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralShareTarget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralShareTarget_utm_term(ctx context.Context, field graphql.CollectedField, obj *model.ReferralShareTarget) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralShareTarget_utm_term(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmTerm, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralShareTarget_utm_term(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralShareTarget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralShareTarget_utm_content(ctx context.Context, field graphql.CollectedField, obj *model.ReferralShareTarget) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralShareTarget_utm_content(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmContent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralShareTarget_utm_content(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralShareTarget",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_utm_source(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_utm_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmSource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_utm_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_utm_medium(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_utm_medium(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmMedium, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_utm_medium(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_utm_campaign(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_utm_campaign(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UtmCampaign, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_utm_campaign(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_clicks(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_clicks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Clicks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_clicks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_unique_clicks(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_unique_clicks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UniqueClicks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_unique_clicks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_installs(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_installs(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Installs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_installs(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_rewards(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_rewards(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rewards, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_rewards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ReferralUTMPerformance_conversion_rate(ctx context.Context, field graphql.CollectedField, obj *model.ReferralUTMPerformance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ReferralUTMPerformance_conversion_rate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ConversionRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ReferralUTMPerformance_conversion_rate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ReferralUTMPerformance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -559709,6 +562562,82 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "referralUserAttribution":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_referralUserAttribution(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "myReferralAttribution":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_myReferralAttribution(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "referralUTMReport":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_referralUTMReport(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "myReferralUTMReport":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_myReferralUTMReport(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "rentHomestay":
 			field := field
 
@@ -566306,6 +569235,64 @@ func (ec *executionContext) _RecruitWorkExperience(ctx context.Context, sel ast.
 	return out
 }
 
+var referralAttributionImplementors = []string{"ReferralAttribution"}
+
+func (ec *executionContext) _ReferralAttribution(ctx context.Context, sel ast.SelectionSet, obj *model.ReferralAttribution) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, referralAttributionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ReferralAttribution")
+		case "owner_user_id":
+			out.Values[i] = ec._ReferralAttribution_owner_user_id(ctx, field, obj)
+		case "new_user_id":
+			out.Values[i] = ec._ReferralAttribution_new_user_id(ctx, field, obj)
+		case "ref_code":
+			out.Values[i] = ec._ReferralAttribution_ref_code(ctx, field, obj)
+		case "platform":
+			out.Values[i] = ec._ReferralAttribution_platform(ctx, field, obj)
+		case "device_id":
+			out.Values[i] = ec._ReferralAttribution_device_id(ctx, field, obj)
+		case "attributed_at":
+			out.Values[i] = ec._ReferralAttribution_attributed_at(ctx, field, obj)
+		case "firebase_instance_id":
+			out.Values[i] = ec._ReferralAttribution_firebase_instance_id(ctx, field, obj)
+		case "utm_source":
+			out.Values[i] = ec._ReferralAttribution_utm_source(ctx, field, obj)
+		case "utm_medium":
+			out.Values[i] = ec._ReferralAttribution_utm_medium(ctx, field, obj)
+		case "utm_campaign":
+			out.Values[i] = ec._ReferralAttribution_utm_campaign(ctx, field, obj)
+		case "utm_term":
+			out.Values[i] = ec._ReferralAttribution_utm_term(ctx, field, obj)
+		case "utm_content":
+			out.Values[i] = ec._ReferralAttribution_utm_content(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var referralLinkListImplementors = []string{"ReferralLinkList"}
 
 func (ec *executionContext) _ReferralLinkList(ctx context.Context, sel ast.SelectionSet, obj *model.ReferralLinkList) graphql.Marshaler {
@@ -566409,6 +569396,18 @@ func (ec *executionContext) _ReferralReferralLink(ctx context.Context, sel ast.S
 			out.Values[i] = ec._ReferralReferralLink_deep_link(ctx, field, obj)
 		case "platform":
 			out.Values[i] = ec._ReferralReferralLink_platform(ctx, field, obj)
+		case "share_url":
+			out.Values[i] = ec._ReferralReferralLink_share_url(ctx, field, obj)
+		case "utm_source":
+			out.Values[i] = ec._ReferralReferralLink_utm_source(ctx, field, obj)
+		case "utm_medium":
+			out.Values[i] = ec._ReferralReferralLink_utm_medium(ctx, field, obj)
+		case "utm_campaign":
+			out.Values[i] = ec._ReferralReferralLink_utm_campaign(ctx, field, obj)
+		case "utm_term":
+			out.Values[i] = ec._ReferralReferralLink_utm_term(ctx, field, obj)
+		case "utm_content":
+			out.Values[i] = ec._ReferralReferralLink_utm_content(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -566465,6 +569464,16 @@ func (ec *executionContext) _ReferralReferralStatusResponse(ctx context.Context,
 			out.Values[i] = ec._ReferralReferralStatusResponse_reward_status(ctx, field, obj)
 		case "reward_value":
 			out.Values[i] = ec._ReferralReferralStatusResponse_reward_value(ctx, field, obj)
+		case "utm_source":
+			out.Values[i] = ec._ReferralReferralStatusResponse_utm_source(ctx, field, obj)
+		case "utm_medium":
+			out.Values[i] = ec._ReferralReferralStatusResponse_utm_medium(ctx, field, obj)
+		case "utm_campaign":
+			out.Values[i] = ec._ReferralReferralStatusResponse_utm_campaign(ctx, field, obj)
+		case "utm_term":
+			out.Values[i] = ec._ReferralReferralStatusResponse_utm_term(ctx, field, obj)
+		case "utm_content":
+			out.Values[i] = ec._ReferralReferralStatusResponse_utm_content(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -566593,6 +569602,66 @@ func (ec *executionContext) _ReferralShareTarget(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._ReferralShareTarget_share_url(ctx, field, obj)
 		case "qr_url":
 			out.Values[i] = ec._ReferralShareTarget_qr_url(ctx, field, obj)
+		case "utm_source":
+			out.Values[i] = ec._ReferralShareTarget_utm_source(ctx, field, obj)
+		case "utm_medium":
+			out.Values[i] = ec._ReferralShareTarget_utm_medium(ctx, field, obj)
+		case "utm_campaign":
+			out.Values[i] = ec._ReferralShareTarget_utm_campaign(ctx, field, obj)
+		case "utm_term":
+			out.Values[i] = ec._ReferralShareTarget_utm_term(ctx, field, obj)
+		case "utm_content":
+			out.Values[i] = ec._ReferralShareTarget_utm_content(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var referralUTMPerformanceImplementors = []string{"ReferralUTMPerformance"}
+
+func (ec *executionContext) _ReferralUTMPerformance(ctx context.Context, sel ast.SelectionSet, obj *model.ReferralUTMPerformance) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, referralUTMPerformanceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ReferralUTMPerformance")
+		case "utm_source":
+			out.Values[i] = ec._ReferralUTMPerformance_utm_source(ctx, field, obj)
+		case "utm_medium":
+			out.Values[i] = ec._ReferralUTMPerformance_utm_medium(ctx, field, obj)
+		case "utm_campaign":
+			out.Values[i] = ec._ReferralUTMPerformance_utm_campaign(ctx, field, obj)
+		case "clicks":
+			out.Values[i] = ec._ReferralUTMPerformance_clicks(ctx, field, obj)
+		case "unique_clicks":
+			out.Values[i] = ec._ReferralUTMPerformance_unique_clicks(ctx, field, obj)
+		case "installs":
+			out.Values[i] = ec._ReferralUTMPerformance_installs(ctx, field, obj)
+		case "rewards":
+			out.Values[i] = ec._ReferralUTMPerformance_rewards(ctx, field, obj)
+		case "conversion_rate":
+			out.Values[i] = ec._ReferralUTMPerformance_conversion_rate(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -588216,6 +591285,16 @@ func (ec *executionContext) marshalNReferralShareTarget2ᚖgithubᚗcomᚋJIeeir
 	return ec._ReferralShareTarget(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNReferralUTMPerformance2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralUTMPerformance(ctx context.Context, sel ast.SelectionSet, v *model.ReferralUTMPerformance) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ReferralUTMPerformance(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNRentAmenity2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐRentAmenity(ctx context.Context, sel ast.SelectionSet, v *model.RentAmenity) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -601017,6 +604096,13 @@ func (ec *executionContext) marshalORecruitWorkExperience2ᚕᚖgithubᚗcomᚋJ
 	return ret
 }
 
+func (ec *executionContext) marshalOReferralAttribution2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralAttribution(ctx context.Context, sel ast.SelectionSet, v *model.ReferralAttribution) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ReferralAttribution(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOReferralLinkList2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralLinkList(ctx context.Context, sel ast.SelectionSet, v *model.ReferralLinkList) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -601194,6 +604280,53 @@ func (ec *executionContext) marshalOReferralShareTarget2ᚕᚖgithubᚗcomᚋJIe
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalNReferralShareTarget2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralShareTarget(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOReferralUTMPerformance2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralUTMPerformanceᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ReferralUTMPerformance) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNReferralUTMPerformance2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐReferralUTMPerformance(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

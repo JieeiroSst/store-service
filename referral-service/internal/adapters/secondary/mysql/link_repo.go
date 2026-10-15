@@ -32,9 +32,10 @@ func NewReferralLinkRepo(db *sqlx.DB, log *zap.Logger) ports.ReferralLinkReposit
 
 func (r *referralLinkRepo) Save(ctx context.Context, link *domain.ReferralLink) error {
 	_, err := r.db.ExecContext(ctx,
-		`INSERT INTO referral_links (ref_code, created_at, owner_user_id, channel, status, expires_at, deep_link, platform)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		`INSERT INTO referral_links (ref_code, created_at, owner_user_id, channel, status, expires_at, deep_link, platform, utm_source, utm_medium, utm_campaign, utm_term, utm_content)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		link.RefCode, link.CreatedAt, link.OwnerUserID, link.Channel, link.Status, link.ExpiresAt, link.DeepLink, link.Platform,
+		link.Source, link.Medium, link.Campaign, link.Term, link.Content,
 	)
 	if err != nil {
 		var mysqlErr *mysqldriver.MySQLError
@@ -51,7 +52,7 @@ func (r *referralLinkRepo) Save(ctx context.Context, link *domain.ReferralLink) 
 func (r *referralLinkRepo) FindByRefCode(ctx context.Context, refCode string) (*domain.ReferralLink, error) {
 	var link domain.ReferralLink
 	err := r.db.GetContext(ctx, &link,
-		`SELECT ref_code, created_at, owner_user_id, channel, status, expires_at, deep_link, platform
+		`SELECT ref_code, created_at, owner_user_id, channel, status, expires_at, deep_link, platform, utm_source, utm_medium, utm_campaign, utm_term, utm_content
 		 FROM referral_links WHERE ref_code = ?`,
 		refCode,
 	)
@@ -70,7 +71,7 @@ func (r *referralLinkRepo) FindByOwnerUserID(
 	limit int,
 	cursor string,
 ) ([]*domain.ReferralLink, string, error) {
-	query := `SELECT ref_code, created_at, owner_user_id, channel, status, expires_at, deep_link, platform
+	query := `SELECT ref_code, created_at, owner_user_id, channel, status, expires_at, deep_link, platform, utm_source, utm_medium, utm_campaign, utm_term, utm_content
 		FROM referral_links WHERE owner_user_id = ?`
 	args := []any{ownerUserID}
 

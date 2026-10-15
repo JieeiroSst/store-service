@@ -128,6 +128,10 @@ make run
 | `APP_PUBLIC_URL` | — | URL công khai của service (không có trailing slash). Mặc định `http://localhost:{APP_PORT}` | `https://ref.yourapp.com` |
 | `REFERRAL_TTL_DAYS` | — | Số ngày link còn hiệu lực (mặc định 30) | `30` |
 | `MAX_REFERRAL_PER_DAY` | — | Giới hạn link mỗi ngày (mặc định 50) | `50` |
+| `BRANCH_KEY` | — | Branch live key (`key_live_...`). Có cùng `BRANCH_LINK_DOMAIN` thì `/r/:ref_code` redirect qua Branch | `key_live_xxx` |
+| `BRANCH_LINK_DOMAIN` | — | Domain link Branch của app | `yourapp.app.link` |
+| `REFERRAL_UTM_MEDIUM` | — | `utm_medium` mặc định khi client không truyền (mặc định `referral`) | `referral` |
+| `REFERRAL_UTM_CAMPAIGN` | — | `utm_campaign` mặc định khi client không truyền (mặc định `referral_program`) | `referral_program` |
 | `MYSQL_HOST` | — | MySQL host (mặc định `localhost`) | `prod-db.internal` |
 | `MYSQL_PORT` | — | MySQL port (mặc định `3306`) | `3306` |
 | `MYSQL_DATABASE` | — | Tên database (mặc định `referral_service`) | `referral_service` |
@@ -197,7 +201,9 @@ curl -s -X POST http://localhost:8080/api/v1/referral/generate \
   -d '{
     "owner_user_id": "user-123",
     "channel": "copy",
-    "platform": "ios"
+    "platform": "ios",
+    "utm_campaign": "sale_tet_2026",
+    "utm_content": "banner_a"
   }' | jq .
 ```
 
@@ -206,10 +212,91 @@ curl -s -X POST http://localhost:8080/api/v1/referral/generate \
   "data": {
     "ref_code":  "ABC12",
     "deep_link": "https://ref.yourapp.com/r/ABC12",
-    "expires_at": 1751299200000
+    "share_url": "https://ref.yourapp.com/r/ABC12?channel=copy&utm_campaign=sale_tet_2026&utm_content=banner_a&utm_medium=referral&utm_source=copy",
+    "expires_at": 1751299200000,
+    "utm_source": "copy",
+    "utm_medium": "referral",
+    "utm_campaign": "sale_tet_2026",
+    "utm_content": "banner_a"
   }
 }
 ```
+
+## UTM Tracking
+
+Mọi link/event/attribution đều mang 5 tham số UTM: `utm_source`, `utm_medium`, `utm_campaign` (luôn có giá trị), `utm_term`, `utm_content` (tuỳ chọn).
+
+| Bước | UTM được lấy từ đâu |
+| --- | --- |
+| `POST /generate` | body; thiếu field nào thì lấy mặc định: `utm_source = channel`, `utm_medium = REFERRAL_UTM_MEDIUM`, `utm_campaign = REFERRAL_UTM_CAMPAIGN`. Lưu vào `referral_links`. |
+| `GET /share/:ref_code`, `GET /qr/:ref_code` | UTM của link, `utm_source` được thay bằng channel chia sẻ; QR nhận thêm `utm_*` qua query để override. |
+| `GET /r/:ref_code?utm_...` | Người nhận click link: query string → fallback UTM của link; sinh `click_id` (= `event_id` của event `link_clicked`) và lưu UTM vào event đó. Android: `ref_code`, `click_id`, `utm_*` nhúng vào `referrer` của Play Store. iOS: clipboard `REF:{ref_code}:{click_id}`. Web: redirect giữ nguyên `utm_*`. |
+| `POST /activate`, `/confirm-install` | UTM của **chính người nhận**: `utm_*` trong body → click theo `click_id` (hoặc `ref_code` dạng `ABC12345:{click_id}`) → click chưa gán user khớp `device_id`/IP → UTM của link. Click được gán `new_user_id`; UTM lưu vào `app_installed`, `reward_given`, `referral_attributions`. |
+| `GET /user/:user_id/attribution` | Ai đã mời user này và UTM mà user này đến từ đó. |
+
+Giá trị `utm_source/medium/campaign` được trim + lowercase, mọi giá trị cắt tối đa 128 ký tự.
+
+### Độ chính xác của click
+
+- Bot preview link (Facebook, WhatsApp, Telegram, Zalo, …) được lọc bằng [`x-way/crawlerdetect`](https://github.com/x-way/crawlerdetect) + parser [`mileusna/useragent`](https://github.com/mileusna/useragent): không ghi `link_clicked`, không tăng `total_invited`.
+- Platform lấy từ `useragent` (iPad desktop-mode báo `macos` → trang landing kiểm tra cảm ứng để đưa vào App Store).
+- iOS không qua Branch: Safari chỉ cho ghi clipboard khi user chạm, nên trang landing hiện nút "Mở App Store" nếu không tự copy được.
+
+### Branch.io (deferred deep link)
+
+Khi set `BRANCH_KEY` + `BRANCH_LINK_DOMAIN`, sau khi ghi click server redirect sang Branch long link:
+
+```text
+https://{BRANCH_LINK_DOMAIN}/a/{BRANCH_KEY}?ref_code=ABC12345&click_id={uuid}&channel=zalo
+  &utm_source=zalo&utm_medium=referral&utm_campaign=sale_tet_2026
+  &~channel=zalo&~campaign=sale_tet_2026&~tags=referral&~feature=referral
+  &$desktop_url=...&$ios_url={APP_STORE_URL}&$android_url={PLAY_STORE_URL}
+```
+
+Branch SDK match click ↔ install/open (kể cả deferred, iOS lẫn Android) và trả lại toàn bộ params cho app. Dashboard Branch cũng tự có báo cáo theo `~channel`/`~campaign`.
+
+Phía app (sau `Branch.initSession`, khi `+clicked_branch_link == true`), gọi:
+
+```json
+POST /api/v1/referral/activate
+{
+  "ref_code": "<params.ref_code>",
+  "click_id": "<params.click_id>",
+  "user_id": "user-B",
+  "utm_source": "<params.utm_source>",
+  "utm_medium": "<params.utm_medium>",
+  "utm_campaign": "<params.utm_campaign>",
+  "utm_term": "<params.utm_term>",
+  "utm_content": "<params.utm_content>"
+}
+```
+
+### Báo cáo hiệu suất theo UTM
+
+```bash
+curl -s "http://localhost:8080/api/v1/referral/utm/report?utm_campaign=sale_tet_2026&from=1767225600000&to=1769904000000" | jq .
+```
+
+Query (đều tuỳ chọn): `owner_user_id`, `utm_source`, `utm_medium`, `utm_campaign`, `from`, `to` (Unix ms, `to` không bao gồm).
+
+```json
+{
+  "data": [
+    {
+      "utm_source": "zalo",
+      "utm_medium": "referral",
+      "utm_campaign": "sale_tet_2026",
+      "clicks": 120,
+      "unique_clicks": 85,
+      "installs": 17,
+      "rewards": 15,
+      "conversion_rate": 0.2
+    }
+  ]
+}
+```
+
+`unique_clicks` đếm theo `device_id` (fallback `ip_address`); `conversion_rate = installs / unique_clicks`.
 
 ### Lấy QR code chia sẻ
 

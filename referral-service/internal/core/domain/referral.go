@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type ReferralStatus string
 
@@ -21,6 +24,89 @@ const (
 	ChannelOther     Channel = "other"
 )
 
+const utmMaxLen = 128
+
+type UTM struct {
+	Source   string `json:"utm_source,omitempty"   db:"utm_source"`
+	Medium   string `json:"utm_medium,omitempty"   db:"utm_medium"`
+	Campaign string `json:"utm_campaign,omitempty" db:"utm_campaign"`
+	Term     string `json:"utm_term,omitempty"     db:"utm_term"`
+	Content  string `json:"utm_content,omitempty"  db:"utm_content"`
+}
+
+func (u UTM) IsZero() bool {
+	return u == UTM{}
+}
+
+func (u UTM) Normalize() UTM {
+	return UTM{
+		Source:   normalizeUTMValue(u.Source, true),
+		Medium:   normalizeUTMValue(u.Medium, true),
+		Campaign: normalizeUTMValue(u.Campaign, true),
+		Term:     normalizeUTMValue(u.Term, false),
+		Content:  normalizeUTMValue(u.Content, false),
+	}
+}
+
+func (u UTM) WithDefaults(def UTM) UTM {
+	if u.Source == "" {
+		u.Source = def.Source
+	}
+	if u.Medium == "" {
+		u.Medium = def.Medium
+	}
+	if u.Campaign == "" {
+		u.Campaign = def.Campaign
+	}
+	if u.Term == "" {
+		u.Term = def.Term
+	}
+	if u.Content == "" {
+		u.Content = def.Content
+	}
+	return u
+}
+
+func normalizeUTMValue(v string, lower bool) string {
+	v = strings.TrimSpace(v)
+	if lower {
+		v = strings.ToLower(v)
+	}
+	if len(v) > utmMaxLen {
+		v = v[:utmMaxLen]
+	}
+	return v
+}
+
+func SplitRefCode(raw string) (refCode, clickID string) {
+	raw = strings.TrimSpace(raw)
+	raw = strings.TrimPrefix(raw, "REF:")
+	if i := strings.IndexByte(raw, ':'); i >= 0 {
+		return raw[:i], raw[i+1:]
+	}
+	return raw, ""
+}
+
+type UTMPerformance struct {
+	Source         string  `json:"utm_source"      db:"utm_source"`
+	Medium         string  `json:"utm_medium"      db:"utm_medium"`
+	Campaign       string  `json:"utm_campaign"    db:"utm_campaign"`
+	Clicks         int64   `json:"clicks"          db:"clicks"`
+	UniqueClicks   int64   `json:"unique_clicks"   db:"unique_clicks"`
+	Installs       int64   `json:"installs"        db:"installs"`
+	Rewards        int64   `json:"rewards"         db:"rewards"`
+	ConversionRate float64 `json:"conversion_rate" db:"-"`
+}
+
+type UTMReportFilter struct {
+	OwnerUserID string
+	Source      string
+	Medium      string
+	Campaign    string
+	FromMs      int64
+	ToMs        int64
+}
+
 type ReferralLink struct {
 	RefCode     string         `json:"ref_code"      db:"ref_code"`      // primary key
 	CreatedAt   int64          `json:"created_at"    db:"created_at"`    // Unix ms — indexed with owner_user_id for pagination
@@ -30,6 +116,7 @@ type ReferralLink struct {
 	ExpiresAt   int64          `json:"expires_at"    db:"expires_at"`    // Unix ms
 	DeepLink    string         `json:"deep_link"     db:"deep_link"`
 	Platform    string         `json:"platform"      db:"platform"`      // "ios" | "android" | "universal"
+	UTM
 }
 
 func (r *ReferralLink) IsExpired() bool {
@@ -64,6 +151,7 @@ type ReferralEvent struct {
 	DeviceID            string    `json:"device_id"     db:"device_id"`
 	UserAgent           string    `json:"user_agent"    db:"user_agent"`
 	FirebaseInstanceID  string    `json:"firebase_instance_id,omitempty" db:"firebase_instance_id"` // Firebase Analytics App Instance ID, for cross-referencing with GA4/BigQuery
+	UTM
 }
 
 // ReferralAttribution records the confirmed relationship between an owner and a new user
@@ -76,6 +164,7 @@ type ReferralAttribution struct {
 	DeviceID           string `json:"device_id"     db:"device_id"`
 	AttributedAt       int64  `json:"attributed_at" db:"attributed_at"` // Unix ms
 	FirebaseInstanceID string `json:"firebase_instance_id,omitempty" db:"firebase_instance_id"` // Firebase Analytics App Instance ID, for cross-referencing with GA4/BigQuery
+	UTM
 }
 
 type RewardStatus string

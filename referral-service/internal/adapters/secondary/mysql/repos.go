@@ -29,10 +29,11 @@ func NewReferralEventRepo(db *sqlx.DB, log *zap.Logger) ports.ReferralEventRepos
 
 func (r *referralEventRepo) Save(ctx context.Context, event *domain.ReferralEvent) error {
 	_, err := r.db.ExecContext(ctx,
-		`INSERT INTO referral_events (event_id, ref_code, event_type, occurred_at, platform, channel, new_user_id, owner_user_id, ip_address, device_id, user_agent, firebase_instance_id)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		`INSERT INTO referral_events (event_id, ref_code, event_type, occurred_at, platform, channel, new_user_id, owner_user_id, ip_address, device_id, user_agent, firebase_instance_id, utm_source, utm_medium, utm_campaign, utm_term, utm_content)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		event.EventID, event.RefCode, event.EventType, event.OccurredAt, event.Platform, event.Channel,
 		event.NewUserID, event.OwnerUserID, event.IPAddress, event.DeviceID, event.UserAgent, event.FirebaseInstanceID,
+		event.Source, event.Medium, event.Campaign, event.Term, event.Content,
 	)
 	if err != nil {
 		return fmt.Errorf("insert event: %w", err)
@@ -47,7 +48,7 @@ func (r *referralEventRepo) Save(ctx context.Context, event *domain.ReferralEven
 func (r *referralEventRepo) FindByRefCode(ctx context.Context, refCode string) ([]*domain.ReferralEvent, error) {
 	var events []*domain.ReferralEvent
 	err := r.db.SelectContext(ctx, &events,
-		`SELECT event_id, ref_code, event_type, occurred_at, platform, channel, new_user_id, owner_user_id, ip_address, device_id, user_agent, firebase_instance_id
+		`SELECT event_id, ref_code, event_type, occurred_at, platform, channel, new_user_id, owner_user_id, ip_address, device_id, user_agent, firebase_instance_id, utm_source, utm_medium, utm_campaign, utm_term, utm_content
 		 FROM referral_events WHERE ref_code = ? ORDER BY occurred_at DESC`,
 		refCode,
 	)
@@ -60,7 +61,7 @@ func (r *referralEventRepo) FindByRefCode(ctx context.Context, refCode string) (
 func (r *referralEventRepo) FindByNewUserID(ctx context.Context, newUserID string) ([]*domain.ReferralEvent, error) {
 	var events []*domain.ReferralEvent
 	err := r.db.SelectContext(ctx, &events,
-		`SELECT event_id, ref_code, event_type, occurred_at, platform, channel, new_user_id, owner_user_id, ip_address, device_id, user_agent, firebase_instance_id
+		`SELECT event_id, ref_code, event_type, occurred_at, platform, channel, new_user_id, owner_user_id, ip_address, device_id, user_agent, firebase_instance_id, utm_source, utm_medium, utm_campaign, utm_term, utm_content
 		 FROM referral_events WHERE new_user_id = ?`,
 		newUserID,
 	)
@@ -68,6 +69,75 @@ func (r *referralEventRepo) FindByNewUserID(ctx context.Context, newUserID strin
 		return nil, fmt.Errorf("query events for user %s: %w", newUserID, err)
 	}
 	return events, nil
+}
+
+func (r *referralEventRepo) FindByID(ctx context.Context, eventID string) (*domain.ReferralEvent, error) {
+	var event domain.ReferralEvent
+	err := r.db.GetContext(ctx, &event,
+		`SELECT event_id, ref_code, event_type, occurred_at, platform, channel, new_user_id, owner_user_id, ip_address, device_id, user_agent, firebase_instance_id, utm_source, utm_medium, utm_campaign, utm_term, utm_content
+		 FROM referral_events WHERE event_id = ?`,
+		eventID,
+	)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("event %s: %w", eventID, domain.ErrNotFound)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("get event %s: %w", eventID, err)
+	}
+	return &event, nil
+}
+
+func (r *referralEventRepo) AssignNewUser(ctx context.Context, eventID, newUserID string) error {
+	_, err := r.db.ExecContext(ctx,
+		`UPDATE referral_events SET new_user_id = ? WHERE event_id = ? AND new_user_id = ''`,
+		newUserID, eventID,
+	)
+	if err != nil {
+		return fmt.Errorf("assign new user to event %s: %w", eventID, err)
+	}
+	return nil
+}
+
+func (r *referralEventRepo) AggregateByUTM(ctx context.Context, f domain.UTMReportFilter) ([]*domain.UTMPerformance, error) {
+	query := `SELECT utm_source, utm_medium, utm_campaign,
+		SUM(event_type = ?) AS clicks,
+		COUNT(DISTINCT CASE WHEN event_type = ? THEN COALESCE(NULLIF(device_id, ''), NULLIF(ip_address, '')) END) AS unique_clicks,
+		SUM(event_type = ?) AS installs,
+		SUM(event_type = ?) AS rewards
+		FROM referral_events WHERE 1 = 1`
+	args := []any{domain.EventLinkClicked, domain.EventLinkClicked, domain.EventAppInstalled, domain.EventRewardGiven}
+
+	if f.OwnerUserID != "" {
+		query += ` AND owner_user_id = ?`
+		args = append(args, f.OwnerUserID)
+	}
+	if f.Source != "" {
+		query += ` AND utm_source = ?`
+		args = append(args, f.Source)
+	}
+	if f.Medium != "" {
+		query += ` AND utm_medium = ?`
+		args = append(args, f.Medium)
+	}
+	if f.Campaign != "" {
+		query += ` AND utm_campaign = ?`
+		args = append(args, f.Campaign)
+	}
+	if f.FromMs > 0 {
+		query += ` AND occurred_at >= ?`
+		args = append(args, f.FromMs)
+	}
+	if f.ToMs > 0 {
+		query += ` AND occurred_at < ?`
+		args = append(args, f.ToMs)
+	}
+	query += ` GROUP BY utm_source, utm_medium, utm_campaign ORDER BY installs DESC, clicks DESC`
+
+	var rows []*domain.UTMPerformance
+	if err := r.db.SelectContext(ctx, &rows, query, args...); err != nil {
+		return nil, fmt.Errorf("aggregate events by utm: %w", err)
+	}
+	return rows, nil
 }
 
 type rewardRepo struct {
