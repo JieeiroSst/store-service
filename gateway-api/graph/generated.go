@@ -1098,7 +1098,9 @@ type ComplexityRoot struct {
 		FromNumber   func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Notes        func(childComplexity int) int
+		Outcome      func(childComplexity int) int
 		RecordingURL func(childComplexity int) int
+		Scenario     func(childComplexity int) int
 		StartTime    func(childComplexity int) int
 		Status       func(childComplexity int) int
 		ToNumber     func(childComplexity int) int
@@ -1114,7 +1116,9 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		Messages     func(childComplexity int) int
 		Notes        func(childComplexity int) int
+		Outcome      func(childComplexity int) int
 		RecordingURL func(childComplexity int) int
+		Scenario     func(childComplexity int) int
 		StartTime    func(childComplexity int) int
 		Status       func(childComplexity int) int
 		ToNumber     func(childComplexity int) int
@@ -1133,6 +1137,18 @@ type ComplexityRoot struct {
 		UpdatedAt    func(childComplexity int) int
 	}
 
+	CallCenterKnowledgeEntry struct {
+		Answer    func(childComplexity int) int
+		Category  func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		IsActive  func(childComplexity int) int
+		Keywords  func(childComplexity int) int
+		Question  func(childComplexity int) int
+		Scenario  func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
 	CallCenterMessage struct {
 		AudioURL       func(childComplexity int) int
 		CallID         func(childComplexity int) int
@@ -1146,19 +1162,41 @@ type ComplexityRoot struct {
 	CallCenterScenario struct {
 		CreatedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
+		Greeting    func(childComplexity int) int
 		ID          func(childComplexity int) int
 		IsActive    func(childComplexity int) int
+		IsDefault   func(childComplexity int) int
 		Name        func(childComplexity int) int
+		PhoneNumber func(childComplexity int) int
 		Prompt      func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 	}
 
+	CallCenterSeedResult struct {
+		KnowledgeEntries func(childComplexity int) int
+		Scenarios        func(childComplexity int) int
+	}
+
+	CallCenterSimulation struct {
+		CallSid    func(childComplexity int) int
+		Ended      func(childComplexity int) int
+		Greeting   func(childComplexity int) int
+		Knowledge  func(childComplexity int) int
+		Listening  func(childComplexity int) int
+		Reply      func(childComplexity int) int
+		TransferTo func(childComplexity int) int
+	}
+
 	CallCenterStatistics struct {
-		AverageDuration func(childComplexity int) int
-		CompletedCalls  func(childComplexity int) int
-		FailedCalls     func(childComplexity int) int
-		TotalCalls      func(childComplexity int) int
-		TotalMessages   func(childComplexity int) int
+		AbandonedCalls   func(childComplexity int) int
+		AverageDuration  func(childComplexity int) int
+		CallbackRequests func(childComplexity int) int
+		CompletedCalls   func(childComplexity int) int
+		FailedCalls      func(childComplexity int) int
+		ResolvedCalls    func(childComplexity int) int
+		TotalCalls       func(childComplexity int) int
+		TotalMessages    func(childComplexity int) int
+		TransferredCalls func(childComplexity int) int
 	}
 
 	CarRentalBicycleDetails struct {
@@ -3742,9 +3780,15 @@ type ComplexityRoot struct {
 		BotUpdatePost                                           func(childComplexity int, id string, input model.BotUpdatePostInput) int
 		BridgeCircleToSolana                                    func(childComplexity int, fromCircleWalletID string, toSolanaAddress string, amount string) int
 		BridgeSolanaToCircle                                    func(childComplexity int, fromSolanaAddress string, toCircleWalletID string, amount int, privateKey string) int
+		CallCenterCreateKnowledgeEntry                          func(childComplexity int, input model.CallCenterKnowledgeInput) int
 		CallCenterCreateScenario                                func(childComplexity int, input model.CallCenterScenarioInput) int
 		CallCenterDeleteCall                                    func(childComplexity int, callID int) int
+		CallCenterDeleteKnowledgeEntry                          func(childComplexity int, entryID int) int
 		CallCenterDeleteScenario                                func(childComplexity int, scenarioID int) int
+		CallCenterSeedDefaults                                  func(childComplexity int) int
+		CallCenterSimulate                                      func(childComplexity int, input model.CallCenterSimulateInput) int
+		CallCenterUpdateCustomer                                func(childComplexity int, phoneNumber string, input model.CallCenterCustomerInput) int
+		CallCenterUpdateKnowledgeEntry                          func(childComplexity int, entryID int, input model.CallCenterKnowledgeInput) int
 		CallCenterUpdateScenario                                func(childComplexity int, scenarioID int, input model.CallCenterScenarioInput) int
 		CarRentalCancelReservation                              func(childComplexity int, input model.CarRentalCancelReservationRequestInput) int
 		CarRentalCompleteRental                                 func(childComplexity int, input model.CarRentalCompleteRentalRequestInput) int
@@ -5688,10 +5732,13 @@ type ComplexityRoot struct {
 		CalcRadar                                   func(childComplexity int) int
 		CalcTide                                    func(childComplexity int, station string) int
 		CallCenterCall                              func(childComplexity int, callID int) int
-		CallCenterCalls                             func(childComplexity int, skip *int, limit *int, status *string, fromNumber *string) int
+		CallCenterCalls                             func(childComplexity int, skip *int, limit *int, status *string, fromNumber *string, outcome *string) int
 		CallCenterCustomer                          func(childComplexity int, phoneNumber string) int
+		CallCenterKnowledgeEntries                  func(childComplexity int, skip *int, limit *int, category *string, scenario *string) int
+		CallCenterKnowledgeEntry                    func(childComplexity int, entryID int) int
 		CallCenterScenario                          func(childComplexity int, scenarioID int) int
 		CallCenterScenarios                         func(childComplexity int, skip *int, limit *int) int
+		CallCenterSearchKnowledge                   func(childComplexity int, q string, scenario *string, limit *int) int
 		CallCenterStatistics                        func(childComplexity int, days *int) int
 		CarRentalGetRental                          func(childComplexity int, input model.CarRentalGetRentalRequestInput) int
 		CarRentalGetReservation                     func(childComplexity int, input model.CarRentalGetReservationRequestInput) int
@@ -9586,6 +9633,12 @@ type MutationResolver interface {
 	CallCenterCreateScenario(ctx context.Context, input model.CallCenterScenarioInput) (*model.CallCenterScenario, error)
 	CallCenterUpdateScenario(ctx context.Context, scenarioID int, input model.CallCenterScenarioInput) (*model.CallCenterScenario, error)
 	CallCenterDeleteScenario(ctx context.Context, scenarioID int) (bool, error)
+	CallCenterSeedDefaults(ctx context.Context) (*model.CallCenterSeedResult, error)
+	CallCenterCreateKnowledgeEntry(ctx context.Context, input model.CallCenterKnowledgeInput) (*model.CallCenterKnowledgeEntry, error)
+	CallCenterUpdateKnowledgeEntry(ctx context.Context, entryID int, input model.CallCenterKnowledgeInput) (*model.CallCenterKnowledgeEntry, error)
+	CallCenterDeleteKnowledgeEntry(ctx context.Context, entryID int) (bool, error)
+	CallCenterUpdateCustomer(ctx context.Context, phoneNumber string, input model.CallCenterCustomerInput) (*model.CallCenterCustomer, error)
+	CallCenterSimulate(ctx context.Context, input model.CallCenterSimulateInput) (*model.CallCenterSimulation, error)
 	CarRentalRegisterUser(ctx context.Context, input model.CarRentalRegisterUserRequestInput) (*model.CarRentalUserResponse, error)
 	CarRentalUpdateUser(ctx context.Context, input model.CarRentalUpdateUserRequestInput) (*model.CarRentalUserResponse, error)
 	CarRentalCreateVehicle(ctx context.Context, input model.CarRentalCreateVehicleRequestInput) (*model.CarRentalVehicleResponse, error)
@@ -10537,10 +10590,13 @@ type QueryResolver interface {
 	CalcCurrentWeather(ctx context.Context, location string) (*model.CalcWeatherSnapshot, error)
 	CalcLocations(ctx context.Context) ([]*model.CalcTrackedLocation, error)
 	CalcMarketSnapshot(ctx context.Context) (*model.CalcMarketSnapshot, error)
-	CallCenterCalls(ctx context.Context, skip *int, limit *int, status *string, fromNumber *string) ([]*model.CallCenterCall, error)
+	CallCenterCalls(ctx context.Context, skip *int, limit *int, status *string, fromNumber *string, outcome *string) ([]*model.CallCenterCall, error)
 	CallCenterCall(ctx context.Context, callID int) (*model.CallCenterCallDetail, error)
 	CallCenterScenarios(ctx context.Context, skip *int, limit *int) ([]*model.CallCenterScenario, error)
 	CallCenterScenario(ctx context.Context, scenarioID int) (*model.CallCenterScenario, error)
+	CallCenterKnowledgeEntries(ctx context.Context, skip *int, limit *int, category *string, scenario *string) ([]*model.CallCenterKnowledgeEntry, error)
+	CallCenterKnowledgeEntry(ctx context.Context, entryID int) (*model.CallCenterKnowledgeEntry, error)
+	CallCenterSearchKnowledge(ctx context.Context, q string, scenario *string, limit *int) ([]*model.CallCenterKnowledgeEntry, error)
 	CallCenterCustomer(ctx context.Context, phoneNumber string) (*model.CallCenterCustomer, error)
 	CallCenterStatistics(ctx context.Context, days *int) (*model.CallCenterStatistics, error)
 	CarRentalGetUser(ctx context.Context, input model.CarRentalGetUserRequestInput) (*model.CarRentalUserResponse, error)
@@ -16176,12 +16232,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CallCenterCall.Notes(childComplexity), true
 
+	case "CallCenterCall.outcome":
+		if e.complexity.CallCenterCall.Outcome == nil {
+			break
+		}
+
+		return e.complexity.CallCenterCall.Outcome(childComplexity), true
+
 	case "CallCenterCall.recording_url":
 		if e.complexity.CallCenterCall.RecordingURL == nil {
 			break
 		}
 
 		return e.complexity.CallCenterCall.RecordingURL(childComplexity), true
+
+	case "CallCenterCall.scenario":
+		if e.complexity.CallCenterCall.Scenario == nil {
+			break
+		}
+
+		return e.complexity.CallCenterCall.Scenario(childComplexity), true
 
 	case "CallCenterCall.start_time":
 		if e.complexity.CallCenterCall.StartTime == nil {
@@ -16267,12 +16337,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CallCenterCallDetail.Notes(childComplexity), true
 
+	case "CallCenterCallDetail.outcome":
+		if e.complexity.CallCenterCallDetail.Outcome == nil {
+			break
+		}
+
+		return e.complexity.CallCenterCallDetail.Outcome(childComplexity), true
+
 	case "CallCenterCallDetail.recording_url":
 		if e.complexity.CallCenterCallDetail.RecordingURL == nil {
 			break
 		}
 
 		return e.complexity.CallCenterCallDetail.RecordingURL(childComplexity), true
+
+	case "CallCenterCallDetail.scenario":
+		if e.complexity.CallCenterCallDetail.Scenario == nil {
+			break
+		}
+
+		return e.complexity.CallCenterCallDetail.Scenario(childComplexity), true
 
 	case "CallCenterCallDetail.start_time":
 		if e.complexity.CallCenterCallDetail.StartTime == nil {
@@ -16365,6 +16449,69 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CallCenterCustomer.UpdatedAt(childComplexity), true
 
+	case "CallCenterKnowledgeEntry.answer":
+		if e.complexity.CallCenterKnowledgeEntry.Answer == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.Answer(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.category":
+		if e.complexity.CallCenterKnowledgeEntry.Category == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.Category(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.created_at":
+		if e.complexity.CallCenterKnowledgeEntry.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.CreatedAt(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.id":
+		if e.complexity.CallCenterKnowledgeEntry.ID == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.ID(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.is_active":
+		if e.complexity.CallCenterKnowledgeEntry.IsActive == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.IsActive(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.keywords":
+		if e.complexity.CallCenterKnowledgeEntry.Keywords == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.Keywords(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.question":
+		if e.complexity.CallCenterKnowledgeEntry.Question == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.Question(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.scenario":
+		if e.complexity.CallCenterKnowledgeEntry.Scenario == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.Scenario(childComplexity), true
+
+	case "CallCenterKnowledgeEntry.updated_at":
+		if e.complexity.CallCenterKnowledgeEntry.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.CallCenterKnowledgeEntry.UpdatedAt(childComplexity), true
+
 	case "CallCenterMessage.audio_url":
 		if e.complexity.CallCenterMessage.AudioURL == nil {
 			break
@@ -16428,6 +16575,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CallCenterScenario.Description(childComplexity), true
 
+	case "CallCenterScenario.greeting":
+		if e.complexity.CallCenterScenario.Greeting == nil {
+			break
+		}
+
+		return e.complexity.CallCenterScenario.Greeting(childComplexity), true
+
 	case "CallCenterScenario.id":
 		if e.complexity.CallCenterScenario.ID == nil {
 			break
@@ -16442,12 +16596,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CallCenterScenario.IsActive(childComplexity), true
 
+	case "CallCenterScenario.is_default":
+		if e.complexity.CallCenterScenario.IsDefault == nil {
+			break
+		}
+
+		return e.complexity.CallCenterScenario.IsDefault(childComplexity), true
+
 	case "CallCenterScenario.name":
 		if e.complexity.CallCenterScenario.Name == nil {
 			break
 		}
 
 		return e.complexity.CallCenterScenario.Name(childComplexity), true
+
+	case "CallCenterScenario.phone_number":
+		if e.complexity.CallCenterScenario.PhoneNumber == nil {
+			break
+		}
+
+		return e.complexity.CallCenterScenario.PhoneNumber(childComplexity), true
 
 	case "CallCenterScenario.prompt":
 		if e.complexity.CallCenterScenario.Prompt == nil {
@@ -16463,12 +16631,89 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CallCenterScenario.UpdatedAt(childComplexity), true
 
+	case "CallCenterSeedResult.knowledge_entries":
+		if e.complexity.CallCenterSeedResult.KnowledgeEntries == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSeedResult.KnowledgeEntries(childComplexity), true
+
+	case "CallCenterSeedResult.scenarios":
+		if e.complexity.CallCenterSeedResult.Scenarios == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSeedResult.Scenarios(childComplexity), true
+
+	case "CallCenterSimulation.call_sid":
+		if e.complexity.CallCenterSimulation.CallSid == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSimulation.CallSid(childComplexity), true
+
+	case "CallCenterSimulation.ended":
+		if e.complexity.CallCenterSimulation.Ended == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSimulation.Ended(childComplexity), true
+
+	case "CallCenterSimulation.greeting":
+		if e.complexity.CallCenterSimulation.Greeting == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSimulation.Greeting(childComplexity), true
+
+	case "CallCenterSimulation.knowledge":
+		if e.complexity.CallCenterSimulation.Knowledge == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSimulation.Knowledge(childComplexity), true
+
+	case "CallCenterSimulation.listening":
+		if e.complexity.CallCenterSimulation.Listening == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSimulation.Listening(childComplexity), true
+
+	case "CallCenterSimulation.reply":
+		if e.complexity.CallCenterSimulation.Reply == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSimulation.Reply(childComplexity), true
+
+	case "CallCenterSimulation.transfer_to":
+		if e.complexity.CallCenterSimulation.TransferTo == nil {
+			break
+		}
+
+		return e.complexity.CallCenterSimulation.TransferTo(childComplexity), true
+
+	case "CallCenterStatistics.abandoned_calls":
+		if e.complexity.CallCenterStatistics.AbandonedCalls == nil {
+			break
+		}
+
+		return e.complexity.CallCenterStatistics.AbandonedCalls(childComplexity), true
+
 	case "CallCenterStatistics.average_duration":
 		if e.complexity.CallCenterStatistics.AverageDuration == nil {
 			break
 		}
 
 		return e.complexity.CallCenterStatistics.AverageDuration(childComplexity), true
+
+	case "CallCenterStatistics.callback_requests":
+		if e.complexity.CallCenterStatistics.CallbackRequests == nil {
+			break
+		}
+
+		return e.complexity.CallCenterStatistics.CallbackRequests(childComplexity), true
 
 	case "CallCenterStatistics.completed_calls":
 		if e.complexity.CallCenterStatistics.CompletedCalls == nil {
@@ -16484,6 +16729,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CallCenterStatistics.FailedCalls(childComplexity), true
 
+	case "CallCenterStatistics.resolved_calls":
+		if e.complexity.CallCenterStatistics.ResolvedCalls == nil {
+			break
+		}
+
+		return e.complexity.CallCenterStatistics.ResolvedCalls(childComplexity), true
+
 	case "CallCenterStatistics.total_calls":
 		if e.complexity.CallCenterStatistics.TotalCalls == nil {
 			break
@@ -16497,6 +16749,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CallCenterStatistics.TotalMessages(childComplexity), true
+
+	case "CallCenterStatistics.transferred_calls":
+		if e.complexity.CallCenterStatistics.TransferredCalls == nil {
+			break
+		}
+
+		return e.complexity.CallCenterStatistics.TransferredCalls(childComplexity), true
 
 	case "CarRentalBicycleDetails.bicycleType":
 		if e.complexity.CarRentalBicycleDetails.BicycleType == nil {
@@ -30448,6 +30707,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.BridgeSolanaToCircle(childComplexity, args["fromSolanaAddress"].(string), args["toCircleWalletId"].(string), args["amount"].(int), args["privateKey"].(string)), true
 
+	case "Mutation.callCenterCreateKnowledgeEntry":
+		if e.complexity.Mutation.CallCenterCreateKnowledgeEntry == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_callCenterCreateKnowledgeEntry_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CallCenterCreateKnowledgeEntry(childComplexity, args["input"].(model.CallCenterKnowledgeInput)), true
+
 	case "Mutation.callCenterCreateScenario":
 		if e.complexity.Mutation.CallCenterCreateScenario == nil {
 			break
@@ -30472,6 +30743,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CallCenterDeleteCall(childComplexity, args["call_id"].(int)), true
 
+	case "Mutation.callCenterDeleteKnowledgeEntry":
+		if e.complexity.Mutation.CallCenterDeleteKnowledgeEntry == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_callCenterDeleteKnowledgeEntry_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CallCenterDeleteKnowledgeEntry(childComplexity, args["entry_id"].(int)), true
+
 	case "Mutation.callCenterDeleteScenario":
 		if e.complexity.Mutation.CallCenterDeleteScenario == nil {
 			break
@@ -30483,6 +30766,49 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CallCenterDeleteScenario(childComplexity, args["scenario_id"].(int)), true
+
+	case "Mutation.callCenterSeedDefaults":
+		if e.complexity.Mutation.CallCenterSeedDefaults == nil {
+			break
+		}
+
+		return e.complexity.Mutation.CallCenterSeedDefaults(childComplexity), true
+
+	case "Mutation.callCenterSimulate":
+		if e.complexity.Mutation.CallCenterSimulate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_callCenterSimulate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CallCenterSimulate(childComplexity, args["input"].(model.CallCenterSimulateInput)), true
+
+	case "Mutation.callCenterUpdateCustomer":
+		if e.complexity.Mutation.CallCenterUpdateCustomer == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_callCenterUpdateCustomer_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CallCenterUpdateCustomer(childComplexity, args["phone_number"].(string), args["input"].(model.CallCenterCustomerInput)), true
+
+	case "Mutation.callCenterUpdateKnowledgeEntry":
+		if e.complexity.Mutation.CallCenterUpdateKnowledgeEntry == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_callCenterUpdateKnowledgeEntry_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CallCenterUpdateKnowledgeEntry(childComplexity, args["entry_id"].(int), args["input"].(model.CallCenterKnowledgeInput)), true
 
 	case "Mutation.callCenterUpdateScenario":
 		if e.complexity.Mutation.CallCenterUpdateScenario == nil {
@@ -46316,7 +46642,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.CallCenterCalls(childComplexity, args["skip"].(*int), args["limit"].(*int), args["status"].(*string), args["from_number"].(*string)), true
+		return e.complexity.Query.CallCenterCalls(childComplexity, args["skip"].(*int), args["limit"].(*int), args["status"].(*string), args["from_number"].(*string), args["outcome"].(*string)), true
 
 	case "Query.callCenterCustomer":
 		if e.complexity.Query.CallCenterCustomer == nil {
@@ -46329,6 +46655,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.CallCenterCustomer(childComplexity, args["phone_number"].(string)), true
+
+	case "Query.callCenterKnowledgeEntries":
+		if e.complexity.Query.CallCenterKnowledgeEntries == nil {
+			break
+		}
+
+		args, err := ec.field_Query_callCenterKnowledgeEntries_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CallCenterKnowledgeEntries(childComplexity, args["skip"].(*int), args["limit"].(*int), args["category"].(*string), args["scenario"].(*string)), true
+
+	case "Query.callCenterKnowledgeEntry":
+		if e.complexity.Query.CallCenterKnowledgeEntry == nil {
+			break
+		}
+
+		args, err := ec.field_Query_callCenterKnowledgeEntry_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CallCenterKnowledgeEntry(childComplexity, args["entry_id"].(int)), true
 
 	case "Query.callCenterScenario":
 		if e.complexity.Query.CallCenterScenario == nil {
@@ -46353,6 +46703,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.CallCenterScenarios(childComplexity, args["skip"].(*int), args["limit"].(*int)), true
+
+	case "Query.callCenterSearchKnowledge":
+		if e.complexity.Query.CallCenterSearchKnowledge == nil {
+			break
+		}
+
+		args, err := ec.field_Query_callCenterSearchKnowledge_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CallCenterSearchKnowledge(childComplexity, args["q"].(string), args["scenario"].(*string), args["limit"].(*int)), true
 
 	case "Query.callCenterStatistics":
 		if e.complexity.Query.CallCenterStatistics == nil {
@@ -68899,7 +69261,10 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputBotCreatePostInput,
 		ec.unmarshalInputBotMediaInput,
 		ec.unmarshalInputBotUpdatePostInput,
+		ec.unmarshalInputCallCenterCustomerInput,
+		ec.unmarshalInputCallCenterKnowledgeInput,
 		ec.unmarshalInputCallCenterScenarioInput,
+		ec.unmarshalInputCallCenterSimulateInput,
 		ec.unmarshalInputCarRentalBicycleDetailsInput,
 		ec.unmarshalInputCarRentalCancelReservationRequestInput,
 		ec.unmarshalInputCarRentalCarDetailsInput,
@@ -74245,6 +74610,29 @@ func (ec *executionContext) field_Mutation_bridgeSolanaToCircle_argsPrivateKey(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_callCenterCreateKnowledgeEntry_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_callCenterCreateKnowledgeEntry_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_callCenterCreateKnowledgeEntry_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.CallCenterKnowledgeInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCallCenterKnowledgeInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeInput(ctx, tmp)
+	}
+
+	var zeroVal model.CallCenterKnowledgeInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_callCenterCreateScenario_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -74291,6 +74679,29 @@ func (ec *executionContext) field_Mutation_callCenterDeleteCall_argsCallID(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_callCenterDeleteKnowledgeEntry_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_callCenterDeleteKnowledgeEntry_argsEntryID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["entry_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_callCenterDeleteKnowledgeEntry_argsEntryID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("entry_id"))
+	if tmp, ok := rawArgs["entry_id"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_callCenterDeleteScenario_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -74311,6 +74722,111 @@ func (ec *executionContext) field_Mutation_callCenterDeleteScenario_argsScenario
 	}
 
 	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_callCenterSimulate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_callCenterSimulate_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_callCenterSimulate_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.CallCenterSimulateInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCallCenterSimulateInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterSimulateInput(ctx, tmp)
+	}
+
+	var zeroVal model.CallCenterSimulateInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_callCenterUpdateCustomer_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_callCenterUpdateCustomer_argsPhoneNumber(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["phone_number"] = arg0
+	arg1, err := ec.field_Mutation_callCenterUpdateCustomer_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_callCenterUpdateCustomer_argsPhoneNumber(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("phone_number"))
+	if tmp, ok := rawArgs["phone_number"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_callCenterUpdateCustomer_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.CallCenterCustomerInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCallCenterCustomerInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterCustomerInput(ctx, tmp)
+	}
+
+	var zeroVal model.CallCenterCustomerInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_callCenterUpdateKnowledgeEntry_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_callCenterUpdateKnowledgeEntry_argsEntryID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["entry_id"] = arg0
+	arg1, err := ec.field_Mutation_callCenterUpdateKnowledgeEntry_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_callCenterUpdateKnowledgeEntry_argsEntryID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("entry_id"))
+	if tmp, ok := rawArgs["entry_id"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_callCenterUpdateKnowledgeEntry_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.CallCenterKnowledgeInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCallCenterKnowledgeInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeInput(ctx, tmp)
+	}
+
+	var zeroVal model.CallCenterKnowledgeInput
 	return zeroVal, nil
 }
 
@@ -108285,6 +108801,11 @@ func (ec *executionContext) field_Query_callCenterCalls_args(ctx context.Context
 		return nil, err
 	}
 	args["from_number"] = arg3
+	arg4, err := ec.field_Query_callCenterCalls_argsOutcome(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["outcome"] = arg4
 	return args, nil
 }
 func (ec *executionContext) field_Query_callCenterCalls_argsSkip(
@@ -108339,6 +108860,19 @@ func (ec *executionContext) field_Query_callCenterCalls_argsFromNumber(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_callCenterCalls_argsOutcome(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("outcome"))
+	if tmp, ok := rawArgs["outcome"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_callCenterCustomer_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -108359,6 +108893,106 @@ func (ec *executionContext) field_Query_callCenterCustomer_argsPhoneNumber(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterKnowledgeEntries_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_callCenterKnowledgeEntries_argsSkip(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["skip"] = arg0
+	arg1, err := ec.field_Query_callCenterKnowledgeEntries_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	arg2, err := ec.field_Query_callCenterKnowledgeEntries_argsCategory(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["category"] = arg2
+	arg3, err := ec.field_Query_callCenterKnowledgeEntries_argsScenario(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["scenario"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Query_callCenterKnowledgeEntries_argsSkip(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("skip"))
+	if tmp, ok := rawArgs["skip"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterKnowledgeEntries_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterKnowledgeEntries_argsCategory(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+	if tmp, ok := rawArgs["category"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterKnowledgeEntries_argsScenario(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("scenario"))
+	if tmp, ok := rawArgs["scenario"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterKnowledgeEntry_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_callCenterKnowledgeEntry_argsEntryID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["entry_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_callCenterKnowledgeEntry_argsEntryID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("entry_id"))
+	if tmp, ok := rawArgs["entry_id"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
 	return zeroVal, nil
 }
 
@@ -108414,6 +109048,65 @@ func (ec *executionContext) field_Query_callCenterScenarios_argsSkip(
 }
 
 func (ec *executionContext) field_Query_callCenterScenarios_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterSearchKnowledge_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_callCenterSearchKnowledge_argsQ(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["q"] = arg0
+	arg1, err := ec.field_Query_callCenterSearchKnowledge_argsScenario(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["scenario"] = arg1
+	arg2, err := ec.field_Query_callCenterSearchKnowledge_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_callCenterSearchKnowledge_argsQ(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("q"))
+	if tmp, ok := rawArgs["q"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterSearchKnowledge_argsScenario(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("scenario"))
+	if tmp, ok := rawArgs["scenario"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_callCenterSearchKnowledge_argsLimit(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*int, error) {
@@ -165562,6 +166255,88 @@ func (ec *executionContext) fieldContext_CallCenterCall_recording_url(_ context.
 	return fc, nil
 }
 
+func (ec *executionContext) _CallCenterCall_scenario(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterCall) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterCall_scenario(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scenario, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterCall_scenario(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterCall",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterCall_outcome(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterCall) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterCall_outcome(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Outcome, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterCall_outcome(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterCall",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CallCenterCall_created_at(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterCall) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CallCenterCall_created_at(ctx, field)
 	if err != nil {
@@ -166054,6 +166829,88 @@ func (ec *executionContext) _CallCenterCallDetail_recording_url(ctx context.Cont
 }
 
 func (ec *executionContext) fieldContext_CallCenterCallDetail_recording_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterCallDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterCallDetail_scenario(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterCallDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterCallDetail_scenario(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scenario, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterCallDetail_scenario(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterCallDetail",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterCallDetail_outcome(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterCallDetail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterCallDetail_outcome(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Outcome, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterCallDetail_outcome(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CallCenterCallDetail",
 		Field:      field,
@@ -166580,6 +167437,384 @@ func (ec *executionContext) fieldContext_CallCenterCustomer_updated_at(_ context
 	return fc, nil
 }
 
+func (ec *executionContext) _CallCenterKnowledgeEntry_id(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_question(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_question(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Question, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_question(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_answer(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_answer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Answer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_answer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_keywords(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_keywords(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Keywords, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_keywords(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_category(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_category(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Category, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_scenario(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_scenario(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scenario, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_scenario(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_is_active(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_is_active(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsActive, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_is_active(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_created_at(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterKnowledgeEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterKnowledgeEntry_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterKnowledgeEntry_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterKnowledgeEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CallCenterMessage_id(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterMessage) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CallCenterMessage_id(ctx, field)
 	if err != nil {
@@ -167043,6 +168278,129 @@ func (ec *executionContext) fieldContext_CallCenterScenario_prompt(_ context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _CallCenterScenario_greeting(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterScenario) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterScenario_greeting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Greeting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterScenario_greeting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterScenario",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterScenario_phone_number(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterScenario) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterScenario_phone_number(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhoneNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterScenario_phone_number(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterScenario",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterScenario_is_default(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterScenario) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterScenario_is_default(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDefault, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterScenario_is_default(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterScenario",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CallCenterScenario_is_active(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterScenario) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CallCenterScenario_is_active(ctx, field)
 	if err != nil {
@@ -167156,6 +168514,390 @@ func (ec *executionContext) _CallCenterScenario_updated_at(ctx context.Context, 
 func (ec *executionContext) fieldContext_CallCenterScenario_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CallCenterScenario",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSeedResult_scenarios(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSeedResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSeedResult_scenarios(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scenarios, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSeedResult_scenarios(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSeedResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSeedResult_knowledge_entries(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSeedResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSeedResult_knowledge_entries(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KnowledgeEntries, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSeedResult_knowledge_entries(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSeedResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSimulation_call_sid(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSimulation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSimulation_call_sid(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CallSid, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSimulation_call_sid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSimulation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSimulation_greeting(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSimulation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSimulation_greeting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Greeting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSimulation_greeting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSimulation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSimulation_reply(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSimulation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSimulation_reply(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reply, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSimulation_reply(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSimulation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSimulation_listening(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSimulation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSimulation_listening(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Listening, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSimulation_listening(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSimulation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSimulation_transfer_to(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSimulation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSimulation_transfer_to(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TransferTo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSimulation_transfer_to(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSimulation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSimulation_ended(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSimulation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSimulation_ended(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ended, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSimulation_ended(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSimulation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterSimulation_knowledge(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterSimulation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterSimulation_knowledge(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Knowledge, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterSimulation_knowledge(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterSimulation",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -167374,6 +169116,170 @@ func (ec *executionContext) _CallCenterStatistics_total_messages(ctx context.Con
 }
 
 func (ec *executionContext) fieldContext_CallCenterStatistics_total_messages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterStatistics",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterStatistics_resolved_calls(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterStatistics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterStatistics_resolved_calls(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResolvedCalls, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterStatistics_resolved_calls(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterStatistics",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterStatistics_transferred_calls(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterStatistics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterStatistics_transferred_calls(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TransferredCalls, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterStatistics_transferred_calls(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterStatistics",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterStatistics_callback_requests(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterStatistics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterStatistics_callback_requests(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CallbackRequests, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterStatistics_callback_requests(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CallCenterStatistics",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CallCenterStatistics_abandoned_calls(ctx context.Context, field graphql.CollectedField, obj *model.CallCenterStatistics) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CallCenterStatistics_abandoned_calls(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AbandonedCalls, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CallCenterStatistics_abandoned_calls(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CallCenterStatistics",
 		Field:      field,
@@ -258036,6 +259942,12 @@ func (ec *executionContext) fieldContext_Mutation_callCenterCreateScenario(ctx c
 				return ec.fieldContext_CallCenterScenario_description(ctx, field)
 			case "prompt":
 				return ec.fieldContext_CallCenterScenario_prompt(ctx, field)
+			case "greeting":
+				return ec.fieldContext_CallCenterScenario_greeting(ctx, field)
+			case "phone_number":
+				return ec.fieldContext_CallCenterScenario_phone_number(ctx, field)
+			case "is_default":
+				return ec.fieldContext_CallCenterScenario_is_default(ctx, field)
 			case "is_active":
 				return ec.fieldContext_CallCenterScenario_is_active(ctx, field)
 			case "created_at":
@@ -258136,6 +260048,12 @@ func (ec *executionContext) fieldContext_Mutation_callCenterUpdateScenario(ctx c
 				return ec.fieldContext_CallCenterScenario_description(ctx, field)
 			case "prompt":
 				return ec.fieldContext_CallCenterScenario_prompt(ctx, field)
+			case "greeting":
+				return ec.fieldContext_CallCenterScenario_greeting(ctx, field)
+			case "phone_number":
+				return ec.fieldContext_CallCenterScenario_phone_number(ctx, field)
+			case "is_default":
+				return ec.fieldContext_CallCenterScenario_is_default(ctx, field)
 			case "is_active":
 				return ec.fieldContext_CallCenterScenario_is_active(ctx, field)
 			case "created_at":
@@ -258241,6 +260159,584 @@ func (ec *executionContext) fieldContext_Mutation_callCenterDeleteScenario(ctx c
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_callCenterDeleteScenario_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_callCenterSeedDefaults(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_callCenterSeedDefaults(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CallCenterSeedDefaults(rctx)
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal *model.CallCenterSeedResult
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.CallCenterSeedResult
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.CallCenterSeedResult
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.CallCenterSeedResult); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.CallCenterSeedResult`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CallCenterSeedResult)
+	fc.Result = res
+	return ec.marshalOCallCenterSeedResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterSeedResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_callCenterSeedDefaults(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scenarios":
+				return ec.fieldContext_CallCenterSeedResult_scenarios(ctx, field)
+			case "knowledge_entries":
+				return ec.fieldContext_CallCenterSeedResult_knowledge_entries(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterSeedResult", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_callCenterCreateKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_callCenterCreateKnowledgeEntry(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CallCenterCreateKnowledgeEntry(rctx, fc.Args["input"].(model.CallCenterKnowledgeInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.CallCenterKnowledgeEntry); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.CallCenterKnowledgeEntry`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CallCenterKnowledgeEntry)
+	fc.Result = res
+	return ec.marshalOCallCenterKnowledgeEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntry(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_callCenterCreateKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CallCenterKnowledgeEntry_id(ctx, field)
+			case "question":
+				return ec.fieldContext_CallCenterKnowledgeEntry_question(ctx, field)
+			case "answer":
+				return ec.fieldContext_CallCenterKnowledgeEntry_answer(ctx, field)
+			case "keywords":
+				return ec.fieldContext_CallCenterKnowledgeEntry_keywords(ctx, field)
+			case "category":
+				return ec.fieldContext_CallCenterKnowledgeEntry_category(ctx, field)
+			case "scenario":
+				return ec.fieldContext_CallCenterKnowledgeEntry_scenario(ctx, field)
+			case "is_active":
+				return ec.fieldContext_CallCenterKnowledgeEntry_is_active(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterKnowledgeEntry", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_callCenterCreateKnowledgeEntry_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_callCenterUpdateKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_callCenterUpdateKnowledgeEntry(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CallCenterUpdateKnowledgeEntry(rctx, fc.Args["entry_id"].(int), fc.Args["input"].(model.CallCenterKnowledgeInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.CallCenterKnowledgeEntry); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.CallCenterKnowledgeEntry`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CallCenterKnowledgeEntry)
+	fc.Result = res
+	return ec.marshalOCallCenterKnowledgeEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntry(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_callCenterUpdateKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CallCenterKnowledgeEntry_id(ctx, field)
+			case "question":
+				return ec.fieldContext_CallCenterKnowledgeEntry_question(ctx, field)
+			case "answer":
+				return ec.fieldContext_CallCenterKnowledgeEntry_answer(ctx, field)
+			case "keywords":
+				return ec.fieldContext_CallCenterKnowledgeEntry_keywords(ctx, field)
+			case "category":
+				return ec.fieldContext_CallCenterKnowledgeEntry_category(ctx, field)
+			case "scenario":
+				return ec.fieldContext_CallCenterKnowledgeEntry_scenario(ctx, field)
+			case "is_active":
+				return ec.fieldContext_CallCenterKnowledgeEntry_is_active(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterKnowledgeEntry", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_callCenterUpdateKnowledgeEntry_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_callCenterDeleteKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_callCenterDeleteKnowledgeEntry(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CallCenterDeleteKnowledgeEntry(rctx, fc.Args["entry_id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_callCenterDeleteKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_callCenterDeleteKnowledgeEntry_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_callCenterUpdateCustomer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_callCenterUpdateCustomer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CallCenterUpdateCustomer(rctx, fc.Args["phone_number"].(string), fc.Args["input"].(model.CallCenterCustomerInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal *model.CallCenterCustomer
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.CallCenterCustomer
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.CallCenterCustomer
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.CallCenterCustomer); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.CallCenterCustomer`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CallCenterCustomer)
+	fc.Result = res
+	return ec.marshalOCallCenterCustomer2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterCustomer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_callCenterUpdateCustomer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CallCenterCustomer_id(ctx, field)
+			case "phone_number":
+				return ec.fieldContext_CallCenterCustomer_phone_number(ctx, field)
+			case "name":
+				return ec.fieldContext_CallCenterCustomer_name(ctx, field)
+			case "email":
+				return ec.fieldContext_CallCenterCustomer_email(ctx, field)
+			case "notes":
+				return ec.fieldContext_CallCenterCustomer_notes(ctx, field)
+			case "total_calls":
+				return ec.fieldContext_CallCenterCustomer_total_calls(ctx, field)
+			case "last_call_date":
+				return ec.fieldContext_CallCenterCustomer_last_call_date(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CallCenterCustomer_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CallCenterCustomer_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterCustomer", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_callCenterUpdateCustomer_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_callCenterSimulate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_callCenterSimulate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CallCenterSimulate(rctx, fc.Args["input"].(model.CallCenterSimulateInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal *model.CallCenterSimulation
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.CallCenterSimulation
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.CallCenterSimulation
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.CallCenterSimulation); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.CallCenterSimulation`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CallCenterSimulation)
+	fc.Result = res
+	return ec.marshalOCallCenterSimulation2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterSimulation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_callCenterSimulate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "call_sid":
+				return ec.fieldContext_CallCenterSimulation_call_sid(ctx, field)
+			case "greeting":
+				return ec.fieldContext_CallCenterSimulation_greeting(ctx, field)
+			case "reply":
+				return ec.fieldContext_CallCenterSimulation_reply(ctx, field)
+			case "listening":
+				return ec.fieldContext_CallCenterSimulation_listening(ctx, field)
+			case "transfer_to":
+				return ec.fieldContext_CallCenterSimulation_transfer_to(ctx, field)
+			case "ended":
+				return ec.fieldContext_CallCenterSimulation_ended(ctx, field)
+			case "knowledge":
+				return ec.fieldContext_CallCenterSimulation_knowledge(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterSimulation", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_callCenterSimulate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -367451,7 +369947,7 @@ func (ec *executionContext) _Query_callCenterCalls(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		directive0 := func(rctx context.Context) (any, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().CallCenterCalls(rctx, fc.Args["skip"].(*int), fc.Args["limit"].(*int), fc.Args["status"].(*string), fc.Args["from_number"].(*string))
+			return ec.resolvers.Query().CallCenterCalls(rctx, fc.Args["skip"].(*int), fc.Args["limit"].(*int), fc.Args["status"].(*string), fc.Args["from_number"].(*string), fc.Args["outcome"].(*string))
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
@@ -367527,6 +370023,10 @@ func (ec *executionContext) fieldContext_Query_callCenterCalls(ctx context.Conte
 				return ec.fieldContext_CallCenterCall_end_time(ctx, field)
 			case "recording_url":
 				return ec.fieldContext_CallCenterCall_recording_url(ctx, field)
+			case "scenario":
+				return ec.fieldContext_CallCenterCall_scenario(ctx, field)
+			case "outcome":
+				return ec.fieldContext_CallCenterCall_outcome(ctx, field)
 			case "created_at":
 				return ec.fieldContext_CallCenterCall_created_at(ctx, field)
 			case "updated_at":
@@ -367637,6 +370137,10 @@ func (ec *executionContext) fieldContext_Query_callCenterCall(ctx context.Contex
 				return ec.fieldContext_CallCenterCallDetail_end_time(ctx, field)
 			case "recording_url":
 				return ec.fieldContext_CallCenterCallDetail_recording_url(ctx, field)
+			case "scenario":
+				return ec.fieldContext_CallCenterCallDetail_scenario(ctx, field)
+			case "outcome":
+				return ec.fieldContext_CallCenterCallDetail_outcome(ctx, field)
 			case "created_at":
 				return ec.fieldContext_CallCenterCallDetail_created_at(ctx, field)
 			case "updated_at":
@@ -367740,6 +370244,12 @@ func (ec *executionContext) fieldContext_Query_callCenterScenarios(ctx context.C
 				return ec.fieldContext_CallCenterScenario_description(ctx, field)
 			case "prompt":
 				return ec.fieldContext_CallCenterScenario_prompt(ctx, field)
+			case "greeting":
+				return ec.fieldContext_CallCenterScenario_greeting(ctx, field)
+			case "phone_number":
+				return ec.fieldContext_CallCenterScenario_phone_number(ctx, field)
+			case "is_default":
+				return ec.fieldContext_CallCenterScenario_is_default(ctx, field)
 			case "is_active":
 				return ec.fieldContext_CallCenterScenario_is_active(ctx, field)
 			case "created_at":
@@ -367840,6 +370350,12 @@ func (ec *executionContext) fieldContext_Query_callCenterScenario(ctx context.Co
 				return ec.fieldContext_CallCenterScenario_description(ctx, field)
 			case "prompt":
 				return ec.fieldContext_CallCenterScenario_prompt(ctx, field)
+			case "greeting":
+				return ec.fieldContext_CallCenterScenario_greeting(ctx, field)
+			case "phone_number":
+				return ec.fieldContext_CallCenterScenario_phone_number(ctx, field)
+			case "is_default":
+				return ec.fieldContext_CallCenterScenario_is_default(ctx, field)
 			case "is_active":
 				return ec.fieldContext_CallCenterScenario_is_active(ctx, field)
 			case "created_at":
@@ -367858,6 +370374,324 @@ func (ec *executionContext) fieldContext_Query_callCenterScenario(ctx context.Co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_callCenterScenario_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_callCenterKnowledgeEntries(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_callCenterKnowledgeEntries(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().CallCenterKnowledgeEntries(rctx, fc.Args["skip"].(*int), fc.Args["limit"].(*int), fc.Args["category"].(*string), fc.Args["scenario"].(*string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal []*model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal []*model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal []*model.CallCenterKnowledgeEntry
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.CallCenterKnowledgeEntry); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/JIeeiroSst/gateway-api/graph/model.CallCenterKnowledgeEntry`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CallCenterKnowledgeEntry)
+	fc.Result = res
+	return ec.marshalNCallCenterKnowledgeEntry2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_callCenterKnowledgeEntries(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CallCenterKnowledgeEntry_id(ctx, field)
+			case "question":
+				return ec.fieldContext_CallCenterKnowledgeEntry_question(ctx, field)
+			case "answer":
+				return ec.fieldContext_CallCenterKnowledgeEntry_answer(ctx, field)
+			case "keywords":
+				return ec.fieldContext_CallCenterKnowledgeEntry_keywords(ctx, field)
+			case "category":
+				return ec.fieldContext_CallCenterKnowledgeEntry_category(ctx, field)
+			case "scenario":
+				return ec.fieldContext_CallCenterKnowledgeEntry_scenario(ctx, field)
+			case "is_active":
+				return ec.fieldContext_CallCenterKnowledgeEntry_is_active(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterKnowledgeEntry", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_callCenterKnowledgeEntries_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_callCenterKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_callCenterKnowledgeEntry(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().CallCenterKnowledgeEntry(rctx, fc.Args["entry_id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.CallCenterKnowledgeEntry
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.CallCenterKnowledgeEntry); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.CallCenterKnowledgeEntry`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.CallCenterKnowledgeEntry)
+	fc.Result = res
+	return ec.marshalOCallCenterKnowledgeEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntry(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_callCenterKnowledgeEntry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CallCenterKnowledgeEntry_id(ctx, field)
+			case "question":
+				return ec.fieldContext_CallCenterKnowledgeEntry_question(ctx, field)
+			case "answer":
+				return ec.fieldContext_CallCenterKnowledgeEntry_answer(ctx, field)
+			case "keywords":
+				return ec.fieldContext_CallCenterKnowledgeEntry_keywords(ctx, field)
+			case "category":
+				return ec.fieldContext_CallCenterKnowledgeEntry_category(ctx, field)
+			case "scenario":
+				return ec.fieldContext_CallCenterKnowledgeEntry_scenario(ctx, field)
+			case "is_active":
+				return ec.fieldContext_CallCenterKnowledgeEntry_is_active(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterKnowledgeEntry", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_callCenterKnowledgeEntry_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_callCenterSearchKnowledge(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_callCenterSearchKnowledge(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().CallCenterSearchKnowledge(rctx, fc.Args["q"].(string), fc.Args["scenario"].(*string), fc.Args["limit"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/call-center-ai")
+			if err != nil {
+				var zeroVal []*model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal []*model.CallCenterKnowledgeEntry
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal []*model.CallCenterKnowledgeEntry
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.CallCenterKnowledgeEntry); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/JIeeiroSst/gateway-api/graph/model.CallCenterKnowledgeEntry`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CallCenterKnowledgeEntry)
+	fc.Result = res
+	return ec.marshalNCallCenterKnowledgeEntry2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_callCenterSearchKnowledge(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_CallCenterKnowledgeEntry_id(ctx, field)
+			case "question":
+				return ec.fieldContext_CallCenterKnowledgeEntry_question(ctx, field)
+			case "answer":
+				return ec.fieldContext_CallCenterKnowledgeEntry_answer(ctx, field)
+			case "keywords":
+				return ec.fieldContext_CallCenterKnowledgeEntry_keywords(ctx, field)
+			case "category":
+				return ec.fieldContext_CallCenterKnowledgeEntry_category(ctx, field)
+			case "scenario":
+				return ec.fieldContext_CallCenterKnowledgeEntry_scenario(ctx, field)
+			case "is_active":
+				return ec.fieldContext_CallCenterKnowledgeEntry_is_active(ctx, field)
+			case "created_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_CallCenterKnowledgeEntry_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CallCenterKnowledgeEntry", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_callCenterSearchKnowledge_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -368046,6 +370880,14 @@ func (ec *executionContext) fieldContext_Query_callCenterStatistics(ctx context.
 				return ec.fieldContext_CallCenterStatistics_average_duration(ctx, field)
 			case "total_messages":
 				return ec.fieldContext_CallCenterStatistics_total_messages(ctx, field)
+			case "resolved_calls":
+				return ec.fieldContext_CallCenterStatistics_resolved_calls(ctx, field)
+			case "transferred_calls":
+				return ec.fieldContext_CallCenterStatistics_transferred_calls(ctx, field)
+			case "callback_requests":
+				return ec.fieldContext_CallCenterStatistics_callback_requests(ctx, field)
+			case "abandoned_calls":
+				return ec.fieldContext_CallCenterStatistics_abandoned_calls(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type CallCenterStatistics", field.Name)
 		},
@@ -523997,6 +526839,109 @@ func (ec *executionContext) unmarshalInputBotUpdatePostInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCallCenterCustomerInput(ctx context.Context, obj any) (model.CallCenterCustomerInput, error) {
+	var it model.CallCenterCustomerInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "email", "notes"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "notes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notes"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Notes = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCallCenterKnowledgeInput(ctx context.Context, obj any) (model.CallCenterKnowledgeInput, error) {
+	var it model.CallCenterKnowledgeInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"question", "answer", "keywords", "category", "scenario", "is_active"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "question":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("question"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Question = data
+		case "answer":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("answer"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Answer = data
+		case "keywords":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keywords"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Keywords = data
+		case "category":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Category = data
+		case "scenario":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scenario"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Scenario = data
+		case "is_active":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_active"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsActive = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCallCenterScenarioInput(ctx context.Context, obj any) (model.CallCenterScenarioInput, error) {
 	var it model.CallCenterScenarioInput
 	asMap := map[string]any{}
@@ -524004,7 +526949,7 @@ func (ec *executionContext) unmarshalInputCallCenterScenarioInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "description", "prompt", "is_active"}
+	fieldsInOrder := [...]string{"name", "description", "prompt", "greeting", "phone_number", "is_default", "is_active"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -524032,6 +526977,27 @@ func (ec *executionContext) unmarshalInputCallCenterScenarioInput(ctx context.Co
 				return it, err
 			}
 			it.Prompt = data
+		case "greeting":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("greeting"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Greeting = data
+		case "phone_number":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phone_number"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
+		case "is_default":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_default"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsDefault = data
 		case "is_active":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("is_active"))
 			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
@@ -524039,6 +527005,61 @@ func (ec *executionContext) unmarshalInputCallCenterScenarioInput(ctx context.Co
 				return it, err
 			}
 			it.IsActive = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCallCenterSimulateInput(ctx context.Context, obj any) (model.CallCenterSimulateInput, error) {
+	var it model.CallCenterSimulateInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"message", "call_sid", "scenario", "from_number", "to_number"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "message":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("message"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Message = data
+		case "call_sid":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("call_sid"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CallSid = data
+		case "scenario":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scenario"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Scenario = data
+		case "from_number":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("from_number"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FromNumber = data
+		case "to_number":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("to_number"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ToNumber = data
 		}
 	}
 
@@ -543019,6 +546040,10 @@ func (ec *executionContext) _CallCenterCall(ctx context.Context, sel ast.Selecti
 			out.Values[i] = ec._CallCenterCall_end_time(ctx, field, obj)
 		case "recording_url":
 			out.Values[i] = ec._CallCenterCall_recording_url(ctx, field, obj)
+		case "scenario":
+			out.Values[i] = ec._CallCenterCall_scenario(ctx, field, obj)
+		case "outcome":
+			out.Values[i] = ec._CallCenterCall_outcome(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._CallCenterCall_created_at(ctx, field, obj)
 		case "updated_at":
@@ -543089,6 +546114,10 @@ func (ec *executionContext) _CallCenterCallDetail(ctx context.Context, sel ast.S
 			out.Values[i] = ec._CallCenterCallDetail_end_time(ctx, field, obj)
 		case "recording_url":
 			out.Values[i] = ec._CallCenterCallDetail_recording_url(ctx, field, obj)
+		case "scenario":
+			out.Values[i] = ec._CallCenterCallDetail_scenario(ctx, field, obj)
+		case "outcome":
+			out.Values[i] = ec._CallCenterCallDetail_outcome(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._CallCenterCallDetail_created_at(ctx, field, obj)
 		case "updated_at":
@@ -543153,6 +546182,67 @@ func (ec *executionContext) _CallCenterCustomer(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._CallCenterCustomer_created_at(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._CallCenterCustomer_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var callCenterKnowledgeEntryImplementors = []string{"CallCenterKnowledgeEntry"}
+
+func (ec *executionContext) _CallCenterKnowledgeEntry(ctx context.Context, sel ast.SelectionSet, obj *model.CallCenterKnowledgeEntry) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, callCenterKnowledgeEntryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CallCenterKnowledgeEntry")
+		case "id":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "question":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_question(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "answer":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_answer(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "keywords":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_keywords(ctx, field, obj)
+		case "category":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_category(ctx, field, obj)
+		case "scenario":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_scenario(ctx, field, obj)
+		case "is_active":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_is_active(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_created_at(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._CallCenterKnowledgeEntry_updated_at(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -543255,12 +546345,119 @@ func (ec *executionContext) _CallCenterScenario(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._CallCenterScenario_description(ctx, field, obj)
 		case "prompt":
 			out.Values[i] = ec._CallCenterScenario_prompt(ctx, field, obj)
+		case "greeting":
+			out.Values[i] = ec._CallCenterScenario_greeting(ctx, field, obj)
+		case "phone_number":
+			out.Values[i] = ec._CallCenterScenario_phone_number(ctx, field, obj)
+		case "is_default":
+			out.Values[i] = ec._CallCenterScenario_is_default(ctx, field, obj)
 		case "is_active":
 			out.Values[i] = ec._CallCenterScenario_is_active(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._CallCenterScenario_created_at(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._CallCenterScenario_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var callCenterSeedResultImplementors = []string{"CallCenterSeedResult"}
+
+func (ec *executionContext) _CallCenterSeedResult(ctx context.Context, sel ast.SelectionSet, obj *model.CallCenterSeedResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, callCenterSeedResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CallCenterSeedResult")
+		case "scenarios":
+			out.Values[i] = ec._CallCenterSeedResult_scenarios(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "knowledge_entries":
+			out.Values[i] = ec._CallCenterSeedResult_knowledge_entries(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var callCenterSimulationImplementors = []string{"CallCenterSimulation"}
+
+func (ec *executionContext) _CallCenterSimulation(ctx context.Context, sel ast.SelectionSet, obj *model.CallCenterSimulation) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, callCenterSimulationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CallCenterSimulation")
+		case "call_sid":
+			out.Values[i] = ec._CallCenterSimulation_call_sid(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "greeting":
+			out.Values[i] = ec._CallCenterSimulation_greeting(ctx, field, obj)
+		case "reply":
+			out.Values[i] = ec._CallCenterSimulation_reply(ctx, field, obj)
+		case "listening":
+			out.Values[i] = ec._CallCenterSimulation_listening(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "transfer_to":
+			out.Values[i] = ec._CallCenterSimulation_transfer_to(ctx, field, obj)
+		case "ended":
+			out.Values[i] = ec._CallCenterSimulation_ended(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "knowledge":
+			out.Values[i] = ec._CallCenterSimulation_knowledge(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -543320,6 +546517,14 @@ func (ec *executionContext) _CallCenterStatistics(ctx context.Context, sel ast.S
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "resolved_calls":
+			out.Values[i] = ec._CallCenterStatistics_resolved_calls(ctx, field, obj)
+		case "transferred_calls":
+			out.Values[i] = ec._CallCenterStatistics_transferred_calls(ctx, field, obj)
+		case "callback_requests":
+			out.Values[i] = ec._CallCenterStatistics_callback_requests(ctx, field, obj)
+		case "abandoned_calls":
+			out.Values[i] = ec._CallCenterStatistics_abandoned_calls(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -557426,6 +560631,33 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "callCenterSeedDefaults":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_callCenterSeedDefaults(ctx, field)
+			})
+		case "callCenterCreateKnowledgeEntry":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_callCenterCreateKnowledgeEntry(ctx, field)
+			})
+		case "callCenterUpdateKnowledgeEntry":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_callCenterUpdateKnowledgeEntry(ctx, field)
+			})
+		case "callCenterDeleteKnowledgeEntry":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_callCenterDeleteKnowledgeEntry(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "callCenterUpdateCustomer":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_callCenterUpdateCustomer(ctx, field)
+			})
+		case "callCenterSimulate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_callCenterSimulate(ctx, field)
+			})
 		case "carRentalRegisterUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_carRentalRegisterUser(ctx, field)
@@ -569009,6 +572241,69 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_callCenterScenario(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "callCenterKnowledgeEntries":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_callCenterKnowledgeEntries(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "callCenterKnowledgeEntry":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_callCenterKnowledgeEntry(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "callCenterSearchKnowledge":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_callCenterSearchKnowledge(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -601300,6 +604595,70 @@ func (ec *executionContext) marshalNCallCenterCall2ᚖgithubᚗcomᚋJIeeiroSst�
 	return ec._CallCenterCall(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNCallCenterCustomerInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterCustomerInput(ctx context.Context, v any) (model.CallCenterCustomerInput, error) {
+	res, err := ec.unmarshalInputCallCenterCustomerInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCallCenterKnowledgeEntry2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CallCenterKnowledgeEntry) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCallCenterKnowledgeEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntry(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCallCenterKnowledgeEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntry(ctx context.Context, sel ast.SelectionSet, v *model.CallCenterKnowledgeEntry) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CallCenterKnowledgeEntry(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNCallCenterKnowledgeInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeInput(ctx context.Context, v any) (model.CallCenterKnowledgeInput, error) {
+	res, err := ec.unmarshalInputCallCenterKnowledgeInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNCallCenterMessage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterMessage(ctx context.Context, sel ast.SelectionSet, v *model.CallCenterMessage) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -601366,6 +604725,11 @@ func (ec *executionContext) marshalNCallCenterScenario2ᚖgithubᚗcomᚋJIeeiro
 
 func (ec *executionContext) unmarshalNCallCenterScenarioInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterScenarioInput(ctx context.Context, v any) (model.CallCenterScenarioInput, error) {
 	res, err := ec.unmarshalInputCallCenterScenarioInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCallCenterSimulateInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterSimulateInput(ctx context.Context, v any) (model.CallCenterSimulateInput, error) {
+	res, err := ec.unmarshalInputCallCenterSimulateInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -610662,6 +614026,13 @@ func (ec *executionContext) marshalOCallCenterCustomer2ᚖgithubᚗcomᚋJIeeiro
 	return ec._CallCenterCustomer(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOCallCenterKnowledgeEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterKnowledgeEntry(ctx context.Context, sel ast.SelectionSet, v *model.CallCenterKnowledgeEntry) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CallCenterKnowledgeEntry(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOCallCenterMessage2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterMessageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CallCenterMessage) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -610714,6 +614085,20 @@ func (ec *executionContext) marshalOCallCenterScenario2ᚖgithubᚗcomᚋJIeeiro
 		return graphql.Null
 	}
 	return ec._CallCenterScenario(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOCallCenterSeedResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterSeedResult(ctx context.Context, sel ast.SelectionSet, v *model.CallCenterSeedResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CallCenterSeedResult(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOCallCenterSimulation2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterSimulation(ctx context.Context, sel ast.SelectionSet, v *model.CallCenterSimulation) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CallCenterSimulation(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOCallCenterStatistics2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐCallCenterStatistics(ctx context.Context, sel ast.SelectionSet, v *model.CallCenterStatistics) graphql.Marshaler {

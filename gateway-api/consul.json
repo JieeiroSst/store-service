@@ -81,7 +81,7 @@
             "timeout_seconds": 10
         },
         "call-center-ai": {
-            "http_address": "http://call-center-ai-svc:8000",
+            "http_address": "http://call-center-ai-svc",
             "timeout_seconds": 30
         },
         "car-rental-service": {

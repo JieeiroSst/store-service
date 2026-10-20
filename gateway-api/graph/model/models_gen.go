@@ -1602,6 +1602,8 @@ type CallCenterCall struct {
 	StartTime    *string `json:"start_time,omitempty"`
 	EndTime      *string `json:"end_time,omitempty"`
 	RecordingURL *string `json:"recording_url,omitempty"`
+	Scenario     *string `json:"scenario,omitempty"`
+	Outcome      *string `json:"outcome,omitempty"`
 	CreatedAt    *string `json:"created_at,omitempty"`
 	UpdatedAt    *string `json:"updated_at,omitempty"`
 }
@@ -1617,6 +1619,8 @@ type CallCenterCallDetail struct {
 	StartTime    *string              `json:"start_time,omitempty"`
 	EndTime      *string              `json:"end_time,omitempty"`
 	RecordingURL *string              `json:"recording_url,omitempty"`
+	Scenario     *string              `json:"scenario,omitempty"`
+	Outcome      *string              `json:"outcome,omitempty"`
 	CreatedAt    *string              `json:"created_at,omitempty"`
 	UpdatedAt    *string              `json:"updated_at,omitempty"`
 	Messages     []*CallCenterMessage `json:"messages,omitempty"`
@@ -1634,6 +1638,33 @@ type CallCenterCustomer struct {
 	UpdatedAt    *string `json:"updated_at,omitempty"`
 }
 
+type CallCenterCustomerInput struct {
+	Name  *string `json:"name,omitempty"`
+	Email *string `json:"email,omitempty"`
+	Notes *string `json:"notes,omitempty"`
+}
+
+type CallCenterKnowledgeEntry struct {
+	ID        int     `json:"id"`
+	Question  string  `json:"question"`
+	Answer    string  `json:"answer"`
+	Keywords  *string `json:"keywords,omitempty"`
+	Category  *string `json:"category,omitempty"`
+	Scenario  *string `json:"scenario,omitempty"`
+	IsActive  *int    `json:"is_active,omitempty"`
+	CreatedAt *string `json:"created_at,omitempty"`
+	UpdatedAt *string `json:"updated_at,omitempty"`
+}
+
+type CallCenterKnowledgeInput struct {
+	Question *string `json:"question,omitempty"`
+	Answer   *string `json:"answer,omitempty"`
+	Keywords *string `json:"keywords,omitempty"`
+	Category *string `json:"category,omitempty"`
+	Scenario *string `json:"scenario,omitempty"`
+	IsActive *int    `json:"is_active,omitempty"`
+}
+
 type CallCenterMessage struct {
 	ID             int      `json:"id"`
 	CallID         int      `json:"call_id"`
@@ -1649,6 +1680,9 @@ type CallCenterScenario struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description,omitempty"`
 	Prompt      *string `json:"prompt,omitempty"`
+	Greeting    *string `json:"greeting,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+	IsDefault   *int    `json:"is_default,omitempty"`
 	IsActive    *int    `json:"is_active,omitempty"`
 	CreatedAt   *string `json:"created_at,omitempty"`
 	UpdatedAt   *string `json:"updated_at,omitempty"`
@@ -1658,15 +1692,45 @@ type CallCenterScenarioInput struct {
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Prompt      *string `json:"prompt,omitempty"`
+	Greeting    *string `json:"greeting,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+	IsDefault   *int    `json:"is_default,omitempty"`
 	IsActive    *int    `json:"is_active,omitempty"`
 }
 
+type CallCenterSeedResult struct {
+	Scenarios        []string `json:"scenarios"`
+	KnowledgeEntries int      `json:"knowledge_entries"`
+}
+
+type CallCenterSimulateInput struct {
+	Message    *string `json:"message,omitempty"`
+	CallSid    *string `json:"call_sid,omitempty"`
+	Scenario   *string `json:"scenario,omitempty"`
+	FromNumber *string `json:"from_number,omitempty"`
+	ToNumber   *string `json:"to_number,omitempty"`
+}
+
+type CallCenterSimulation struct {
+	CallSid    string   `json:"call_sid"`
+	Greeting   *string  `json:"greeting,omitempty"`
+	Reply      *string  `json:"reply,omitempty"`
+	Listening  bool     `json:"listening"`
+	TransferTo *string  `json:"transfer_to,omitempty"`
+	Ended      bool     `json:"ended"`
+	Knowledge  []string `json:"knowledge,omitempty"`
+}
+
 type CallCenterStatistics struct {
-	TotalCalls      int     `json:"total_calls"`
-	CompletedCalls  int     `json:"completed_calls"`
-	FailedCalls     int     `json:"failed_calls"`
-	AverageDuration float64 `json:"average_duration"`
-	TotalMessages   int     `json:"total_messages"`
+	TotalCalls       int     `json:"total_calls"`
+	CompletedCalls   int     `json:"completed_calls"`
+	FailedCalls      int     `json:"failed_calls"`
+	AverageDuration  float64 `json:"average_duration"`
+	TotalMessages    int     `json:"total_messages"`
+	ResolvedCalls    *int    `json:"resolved_calls,omitempty"`
+	TransferredCalls *int    `json:"transferred_calls,omitempty"`
+	CallbackRequests *int    `json:"callback_requests,omitempty"`
+	AbandonedCalls   *int    `json:"abandoned_calls,omitempty"`
 }
 
 type CarRentalBicycleDetails struct {

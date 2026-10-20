@@ -9,6 +9,8 @@ type CallCenterCall {
   start_time: String
   end_time: String
   recording_url: String
+  scenario: String
+  outcome: String
   created_at: String
   updated_at: String
 }
@@ -34,6 +36,8 @@ type CallCenterCallDetail {
   start_time: String
   end_time: String
   recording_url: String
+  scenario: String
+  outcome: String
   created_at: String
   updated_at: String
   messages: [CallCenterMessage!]
@@ -44,6 +48,9 @@ type CallCenterScenario {
   name: String!
   description: String
   prompt: String
+  greeting: String
+  phone_number: String
+  is_default: Int
   is_active: Int
   created_at: String
   updated_at: String
@@ -53,6 +60,30 @@ input CallCenterScenarioInput {
   name: String
   description: String
   prompt: String
+  greeting: String
+  phone_number: String
+  is_default: Int
+  is_active: Int
+}
+
+type CallCenterKnowledgeEntry {
+  id: Int!
+  question: String!
+  answer: String!
+  keywords: String
+  category: String
+  scenario: String
+  is_active: Int
+  created_at: String
+  updated_at: String
+}
+
+input CallCenterKnowledgeInput {
+  question: String
+  answer: String
+  keywords: String
+  category: String
+  scenario: String
   is_active: Int
 }
 
@@ -68,19 +99,55 @@ type CallCenterCustomer {
   updated_at: String
 }
 
+input CallCenterCustomerInput {
+  name: String
+  email: String
+  notes: String
+}
+
 type CallCenterStatistics {
   total_calls: Int!
   completed_calls: Int!
   failed_calls: Int!
   average_duration: Float!
   total_messages: Int!
+  resolved_calls: Int
+  transferred_calls: Int
+  callback_requests: Int
+  abandoned_calls: Int
+}
+
+type CallCenterSeedResult {
+  scenarios: [String!]!
+  knowledge_entries: Int!
+}
+
+input CallCenterSimulateInput {
+  message: String
+  call_sid: String
+  scenario: String
+  from_number: String
+  to_number: String
+}
+
+type CallCenterSimulation {
+  call_sid: String!
+  greeting: String
+  reply: String
+  listening: Boolean!
+  transfer_to: String
+  ended: Boolean!
+  knowledge: [String!]
 }
 
 extend type Query {
-  callCenterCalls(skip: Int, limit: Int, status: String, from_number: String): [CallCenterCall!]! @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/calls")
+  callCenterCalls(skip: Int, limit: Int, status: String, from_number: String, outcome: String): [CallCenterCall!]! @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/calls")
   callCenterCall(call_id: Int!): CallCenterCallDetail @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/calls/{call_id}")
   callCenterScenarios(skip: Int, limit: Int): [CallCenterScenario!]! @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/scenarios")
   callCenterScenario(scenario_id: Int!): CallCenterScenario @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/scenarios/{scenario_id}")
+  callCenterKnowledgeEntries(skip: Int, limit: Int, category: String, scenario: String): [CallCenterKnowledgeEntry!]! @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/knowledge")
+  callCenterKnowledgeEntry(entry_id: Int!): CallCenterKnowledgeEntry @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/knowledge/{entry_id}")
+  callCenterSearchKnowledge(q: String!, scenario: String, limit: Int): [CallCenterKnowledgeEntry!]! @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/knowledge/search")
   callCenterCustomer(phone_number: String!): CallCenterCustomer @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/customers/{phone_number}")
   callCenterStatistics(days: Int): CallCenterStatistics @hasPermission(object: "/graphql/call-center-ai", action: "QUERY") @rest(service: "call-center-ai", path: "/api/analytics/statistics")
 }
@@ -90,4 +157,10 @@ extend type Mutation {
   callCenterCreateScenario(input: CallCenterScenarioInput!): CallCenterScenario @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "POST", path: "/api/scenarios")
   callCenterUpdateScenario(scenario_id: Int!, input: CallCenterScenarioInput!): CallCenterScenario @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "PUT", path: "/api/scenarios/{scenario_id}")
   callCenterDeleteScenario(scenario_id: Int!): Boolean! @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "DELETE", path: "/api/scenarios/{scenario_id}")
+  callCenterSeedDefaults: CallCenterSeedResult @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "POST", path: "/api/scenarios/seed")
+  callCenterCreateKnowledgeEntry(input: CallCenterKnowledgeInput!): CallCenterKnowledgeEntry @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "POST", path: "/api/knowledge")
+  callCenterUpdateKnowledgeEntry(entry_id: Int!, input: CallCenterKnowledgeInput!): CallCenterKnowledgeEntry @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "PUT", path: "/api/knowledge/{entry_id}")
+  callCenterDeleteKnowledgeEntry(entry_id: Int!): Boolean! @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "DELETE", path: "/api/knowledge/{entry_id}")
+  callCenterUpdateCustomer(phone_number: String!, input: CallCenterCustomerInput!): CallCenterCustomer @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "PUT", path: "/api/customers/{phone_number}")
+  callCenterSimulate(input: CallCenterSimulateInput!): CallCenterSimulation @hasPermission(object: "/graphql/call-center-ai", action: "MUTATION") @rest(service: "call-center-ai", method: "POST", path: "/api/simulate")
 }
