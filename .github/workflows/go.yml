@@ -1395,3 +1395,43 @@ jobs:
 
     - name: Test
       run: cd gateway-internal-api && make test
+
+  lucky_service:
+    name: lucky_service
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: lucky
+          POSTGRES_PASSWORD: lucky
+          POSTGRES_DB: lucky
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lucky"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: "1.25"
+
+    - name: Build
+      run: cd lucky-service && make build
+
+    - name: Vet
+      run: cd lucky-service && make vet
+
+    - name: Test
+      env:
+        LUCKY_TEST_DB_HOST: localhost
+        LUCKY_TEST_DB_PORT: "5432"
+        LUCKY_TEST_DB_USER: lucky
+        LUCKY_TEST_DB_PASSWORD: lucky
+        LUCKY_TEST_DB_NAME: lucky
+      run: cd lucky-service && make test

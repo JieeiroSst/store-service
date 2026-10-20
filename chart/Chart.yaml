@@ -575,3 +575,8 @@ dependencies:
     version: "0.2.0"
     repository: file://food-service
     condition: foodService.enabled
+  - alias: luckyService
+    name: lucky-service
+    version: "0.1.0"
+    repository: file://lucky-service
+    condition: luckyService.enabled

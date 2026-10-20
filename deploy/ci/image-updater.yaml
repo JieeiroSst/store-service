@@ -702,6 +702,14 @@ spec:
         helm:
           name: solanaService.image.name
           tag: solanaService.image.tag
+  - namePattern: lucky-service-dev
+    images:
+    - alias: luckyService
+      imageName: localhost:5000/lucky-service
+      manifestTargets:
+        helm:
+          name: luckyService.image.name
+          tag: luckyService.image.tag
   - namePattern: wishlists-service-dev
     images:
     - alias: wishlistsService

@@ -155,6 +155,15 @@ postgres:
       consulKey: ejabberd_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # lucky-service reads DB_USER / DB_PASSWORD from
+    # lucky-service-db-credentials; it has no Consul key, so the KV patch
+    # step is skipped.
+    - name: lucky-service
+      database: lucky_service
+      role: lucky_service_svc
+      consulKey: lucky_service
+      userField: .postgres.user
+      passwordField: .postgres.password
     # wishlists-service reads DB_USER / DB_PASSWORD from
     # wishlists-service-db-credentials; it has no Consul key, so the KV patch
     # step is skipped.

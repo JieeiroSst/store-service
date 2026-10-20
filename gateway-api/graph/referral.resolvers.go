@@ -2,7 +2,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/JIeeiroSst/gateway-api/graph/model"
 	"github.com/JIeeiroSst/gateway-api/proxy/rest"
@@ -17,11 +16,11 @@ func (r *mutationResolver) ReferralTrackEvent(ctx context.Context, refCode strin
 }
 
 func (r *mutationResolver) ReferralConfirmInstall(ctx context.Context, refCode string, clickID *string, platform *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) (any, error) {
-	return restCall[any](ctx, r.Proxy, "referral-service", rest.Request{Method: "POST", Path: "/api/v1/referral/confirm-install", Body: withField(map[string]any{"ref_code": refCode, "platform": platform, "device_id": deviceID, "firebase_instance_id": firebaseInstanceID, "utm_source": utmSource, "utm_medium": utmMedium, "utm_campaign": utmCampaign, "utm_term": utmTerm, "utm_content": utmContent}, "new_user_id", userIDOf(ctx))}, "")
+	return restCall[any](ctx, r.Proxy, "referral-service", rest.Request{Method: "POST", Path: "/api/v1/referral/confirm-install", Body: withField(map[string]any{"ref_code": refCode, "click_id": clickID, "platform": platform, "device_id": deviceID, "firebase_instance_id": firebaseInstanceID, "utm_source": utmSource, "utm_medium": utmMedium, "utm_campaign": utmCampaign, "utm_term": utmTerm, "utm_content": utmContent}, "new_user_id", userIDOf(ctx))}, "")
 }
 
 func (r *mutationResolver) ReferralActivate(ctx context.Context, refCode string, clickID *string, platform *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) (any, error) {
-	return restCall[any](ctx, r.Proxy, "referral-service", rest.Request{Method: "POST", Path: "/api/v1/referral/activate", Body: withField(map[string]any{"ref_code": refCode, "platform": platform, "device_id": deviceID, "firebase_instance_id": firebaseInstanceID, "utm_source": utmSource, "utm_medium": utmMedium, "utm_campaign": utmCampaign, "utm_term": utmTerm, "utm_content": utmContent}, "user_id", userIDOf(ctx))}, "")
+	return restCall[any](ctx, r.Proxy, "referral-service", rest.Request{Method: "POST", Path: "/api/v1/referral/activate", Body: withField(map[string]any{"ref_code": refCode, "click_id": clickID, "platform": platform, "device_id": deviceID, "firebase_instance_id": firebaseInstanceID, "utm_source": utmSource, "utm_medium": utmMedium, "utm_campaign": utmCampaign, "utm_term": utmTerm, "utm_content": utmContent}, "user_id", userIDOf(ctx))}, "")
 }
 
 func (r *mutationResolver) ReferralCreateRewardProgram(ctx context.Context, name string, activate *bool, tiers []*model.ReferralRewardTierInput) (*model.ReferralRewardProgram, error) {
@@ -65,11 +64,11 @@ func (r *queryResolver) MyReferralStats(ctx context.Context) (*model.ReferralUse
 }
 
 func (r *queryResolver) ReferralUserAttribution(ctx context.Context, userID string) (*model.ReferralAttribution, error) {
-	panic(fmt.Errorf("not implemented: ReferralUserAttribution - referralUserAttribution"))
+	return restCall[*model.ReferralAttribution](ctx, r.Proxy, "referral-service", rest.Request{Method: "GET", Path: rest.P("/api/v1/referral/user/%v/attribution", userID)}, "data")
 }
 
 func (r *queryResolver) MyReferralAttribution(ctx context.Context) (*model.ReferralAttribution, error) {
-	panic(fmt.Errorf("not implemented: MyReferralAttribution - myReferralAttribution"))
+	return restCall[*model.ReferralAttribution](ctx, r.Proxy, "referral-service", rest.Request{Method: "GET", Path: rest.P("/api/v1/referral/user/%v/attribution", userIDOf(ctx))}, "data")
 }
 
 func (r *queryResolver) ReferralUTMReport(ctx context.Context, ownerUserID *string, utmSource *string, utmMedium *string, utmCampaign *string, from *int, to *int) ([]*model.ReferralUTMPerformance, error) {

@@ -7,9 +7,52 @@ import (
 )
 
 type Config struct {
-	Server ServerConfig `json:"server"`
-	Mysql  MysqlConfig  `json:"mysql"`
-	Cache  CacheConfig  `json:"cache"`
+	Server   ServerConfig   `json:"server"`
+	Mysql    MysqlConfig    `json:"mysql"`
+	Cache    CacheConfig    `json:"cache"`
+	RabbitMQ RabbitMQConfig `json:"rabbitmq"`
+}
+
+type RabbitMQConfig struct {
+	Enabled  bool     `json:"enabled"`
+	Host     string   `json:"host"`
+	Port     string   `json:"port"`
+	User     string   `json:"user"`
+	Password string   `json:"password"`
+	VHost    string   `json:"vhost"`
+	Queue    string   `json:"queue"`
+	Bindings []string `json:"bindings"`
+	Prefetch int      `json:"prefetch"`
+}
+
+func (c *RabbitMQConfig) ApplyEnv() {
+	if v := os.Getenv("RABBITMQ_ENABLED"); v != "" {
+		c.Enabled = v == "true" || v == "1"
+	}
+	for env, dst := range map[string]*string{
+		"RABBITMQ_HOST":     &c.Host,
+		"RABBITMQ_PORT":     &c.Port,
+		"RABBITMQ_USER":     &c.User,
+		"RABBITMQ_PASSWORD": &c.Password,
+		"RABBITMQ_VHOST":    &c.VHost,
+		"RABBITMQ_QUEUE":    &c.Queue,
+	} {
+		if v := os.Getenv(env); v != "" {
+			*dst = v
+		}
+	}
+	if c.Port == "" {
+		c.Port = "5672"
+	}
+	if c.Queue == "" {
+		c.Queue = "point-service.rewards"
+	}
+	if len(c.Bindings) == 0 {
+		c.Bindings = []string{"lucky:lucky.reward.granted"}
+	}
+	if c.Prefetch <= 0 {
+		c.Prefetch = 20
+	}
 }
 
 type ServerConfig struct {

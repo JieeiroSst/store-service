@@ -15,14 +15,17 @@ func TestAllControllersRegisterOnOneEngine(t *testing.T) {
 	registerRewardDiscountRoutes(r, &RewardDiscountController{})
 	registerConvertedRewardPointRoutes(r, &ConvertedRewardPointContrller{})
 	registerRewardPointRoutes(r, &RewardPointController{})
+	registerPointLedgerRoutes(r, &PointLedgerController{})
 
 	want := map[string]bool{
-		"GET /api/v1/reward-discounts":            true,
-		"GET /api/v1/reward-discounts/:id":        true,
-		"GET /api/v1/converted-reward-points":     true,
-		"GET /api/v1/converted-reward-points/:id": true,
-		"GET /api/v1/reward-points":               true,
-		"GET /api/v1/reward-points/:id":           true,
+		"GET /api/v1/reward-discounts":                 true,
+		"GET /api/v1/reward-discounts/:id":             true,
+		"GET /api/v1/converted-reward-points":          true,
+		"GET /api/v1/converted-reward-points/:id":      true,
+		"GET /api/v1/reward-points":                    true,
+		"GET /api/v1/reward-points/:id":                true,
+		"GET /api/v1/users/:userId/points":             true,
+		"GET /api/v1/users/:userId/point-transactions": true,
 	}
 	for _, rt := range r.Routes() {
 		delete(want, rt.Method+" "+rt.Path)

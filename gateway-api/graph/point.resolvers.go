@@ -31,6 +31,22 @@ func (r *mutationResolver) PointUpdateConvertedRewardPoint(ctx context.Context, 
 	return restCall[*string](ctx, r.Proxy, "point-service", rest.Request{Method: "PUT", Path: "/api/v1/converted-reward-points", Body: input}, "")
 }
 
+func (r *queryResolver) PointMyBalance(ctx context.Context) (*model.PointAccount, error) {
+	return restCall[*model.PointAccount](ctx, r.Proxy, "point-service", rest.Request{Method: "GET", Path: rest.P("/api/v1/users/%v/points", userIDOf(ctx))}, "data")
+}
+
+func (r *queryResolver) PointMyTransactions(ctx context.Context, limit *int, offset *int) (*model.PointTransactionPage, error) {
+	return restCall[*model.PointTransactionPage](ctx, r.Proxy, "point-service", rest.Request{Method: "GET", Path: rest.P("/api/v1/users/%v/point-transactions", userIDOf(ctx)), Query: restQuery("limit", limit, "offset", offset)}, "data")
+}
+
+func (r *queryResolver) PointUserBalance(ctx context.Context, userID string) (*model.PointAccount, error) {
+	return restCall[*model.PointAccount](ctx, r.Proxy, "point-service", rest.Request{Method: "GET", Path: rest.P("/api/v1/users/%v/points", userID)}, "data")
+}
+
+func (r *queryResolver) PointUserTransactions(ctx context.Context, userID string, limit *int, offset *int) (*model.PointTransactionPage, error) {
+	return restCall[*model.PointTransactionPage](ctx, r.Proxy, "point-service", rest.Request{Method: "GET", Path: rest.P("/api/v1/users/%v/point-transactions", userID), Query: restQuery("limit", limit, "offset", offset)}, "data")
+}
+
 func (r *queryResolver) PointRewardPoints(ctx context.Context, perPage *int, sortOrder *string, cursor *string) (*model.PointRewardPointPage, error) {
 	return restCall[*model.PointRewardPointPage](ctx, r.Proxy, "point-service", rest.Request{Method: "GET", Path: "/api/v1/reward-points", Query: restQuery("per_page", perPage, "sort_order", sortOrder, "cursor", cursor)}, "")
 }

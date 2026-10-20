@@ -5,6 +5,7 @@ import "context"
 type Client struct {
 	IP        string
 	UserAgent string
+	DeviceID  string
 }
 
 type clientKey struct{}

@@ -165,12 +165,16 @@ func (c *Client) send(ctx context.Context, req Request, body io.Reader, contentT
 		httpReq.Header.Set("Content-Type", contentType)
 	}
 	httpReq.Header.Set("Accept", "application/json")
-	if client := auth.ClientFromContext(ctx); client.IP != "" {
+	client := auth.ClientFromContext(ctx)
+	if client.IP != "" {
 		httpReq.Header.Set("X-Forwarded-For", client.IP)
 		httpReq.Header.Set("X-Real-IP", client.IP)
 		if client.UserAgent != "" {
 			httpReq.Header.Set("User-Agent", client.UserAgent)
 		}
+	}
+	if client.DeviceID != "" {
+		httpReq.Header.Set("X-Device-Id", client.DeviceID)
 	}
 	if user, ok := auth.UserFromContext(ctx); ok {
 		if !c.opts.DropUserToken {

@@ -14,5 +14,18 @@
     },
     "cache": {
         "host": "redis-svc:80"
+    },
+    "rabbitmq": {
+        "enabled": true,
+        "host": "rabbitmq-service",
+        "port": "5672",
+        "user": "admin",
+        "password": "admin",
+        "vhost": "",
+        "queue": "point-service.rewards",
+        "bindings": [
+            "lucky:lucky.reward.granted"
+        ],
+        "prefetch": 20
     }
 }

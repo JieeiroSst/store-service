@@ -262,6 +262,21 @@ services:
   - livestreamService
   lang: go
   goVersion: '1.25'
+- name: lucky-service
+  context: lucky-service
+  image: lucky-service
+  helmKeys:
+  - luckyService
+  lang: go
+  goVersion: '1.25'
+  testEnv:
+    LUCKY_TEST_DB_HOST: localhost
+    LUCKY_TEST_DB_PORT: '5432'
+    LUCKY_TEST_DB_USER: postgres
+    LUCKY_TEST_DB_PASSWORD: pw
+    LUCKY_TEST_DB_NAME: postgres
+  testServices:
+  - postgres
 - name: lottery-service
   context: lottery-service
   image: lottery-service

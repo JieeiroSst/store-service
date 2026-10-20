@@ -1,0 +1,4 @@
+.env
+/lucky-service
+*.test
+*.out

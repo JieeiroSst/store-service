@@ -41,3 +41,26 @@ func TestForwardsUserAccessToken(t *testing.T) {
 		t.Fatalf("forward_user_token=false must drop the token: %v", got)
 	}
 }
+
+func TestForwardsClientSignals(t *testing.T) {
+	var got http.Header
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.Header.Clone()
+		_, _ = w.Write([]byte(`{"data":{}}`))
+	}))
+	defer srv.Close()
+	ctx := auth.WithClient(context.Background(), auth.Client{IP: "203.0.113.5", UserAgent: "LuckyApp/2", DeviceID: "device-9"})
+	var out any
+	if err := New("lucky-service", srv.URL, time.Second).Post(ctx, "/api/v1/lucky/checkin/me", map[string]any{}, &out); err != nil {
+		t.Fatal(err)
+	}
+	if got.Get("X-Real-IP") != "203.0.113.5" || got.Get("User-Agent") != "LuckyApp/2" || got.Get("X-Device-Id") != "device-9" {
+		t.Fatalf("client ip, user agent and device id must reach the service: %v", got)
+	}
+	if err := New("lucky-service", srv.URL, time.Second).Get(context.Background(), "/", nil, &out); err != nil {
+		t.Fatal(err)
+	}
+	if got.Get("X-Device-Id") != "" {
+		t.Fatalf("no device id without a client: %v", got)
+	}
+}

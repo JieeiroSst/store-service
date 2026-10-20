@@ -283,6 +283,10 @@
             "http_address": "http://photo-service-svc",
             "timeout_seconds": 10
         },
+        "lucky-service": {
+            "http_address": "http://lucky-service-svc:9000",
+            "timeout_seconds": 10
+        },
         "point-service": {
             "http_address": "http://point-service-svc:3000",
             "timeout_seconds": 10

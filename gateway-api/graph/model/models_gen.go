@@ -4517,6 +4517,254 @@ type LotteryScrape struct {
 	ProvincesSaved int      `json:"provinces_saved"`
 }
 
+type LuckyBlockPage struct {
+	Items  []*LuckyUserBlock `json:"items"`
+	Total  int               `json:"total"`
+	Limit  int               `json:"limit"`
+	Offset int               `json:"offset"`
+}
+
+type LuckyBlockResult struct {
+	Block       *LuckyUserBlock `json:"block"`
+	HeldRewards int             `json:"held_rewards"`
+}
+
+type LuckyCampaign struct {
+	ID                  int              `json:"id"`
+	GameType            string           `json:"game_type"`
+	Name                string           `json:"name"`
+	Description         *string          `json:"description,omitempty"`
+	StartAt             string           `json:"start_at"`
+	EndAt               string           `json:"end_at"`
+	Timezone            string           `json:"timezone"`
+	Status              *string          `json:"status,omitempty"`
+	WinRate             *float64         `json:"win_rate,omitempty"`
+	DailySpins          int              `json:"daily_spins"`
+	MaxSpinsPerDay      *int             `json:"max_spins_per_day,omitempty"`
+	MaxPointsPerUserDay *int             `json:"max_points_per_user_day,omitempty"`
+	BudgetPoints        *int             `json:"budget_points,omitempty"`
+	PointsAwarded       *int             `json:"points_awarded,omitempty"`
+	ReviewPoints        *int             `json:"review_points,omitempty"`
+	SpinRules           []*LuckySpinRule `json:"spin_rules,omitempty"`
+	ExtraPlayEvents     []string         `json:"extra_play_events,omitempty"`
+	CheckinRewards      []int            `json:"checkin_rewards,omitempty"`
+	Settings            map[string]any   `json:"settings,omitempty"`
+	Prizes              []*LuckyPrize    `json:"prizes"`
+	CreatedAt           *string          `json:"created_at,omitempty"`
+	UpdatedAt           *string          `json:"updated_at,omitempty"`
+}
+
+type LuckyCampaignInput struct {
+	GameType            *string               `json:"game_type,omitempty"`
+	Name                string                `json:"name"`
+	Description         *string               `json:"description,omitempty"`
+	StartAt             string                `json:"start_at"`
+	EndAt               string                `json:"end_at"`
+	Timezone            *string               `json:"timezone,omitempty"`
+	WinRate             *float64              `json:"win_rate,omitempty"`
+	DailySpins          *int                  `json:"daily_spins,omitempty"`
+	MaxSpinsPerDay      *int                  `json:"max_spins_per_day,omitempty"`
+	MaxPointsPerUserDay *int                  `json:"max_points_per_user_day,omitempty"`
+	BudgetPoints        *int                  `json:"budget_points,omitempty"`
+	ReviewPoints        *int                  `json:"review_points,omitempty"`
+	SpinRules           []*LuckySpinRuleInput `json:"spin_rules,omitempty"`
+	CheckinRewards      []int                 `json:"checkin_rewards,omitempty"`
+	Settings            map[string]any        `json:"settings,omitempty"`
+	Prizes              []*LuckyPrizeInput    `json:"prizes,omitempty"`
+}
+
+type LuckyCampaignPage struct {
+	Items  []*LuckyCampaign `json:"items"`
+	Total  int              `json:"total"`
+	Limit  int              `json:"limit"`
+	Offset int              `json:"offset"`
+}
+
+type LuckyCheckin struct {
+	ID         int    `json:"id"`
+	CampaignID int    `json:"campaign_id"`
+	UserID     string `json:"user_id"`
+	Day        string `json:"day"`
+	Streak     int    `json:"streak"`
+	Points     int    `json:"points"`
+	CreatedAt  string `json:"created_at"`
+}
+
+type LuckyCheckinPage struct {
+	Items  []*LuckyCheckin `json:"items"`
+	Total  int             `json:"total"`
+	Limit  int             `json:"limit"`
+	Offset int             `json:"offset"`
+}
+
+type LuckyCheckinResult struct {
+	Checkin *LuckyCheckin       `json:"checkin"`
+	Status  *LuckyCheckinStatus `json:"status"`
+}
+
+type LuckyCheckinStatus struct {
+	CampaignID     int    `json:"campaign_id"`
+	Day            string `json:"day"`
+	CheckedInToday bool   `json:"checked_in_today"`
+	Streak         int    `json:"streak"`
+	CycleDay       int    `json:"cycle_day"`
+	NextReward     int    `json:"next_reward"`
+	Rewards        []int  `json:"rewards"`
+	EndsAt         string `json:"ends_at"`
+}
+
+type LuckyClient struct {
+	IP        *string `json:"ip,omitempty"`
+	DeviceID  *string `json:"device_id,omitempty"`
+	UserAgent *string `json:"user_agent,omitempty"`
+}
+
+type LuckyCreditGrant struct {
+	ID          int    `json:"id"`
+	CampaignID  int    `json:"campaign_id"`
+	GameType    string `json:"game_type"`
+	UserID      string `json:"user_id"`
+	Event       string `json:"event"`
+	ReferenceID string `json:"reference_id"`
+	Spins       int    `json:"spins"`
+	Day         string `json:"day"`
+	CreatedAt   string `json:"created_at"`
+}
+
+type LuckyGrantResult struct {
+	Grants  []*LuckyCreditGrant `json:"grants"`
+	Skipped []*LuckyGrantSkip   `json:"skipped"`
+}
+
+type LuckyGrantSkip struct {
+	CampaignID int    `json:"campaign_id"`
+	GameType   string `json:"game_type"`
+	Reason     string `json:"reason"`
+}
+
+type LuckyPlay struct {
+	ID         int          `json:"id"`
+	CampaignID int          `json:"campaign_id"`
+	GameType   string       `json:"game_type"`
+	UserID     string       `json:"user_id"`
+	PrizeID    int          `json:"prize_id"`
+	PrizeName  string       `json:"prize_name"`
+	PrizeType  string       `json:"prize_type"`
+	Points     int          `json:"points"`
+	Position   int          `json:"position"`
+	Choice     int          `json:"choice"`
+	Source     string       `json:"source"`
+	Day        string       `json:"day"`
+	Client     *LuckyClient `json:"client,omitempty"`
+	CreatedAt  string       `json:"created_at"`
+}
+
+type LuckyPlayPage struct {
+	Items  []*LuckyPlay `json:"items"`
+	Total  int          `json:"total"`
+	Limit  int          `json:"limit"`
+	Offset int          `json:"offset"`
+}
+
+type LuckyPlayResult struct {
+	Play     *LuckyPlay         `json:"play"`
+	Won      bool               `json:"won"`
+	Replayed bool               `json:"replayed"`
+	Status   *LuckyPlayerStatus `json:"status"`
+}
+
+type LuckyPlayerStatus struct {
+	CampaignID int         `json:"campaign_id"`
+	GameType   string      `json:"game_type"`
+	Day        string      `json:"day"`
+	DailySpins int         `json:"daily_spins"`
+	Remaining  int         `json:"remaining"`
+	Usage      *LuckyUsage `json:"usage"`
+	EndsAt     string      `json:"ends_at"`
+}
+
+type LuckyPrize struct {
+	ID         int     `json:"id"`
+	CampaignID *int    `json:"campaign_id,omitempty"`
+	Name       string  `json:"name"`
+	Type       string  `json:"type"`
+	Points     int     `json:"points"`
+	Weight     *int    `json:"weight,omitempty"`
+	Quantity   *int    `json:"quantity,omitempty"`
+	Awarded    *int    `json:"awarded,omitempty"`
+	Position   int     `json:"position"`
+	ImageURL   *string `json:"image_url,omitempty"`
+}
+
+type LuckyPrizeInput struct {
+	ID       *int    `json:"id,omitempty"`
+	Name     string  `json:"name"`
+	Type     string  `json:"type"`
+	Points   *int    `json:"points,omitempty"`
+	Weight   *int    `json:"weight,omitempty"`
+	Quantity *int    `json:"quantity,omitempty"`
+	Position *int    `json:"position,omitempty"`
+	ImageURL *string `json:"image_url,omitempty"`
+}
+
+type LuckyReviewReward struct {
+	ID          int     `json:"id"`
+	EventID     string  `json:"event_id"`
+	Source      string  `json:"source"`
+	GameType    string  `json:"game_type"`
+	UserID      string  `json:"user_id"`
+	CampaignID  int     `json:"campaign_id"`
+	ReferenceID int     `json:"reference_id"`
+	Title       string  `json:"title"`
+	Points      int     `json:"points"`
+	Status      string  `json:"status"`
+	HoldReason  *string `json:"hold_reason,omitempty"`
+	ReviewedBy  *string `json:"reviewed_by,omitempty"`
+	OccurredAt  string  `json:"occurred_at"`
+	PublishedAt *string `json:"published_at,omitempty"`
+}
+
+type LuckyReviewRewardPage struct {
+	Items  []*LuckyReviewReward `json:"items"`
+	Total  int                  `json:"total"`
+	Limit  int                  `json:"limit"`
+	Offset int                  `json:"offset"`
+}
+
+type LuckySpinRule struct {
+	Event     string `json:"event"`
+	Spins     int    `json:"spins"`
+	MaxPerDay int    `json:"max_per_day"`
+}
+
+type LuckySpinRuleInput struct {
+	Event     string `json:"event"`
+	Spins     int    `json:"spins"`
+	MaxPerDay *int   `json:"max_per_day,omitempty"`
+}
+
+type LuckyUsage struct {
+	DailyToday    int `json:"daily_today"`
+	CreditToday   int `json:"credit_today"`
+	CreditBalance int `json:"credit_balance"`
+}
+
+type LuckyUserBlock struct {
+	UserID    string `json:"user_id"`
+	Reason    string `json:"reason"`
+	BlockedBy string `json:"blocked_by"`
+	CreatedAt string `json:"created_at"`
+}
+
+type LuckyWinner struct {
+	CampaignID int    `json:"campaign_id"`
+	GameType   string `json:"game_type"`
+	User       string `json:"user"`
+	PrizeName  string `json:"prize_name"`
+	Points     int    `json:"points"`
+	At         string `json:"at"`
+}
+
 type MediaSearchResult struct {
 	Videos []*MediaVideo `json:"videos,omitempty"`
 	Total  *int          `json:"total,omitempty"`
@@ -5382,6 +5630,13 @@ type PhotosourceDto struct {
 	Order     *int    `json:"order,omitempty"`
 }
 
+type PointAccount struct {
+	UserID      string  `json:"user_id"`
+	Balance     int     `json:"balance"`
+	TotalEarned int     `json:"total_earned"`
+	UpdatedAt   *string `json:"updated_at,omitempty"`
+}
+
 type PointConvertedRewardPoint struct {
 	RewConvertID          *string `json:"rew_convert_id,omitempty"`
 	RewConvertOrdDetailID *string `json:"rew_convert_ord_detail_id,omitempty"`
@@ -5473,6 +5728,23 @@ type PointRewardPointPage struct {
 	Success    *bool                `json:"success,omitempty"`
 	Data       []*PointRewardPoint  `json:"data,omitempty"`
 	Pagination *PointPaginationInfo `json:"pagination,omitempty"`
+}
+
+type PointTransaction struct {
+	ID           int    `json:"id"`
+	EventID      string `json:"event_id"`
+	Source       string `json:"source"`
+	Title        string `json:"title"`
+	Points       int    `json:"points"`
+	BalanceAfter int    `json:"balance_after"`
+	OccurredAt   string `json:"occurred_at"`
+}
+
+type PointTransactionPage struct {
+	Items  []*PointTransaction `json:"items"`
+	Total  int                 `json:"total"`
+	Limit  int                 `json:"limit"`
+	Offset int                 `json:"offset"`
 }
 
 type PolyActivity struct {

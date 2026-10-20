@@ -91,7 +91,35 @@ input PointConvertedRewardPointInput {
   rew_convert_date: Int
 }
 
+type PointAccount {
+  user_id: String!
+  balance: Int64!
+  total_earned: Int64!
+  updated_at: String
+}
+
+type PointTransaction {
+  id: Int64!
+  event_id: String!
+  source: String!
+  title: String!
+  points: Int64!
+  balance_after: Int64!
+  occurred_at: String!
+}
+
+type PointTransactionPage {
+  items: [PointTransaction!]!
+  total: Int64!
+  limit: Int!
+  offset: Int!
+}
+
 extend type Query {
+  pointMyBalance: PointAccount @rest(service: "point-service", path: "/api/v1/users/{$userId}/points", unwrap: "data")
+  pointMyTransactions(limit: Int, offset: Int): PointTransactionPage @rest(service: "point-service", path: "/api/v1/users/{$userId}/point-transactions", unwrap: "data")
+  pointUserBalance(user_id: String!): PointAccount @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/users/{user_id}/points", unwrap: "data")
+  pointUserTransactions(user_id: String!, limit: Int, offset: Int): PointTransactionPage @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/users/{user_id}/point-transactions", unwrap: "data")
   pointRewardPoints(per_page: Int, sort_order: String, cursor: String): PointRewardPointPage @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/reward-points")
   pointRewardPoint(id: String!): PointRewardPoint @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/reward-points/{id}")
   pointRewardDiscounts(per_page: Int, sort_order: String, cursor: String): PointRewardDiscountPage @hasPermission(object: "/graphql/point-service", action: "QUERY") @rest(service: "point-service", path: "/api/v1/reward-discounts")

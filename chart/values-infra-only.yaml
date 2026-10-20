@@ -170,6 +170,8 @@ solanaService:
   enabled: false
 wishlistsService:
   enabled: false
+luckyService:
+  enabled: false
 sardAuthService:
   enabled: false
 sardCustomerInfoService:

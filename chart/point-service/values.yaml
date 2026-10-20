@@ -39,9 +39,28 @@ pointService:
 
   autoscaling:
     enabled: false
+  rabbitmq:
+    enabled: true
+    host: rabbitmq-service
+    port: '5672'
+    user: admin
+    password: admin
+    queue: point-service.rewards
   containerEnv:
     - name: PORT
       value: '{{ .Values.pointService.image.port }}'
+    - name: RABBITMQ_ENABLED
+      value: '{{ .Values.pointService.rabbitmq.enabled }}'
+    - name: RABBITMQ_HOST
+      value: '{{ .Values.pointService.rabbitmq.host }}'
+    - name: RABBITMQ_PORT
+      value: '{{ .Values.pointService.rabbitmq.port }}'
+    - name: RABBITMQ_USER
+      value: '{{ .Values.pointService.rabbitmq.user }}'
+    - name: RABBITMQ_PASSWORD
+      value: '{{ .Values.pointService.rabbitmq.password }}'
+    - name: RABBITMQ_QUEUE
+      value: '{{ .Values.pointService.rabbitmq.queue }}'
   envFile:
     enabled: true
     mountPath: /app/.env

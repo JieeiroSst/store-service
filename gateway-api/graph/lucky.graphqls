@@ -1,0 +1,278 @@
+type LuckySpinRule {
+  event: String!
+  spins: Int!
+  max_per_day: Int!
+}
+
+type LuckyPrize {
+  id: Int64!
+  campaign_id: Int64
+  name: String!
+  type: String!
+  points: Int64!
+  weight: Int
+  quantity: Int64
+  awarded: Int64
+  position: Int!
+  image_url: String
+}
+
+type LuckyCampaign {
+  id: Int64!
+  game_type: String!
+  name: String!
+  description: String
+  start_at: String!
+  end_at: String!
+  timezone: String!
+  status: String
+  win_rate: Float
+  daily_spins: Int!
+  max_spins_per_day: Int
+  max_points_per_user_day: Int64
+  budget_points: Int64
+  points_awarded: Int64
+  review_points: Int64
+  spin_rules: [LuckySpinRule!]
+  extra_play_events: [String!]
+  checkin_rewards: [Int64!]
+  settings: Map
+  prizes: [LuckyPrize!]!
+  created_at: String
+  updated_at: String
+}
+
+type LuckyCampaignPage {
+  items: [LuckyCampaign!]!
+  total: Int64!
+  limit: Int!
+  offset: Int!
+}
+
+type LuckyUsage {
+  daily_today: Int!
+  credit_today: Int!
+  credit_balance: Int!
+}
+
+type LuckyPlayerStatus {
+  campaign_id: Int64!
+  game_type: String!
+  day: String!
+  daily_spins: Int!
+  remaining: Int!
+  usage: LuckyUsage!
+  ends_at: String!
+}
+
+type LuckyClient {
+  ip: String
+  device_id: String
+  user_agent: String
+}
+
+type LuckyPlay {
+  id: Int64!
+  campaign_id: Int64!
+  game_type: String!
+  user_id: String!
+  prize_id: Int64!
+  prize_name: String!
+  prize_type: String!
+  points: Int64!
+  position: Int!
+  choice: Int!
+  source: String!
+  day: String!
+  client: LuckyClient
+  created_at: String!
+}
+
+type LuckyPlayResult {
+  play: LuckyPlay!
+  won: Boolean!
+  replayed: Boolean!
+  status: LuckyPlayerStatus!
+}
+
+type LuckyPlayPage {
+  items: [LuckyPlay!]!
+  total: Int64!
+  limit: Int!
+  offset: Int!
+}
+
+type LuckyWinner {
+  campaign_id: Int64!
+  game_type: String!
+  user: String!
+  prize_name: String!
+  points: Int64!
+  at: String!
+}
+
+type LuckyCreditGrant {
+  id: Int64!
+  campaign_id: Int64!
+  game_type: String!
+  user_id: String!
+  event: String!
+  reference_id: String!
+  spins: Int!
+  day: String!
+  created_at: String!
+}
+
+type LuckyGrantSkip {
+  campaign_id: Int64!
+  game_type: String!
+  reason: String!
+}
+
+type LuckyGrantResult {
+  grants: [LuckyCreditGrant!]!
+  skipped: [LuckyGrantSkip!]!
+}
+
+type LuckyCheckin {
+  id: Int64!
+  campaign_id: Int64!
+  user_id: String!
+  day: String!
+  streak: Int!
+  points: Int64!
+  created_at: String!
+}
+
+type LuckyCheckinStatus {
+  campaign_id: Int64!
+  day: String!
+  checked_in_today: Boolean!
+  streak: Int!
+  cycle_day: Int!
+  next_reward: Int64!
+  rewards: [Int64!]!
+  ends_at: String!
+}
+
+type LuckyCheckinResult {
+  checkin: LuckyCheckin!
+  status: LuckyCheckinStatus!
+}
+
+type LuckyCheckinPage {
+  items: [LuckyCheckin!]!
+  total: Int64!
+  limit: Int!
+  offset: Int!
+}
+
+type LuckyUserBlock {
+  user_id: String!
+  reason: String!
+  blocked_by: String!
+  created_at: String!
+}
+
+type LuckyBlockResult {
+  block: LuckyUserBlock!
+  held_rewards: Int64!
+}
+
+type LuckyBlockPage {
+  items: [LuckyUserBlock!]!
+  total: Int64!
+  limit: Int!
+  offset: Int!
+}
+
+type LuckyReviewReward {
+  id: Int64!
+  event_id: String!
+  source: String!
+  game_type: String!
+  user_id: String!
+  campaign_id: Int64!
+  reference_id: Int64!
+  title: String!
+  points: Int64!
+  status: String!
+  hold_reason: String
+  reviewed_by: String
+  occurred_at: String!
+  published_at: String
+}
+
+type LuckyReviewRewardPage {
+  items: [LuckyReviewReward!]!
+  total: Int64!
+  limit: Int!
+  offset: Int!
+}
+
+input LuckySpinRuleInput {
+  event: String!
+  spins: Int!
+  max_per_day: Int
+}
+
+input LuckyPrizeInput {
+  id: Int64
+  name: String!
+  type: String!
+  points: Int64
+  weight: Int
+  quantity: Int64
+  position: Int
+  image_url: String
+}
+
+input LuckyCampaignInput {
+  game_type: String
+  name: String!
+  description: String
+  start_at: String!
+  end_at: String!
+  timezone: String
+  win_rate: Float
+  daily_spins: Int
+  max_spins_per_day: Int
+  max_points_per_user_day: Int64
+  budget_points: Int64
+  review_points: Int64
+  spin_rules: [LuckySpinRuleInput!]
+  checkin_rewards: [Int64!]
+  settings: Map
+  prizes: [LuckyPrizeInput!]
+}
+
+extend type Query {
+  luckyGames: [LuckyCampaign!]! @public @rest(service: "lucky-service", path: "/api/v1/lucky/games", unwrap: "data")
+  luckyGame(game: String!): LuckyCampaign @public @rest(service: "lucky-service", path: "/api/v1/lucky/games/{game}", unwrap: "data")
+  luckyWinners(game: String!, limit: Int): [LuckyWinner!]! @public @rest(service: "lucky-service", path: "/api/v1/lucky/games/{game}/winners", unwrap: "data")
+  luckyMyStatus(game: String!): LuckyPlayerStatus @rest(service: "lucky-service", path: "/api/v1/lucky/games/{game}/me/status", unwrap: "data")
+  luckyMyPlays(game_type: String, campaign_id: Int64, limit: Int, offset: Int): LuckyPlayPage @rest(service: "lucky-service", path: "/api/v1/lucky/me/plays", unwrap: "data")
+  luckyCheckinStatus: LuckyCheckinStatus @rest(service: "lucky-service", path: "/api/v1/lucky/checkin/me", unwrap: "data")
+  luckyCheckinHistory(limit: Int, offset: Int): LuckyCheckinPage @rest(service: "lucky-service", path: "/api/v1/lucky/checkin/me/history", unwrap: "data")
+  luckyCampaigns(game_type: String, status: String, limit: Int, offset: Int): LuckyCampaignPage @hasPermission(object: "/graphql/lucky-service", action: "QUERY") @rest(service: "lucky-service", path: "/api/v1/lucky/campaigns", unwrap: "data")
+  luckyCampaign(id: Int64!): LuckyCampaign @hasPermission(object: "/graphql/lucky-service", action: "QUERY") @rest(service: "lucky-service", path: "/api/v1/lucky/campaigns/{id}", unwrap: "data")
+  luckyFraudBlocks(limit: Int, offset: Int): LuckyBlockPage @hasPermission(object: "/graphql/lucky-service", action: "QUERY") @rest(service: "lucky-service", path: "/api/v1/lucky/fraud/blocks", unwrap: "data")
+  luckyFraudRewards(status: String, user_id: String, limit: Int, offset: Int): LuckyReviewRewardPage @hasPermission(object: "/graphql/lucky-service", action: "QUERY") @rest(service: "lucky-service", path: "/api/v1/lucky/fraud/rewards", unwrap: "data")
+  luckyFraudPlays(user_id: String, device_id: String, ip: String, limit: Int, offset: Int): LuckyPlayPage @hasPermission(object: "/graphql/lucky-service", action: "QUERY") @rest(service: "lucky-service", path: "/api/v1/lucky/fraud/plays", unwrap: "data")
+  luckyCampaignPlays(id: Int64!, user_id: String, limit: Int, offset: Int): LuckyPlayPage @hasPermission(object: "/graphql/lucky-service", action: "QUERY") @rest(service: "lucky-service", path: "/api/v1/lucky/campaigns/{id}/plays", unwrap: "data")
+}
+
+extend type Mutation {
+  luckyPlay(game: String!, choice: Int, idempotency_key: String): LuckyPlayResult @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/games/{game}/me/plays", unwrap: "data", headerArgs: "idempotency_key:Idempotency-Key")
+  luckyCheckIn: LuckyCheckinResult @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/checkin/me", unwrap: "data")
+  luckyGrantPlays(user_id: String!, event: String!, reference_id: String!): LuckyGrantResult @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/credits", unwrap: "data")
+  luckyCampaignCreate(input: LuckyCampaignInput!): LuckyCampaign @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/campaigns", unwrap: "data")
+  luckyCampaignUpdate(id: Int64!, input: LuckyCampaignInput!): LuckyCampaign @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "PUT", path: "/api/v1/lucky/campaigns/{id}", unwrap: "data")
+  luckyCampaignDelete(id: Int64!): Boolean! @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "DELETE", path: "/api/v1/lucky/campaigns/{id}")
+  luckyCampaignActivate(id: Int64!): LuckyCampaign @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/campaigns/{id}/activate", unwrap: "data")
+  luckyFraudBlock(user_id: String!, reason: String!): LuckyBlockResult @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/fraud/blocks", unwrap: "data")
+  luckyFraudUnblock(user_id: String!): Boolean! @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "DELETE", path: "/api/v1/lucky/fraud/blocks/{user_id}")
+  luckyFraudApproveReward(id: Int64!): LuckyReviewReward @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/fraud/rewards/{id}/approve", unwrap: "data")
+  luckyFraudRejectReward(id: Int64!): LuckyReviewReward @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/fraud/rewards/{id}/reject", unwrap: "data")
+  luckyCampaignPause(id: Int64!): LuckyCampaign @hasPermission(object: "/graphql/lucky-service", action: "MUTATION") @rest(service: "lucky-service", method: "POST", path: "/api/v1/lucky/campaigns/{id}/pause", unwrap: "data")
+}

@@ -1,12 +1,16 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/JIeeiroSst/point-service/application"
 	"github.com/JIeeiroSst/point-service/config"
+	"github.com/JIeeiroSst/point-service/domain/service"
+	"github.com/JIeeiroSst/point-service/infrastructure/messaging"
+	"github.com/JIeeiroSst/point-service/infrastructure/persistence"
 	middleware "github.com/JIeeiroSst/point-service/interfaces"
 	"github.com/JIeeiroSst/point-service/pkg/consul"
 	"github.com/gin-gonic/gin"
@@ -49,6 +53,17 @@ func InitServer() Server {
 	application.InitRewardDiscountRouter(router, dns)
 	application.InitConvertedRewardPointRouter(router, dns)
 	application.InitRewardPointRouter(router, dns)
+
+	dbHelper, err := persistence.InitDbHelper(dns)
+	if err != nil {
+		log.Fatalf("point ledger: %v", err)
+	}
+	ledger := service.NewPointLedgerServiceImpl(dbHelper.PointLedgerRepository)
+	application.InitPointLedgerRouter(router, ledger)
+	conf.RabbitMQ.ApplyEnv()
+	if conf.RabbitMQ.Enabled {
+		go messaging.NewRewardConsumer(conf.RabbitMQ, ledger).Run(context.Background())
+	}
 
 	serverImpl.router = router
 	return serverImpl

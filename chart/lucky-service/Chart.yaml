@@ -1,0 +1,13 @@
+apiVersion: v2
+name: lucky-service
+description: A Helm chart for lucky-service, mini games that reward points (Go, hexagonal + fx, PostgreSQL, Redis, RabbitMQ)
+
+type: application
+
+version: 0.1.0
+appVersion: "1.0.0"
+
+dependencies:
+  - name: common
+    version: "0.1.0"
+    repository: file://../common

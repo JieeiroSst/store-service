@@ -1,0 +1,242 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+luckyService:
+  name: lucky-service
+  selectorApp: lucky-service
+  containerName: lucky-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/lucky-service
+    tag: latest
+    port: 9000
+    pullPolicy: IfNotPresent
+
+  service:
+    name: lucky-service-svc
+    type: ClusterIP
+    port: 9000
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: lucky-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: false
+  postgres:
+    host: postgresdb
+    port: 80
+    database: lucky_service
+    sslMode: disable
+    credentialsSecret: lucky-service-db-credentials
+  userServiceUrl: http://user-api-svc
+  userServiceTimeout: 2s
+  internalTokensSecret:
+    enabled: false
+    name: internal-api-tokens
+    key: INTERNAL_API_TOKENS
+  defaultTimezone: Asia/Ho_Chi_Minh
+  rabbitmq:
+    enabled: true
+    host: rabbitmq-service
+    port: '5672'
+    user: admin
+    password: admin
+    vhost: ''
+    exchange: lucky
+    routingKey: lucky.reward.granted
+    passwordSecret:
+      enabled: false
+      name: lucky-service-secret
+      key: rabbitmqPassword
+  relayInterval: 10s
+  redis:
+    enabled: true
+    addr: redis-svc:80
+    db: '0'
+    prefix: 'lucky:'
+    campaignTtl: 15s
+    winnerFeedSize: 50
+  rateLimit:
+    playsPerMinute: 30
+  fraud:
+    requireDevice: false
+    maxUsersPerDevice: 3
+    maxUsersPerIp: 50
+
+  containerEnv:
+    - name: HTTP_PORT
+      value: '{{ .Values.luckyService.image.port }}'
+    - name: LOG_LEVEL
+      value: info
+    - name: DB_HOST
+      value: '{{ .Values.luckyService.postgres.host }}'
+    - name: DB_PORT
+      value: '{{ .Values.luckyService.postgres.port }}'
+    - name: DB_NAME
+      value: '{{ .Values.luckyService.postgres.database }}'
+    - name: DB_SSLMODE
+      value: '{{ .Values.luckyService.postgres.sslMode }}'
+    - name: DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.luckyService.postgres.credentialsSecret }}'
+          key: POSTGRES_USER
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.luckyService.postgres.credentialsSecret }}'
+          key: POSTGRES_PASSWORD
+    - name: USER_SERVICE_URL
+      value: '{{ .Values.luckyService.userServiceUrl }}'
+    - name: USER_SERVICE_TIMEOUT
+      value: '{{ .Values.luckyService.userServiceTimeout }}'
+    - name: DEFAULT_TIMEZONE
+      value: '{{ .Values.luckyService.defaultTimezone }}'
+    - name: RABBITMQ_ENABLED
+      value: '{{ .Values.luckyService.rabbitmq.enabled }}'
+    - name: RABBITMQ_HOST
+      value: '{{ .Values.luckyService.rabbitmq.host }}'
+    - name: RABBITMQ_PORT
+      value: '{{ .Values.luckyService.rabbitmq.port }}'
+    - name: RABBITMQ_USER
+      value: '{{ .Values.luckyService.rabbitmq.user }}'
+    - name: RABBITMQ_VHOST
+      value: '{{ .Values.luckyService.rabbitmq.vhost }}'
+    - name: RABBITMQ_EXCHANGE
+      value: '{{ .Values.luckyService.rabbitmq.exchange }}'
+    - name: RABBITMQ_ROUTING_KEY
+      value: '{{ .Values.luckyService.rabbitmq.routingKey }}'
+    - name: RABBITMQ_PASSWORD
+      value: '{{ .Values.luckyService.rabbitmq.password }}'
+      when: '{{ if not .Values.luckyService.rabbitmq.passwordSecret.enabled }}true{{ end }}'
+    - name: RABBITMQ_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.luckyService.rabbitmq.passwordSecret.name }}'
+          key: '{{ .Values.luckyService.rabbitmq.passwordSecret.key }}'
+      when: '{{ if .Values.luckyService.rabbitmq.passwordSecret.enabled }}true{{ end }}'
+    - name: RELAY_INTERVAL
+      value: '{{ .Values.luckyService.relayInterval }}'
+    - name: RATE_LIMIT_PLAYS_PER_MINUTE
+      value: '{{ .Values.luckyService.rateLimit.playsPerMinute }}'
+    - name: FRAUD_REQUIRE_DEVICE
+      value: '{{ .Values.luckyService.fraud.requireDevice }}'
+    - name: FRAUD_MAX_USERS_PER_DEVICE
+      value: '{{ .Values.luckyService.fraud.maxUsersPerDevice }}'
+    - name: FRAUD_MAX_USERS_PER_IP
+      value: '{{ .Values.luckyService.fraud.maxUsersPerIp }}'
+    - name: REDIS_ADDR
+      value: '{{ .Values.luckyService.redis.addr }}'
+      when: '{{ if .Values.luckyService.redis.enabled }}true{{ end }}'
+    - name: REDIS_DB
+      value: '{{ .Values.luckyService.redis.db }}'
+      when: '{{ if .Values.luckyService.redis.enabled }}true{{ end }}'
+    - name: REDIS_PREFIX
+      value: '{{ .Values.luckyService.redis.prefix }}'
+      when: '{{ if .Values.luckyService.redis.enabled }}true{{ end }}'
+    - name: CACHE_CAMPAIGN_TTL
+      value: '{{ .Values.luckyService.redis.campaignTtl }}'
+      when: '{{ if .Values.luckyService.redis.enabled }}true{{ end }}'
+    - name: WINNER_FEED_SIZE
+      value: '{{ .Values.luckyService.redis.winnerFeedSize }}'
+      when: '{{ if .Values.luckyService.redis.enabled }}true{{ end }}'
+    - name: INTERNAL_API_TOKENS
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.luckyService.internalTokensSecret.name }}'
+          key: '{{ .Values.luckyService.internalTokensSecret.key }}'
+      when: '{{ if .Values.luckyService.internalTokensSecret.enabled }}true{{ end }}'
+  # /health pings PostgreSQL (readiness); /livez only checks the process.
+  # Won points are queued in PostgreSQL and relayed to RabbitMQ, and Redis only
+  # caches, so neither a broker nor a Redis outage fails readiness.
+  probes:
+    startup:
+      httpGet:
+        path: /livez
+        port: http
+      periodSeconds: 5
+      failureThreshold: 30
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    liveness:
+      httpGet:
+        path: /livez
+        port: http
+      periodSeconds: 20
+      failureThreshold: 3
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    fsGroup: 10001
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  networkLabels:
+    consulClient: false
+    internet: false
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: ''
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

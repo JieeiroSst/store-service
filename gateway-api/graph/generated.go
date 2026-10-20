@@ -3177,6 +3177,218 @@ type ComplexityRoot struct {
 		RegionsOk      func(childComplexity int) int
 	}
 
+	LuckyBlockPage struct {
+		Items  func(childComplexity int) int
+		Limit  func(childComplexity int) int
+		Offset func(childComplexity int) int
+		Total  func(childComplexity int) int
+	}
+
+	LuckyBlockResult struct {
+		Block       func(childComplexity int) int
+		HeldRewards func(childComplexity int) int
+	}
+
+	LuckyCampaign struct {
+		BudgetPoints        func(childComplexity int) int
+		CheckinRewards      func(childComplexity int) int
+		CreatedAt           func(childComplexity int) int
+		DailySpins          func(childComplexity int) int
+		Description         func(childComplexity int) int
+		EndAt               func(childComplexity int) int
+		ExtraPlayEvents     func(childComplexity int) int
+		GameType            func(childComplexity int) int
+		ID                  func(childComplexity int) int
+		MaxPointsPerUserDay func(childComplexity int) int
+		MaxSpinsPerDay      func(childComplexity int) int
+		Name                func(childComplexity int) int
+		PointsAwarded       func(childComplexity int) int
+		Prizes              func(childComplexity int) int
+		ReviewPoints        func(childComplexity int) int
+		Settings            func(childComplexity int) int
+		SpinRules           func(childComplexity int) int
+		StartAt             func(childComplexity int) int
+		Status              func(childComplexity int) int
+		Timezone            func(childComplexity int) int
+		UpdatedAt           func(childComplexity int) int
+		WinRate             func(childComplexity int) int
+	}
+
+	LuckyCampaignPage struct {
+		Items  func(childComplexity int) int
+		Limit  func(childComplexity int) int
+		Offset func(childComplexity int) int
+		Total  func(childComplexity int) int
+	}
+
+	LuckyCheckin struct {
+		CampaignID func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		Day        func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Points     func(childComplexity int) int
+		Streak     func(childComplexity int) int
+		UserID     func(childComplexity int) int
+	}
+
+	LuckyCheckinPage struct {
+		Items  func(childComplexity int) int
+		Limit  func(childComplexity int) int
+		Offset func(childComplexity int) int
+		Total  func(childComplexity int) int
+	}
+
+	LuckyCheckinResult struct {
+		Checkin func(childComplexity int) int
+		Status  func(childComplexity int) int
+	}
+
+	LuckyCheckinStatus struct {
+		CampaignID     func(childComplexity int) int
+		CheckedInToday func(childComplexity int) int
+		CycleDay       func(childComplexity int) int
+		Day            func(childComplexity int) int
+		EndsAt         func(childComplexity int) int
+		NextReward     func(childComplexity int) int
+		Rewards        func(childComplexity int) int
+		Streak         func(childComplexity int) int
+	}
+
+	LuckyClient struct {
+		DeviceID  func(childComplexity int) int
+		IP        func(childComplexity int) int
+		UserAgent func(childComplexity int) int
+	}
+
+	LuckyCreditGrant struct {
+		CampaignID  func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		Day         func(childComplexity int) int
+		Event       func(childComplexity int) int
+		GameType    func(childComplexity int) int
+		ID          func(childComplexity int) int
+		ReferenceID func(childComplexity int) int
+		Spins       func(childComplexity int) int
+		UserID      func(childComplexity int) int
+	}
+
+	LuckyGrantResult struct {
+		Grants  func(childComplexity int) int
+		Skipped func(childComplexity int) int
+	}
+
+	LuckyGrantSkip struct {
+		CampaignID func(childComplexity int) int
+		GameType   func(childComplexity int) int
+		Reason     func(childComplexity int) int
+	}
+
+	LuckyPlay struct {
+		CampaignID func(childComplexity int) int
+		Choice     func(childComplexity int) int
+		Client     func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		Day        func(childComplexity int) int
+		GameType   func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Points     func(childComplexity int) int
+		Position   func(childComplexity int) int
+		PrizeID    func(childComplexity int) int
+		PrizeName  func(childComplexity int) int
+		PrizeType  func(childComplexity int) int
+		Source     func(childComplexity int) int
+		UserID     func(childComplexity int) int
+	}
+
+	LuckyPlayPage struct {
+		Items  func(childComplexity int) int
+		Limit  func(childComplexity int) int
+		Offset func(childComplexity int) int
+		Total  func(childComplexity int) int
+	}
+
+	LuckyPlayResult struct {
+		Play     func(childComplexity int) int
+		Replayed func(childComplexity int) int
+		Status   func(childComplexity int) int
+		Won      func(childComplexity int) int
+	}
+
+	LuckyPlayerStatus struct {
+		CampaignID func(childComplexity int) int
+		DailySpins func(childComplexity int) int
+		Day        func(childComplexity int) int
+		EndsAt     func(childComplexity int) int
+		GameType   func(childComplexity int) int
+		Remaining  func(childComplexity int) int
+		Usage      func(childComplexity int) int
+	}
+
+	LuckyPrize struct {
+		Awarded    func(childComplexity int) int
+		CampaignID func(childComplexity int) int
+		ID         func(childComplexity int) int
+		ImageURL   func(childComplexity int) int
+		Name       func(childComplexity int) int
+		Points     func(childComplexity int) int
+		Position   func(childComplexity int) int
+		Quantity   func(childComplexity int) int
+		Type       func(childComplexity int) int
+		Weight     func(childComplexity int) int
+	}
+
+	LuckyReviewReward struct {
+		CampaignID  func(childComplexity int) int
+		EventID     func(childComplexity int) int
+		GameType    func(childComplexity int) int
+		HoldReason  func(childComplexity int) int
+		ID          func(childComplexity int) int
+		OccurredAt  func(childComplexity int) int
+		Points      func(childComplexity int) int
+		PublishedAt func(childComplexity int) int
+		ReferenceID func(childComplexity int) int
+		ReviewedBy  func(childComplexity int) int
+		Source      func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Title       func(childComplexity int) int
+		UserID      func(childComplexity int) int
+	}
+
+	LuckyReviewRewardPage struct {
+		Items  func(childComplexity int) int
+		Limit  func(childComplexity int) int
+		Offset func(childComplexity int) int
+		Total  func(childComplexity int) int
+	}
+
+	LuckySpinRule struct {
+		Event     func(childComplexity int) int
+		MaxPerDay func(childComplexity int) int
+		Spins     func(childComplexity int) int
+	}
+
+	LuckyUsage struct {
+		CreditBalance func(childComplexity int) int
+		CreditToday   func(childComplexity int) int
+		DailyToday    func(childComplexity int) int
+	}
+
+	LuckyUserBlock struct {
+		BlockedBy func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		Reason    func(childComplexity int) int
+		UserID    func(childComplexity int) int
+	}
+
+	LuckyWinner struct {
+		At         func(childComplexity int) int
+		CampaignID func(childComplexity int) int
+		GameType   func(childComplexity int) int
+		Points     func(childComplexity int) int
+		PrizeName  func(childComplexity int) int
+		User       func(childComplexity int) int
+	}
+
 	MediaSearchResult struct {
 		Page   func(childComplexity int) int
 		Pages  func(childComplexity int) int
@@ -3848,6 +4060,18 @@ type ComplexityRoot struct {
 		Logout                                                  func(childComplexity int) int
 		LotteryBackfill                                         func(childComplexity int, start string, end string, force *bool) int
 		LotteryScrape                                           func(childComplexity int, date string) int
+		LuckyCampaignActivate                                   func(childComplexity int, id int) int
+		LuckyCampaignCreate                                     func(childComplexity int, input model.LuckyCampaignInput) int
+		LuckyCampaignDelete                                     func(childComplexity int, id int) int
+		LuckyCampaignPause                                      func(childComplexity int, id int) int
+		LuckyCampaignUpdate                                     func(childComplexity int, id int, input model.LuckyCampaignInput) int
+		LuckyCheckIn                                            func(childComplexity int) int
+		LuckyFraudApproveReward                                 func(childComplexity int, id int) int
+		LuckyFraudBlock                                         func(childComplexity int, userID string, reason string) int
+		LuckyFraudRejectReward                                  func(childComplexity int, id int) int
+		LuckyFraudUnblock                                       func(childComplexity int, userID string) int
+		LuckyGrantPlays                                         func(childComplexity int, userID string, event string, referenceID string) int
+		LuckyPlay                                               func(childComplexity int, game string, choice *int, idempotencyKey *string) int
 		MediaSaveVideo                                          func(childComplexity int, video map[string]any, tag map[string]any) int
 		MediaUploadVideo                                        func(childComplexity int, video graphql.Upload) int
 		MedicalAddAlias                                         func(childComplexity int, alias string, canonical string) int
@@ -4801,6 +5025,13 @@ type ComplexityRoot struct {
 		URL       func(childComplexity int) int
 	}
 
+	PointAccount struct {
+		Balance     func(childComplexity int) int
+		TotalEarned func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		UserID      func(childComplexity int) int
+	}
+
 	PointConvertedRewardPoint struct {
 		CreatedAt             func(childComplexity int) int
 		RewConvertDate        func(childComplexity int) int
@@ -4860,6 +5091,23 @@ type ComplexityRoot struct {
 		Data       func(childComplexity int) int
 		Pagination func(childComplexity int) int
 		Success    func(childComplexity int) int
+	}
+
+	PointTransaction struct {
+		BalanceAfter func(childComplexity int) int
+		EventID      func(childComplexity int) int
+		ID           func(childComplexity int) int
+		OccurredAt   func(childComplexity int) int
+		Points       func(childComplexity int) int
+		Source       func(childComplexity int) int
+		Title        func(childComplexity int) int
+	}
+
+	PointTransactionPage struct {
+		Items  func(childComplexity int) int
+		Limit  func(childComplexity int) int
+		Offset func(childComplexity int) int
+		Total  func(childComplexity int) int
 	}
 
 	PolyActivity struct {
@@ -5668,6 +5916,19 @@ type ComplexityRoot struct {
 		LiveViewerCount                             func(childComplexity int, id string) int
 		LotteryCheck                                func(childComplexity int, date string, province string, ticketNumber string) int
 		LotteryResults                              func(childComplexity int, date string, province string) int
+		LuckyCampaign                               func(childComplexity int, id int) int
+		LuckyCampaignPlays                          func(childComplexity int, id int, userID *string, limit *int, offset *int) int
+		LuckyCampaigns                              func(childComplexity int, gameType *string, status *string, limit *int, offset *int) int
+		LuckyCheckinHistory                         func(childComplexity int, limit *int, offset *int) int
+		LuckyCheckinStatus                          func(childComplexity int) int
+		LuckyFraudBlocks                            func(childComplexity int, limit *int, offset *int) int
+		LuckyFraudPlays                             func(childComplexity int, userID *string, deviceID *string, ip *string, limit *int, offset *int) int
+		LuckyFraudRewards                           func(childComplexity int, status *string, userID *string, limit *int, offset *int) int
+		LuckyGame                                   func(childComplexity int, game string) int
+		LuckyGames                                  func(childComplexity int) int
+		LuckyMyPlays                                func(childComplexity int, gameType *string, campaignID *int, limit *int, offset *int) int
+		LuckyMyStatus                               func(childComplexity int, game string) int
+		LuckyWinners                                func(childComplexity int, game string, limit *int) int
 		Me                                          func(childComplexity int) int
 		MediaSearchVideos                           func(childComplexity int, query *string, page *int, size *int) int
 		MediaVideo                                  func(childComplexity int, videoID int, userID int) int
@@ -5786,10 +6047,14 @@ type ComplexityRoot struct {
 		PhotoComposition                            func(childComplexity int, id string) int
 		PointConvertedRewardPoint                   func(childComplexity int, id string) int
 		PointConvertedRewardPoints                  func(childComplexity int, perPage *int, sortOrder *string, cursor *string) int
+		PointMyBalance                              func(childComplexity int) int
+		PointMyTransactions                         func(childComplexity int, limit *int, offset *int) int
 		PointRewardDiscount                         func(childComplexity int, id string) int
 		PointRewardDiscounts                        func(childComplexity int, perPage *int, sortOrder *string, cursor *string) int
 		PointRewardPoint                            func(childComplexity int, id string) int
 		PointRewardPoints                           func(childComplexity int, perPage *int, sortOrder *string, cursor *string) int
+		PointUserBalance                            func(childComplexity int, userID string) int
+		PointUserTransactions                       func(childComplexity int, userID string, limit *int, offset *int) int
 		PolyActivity                                func(childComplexity int, userID string, limit *int) int
 		PolyBalance                                 func(childComplexity int, userID string) int
 		PolyCategories                              func(childComplexity int) int
@@ -9487,6 +9752,18 @@ type MutationResolver interface {
 	LiveAdminDeleteRoom(ctx context.Context, id string) (bool, error)
 	LotteryScrape(ctx context.Context, date string) (*model.LotteryScrape, error)
 	LotteryBackfill(ctx context.Context, start string, end string, force *bool) (*model.LotteryBackfill, error)
+	LuckyPlay(ctx context.Context, game string, choice *int, idempotencyKey *string) (*model.LuckyPlayResult, error)
+	LuckyCheckIn(ctx context.Context) (*model.LuckyCheckinResult, error)
+	LuckyGrantPlays(ctx context.Context, userID string, event string, referenceID string) (*model.LuckyGrantResult, error)
+	LuckyCampaignCreate(ctx context.Context, input model.LuckyCampaignInput) (*model.LuckyCampaign, error)
+	LuckyCampaignUpdate(ctx context.Context, id int, input model.LuckyCampaignInput) (*model.LuckyCampaign, error)
+	LuckyCampaignDelete(ctx context.Context, id int) (bool, error)
+	LuckyCampaignActivate(ctx context.Context, id int) (*model.LuckyCampaign, error)
+	LuckyFraudBlock(ctx context.Context, userID string, reason string) (*model.LuckyBlockResult, error)
+	LuckyFraudUnblock(ctx context.Context, userID string) (bool, error)
+	LuckyFraudApproveReward(ctx context.Context, id int) (*model.LuckyReviewReward, error)
+	LuckyFraudRejectReward(ctx context.Context, id int) (*model.LuckyReviewReward, error)
+	LuckyCampaignPause(ctx context.Context, id int) (*model.LuckyCampaign, error)
 	KcPostRealmsProtocolToken(ctx context.Context, realm string, input map[string]any) (any, error)
 	KcPostRealmsProtocolIntrospect(ctx context.Context, realm string, input map[string]any) (any, error)
 	KcPostRealmsProtocolRevoke(ctx context.Context, realm string, input map[string]any) (any, error)
@@ -10406,6 +10683,19 @@ type QueryResolver interface {
 	LivePlayback(ctx context.Context, id string) (*model.LivePlaybackInfo, error)
 	LotteryResults(ctx context.Context, date string, province string) (*model.LotteryResult, error)
 	LotteryCheck(ctx context.Context, date string, province string, ticketNumber string) (*model.LotteryCheck, error)
+	LuckyGames(ctx context.Context) ([]*model.LuckyCampaign, error)
+	LuckyGame(ctx context.Context, game string) (*model.LuckyCampaign, error)
+	LuckyWinners(ctx context.Context, game string, limit *int) ([]*model.LuckyWinner, error)
+	LuckyMyStatus(ctx context.Context, game string) (*model.LuckyPlayerStatus, error)
+	LuckyMyPlays(ctx context.Context, gameType *string, campaignID *int, limit *int, offset *int) (*model.LuckyPlayPage, error)
+	LuckyCheckinStatus(ctx context.Context) (*model.LuckyCheckinStatus, error)
+	LuckyCheckinHistory(ctx context.Context, limit *int, offset *int) (*model.LuckyCheckinPage, error)
+	LuckyCampaigns(ctx context.Context, gameType *string, status *string, limit *int, offset *int) (*model.LuckyCampaignPage, error)
+	LuckyCampaign(ctx context.Context, id int) (*model.LuckyCampaign, error)
+	LuckyFraudBlocks(ctx context.Context, limit *int, offset *int) (*model.LuckyBlockPage, error)
+	LuckyFraudRewards(ctx context.Context, status *string, userID *string, limit *int, offset *int) (*model.LuckyReviewRewardPage, error)
+	LuckyFraudPlays(ctx context.Context, userID *string, deviceID *string, ip *string, limit *int, offset *int) (*model.LuckyPlayPage, error)
+	LuckyCampaignPlays(ctx context.Context, id int, userID *string, limit *int, offset *int) (*model.LuckyPlayPage, error)
 	KcTokenUser(ctx context.Context, realm *string) (*model.KcTokenInfo, error)
 	KcIssuer(ctx context.Context, realm string) (*model.KcIssuerResponse, error)
 	KcCerts(ctx context.Context, realm string) (*model.KcCertResponse, error)
@@ -10609,6 +10899,10 @@ type QueryResolver interface {
 	MyWalletPockets(ctx context.Context, id string) ([]*model.WalletPocket, error)
 	MyPaymentMethods(ctx context.Context) ([]*model.WalletPaymentMethod, error)
 	PhotoComposition(ctx context.Context, id string) (*model.PhotoComposition, error)
+	PointMyBalance(ctx context.Context) (*model.PointAccount, error)
+	PointMyTransactions(ctx context.Context, limit *int, offset *int) (*model.PointTransactionPage, error)
+	PointUserBalance(ctx context.Context, userID string) (*model.PointAccount, error)
+	PointUserTransactions(ctx context.Context, userID string, limit *int, offset *int) (*model.PointTransactionPage, error)
 	PointRewardPoints(ctx context.Context, perPage *int, sortOrder *string, cursor *string) (*model.PointRewardPointPage, error)
 	PointRewardPoint(ctx context.Context, id string) (*model.PointRewardPoint, error)
 	PointRewardDiscounts(ctx context.Context, perPage *int, sortOrder *string, cursor *string) (*model.PointRewardDiscountPage, error)
@@ -26326,6 +26620,1007 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LotteryScrape.RegionsOk(childComplexity), true
 
+	case "LuckyBlockPage.items":
+		if e.complexity.LuckyBlockPage.Items == nil {
+			break
+		}
+
+		return e.complexity.LuckyBlockPage.Items(childComplexity), true
+
+	case "LuckyBlockPage.limit":
+		if e.complexity.LuckyBlockPage.Limit == nil {
+			break
+		}
+
+		return e.complexity.LuckyBlockPage.Limit(childComplexity), true
+
+	case "LuckyBlockPage.offset":
+		if e.complexity.LuckyBlockPage.Offset == nil {
+			break
+		}
+
+		return e.complexity.LuckyBlockPage.Offset(childComplexity), true
+
+	case "LuckyBlockPage.total":
+		if e.complexity.LuckyBlockPage.Total == nil {
+			break
+		}
+
+		return e.complexity.LuckyBlockPage.Total(childComplexity), true
+
+	case "LuckyBlockResult.block":
+		if e.complexity.LuckyBlockResult.Block == nil {
+			break
+		}
+
+		return e.complexity.LuckyBlockResult.Block(childComplexity), true
+
+	case "LuckyBlockResult.held_rewards":
+		if e.complexity.LuckyBlockResult.HeldRewards == nil {
+			break
+		}
+
+		return e.complexity.LuckyBlockResult.HeldRewards(childComplexity), true
+
+	case "LuckyCampaign.budget_points":
+		if e.complexity.LuckyCampaign.BudgetPoints == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.BudgetPoints(childComplexity), true
+
+	case "LuckyCampaign.checkin_rewards":
+		if e.complexity.LuckyCampaign.CheckinRewards == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.CheckinRewards(childComplexity), true
+
+	case "LuckyCampaign.created_at":
+		if e.complexity.LuckyCampaign.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.CreatedAt(childComplexity), true
+
+	case "LuckyCampaign.daily_spins":
+		if e.complexity.LuckyCampaign.DailySpins == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.DailySpins(childComplexity), true
+
+	case "LuckyCampaign.description":
+		if e.complexity.LuckyCampaign.Description == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.Description(childComplexity), true
+
+	case "LuckyCampaign.end_at":
+		if e.complexity.LuckyCampaign.EndAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.EndAt(childComplexity), true
+
+	case "LuckyCampaign.extra_play_events":
+		if e.complexity.LuckyCampaign.ExtraPlayEvents == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.ExtraPlayEvents(childComplexity), true
+
+	case "LuckyCampaign.game_type":
+		if e.complexity.LuckyCampaign.GameType == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.GameType(childComplexity), true
+
+	case "LuckyCampaign.id":
+		if e.complexity.LuckyCampaign.ID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.ID(childComplexity), true
+
+	case "LuckyCampaign.max_points_per_user_day":
+		if e.complexity.LuckyCampaign.MaxPointsPerUserDay == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.MaxPointsPerUserDay(childComplexity), true
+
+	case "LuckyCampaign.max_spins_per_day":
+		if e.complexity.LuckyCampaign.MaxSpinsPerDay == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.MaxSpinsPerDay(childComplexity), true
+
+	case "LuckyCampaign.name":
+		if e.complexity.LuckyCampaign.Name == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.Name(childComplexity), true
+
+	case "LuckyCampaign.points_awarded":
+		if e.complexity.LuckyCampaign.PointsAwarded == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.PointsAwarded(childComplexity), true
+
+	case "LuckyCampaign.prizes":
+		if e.complexity.LuckyCampaign.Prizes == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.Prizes(childComplexity), true
+
+	case "LuckyCampaign.review_points":
+		if e.complexity.LuckyCampaign.ReviewPoints == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.ReviewPoints(childComplexity), true
+
+	case "LuckyCampaign.settings":
+		if e.complexity.LuckyCampaign.Settings == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.Settings(childComplexity), true
+
+	case "LuckyCampaign.spin_rules":
+		if e.complexity.LuckyCampaign.SpinRules == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.SpinRules(childComplexity), true
+
+	case "LuckyCampaign.start_at":
+		if e.complexity.LuckyCampaign.StartAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.StartAt(childComplexity), true
+
+	case "LuckyCampaign.status":
+		if e.complexity.LuckyCampaign.Status == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.Status(childComplexity), true
+
+	case "LuckyCampaign.timezone":
+		if e.complexity.LuckyCampaign.Timezone == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.Timezone(childComplexity), true
+
+	case "LuckyCampaign.updated_at":
+		if e.complexity.LuckyCampaign.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.UpdatedAt(childComplexity), true
+
+	case "LuckyCampaign.win_rate":
+		if e.complexity.LuckyCampaign.WinRate == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaign.WinRate(childComplexity), true
+
+	case "LuckyCampaignPage.items":
+		if e.complexity.LuckyCampaignPage.Items == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaignPage.Items(childComplexity), true
+
+	case "LuckyCampaignPage.limit":
+		if e.complexity.LuckyCampaignPage.Limit == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaignPage.Limit(childComplexity), true
+
+	case "LuckyCampaignPage.offset":
+		if e.complexity.LuckyCampaignPage.Offset == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaignPage.Offset(childComplexity), true
+
+	case "LuckyCampaignPage.total":
+		if e.complexity.LuckyCampaignPage.Total == nil {
+			break
+		}
+
+		return e.complexity.LuckyCampaignPage.Total(childComplexity), true
+
+	case "LuckyCheckin.campaign_id":
+		if e.complexity.LuckyCheckin.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckin.CampaignID(childComplexity), true
+
+	case "LuckyCheckin.created_at":
+		if e.complexity.LuckyCheckin.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckin.CreatedAt(childComplexity), true
+
+	case "LuckyCheckin.day":
+		if e.complexity.LuckyCheckin.Day == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckin.Day(childComplexity), true
+
+	case "LuckyCheckin.id":
+		if e.complexity.LuckyCheckin.ID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckin.ID(childComplexity), true
+
+	case "LuckyCheckin.points":
+		if e.complexity.LuckyCheckin.Points == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckin.Points(childComplexity), true
+
+	case "LuckyCheckin.streak":
+		if e.complexity.LuckyCheckin.Streak == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckin.Streak(childComplexity), true
+
+	case "LuckyCheckin.user_id":
+		if e.complexity.LuckyCheckin.UserID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckin.UserID(childComplexity), true
+
+	case "LuckyCheckinPage.items":
+		if e.complexity.LuckyCheckinPage.Items == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinPage.Items(childComplexity), true
+
+	case "LuckyCheckinPage.limit":
+		if e.complexity.LuckyCheckinPage.Limit == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinPage.Limit(childComplexity), true
+
+	case "LuckyCheckinPage.offset":
+		if e.complexity.LuckyCheckinPage.Offset == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinPage.Offset(childComplexity), true
+
+	case "LuckyCheckinPage.total":
+		if e.complexity.LuckyCheckinPage.Total == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinPage.Total(childComplexity), true
+
+	case "LuckyCheckinResult.checkin":
+		if e.complexity.LuckyCheckinResult.Checkin == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinResult.Checkin(childComplexity), true
+
+	case "LuckyCheckinResult.status":
+		if e.complexity.LuckyCheckinResult.Status == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinResult.Status(childComplexity), true
+
+	case "LuckyCheckinStatus.campaign_id":
+		if e.complexity.LuckyCheckinStatus.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.CampaignID(childComplexity), true
+
+	case "LuckyCheckinStatus.checked_in_today":
+		if e.complexity.LuckyCheckinStatus.CheckedInToday == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.CheckedInToday(childComplexity), true
+
+	case "LuckyCheckinStatus.cycle_day":
+		if e.complexity.LuckyCheckinStatus.CycleDay == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.CycleDay(childComplexity), true
+
+	case "LuckyCheckinStatus.day":
+		if e.complexity.LuckyCheckinStatus.Day == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.Day(childComplexity), true
+
+	case "LuckyCheckinStatus.ends_at":
+		if e.complexity.LuckyCheckinStatus.EndsAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.EndsAt(childComplexity), true
+
+	case "LuckyCheckinStatus.next_reward":
+		if e.complexity.LuckyCheckinStatus.NextReward == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.NextReward(childComplexity), true
+
+	case "LuckyCheckinStatus.rewards":
+		if e.complexity.LuckyCheckinStatus.Rewards == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.Rewards(childComplexity), true
+
+	case "LuckyCheckinStatus.streak":
+		if e.complexity.LuckyCheckinStatus.Streak == nil {
+			break
+		}
+
+		return e.complexity.LuckyCheckinStatus.Streak(childComplexity), true
+
+	case "LuckyClient.device_id":
+		if e.complexity.LuckyClient.DeviceID == nil {
+			break
+		}
+
+		return e.complexity.LuckyClient.DeviceID(childComplexity), true
+
+	case "LuckyClient.ip":
+		if e.complexity.LuckyClient.IP == nil {
+			break
+		}
+
+		return e.complexity.LuckyClient.IP(childComplexity), true
+
+	case "LuckyClient.user_agent":
+		if e.complexity.LuckyClient.UserAgent == nil {
+			break
+		}
+
+		return e.complexity.LuckyClient.UserAgent(childComplexity), true
+
+	case "LuckyCreditGrant.campaign_id":
+		if e.complexity.LuckyCreditGrant.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.CampaignID(childComplexity), true
+
+	case "LuckyCreditGrant.created_at":
+		if e.complexity.LuckyCreditGrant.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.CreatedAt(childComplexity), true
+
+	case "LuckyCreditGrant.day":
+		if e.complexity.LuckyCreditGrant.Day == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.Day(childComplexity), true
+
+	case "LuckyCreditGrant.event":
+		if e.complexity.LuckyCreditGrant.Event == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.Event(childComplexity), true
+
+	case "LuckyCreditGrant.game_type":
+		if e.complexity.LuckyCreditGrant.GameType == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.GameType(childComplexity), true
+
+	case "LuckyCreditGrant.id":
+		if e.complexity.LuckyCreditGrant.ID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.ID(childComplexity), true
+
+	case "LuckyCreditGrant.reference_id":
+		if e.complexity.LuckyCreditGrant.ReferenceID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.ReferenceID(childComplexity), true
+
+	case "LuckyCreditGrant.spins":
+		if e.complexity.LuckyCreditGrant.Spins == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.Spins(childComplexity), true
+
+	case "LuckyCreditGrant.user_id":
+		if e.complexity.LuckyCreditGrant.UserID == nil {
+			break
+		}
+
+		return e.complexity.LuckyCreditGrant.UserID(childComplexity), true
+
+	case "LuckyGrantResult.grants":
+		if e.complexity.LuckyGrantResult.Grants == nil {
+			break
+		}
+
+		return e.complexity.LuckyGrantResult.Grants(childComplexity), true
+
+	case "LuckyGrantResult.skipped":
+		if e.complexity.LuckyGrantResult.Skipped == nil {
+			break
+		}
+
+		return e.complexity.LuckyGrantResult.Skipped(childComplexity), true
+
+	case "LuckyGrantSkip.campaign_id":
+		if e.complexity.LuckyGrantSkip.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyGrantSkip.CampaignID(childComplexity), true
+
+	case "LuckyGrantSkip.game_type":
+		if e.complexity.LuckyGrantSkip.GameType == nil {
+			break
+		}
+
+		return e.complexity.LuckyGrantSkip.GameType(childComplexity), true
+
+	case "LuckyGrantSkip.reason":
+		if e.complexity.LuckyGrantSkip.Reason == nil {
+			break
+		}
+
+		return e.complexity.LuckyGrantSkip.Reason(childComplexity), true
+
+	case "LuckyPlay.campaign_id":
+		if e.complexity.LuckyPlay.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.CampaignID(childComplexity), true
+
+	case "LuckyPlay.choice":
+		if e.complexity.LuckyPlay.Choice == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.Choice(childComplexity), true
+
+	case "LuckyPlay.client":
+		if e.complexity.LuckyPlay.Client == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.Client(childComplexity), true
+
+	case "LuckyPlay.created_at":
+		if e.complexity.LuckyPlay.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.CreatedAt(childComplexity), true
+
+	case "LuckyPlay.day":
+		if e.complexity.LuckyPlay.Day == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.Day(childComplexity), true
+
+	case "LuckyPlay.game_type":
+		if e.complexity.LuckyPlay.GameType == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.GameType(childComplexity), true
+
+	case "LuckyPlay.id":
+		if e.complexity.LuckyPlay.ID == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.ID(childComplexity), true
+
+	case "LuckyPlay.points":
+		if e.complexity.LuckyPlay.Points == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.Points(childComplexity), true
+
+	case "LuckyPlay.position":
+		if e.complexity.LuckyPlay.Position == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.Position(childComplexity), true
+
+	case "LuckyPlay.prize_id":
+		if e.complexity.LuckyPlay.PrizeID == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.PrizeID(childComplexity), true
+
+	case "LuckyPlay.prize_name":
+		if e.complexity.LuckyPlay.PrizeName == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.PrizeName(childComplexity), true
+
+	case "LuckyPlay.prize_type":
+		if e.complexity.LuckyPlay.PrizeType == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.PrizeType(childComplexity), true
+
+	case "LuckyPlay.source":
+		if e.complexity.LuckyPlay.Source == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.Source(childComplexity), true
+
+	case "LuckyPlay.user_id":
+		if e.complexity.LuckyPlay.UserID == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlay.UserID(childComplexity), true
+
+	case "LuckyPlayPage.items":
+		if e.complexity.LuckyPlayPage.Items == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayPage.Items(childComplexity), true
+
+	case "LuckyPlayPage.limit":
+		if e.complexity.LuckyPlayPage.Limit == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayPage.Limit(childComplexity), true
+
+	case "LuckyPlayPage.offset":
+		if e.complexity.LuckyPlayPage.Offset == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayPage.Offset(childComplexity), true
+
+	case "LuckyPlayPage.total":
+		if e.complexity.LuckyPlayPage.Total == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayPage.Total(childComplexity), true
+
+	case "LuckyPlayResult.play":
+		if e.complexity.LuckyPlayResult.Play == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayResult.Play(childComplexity), true
+
+	case "LuckyPlayResult.replayed":
+		if e.complexity.LuckyPlayResult.Replayed == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayResult.Replayed(childComplexity), true
+
+	case "LuckyPlayResult.status":
+		if e.complexity.LuckyPlayResult.Status == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayResult.Status(childComplexity), true
+
+	case "LuckyPlayResult.won":
+		if e.complexity.LuckyPlayResult.Won == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayResult.Won(childComplexity), true
+
+	case "LuckyPlayerStatus.campaign_id":
+		if e.complexity.LuckyPlayerStatus.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayerStatus.CampaignID(childComplexity), true
+
+	case "LuckyPlayerStatus.daily_spins":
+		if e.complexity.LuckyPlayerStatus.DailySpins == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayerStatus.DailySpins(childComplexity), true
+
+	case "LuckyPlayerStatus.day":
+		if e.complexity.LuckyPlayerStatus.Day == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayerStatus.Day(childComplexity), true
+
+	case "LuckyPlayerStatus.ends_at":
+		if e.complexity.LuckyPlayerStatus.EndsAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayerStatus.EndsAt(childComplexity), true
+
+	case "LuckyPlayerStatus.game_type":
+		if e.complexity.LuckyPlayerStatus.GameType == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayerStatus.GameType(childComplexity), true
+
+	case "LuckyPlayerStatus.remaining":
+		if e.complexity.LuckyPlayerStatus.Remaining == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayerStatus.Remaining(childComplexity), true
+
+	case "LuckyPlayerStatus.usage":
+		if e.complexity.LuckyPlayerStatus.Usage == nil {
+			break
+		}
+
+		return e.complexity.LuckyPlayerStatus.Usage(childComplexity), true
+
+	case "LuckyPrize.awarded":
+		if e.complexity.LuckyPrize.Awarded == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.Awarded(childComplexity), true
+
+	case "LuckyPrize.campaign_id":
+		if e.complexity.LuckyPrize.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.CampaignID(childComplexity), true
+
+	case "LuckyPrize.id":
+		if e.complexity.LuckyPrize.ID == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.ID(childComplexity), true
+
+	case "LuckyPrize.image_url":
+		if e.complexity.LuckyPrize.ImageURL == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.ImageURL(childComplexity), true
+
+	case "LuckyPrize.name":
+		if e.complexity.LuckyPrize.Name == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.Name(childComplexity), true
+
+	case "LuckyPrize.points":
+		if e.complexity.LuckyPrize.Points == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.Points(childComplexity), true
+
+	case "LuckyPrize.position":
+		if e.complexity.LuckyPrize.Position == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.Position(childComplexity), true
+
+	case "LuckyPrize.quantity":
+		if e.complexity.LuckyPrize.Quantity == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.Quantity(childComplexity), true
+
+	case "LuckyPrize.type":
+		if e.complexity.LuckyPrize.Type == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.Type(childComplexity), true
+
+	case "LuckyPrize.weight":
+		if e.complexity.LuckyPrize.Weight == nil {
+			break
+		}
+
+		return e.complexity.LuckyPrize.Weight(childComplexity), true
+
+	case "LuckyReviewReward.campaign_id":
+		if e.complexity.LuckyReviewReward.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.CampaignID(childComplexity), true
+
+	case "LuckyReviewReward.event_id":
+		if e.complexity.LuckyReviewReward.EventID == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.EventID(childComplexity), true
+
+	case "LuckyReviewReward.game_type":
+		if e.complexity.LuckyReviewReward.GameType == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.GameType(childComplexity), true
+
+	case "LuckyReviewReward.hold_reason":
+		if e.complexity.LuckyReviewReward.HoldReason == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.HoldReason(childComplexity), true
+
+	case "LuckyReviewReward.id":
+		if e.complexity.LuckyReviewReward.ID == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.ID(childComplexity), true
+
+	case "LuckyReviewReward.occurred_at":
+		if e.complexity.LuckyReviewReward.OccurredAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.OccurredAt(childComplexity), true
+
+	case "LuckyReviewReward.points":
+		if e.complexity.LuckyReviewReward.Points == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.Points(childComplexity), true
+
+	case "LuckyReviewReward.published_at":
+		if e.complexity.LuckyReviewReward.PublishedAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.PublishedAt(childComplexity), true
+
+	case "LuckyReviewReward.reference_id":
+		if e.complexity.LuckyReviewReward.ReferenceID == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.ReferenceID(childComplexity), true
+
+	case "LuckyReviewReward.reviewed_by":
+		if e.complexity.LuckyReviewReward.ReviewedBy == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.ReviewedBy(childComplexity), true
+
+	case "LuckyReviewReward.source":
+		if e.complexity.LuckyReviewReward.Source == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.Source(childComplexity), true
+
+	case "LuckyReviewReward.status":
+		if e.complexity.LuckyReviewReward.Status == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.Status(childComplexity), true
+
+	case "LuckyReviewReward.title":
+		if e.complexity.LuckyReviewReward.Title == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.Title(childComplexity), true
+
+	case "LuckyReviewReward.user_id":
+		if e.complexity.LuckyReviewReward.UserID == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewReward.UserID(childComplexity), true
+
+	case "LuckyReviewRewardPage.items":
+		if e.complexity.LuckyReviewRewardPage.Items == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewRewardPage.Items(childComplexity), true
+
+	case "LuckyReviewRewardPage.limit":
+		if e.complexity.LuckyReviewRewardPage.Limit == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewRewardPage.Limit(childComplexity), true
+
+	case "LuckyReviewRewardPage.offset":
+		if e.complexity.LuckyReviewRewardPage.Offset == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewRewardPage.Offset(childComplexity), true
+
+	case "LuckyReviewRewardPage.total":
+		if e.complexity.LuckyReviewRewardPage.Total == nil {
+			break
+		}
+
+		return e.complexity.LuckyReviewRewardPage.Total(childComplexity), true
+
+	case "LuckySpinRule.event":
+		if e.complexity.LuckySpinRule.Event == nil {
+			break
+		}
+
+		return e.complexity.LuckySpinRule.Event(childComplexity), true
+
+	case "LuckySpinRule.max_per_day":
+		if e.complexity.LuckySpinRule.MaxPerDay == nil {
+			break
+		}
+
+		return e.complexity.LuckySpinRule.MaxPerDay(childComplexity), true
+
+	case "LuckySpinRule.spins":
+		if e.complexity.LuckySpinRule.Spins == nil {
+			break
+		}
+
+		return e.complexity.LuckySpinRule.Spins(childComplexity), true
+
+	case "LuckyUsage.credit_balance":
+		if e.complexity.LuckyUsage.CreditBalance == nil {
+			break
+		}
+
+		return e.complexity.LuckyUsage.CreditBalance(childComplexity), true
+
+	case "LuckyUsage.credit_today":
+		if e.complexity.LuckyUsage.CreditToday == nil {
+			break
+		}
+
+		return e.complexity.LuckyUsage.CreditToday(childComplexity), true
+
+	case "LuckyUsage.daily_today":
+		if e.complexity.LuckyUsage.DailyToday == nil {
+			break
+		}
+
+		return e.complexity.LuckyUsage.DailyToday(childComplexity), true
+
+	case "LuckyUserBlock.blocked_by":
+		if e.complexity.LuckyUserBlock.BlockedBy == nil {
+			break
+		}
+
+		return e.complexity.LuckyUserBlock.BlockedBy(childComplexity), true
+
+	case "LuckyUserBlock.created_at":
+		if e.complexity.LuckyUserBlock.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.LuckyUserBlock.CreatedAt(childComplexity), true
+
+	case "LuckyUserBlock.reason":
+		if e.complexity.LuckyUserBlock.Reason == nil {
+			break
+		}
+
+		return e.complexity.LuckyUserBlock.Reason(childComplexity), true
+
+	case "LuckyUserBlock.user_id":
+		if e.complexity.LuckyUserBlock.UserID == nil {
+			break
+		}
+
+		return e.complexity.LuckyUserBlock.UserID(childComplexity), true
+
+	case "LuckyWinner.at":
+		if e.complexity.LuckyWinner.At == nil {
+			break
+		}
+
+		return e.complexity.LuckyWinner.At(childComplexity), true
+
+	case "LuckyWinner.campaign_id":
+		if e.complexity.LuckyWinner.CampaignID == nil {
+			break
+		}
+
+		return e.complexity.LuckyWinner.CampaignID(childComplexity), true
+
+	case "LuckyWinner.game_type":
+		if e.complexity.LuckyWinner.GameType == nil {
+			break
+		}
+
+		return e.complexity.LuckyWinner.GameType(childComplexity), true
+
+	case "LuckyWinner.points":
+		if e.complexity.LuckyWinner.Points == nil {
+			break
+		}
+
+		return e.complexity.LuckyWinner.Points(childComplexity), true
+
+	case "LuckyWinner.prize_name":
+		if e.complexity.LuckyWinner.PrizeName == nil {
+			break
+		}
+
+		return e.complexity.LuckyWinner.PrizeName(childComplexity), true
+
+	case "LuckyWinner.user":
+		if e.complexity.LuckyWinner.User == nil {
+			break
+		}
+
+		return e.complexity.LuckyWinner.User(childComplexity), true
+
 	case "MediaSearchResult.page":
 		if e.complexity.MediaSearchResult.Page == nil {
 			break
@@ -32953,6 +34248,145 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.LotteryScrape(childComplexity, args["date"].(string)), true
+
+	case "Mutation.luckyCampaignActivate":
+		if e.complexity.Mutation.LuckyCampaignActivate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyCampaignActivate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyCampaignActivate(childComplexity, args["id"].(int)), true
+
+	case "Mutation.luckyCampaignCreate":
+		if e.complexity.Mutation.LuckyCampaignCreate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyCampaignCreate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyCampaignCreate(childComplexity, args["input"].(model.LuckyCampaignInput)), true
+
+	case "Mutation.luckyCampaignDelete":
+		if e.complexity.Mutation.LuckyCampaignDelete == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyCampaignDelete_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyCampaignDelete(childComplexity, args["id"].(int)), true
+
+	case "Mutation.luckyCampaignPause":
+		if e.complexity.Mutation.LuckyCampaignPause == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyCampaignPause_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyCampaignPause(childComplexity, args["id"].(int)), true
+
+	case "Mutation.luckyCampaignUpdate":
+		if e.complexity.Mutation.LuckyCampaignUpdate == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyCampaignUpdate_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyCampaignUpdate(childComplexity, args["id"].(int), args["input"].(model.LuckyCampaignInput)), true
+
+	case "Mutation.luckyCheckIn":
+		if e.complexity.Mutation.LuckyCheckIn == nil {
+			break
+		}
+
+		return e.complexity.Mutation.LuckyCheckIn(childComplexity), true
+
+	case "Mutation.luckyFraudApproveReward":
+		if e.complexity.Mutation.LuckyFraudApproveReward == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyFraudApproveReward_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyFraudApproveReward(childComplexity, args["id"].(int)), true
+
+	case "Mutation.luckyFraudBlock":
+		if e.complexity.Mutation.LuckyFraudBlock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyFraudBlock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyFraudBlock(childComplexity, args["user_id"].(string), args["reason"].(string)), true
+
+	case "Mutation.luckyFraudRejectReward":
+		if e.complexity.Mutation.LuckyFraudRejectReward == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyFraudRejectReward_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyFraudRejectReward(childComplexity, args["id"].(int)), true
+
+	case "Mutation.luckyFraudUnblock":
+		if e.complexity.Mutation.LuckyFraudUnblock == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyFraudUnblock_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyFraudUnblock(childComplexity, args["user_id"].(string)), true
+
+	case "Mutation.luckyGrantPlays":
+		if e.complexity.Mutation.LuckyGrantPlays == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyGrantPlays_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyGrantPlays(childComplexity, args["user_id"].(string), args["event"].(string), args["reference_id"].(string)), true
+
+	case "Mutation.luckyPlay":
+		if e.complexity.Mutation.LuckyPlay == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_luckyPlay_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.LuckyPlay(childComplexity, args["game"].(string), args["choice"].(*int), args["idempotency_key"].(*string)), true
 
 	case "Mutation.mediaSaveVideo":
 		if e.complexity.Mutation.MediaSaveVideo == nil {
@@ -40854,6 +42288,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PhotosourceDTO.URL(childComplexity), true
 
+	case "PointAccount.balance":
+		if e.complexity.PointAccount.Balance == nil {
+			break
+		}
+
+		return e.complexity.PointAccount.Balance(childComplexity), true
+
+	case "PointAccount.total_earned":
+		if e.complexity.PointAccount.TotalEarned == nil {
+			break
+		}
+
+		return e.complexity.PointAccount.TotalEarned(childComplexity), true
+
+	case "PointAccount.updated_at":
+		if e.complexity.PointAccount.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.PointAccount.UpdatedAt(childComplexity), true
+
+	case "PointAccount.user_id":
+		if e.complexity.PointAccount.UserID == nil {
+			break
+		}
+
+		return e.complexity.PointAccount.UserID(childComplexity), true
+
 	case "PointConvertedRewardPoint.created_at":
 		if e.complexity.PointConvertedRewardPoint.CreatedAt == nil {
 			break
@@ -41133,6 +42595,83 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PointRewardPointPage.Success(childComplexity), true
+
+	case "PointTransaction.balance_after":
+		if e.complexity.PointTransaction.BalanceAfter == nil {
+			break
+		}
+
+		return e.complexity.PointTransaction.BalanceAfter(childComplexity), true
+
+	case "PointTransaction.event_id":
+		if e.complexity.PointTransaction.EventID == nil {
+			break
+		}
+
+		return e.complexity.PointTransaction.EventID(childComplexity), true
+
+	case "PointTransaction.id":
+		if e.complexity.PointTransaction.ID == nil {
+			break
+		}
+
+		return e.complexity.PointTransaction.ID(childComplexity), true
+
+	case "PointTransaction.occurred_at":
+		if e.complexity.PointTransaction.OccurredAt == nil {
+			break
+		}
+
+		return e.complexity.PointTransaction.OccurredAt(childComplexity), true
+
+	case "PointTransaction.points":
+		if e.complexity.PointTransaction.Points == nil {
+			break
+		}
+
+		return e.complexity.PointTransaction.Points(childComplexity), true
+
+	case "PointTransaction.source":
+		if e.complexity.PointTransaction.Source == nil {
+			break
+		}
+
+		return e.complexity.PointTransaction.Source(childComplexity), true
+
+	case "PointTransaction.title":
+		if e.complexity.PointTransaction.Title == nil {
+			break
+		}
+
+		return e.complexity.PointTransaction.Title(childComplexity), true
+
+	case "PointTransactionPage.items":
+		if e.complexity.PointTransactionPage.Items == nil {
+			break
+		}
+
+		return e.complexity.PointTransactionPage.Items(childComplexity), true
+
+	case "PointTransactionPage.limit":
+		if e.complexity.PointTransactionPage.Limit == nil {
+			break
+		}
+
+		return e.complexity.PointTransactionPage.Limit(childComplexity), true
+
+	case "PointTransactionPage.offset":
+		if e.complexity.PointTransactionPage.Offset == nil {
+			break
+		}
+
+		return e.complexity.PointTransactionPage.Offset(childComplexity), true
+
+	case "PointTransactionPage.total":
+		if e.complexity.PointTransactionPage.Total == nil {
+			break
+		}
+
+		return e.complexity.PointTransactionPage.Total(childComplexity), true
 
 	case "PolyActivity.amount":
 		if e.complexity.PolyActivity.Amount == nil {
@@ -47403,6 +48942,152 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.LotteryResults(childComplexity, args["date"].(string), args["province"].(string)), true
 
+	case "Query.luckyCampaign":
+		if e.complexity.Query.LuckyCampaign == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyCampaign_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyCampaign(childComplexity, args["id"].(int)), true
+
+	case "Query.luckyCampaignPlays":
+		if e.complexity.Query.LuckyCampaignPlays == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyCampaignPlays_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyCampaignPlays(childComplexity, args["id"].(int), args["user_id"].(*string), args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.luckyCampaigns":
+		if e.complexity.Query.LuckyCampaigns == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyCampaigns_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyCampaigns(childComplexity, args["game_type"].(*string), args["status"].(*string), args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.luckyCheckinHistory":
+		if e.complexity.Query.LuckyCheckinHistory == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyCheckinHistory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyCheckinHistory(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.luckyCheckinStatus":
+		if e.complexity.Query.LuckyCheckinStatus == nil {
+			break
+		}
+
+		return e.complexity.Query.LuckyCheckinStatus(childComplexity), true
+
+	case "Query.luckyFraudBlocks":
+		if e.complexity.Query.LuckyFraudBlocks == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyFraudBlocks_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyFraudBlocks(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.luckyFraudPlays":
+		if e.complexity.Query.LuckyFraudPlays == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyFraudPlays_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyFraudPlays(childComplexity, args["user_id"].(*string), args["device_id"].(*string), args["ip"].(*string), args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.luckyFraudRewards":
+		if e.complexity.Query.LuckyFraudRewards == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyFraudRewards_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyFraudRewards(childComplexity, args["status"].(*string), args["user_id"].(*string), args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.luckyGame":
+		if e.complexity.Query.LuckyGame == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyGame_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyGame(childComplexity, args["game"].(string)), true
+
+	case "Query.luckyGames":
+		if e.complexity.Query.LuckyGames == nil {
+			break
+		}
+
+		return e.complexity.Query.LuckyGames(childComplexity), true
+
+	case "Query.luckyMyPlays":
+		if e.complexity.Query.LuckyMyPlays == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyMyPlays_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyMyPlays(childComplexity, args["game_type"].(*string), args["campaign_id"].(*int), args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.luckyMyStatus":
+		if e.complexity.Query.LuckyMyStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyMyStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyMyStatus(childComplexity, args["game"].(string)), true
+
+	case "Query.luckyWinners":
+		if e.complexity.Query.LuckyWinners == nil {
+			break
+		}
+
+		args, err := ec.field_Query_luckyWinners_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.LuckyWinners(childComplexity, args["game"].(string), args["limit"].(*int)), true
+
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
 			break
@@ -48674,6 +50359,25 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PointConvertedRewardPoints(childComplexity, args["per_page"].(*int), args["sort_order"].(*string), args["cursor"].(*string)), true
 
+	case "Query.pointMyBalance":
+		if e.complexity.Query.PointMyBalance == nil {
+			break
+		}
+
+		return e.complexity.Query.PointMyBalance(childComplexity), true
+
+	case "Query.pointMyTransactions":
+		if e.complexity.Query.PointMyTransactions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_pointMyTransactions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PointMyTransactions(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+
 	case "Query.pointRewardDiscount":
 		if e.complexity.Query.PointRewardDiscount == nil {
 			break
@@ -48721,6 +50425,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.PointRewardPoints(childComplexity, args["per_page"].(*int), args["sort_order"].(*string), args["cursor"].(*string)), true
+
+	case "Query.pointUserBalance":
+		if e.complexity.Query.PointUserBalance == nil {
+			break
+		}
+
+		args, err := ec.field_Query_pointUserBalance_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PointUserBalance(childComplexity, args["user_id"].(string)), true
+
+	case "Query.pointUserTransactions":
+		if e.complexity.Query.PointUserTransactions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_pointUserTransactions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PointUserTransactions(childComplexity, args["user_id"].(string), args["limit"].(*int), args["offset"].(*int)), true
 
 	case "Query.polyActivity":
 		if e.complexity.Query.PolyActivity == nil {
@@ -67268,6 +68996,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputKmsCreateKeyInput,
 		ec.unmarshalInputLiveCreateRoomInput,
 		ec.unmarshalInputLoginInput,
+		ec.unmarshalInputLuckyCampaignInput,
+		ec.unmarshalInputLuckyPrizeInput,
+		ec.unmarshalInputLuckySpinRuleInput,
 		ec.unmarshalInputMedicalAdjustInput,
 		ec.unmarshalInputMedicalBatchInput,
 		ec.unmarshalInputMedicalDispenseInput,
@@ -67455,7 +69186,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
-//go:embed "account_transaction.graphqls" "address.graphqls" "admanagement.graphqls" "ai_agent.graphqls" "airflow.graphqls" "arrange.graphqls" "authorize.graphqls" "automatic_payment.graphqls" "banking.graphqls" "basket.graphqls" "billing.graphqls" "bonuslink.graphqls" "book.graphqls" "book_store.graphqls" "booking_mini.graphqls" "bot.graphqls" "calculate.graphqls" "call_center.graphqls" "car_rental.graphqls" "catalogues.graphqls" "cdn.graphqls" "chat.graphqls" "chatbot.graphqls" "common.graphqls" "coupon.graphqls" "crm.graphqls" "directives.graphqls" "doordash.graphqls" "draw_image.graphqls" "ejabberd.graphqls" "ekyc.graphqls" "face.graphqls" "food.graphqls" "geoservice.graphqls" "hospital.graphqls" "identified.graphqls" "integrated_payment.graphqls" "kms.graphqls" "livestream.graphqls" "lottery.graphqls" "manage.graphqls" "media.graphqls" "medical.graphqls" "message.graphqls" "movie.graphqls" "networking.graphqls" "notification.graphqls" "notifyhub.graphqls" "ollama_chat.graphqls" "ollama_py.graphqls" "parking_lot.graphqls" "partner.graphqls" "payer.graphqls" "payment.graphqls" "payment_wallet.graphqls" "photo.graphqls" "point.graphqls" "polymarket.graphqls" "post.graphqls" "qr.graphqls" "recompense.graphqls" "recruitment.graphqls" "referral.graphqls" "rent_house.graphqls" "reservation.graphqls" "restaurant_accounting.graphqls" "restaurant_consumer.graphqls" "restaurant_delivery.graphqls" "restaurant_kitchen.graphqls" "restaurant_order.graphqls" "reward.graphqls" "room.graphqls" "sard_auth.graphqls" "sard_card.graphqls" "sard_customer.graphqls" "search.graphqls" "serpapi.graphqls" "share.graphqls" "shipping.graphqls" "shopify.graphqls" "shortlink.graphqls" "solana.graphqls" "threads.graphqls" "ticket.graphqls" "toggle.graphqls" "tool.graphqls" "upload.graphqls" "user.graphqls" "vending.graphqls" "video.graphqls" "voucher.graphqls" "wallet_service.graphqls" "webrtc.graphqls" "wishlists.graphqls" "workflow.graphqls"
+//go:embed "account_transaction.graphqls" "address.graphqls" "admanagement.graphqls" "ai_agent.graphqls" "airflow.graphqls" "arrange.graphqls" "authorize.graphqls" "automatic_payment.graphqls" "banking.graphqls" "basket.graphqls" "billing.graphqls" "bonuslink.graphqls" "book.graphqls" "book_store.graphqls" "booking_mini.graphqls" "bot.graphqls" "calculate.graphqls" "call_center.graphqls" "car_rental.graphqls" "catalogues.graphqls" "cdn.graphqls" "chat.graphqls" "chatbot.graphqls" "common.graphqls" "coupon.graphqls" "crm.graphqls" "directives.graphqls" "doordash.graphqls" "draw_image.graphqls" "ejabberd.graphqls" "ekyc.graphqls" "face.graphqls" "food.graphqls" "geoservice.graphqls" "hospital.graphqls" "identified.graphqls" "integrated_payment.graphqls" "kms.graphqls" "livestream.graphqls" "lottery.graphqls" "lucky.graphqls" "manage.graphqls" "media.graphqls" "medical.graphqls" "message.graphqls" "movie.graphqls" "networking.graphqls" "notification.graphqls" "notifyhub.graphqls" "ollama_chat.graphqls" "ollama_py.graphqls" "parking_lot.graphqls" "partner.graphqls" "payer.graphqls" "payment.graphqls" "payment_wallet.graphqls" "photo.graphqls" "point.graphqls" "polymarket.graphqls" "post.graphqls" "qr.graphqls" "recompense.graphqls" "recruitment.graphqls" "referral.graphqls" "rent_house.graphqls" "reservation.graphqls" "restaurant_accounting.graphqls" "restaurant_consumer.graphqls" "restaurant_delivery.graphqls" "restaurant_kitchen.graphqls" "restaurant_order.graphqls" "reward.graphqls" "room.graphqls" "sard_auth.graphqls" "sard_card.graphqls" "sard_customer.graphqls" "search.graphqls" "serpapi.graphqls" "share.graphqls" "shipping.graphqls" "shopify.graphqls" "shortlink.graphqls" "solana.graphqls" "threads.graphqls" "ticket.graphqls" "toggle.graphqls" "tool.graphqls" "upload.graphqls" "user.graphqls" "vending.graphqls" "video.graphqls" "voucher.graphqls" "wallet_service.graphqls" "webrtc.graphqls" "wishlists.graphqls" "workflow.graphqls"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -67507,6 +69238,7 @@ var sources = []*ast.Source{
 	{Name: "kms.graphqls", Input: sourceData("kms.graphqls"), BuiltIn: false},
 	{Name: "livestream.graphqls", Input: sourceData("livestream.graphqls"), BuiltIn: false},
 	{Name: "lottery.graphqls", Input: sourceData("lottery.graphqls"), BuiltIn: false},
+	{Name: "lucky.graphqls", Input: sourceData("lucky.graphqls"), BuiltIn: false},
 	{Name: "manage.graphqls", Input: sourceData("manage.graphqls"), BuiltIn: false},
 	{Name: "media.graphqls", Input: sourceData("media.graphqls"), BuiltIn: false},
 	{Name: "medical.graphqls", Input: sourceData("medical.graphqls"), BuiltIn: false},
@@ -84399,6 +86131,367 @@ func (ec *executionContext) field_Mutation_lotteryScrape_argsDate(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyCampaignActivate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyCampaignActivate_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyCampaignActivate_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyCampaignCreate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyCampaignCreate_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyCampaignCreate_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.LuckyCampaignInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNLuckyCampaignInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignInput(ctx, tmp)
+	}
+
+	var zeroVal model.LuckyCampaignInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyCampaignDelete_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyCampaignDelete_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyCampaignDelete_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyCampaignPause_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyCampaignPause_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyCampaignPause_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyCampaignUpdate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyCampaignUpdate_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Mutation_luckyCampaignUpdate_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyCampaignUpdate_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyCampaignUpdate_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.LuckyCampaignInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNLuckyCampaignInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignInput(ctx, tmp)
+	}
+
+	var zeroVal model.LuckyCampaignInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyFraudApproveReward_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyFraudApproveReward_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyFraudApproveReward_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyFraudBlock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyFraudBlock_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	arg1, err := ec.field_Mutation_luckyFraudBlock_argsReason(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["reason"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyFraudBlock_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyFraudBlock_argsReason(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("reason"))
+	if tmp, ok := rawArgs["reason"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyFraudRejectReward_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyFraudRejectReward_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyFraudRejectReward_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyFraudUnblock_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyFraudUnblock_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyFraudUnblock_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyGrantPlays_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyGrantPlays_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	arg1, err := ec.field_Mutation_luckyGrantPlays_argsEvent(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["event"] = arg1
+	arg2, err := ec.field_Mutation_luckyGrantPlays_argsReferenceID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["reference_id"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyGrantPlays_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyGrantPlays_argsEvent(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
+	if tmp, ok := rawArgs["event"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyGrantPlays_argsReferenceID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("reference_id"))
+	if tmp, ok := rawArgs["reference_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyPlay_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_luckyPlay_argsGame(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["game"] = arg0
+	arg1, err := ec.field_Mutation_luckyPlay_argsChoice(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["choice"] = arg1
+	arg2, err := ec.field_Mutation_luckyPlay_argsIdempotencyKey(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["idempotency_key"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_luckyPlay_argsGame(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("game"))
+	if tmp, ok := rawArgs["game"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyPlay_argsChoice(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("choice"))
+	if tmp, ok := rawArgs["choice"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_luckyPlay_argsIdempotencyKey(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("idempotency_key"))
+	if tmp, ok := rawArgs["idempotency_key"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
 	return zeroVal, nil
 }
 
@@ -116119,6 +118212,601 @@ func (ec *executionContext) field_Query_lotteryResults_argsProvince(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_luckyCampaignPlays_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyCampaignPlays_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Query_luckyCampaignPlays_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg1
+	arg2, err := ec.field_Query_luckyCampaignPlays_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg2
+	arg3, err := ec.field_Query_luckyCampaignPlays_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyCampaignPlays_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaignPlays_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaignPlays_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaignPlays_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaign_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyCampaign_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyCampaign_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNInt642int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaigns_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyCampaigns_argsGameType(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["game_type"] = arg0
+	arg1, err := ec.field_Query_luckyCampaigns_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg1
+	arg2, err := ec.field_Query_luckyCampaigns_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg2
+	arg3, err := ec.field_Query_luckyCampaigns_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyCampaigns_argsGameType(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("game_type"))
+	if tmp, ok := rawArgs["game_type"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaigns_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaigns_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCampaigns_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCheckinHistory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyCheckinHistory_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	arg1, err := ec.field_Query_luckyCheckinHistory_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyCheckinHistory_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyCheckinHistory_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudBlocks_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyFraudBlocks_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	arg1, err := ec.field_Query_luckyFraudBlocks_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyFraudBlocks_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudBlocks_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudPlays_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyFraudPlays_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	arg1, err := ec.field_Query_luckyFraudPlays_argsDeviceID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["device_id"] = arg1
+	arg2, err := ec.field_Query_luckyFraudPlays_argsIP(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["ip"] = arg2
+	arg3, err := ec.field_Query_luckyFraudPlays_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg3
+	arg4, err := ec.field_Query_luckyFraudPlays_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg4
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyFraudPlays_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudPlays_argsDeviceID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("device_id"))
+	if tmp, ok := rawArgs["device_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudPlays_argsIP(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("ip"))
+	if tmp, ok := rawArgs["ip"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudPlays_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudPlays_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudRewards_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyFraudRewards_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg0
+	arg1, err := ec.field_Query_luckyFraudRewards_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg1
+	arg2, err := ec.field_Query_luckyFraudRewards_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg2
+	arg3, err := ec.field_Query_luckyFraudRewards_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyFraudRewards_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudRewards_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudRewards_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyFraudRewards_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyGame_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyGame_argsGame(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["game"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyGame_argsGame(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("game"))
+	if tmp, ok := rawArgs["game"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyMyPlays_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyMyPlays_argsGameType(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["game_type"] = arg0
+	arg1, err := ec.field_Query_luckyMyPlays_argsCampaignID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["campaign_id"] = arg1
+	arg2, err := ec.field_Query_luckyMyPlays_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg2
+	arg3, err := ec.field_Query_luckyMyPlays_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyMyPlays_argsGameType(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("game_type"))
+	if tmp, ok := rawArgs["game_type"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyMyPlays_argsCampaignID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("campaign_id"))
+	if tmp, ok := rawArgs["campaign_id"]; ok {
+		return ec.unmarshalOInt642ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyMyPlays_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyMyPlays_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyMyStatus_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyMyStatus_argsGame(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["game"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyMyStatus_argsGame(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("game"))
+	if tmp, ok := rawArgs["game"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyWinners_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_luckyWinners_argsGame(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["game"] = arg0
+	arg1, err := ec.field_Query_luckyWinners_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_luckyWinners_argsGame(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("game"))
+	if tmp, ok := rawArgs["game"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_luckyWinners_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_mediaSearchVideos_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -119876,6 +122564,47 @@ func (ec *executionContext) field_Query_pointConvertedRewardPoints_argsCursor(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_pointMyTransactions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_pointMyTransactions_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg0
+	arg1, err := ec.field_Query_pointMyTransactions_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_pointMyTransactions_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_pointMyTransactions_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_pointRewardDiscount_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -120037,6 +122766,88 @@ func (ec *executionContext) field_Query_pointRewardPoints_argsCursor(
 	}
 
 	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_pointUserBalance_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_pointUserBalance_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_pointUserBalance_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_pointUserTransactions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_pointUserTransactions_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	arg1, err := ec.field_Query_pointUserTransactions_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	arg2, err := ec.field_Query_pointUserTransactions_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_pointUserTransactions_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_pointUserTransactions_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_pointUserTransactions_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
 	return zeroVal, nil
 }
 
@@ -227569,6 +230380,6516 @@ func (ec *executionContext) fieldContext_LotteryScrape_provinces_saved(_ context
 	return fc, nil
 }
 
+func (ec *executionContext) _LuckyBlockPage_items(ctx context.Context, field graphql.CollectedField, obj *model.LuckyBlockPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyBlockPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyUserBlock)
+	fc.Result = res
+	return ec.marshalNLuckyUserBlock2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyUserBlockᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyBlockPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyBlockPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user_id":
+				return ec.fieldContext_LuckyUserBlock_user_id(ctx, field)
+			case "reason":
+				return ec.fieldContext_LuckyUserBlock_reason(ctx, field)
+			case "blocked_by":
+				return ec.fieldContext_LuckyUserBlock_blocked_by(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyUserBlock_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyUserBlock", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyBlockPage_total(ctx context.Context, field graphql.CollectedField, obj *model.LuckyBlockPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyBlockPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyBlockPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyBlockPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyBlockPage_limit(ctx context.Context, field graphql.CollectedField, obj *model.LuckyBlockPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyBlockPage_limit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Limit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyBlockPage_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyBlockPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyBlockPage_offset(ctx context.Context, field graphql.CollectedField, obj *model.LuckyBlockPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyBlockPage_offset(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Offset, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyBlockPage_offset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyBlockPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyBlockResult_block(ctx context.Context, field graphql.CollectedField, obj *model.LuckyBlockResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyBlockResult_block(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Block, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyUserBlock)
+	fc.Result = res
+	return ec.marshalNLuckyUserBlock2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyUserBlock(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyBlockResult_block(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyBlockResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user_id":
+				return ec.fieldContext_LuckyUserBlock_user_id(ctx, field)
+			case "reason":
+				return ec.fieldContext_LuckyUserBlock_reason(ctx, field)
+			case "blocked_by":
+				return ec.fieldContext_LuckyUserBlock_blocked_by(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyUserBlock_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyUserBlock", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyBlockResult_held_rewards(ctx context.Context, field graphql.CollectedField, obj *model.LuckyBlockResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyBlockResult_held_rewards(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HeldRewards, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyBlockResult_held_rewards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyBlockResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_game_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_game_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_name(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_description(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_start_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_start_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_end_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EndAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_end_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_timezone(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Timezone, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_timezone(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_status(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_win_rate(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WinRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*float64)
+	fc.Result = res
+	return ec.marshalOFloat2ᚖfloat64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_win_rate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_daily_spins(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DailySpins, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_daily_spins(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_max_spins_per_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MaxSpinsPerDay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_max_spins_per_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_max_points_per_user_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MaxPointsPerUserDay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt642ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_max_points_per_user_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_budget_points(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BudgetPoints, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt642ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_budget_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_points_awarded(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PointsAwarded, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt642ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_points_awarded(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_review_points(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReviewPoints, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt642ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_review_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_spin_rules(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpinRules, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckySpinRule)
+	fc.Result = res
+	return ec.marshalOLuckySpinRule2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRuleᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_spin_rules(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "event":
+				return ec.fieldContext_LuckySpinRule_event(ctx, field)
+			case "spins":
+				return ec.fieldContext_LuckySpinRule_spins(ctx, field)
+			case "max_per_day":
+				return ec.fieldContext_LuckySpinRule_max_per_day(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckySpinRule", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_extra_play_events(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExtraPlayEvents, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_extra_play_events(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_checkin_rewards(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CheckinRewards, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]int)
+	fc.Result = res
+	return ec.marshalOInt642ᚕintᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_checkin_rewards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_settings(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_settings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Settings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]any)
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_settings(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_prizes(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Prizes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyPrize)
+	fc.Result = res
+	return ec.marshalNLuckyPrize2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrizeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_prizes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyPrize_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyPrize_campaign_id(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyPrize_name(ctx, field)
+			case "type":
+				return ec.fieldContext_LuckyPrize_type(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyPrize_points(ctx, field)
+			case "weight":
+				return ec.fieldContext_LuckyPrize_weight(ctx, field)
+			case "quantity":
+				return ec.fieldContext_LuckyPrize_quantity(ctx, field)
+			case "awarded":
+				return ec.fieldContext_LuckyPrize_awarded(ctx, field)
+			case "position":
+				return ec.fieldContext_LuckyPrize_position(ctx, field)
+			case "image_url":
+				return ec.fieldContext_LuckyPrize_image_url(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPrize", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_created_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaign_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaign) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaign_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaign",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaignPage_items(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaignPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaignPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalNLuckyCampaign2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaignPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaignPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaignPage_total(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaignPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaignPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaignPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaignPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaignPage_limit(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaignPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaignPage_limit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Limit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaignPage_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaignPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCampaignPage_offset(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCampaignPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCampaignPage_offset(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Offset, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCampaignPage_offset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCampaignPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckin_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckin) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckin_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckin_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckin",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckin_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckin) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckin_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckin_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckin",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckin_user_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckin) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckin_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckin_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckin",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckin_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckin) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckin_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Day, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckin_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckin",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckin_streak(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckin) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckin_streak(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Streak, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckin_streak(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckin",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckin_points(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckin) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckin_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckin_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckin",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckin_created_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckin) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckin_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckin_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckin",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinPage_items(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyCheckin)
+	fc.Result = res
+	return ec.marshalNLuckyCheckin2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCheckin_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyCheckin_campaign_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyCheckin_user_id(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyCheckin_day(ctx, field)
+			case "streak":
+				return ec.fieldContext_LuckyCheckin_streak(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyCheckin_points(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCheckin_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCheckin", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinPage_total(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinPage_limit(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinPage_limit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Limit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinPage_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinPage_offset(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinPage_offset(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Offset, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinPage_offset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinResult_checkin(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinResult_checkin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Checkin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCheckin)
+	fc.Result = res
+	return ec.marshalNLuckyCheckin2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckin(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinResult_checkin(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCheckin_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyCheckin_campaign_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyCheckin_user_id(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyCheckin_day(ctx, field)
+			case "streak":
+				return ec.fieldContext_LuckyCheckin_streak(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyCheckin_points(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCheckin_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCheckin", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinResult_status(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinResult_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCheckinStatus)
+	fc.Result = res
+	return ec.marshalNLuckyCheckinStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinResult_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "campaign_id":
+				return ec.fieldContext_LuckyCheckinStatus_campaign_id(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyCheckinStatus_day(ctx, field)
+			case "checked_in_today":
+				return ec.fieldContext_LuckyCheckinStatus_checked_in_today(ctx, field)
+			case "streak":
+				return ec.fieldContext_LuckyCheckinStatus_streak(ctx, field)
+			case "cycle_day":
+				return ec.fieldContext_LuckyCheckinStatus_cycle_day(ctx, field)
+			case "next_reward":
+				return ec.fieldContext_LuckyCheckinStatus_next_reward(ctx, field)
+			case "rewards":
+				return ec.fieldContext_LuckyCheckinStatus_rewards(ctx, field)
+			case "ends_at":
+				return ec.fieldContext_LuckyCheckinStatus_ends_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCheckinStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Day, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_checked_in_today(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_checked_in_today(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CheckedInToday, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_checked_in_today(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_streak(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_streak(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Streak, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_streak(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_cycle_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_cycle_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CycleDay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_cycle_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_next_reward(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_next_reward(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NextReward, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_next_reward(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_rewards(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_rewards(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rewards, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]int)
+	fc.Result = res
+	return ec.marshalNInt642ᚕintᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_rewards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCheckinStatus_ends_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCheckinStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCheckinStatus_ends_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EndsAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCheckinStatus_ends_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCheckinStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyClient_ip(ctx context.Context, field graphql.CollectedField, obj *model.LuckyClient) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyClient_ip(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IP, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyClient_ip(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyClient",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyClient_device_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyClient) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyClient_device_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeviceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyClient_device_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyClient",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyClient_user_agent(ctx context.Context, field graphql.CollectedField, obj *model.LuckyClient) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyClient_user_agent(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserAgent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyClient_user_agent(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyClient",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_game_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_game_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_game_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_user_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_event(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_event(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Event, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_event(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_reference_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_reference_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReferenceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_reference_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_spins(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_spins(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Spins, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_spins(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Day, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyCreditGrant_created_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyCreditGrant) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyCreditGrant_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyCreditGrant_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyCreditGrant",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyGrantResult_grants(ctx context.Context, field graphql.CollectedField, obj *model.LuckyGrantResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyGrantResult_grants(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Grants, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyCreditGrant)
+	fc.Result = res
+	return ec.marshalNLuckyCreditGrant2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCreditGrantᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyGrantResult_grants(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyGrantResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCreditGrant_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyCreditGrant_campaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCreditGrant_game_type(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyCreditGrant_user_id(ctx, field)
+			case "event":
+				return ec.fieldContext_LuckyCreditGrant_event(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_LuckyCreditGrant_reference_id(ctx, field)
+			case "spins":
+				return ec.fieldContext_LuckyCreditGrant_spins(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyCreditGrant_day(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCreditGrant_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCreditGrant", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyGrantResult_skipped(ctx context.Context, field graphql.CollectedField, obj *model.LuckyGrantResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyGrantResult_skipped(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Skipped, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyGrantSkip)
+	fc.Result = res
+	return ec.marshalNLuckyGrantSkip2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyGrantSkipᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyGrantResult_skipped(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyGrantResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "campaign_id":
+				return ec.fieldContext_LuckyGrantSkip_campaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyGrantSkip_game_type(ctx, field)
+			case "reason":
+				return ec.fieldContext_LuckyGrantSkip_reason(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyGrantSkip", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyGrantSkip_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyGrantSkip) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyGrantSkip_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyGrantSkip_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyGrantSkip",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyGrantSkip_game_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyGrantSkip) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyGrantSkip_game_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyGrantSkip_game_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyGrantSkip",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyGrantSkip_reason(ctx context.Context, field graphql.CollectedField, obj *model.LuckyGrantSkip) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyGrantSkip_reason(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyGrantSkip_reason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyGrantSkip",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_game_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_game_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_game_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_user_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_prize_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_prize_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PrizeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_prize_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_prize_name(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_prize_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PrizeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_prize_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_prize_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_prize_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PrizeType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_prize_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_points(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_position(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_position(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_position(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_choice(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_choice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Choice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_choice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_source(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Source, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Day, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_client(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_client(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Client, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyClient)
+	fc.Result = res
+	return ec.marshalOLuckyClient2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyClient(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_client(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "ip":
+				return ec.fieldContext_LuckyClient_ip(ctx, field)
+			case "device_id":
+				return ec.fieldContext_LuckyClient_device_id(ctx, field)
+			case "user_agent":
+				return ec.fieldContext_LuckyClient_user_agent(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyClient", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlay_created_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlay_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlay_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayPage_items(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyPlay)
+	fc.Result = res
+	return ec.marshalNLuckyPlay2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyPlay_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyPlay_campaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyPlay_game_type(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyPlay_user_id(ctx, field)
+			case "prize_id":
+				return ec.fieldContext_LuckyPlay_prize_id(ctx, field)
+			case "prize_name":
+				return ec.fieldContext_LuckyPlay_prize_name(ctx, field)
+			case "prize_type":
+				return ec.fieldContext_LuckyPlay_prize_type(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyPlay_points(ctx, field)
+			case "position":
+				return ec.fieldContext_LuckyPlay_position(ctx, field)
+			case "choice":
+				return ec.fieldContext_LuckyPlay_choice(ctx, field)
+			case "source":
+				return ec.fieldContext_LuckyPlay_source(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyPlay_day(ctx, field)
+			case "client":
+				return ec.fieldContext_LuckyPlay_client(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyPlay_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlay", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayPage_total(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayPage_limit(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayPage_limit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Limit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayPage_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayPage_offset(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayPage_offset(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Offset, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayPage_offset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayResult_play(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayResult_play(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Play, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyPlay)
+	fc.Result = res
+	return ec.marshalNLuckyPlay2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlay(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayResult_play(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyPlay_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyPlay_campaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyPlay_game_type(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyPlay_user_id(ctx, field)
+			case "prize_id":
+				return ec.fieldContext_LuckyPlay_prize_id(ctx, field)
+			case "prize_name":
+				return ec.fieldContext_LuckyPlay_prize_name(ctx, field)
+			case "prize_type":
+				return ec.fieldContext_LuckyPlay_prize_type(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyPlay_points(ctx, field)
+			case "position":
+				return ec.fieldContext_LuckyPlay_position(ctx, field)
+			case "choice":
+				return ec.fieldContext_LuckyPlay_choice(ctx, field)
+			case "source":
+				return ec.fieldContext_LuckyPlay_source(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyPlay_day(ctx, field)
+			case "client":
+				return ec.fieldContext_LuckyPlay_client(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyPlay_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlay", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayResult_won(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayResult_won(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Won, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayResult_won(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayResult_replayed(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayResult_replayed(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Replayed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayResult_replayed(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayResult_status(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayResult_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyPlayerStatus)
+	fc.Result = res
+	return ec.marshalNLuckyPlayerStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayerStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayResult_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "campaign_id":
+				return ec.fieldContext_LuckyPlayerStatus_campaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyPlayerStatus_game_type(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyPlayerStatus_day(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyPlayerStatus_daily_spins(ctx, field)
+			case "remaining":
+				return ec.fieldContext_LuckyPlayerStatus_remaining(ctx, field)
+			case "usage":
+				return ec.fieldContext_LuckyPlayerStatus_usage(ctx, field)
+			case "ends_at":
+				return ec.fieldContext_LuckyPlayerStatus_ends_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlayerStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayerStatus_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayerStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayerStatus_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayerStatus_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayerStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayerStatus_game_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayerStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayerStatus_game_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayerStatus_game_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayerStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayerStatus_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayerStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayerStatus_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Day, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayerStatus_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayerStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayerStatus_daily_spins(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayerStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayerStatus_daily_spins(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DailySpins, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayerStatus_daily_spins(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayerStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayerStatus_remaining(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayerStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayerStatus_remaining(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Remaining, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayerStatus_remaining(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayerStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayerStatus_usage(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayerStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayerStatus_usage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Usage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyUsage)
+	fc.Result = res
+	return ec.marshalNLuckyUsage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyUsage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayerStatus_usage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayerStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "daily_today":
+				return ec.fieldContext_LuckyUsage_daily_today(ctx, field)
+			case "credit_today":
+				return ec.fieldContext_LuckyUsage_credit_today(ctx, field)
+			case "credit_balance":
+				return ec.fieldContext_LuckyUsage_credit_balance(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyUsage", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPlayerStatus_ends_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPlayerStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPlayerStatus_ends_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EndsAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPlayerStatus_ends_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPlayerStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt642ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_name(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_points(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_weight(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_weight(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Weight, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_weight(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_quantity(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_quantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Quantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt642ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_quantity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_awarded(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_awarded(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Awarded, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt642ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_awarded(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_position(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_position(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Position, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_position(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyPrize_image_url(ctx context.Context, field graphql.CollectedField, obj *model.LuckyPrize) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyPrize_image_url(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImageURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyPrize_image_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyPrize",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_event_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_event_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EventID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_event_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_source(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Source, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_game_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_game_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_game_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_user_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_reference_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_reference_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReferenceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_reference_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_title(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_title(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_points(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_status(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_hold_reason(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_hold_reason(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HoldReason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_hold_reason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_reviewed_by(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_reviewed_by(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReviewedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_reviewed_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_occurred_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_occurred_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OccurredAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_occurred_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewReward_published_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewReward) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewReward_published_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublishedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewReward_published_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewReward",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewRewardPage_items(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewRewardPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewRewardPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyReviewReward)
+	fc.Result = res
+	return ec.marshalNLuckyReviewReward2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewRewardᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewRewardPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewRewardPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyReviewReward_id(ctx, field)
+			case "event_id":
+				return ec.fieldContext_LuckyReviewReward_event_id(ctx, field)
+			case "source":
+				return ec.fieldContext_LuckyReviewReward_source(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyReviewReward_game_type(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyReviewReward_user_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyReviewReward_campaign_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_LuckyReviewReward_reference_id(ctx, field)
+			case "title":
+				return ec.fieldContext_LuckyReviewReward_title(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyReviewReward_points(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyReviewReward_status(ctx, field)
+			case "hold_reason":
+				return ec.fieldContext_LuckyReviewReward_hold_reason(ctx, field)
+			case "reviewed_by":
+				return ec.fieldContext_LuckyReviewReward_reviewed_by(ctx, field)
+			case "occurred_at":
+				return ec.fieldContext_LuckyReviewReward_occurred_at(ctx, field)
+			case "published_at":
+				return ec.fieldContext_LuckyReviewReward_published_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyReviewReward", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewRewardPage_total(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewRewardPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewRewardPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewRewardPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewRewardPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewRewardPage_limit(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewRewardPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewRewardPage_limit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Limit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewRewardPage_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewRewardPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyReviewRewardPage_offset(ctx context.Context, field graphql.CollectedField, obj *model.LuckyReviewRewardPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyReviewRewardPage_offset(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Offset, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyReviewRewardPage_offset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyReviewRewardPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckySpinRule_event(ctx context.Context, field graphql.CollectedField, obj *model.LuckySpinRule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckySpinRule_event(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Event, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckySpinRule_event(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckySpinRule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckySpinRule_spins(ctx context.Context, field graphql.CollectedField, obj *model.LuckySpinRule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckySpinRule_spins(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Spins, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckySpinRule_spins(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckySpinRule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckySpinRule_max_per_day(ctx context.Context, field graphql.CollectedField, obj *model.LuckySpinRule) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckySpinRule_max_per_day(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MaxPerDay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckySpinRule_max_per_day(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckySpinRule",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyUsage_daily_today(ctx context.Context, field graphql.CollectedField, obj *model.LuckyUsage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyUsage_daily_today(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DailyToday, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyUsage_daily_today(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyUsage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyUsage_credit_today(ctx context.Context, field graphql.CollectedField, obj *model.LuckyUsage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyUsage_credit_today(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreditToday, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyUsage_credit_today(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyUsage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyUsage_credit_balance(ctx context.Context, field graphql.CollectedField, obj *model.LuckyUsage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyUsage_credit_balance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreditBalance, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyUsage_credit_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyUsage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyUserBlock_user_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyUserBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyUserBlock_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyUserBlock_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyUserBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyUserBlock_reason(ctx context.Context, field graphql.CollectedField, obj *model.LuckyUserBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyUserBlock_reason(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Reason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyUserBlock_reason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyUserBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyUserBlock_blocked_by(ctx context.Context, field graphql.CollectedField, obj *model.LuckyUserBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyUserBlock_blocked_by(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BlockedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyUserBlock_blocked_by(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyUserBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyUserBlock_created_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyUserBlock) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyUserBlock_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyUserBlock_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyUserBlock",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyWinner_campaign_id(ctx context.Context, field graphql.CollectedField, obj *model.LuckyWinner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyWinner_campaign_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CampaignID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyWinner_campaign_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyWinner",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyWinner_game_type(ctx context.Context, field graphql.CollectedField, obj *model.LuckyWinner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyWinner_game_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyWinner_game_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyWinner",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyWinner_user(ctx context.Context, field graphql.CollectedField, obj *model.LuckyWinner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyWinner_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyWinner_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyWinner",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyWinner_prize_name(ctx context.Context, field graphql.CollectedField, obj *model.LuckyWinner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyWinner_prize_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PrizeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyWinner_prize_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyWinner",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyWinner_points(ctx context.Context, field graphql.CollectedField, obj *model.LuckyWinner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyWinner_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyWinner_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyWinner",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LuckyWinner_at(ctx context.Context, field graphql.CollectedField, obj *model.LuckyWinner) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LuckyWinner_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.At, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LuckyWinner_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LuckyWinner",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _MediaSearchResult_videos(ctx context.Context, field graphql.CollectedField, obj *model.MediaSearchResult) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MediaSearchResult_videos(ctx, field)
 	if err != nil {
@@ -264330,6 +273651,1217 @@ func (ec *executionContext) fieldContext_Mutation_lotteryBackfill(ctx context.Co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_lotteryBackfill_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyPlay(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyPlay(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().LuckyPlay(rctx, fc.Args["game"].(string), fc.Args["choice"].(*int), fc.Args["idempotency_key"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyPlayResult)
+	fc.Result = res
+	return ec.marshalOLuckyPlayResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyPlay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "play":
+				return ec.fieldContext_LuckyPlayResult_play(ctx, field)
+			case "won":
+				return ec.fieldContext_LuckyPlayResult_won(ctx, field)
+			case "replayed":
+				return ec.fieldContext_LuckyPlayResult_replayed(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyPlayResult_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlayResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyPlay_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyCheckIn(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyCheckIn(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().LuckyCheckIn(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCheckinResult)
+	fc.Result = res
+	return ec.marshalOLuckyCheckinResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyCheckIn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "checkin":
+				return ec.fieldContext_LuckyCheckinResult_checkin(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCheckinResult_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCheckinResult", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyGrantPlays(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyGrantPlays(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyGrantPlays(rctx, fc.Args["user_id"].(string), fc.Args["event"].(string), fc.Args["reference_id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyGrantResult
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyGrantResult
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyGrantResult
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyGrantResult); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyGrantResult`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyGrantResult)
+	fc.Result = res
+	return ec.marshalOLuckyGrantResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyGrantResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyGrantPlays(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "grants":
+				return ec.fieldContext_LuckyGrantResult_grants(ctx, field)
+			case "skipped":
+				return ec.fieldContext_LuckyGrantResult_skipped(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyGrantResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyGrantPlays_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyCampaignCreate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyCampaignCreate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyCampaignCreate(rctx, fc.Args["input"].(model.LuckyCampaignInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyCampaign); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaign`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalOLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyCampaignCreate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyCampaignCreate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyCampaignUpdate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyCampaignUpdate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyCampaignUpdate(rctx, fc.Args["id"].(int), fc.Args["input"].(model.LuckyCampaignInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyCampaign); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaign`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalOLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyCampaignUpdate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyCampaignUpdate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyCampaignDelete(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyCampaignDelete(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyCampaignDelete(rctx, fc.Args["id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyCampaignDelete(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyCampaignDelete_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyCampaignActivate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyCampaignActivate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyCampaignActivate(rctx, fc.Args["id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyCampaign); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaign`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalOLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyCampaignActivate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyCampaignActivate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyFraudBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyFraudBlock(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyFraudBlock(rctx, fc.Args["user_id"].(string), fc.Args["reason"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyBlockResult
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyBlockResult
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyBlockResult
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyBlockResult); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyBlockResult`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyBlockResult)
+	fc.Result = res
+	return ec.marshalOLuckyBlockResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyBlockResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyFraudBlock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "block":
+				return ec.fieldContext_LuckyBlockResult_block(ctx, field)
+			case "held_rewards":
+				return ec.fieldContext_LuckyBlockResult_held_rewards(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyBlockResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyFraudBlock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyFraudUnblock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyFraudUnblock(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyFraudUnblock(rctx, fc.Args["user_id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyFraudUnblock(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyFraudUnblock_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyFraudApproveReward(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyFraudApproveReward(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyFraudApproveReward(rctx, fc.Args["id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyReviewReward
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyReviewReward
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyReviewReward
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyReviewReward); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyReviewReward`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyReviewReward)
+	fc.Result = res
+	return ec.marshalOLuckyReviewReward2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewReward(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyFraudApproveReward(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyReviewReward_id(ctx, field)
+			case "event_id":
+				return ec.fieldContext_LuckyReviewReward_event_id(ctx, field)
+			case "source":
+				return ec.fieldContext_LuckyReviewReward_source(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyReviewReward_game_type(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyReviewReward_user_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyReviewReward_campaign_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_LuckyReviewReward_reference_id(ctx, field)
+			case "title":
+				return ec.fieldContext_LuckyReviewReward_title(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyReviewReward_points(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyReviewReward_status(ctx, field)
+			case "hold_reason":
+				return ec.fieldContext_LuckyReviewReward_hold_reason(ctx, field)
+			case "reviewed_by":
+				return ec.fieldContext_LuckyReviewReward_reviewed_by(ctx, field)
+			case "occurred_at":
+				return ec.fieldContext_LuckyReviewReward_occurred_at(ctx, field)
+			case "published_at":
+				return ec.fieldContext_LuckyReviewReward_published_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyReviewReward", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyFraudApproveReward_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyFraudRejectReward(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyFraudRejectReward(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyFraudRejectReward(rctx, fc.Args["id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyReviewReward
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyReviewReward
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyReviewReward
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyReviewReward); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyReviewReward`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyReviewReward)
+	fc.Result = res
+	return ec.marshalOLuckyReviewReward2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewReward(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyFraudRejectReward(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyReviewReward_id(ctx, field)
+			case "event_id":
+				return ec.fieldContext_LuckyReviewReward_event_id(ctx, field)
+			case "source":
+				return ec.fieldContext_LuckyReviewReward_source(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyReviewReward_game_type(ctx, field)
+			case "user_id":
+				return ec.fieldContext_LuckyReviewReward_user_id(ctx, field)
+			case "campaign_id":
+				return ec.fieldContext_LuckyReviewReward_campaign_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_LuckyReviewReward_reference_id(ctx, field)
+			case "title":
+				return ec.fieldContext_LuckyReviewReward_title(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyReviewReward_points(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyReviewReward_status(ctx, field)
+			case "hold_reason":
+				return ec.fieldContext_LuckyReviewReward_hold_reason(ctx, field)
+			case "reviewed_by":
+				return ec.fieldContext_LuckyReviewReward_reviewed_by(ctx, field)
+			case "occurred_at":
+				return ec.fieldContext_LuckyReviewReward_occurred_at(ctx, field)
+			case "published_at":
+				return ec.fieldContext_LuckyReviewReward_published_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyReviewReward", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyFraudRejectReward_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_luckyCampaignPause(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_luckyCampaignPause(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().LuckyCampaignPause(rctx, fc.Args["id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyCampaign); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaign`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalOLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_luckyCampaignPause(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_luckyCampaignPause_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -327739,6 +338271,179 @@ func (ec *executionContext) fieldContext_PhotosourceDTO_order(_ context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _PointAccount_user_id(ctx context.Context, field graphql.CollectedField, obj *model.PointAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointAccount_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointAccount_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointAccount_balance(ctx context.Context, field graphql.CollectedField, obj *model.PointAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointAccount_balance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Balance, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointAccount_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointAccount_total_earned(ctx context.Context, field graphql.CollectedField, obj *model.PointAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointAccount_total_earned(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalEarned, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointAccount_total_earned(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointAccount_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.PointAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointAccount_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointAccount_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PointConvertedRewardPoint_rew_convert_id(ctx context.Context, field graphql.CollectedField, obj *model.PointConvertedRewardPoint) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PointConvertedRewardPoint_rew_convert_id(ctx, field)
 	if err != nil {
@@ -329456,6 +340161,506 @@ func (ec *executionContext) fieldContext_PointRewardPointPage_pagination(_ conte
 				return ec.fieldContext_PointPaginationInfo_prev_cursor(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PointPaginationInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransaction_id(ctx context.Context, field graphql.CollectedField, obj *model.PointTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransaction_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransaction_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransaction_event_id(ctx context.Context, field graphql.CollectedField, obj *model.PointTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransaction_event_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EventID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransaction_event_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransaction_source(ctx context.Context, field graphql.CollectedField, obj *model.PointTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransaction_source(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Source, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransaction_source(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransaction_title(ctx context.Context, field graphql.CollectedField, obj *model.PointTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransaction_title(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransaction_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransaction_points(ctx context.Context, field graphql.CollectedField, obj *model.PointTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransaction_points(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Points, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransaction_points(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransaction_balance_after(ctx context.Context, field graphql.CollectedField, obj *model.PointTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransaction_balance_after(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BalanceAfter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransaction_balance_after(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransaction_occurred_at(ctx context.Context, field graphql.CollectedField, obj *model.PointTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransaction_occurred_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OccurredAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransaction_occurred_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransactionPage_items(ctx context.Context, field graphql.CollectedField, obj *model.PointTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransactionPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.PointTransaction)
+	fc.Result = res
+	return ec.marshalNPointTransaction2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointTransactionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransactionPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PointTransaction_id(ctx, field)
+			case "event_id":
+				return ec.fieldContext_PointTransaction_event_id(ctx, field)
+			case "source":
+				return ec.fieldContext_PointTransaction_source(ctx, field)
+			case "title":
+				return ec.fieldContext_PointTransaction_title(ctx, field)
+			case "points":
+				return ec.fieldContext_PointTransaction_points(ctx, field)
+			case "balance_after":
+				return ec.fieldContext_PointTransaction_balance_after(ctx, field)
+			case "occurred_at":
+				return ec.fieldContext_PointTransaction_occurred_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PointTransaction", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransactionPage_total(ctx context.Context, field graphql.CollectedField, obj *model.PointTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransactionPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt642int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransactionPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int64 does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransactionPage_limit(ctx context.Context, field graphql.CollectedField, obj *model.PointTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransactionPage_limit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Limit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransactionPage_limit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PointTransactionPage_offset(ctx context.Context, field graphql.CollectedField, obj *model.PointTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PointTransactionPage_offset(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Offset, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PointTransactionPage_offset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PointTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -369596,6 +380801,1180 @@ func (ec *executionContext) fieldContext_Query_lotteryCheck(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_luckyGames(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyGames(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyGames(rctx)
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.Public == nil {
+				var zeroVal []*model.LuckyCampaign
+				return zeroVal, errors.New("directive public is not implemented")
+			}
+			return ec.directives.Public(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.LuckyCampaign); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaign`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalNLuckyCampaign2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyGames(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyGame(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyGame(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyGame(rctx, fc.Args["game"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.Public == nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, errors.New("directive public is not implemented")
+			}
+			return ec.directives.Public(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyCampaign); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaign`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalOLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyGame(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyGame_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyWinners(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyWinners(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyWinners(rctx, fc.Args["game"].(string), fc.Args["limit"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.Public == nil {
+				var zeroVal []*model.LuckyWinner
+				return zeroVal, errors.New("directive public is not implemented")
+			}
+			return ec.directives.Public(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.LuckyWinner); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/JIeeiroSst/gateway-api/graph/model.LuckyWinner`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.LuckyWinner)
+	fc.Result = res
+	return ec.marshalNLuckyWinner2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyWinnerᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyWinners(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "campaign_id":
+				return ec.fieldContext_LuckyWinner_campaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyWinner_game_type(ctx, field)
+			case "user":
+				return ec.fieldContext_LuckyWinner_user(ctx, field)
+			case "prize_name":
+				return ec.fieldContext_LuckyWinner_prize_name(ctx, field)
+			case "points":
+				return ec.fieldContext_LuckyWinner_points(ctx, field)
+			case "at":
+				return ec.fieldContext_LuckyWinner_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyWinner", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyWinners_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyMyStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyMyStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().LuckyMyStatus(rctx, fc.Args["game"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyPlayerStatus)
+	fc.Result = res
+	return ec.marshalOLuckyPlayerStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayerStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyMyStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "campaign_id":
+				return ec.fieldContext_LuckyPlayerStatus_campaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyPlayerStatus_game_type(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyPlayerStatus_day(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyPlayerStatus_daily_spins(ctx, field)
+			case "remaining":
+				return ec.fieldContext_LuckyPlayerStatus_remaining(ctx, field)
+			case "usage":
+				return ec.fieldContext_LuckyPlayerStatus_usage(ctx, field)
+			case "ends_at":
+				return ec.fieldContext_LuckyPlayerStatus_ends_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlayerStatus", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyMyStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyMyPlays(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyMyPlays(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().LuckyMyPlays(rctx, fc.Args["game_type"].(*string), fc.Args["campaign_id"].(*int), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyPlayPage)
+	fc.Result = res
+	return ec.marshalOLuckyPlayPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyMyPlays(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_LuckyPlayPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_LuckyPlayPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_LuckyPlayPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_LuckyPlayPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlayPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyMyPlays_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyCheckinStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyCheckinStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().LuckyCheckinStatus(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCheckinStatus)
+	fc.Result = res
+	return ec.marshalOLuckyCheckinStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyCheckinStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "campaign_id":
+				return ec.fieldContext_LuckyCheckinStatus_campaign_id(ctx, field)
+			case "day":
+				return ec.fieldContext_LuckyCheckinStatus_day(ctx, field)
+			case "checked_in_today":
+				return ec.fieldContext_LuckyCheckinStatus_checked_in_today(ctx, field)
+			case "streak":
+				return ec.fieldContext_LuckyCheckinStatus_streak(ctx, field)
+			case "cycle_day":
+				return ec.fieldContext_LuckyCheckinStatus_cycle_day(ctx, field)
+			case "next_reward":
+				return ec.fieldContext_LuckyCheckinStatus_next_reward(ctx, field)
+			case "rewards":
+				return ec.fieldContext_LuckyCheckinStatus_rewards(ctx, field)
+			case "ends_at":
+				return ec.fieldContext_LuckyCheckinStatus_ends_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCheckinStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyCheckinHistory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyCheckinHistory(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().LuckyCheckinHistory(rctx, fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCheckinPage)
+	fc.Result = res
+	return ec.marshalOLuckyCheckinPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyCheckinHistory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_LuckyCheckinPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_LuckyCheckinPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_LuckyCheckinPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_LuckyCheckinPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCheckinPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyCheckinHistory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyCampaigns(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyCampaigns(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyCampaigns(rctx, fc.Args["game_type"].(*string), fc.Args["status"].(*string), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyCampaignPage
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.LuckyCampaignPage
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyCampaignPage
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyCampaignPage); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaignPage`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCampaignPage)
+	fc.Result = res
+	return ec.marshalOLuckyCampaignPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyCampaigns(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_LuckyCampaignPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_LuckyCampaignPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_LuckyCampaignPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_LuckyCampaignPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaignPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyCampaigns_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyCampaign(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyCampaign(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyCampaign(rctx, fc.Args["id"].(int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyCampaign
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyCampaign); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyCampaign`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyCampaign)
+	fc.Result = res
+	return ec.marshalOLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyCampaign(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_LuckyCampaign_id(ctx, field)
+			case "game_type":
+				return ec.fieldContext_LuckyCampaign_game_type(ctx, field)
+			case "name":
+				return ec.fieldContext_LuckyCampaign_name(ctx, field)
+			case "description":
+				return ec.fieldContext_LuckyCampaign_description(ctx, field)
+			case "start_at":
+				return ec.fieldContext_LuckyCampaign_start_at(ctx, field)
+			case "end_at":
+				return ec.fieldContext_LuckyCampaign_end_at(ctx, field)
+			case "timezone":
+				return ec.fieldContext_LuckyCampaign_timezone(ctx, field)
+			case "status":
+				return ec.fieldContext_LuckyCampaign_status(ctx, field)
+			case "win_rate":
+				return ec.fieldContext_LuckyCampaign_win_rate(ctx, field)
+			case "daily_spins":
+				return ec.fieldContext_LuckyCampaign_daily_spins(ctx, field)
+			case "max_spins_per_day":
+				return ec.fieldContext_LuckyCampaign_max_spins_per_day(ctx, field)
+			case "max_points_per_user_day":
+				return ec.fieldContext_LuckyCampaign_max_points_per_user_day(ctx, field)
+			case "budget_points":
+				return ec.fieldContext_LuckyCampaign_budget_points(ctx, field)
+			case "points_awarded":
+				return ec.fieldContext_LuckyCampaign_points_awarded(ctx, field)
+			case "review_points":
+				return ec.fieldContext_LuckyCampaign_review_points(ctx, field)
+			case "spin_rules":
+				return ec.fieldContext_LuckyCampaign_spin_rules(ctx, field)
+			case "extra_play_events":
+				return ec.fieldContext_LuckyCampaign_extra_play_events(ctx, field)
+			case "checkin_rewards":
+				return ec.fieldContext_LuckyCampaign_checkin_rewards(ctx, field)
+			case "settings":
+				return ec.fieldContext_LuckyCampaign_settings(ctx, field)
+			case "prizes":
+				return ec.fieldContext_LuckyCampaign_prizes(ctx, field)
+			case "created_at":
+				return ec.fieldContext_LuckyCampaign_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_LuckyCampaign_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyCampaign", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyCampaign_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyFraudBlocks(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyFraudBlocks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyFraudBlocks(rctx, fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyBlockPage
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.LuckyBlockPage
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyBlockPage
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyBlockPage); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyBlockPage`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyBlockPage)
+	fc.Result = res
+	return ec.marshalOLuckyBlockPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyBlockPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyFraudBlocks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_LuckyBlockPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_LuckyBlockPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_LuckyBlockPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_LuckyBlockPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyBlockPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyFraudBlocks_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyFraudRewards(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyFraudRewards(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyFraudRewards(rctx, fc.Args["status"].(*string), fc.Args["user_id"].(*string), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyReviewRewardPage
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.LuckyReviewRewardPage
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyReviewRewardPage
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyReviewRewardPage); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyReviewRewardPage`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyReviewRewardPage)
+	fc.Result = res
+	return ec.marshalOLuckyReviewRewardPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewRewardPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyFraudRewards(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_LuckyReviewRewardPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_LuckyReviewRewardPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_LuckyReviewRewardPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_LuckyReviewRewardPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyReviewRewardPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyFraudRewards_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyFraudPlays(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyFraudPlays(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyFraudPlays(rctx, fc.Args["user_id"].(*string), fc.Args["device_id"].(*string), fc.Args["ip"].(*string), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyPlayPage
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.LuckyPlayPage
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyPlayPage
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyPlayPage); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyPlayPage`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyPlayPage)
+	fc.Result = res
+	return ec.marshalOLuckyPlayPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyFraudPlays(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_LuckyPlayPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_LuckyPlayPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_LuckyPlayPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_LuckyPlayPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlayPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyFraudPlays_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_luckyCampaignPlays(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_luckyCampaignPlays(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().LuckyCampaignPlays(rctx, fc.Args["id"].(int), fc.Args["user_id"].(*string), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/lucky-service")
+			if err != nil {
+				var zeroVal *model.LuckyPlayPage
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.LuckyPlayPage
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.LuckyPlayPage
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LuckyPlayPage); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.LuckyPlayPage`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LuckyPlayPage)
+	fc.Result = res
+	return ec.marshalOLuckyPlayPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_luckyCampaignPlays(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_LuckyPlayPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_LuckyPlayPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_LuckyPlayPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_LuckyPlayPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LuckyPlayPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_luckyCampaignPlays_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_kcTokenUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_kcTokenUser(ctx, field)
 	if err != nil {
@@ -389396,6 +401775,307 @@ func (ec *executionContext) fieldContext_Query_photoComposition(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_photoComposition_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_pointMyBalance(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_pointMyBalance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PointMyBalance(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PointAccount)
+	fc.Result = res
+	return ec.marshalOPointAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointAccount(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_pointMyBalance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user_id":
+				return ec.fieldContext_PointAccount_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_PointAccount_balance(ctx, field)
+			case "total_earned":
+				return ec.fieldContext_PointAccount_total_earned(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_PointAccount_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PointAccount", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_pointMyTransactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_pointMyTransactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PointMyTransactions(rctx, fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PointTransactionPage)
+	fc.Result = res
+	return ec.marshalOPointTransactionPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointTransactionPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_pointMyTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_PointTransactionPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_PointTransactionPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_PointTransactionPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_PointTransactionPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PointTransactionPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_pointMyTransactions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_pointUserBalance(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_pointUserBalance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().PointUserBalance(rctx, fc.Args["user_id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/point-service")
+			if err != nil {
+				var zeroVal *model.PointAccount
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.PointAccount
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.PointAccount
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.PointAccount); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.PointAccount`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PointAccount)
+	fc.Result = res
+	return ec.marshalOPointAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointAccount(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_pointUserBalance(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user_id":
+				return ec.fieldContext_PointAccount_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_PointAccount_balance(ctx, field)
+			case "total_earned":
+				return ec.fieldContext_PointAccount_total_earned(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_PointAccount_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PointAccount", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_pointUserBalance_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_pointUserTransactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_pointUserTransactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().PointUserTransactions(rctx, fc.Args["user_id"].(string), fc.Args["limit"].(*int), fc.Args["offset"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/point-service")
+			if err != nil {
+				var zeroVal *model.PointTransactionPage
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.PointTransactionPage
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.PointTransactionPage
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.PointTransactionPage); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.PointTransactionPage`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.PointTransactionPage)
+	fc.Result = res
+	return ec.marshalOPointTransactionPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointTransactionPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_pointUserTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_PointTransactionPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_PointTransactionPage_total(ctx, field)
+			case "limit":
+				return ec.fieldContext_PointTransactionPage_limit(ctx, field)
+			case "offset":
+				return ec.fieldContext_PointTransactionPage_offset(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PointTransactionPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_pointUserTransactions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -517086,6 +529766,255 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj an
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputLuckyCampaignInput(ctx context.Context, obj any) (model.LuckyCampaignInput, error) {
+	var it model.LuckyCampaignInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"game_type", "name", "description", "start_at", "end_at", "timezone", "win_rate", "daily_spins", "max_spins_per_day", "max_points_per_user_day", "budget_points", "review_points", "spin_rules", "checkin_rewards", "settings", "prizes"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "game_type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("game_type"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GameType = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "start_at":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("start_at"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartAt = data
+		case "end_at":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("end_at"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EndAt = data
+		case "timezone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timezone"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Timezone = data
+		case "win_rate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("win_rate"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WinRate = data
+		case "daily_spins":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("daily_spins"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DailySpins = data
+		case "max_spins_per_day":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("max_spins_per_day"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MaxSpinsPerDay = data
+		case "max_points_per_user_day":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("max_points_per_user_day"))
+			data, err := ec.unmarshalOInt642ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MaxPointsPerUserDay = data
+		case "budget_points":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("budget_points"))
+			data, err := ec.unmarshalOInt642ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BudgetPoints = data
+		case "review_points":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("review_points"))
+			data, err := ec.unmarshalOInt642ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ReviewPoints = data
+		case "spin_rules":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spin_rules"))
+			data, err := ec.unmarshalOLuckySpinRuleInput2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRuleInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SpinRules = data
+		case "checkin_rewards":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkin_rewards"))
+			data, err := ec.unmarshalOInt642ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CheckinRewards = data
+		case "settings":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settings"))
+			data, err := ec.unmarshalOMap2map(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Settings = data
+		case "prizes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("prizes"))
+			data, err := ec.unmarshalOLuckyPrizeInput2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrizeInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Prizes = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputLuckyPrizeInput(ctx context.Context, obj any) (model.LuckyPrizeInput, error) {
+	var it model.LuckyPrizeInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "name", "type", "points", "weight", "quantity", "position", "image_url"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOInt642ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "points":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("points"))
+			data, err := ec.unmarshalOInt642ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Points = data
+		case "weight":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("weight"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Weight = data
+		case "quantity":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
+			data, err := ec.unmarshalOInt642ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Quantity = data
+		case "position":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("position"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Position = data
+		case "image_url":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("image_url"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ImageURL = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputLuckySpinRuleInput(ctx context.Context, obj any) (model.LuckySpinRuleInput, error) {
+	var it model.LuckySpinRuleInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"event", "spins", "max_per_day"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "event":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("event"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Event = data
+		case "spins":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spins"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Spins = data
+		case "max_per_day":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("max_per_day"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MaxPerDay = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputMedicalAdjustInput(ctx context.Context, obj any) (model.MedicalAdjustInput, error) {
 	var it model.MedicalAdjustInput
 	asMap := map[string]any{}
@@ -541200,6 +554129,1425 @@ func (ec *executionContext) _LotteryScrape(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var luckyBlockPageImplementors = []string{"LuckyBlockPage"}
+
+func (ec *executionContext) _LuckyBlockPage(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyBlockPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyBlockPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyBlockPage")
+		case "items":
+			out.Values[i] = ec._LuckyBlockPage_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._LuckyBlockPage_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "limit":
+			out.Values[i] = ec._LuckyBlockPage_limit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "offset":
+			out.Values[i] = ec._LuckyBlockPage_offset(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyBlockResultImplementors = []string{"LuckyBlockResult"}
+
+func (ec *executionContext) _LuckyBlockResult(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyBlockResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyBlockResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyBlockResult")
+		case "block":
+			out.Values[i] = ec._LuckyBlockResult_block(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "held_rewards":
+			out.Values[i] = ec._LuckyBlockResult_held_rewards(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyCampaignImplementors = []string{"LuckyCampaign"}
+
+func (ec *executionContext) _LuckyCampaign(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyCampaign) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyCampaignImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyCampaign")
+		case "id":
+			out.Values[i] = ec._LuckyCampaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "game_type":
+			out.Values[i] = ec._LuckyCampaign_game_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._LuckyCampaign_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "description":
+			out.Values[i] = ec._LuckyCampaign_description(ctx, field, obj)
+		case "start_at":
+			out.Values[i] = ec._LuckyCampaign_start_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "end_at":
+			out.Values[i] = ec._LuckyCampaign_end_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "timezone":
+			out.Values[i] = ec._LuckyCampaign_timezone(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._LuckyCampaign_status(ctx, field, obj)
+		case "win_rate":
+			out.Values[i] = ec._LuckyCampaign_win_rate(ctx, field, obj)
+		case "daily_spins":
+			out.Values[i] = ec._LuckyCampaign_daily_spins(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "max_spins_per_day":
+			out.Values[i] = ec._LuckyCampaign_max_spins_per_day(ctx, field, obj)
+		case "max_points_per_user_day":
+			out.Values[i] = ec._LuckyCampaign_max_points_per_user_day(ctx, field, obj)
+		case "budget_points":
+			out.Values[i] = ec._LuckyCampaign_budget_points(ctx, field, obj)
+		case "points_awarded":
+			out.Values[i] = ec._LuckyCampaign_points_awarded(ctx, field, obj)
+		case "review_points":
+			out.Values[i] = ec._LuckyCampaign_review_points(ctx, field, obj)
+		case "spin_rules":
+			out.Values[i] = ec._LuckyCampaign_spin_rules(ctx, field, obj)
+		case "extra_play_events":
+			out.Values[i] = ec._LuckyCampaign_extra_play_events(ctx, field, obj)
+		case "checkin_rewards":
+			out.Values[i] = ec._LuckyCampaign_checkin_rewards(ctx, field, obj)
+		case "settings":
+			out.Values[i] = ec._LuckyCampaign_settings(ctx, field, obj)
+		case "prizes":
+			out.Values[i] = ec._LuckyCampaign_prizes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created_at":
+			out.Values[i] = ec._LuckyCampaign_created_at(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._LuckyCampaign_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyCampaignPageImplementors = []string{"LuckyCampaignPage"}
+
+func (ec *executionContext) _LuckyCampaignPage(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyCampaignPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyCampaignPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyCampaignPage")
+		case "items":
+			out.Values[i] = ec._LuckyCampaignPage_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._LuckyCampaignPage_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "limit":
+			out.Values[i] = ec._LuckyCampaignPage_limit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "offset":
+			out.Values[i] = ec._LuckyCampaignPage_offset(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyCheckinImplementors = []string{"LuckyCheckin"}
+
+func (ec *executionContext) _LuckyCheckin(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyCheckin) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyCheckinImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyCheckin")
+		case "id":
+			out.Values[i] = ec._LuckyCheckin_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "campaign_id":
+			out.Values[i] = ec._LuckyCheckin_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user_id":
+			out.Values[i] = ec._LuckyCheckin_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "day":
+			out.Values[i] = ec._LuckyCheckin_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "streak":
+			out.Values[i] = ec._LuckyCheckin_streak(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._LuckyCheckin_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created_at":
+			out.Values[i] = ec._LuckyCheckin_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyCheckinPageImplementors = []string{"LuckyCheckinPage"}
+
+func (ec *executionContext) _LuckyCheckinPage(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyCheckinPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyCheckinPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyCheckinPage")
+		case "items":
+			out.Values[i] = ec._LuckyCheckinPage_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._LuckyCheckinPage_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "limit":
+			out.Values[i] = ec._LuckyCheckinPage_limit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "offset":
+			out.Values[i] = ec._LuckyCheckinPage_offset(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyCheckinResultImplementors = []string{"LuckyCheckinResult"}
+
+func (ec *executionContext) _LuckyCheckinResult(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyCheckinResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyCheckinResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyCheckinResult")
+		case "checkin":
+			out.Values[i] = ec._LuckyCheckinResult_checkin(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._LuckyCheckinResult_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyCheckinStatusImplementors = []string{"LuckyCheckinStatus"}
+
+func (ec *executionContext) _LuckyCheckinStatus(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyCheckinStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyCheckinStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyCheckinStatus")
+		case "campaign_id":
+			out.Values[i] = ec._LuckyCheckinStatus_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "day":
+			out.Values[i] = ec._LuckyCheckinStatus_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "checked_in_today":
+			out.Values[i] = ec._LuckyCheckinStatus_checked_in_today(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "streak":
+			out.Values[i] = ec._LuckyCheckinStatus_streak(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "cycle_day":
+			out.Values[i] = ec._LuckyCheckinStatus_cycle_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "next_reward":
+			out.Values[i] = ec._LuckyCheckinStatus_next_reward(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "rewards":
+			out.Values[i] = ec._LuckyCheckinStatus_rewards(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "ends_at":
+			out.Values[i] = ec._LuckyCheckinStatus_ends_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyClientImplementors = []string{"LuckyClient"}
+
+func (ec *executionContext) _LuckyClient(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyClient) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyClientImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyClient")
+		case "ip":
+			out.Values[i] = ec._LuckyClient_ip(ctx, field, obj)
+		case "device_id":
+			out.Values[i] = ec._LuckyClient_device_id(ctx, field, obj)
+		case "user_agent":
+			out.Values[i] = ec._LuckyClient_user_agent(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyCreditGrantImplementors = []string{"LuckyCreditGrant"}
+
+func (ec *executionContext) _LuckyCreditGrant(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyCreditGrant) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyCreditGrantImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyCreditGrant")
+		case "id":
+			out.Values[i] = ec._LuckyCreditGrant_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "campaign_id":
+			out.Values[i] = ec._LuckyCreditGrant_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "game_type":
+			out.Values[i] = ec._LuckyCreditGrant_game_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user_id":
+			out.Values[i] = ec._LuckyCreditGrant_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "event":
+			out.Values[i] = ec._LuckyCreditGrant_event(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reference_id":
+			out.Values[i] = ec._LuckyCreditGrant_reference_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "spins":
+			out.Values[i] = ec._LuckyCreditGrant_spins(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "day":
+			out.Values[i] = ec._LuckyCreditGrant_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created_at":
+			out.Values[i] = ec._LuckyCreditGrant_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyGrantResultImplementors = []string{"LuckyGrantResult"}
+
+func (ec *executionContext) _LuckyGrantResult(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyGrantResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyGrantResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyGrantResult")
+		case "grants":
+			out.Values[i] = ec._LuckyGrantResult_grants(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "skipped":
+			out.Values[i] = ec._LuckyGrantResult_skipped(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyGrantSkipImplementors = []string{"LuckyGrantSkip"}
+
+func (ec *executionContext) _LuckyGrantSkip(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyGrantSkip) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyGrantSkipImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyGrantSkip")
+		case "campaign_id":
+			out.Values[i] = ec._LuckyGrantSkip_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "game_type":
+			out.Values[i] = ec._LuckyGrantSkip_game_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reason":
+			out.Values[i] = ec._LuckyGrantSkip_reason(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyPlayImplementors = []string{"LuckyPlay"}
+
+func (ec *executionContext) _LuckyPlay(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyPlay) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyPlayImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyPlay")
+		case "id":
+			out.Values[i] = ec._LuckyPlay_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "campaign_id":
+			out.Values[i] = ec._LuckyPlay_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "game_type":
+			out.Values[i] = ec._LuckyPlay_game_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user_id":
+			out.Values[i] = ec._LuckyPlay_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "prize_id":
+			out.Values[i] = ec._LuckyPlay_prize_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "prize_name":
+			out.Values[i] = ec._LuckyPlay_prize_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "prize_type":
+			out.Values[i] = ec._LuckyPlay_prize_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._LuckyPlay_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "position":
+			out.Values[i] = ec._LuckyPlay_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "choice":
+			out.Values[i] = ec._LuckyPlay_choice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "source":
+			out.Values[i] = ec._LuckyPlay_source(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "day":
+			out.Values[i] = ec._LuckyPlay_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "client":
+			out.Values[i] = ec._LuckyPlay_client(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._LuckyPlay_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyPlayPageImplementors = []string{"LuckyPlayPage"}
+
+func (ec *executionContext) _LuckyPlayPage(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyPlayPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyPlayPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyPlayPage")
+		case "items":
+			out.Values[i] = ec._LuckyPlayPage_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._LuckyPlayPage_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "limit":
+			out.Values[i] = ec._LuckyPlayPage_limit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "offset":
+			out.Values[i] = ec._LuckyPlayPage_offset(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyPlayResultImplementors = []string{"LuckyPlayResult"}
+
+func (ec *executionContext) _LuckyPlayResult(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyPlayResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyPlayResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyPlayResult")
+		case "play":
+			out.Values[i] = ec._LuckyPlayResult_play(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "won":
+			out.Values[i] = ec._LuckyPlayResult_won(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "replayed":
+			out.Values[i] = ec._LuckyPlayResult_replayed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._LuckyPlayResult_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyPlayerStatusImplementors = []string{"LuckyPlayerStatus"}
+
+func (ec *executionContext) _LuckyPlayerStatus(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyPlayerStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyPlayerStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyPlayerStatus")
+		case "campaign_id":
+			out.Values[i] = ec._LuckyPlayerStatus_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "game_type":
+			out.Values[i] = ec._LuckyPlayerStatus_game_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "day":
+			out.Values[i] = ec._LuckyPlayerStatus_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "daily_spins":
+			out.Values[i] = ec._LuckyPlayerStatus_daily_spins(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "remaining":
+			out.Values[i] = ec._LuckyPlayerStatus_remaining(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "usage":
+			out.Values[i] = ec._LuckyPlayerStatus_usage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "ends_at":
+			out.Values[i] = ec._LuckyPlayerStatus_ends_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyPrizeImplementors = []string{"LuckyPrize"}
+
+func (ec *executionContext) _LuckyPrize(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyPrize) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyPrizeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyPrize")
+		case "id":
+			out.Values[i] = ec._LuckyPrize_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "campaign_id":
+			out.Values[i] = ec._LuckyPrize_campaign_id(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._LuckyPrize_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "type":
+			out.Values[i] = ec._LuckyPrize_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._LuckyPrize_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "weight":
+			out.Values[i] = ec._LuckyPrize_weight(ctx, field, obj)
+		case "quantity":
+			out.Values[i] = ec._LuckyPrize_quantity(ctx, field, obj)
+		case "awarded":
+			out.Values[i] = ec._LuckyPrize_awarded(ctx, field, obj)
+		case "position":
+			out.Values[i] = ec._LuckyPrize_position(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "image_url":
+			out.Values[i] = ec._LuckyPrize_image_url(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyReviewRewardImplementors = []string{"LuckyReviewReward"}
+
+func (ec *executionContext) _LuckyReviewReward(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyReviewReward) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyReviewRewardImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyReviewReward")
+		case "id":
+			out.Values[i] = ec._LuckyReviewReward_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "event_id":
+			out.Values[i] = ec._LuckyReviewReward_event_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "source":
+			out.Values[i] = ec._LuckyReviewReward_source(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "game_type":
+			out.Values[i] = ec._LuckyReviewReward_game_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user_id":
+			out.Values[i] = ec._LuckyReviewReward_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "campaign_id":
+			out.Values[i] = ec._LuckyReviewReward_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reference_id":
+			out.Values[i] = ec._LuckyReviewReward_reference_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "title":
+			out.Values[i] = ec._LuckyReviewReward_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._LuckyReviewReward_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._LuckyReviewReward_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hold_reason":
+			out.Values[i] = ec._LuckyReviewReward_hold_reason(ctx, field, obj)
+		case "reviewed_by":
+			out.Values[i] = ec._LuckyReviewReward_reviewed_by(ctx, field, obj)
+		case "occurred_at":
+			out.Values[i] = ec._LuckyReviewReward_occurred_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "published_at":
+			out.Values[i] = ec._LuckyReviewReward_published_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyReviewRewardPageImplementors = []string{"LuckyReviewRewardPage"}
+
+func (ec *executionContext) _LuckyReviewRewardPage(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyReviewRewardPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyReviewRewardPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyReviewRewardPage")
+		case "items":
+			out.Values[i] = ec._LuckyReviewRewardPage_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._LuckyReviewRewardPage_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "limit":
+			out.Values[i] = ec._LuckyReviewRewardPage_limit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "offset":
+			out.Values[i] = ec._LuckyReviewRewardPage_offset(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckySpinRuleImplementors = []string{"LuckySpinRule"}
+
+func (ec *executionContext) _LuckySpinRule(ctx context.Context, sel ast.SelectionSet, obj *model.LuckySpinRule) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckySpinRuleImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckySpinRule")
+		case "event":
+			out.Values[i] = ec._LuckySpinRule_event(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "spins":
+			out.Values[i] = ec._LuckySpinRule_spins(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "max_per_day":
+			out.Values[i] = ec._LuckySpinRule_max_per_day(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyUsageImplementors = []string{"LuckyUsage"}
+
+func (ec *executionContext) _LuckyUsage(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyUsage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyUsageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyUsage")
+		case "daily_today":
+			out.Values[i] = ec._LuckyUsage_daily_today(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "credit_today":
+			out.Values[i] = ec._LuckyUsage_credit_today(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "credit_balance":
+			out.Values[i] = ec._LuckyUsage_credit_balance(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyUserBlockImplementors = []string{"LuckyUserBlock"}
+
+func (ec *executionContext) _LuckyUserBlock(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyUserBlock) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyUserBlockImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyUserBlock")
+		case "user_id":
+			out.Values[i] = ec._LuckyUserBlock_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reason":
+			out.Values[i] = ec._LuckyUserBlock_reason(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "blocked_by":
+			out.Values[i] = ec._LuckyUserBlock_blocked_by(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created_at":
+			out.Values[i] = ec._LuckyUserBlock_created_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var luckyWinnerImplementors = []string{"LuckyWinner"}
+
+func (ec *executionContext) _LuckyWinner(ctx context.Context, sel ast.SelectionSet, obj *model.LuckyWinner) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, luckyWinnerImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LuckyWinner")
+		case "campaign_id":
+			out.Values[i] = ec._LuckyWinner_campaign_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "game_type":
+			out.Values[i] = ec._LuckyWinner_game_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user":
+			out.Values[i] = ec._LuckyWinner_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "prize_name":
+			out.Values[i] = ec._LuckyWinner_prize_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._LuckyWinner_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "at":
+			out.Values[i] = ec._LuckyWinner_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mediaSearchResultImplementors = []string{"MediaSearchResult"}
 
 func (ec *executionContext) _MediaSearchResult(ctx context.Context, sel ast.SelectionSet, obj *model.MediaSearchResult) graphql.Marshaler {
@@ -543864,6 +558212,60 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "lotteryBackfill":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_lotteryBackfill(ctx, field)
+			})
+		case "luckyPlay":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyPlay(ctx, field)
+			})
+		case "luckyCheckIn":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyCheckIn(ctx, field)
+			})
+		case "luckyGrantPlays":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyGrantPlays(ctx, field)
+			})
+		case "luckyCampaignCreate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyCampaignCreate(ctx, field)
+			})
+		case "luckyCampaignUpdate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyCampaignUpdate(ctx, field)
+			})
+		case "luckyCampaignDelete":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyCampaignDelete(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "luckyCampaignActivate":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyCampaignActivate(ctx, field)
+			})
+		case "luckyFraudBlock":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyFraudBlock(ctx, field)
+			})
+		case "luckyFraudUnblock":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyFraudUnblock(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "luckyFraudApproveReward":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyFraudApproveReward(ctx, field)
+			})
+		case "luckyFraudRejectReward":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyFraudRejectReward(ctx, field)
+			})
+		case "luckyCampaignPause":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_luckyCampaignPause(ctx, field)
 			})
 		case "kcPostRealmsProtocolToken":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -548974,6 +563376,57 @@ func (ec *executionContext) _PhotosourceDTO(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var pointAccountImplementors = []string{"PointAccount"}
+
+func (ec *executionContext) _PointAccount(ctx context.Context, sel ast.SelectionSet, obj *model.PointAccount) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pointAccountImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PointAccount")
+		case "user_id":
+			out.Values[i] = ec._PointAccount_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "balance":
+			out.Values[i] = ec._PointAccount_balance(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total_earned":
+			out.Values[i] = ec._PointAccount_total_earned(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updated_at":
+			out.Values[i] = ec._PointAccount_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var pointConvertedRewardPointImplementors = []string{"PointConvertedRewardPoint"}
 
 func (ec *executionContext) _PointConvertedRewardPoint(ctx context.Context, sel ast.SelectionSet, obj *model.PointConvertedRewardPoint) graphql.Marshaler {
@@ -549269,6 +563722,129 @@ func (ec *executionContext) _PointRewardPointPage(ctx context.Context, sel ast.S
 			out.Values[i] = ec._PointRewardPointPage_data(ctx, field, obj)
 		case "pagination":
 			out.Values[i] = ec._PointRewardPointPage_pagination(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var pointTransactionImplementors = []string{"PointTransaction"}
+
+func (ec *executionContext) _PointTransaction(ctx context.Context, sel ast.SelectionSet, obj *model.PointTransaction) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pointTransactionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PointTransaction")
+		case "id":
+			out.Values[i] = ec._PointTransaction_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "event_id":
+			out.Values[i] = ec._PointTransaction_event_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "source":
+			out.Values[i] = ec._PointTransaction_source(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "title":
+			out.Values[i] = ec._PointTransaction_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "points":
+			out.Values[i] = ec._PointTransaction_points(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "balance_after":
+			out.Values[i] = ec._PointTransaction_balance_after(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "occurred_at":
+			out.Values[i] = ec._PointTransaction_occurred_at(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var pointTransactionPageImplementors = []string{"PointTransactionPage"}
+
+func (ec *executionContext) _PointTransactionPage(ctx context.Context, sel ast.SelectionSet, obj *model.PointTransactionPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pointTransactionPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PointTransactionPage")
+		case "items":
+			out.Values[i] = ec._PointTransactionPage_items(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._PointTransactionPage_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "limit":
+			out.Values[i] = ec._PointTransactionPage_limit(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "offset":
+			out.Values[i] = ec._PointTransactionPage_offset(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -557242,6 +571818,259 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyGames":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyGames(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyGame":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyGame(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyWinners":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyWinners(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyMyStatus":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyMyStatus(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyMyPlays":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyMyPlays(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyCheckinStatus":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyCheckinStatus(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyCheckinHistory":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyCheckinHistory(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyCampaigns":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyCampaigns(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyCampaign":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyCampaign(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyFraudBlocks":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyFraudBlocks(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyFraudRewards":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyFraudRewards(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyFraudPlays":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyFraudPlays(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "luckyCampaignPlays":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_luckyCampaignPlays(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "kcTokenUser":
 			field := field
 
@@ -561090,6 +575919,82 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_photoComposition(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "pointMyBalance":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_pointMyBalance(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "pointMyTransactions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_pointMyTransactions(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "pointUserBalance":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_pointUserBalance(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "pointUserTransactions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_pointUserTransactions(ctx, field)
 				return res
 			}
 
@@ -589705,6 +604610,38 @@ func (ec *executionContext) marshalNInt642int(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalNInt642ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
+	var vSlice []any
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]int, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInt642int(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNInt642ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNInt642int(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalNIntPayCreatePaymentInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐIntPayCreatePaymentInput(ctx context.Context, v any) (model.IntPayCreatePaymentInput, error) {
 	res, err := ec.unmarshalInputIntPayCreatePaymentInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -590187,6 +605124,547 @@ func (ec *executionContext) marshalNLotteryPrizeDetail2ᚖgithubᚗcomᚋJIeeiro
 		return graphql.Null
 	}
 	return ec._LotteryPrizeDetail(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyCampaign2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyCampaign) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCampaign) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyCampaign(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNLuckyCampaignInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignInput(ctx context.Context, v any) (model.LuckyCampaignInput, error) {
+	res, err := ec.unmarshalInputLuckyCampaignInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLuckyCheckin2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyCheckin) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyCheckin2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckin(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyCheckin2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckin(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCheckin) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyCheckin(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyCheckinStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinStatus(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCheckinStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyCheckinStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyCreditGrant2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCreditGrantᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyCreditGrant) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyCreditGrant2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCreditGrant(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyCreditGrant2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCreditGrant(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCreditGrant) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyCreditGrant(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyGrantSkip2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyGrantSkipᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyGrantSkip) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyGrantSkip2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyGrantSkip(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyGrantSkip2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyGrantSkip(ctx context.Context, sel ast.SelectionSet, v *model.LuckyGrantSkip) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyGrantSkip(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyPlay2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyPlay) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyPlay2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlay(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyPlay2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlay(ctx context.Context, sel ast.SelectionSet, v *model.LuckyPlay) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyPlay(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyPlayerStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayerStatus(ctx context.Context, sel ast.SelectionSet, v *model.LuckyPlayerStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyPlayerStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyPrize2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrizeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyPrize) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyPrize2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrize(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyPrize2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrize(ctx context.Context, sel ast.SelectionSet, v *model.LuckyPrize) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyPrize(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNLuckyPrizeInput2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrizeInput(ctx context.Context, v any) (*model.LuckyPrizeInput, error) {
+	res, err := ec.unmarshalInputLuckyPrizeInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLuckyReviewReward2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewRewardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyReviewReward) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyReviewReward2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewReward(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyReviewReward2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewReward(ctx context.Context, sel ast.SelectionSet, v *model.LuckyReviewReward) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyReviewReward(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckySpinRule2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRule(ctx context.Context, sel ast.SelectionSet, v *model.LuckySpinRule) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckySpinRule(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNLuckySpinRuleInput2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRuleInput(ctx context.Context, v any) (*model.LuckySpinRuleInput, error) {
+	res, err := ec.unmarshalInputLuckySpinRuleInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLuckyUsage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyUsage(ctx context.Context, sel ast.SelectionSet, v *model.LuckyUsage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyUsage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyUserBlock2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyUserBlockᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyUserBlock) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyUserBlock2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyUserBlock(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyUserBlock2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyUserBlock(ctx context.Context, sel ast.SelectionSet, v *model.LuckyUserBlock) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyUserBlock(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLuckyWinner2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyWinnerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckyWinner) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckyWinner2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyWinner(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNLuckyWinner2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyWinner(ctx context.Context, sel ast.SelectionSet, v *model.LuckyWinner) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LuckyWinner(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNMap2map(ctx context.Context, v any) (map[string]any, error) {
@@ -590778,6 +606256,60 @@ func (ec *executionContext) marshalNPointRewardPoint2ᚖgithubᚗcomᚋJIeeiroSs
 func (ec *executionContext) unmarshalNPointRewardPointInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointRewardPointInput(ctx context.Context, v any) (model.PointRewardPointInput, error) {
 	res, err := ec.unmarshalInputPointRewardPointInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPointTransaction2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PointTransaction) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPointTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointTransaction(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNPointTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointTransaction(ctx context.Context, sel ast.SelectionSet, v *model.PointTransaction) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PointTransaction(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPolyActivity2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPolyActivity(ctx context.Context, sel ast.SelectionSet, v *model.PolyActivity) graphql.Marshaler {
@@ -599490,6 +615022,191 @@ func (ec *executionContext) marshalOLotteryScrape2ᚖgithubᚗcomᚋJIeeiroSst�
 	return ec._LotteryScrape(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOLuckyBlockPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyBlockPage(ctx context.Context, sel ast.SelectionSet, v *model.LuckyBlockPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyBlockPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyBlockResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyBlockResult(ctx context.Context, sel ast.SelectionSet, v *model.LuckyBlockResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyBlockResult(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyCampaign2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaign(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCampaign) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyCampaign(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyCampaignPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCampaignPage(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCampaignPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyCampaignPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyCheckinPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinPage(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCheckinPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyCheckinPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyCheckinResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinResult(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCheckinResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyCheckinResult(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyCheckinStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyCheckinStatus(ctx context.Context, sel ast.SelectionSet, v *model.LuckyCheckinStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyCheckinStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyClient2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyClient(ctx context.Context, sel ast.SelectionSet, v *model.LuckyClient) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyClient(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyGrantResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyGrantResult(ctx context.Context, sel ast.SelectionSet, v *model.LuckyGrantResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyGrantResult(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyPlayPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayPage(ctx context.Context, sel ast.SelectionSet, v *model.LuckyPlayPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyPlayPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyPlayResult2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayResult(ctx context.Context, sel ast.SelectionSet, v *model.LuckyPlayResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyPlayResult(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyPlayerStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPlayerStatus(ctx context.Context, sel ast.SelectionSet, v *model.LuckyPlayerStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyPlayerStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOLuckyPrizeInput2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrizeInputᚄ(ctx context.Context, v any) ([]*model.LuckyPrizeInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.LuckyPrizeInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNLuckyPrizeInput2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyPrizeInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOLuckyReviewReward2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewReward(ctx context.Context, sel ast.SelectionSet, v *model.LuckyReviewReward) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyReviewReward(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckyReviewRewardPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckyReviewRewardPage(ctx context.Context, sel ast.SelectionSet, v *model.LuckyReviewRewardPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._LuckyReviewRewardPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOLuckySpinRule2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRuleᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LuckySpinRule) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNLuckySpinRule2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRule(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOLuckySpinRuleInput2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRuleInputᚄ(ctx context.Context, v any) ([]*model.LuckySpinRuleInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.LuckySpinRuleInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNLuckySpinRuleInput2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐLuckySpinRuleInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v any) (map[string]any, error) {
 	if v == nil {
 		return nil, nil
@@ -601553,6 +617270,13 @@ func (ec *executionContext) marshalOPhotosourceDTO2ᚕᚖgithubᚗcomᚋJIeeiroS
 	return ret
 }
 
+func (ec *executionContext) marshalOPointAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointAccount(ctx context.Context, sel ast.SelectionSet, v *model.PointAccount) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PointAccount(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOPointConvertedRewardPoint2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointConvertedRewardPointᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PointConvertedRewardPoint) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -601741,6 +617465,13 @@ func (ec *executionContext) marshalOPointRewardPointPage2ᚖgithubᚗcomᚋJIeei
 		return graphql.Null
 	}
 	return ec._PointRewardPointPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPointTransactionPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPointTransactionPage(ctx context.Context, sel ast.SelectionSet, v *model.PointTransactionPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PointTransactionPage(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPolyActivity2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐPolyActivityᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PolyActivity) graphql.Marshaler {
