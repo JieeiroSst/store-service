@@ -67,6 +67,10 @@ print_header "Step 1: Checking System Requirements"
 # Check Python
 if command_exists python3; then
     PYTHON_VERSION=$(python3 --version | cut -d' ' -f2)
+    if ! python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))'; then
+        print_error "Python $PYTHON_VERSION is too old. anthropic>=1.0 requires Python 3.10+ (3.11 recommended)"
+        exit 1
+    fi
     print_success "Python found: $PYTHON_VERSION"
 else
     print_error "Python 3 not found. Please install Python 3.11 or higher"
@@ -212,7 +216,7 @@ ${EDITOR:-nano} .env
 # Step 6: Initialize scenarios
 print_header "Step 6: Initializing Database & Scenarios"
 
-python init_scenarios.py
+python -m app.adapters.inbound.cli.seed_scenarios
 
 if [ $? -eq 0 ]; then
     print_success "Scenarios initialized"
@@ -224,7 +228,7 @@ fi
 print_header "Step 7: Testing System"
 
 print_info "Running system tests..."
-python test_system.py
+python -m scripts.smoke_test
 
 if [ $? -eq 0 ]; then
     print_success "All tests passed!"
@@ -241,7 +245,7 @@ echo ""
 print_info "Next steps:"
 echo ""
 echo "1. Start the server:"
-echo "   ${GREEN}python main.py${NC}"
+echo "   ${GREEN}uvicorn app.adapters.inbound.api.main:app --reload${NC}"
 echo ""
 echo "2. In a new terminal, expose with ngrok:"
 echo "   ${GREEN}ngrok http 8000${NC}"

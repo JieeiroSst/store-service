@@ -1,182 +1,47 @@
-╔══════════════════════════════════════════════════════════════════════╗
-║                  🤖 CALL CENTER AI SYSTEM 🤖                         ║
-║                                                                      ║
-║            Hệ thống Call Center tự động với AI                      ║
-║     Tích hợp Twilio, OpenAI/Claude, Text-to-Speech, MySQL          ║
-╚══════════════════════════════════════════════════════════════════════╝
+CALL CENTER AI - BẮT ĐẦU TỪ ĐÂY
+================================
 
-📚 BẮT ĐẦU TỪ ĐÂY:
-═══════════════════
+Tổng đài tự động: Twilio nhận cuộc gọi, Claude (dự phòng OpenAI) trả lời theo
+kịch bản + kho FAQ, chuyển máy cho nhân viên khi cần, lưu mọi hội thoại vào MySQL.
 
-1. Đọc INDEX.md - Tìm hiểu toàn bộ tài liệu
-2. Đọc SUMMARY.md - Tổng quan project  
-3. Đọc QUICKSTART.md - Setup trong 10 phút
-4. Đọc README.md - Documentation đầy đủ
+TÀI LIỆU
+  README.md             Tính năng, cấu hình, toàn bộ API
+  QUICKSTART.md         Setup trong 10 phút
+  PROJECT_STRUCTURE.md  Kiến trúc hexagonal, luồng cuộc gọi, cách thêm adapter
+  DEPLOYMENT.md         Triển khai production
+  INDEX.md              Mục lục tài liệu
 
-🚀 QUICK START:
-═══════════════
-
-Linux/Mac:
-  ./setup.sh                    # Chạy script tự động
-
-Manual:
-  python -m venv venv           # Tạo virtual environment
-  source venv/bin/activate      # Activate (Linux/Mac)
+CHẠY NHANH (Python 3.10+, khuyên dùng 3.11)
+  python -m venv venv && source venv/bin/activate
   pip install -r requirements.txt
-  cp .env.example .env          # Cấu hình .env
-  python init_scenarios.py      # Khởi tạo database
-  python main.py                # Chạy server
+  cp .env.example .env                                   # điền key, DB, AGENT_PHONE_NUMBER...
+  python -m app.adapters.inbound.cli.seed_scenarios      # tạo bảng + 6 kịch bản + FAQ mẫu
+  uvicorn app.adapters.inbound.api.main:app --reload
 
-Docker:
-  cp .env.example .env          # Cấu hình .env
-  docker-compose up -d          # Start services
-  docker-compose exec api python init_scenarios.py
+DOCKER
+  cp .env.example .env
+  docker-compose up -d
+  docker-compose exec api python -m app.adapters.inbound.cli.seed_scenarios
 
-📦 PROJECT CONTENTS:
-═══════════════════
+THỬ KỊCH BẢN KHÔNG CẦN GỌI ĐIỆN
+  curl -X POST localhost:8000/api/simulate -H 'X-Internal-Token: <token>' \
+       -H 'Content-Type: application/json' -d '{"scenario": "customer_support"}'
+  curl -X POST localhost:8000/api/simulate -H 'X-Internal-Token: <token>' \
+       -H 'Content-Type: application/json' -d '{"call_sid": "SIM-...", "message": "phí ship bao nhiêu"}'
 
-Python Source Code:
-  main.py              - FastAPI application
-  ai_service.py        - AI integration (OpenAI, Anthropic)
-  tts_service.py       - Text-to-Speech services
-  crud.py              - Database operations
-  database.py          - Database connection
-  models.py            - Database models
-  schemas.py           - API schemas
-  init_scenarios.py    - Initialize scenarios
-  test_system.py       - System tests
+KIỂM THỬ
+  python -m unittest discover -s tests -t .              # unit + API, không cần DB thật
+  python -m scripts.smoke_test [--with-api]              # kiểm tra DB/LLM/TTS thật
 
-Documentation (Total ~50 pages):
-  INDEX.md             - Documentation index (START HERE!)
-  SUMMARY.md           - Project overview
-  QUICKSTART.md        - Quick setup guide
-  README.md            - Complete documentation
-  PROJECT_STRUCTURE.md - Architecture details
-  DEPLOYMENT.md        - Production deployment
+MÃ NGUỒN (app/)
+  domain/        Entity, quy tắc hội thoại, tìm kiếm FAQ, kịch bản mẫu, ports
+  application/   Use case: VoiceCallService, CallService, ScenarioService, KnowledgeService
+  adapters/      inbound (FastAPI, Twilio, CLI) / outbound (SQLAlchemy, Claude, OpenAI, TTS)
+  container.py   Nối port với adapter
+  config.py      Biến môi trường
 
-Configuration:
-  .env.example         - Environment variables template
-  requirements.txt     - Python dependencies
-  docker-compose.yml   - Docker setup
-  Dockerfile           - Docker image
-  setup.sh             - Automated setup script
-
-✨ FEATURES:
-═══════════
-
-✅ Tự động trả lời cuộc gọi với AI
-✅ Speech-to-Text (STT) qua Twilio  
-✅ Text-to-Speech (TTS) - 3 providers
-✅ Lưu lịch sử hội thoại trong MySQL
-✅ REST API đầy đủ
-✅ 4 kịch bản built-in
-✅ Thống kê và analytics
-✅ Docker support
-✅ Production ready
-
-🔧 TECH STACK:
-══════════════
-
-Backend:      FastAPI, Python 3.11+
-Database:     MySQL 8.0+
-Telephony:    Twilio
-AI:           OpenAI GPT-4 / Anthropic Claude
-TTS:          Google TTS / ElevenLabs / gTTS
-Deployment:   Docker, Nginx, Supervisor
-
-📊 PROJECT STATS:
-═════════════════
-
-Files:        23 total (17 Python + 6 Documentation)
-Code:         ~2,200+ lines
-Documentation: ~5,000+ lines / 50 pages
-Size:         135KB
-Dependencies: 17 packages
-
-📖 DOCUMENTATION GUIDE:
-═══════════════════════
-
-For Quick Setup:
-  → QUICKSTART.md (7KB, 10 min read)
-
-For Understanding Architecture:
-  → PROJECT_STRUCTURE.md (12KB, 15 min read)
-
-For Production Deployment:
-  → DEPLOYMENT.md (13KB, 20 min read)
-
-For Complete Reference:
-  → README.md (11KB, 20 min read)
-
-For Navigation:
-  → INDEX.md (10KB, browse anytime)
-
-🔗 EXTERNAL REQUIREMENTS:
-═════════════════════════
-
-Required:
-  • Python 3.11+
-  • MySQL 8.0+
-  • Twilio Account (trial OK)
-  • OpenAI or Anthropic API key
-
-Optional:
-  • Google Cloud TTS credentials
-  • ElevenLabs API key
-  • Docker & Docker Compose
-
-💡 NEXT STEPS:
-══════════════
-
-1. Read INDEX.md to navigate documentation
-2. Follow QUICKSTART.md to setup
-3. Configure .env with your credentials
-4. Initialize database and scenarios
-5. Run test_system.py to verify
-6. Start the server and test!
-
-🆘 NEED HELP?
-═════════════
-
-1. Check QUICKSTART.md → Troubleshooting
-2. Check README.md → Common Issues
-3. Run: python test_system.py
-4. Review logs in /var/log/callcenter/
-5. Create GitHub issue
-
-📝 IMPORTANT FILES:
-═══════════════════
-
-Must Read:
-  INDEX.md             - Start here!
-  QUICKSTART.md        - Setup guide
-  
-Must Configure:
-  .env                 - Your credentials
-  
-Must Run:
-  setup.sh             - Automated setup (Linux/Mac)
-  init_scenarios.py    - Initialize database
-  test_system.py       - Test system
-
-📞 SUPPORT:
-═══════════
-
-Documentation: See INDEX.md for all guides
-Issues: Create on GitHub
-Updates: Check git repository
-
-🎉 READY TO START!
-══════════════════
-
-→ Open INDEX.md to navigate all documentation
-→ Follow QUICKSTART.md for step-by-step setup
-→ Enjoy your AI Call Center System!
-
-═══════════════════════════════════════════════════════════════════════
-
-Made with ❤️ for Vietnamese Call Centers
-Version 1.0.0 - December 2024
-License: MIT
-
-═══════════════════════════════════════════════════════════════════════
+TRƯỚC KHI CHẠY THẬT
+  - Sửa các FAQ mẫu theo chính sách thật (/api/knowledge): số liệu mẫu chỉ để minh hoạ
+  - Đặt AGENT_PHONE_NUMBER để bot chuyển máy được, COMPANY_* để bot giới thiệu đúng
+  - Đặt TWILIO_AUTH_TOKEN + PUBLIC_BASE_URL để kiểm tra chữ ký webhook
+  - Đặt INTERNAL_API_TOKENS để khoá /api/*

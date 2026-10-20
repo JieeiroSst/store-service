@@ -152,6 +152,14 @@ spec:
         helm:
           name: calculate.image.name
           tag: calculate.image.tag
+  - namePattern: call-center-ai-dev
+    images:
+    - alias: callCenterAi
+      imageName: localhost:5000/call-center-ai
+      manifestTargets:
+        helm:
+          name: callCenterAi.image.name
+          tag: callCenterAi.image.tag
   - namePattern: car-rental-service-dev
     images:
     - alias: carRentalService
@@ -296,6 +304,14 @@ spec:
         helm:
           name: livestreamService.image.name
           tag: livestreamService.image.tag
+  - namePattern: lucky-service-dev
+    images:
+    - alias: luckyService
+      imageName: localhost:5000/lucky-service
+      manifestTargets:
+        helm:
+          name: luckyService.image.name
+          tag: luckyService.image.tag
   - namePattern: lottery-service-dev
     images:
     - alias: lottery
@@ -702,14 +718,6 @@ spec:
         helm:
           name: solanaService.image.name
           tag: solanaService.image.tag
-  - namePattern: lucky-service-dev
-    images:
-    - alias: luckyService
-      imageName: localhost:5000/lucky-service
-      manifestTargets:
-        helm:
-          name: luckyService.image.name
-          tag: luckyService.image.tag
   - namePattern: wishlists-service-dev
     images:
     - alias: wishlistsService

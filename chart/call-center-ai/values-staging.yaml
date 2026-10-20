@@ -1,0 +1,70 @@
+# Argo CD: namespace store-staging, auto-synced. Promoted from dev with the
+# "Promote image" workflow; mirrors prod topology at smaller scale.
+global:
+  environment: staging
+callCenterAi:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    host: call-center-ai.staging.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+      nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
+    tls:
+      enabled: true
+  publicBaseUrl: https://call-center-ai.staging.store.example.com
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: false
+    internet: true
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 60
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  topologySpread:
+    enabled: true
+  networkPolicy:
+    enabled: true
+    allowToApps:
+      - name: user-api-deployment
+        port: 1235
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: mysql
+        ports:
+          - port: 3306
+            protocol: TCP
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: MYSQL_USER
+        remoteKey: call-center-ai-db-credentials
+        property: MYSQL_USER
+      - secretKey: MYSQL_PASSWORD
+        remoteKey: call-center-ai-db-credentials
+        property: MYSQL_PASSWORD

@@ -1,0 +1,225 @@
+# Base values for the local umbrella install; values-<env>.yaml overlays are
+# layered on top by Argo CD (deploy/argocd).
+global:
+  environment: local
+callCenterAi:
+  name: call-center-ai
+  selectorApp: call-center-ai
+  containerName: call-center-ai
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/call-center-ai
+    tag: latest
+    port: 8000
+    pullPolicy: IfNotPresent
+
+  service:
+    name: call-center-ai-svc
+    type: ClusterIP
+    port: 80
+  # Twilio calls /voice/* from the internet, so environments that take real
+  # calls enable this and set publicBaseUrl to the same host.
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: call-center-ai.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ''
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 192Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 60
+
+  # MySQL from chart/mysql (database + user call_center_ai_svc). Its
+  # provisioner creates the credentials Secret in `default`; other namespaces
+  # mirror it with an ExternalSecret (values-dev.yaml / values-staging.yaml).
+  mysql:
+    host: mysql-svc
+    port: 80
+    database: call_center_ai
+    credentialsSecret: call-center-ai-db-credentials
+
+  # Must equal the URL Twilio is configured with, or webhook signatures fail.
+  publicBaseUrl: ''
+  userServiceUrl: http://user-api-svc
+
+  llm:
+    anthropicModel: claude-opus-5-5
+    anthropicEffort: low
+    anthropicMaxTokens: '2048'
+    anthropicRefusalFallback: 'true'
+    openaiModel: gpt-4-turbo-preview
+    timeoutSeconds: '10'
+
+  voice:
+    language: vi-VN
+    scenario: customer_support
+    maxTurns: '20'
+    knowledgeTopK: '3'
+    # Tổng đài viên nhận cuộc gọi chuyển máy; trống = bot ghi nhận yêu cầu gọi lại.
+    agentPhoneNumber: ''
+
+  company:
+    name: Store Service
+    hotlineHours: 8:00 - 21:00 tất cả các ngày trong tuần
+    website: ''
+
+  # API keys and tokens. Rendered into call-center-ai-secret for local and
+  # non-prod clusters; prod sets create=false and syncs the same Secret with
+  # externalSecret (values-prod.yaml). Empty keys leave that provider off.
+  secret:
+    create: true
+    name: call-center-ai-secret
+    stringData:
+      ANTHROPIC_API_KEY: ''
+      OPENAI_API_KEY: ''
+      TWILIO_AUTH_TOKEN: ''
+      ELEVENLABS_API_KEY: ''
+      # Required on /api/* via X-Internal-Token; empty would accept anonymous calls.
+      INTERNAL_API_TOKENS: call-center-ai-dev-token
+
+  envFrom:
+    - secretRef:
+        name: call-center-ai-secret
+
+  containerEnv:
+    - name: LOG_LEVEL
+      value: INFO
+    - name: DB_HOST
+      value: '{{ .Values.callCenterAi.mysql.host }}'
+    - name: DB_PORT
+      value: '{{ .Values.callCenterAi.mysql.port }}'
+    - name: DB_NAME
+      value: '{{ .Values.callCenterAi.mysql.database }}'
+    - name: DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.callCenterAi.mysql.credentialsSecret }}'
+          key: MYSQL_USER
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.callCenterAi.mysql.credentialsSecret }}'
+          key: MYSQL_PASSWORD
+    - name: PUBLIC_BASE_URL
+      value: '{{ .Values.callCenterAi.publicBaseUrl }}'
+    - name: USER_SERVICE_URL
+      value: '{{ .Values.callCenterAi.userServiceUrl }}'
+    - name: ANTHROPIC_MODEL
+      value: '{{ .Values.callCenterAi.llm.anthropicModel }}'
+    - name: ANTHROPIC_EFFORT
+      value: '{{ .Values.callCenterAi.llm.anthropicEffort }}'
+    - name: ANTHROPIC_MAX_TOKENS
+      value: '{{ .Values.callCenterAi.llm.anthropicMaxTokens }}'
+    - name: ANTHROPIC_REFUSAL_FALLBACK
+      value: '{{ .Values.callCenterAi.llm.anthropicRefusalFallback }}'
+    - name: OPENAI_MODEL
+      value: '{{ .Values.callCenterAi.llm.openaiModel }}'
+    - name: LLM_TIMEOUT_SECONDS
+      value: '{{ .Values.callCenterAi.llm.timeoutSeconds }}'
+    - name: VOICE_LANGUAGE
+      value: '{{ .Values.callCenterAi.voice.language }}'
+    - name: VOICE_SCENARIO
+      value: '{{ .Values.callCenterAi.voice.scenario }}'
+    - name: VOICE_MAX_TURNS
+      value: '{{ .Values.callCenterAi.voice.maxTurns }}'
+    - name: KNOWLEDGE_TOP_K
+      value: '{{ .Values.callCenterAi.voice.knowledgeTopK }}'
+    - name: AGENT_PHONE_NUMBER
+      value: '{{ .Values.callCenterAi.voice.agentPhoneNumber }}'
+    - name: COMPANY_NAME
+      value: '{{ .Values.callCenterAi.company.name }}'
+    - name: COMPANY_HOTLINE_HOURS
+      value: '{{ .Values.callCenterAi.company.hotlineHours }}'
+    - name: COMPANY_WEBSITE
+      value: '{{ .Values.callCenterAi.company.website }}'
+    # No Google credentials in the cluster; ElevenLabs/gTTS only back /api/test/tts.
+    - name: GOOGLE_TTS_ENABLED
+      value: 'false'
+
+  probes:
+    startup:
+      httpGet:
+        path: /
+        port: http
+      periodSeconds: 5
+      failureThreshold: 24
+    readiness:
+      httpGet:
+        path: /
+        port: http
+      periodSeconds: 10
+    liveness:
+      httpGet:
+        path: /
+        port: http
+      periodSeconds: 20
+
+  # Production contract, see chart/common/templates
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+  serviceAccount:
+    create: true
+    name: ''
+    annotations: {}
+    automountToken: false
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+  podAnnotations: {}
+  podLabels: {}
+  # internet: Anthropic / OpenAI / ElevenLabs APIs.
+  networkLabels:
+    consulClient: false
+    internet: true
+  priorityClassName: ''
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ''
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+  externalSecret:
+    enabled: false
+    targetName: call-center-ai-db-credentials
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []

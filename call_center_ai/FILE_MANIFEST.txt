@@ -1,427 +1,51 @@
-═══════════════════════════════════════════════════════════════════════
-                      FILE MANIFEST
-              Call Center AI System v1.0.0
-═══════════════════════════════════════════════════════════════════════
-
-📂 DIRECTORY STRUCTURE
-─────────────────────
-
-call_center_ai/
-├── 📖 Documentation (6 files)
-│   ├── START_HERE.txt          - Quick introduction
-│   ├── INDEX.md                - Documentation index
-│   ├── SUMMARY.md              - Project overview
-│   ├── QUICKSTART.md           - Quick setup guide
-│   ├── README.md               - Complete documentation
-│   ├── PROJECT_STRUCTURE.md    - Architecture details
-│   └── DEPLOYMENT.md           - Production deployment
-│
-├── 🐍 Python Source Code (9 files)
-│   ├── main.py                 - FastAPI application & routes
-│   ├── database.py             - Database connection & session
-│   ├── models.py               - SQLAlchemy database models
-│   ├── schemas.py              - Pydantic API schemas
-│   ├── crud.py                 - Database CRUD operations
-│   ├── ai_service.py           - AI integration (OpenAI/Claude)
-│   ├── tts_service.py          - Text-to-Speech services
-│   ├── init_scenarios.py       - Initialize default scenarios
-│   └── test_system.py          - System testing suite
-│
-├── ⚙️ Configuration (5 files)
-│   ├── .env.example            - Environment variables template
-│   ├── .env                    - Your environment variables (EDIT THIS!)
-│   ├── requirements.txt        - Python dependencies
-│   ├── docker-compose.yml      - Docker multi-container setup
-│   └── Dockerfile              - Docker image configuration
-│
-└── 🔧 Scripts (2 files)
-    ├── setup.sh                - Automated setup script (Linux/Mac)
-    └── FILE_MANIFEST.txt       - This file
-
-═══════════════════════════════════════════════════════════════════════
-
-📄 FILE DETAILS
-───────────────
-
-Documentation Files:
-───────────────────
-
-START_HERE.txt (5KB)
-  Quick introduction with ASCII art
-  Quick start commands
-  Project overview
-  → Read this first!
-
-INDEX.md (10KB)
-  Complete documentation index
-  Quick links by topic
-  Common tasks guide
-  API quick reference
-  → Navigation hub for all docs
-
-SUMMARY.md (14KB)
-  Project statistics
-  System architecture
-  Tech stack details
-  Features list
-  Capabilities
-  Use cases
-  → High-level overview
-
-QUICKSTART.md (7KB)
-  Two setup options (Manual & Docker)
-  Step-by-step instructions
-  Troubleshooting guide
-  Test procedures
-  → Get started in 10 minutes
-
-README.md (11KB)
-  Comprehensive documentation
-  Installation guides
-  API documentation
-  Database schema
-  Configuration options
-  Security best practices
-  → Complete reference
-
-PROJECT_STRUCTURE.md (12KB)
-  File organization
-  Code architecture
-  Design patterns
-  Data flow diagrams
-  Metrics and statistics
-  → For developers
-
-DEPLOYMENT.md (13KB)
-  Production deployment
-  VPS/Cloud setup
-  Docker production
-  Security configuration
-  Monitoring & logging
-  Backup strategies
-  CI/CD examples
-  → For DevOps
-
-Source Code Files:
-─────────────────
-
-main.py (14KB, ~400 lines)
-  FastAPI application entry point
-  Voice webhooks for Twilio
-  REST API endpoints
-  Conversation management
-  Request/response handling
-
-database.py (1.3KB, ~50 lines)
-  SQLAlchemy engine configuration
-  Database session management
-  Connection pooling setup
-  Dependency injection
-
-models.py (3.7KB, ~150 lines)
-  Call model (cuộc gọi)
-  Message model (tin nhắn)
-  Scenario model (kịch bản)
-  Customer model (khách hàng)
-  Enums: CallStatus, MessageRole
-
-schemas.py (2.6KB, ~120 lines)
-  Pydantic validation schemas
-  API request/response models
-  Data serialization
-  Type validation
-
-crud.py (8.1KB, ~300 lines)
-  Database CRUD operations
-  Query builders
-  Filtering & pagination
-  Analytics functions
-  Transaction management
-
-ai_service.py (8KB, ~350 lines)
-  OpenAI GPT-4 integration
-  Anthropic Claude integration
-  Scenario management
-  Automatic fallback
-  Response generation
-
-tts_service.py (7.5KB, ~300 lines)
-  Google Cloud TTS
-  ElevenLabs TTS
-  gTTS (fallback)
-  Audio generation
-  Service management
-
-init_scenarios.py (1.5KB, ~50 lines)
-  Initialize database tables
-  Create default scenarios
-  Setup initial data
-
-test_system.py (5.4KB, ~200 lines)
-  Database connectivity test
-  AI service test
-  TTS service test
-  Scenario management test
-  API endpoint test (optional)
-
-Configuration Files:
-───────────────────
-
-.env.example (1KB)
-  Environment variables template
-  Database configuration
-  Twilio credentials
-  AI API keys
-  TTS configuration
-  → Copy to .env and edit!
-
-.env (1KB)
-  YOUR actual configuration
-  ⚠️ NEVER commit this file!
-  ⚠️ Contains sensitive credentials
-  → MUST BE CONFIGURED
-
-requirements.txt (320 bytes)
-  Python package dependencies
-  17 packages total
-  Version specifications
-  → pip install -r requirements.txt
-
-docker-compose.yml (1.5KB)
-  Multi-container setup
-  MySQL service
-  FastAPI service
-  Network configuration
-  Volume management
-  → docker-compose up -d
-
-Dockerfile (559 bytes)
-  Python 3.11-slim base
-  System dependencies
-  Python packages
-  Application setup
-  → docker build -t callcenter .
-
-Scripts:
-───────
-
-setup.sh (7KB, ~250 lines, executable)
-  Automated setup script
-  Checks system requirements
-  Creates virtual environment
-  Installs dependencies
-  Configures MySQL
-  Initializes database
-  Runs tests
-  → ./setup.sh (Linux/Mac only)
-
-FILE_MANIFEST.txt
-  This file
-  Complete file listing
-  Descriptions and purposes
-  Usage instructions
-
-═══════════════════════════════════════════════════════════════════════
-
-📊 FILE STATISTICS
-──────────────────
-
-Total Files: 23
-  • Documentation: 7 files (~50 pages)
-  • Source Code: 9 files (~2,200 lines)
-  • Configuration: 5 files
-  • Scripts: 2 files
-
-Total Size: 135KB
-  • Code: ~85KB
-  • Documentation: ~50KB
-
-Lines of Code: ~2,200+
-Lines of Documentation: ~5,000+
-
-═══════════════════════════════════════════════════════════════════════
-
-✅ WHAT TO DO WITH EACH FILE
-─────────────────────────────
-
-READ FIRST:
-  1. START_HERE.txt       - Quick overview
-  2. INDEX.md             - Find what you need
-  3. QUICKSTART.md        - Setup instructions
-
-CONFIGURE:
-  1. Copy .env.example to .env
-  2. Edit .env with your credentials:
-     - Database credentials
-     - Twilio credentials (required)
-     - OpenAI or Anthropic API key (required)
-     - TTS credentials (optional)
-
-RUN:
-  1. setup.sh (Linux/Mac)
-     OR
-     Follow QUICKSTART.md for manual setup
-  
-  2. python init_scenarios.py
-     (Initialize database & scenarios)
-  
-  3. python test_system.py
-     (Test all components)
-  
-  4. python main.py
-     (Start the server)
-
-DEPLOY:
-  - Development: Follow QUICKSTART.md
-  - Production: Follow DEPLOYMENT.md
-  - Docker: Use docker-compose.yml
-
-CUSTOMIZE:
-  - Scenarios: Edit in database or via API
-  - AI prompts: Modify in ai_service.py
-  - Database: Modify models.py & schemas.py
-  - Routes: Add in main.py
-
-═══════════════════════════════════════════════════════════════════════
-
-🔒 SECURITY NOTES
-─────────────────
-
-NEVER commit these files:
-  ❌ .env (contains credentials)
-  ❌ *.pyc, __pycache__ (Python bytecode)
-  ❌ venv/ (virtual environment)
-  ❌ *.log (log files)
-  ❌ audio/ (generated audio files)
-
-ALWAYS protect:
-  🔐 Database credentials
-  🔐 API keys (Twilio, OpenAI, Anthropic)
-  🔐 TTS credentials
-  🔐 Server access credentials
-
-═══════════════════════════════════════════════════════════════════════
-
-📞 USAGE WORKFLOW
-─────────────────
-
-1. SETUP
-   → Read QUICKSTART.md
-   → Configure .env
-   → Run setup.sh or manual setup
-   → Initialize scenarios
-   → Test system
-
-2. DEVELOPMENT
-   → Start server: python main.py
-   → Expose with ngrok: ngrok http 8000
-   → Configure Twilio webhooks
-   → Test calls
-   → Check logs
-   → Iterate
-
-3. PRODUCTION
-   → Follow DEPLOYMENT.md
-   → Setup VPS/Cloud server
-   → Configure Nginx + SSL
-   → Setup monitoring
-   → Configure backups
-   → Deploy!
-
-4. MAINTENANCE
-   → Monitor logs
-   → Backup database daily
-   → Update dependencies
-   → Review analytics
-   → Optimize as needed
-
-═══════════════════════════════════════════════════════════════════════
-
-🎓 LEARNING PATH
-────────────────
-
-Beginner:
-  1. Read START_HERE.txt
-  2. Read INDEX.md
-  3. Follow QUICKSTART.md
-  4. Test the system
-  5. Make a test call
-
-Intermediate:
-  1. Read PROJECT_STRUCTURE.md
-  2. Review source code
-  3. Customize scenarios
-  4. Modify prompts
-  5. Add features
-
-Advanced:
-  1. Read DEPLOYMENT.md
-  2. Deploy to production
-  3. Setup monitoring
-  4. Implement CI/CD
-  5. Scale system
-
-═══════════════════════════════════════════════════════════════════════
-
-💡 TIPS & BEST PRACTICES
-─────────────────────────
-
-✅ Always backup .env before editing
-✅ Test scenarios before production
-✅ Monitor logs regularly
-✅ Use Docker for consistency
-✅ Keep dependencies updated
-✅ Implement rate limiting
-✅ Setup SSL for production
-✅ Use strong passwords
-✅ Rotate API keys regularly
-✅ Document your changes
-
-═══════════════════════════════════════════════════════════════════════
-
-🆘 SUPPORT & RESOURCES
-──────────────────────
-
-Documentation:
-  → INDEX.md for navigation
-  → Each .md file for specific topics
-
-Troubleshooting:
-  → QUICKSTART.md → Troubleshooting section
-  → DEPLOYMENT.md → Troubleshooting Production
-  → Run: python test_system.py
-
-External Resources:
-  → Twilio: https://www.twilio.com/docs
-  → FastAPI: https://fastapi.tiangolo.com
-  → OpenAI: https://platform.openai.com/docs
-  → Anthropic: https://docs.anthropic.com
-
-═══════════════════════════════════════════════════════════════════════
-
-📝 VERSION INFORMATION
-──────────────────────
-
-Project: Call Center AI System
-Version: 1.0.0
-Date: December 2024
-License: MIT
-Language: Vietnamese (primary), English
-Python: 3.11+
-Database: MySQL 8.0+
-
-═══════════════════════════════════════════════════════════════════════
-
-🎉 YOU'RE ALL SET!
-──────────────────
-
-Next Steps:
-1. Open INDEX.md for documentation navigation
-2. Follow QUICKSTART.md for setup
-3. Configure .env with your credentials
-4. Run setup and tests
-5. Make your first AI-powered call!
-
-Good luck with your Call Center AI System! 🚀
-
-═══════════════════════════════════════════════════════════════════════
+CALL CENTER AI - FILE MANIFEST
+==============================
+
+app/config.py                                Settings đọc từ .env / biến môi trường
+app/container.py                             Composition root: tạo repository, LLM, TTS, use case
+
+app/domain/models.py                         Call, Message, Scenario, KnowledgeEntry, Customer, CallOutcome, VoiceReply
+app/domain/conversation.py                   Câu thoại cố định, nhận diện ý định (kết thúc / gặp nhân viên),
+                                             directive [[END]]/[[TRANSFER]], CALL_RULES, build_system_prompt
+app/domain/knowledge.py                      Chuẩn hoá tiếng Việt, chấm điểm và tìm FAQ
+app/domain/playbook.py                       6 kịch bản dựng sẵn + 17 FAQ mẫu
+app/domain/errors.py                         NotFoundError, AlreadyExistsError
+app/domain/ports/repositories.py             Port: Call/Message/Scenario/Knowledge/Customer repository
+app/domain/ports/llm.py                      Port: LLMPort
+app/domain/ports/tts.py                      Port: TTSPort
+
+app/application/voice.py                     VoiceCallService: start_call, handle_speech, update_status, chuyển máy
+app/application/scenarios.py                 ScenarioResolver (chọn kịch bản), ScenarioService (CRUD, seed)
+app/application/knowledge.py                 KnowledgeService (CRUD, search, seed)
+app/application/calls.py                     CallService (lịch sử, thống kê, khách hàng)
+app/application/speech.py                    SpeechService (TTS)
+
+app/adapters/inbound/api/main.py             FastAPI app, lifespan, xử lý lỗi domain
+app/adapters/inbound/api/routes/voice.py     Webhook Twilio /voice/*
+app/adapters/inbound/api/routes/admin.py     REST /api/* (calls, scenarios, knowledge, customers, simulate)
+app/adapters/inbound/api/schemas.py          Pydantic request/response
+app/adapters/inbound/api/twiml.py            VoiceReply -> TwiML (Gather / Say / Dial / Hangup)
+app/adapters/inbound/api/dependencies.py     FastAPI Depends -> use case
+app/adapters/inbound/api/authn.py            Xác thực token qua user_service / internal token
+app/adapters/inbound/api/auth_deps.py        require_admin, require_user
+app/adapters/inbound/api/twilio_auth.py      Kiểm tra X-Twilio-Signature
+app/adapters/inbound/cli/seed_scenarios.py   Tạo bảng, nạp kịch bản + FAQ mẫu
+
+app/adapters/outbound/persistence/orm.py     Bảng SQLAlchemy
+app/adapters/outbound/persistence/db.py      Engine, session, create_schema + tự thêm cột thiếu
+app/adapters/outbound/persistence/repositories.py   Repository SQL
+app/adapters/outbound/llm/anthropic_llm.py   Claude (anthropic 1.x, refusal fallback)
+app/adapters/outbound/llm/openai_llm.py      OpenAI
+app/adapters/outbound/llm/fallback.py        Thử lần lượt các provider
+app/adapters/outbound/tts/*.py               Google TTS, ElevenLabs, gTTS, FallbackTTS
+
+tests/fakes.py                               Fake adapter in-memory
+tests/test_use_cases.py                      Use case, quy tắc hội thoại, tìm FAQ
+tests/test_api.py                            Luồng Twilio + REST API
+tests/test_sql_repositories.py               Repository SQL + migration trên SQLite
+tests/test_anthropic_llm.py                  Request gửi tới Claude
+tests/test_authn.py, test_auth_deps.py, test_twilio_auth.py   Xác thực
+
+scripts/smoke_test.py                        Kiểm tra DB/LLM/TTS thật
+requirements.txt, Dockerfile, docker-compose.yml, setup.sh, .env.example
+README.md, QUICKSTART.md, PROJECT_STRUCTURE.md, DEPLOYMENT.md, SUMMARY.md, INDEX.md, START_HERE.txt

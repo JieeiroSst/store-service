@@ -1,0 +1,72 @@
+# Argo CD: namespace store-dev, auto-synced. CI bumps image.tag on every merge to master.
+global:
+  environment: dev
+callCenterAi:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    host: call-center-ai.dev.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    tls:
+      enabled: true
+  publicBaseUrl: https://call-center-ai.dev.store.example.com
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: false
+    internet: true
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 60
+  # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+  # limits from values.yaml still cap each pod.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 96Mi
+  networkPolicy:
+    enabled: true
+    allowToApps:
+      - name: user-api-deployment
+        port: 1235
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: mysql
+        ports:
+          - port: 3306
+            protocol: TCP
+
+  # Copies the Secret the mysql chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-dev.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: MYSQL_USER
+        remoteKey: call-center-ai-db-credentials
+        property: MYSQL_USER
+      - secretKey: MYSQL_PASSWORD
+        remoteKey: call-center-ai-db-credentials
+        property: MYSQL_PASSWORD

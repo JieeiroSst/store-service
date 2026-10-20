@@ -4,57 +4,34 @@ Hệ thống call center tự động sử dụng AI để trả lời cuộc g�
 
 ## ✨ Tính năng
 
-- ☎️ **Tự động trả lời cuộc gọi**: Tích hợp Twilio để nhận và xử lý cuộc gọi
-- 🤖 **AI thông minh**: Sử dụng OpenAI GPT hoặc Anthropic Claude
-- 🗣️ **Text-to-Speech**: Hỗ trợ Google TTS, ElevenLabs, và gTTS
-- 🎤 **Speech-to-Text**: Nhận diện giọng nói tiếng Việt qua Twilio
-- 💾 **Lưu trữ lịch sử**: MySQL database lưu tất cả cuộc gọi và tin nhắn
-- 📊 **Thống kê và Analytics**: Báo cáo chi tiết về cuộc gọi
-- 🎭 **Kịch bản linh hoạt**: Hỗ trợ nhiều kịch bản hội thoại khác nhau
-- 🌐 **REST API đầy đủ**: Quản lý cuộc gọi, kịch bản, khách hàng
+- ☎️ **Tự động trả lời cuộc gọi** qua Twilio (nhận diện giọng nói tiếng Việt, đọc câu trả lời bằng TTS của Twilio)
+- 🎭 **6 kịch bản dựng sẵn**: chăm sóc khách hàng, đơn hàng & đổi trả, tư vấn bán hàng, khiếu nại, đặt lịch hẹn, khảo sát; mỗi kịch bản có lời chào và prompt riêng
+- 📞 **Định tuyến theo số được gọi**: mỗi số tổng đài (`phone_number`) gắn với một kịch bản, có kịch bản mặc định
+- 📚 **Kho kiến thức FAQ**: bot chỉ trả lời dựa trên FAQ khớp với câu hỏi (tìm kiếm tiếng Việt có dấu hoặc không dấu), không bịa chính sách hay giá
+- 🙋 **Chuyển máy cho nhân viên**: khi khách yêu cầu, khi AI không trả lời được hoặc khi hội thoại quá dài, bot `<Dial>` tới tổng đài viên; nếu không có ai trực thì bot ghi nhận yêu cầu gọi lại
+- 🧠 **Cá nhân hoá**: dùng tên, ghi chú và số lần gọi của khách trong câu trả lời
+- 🤖 **AI**: Claude (`claude-opus-5-5`, có server-side refusal fallback) làm provider chính, OpenAI làm dự phòng
+- 📊 **Thống kê theo kết quả**: resolved / transferred / callback_requested / abandoned
+- 🧪 **Giả lập cuộc gọi** qua `POST /api/simulate` để kiểm thử kịch bản mà không cần gọi điện
 
-## 🏗️ Kiến trúc
+## 🏗️ Kiến trúc (Hexagonal / Ports & Adapters)
 
 ```
-┌──────────────┐
-│   Twilio     │ ← Cuộc gọi từ khách hàng
-└──────┬───────┘
-       │
-┌──────▼───────────────┐
-│   FastAPI Server     │
-├──────────────────────┤
-│ • Voice Routes       │
-│ • Speech Processing  │
-│ • AI Integration     │
-│ • TTS Generation     │
-└──────┬───────────────┘
-       │
-┌──────▼───────┐
-│  MySQL DB    │ ← Lưu trữ lịch sử
-└──────────────┘
+ inbound adapters            application         domain            outbound adapters
+ ─────────────────           ───────────         ──────            ─────────────────
+ FastAPI /voice (Twilio) ─┐                                  ┌─ SQLAlchemy + MySQL
+ FastAPI /api   (admin)  ─┼──▶ use cases ──▶ entities + ports ◀─┼─ Anthropic / OpenAI
+ CLI seed_scenarios      ─┘                                  └─ Google TTS / ElevenLabs / gTTS
+                         app/container.py nối port ↔ adapter
 ```
-## Detail
-```
-┌─────────────┐
-│   Client    │ (Điện thoại)
-└──────┬──────┘
-       │
-┌──────▼──────────┐
-│   Twilio API    │ (Voice handling)
-└──────┬──────────┘
-       │
-┌──────▼──────────┐
-│  FastAPI Server │
-├─────────────────┤
-│ - Voice Routes  │
-│ - TTS/STT       │
-│ - AI Processing │
-└──────┬──────────┘
-       │
-┌──────▼──────────┐
-│   MySQL DB      │ (Lịch sử cuộc gọi)
-└─────────────────┘
-```
+
+- `app/domain` — entity, quy tắc hội thoại, port (interface). Không import FastAPI/SQLAlchemy/Twilio.
+- `app/application` — use case: `VoiceCallService`, `CallService`, `ScenarioService`, `SpeechService`.
+- `app/adapters/inbound` — HTTP (routes, schemas, TwiML, auth) và CLI.
+- `app/adapters/outbound` — persistence, LLM, TTS.
+- `app/container.py` — composition root, nơi duy nhất biết cả hai phía.
+
+Chi tiết: [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md).
 
 ## 📋 Yêu cầu
 
@@ -136,13 +113,13 @@ BASE_URL=https://your-domain.ngrok.io
 ### 6. Khởi tạo database
 
 ```bash
-python init_scenarios.py
+python -m app.adapters.inbound.cli.seed_scenarios
 ```
 
 ### 7. Chạy server
 
 ```bash
-python main.py
+uvicorn app.adapters.inbound.api.main:app --reload
 ```
 
 Server sẽ chạy tại `http://localhost:8000`
@@ -170,7 +147,7 @@ docker-compose down
 ### 2. Khởi tạo scenarios trong Docker
 
 ```bash
-docker-compose exec api python init_scenarios.py
+docker-compose exec api python -m app.adapters.inbound.cli.seed_scenarios
 ```
 
 ## 🔧 Cấu hình Twilio
@@ -205,196 +182,128 @@ Copy HTTPS URL (ví dụ: `https://abc123.ngrok.io`)
 
 ## 📚 API Documentation
 
-### Voice Endpoints
+Mọi endpoint `/api/*` yêu cầu quyền admin (`Authorization: Bearer <session_token>` của admin, hoặc header `X-Internal-Token`).
 
-#### POST /voice/incoming
-Xử lý cuộc gọi đến từ Twilio
+### Voice Endpoints (webhook Twilio, có kiểm tra chữ ký `X-Twilio-Signature`)
 
-#### POST /voice/process-speech
-Xử lý speech input từ người dùng
+| Endpoint | Mô tả |
+|---|---|
+| `POST /voice/incoming` | Cuộc gọi đến: chọn kịch bản theo số được gọi, đọc lời chào |
+| `POST /voice/process-speech` | Mỗi lượt khách nói: tra FAQ, gọi AI, trả lời / kết thúc / chuyển máy |
+| `POST /voice/status` | Status callback: `queued`, `ringing`, `in-progress`, `completed`, `busy`, `no-answer`, `failed`, `canceled` (trạng thái lạ bị bỏ qua) |
 
-#### POST /voice/status
-Callback khi trạng thái cuộc gọi thay đổi
-
-### REST API Endpoints
-
-#### Calls Management
+### Cuộc gọi
 
 ```bash
-# Lấy danh sách cuộc gọi
-GET /api/calls?skip=0&limit=100&status=completed
-
-# Lấy chi tiết cuộc gọi
-GET /api/calls/{call_id}
-
-# Xóa cuộc gọi
+GET    /api/calls?status=completed&outcome=transferred&from_number=+84...
+GET    /api/calls/{call_id}          # kèm toàn bộ hội thoại
 DELETE /api/calls/{call_id}
+GET    /api/analytics/statistics?days=30
 ```
 
-#### Scenarios Management
+`outcome`: `resolved` (bot giải quyết xong), `transferred` (đã chuyển máy), `callback_requested` (cần gọi lại), `abandoned` (khách cúp máy giữa chừng).
+
+### Kịch bản
 
 ```bash
-# Lấy danh sách kịch bản
-GET /api/scenarios
-
-# Tạo kịch bản mới
-POST /api/scenarios
+GET    /api/scenarios
+POST   /api/scenarios/seed           # nạp 6 kịch bản + FAQ mẫu (idempotent)
+POST   /api/scenarios
 {
-  "name": "custom_scenario",
-  "description": "Kịch bản tùy chỉnh",
-  "prompt": "System prompt cho AI...",
+  "name": "hotline_vip",
+  "description": "Tổng đài khách VIP",
+  "greeting": "Xin chào quý khách VIP...",
+  "prompt": "Bạn là chuyên viên chăm sóc khách VIP...",
+  "phone_number": "+842873000000",   # cuộc gọi tới số này dùng kịch bản này
+  "is_default": 0,                   # 1 = dùng cho số chưa gắn kịch bản (chỉ có một mặc định)
   "is_active": 1
 }
-
-# Lấy chi tiết kịch bản
-GET /api/scenarios/{scenario_id}
-
-# Cập nhật kịch bản
-PUT /api/scenarios/{scenario_id}
-
-# Xóa kịch bản
-DELETE /api/scenarios/{scenario_id}
+GET | PUT | DELETE /api/scenarios/{scenario_id}
 ```
 
-#### Customers Management
+Thứ tự chọn kịch bản: theo `phone_number` → kịch bản `is_default` → `VOICE_SCENARIO` → kịch bản dựng sẵn.
+
+### Kho kiến thức (FAQ)
 
 ```bash
-# Lấy thông tin khách hàng
+GET    /api/knowledge?category=giao hàng&scenario=sales
+GET    /api/knowledge/search?q=phí ship bao nhiêu&scenario=customer_support
+POST   /api/knowledge
+{
+  "question": "Có bán sỉ không?",
+  "answer": "Có, đơn từ 50 sản phẩm được giá sỉ.",
+  "keywords": "sỉ, buôn, số lượng lớn",
+  "category": "bán hàng",
+  "scenario": null                   # null = dùng cho mọi kịch bản
+}
+GET | PUT | DELETE /api/knowledge/{entry_id}
+```
+
+Mỗi lượt khách nói, bot lấy `KNOWLEDGE_TOP_K` mục khớp nhất (theo câu hỏi + keywords) đưa vào prompt. Câu trả lời trong FAQ nên viết sẵn theo văn nói, vì bot sẽ đọc gần như nguyên văn.
+
+### Khách hàng
+
+```bash
 GET /api/customers/{phone_number}
+PUT /api/customers/{phone_number}   {"name": "Chị Lan", "notes": "Khách VIP, ưu tiên"}
 ```
 
-#### Analytics
+### Giả lập & kiểm thử
 
 ```bash
-# Lấy thống kê (30 ngày gần nhất)
-GET /api/analytics/statistics?days=30
-```
+# Bắt đầu cuộc gọi giả lập (trả về call_sid + lời chào)
+POST /api/simulate {"scenario": "sales"}
+# Các lượt tiếp theo
+POST /api/simulate {"call_sid": "SIM-...", "message": "phí ship bao nhiêu"}
+# -> {"reply": "...", "listening": true, "ended": false, "transfer_to": null, "knowledge": ["Phí giao hàng là bao nhiêu?"]}
 
-### Test Endpoints
-
-```bash
-# Test TTS
 POST /api/test/tts?text=Xin chào&language=vi-VN
 ```
 
 ## 🎭 Kịch bản có sẵn
 
-Hệ thống có 4 kịch bản mặc định:
+| Kịch bản | Dùng cho |
+|---|---|
+| `customer_support` (mặc định) | Câu hỏi chung: đơn hàng, giao hàng, đổi trả, thanh toán, bảo hành, khuyến mãi, tài khoản |
+| `order_support` | Kiểm tra / hủy / sửa đơn, đổi trả, hoàn tiền |
+| `sales` | Tư vấn sản phẩm, khuyến mãi, thanh toán |
+| `complaint` | Tiếp nhận khiếu nại, thu thập thông tin, chuyển nhân viên khi cần |
+| `appointment` | Đặt lịch hẹn: họ tên, số điện thoại, dịch vụ, thời gian |
+| `survey` | Khảo sát mức độ hài lòng |
 
-1. **customer_support**: Hỗ trợ khách hàng
-2. **sales**: Tư vấn bán hàng
-3. **appointment**: Đặt lịch hẹn
-4. **survey**: Khảo sát ý kiến
+Mọi kịch bản đều dùng chung bộ quy tắc gọi thoại: trả lời ngắn theo văn nói, chỉ dùng thông tin trong FAQ / thông tin công ty, không hỏi OTP hay mật khẩu, tự kết thúc cuộc gọi khi khách chào tạm biệt, và chuyển nhân viên khi không xử lý được.
 
-Bạn có thể tạo kịch bản tùy chỉnh qua API.
+> ⚠️ 17 mục FAQ mẫu (phí ship 300 nghìn, đổi trả 7 ngày, hoàn tiền 3–7 ngày, ...) chỉ là **dữ liệu minh hoạ**. Hãy sửa lại theo chính sách thật qua `/api/knowledge` trước khi chạy thật.
 
 ## 💾 Database Schema
 
-### Table: calls
-Lưu thông tin cuộc gọi
+Bảng được tạo tự động khi khởi động. Cột mới được tự thêm vào DB cũ (`ALTER TABLE ... ADD COLUMN`).
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | INT | Primary key |
-| call_sid | VARCHAR(255) | Twilio Call SID |
-| from_number | VARCHAR(20) | Số điện thoại gọi đến |
-| to_number | VARCHAR(20) | Số điện thoại nhận |
-| status | ENUM | Trạng thái cuộc gọi |
-| duration | INT | Thời lượng (giây) |
-| start_time | DATETIME | Thời gian bắt đầu |
-| end_time | DATETIME | Thời gian kết thúc |
-| recording_url | VARCHAR(512) | URL file ghi âm |
-| notes | TEXT | Ghi chú |
+| Bảng | Cột chính |
+|---|---|
+| `calls` | call_sid, from_number, to_number, status, duration, start/end_time, notes, **scenario**, **outcome** |
+| `messages` | call_id, role, content, timestamp, processing_time |
+| `scenarios` | name, description, prompt, **greeting**, **phone_number**, **is_default**, is_active |
+| `knowledge_entries` | question, answer, keywords, category, scenario, is_active |
+| `customers` | phone_number, name, email, notes, total_calls, last_call_date |
 
-### Table: messages
-Lưu tin nhắn trong cuộc hội thoại
+## 🔊 Text-to-Speech
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | INT | Primary key |
-| call_id | INT | Foreign key → calls |
-| role | ENUM | user/assistant/system |
-| content | TEXT | Nội dung tin nhắn |
-| audio_url | VARCHAR(512) | URL file audio |
-| timestamp | DATETIME | Thời gian |
-| processing_time | FLOAT | Thời gian xử lý |
+Thứ tự thử: Google Cloud TTS (`GOOGLE_TTS_ENABLED`, `GOOGLE_APPLICATION_CREDENTIALS`) → ElevenLabs (`ELEVENLABS_API_KEY`) → gTTS. Hiện TTS chỉ dùng cho `/api/test/tts`; câu trả lời trong cuộc gọi do Twilio `<Say>` đọc.
 
-### Table: scenarios
-Lưu kịch bản hội thoại
+## 🤖 AI
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | INT | Primary key |
-| name | VARCHAR(255) | Tên kịch bản |
-| description | TEXT | Mô tả |
-| prompt | TEXT | System prompt |
-| is_active | INT | 1: active, 0: inactive |
+| Biến | Mặc định | Ghi chú |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | | Provider chính |
+| `ANTHROPIC_MODEL` | `claude-opus-5-5` | |
+| `ANTHROPIC_EFFORT` | `low` | Giảm độ trễ cho cuộc gọi thoại; tăng lên `medium` nếu cần trả lời kỹ hơn |
+| `ANTHROPIC_MAX_TOKENS` | `2048` | Tính cả token suy luận (thinking) |
+| `ANTHROPIC_REFUSAL_FALLBACK` | `true` | Server-side fallback (`fallbacks: "default"`) khi model từ chối; tắt nếu dùng model không hỗ trợ (vd Haiku) |
+| `OPENAI_API_KEY`, `OPENAI_MODEL` | `gpt-4-turbo-preview` | Dự phòng khi Claude lỗi |
+| `LLM_TIMEOUT_SECONDS` | `10` | Twilio chờ webhook tối đa 15 giây |
 
-### Table: customers
-Lưu thông tin khách hàng
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | INT | Primary key |
-| phone_number | VARCHAR(20) | Số điện thoại |
-| name | VARCHAR(255) | Tên khách hàng |
-| email | VARCHAR(255) | Email |
-| total_calls | INT | Tổng số cuộc gọi |
-| last_call_date | DATETIME | Cuộc gọi cuối |
-
-## 🔊 Text-to-Speech Options
-
-Hệ thống hỗ trợ 3 TTS service:
-
-### 1. Google Cloud TTS (Khuyên dùng cho tiếng Việt)
-- Chất lượng tốt nhất
-- Hỗ trợ nhiều giọng
-- Cần Google Cloud credentials
-
-Cài đặt:
-```bash
-pip install google-cloud-texttospeech
-export GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"
-```
-
-### 2. ElevenLabs TTS
-- Giọng rất tự nhiên
-- Hỗ trợ đa ngôn ngữ
-- Cần API key
-
-```env
-ELEVENLABS_API_KEY=your_api_key
-ELEVENLABS_VOICE_ID=voice_id
-```
-
-### 3. gTTS (Fallback)
-- Miễn phí
-- Không cần cấu hình
-- Chất lượng cơ bản
-
-```bash
-pip install gtts
-```
-
-## 🤖 AI Service Options
-
-### 1. Anthropic Claude (Khuyên dùng)
-- Hiểu tiếng Việt tốt
-- Response tự nhiên
-- Chi phí hợp lý
-
-```env
-ANTHROPIC_API_KEY=your_api_key
-```
-
-### 2. OpenAI GPT
-- Model mạnh mẽ
-- Đa năng
-- Cần API key
-
-```env
-OPENAI_API_KEY=your_api_key
-```
+Yêu cầu Python ≥ 3.10 (`anthropic` 1.x).
 
 ## 📊 Monitoring và Logs
 

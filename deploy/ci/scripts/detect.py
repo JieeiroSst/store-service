@@ -5,7 +5,7 @@ Keeps a git mirror of the repository on the workspace volume, works out which
 services changed since the last processed commit, exports each one's build
 context, and writes the build list for the next steps:
 
-  /tmp/builds.json   [{name, image, tag, src, lang, goVersion, testEnv, db, buildArgs}]
+  /tmp/builds.json   [{name, image, tag, src, lang, goVersion, pythonVersion, testEnv, db, buildArgs}]
   /tmp/sha           commit being built
 
 Pipeline state (the last processed commit) lives in ConfigMap ci-state, so a
@@ -131,6 +131,7 @@ def main():
             "src": src,
             "lang": s.get("lang", "other"),
             "goVersion": str(s.get("goVersion", "1.25")),
+            "pythonVersion": str(s.get("pythonVersion", "3.11")),
             "testEnv": " ".join(f"{k}={v}" for k, v in (s.get("testEnv") or {}).items()),
             "db": "true" if s.get("testServices") else "false",
             "buildArgs": " ".join(f"--build-arg={k}={v}" for k, v in (s.get("buildArgs") or {}).items()),

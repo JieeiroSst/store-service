@@ -85,7 +85,7 @@ sudo cp .env.example .env
 sudo nano .env  # Edit with production values
 
 # Initialize database
-sudo -u www-data venv/bin/python init_scenarios.py
+sudo -u www-data venv/bin/python -m app.adapters.inbound.cli.seed_scenarios
 ```
 
 ### 5. Setup Supervisor (Process Manager)
@@ -98,7 +98,7 @@ Nội dung file:
 
 ```ini
 [program:callcenter]
-command=/opt/call_center_ai/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+command=/opt/call_center_ai/venv/bin/uvicorn app.adapters.inbound.api.main:app --host 0.0.0.0 --port 8000 --workers 4
 directory=/opt/call_center_ai
 user=www-data
 autostart=true
@@ -268,7 +268,7 @@ nano .env  # Edit with production values
 docker-compose up -d
 
 # Initialize scenarios
-docker-compose exec api python init_scenarios.py
+docker-compose exec api python -m app.adapters.inbound.cli.seed_scenarios
 
 # View logs
 docker-compose logs -f

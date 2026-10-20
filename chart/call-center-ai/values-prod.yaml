@@ -1,0 +1,96 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through a
+# reviewed PR opened by the "Promote image" workflow.
+# Credentials come from the secret manager (SecretStore store-secrets);
+# create the store/prod/call-center-ai keys before the first sync.
+global:
+  environment: prod
+callCenterAi:
+  image:
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    host: call-center-ai.store.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/limit-rps: "50"
+      nginx.ingress.kubernetes.io/proxy-body-size: 1m
+      nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    tls:
+      enabled: true
+  publicBaseUrl: https://call-center-ai.store.example.com
+  # Database credentials live in the same synced Secret as the API keys.
+  mysql:
+    credentialsSecret: call-center-ai-secret
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  networkLabels:
+    consulClient: false
+    internet: true
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 60
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+  topologySpread:
+    enabled: true
+  priorityClassName: store-standard
+  networkPolicy:
+    enabled: true
+    allowToApps:
+      - name: user-api-deployment
+        port: 1235
+    # Managed MySQL outside the cluster (private range).
+    egress:
+      - to:
+          - ipBlock:
+              cidr: 10.20.0.0/16
+        ports:
+          - port: 3306
+            protocol: TCP
+
+  # Credentials from the secret manager instead of values.
+  secret:
+    create: false
+  externalSecret:
+    enabled: true
+    targetName: call-center-ai-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: MYSQL_USER
+        remoteKey: store/prod/call-center-ai/mysql
+        property: username
+      - secretKey: MYSQL_PASSWORD
+        remoteKey: store/prod/call-center-ai/mysql
+        property: password
+      - secretKey: ANTHROPIC_API_KEY
+        remoteKey: store/prod/call-center-ai
+        property: anthropicApiKey
+      - secretKey: OPENAI_API_KEY
+        remoteKey: store/prod/call-center-ai
+        property: openaiApiKey
+      - secretKey: TWILIO_AUTH_TOKEN
+        remoteKey: store/prod/call-center-ai
+        property: twilioAuthToken
+      - secretKey: ELEVENLABS_API_KEY
+        remoteKey: store/prod/call-center-ai
+        property: elevenlabsApiKey
+      - secretKey: INTERNAL_API_TOKENS
+        remoteKey: store/prod/call-center-ai
+        property: internalApiTokens

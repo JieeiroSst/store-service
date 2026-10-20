@@ -6,7 +6,8 @@
 #   image        repository name in the local registry (localhost:5000/<image>)
 #   helmKeys     values keys whose image.name/tag Argo CD Image Updater overrides in store-dev
 #   lang/goVersion, testEnv, testServices   how the test step runs (go: go vet + go test,
-#                                           scala: sbt test; others build-only)
+#                                           scala: sbt test, python: pip install + pytest
+#                                           on python:<pythonVersion>-slim; others build-only)
 services:
 - name: account-transaction
   context: account-transaction-service
@@ -124,6 +125,13 @@ services:
   - calculate
   lang: go
   goVersion: '1.22'
+- name: call-center-ai
+  context: call_center_ai
+  image: call-center-ai
+  helmKeys:
+  - callCenterAi
+  lang: python
+  pythonVersion: '3.11'
 - name: car-rental-service
   context: car-rental-service
   image: car-rental-service

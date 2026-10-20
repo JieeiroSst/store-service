@@ -75,23 +75,23 @@ SERVER_PORT=8000
 ### Bước 4: Khởi tạo database và scenarios
 
 ```bash
-python init_scenarios.py
+python -m app.adapters.inbound.cli.seed_scenarios
 ```
 
 ### Bước 5: Test hệ thống
 
 ```bash
 # Test các thành phần
-python test_system.py
+python -m scripts.smoke_test
 
 # Nếu muốn test cả API endpoints
-python test_system.py --with-api
+python -m scripts.smoke_test --with-api
 ```
 
 ### Bước 6: Chạy server
 
 ```bash
-python main.py
+uvicorn app.adapters.inbound.api.main:app --reload
 ```
 
 Server chạy tại: `http://localhost:8000`
@@ -156,14 +156,14 @@ docker-compose logs -f
 ### Bước 4: Khởi tạo scenarios
 
 ```bash
-docker-compose exec api python init_scenarios.py
+docker-compose exec api python -m app.adapters.inbound.cli.seed_scenarios
 ```
 
 ### Bước 5: Test
 
 ```bash
 # Test trong container
-docker-compose exec api python test_system.py
+docker-compose exec api python -m scripts.smoke_test
 ```
 
 ### Bước 6: Expose với ngrok

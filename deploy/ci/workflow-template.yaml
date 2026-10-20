@@ -5,7 +5,8 @@
 #              export the build context of every changed service
 #   service -> per changed service (2 at a time):
 #                test   go vet + go test (Go services; Postgres/MySQL sidecars
-#                       when services.yaml lists testServices), sbt test (Scala)
+#                       when services.yaml lists testServices), sbt test (Scala),
+#                       pip install + pytest (Python)
 #                image  docker build + push to localhost:5000/<image>:<tag>
 #
 # Argo CD Image Updater (image-updater.yaml) then rolls the new tag out to
@@ -61,6 +62,7 @@ spec:
                 - { name: src, value: "{{item.src}}" }
                 - { name: lang, value: "{{item.lang}}" }
                 - { name: goVersion, value: "{{item.goVersion}}" }
+                - { name: pythonVersion, value: "{{item.pythonVersion}}" }
                 - { name: testEnv, value: "{{item.testEnv}}" }
                 - { name: db, value: "{{item.db}}" }
                 - { name: buildArgs, value: "{{item.buildArgs}}" }
@@ -96,6 +98,7 @@ spec:
           - name: src
           - name: lang
           - name: goVersion
+          - name: pythonVersion
           - name: testEnv
           - name: db
           - name: buildArgs
@@ -114,6 +117,14 @@ spec:
             arguments:
               parameters:
                 - { name: src, value: "{{inputs.parameters.src}}" }
+          - name: test-python
+            template: python-test
+            when: "'{{inputs.parameters.lang}}' == 'python'"
+            arguments:
+              parameters:
+                - { name: src, value: "{{inputs.parameters.src}}" }
+                - { name: pythonVersion, value: "{{inputs.parameters.pythonVersion}}" }
+                - { name: testEnv, value: "{{inputs.parameters.testEnv}}" }
           - name: test-with-db
             template: go-test-db
             when: "'{{inputs.parameters.lang}}' == 'go' && '{{inputs.parameters.db}}' == 'true'"
@@ -228,6 +239,32 @@ spec:
         resources:
           requests: { cpu: 100m, memory: 512Mi }
           limits: { cpu: "2", memory: 3Gi }
+        volumeMounts:
+          - { name: workspace, mountPath: /workspace }
+
+    - name: python-test
+      inputs:
+        parameters: [{ name: src }, { name: pythonVersion }, { name: testEnv }]
+      script:
+        image: "python:{{inputs.parameters.pythonVersion}}-slim"
+        command: [bash]
+        env:
+          - { name: TEST_ENV, value: "{{inputs.parameters.testEnv}}" }
+          # Wheel cache on the workspace volume; installs stay offline-fast.
+          - { name: PIP_CACHE_DIR, value: /workspace/cache/pip }
+          - { name: PIP_DISABLE_PIP_VERSION_CHECK, value: "1" }
+          - { name: PYTHONDONTWRITEBYTECODE, value: "1" }
+        source: |
+          set -euo pipefail
+          cd "{{inputs.parameters.src}}"
+          if [ -n "$TEST_ENV" ]; then export $TEST_ENV; fi
+          python -m venv /tmp/venv
+          . /tmp/venv/bin/activate
+          pip install -q -r requirements.txt pytest
+          python -m pytest -q -p no:cacheprovider
+        resources:
+          requests: { cpu: 100m, memory: 256Mi }
+          limits: { cpu: "2", memory: 2Gi }
         volumeMounts:
           - { name: workspace, mountPath: /workspace }
 

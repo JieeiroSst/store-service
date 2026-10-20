@@ -65,3 +65,10 @@ mysql:
       consulKey: draw_image_service
       userField: .mysql.mysqlUser
       passwordField: .mysql.mysqlPassword
+    # call-center-ai reads plain env vars (chart/call-center-ai), no Consul key.
+    - name: call-center-ai
+      database: call_center_ai
+      user: call_center_ai_svc
+      consulKey: call_center_ai
+      userField: .mysql.user
+      passwordField: .mysql.password

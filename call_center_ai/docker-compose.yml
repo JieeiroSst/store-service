@@ -48,7 +48,7 @@ services:
       - ./audio:/app/audio
     networks:
       - call_center_network
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.adapters.inbound.api.main:app --host 0.0.0.0 --port 8000 --reload
 
 volumes:
   mysql_data:
