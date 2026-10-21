@@ -359,5 +359,8 @@ dependencies:
 - name: lucky-service
   repository: file://lucky-service
   version: 0.1.0
-digest: sha256:ad1de77e762bdd63390bee764870eb06763cfc0ce138a37d73460d4a30ca6000
-generated: "2026-10-20T16:22:24.14059+07:00"
+- name: wallet-service
+  repository: file://wallet-service
+  version: 0.2.0
+digest: sha256:9129862f3ec35d5cdc650793907913c4a3e3b571c2bcaa43e996f6c9cd94ad1c
+generated: "2026-10-21T16:16:01.445429+07:00"

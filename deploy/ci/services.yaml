@@ -722,3 +722,10 @@ services:
   helmKeys:
   - foodService
   lang: other
+- name: wallet-service
+  context: wallet-service
+  image: wallet-service
+  helmKeys:
+  - walletService
+  lang: go
+  goVersion: '1.22'

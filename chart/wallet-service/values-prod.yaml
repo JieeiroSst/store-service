@@ -1,0 +1,77 @@
+# Argo CD: namespace store-prod, MANUAL sync. Changes land here only through
+# a reviewed PR opened by the "Promote image" workflow.
+global:
+  environment: prod
+
+walletService:
+  image:
+    # Immutable tag promoted from staging; never `latest` in prod.
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  consul:
+    addr: http://consul-service.consul.svc.cluster.local
+  consulSeed:
+    enabled: true
+    key: wallet-service
+    addr: http://consul-service.consul.svc.cluster.local
+
+  # .env (HostConsul/KeyConsul/ServiceConsul) comes from the secret manager.
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    externalSecret:
+      remoteKey: store/prod/wallet-service/env-file
+      property: env
+
+  priorityClassName: store-critical
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 128Mi
+    limits:
+      cpu: "1"
+      memory: 512Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 65
+    targetMemoryUtilizationPercentage: 80
+
+  pdb:
+    enabled: true
+    minAvailable: 2
+
+  topologySpread:
+    enabled: true
+    hostnameWhenUnsatisfiable: DoNotSchedule
+
+  terminationGracePeriodSeconds: 45
+  preStopSleepSeconds: 10
+
+  networkPolicy:
+    enabled: true
+    # Managed Postgres / Redis outside the cluster (private range).
+    egress:
+      - to:
+          - ipBlock:
+              cidr: 10.20.0.0/16
+        ports:
+          - port: 5432
+            protocol: TCP
+          - port: 6379
+            protocol: TCP
+
+  externalSecret:
+    enabled: true
+    refreshInterval: 15m
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: store/prod/wallet-service/postgres
+        property: username
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: store/prod/wallet-service/postgres
+        property: password

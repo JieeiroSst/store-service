@@ -172,6 +172,8 @@ wishlistsService:
   enabled: false
 luckyService:
   enabled: false
+walletService:
+  enabled: false
 sardAuthService:
   enabled: false
 sardCustomerInfoService:

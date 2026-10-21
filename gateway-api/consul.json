@@ -436,7 +436,7 @@
             "timeout_seconds": 10
         },
         "wallet-service": {
-            "http_address": "http://wallet-service:8080",
+            "http_address": "http://wallet-service-svc",
             "timeout_seconds": 10
         },
         "webrtc-service": {

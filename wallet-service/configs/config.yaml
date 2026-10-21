@@ -2,9 +2,19 @@ server:
   port: ":8080"
   read_timeout: 30
   write_timeout: 30
+  shutdown_timeout: 15
+  rate_limit_capacity: 100
+  rate_limit_per_sec: 50
 
 database:
-  dsn: "host=localhost port=5432 user=postgres password=secret dbname=wallet_service sslmode=disable"
+  host: "localhost"
+  port: "5432"
+  user: "wallet"
+  password: "wallet"
+  name: "wallet_db"
+  sslmode: "disable"
+  auto_migrate: true
+  seed_dev_data: true
   max_open_conns: 25
   max_idle_conns: 10
   conn_max_lifetime: 300
@@ -15,4 +25,18 @@ redis:
   db: 0
 
 log:
-  level: "production"
+  level: "info"
+
+fees:
+  withdrawal_rate: "0.005"
+  withdrawal_min_usd: "0.5"
+  transfer_rate: "0"
+
+security:
+  pin_bcrypt_cost: 10
+
+payment_requests:
+  ttl_hours: 168
+
+bank_gateway:
+  decline_above: "0"

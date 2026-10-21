@@ -2,20 +2,27 @@ package database
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/redis/go-redis/v9"
+	"go.uber.org/fx"
 
-	"github.com/JIeeiroSst/wallet-service/internal/infrastructure/config"
+	"github.com/JIeeiroSst/wallet-service/internal/config"
 )
 
-func NewRedisClient(cfg *config.Config) (*redis.Client, error) {
+func NewRedis(lc fx.Lifecycle, cfg *config.Config) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Redis.Addr,
 		Password: cfg.Redis.Password,
 		DB:       cfg.Redis.DB,
 	})
-	if err := client.Ping(context.Background()).Err(); err != nil {
-		return nil, err
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := client.Ping(ctx).Err(); err != nil {
+		_ = client.Close()
+		return nil, fmt.Errorf("ping redis: %w", err)
 	}
+	lc.Append(fx.StopHook(client.Close))
 	return client, nil
 }

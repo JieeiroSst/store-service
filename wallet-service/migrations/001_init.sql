@@ -1,8 +1,6 @@
 -- wallet-service: Initial Schema Migration
 -- Supports the full VISA payment flow (Authorization + Capture & Settlement)
 
-BEGIN;
-
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
@@ -130,5 +128,3 @@ CREATE TABLE clearing_records (
     cleared_at   TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_clearing_batch_id ON clearing_records(batch_id);
-
-COMMIT;

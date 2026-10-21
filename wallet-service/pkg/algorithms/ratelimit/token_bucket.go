@@ -6,11 +6,11 @@ import (
 )
 
 type TokenBucket struct {
-	mu           sync.Mutex
-	capacity     float64
-	tokens       float64
-	refillRate   float64 
-	lastRefill   time.Time
+	mu         sync.Mutex
+	capacity   float64
+	tokens     float64
+	refillRate float64
+	lastRefill time.Time
 }
 
 func NewTokenBucket(capacity, refillRate float64) *TokenBucket {
@@ -34,15 +34,17 @@ func (tb *TokenBucket) AllowN(n float64) bool {
 }
 
 func min64(a, b float64) float64 {
-	if a < b { return a }
+	if a < b {
+		return a
+	}
 	return b
 }
 
 type SlidingWindowLimiter struct {
-	mu         sync.Mutex
-	limit      int
-	window     time.Duration
-	requests   []time.Time
+	mu       sync.Mutex
+	limit    int
+	window   time.Duration
+	requests []time.Time
 }
 
 func NewSlidingWindowLimiter(limit int, window time.Duration) *SlidingWindowLimiter {
@@ -56,10 +58,14 @@ func (sw *SlidingWindowLimiter) Allow() bool {
 	cutoff := now.Add(-sw.window)
 	valid := sw.requests[:0]
 	for _, t := range sw.requests {
-		if t.After(cutoff) { valid = append(valid, t) }
+		if t.After(cutoff) {
+			valid = append(valid, t)
+		}
 	}
 	sw.requests = valid
-	if len(sw.requests) >= sw.limit { return false }
+	if len(sw.requests) >= sw.limit {
+		return false
+	}
 	sw.requests = append(sw.requests, now)
 	return true
 }

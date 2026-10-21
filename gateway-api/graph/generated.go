@@ -4559,13 +4559,33 @@ type ComplexityRoot struct {
 		WalletSetDefaultPaymentMethod                           func(childComplexity int, id string) int
 		WalletSetLimits                                         func(childComplexity int, id string, dailyLimit int, perTransactionLimit int) int
 		WalletSvcAuthorize                                      func(childComplexity int, idempotencyKey string, cardID string, merchantID string, amount string, currency string, description *string, metadata map[string]any) int
+		WalletSvcBlockCard                                      func(childComplexity int, id string) int
 		WalletSvcCapture                                        func(childComplexity int, id string) int
+		WalletSvcChangeTier                                     func(childComplexity int, id string, tier string) int
 		WalletSvcCreateSettlementBatch                          func(childComplexity int, merchantID string) int
 		WalletSvcCreateWallet                                   func(childComplexity int, userID string, currency string) int
 		WalletSvcCredit                                         func(childComplexity int, id string, amount string, description *string) int
 		WalletSvcFreeze                                         func(childComplexity int, id string) int
+		WalletSvcMyCancelPaymentRequest                         func(childComplexity int, id string) int
+		WalletSvcMyCloseWallet                                  func(childComplexity int, walletID string) int
+		WalletSvcMyCreateWallet                                 func(childComplexity int, currency string) int
+		WalletSvcMyDeclinePaymentRequest                        func(childComplexity int, id string) int
+		WalletSvcMyIssueCard                                    func(childComplexity int, walletID string, issuerBankID string, network string, holderName string) int
+		WalletSvcMyLinkBankAccount                              func(childComplexity int, bankID string, accountNumber string, accountName string) int
+		WalletSvcMyPay                                          func(childComplexity int, walletID string, merchantID string, amount string, pin string, description *string, metadata map[string]any, idempotencyKey string) int
+		WalletSvcMyPayPaymentRequest                            func(childComplexity int, id string, walletID string, pin string) int
+		WalletSvcMyRemoveBankAccount                            func(childComplexity int, accountID string) int
+		WalletSvcMyRequestPayment                               func(childComplexity int, walletID string, payerUserID string, amount string, note *string) int
+		WalletSvcMySetDefaultBankAccount                        func(childComplexity int, accountID string) int
+		WalletSvcMySetPin                                       func(childComplexity int, walletID string, currentPin *string, newPin string) int
+		WalletSvcMyTopUp                                        func(childComplexity int, walletID string, bankAccountID string, amount string, description *string, idempotencyKey string) int
+		WalletSvcMyTransfer                                     func(childComplexity int, fromWalletID string, toWalletID *string, toUserID *string, amount string, pin string, description *string, idempotencyKey string) int
+		WalletSvcMyWithdraw                                     func(childComplexity int, walletID string, bankAccountID string, amount string, pin string, description *string, idempotencyKey string) int
 		WalletSvcProcessClearing                                func(childComplexity int, batchID string) int
 		WalletSvcProcessSettlement                              func(childComplexity int, batchID string) int
+		WalletSvcRefund                                         func(childComplexity int, id string, amount *string, reason *string, idempotencyKey string) int
+		WalletSvcUnblockCard                                    func(childComplexity int, id string) int
+		WalletSvcUnfreeze                                       func(childComplexity int, id string) int
 		WalletSvcVoid                                           func(childComplexity int, id string) int
 		WalletTransfer                                          func(childComplexity int, senderWalletID string, receiverWalletID string, amount int, referenceID string, description *string) int
 		WalletUnfreeze                                          func(childComplexity int, id string) int
@@ -6391,7 +6411,23 @@ type ComplexityRoot struct {
 		WalletPaymentRequestQR                      func(childComplexity int, id string) int
 		WalletPaymentRequests                       func(childComplexity int, walletID string) int
 		WalletPockets                               func(childComplexity int, id string) int
+		WalletSvcBalance                            func(childComplexity int, id string) int
+		WalletSvcCard                               func(childComplexity int, id string) int
+		WalletSvcMyBalance                          func(childComplexity int, walletID string) int
+		WalletSvcMyBankAccounts                     func(childComplexity int) int
+		WalletSvcMyCards                            func(childComplexity int, walletID string) int
+		WalletSvcMyLedger                           func(childComplexity int, walletID string, from *string, to *string, page *int, pageSize *int) int
+		WalletSvcMyLimits                           func(childComplexity int, walletID string) int
+		WalletSvcMyPaymentRequests                  func(childComplexity int, role *string, status *string, page *int, pageSize *int) int
+		WalletSvcMyStatement                        func(childComplexity int, walletID string, from string, to string) int
+		WalletSvcMyTransactions                     func(childComplexity int, walletID string, typeArg *string, status *string, from *string, to *string, page *int, pageSize *int) int
+		WalletSvcMyWallet                           func(childComplexity int, currency string) int
+		WalletSvcMyWallets                          func(childComplexity int) int
+		WalletSvcPaymentRequest                     func(childComplexity int, id string) int
+		WalletSvcStatement                          func(childComplexity int, id string, from string, to string) int
 		WalletSvcTransaction                        func(childComplexity int, id string) int
+		WalletSvcTransactions                       func(childComplexity int, id string, typeArg *string, status *string, from *string, to *string, page *int, pageSize *int) int
+		WalletSvcUserWallets                        func(childComplexity int, userID string) int
 		WalletSvcWallet                             func(childComplexity int, id string) int
 		WalletTransaction                           func(childComplexity int, id string) int
 		WalletTransactionByReference                func(childComplexity int, id string, referenceID string) int
@@ -9300,26 +9336,143 @@ type ComplexityRoot struct {
 		WalletID  func(childComplexity int) int
 	}
 
-	WalletSvcTransaction struct {
-		AcquirerBankID    func(childComplexity int) int
+	WalletSvcBalance struct {
+		Available func(childComplexity int) int
+		Balance   func(childComplexity int) int
+		Currency  func(childComplexity int) int
+		Held      func(childComplexity int) int
+		Status    func(childComplexity int) int
+		WalletID  func(childComplexity int) int
+	}
+
+	WalletSvcBankAccount struct {
+		AccountName   func(childComplexity int) int
+		AccountNumber func(childComplexity int) int
+		BankID        func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		ID            func(childComplexity int) int
+		IsDefault     func(childComplexity int) int
+		Status        func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UserID        func(childComplexity int) int
+	}
+
+	WalletSvcCard struct {
+		CardNumber   func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		ExpiryMonth  func(childComplexity int) int
+		ExpiryYear   func(childComplexity int) int
+		HolderName   func(childComplexity int) int
+		ID           func(childComplexity int) int
+		IssuerBankID func(childComplexity int) int
+		Network      func(childComplexity int) int
+		Status       func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		WalletID     func(childComplexity int) int
+	}
+
+	WalletSvcLedgerEntry struct {
+		Amount        func(childComplexity int) int
+		BalanceAfter  func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		Direction     func(childComplexity int) int
+		ID            func(childComplexity int) int
+		TransactionID func(childComplexity int) int
+		WalletID      func(childComplexity int) int
+	}
+
+	WalletSvcLedgerPage struct {
+		Items    func(childComplexity int) int
+		Page     func(childComplexity int) int
+		PageSize func(childComplexity int) int
+		Total    func(childComplexity int) int
+	}
+
+	WalletSvcLimitPair struct {
+		Daily          func(childComplexity int) int
+		PerTransaction func(childComplexity int) int
+	}
+
+	WalletSvcLimits struct {
+		Currency       func(childComplexity int) int
+		Limits         func(childComplexity int) int
+		RemainingToday func(childComplexity int) int
+		ResetsAt       func(childComplexity int) int
+		Tier           func(childComplexity int) int
+		UsedToday      func(childComplexity int) int
+		WalletID       func(childComplexity int) int
+	}
+
+	WalletSvcPaymentRequest struct {
 		Amount            func(childComplexity int) int
-		AuthorizationCode func(childComplexity int) int
-		BatchID           func(childComplexity int) int
-		CardID            func(childComplexity int) int
-		CardNetwork       func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Currency          func(childComplexity int) int
-		Description       func(childComplexity int) int
-		Fee               func(childComplexity int) int
+		ExpiresAt         func(childComplexity int) int
 		ID                func(childComplexity int) int
-		IdempotencyKey    func(childComplexity int) int
-		IssuerBankID      func(childComplexity int) int
-		MerchantID        func(childComplexity int) int
-		Metadata          func(childComplexity int) int
+		Note              func(childComplexity int) int
+		PayerUserID       func(childComplexity int) int
+		PayerWalletID     func(childComplexity int) int
+		RequesterUserID   func(childComplexity int) int
+		RequesterWalletID func(childComplexity int) int
 		Status            func(childComplexity int) int
-		Type              func(childComplexity int) int
+		TransactionID     func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
-		WalletID          func(childComplexity int) int
+	}
+
+	WalletSvcPaymentRequestPage struct {
+		Items    func(childComplexity int) int
+		Page     func(childComplexity int) int
+		PageSize func(childComplexity int) int
+		Total    func(childComplexity int) int
+	}
+
+	WalletSvcStatement struct {
+		ClosingBalance func(childComplexity int) int
+		CreditCount    func(childComplexity int) int
+		Currency       func(childComplexity int) int
+		DebitCount     func(childComplexity int) int
+		From           func(childComplexity int) int
+		NetChange      func(childComplexity int) int
+		OpeningBalance func(childComplexity int) int
+		To             func(childComplexity int) int
+		TotalCredit    func(childComplexity int) int
+		TotalDebit     func(childComplexity int) int
+		WalletID       func(childComplexity int) int
+	}
+
+	WalletSvcTransaction struct {
+		AcquirerBankID       func(childComplexity int) int
+		Amount               func(childComplexity int) int
+		AuthorizationCode    func(childComplexity int) int
+		BankAccountID        func(childComplexity int) int
+		BatchID              func(childComplexity int) int
+		CardID               func(childComplexity int) int
+		CardNetwork          func(childComplexity int) int
+		CounterpartyWalletID func(childComplexity int) int
+		CreatedAt            func(childComplexity int) int
+		Currency             func(childComplexity int) int
+		Description          func(childComplexity int) int
+		ExternalRef          func(childComplexity int) int
+		FailureReason        func(childComplexity int) int
+		Fee                  func(childComplexity int) int
+		ID                   func(childComplexity int) int
+		IdempotencyKey       func(childComplexity int) int
+		IssuerBankID         func(childComplexity int) int
+		MerchantID           func(childComplexity int) int
+		Metadata             func(childComplexity int) int
+		ReferenceID          func(childComplexity int) int
+		RefundedAmount       func(childComplexity int) int
+		Status               func(childComplexity int) int
+		Type                 func(childComplexity int) int
+		UpdatedAt            func(childComplexity int) int
+		WalletID             func(childComplexity int) int
+	}
+
+	WalletSvcTransactionPage struct {
+		Items    func(childComplexity int) int
+		Page     func(childComplexity int) int
+		PageSize func(childComplexity int) int
+		Total    func(childComplexity int) int
 	}
 
 	WalletSvcWallet struct {
@@ -9327,8 +9480,10 @@ type ComplexityRoot struct {
 		CreatedAt    func(childComplexity int) int
 		Currency     func(childComplexity int) int
 		FrozenAmount func(childComplexity int) int
+		HasPin       func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Status       func(childComplexity int) int
+		Tier         func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
 		UserID       func(childComplexity int) int
 		Version      func(childComplexity int) int
@@ -10427,6 +10582,26 @@ type MutationResolver interface {
 	WalletSvcCreateSettlementBatch(ctx context.Context, merchantID string) (any, error)
 	WalletSvcProcessClearing(ctx context.Context, batchID string) (any, error)
 	WalletSvcProcessSettlement(ctx context.Context, batchID string) (any, error)
+	WalletSvcMyCreateWallet(ctx context.Context, currency string) (*model.WalletSvcWallet, error)
+	WalletSvcMySetPin(ctx context.Context, walletID string, currentPin *string, newPin string) (any, error)
+	WalletSvcMyCloseWallet(ctx context.Context, walletID string) (*model.WalletSvcWallet, error)
+	WalletSvcMyTopUp(ctx context.Context, walletID string, bankAccountID string, amount string, description *string, idempotencyKey string) (*model.WalletSvcTransaction, error)
+	WalletSvcMyWithdraw(ctx context.Context, walletID string, bankAccountID string, amount string, pin string, description *string, idempotencyKey string) (*model.WalletSvcTransaction, error)
+	WalletSvcMyTransfer(ctx context.Context, fromWalletID string, toWalletID *string, toUserID *string, amount string, pin string, description *string, idempotencyKey string) (*model.WalletSvcTransaction, error)
+	WalletSvcMyPay(ctx context.Context, walletID string, merchantID string, amount string, pin string, description *string, metadata map[string]any, idempotencyKey string) (*model.WalletSvcTransaction, error)
+	WalletSvcMyLinkBankAccount(ctx context.Context, bankID string, accountNumber string, accountName string) (*model.WalletSvcBankAccount, error)
+	WalletSvcMyRemoveBankAccount(ctx context.Context, accountID string) (any, error)
+	WalletSvcMySetDefaultBankAccount(ctx context.Context, accountID string) (*model.WalletSvcBankAccount, error)
+	WalletSvcMyIssueCard(ctx context.Context, walletID string, issuerBankID string, network string, holderName string) (*model.WalletSvcCard, error)
+	WalletSvcMyRequestPayment(ctx context.Context, walletID string, payerUserID string, amount string, note *string) (*model.WalletSvcPaymentRequest, error)
+	WalletSvcMyPayPaymentRequest(ctx context.Context, id string, walletID string, pin string) (*model.WalletSvcPaymentRequest, error)
+	WalletSvcMyDeclinePaymentRequest(ctx context.Context, id string) (*model.WalletSvcPaymentRequest, error)
+	WalletSvcMyCancelPaymentRequest(ctx context.Context, id string) (*model.WalletSvcPaymentRequest, error)
+	WalletSvcUnfreeze(ctx context.Context, id string) (any, error)
+	WalletSvcChangeTier(ctx context.Context, id string, tier string) (*model.WalletSvcWallet, error)
+	WalletSvcRefund(ctx context.Context, id string, amount *string, reason *string, idempotencyKey string) (*model.WalletSvcTransaction, error)
+	WalletSvcBlockCard(ctx context.Context, id string) (*model.WalletSvcCard, error)
+	WalletSvcUnblockCard(ctx context.Context, id string) (*model.WalletSvcCard, error)
 	WishlistCreate(ctx context.Context, input model.WishlistCreateInput) (*model.Wishlist, error)
 	WishlistUpdate(ctx context.Context, id int, input model.WishlistUpdateInput) (*model.Wishlist, error)
 	WishlistDelete(ctx context.Context, id int) (bool, error)
@@ -11260,6 +11435,22 @@ type QueryResolver interface {
 	VoucherCorporateSpend(ctx context.Context, id string, from *string, to *string) (*model.VoucherCorporateSpendReport, error)
 	WalletSvcWallet(ctx context.Context, id string) (*model.WalletSvcWallet, error)
 	WalletSvcTransaction(ctx context.Context, id string) (*model.WalletSvcTransaction, error)
+	WalletSvcMyWallets(ctx context.Context) ([]*model.WalletSvcWallet, error)
+	WalletSvcMyWallet(ctx context.Context, currency string) (*model.WalletSvcWallet, error)
+	WalletSvcMyBalance(ctx context.Context, walletID string) (*model.WalletSvcBalance, error)
+	WalletSvcMyLimits(ctx context.Context, walletID string) (*model.WalletSvcLimits, error)
+	WalletSvcMyTransactions(ctx context.Context, walletID string, typeArg *string, status *string, from *string, to *string, page *int, pageSize *int) (*model.WalletSvcTransactionPage, error)
+	WalletSvcMyLedger(ctx context.Context, walletID string, from *string, to *string, page *int, pageSize *int) (*model.WalletSvcLedgerPage, error)
+	WalletSvcMyStatement(ctx context.Context, walletID string, from string, to string) (*model.WalletSvcStatement, error)
+	WalletSvcMyCards(ctx context.Context, walletID string) ([]*model.WalletSvcCard, error)
+	WalletSvcMyBankAccounts(ctx context.Context) ([]*model.WalletSvcBankAccount, error)
+	WalletSvcMyPaymentRequests(ctx context.Context, role *string, status *string, page *int, pageSize *int) (*model.WalletSvcPaymentRequestPage, error)
+	WalletSvcUserWallets(ctx context.Context, userID string) ([]*model.WalletSvcWallet, error)
+	WalletSvcBalance(ctx context.Context, id string) (*model.WalletSvcBalance, error)
+	WalletSvcTransactions(ctx context.Context, id string, typeArg *string, status *string, from *string, to *string, page *int, pageSize *int) (*model.WalletSvcTransactionPage, error)
+	WalletSvcStatement(ctx context.Context, id string, from string, to string) (*model.WalletSvcStatement, error)
+	WalletSvcCard(ctx context.Context, id string) (*model.WalletSvcCard, error)
+	WalletSvcPaymentRequest(ctx context.Context, id string) (*model.WalletSvcPaymentRequest, error)
 	WebrtcIceServers(ctx context.Context, userID *string) (*model.WebrtcIceServers, error)
 	WebrtcRoom(ctx context.Context, roomID string) (*model.WebrtcRoomInfo, error)
 	Wishlists(ctx context.Context, ownerID *string, limit *int, offset *int) (*model.WishlistPage, error)
@@ -39990,6 +40181,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.WalletSvcAuthorize(childComplexity, args["idempotency_key"].(string), args["card_id"].(string), args["merchant_id"].(string), args["amount"].(string), args["currency"].(string), args["description"].(*string), args["metadata"].(map[string]any)), true
 
+	case "Mutation.walletSvcBlockCard":
+		if e.complexity.Mutation.WalletSvcBlockCard == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcBlockCard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcBlockCard(childComplexity, args["id"].(string)), true
+
 	case "Mutation.walletSvcCapture":
 		if e.complexity.Mutation.WalletSvcCapture == nil {
 			break
@@ -40001,6 +40204,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.WalletSvcCapture(childComplexity, args["id"].(string)), true
+
+	case "Mutation.walletSvcChangeTier":
+		if e.complexity.Mutation.WalletSvcChangeTier == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcChangeTier_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcChangeTier(childComplexity, args["id"].(string), args["tier"].(string)), true
 
 	case "Mutation.walletSvcCreateSettlementBatch":
 		if e.complexity.Mutation.WalletSvcCreateSettlementBatch == nil {
@@ -40050,6 +40265,186 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.WalletSvcFreeze(childComplexity, args["id"].(string)), true
 
+	case "Mutation.walletSvcMyCancelPaymentRequest":
+		if e.complexity.Mutation.WalletSvcMyCancelPaymentRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyCancelPaymentRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyCancelPaymentRequest(childComplexity, args["id"].(string)), true
+
+	case "Mutation.walletSvcMyCloseWallet":
+		if e.complexity.Mutation.WalletSvcMyCloseWallet == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyCloseWallet_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyCloseWallet(childComplexity, args["wallet_id"].(string)), true
+
+	case "Mutation.walletSvcMyCreateWallet":
+		if e.complexity.Mutation.WalletSvcMyCreateWallet == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyCreateWallet_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyCreateWallet(childComplexity, args["currency"].(string)), true
+
+	case "Mutation.walletSvcMyDeclinePaymentRequest":
+		if e.complexity.Mutation.WalletSvcMyDeclinePaymentRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyDeclinePaymentRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyDeclinePaymentRequest(childComplexity, args["id"].(string)), true
+
+	case "Mutation.walletSvcMyIssueCard":
+		if e.complexity.Mutation.WalletSvcMyIssueCard == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyIssueCard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyIssueCard(childComplexity, args["wallet_id"].(string), args["issuer_bank_id"].(string), args["network"].(string), args["holder_name"].(string)), true
+
+	case "Mutation.walletSvcMyLinkBankAccount":
+		if e.complexity.Mutation.WalletSvcMyLinkBankAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyLinkBankAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyLinkBankAccount(childComplexity, args["bank_id"].(string), args["account_number"].(string), args["account_name"].(string)), true
+
+	case "Mutation.walletSvcMyPay":
+		if e.complexity.Mutation.WalletSvcMyPay == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyPay_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyPay(childComplexity, args["wallet_id"].(string), args["merchant_id"].(string), args["amount"].(string), args["pin"].(string), args["description"].(*string), args["metadata"].(map[string]any), args["idempotency_key"].(string)), true
+
+	case "Mutation.walletSvcMyPayPaymentRequest":
+		if e.complexity.Mutation.WalletSvcMyPayPaymentRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyPayPaymentRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyPayPaymentRequest(childComplexity, args["id"].(string), args["wallet_id"].(string), args["pin"].(string)), true
+
+	case "Mutation.walletSvcMyRemoveBankAccount":
+		if e.complexity.Mutation.WalletSvcMyRemoveBankAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyRemoveBankAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyRemoveBankAccount(childComplexity, args["account_id"].(string)), true
+
+	case "Mutation.walletSvcMyRequestPayment":
+		if e.complexity.Mutation.WalletSvcMyRequestPayment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyRequestPayment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyRequestPayment(childComplexity, args["wallet_id"].(string), args["payer_user_id"].(string), args["amount"].(string), args["note"].(*string)), true
+
+	case "Mutation.walletSvcMySetDefaultBankAccount":
+		if e.complexity.Mutation.WalletSvcMySetDefaultBankAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMySetDefaultBankAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMySetDefaultBankAccount(childComplexity, args["account_id"].(string)), true
+
+	case "Mutation.walletSvcMySetPin":
+		if e.complexity.Mutation.WalletSvcMySetPin == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMySetPin_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMySetPin(childComplexity, args["wallet_id"].(string), args["current_pin"].(*string), args["new_pin"].(string)), true
+
+	case "Mutation.walletSvcMyTopUp":
+		if e.complexity.Mutation.WalletSvcMyTopUp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyTopUp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyTopUp(childComplexity, args["wallet_id"].(string), args["bank_account_id"].(string), args["amount"].(string), args["description"].(*string), args["idempotency_key"].(string)), true
+
+	case "Mutation.walletSvcMyTransfer":
+		if e.complexity.Mutation.WalletSvcMyTransfer == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyTransfer_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyTransfer(childComplexity, args["from_wallet_id"].(string), args["to_wallet_id"].(*string), args["to_user_id"].(*string), args["amount"].(string), args["pin"].(string), args["description"].(*string), args["idempotency_key"].(string)), true
+
+	case "Mutation.walletSvcMyWithdraw":
+		if e.complexity.Mutation.WalletSvcMyWithdraw == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcMyWithdraw_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcMyWithdraw(childComplexity, args["wallet_id"].(string), args["bank_account_id"].(string), args["amount"].(string), args["pin"].(string), args["description"].(*string), args["idempotency_key"].(string)), true
+
 	case "Mutation.walletSvcProcessClearing":
 		if e.complexity.Mutation.WalletSvcProcessClearing == nil {
 			break
@@ -40073,6 +40468,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.WalletSvcProcessSettlement(childComplexity, args["batch_id"].(string)), true
+
+	case "Mutation.walletSvcRefund":
+		if e.complexity.Mutation.WalletSvcRefund == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcRefund_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcRefund(childComplexity, args["id"].(string), args["amount"].(*string), args["reason"].(*string), args["idempotency_key"].(string)), true
+
+	case "Mutation.walletSvcUnblockCard":
+		if e.complexity.Mutation.WalletSvcUnblockCard == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcUnblockCard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcUnblockCard(childComplexity, args["id"].(string)), true
+
+	case "Mutation.walletSvcUnfreeze":
+		if e.complexity.Mutation.WalletSvcUnfreeze == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_walletSvcUnfreeze_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.WalletSvcUnfreeze(childComplexity, args["id"].(string)), true
 
 	case "Mutation.walletSvcVoid":
 		if e.complexity.Mutation.WalletSvcVoid == nil {
@@ -54055,6 +54486,164 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.WalletPockets(childComplexity, args["id"].(string)), true
 
+	case "Query.walletSvcBalance":
+		if e.complexity.Query.WalletSvcBalance == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcBalance_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcBalance(childComplexity, args["id"].(string)), true
+
+	case "Query.walletSvcCard":
+		if e.complexity.Query.WalletSvcCard == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcCard_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcCard(childComplexity, args["id"].(string)), true
+
+	case "Query.walletSvcMyBalance":
+		if e.complexity.Query.WalletSvcMyBalance == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyBalance_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyBalance(childComplexity, args["wallet_id"].(string)), true
+
+	case "Query.walletSvcMyBankAccounts":
+		if e.complexity.Query.WalletSvcMyBankAccounts == nil {
+			break
+		}
+
+		return e.complexity.Query.WalletSvcMyBankAccounts(childComplexity), true
+
+	case "Query.walletSvcMyCards":
+		if e.complexity.Query.WalletSvcMyCards == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyCards_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyCards(childComplexity, args["wallet_id"].(string)), true
+
+	case "Query.walletSvcMyLedger":
+		if e.complexity.Query.WalletSvcMyLedger == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyLedger_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyLedger(childComplexity, args["wallet_id"].(string), args["from"].(*string), args["to"].(*string), args["page"].(*int), args["page_size"].(*int)), true
+
+	case "Query.walletSvcMyLimits":
+		if e.complexity.Query.WalletSvcMyLimits == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyLimits_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyLimits(childComplexity, args["wallet_id"].(string)), true
+
+	case "Query.walletSvcMyPaymentRequests":
+		if e.complexity.Query.WalletSvcMyPaymentRequests == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyPaymentRequests_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyPaymentRequests(childComplexity, args["role"].(*string), args["status"].(*string), args["page"].(*int), args["page_size"].(*int)), true
+
+	case "Query.walletSvcMyStatement":
+		if e.complexity.Query.WalletSvcMyStatement == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyStatement_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyStatement(childComplexity, args["wallet_id"].(string), args["from"].(string), args["to"].(string)), true
+
+	case "Query.walletSvcMyTransactions":
+		if e.complexity.Query.WalletSvcMyTransactions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyTransactions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyTransactions(childComplexity, args["wallet_id"].(string), args["type"].(*string), args["status"].(*string), args["from"].(*string), args["to"].(*string), args["page"].(*int), args["page_size"].(*int)), true
+
+	case "Query.walletSvcMyWallet":
+		if e.complexity.Query.WalletSvcMyWallet == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcMyWallet_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcMyWallet(childComplexity, args["currency"].(string)), true
+
+	case "Query.walletSvcMyWallets":
+		if e.complexity.Query.WalletSvcMyWallets == nil {
+			break
+		}
+
+		return e.complexity.Query.WalletSvcMyWallets(childComplexity), true
+
+	case "Query.walletSvcPaymentRequest":
+		if e.complexity.Query.WalletSvcPaymentRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcPaymentRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcPaymentRequest(childComplexity, args["id"].(string)), true
+
+	case "Query.walletSvcStatement":
+		if e.complexity.Query.WalletSvcStatement == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcStatement_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcStatement(childComplexity, args["id"].(string), args["from"].(string), args["to"].(string)), true
+
 	case "Query.walletSvcTransaction":
 		if e.complexity.Query.WalletSvcTransaction == nil {
 			break
@@ -54066,6 +54655,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.WalletSvcTransaction(childComplexity, args["id"].(string)), true
+
+	case "Query.walletSvcTransactions":
+		if e.complexity.Query.WalletSvcTransactions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcTransactions_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcTransactions(childComplexity, args["id"].(string), args["type"].(*string), args["status"].(*string), args["from"].(*string), args["to"].(*string), args["page"].(*int), args["page_size"].(*int)), true
+
+	case "Query.walletSvcUserWallets":
+		if e.complexity.Query.WalletSvcUserWallets == nil {
+			break
+		}
+
+		args, err := ec.field_Query_walletSvcUserWallets_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WalletSvcUserWallets(childComplexity, args["user_id"].(string)), true
 
 	case "Query.walletSvcWallet":
 		if e.complexity.Query.WalletSvcWallet == nil {
@@ -68450,6 +69063,524 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WalletPocket.WalletID(childComplexity), true
 
+	case "WalletSvcBalance.available":
+		if e.complexity.WalletSvcBalance.Available == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBalance.Available(childComplexity), true
+
+	case "WalletSvcBalance.balance":
+		if e.complexity.WalletSvcBalance.Balance == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBalance.Balance(childComplexity), true
+
+	case "WalletSvcBalance.currency":
+		if e.complexity.WalletSvcBalance.Currency == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBalance.Currency(childComplexity), true
+
+	case "WalletSvcBalance.held":
+		if e.complexity.WalletSvcBalance.Held == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBalance.Held(childComplexity), true
+
+	case "WalletSvcBalance.status":
+		if e.complexity.WalletSvcBalance.Status == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBalance.Status(childComplexity), true
+
+	case "WalletSvcBalance.wallet_id":
+		if e.complexity.WalletSvcBalance.WalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBalance.WalletID(childComplexity), true
+
+	case "WalletSvcBankAccount.account_name":
+		if e.complexity.WalletSvcBankAccount.AccountName == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.AccountName(childComplexity), true
+
+	case "WalletSvcBankAccount.account_number":
+		if e.complexity.WalletSvcBankAccount.AccountNumber == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.AccountNumber(childComplexity), true
+
+	case "WalletSvcBankAccount.bank_id":
+		if e.complexity.WalletSvcBankAccount.BankID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.BankID(childComplexity), true
+
+	case "WalletSvcBankAccount.created_at":
+		if e.complexity.WalletSvcBankAccount.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.CreatedAt(childComplexity), true
+
+	case "WalletSvcBankAccount.id":
+		if e.complexity.WalletSvcBankAccount.ID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.ID(childComplexity), true
+
+	case "WalletSvcBankAccount.is_default":
+		if e.complexity.WalletSvcBankAccount.IsDefault == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.IsDefault(childComplexity), true
+
+	case "WalletSvcBankAccount.status":
+		if e.complexity.WalletSvcBankAccount.Status == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.Status(childComplexity), true
+
+	case "WalletSvcBankAccount.updated_at":
+		if e.complexity.WalletSvcBankAccount.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.UpdatedAt(childComplexity), true
+
+	case "WalletSvcBankAccount.user_id":
+		if e.complexity.WalletSvcBankAccount.UserID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcBankAccount.UserID(childComplexity), true
+
+	case "WalletSvcCard.card_number":
+		if e.complexity.WalletSvcCard.CardNumber == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.CardNumber(childComplexity), true
+
+	case "WalletSvcCard.created_at":
+		if e.complexity.WalletSvcCard.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.CreatedAt(childComplexity), true
+
+	case "WalletSvcCard.expiry_month":
+		if e.complexity.WalletSvcCard.ExpiryMonth == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.ExpiryMonth(childComplexity), true
+
+	case "WalletSvcCard.expiry_year":
+		if e.complexity.WalletSvcCard.ExpiryYear == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.ExpiryYear(childComplexity), true
+
+	case "WalletSvcCard.holder_name":
+		if e.complexity.WalletSvcCard.HolderName == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.HolderName(childComplexity), true
+
+	case "WalletSvcCard.id":
+		if e.complexity.WalletSvcCard.ID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.ID(childComplexity), true
+
+	case "WalletSvcCard.issuer_bank_id":
+		if e.complexity.WalletSvcCard.IssuerBankID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.IssuerBankID(childComplexity), true
+
+	case "WalletSvcCard.network":
+		if e.complexity.WalletSvcCard.Network == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.Network(childComplexity), true
+
+	case "WalletSvcCard.status":
+		if e.complexity.WalletSvcCard.Status == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.Status(childComplexity), true
+
+	case "WalletSvcCard.updated_at":
+		if e.complexity.WalletSvcCard.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.UpdatedAt(childComplexity), true
+
+	case "WalletSvcCard.wallet_id":
+		if e.complexity.WalletSvcCard.WalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcCard.WalletID(childComplexity), true
+
+	case "WalletSvcLedgerEntry.amount":
+		if e.complexity.WalletSvcLedgerEntry.Amount == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerEntry.Amount(childComplexity), true
+
+	case "WalletSvcLedgerEntry.balance_after":
+		if e.complexity.WalletSvcLedgerEntry.BalanceAfter == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerEntry.BalanceAfter(childComplexity), true
+
+	case "WalletSvcLedgerEntry.created_at":
+		if e.complexity.WalletSvcLedgerEntry.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerEntry.CreatedAt(childComplexity), true
+
+	case "WalletSvcLedgerEntry.direction":
+		if e.complexity.WalletSvcLedgerEntry.Direction == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerEntry.Direction(childComplexity), true
+
+	case "WalletSvcLedgerEntry.id":
+		if e.complexity.WalletSvcLedgerEntry.ID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerEntry.ID(childComplexity), true
+
+	case "WalletSvcLedgerEntry.transaction_id":
+		if e.complexity.WalletSvcLedgerEntry.TransactionID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerEntry.TransactionID(childComplexity), true
+
+	case "WalletSvcLedgerEntry.wallet_id":
+		if e.complexity.WalletSvcLedgerEntry.WalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerEntry.WalletID(childComplexity), true
+
+	case "WalletSvcLedgerPage.items":
+		if e.complexity.WalletSvcLedgerPage.Items == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerPage.Items(childComplexity), true
+
+	case "WalletSvcLedgerPage.page":
+		if e.complexity.WalletSvcLedgerPage.Page == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerPage.Page(childComplexity), true
+
+	case "WalletSvcLedgerPage.page_size":
+		if e.complexity.WalletSvcLedgerPage.PageSize == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerPage.PageSize(childComplexity), true
+
+	case "WalletSvcLedgerPage.total":
+		if e.complexity.WalletSvcLedgerPage.Total == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLedgerPage.Total(childComplexity), true
+
+	case "WalletSvcLimitPair.daily":
+		if e.complexity.WalletSvcLimitPair.Daily == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimitPair.Daily(childComplexity), true
+
+	case "WalletSvcLimitPair.per_transaction":
+		if e.complexity.WalletSvcLimitPair.PerTransaction == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimitPair.PerTransaction(childComplexity), true
+
+	case "WalletSvcLimits.currency":
+		if e.complexity.WalletSvcLimits.Currency == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimits.Currency(childComplexity), true
+
+	case "WalletSvcLimits.limits":
+		if e.complexity.WalletSvcLimits.Limits == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimits.Limits(childComplexity), true
+
+	case "WalletSvcLimits.remaining_today":
+		if e.complexity.WalletSvcLimits.RemainingToday == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimits.RemainingToday(childComplexity), true
+
+	case "WalletSvcLimits.resets_at":
+		if e.complexity.WalletSvcLimits.ResetsAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimits.ResetsAt(childComplexity), true
+
+	case "WalletSvcLimits.tier":
+		if e.complexity.WalletSvcLimits.Tier == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimits.Tier(childComplexity), true
+
+	case "WalletSvcLimits.used_today":
+		if e.complexity.WalletSvcLimits.UsedToday == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimits.UsedToday(childComplexity), true
+
+	case "WalletSvcLimits.wallet_id":
+		if e.complexity.WalletSvcLimits.WalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcLimits.WalletID(childComplexity), true
+
+	case "WalletSvcPaymentRequest.amount":
+		if e.complexity.WalletSvcPaymentRequest.Amount == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.Amount(childComplexity), true
+
+	case "WalletSvcPaymentRequest.created_at":
+		if e.complexity.WalletSvcPaymentRequest.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.CreatedAt(childComplexity), true
+
+	case "WalletSvcPaymentRequest.currency":
+		if e.complexity.WalletSvcPaymentRequest.Currency == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.Currency(childComplexity), true
+
+	case "WalletSvcPaymentRequest.expires_at":
+		if e.complexity.WalletSvcPaymentRequest.ExpiresAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.ExpiresAt(childComplexity), true
+
+	case "WalletSvcPaymentRequest.id":
+		if e.complexity.WalletSvcPaymentRequest.ID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.ID(childComplexity), true
+
+	case "WalletSvcPaymentRequest.note":
+		if e.complexity.WalletSvcPaymentRequest.Note == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.Note(childComplexity), true
+
+	case "WalletSvcPaymentRequest.payer_user_id":
+		if e.complexity.WalletSvcPaymentRequest.PayerUserID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.PayerUserID(childComplexity), true
+
+	case "WalletSvcPaymentRequest.payer_wallet_id":
+		if e.complexity.WalletSvcPaymentRequest.PayerWalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.PayerWalletID(childComplexity), true
+
+	case "WalletSvcPaymentRequest.requester_user_id":
+		if e.complexity.WalletSvcPaymentRequest.RequesterUserID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.RequesterUserID(childComplexity), true
+
+	case "WalletSvcPaymentRequest.requester_wallet_id":
+		if e.complexity.WalletSvcPaymentRequest.RequesterWalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.RequesterWalletID(childComplexity), true
+
+	case "WalletSvcPaymentRequest.status":
+		if e.complexity.WalletSvcPaymentRequest.Status == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.Status(childComplexity), true
+
+	case "WalletSvcPaymentRequest.transaction_id":
+		if e.complexity.WalletSvcPaymentRequest.TransactionID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.TransactionID(childComplexity), true
+
+	case "WalletSvcPaymentRequest.updated_at":
+		if e.complexity.WalletSvcPaymentRequest.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequest.UpdatedAt(childComplexity), true
+
+	case "WalletSvcPaymentRequestPage.items":
+		if e.complexity.WalletSvcPaymentRequestPage.Items == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequestPage.Items(childComplexity), true
+
+	case "WalletSvcPaymentRequestPage.page":
+		if e.complexity.WalletSvcPaymentRequestPage.Page == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequestPage.Page(childComplexity), true
+
+	case "WalletSvcPaymentRequestPage.page_size":
+		if e.complexity.WalletSvcPaymentRequestPage.PageSize == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequestPage.PageSize(childComplexity), true
+
+	case "WalletSvcPaymentRequestPage.total":
+		if e.complexity.WalletSvcPaymentRequestPage.Total == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcPaymentRequestPage.Total(childComplexity), true
+
+	case "WalletSvcStatement.closing_balance":
+		if e.complexity.WalletSvcStatement.ClosingBalance == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.ClosingBalance(childComplexity), true
+
+	case "WalletSvcStatement.credit_count":
+		if e.complexity.WalletSvcStatement.CreditCount == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.CreditCount(childComplexity), true
+
+	case "WalletSvcStatement.currency":
+		if e.complexity.WalletSvcStatement.Currency == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.Currency(childComplexity), true
+
+	case "WalletSvcStatement.debit_count":
+		if e.complexity.WalletSvcStatement.DebitCount == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.DebitCount(childComplexity), true
+
+	case "WalletSvcStatement.from":
+		if e.complexity.WalletSvcStatement.From == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.From(childComplexity), true
+
+	case "WalletSvcStatement.net_change":
+		if e.complexity.WalletSvcStatement.NetChange == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.NetChange(childComplexity), true
+
+	case "WalletSvcStatement.opening_balance":
+		if e.complexity.WalletSvcStatement.OpeningBalance == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.OpeningBalance(childComplexity), true
+
+	case "WalletSvcStatement.to":
+		if e.complexity.WalletSvcStatement.To == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.To(childComplexity), true
+
+	case "WalletSvcStatement.total_credit":
+		if e.complexity.WalletSvcStatement.TotalCredit == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.TotalCredit(childComplexity), true
+
+	case "WalletSvcStatement.total_debit":
+		if e.complexity.WalletSvcStatement.TotalDebit == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.TotalDebit(childComplexity), true
+
+	case "WalletSvcStatement.wallet_id":
+		if e.complexity.WalletSvcStatement.WalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcStatement.WalletID(childComplexity), true
+
 	case "WalletSvcTransaction.acquirer_bank_id":
 		if e.complexity.WalletSvcTransaction.AcquirerBankID == nil {
 			break
@@ -68470,6 +69601,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WalletSvcTransaction.AuthorizationCode(childComplexity), true
+
+	case "WalletSvcTransaction.bank_account_id":
+		if e.complexity.WalletSvcTransaction.BankAccountID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransaction.BankAccountID(childComplexity), true
 
 	case "WalletSvcTransaction.batch_id":
 		if e.complexity.WalletSvcTransaction.BatchID == nil {
@@ -68492,6 +69630,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WalletSvcTransaction.CardNetwork(childComplexity), true
 
+	case "WalletSvcTransaction.counterparty_wallet_id":
+		if e.complexity.WalletSvcTransaction.CounterpartyWalletID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransaction.CounterpartyWalletID(childComplexity), true
+
 	case "WalletSvcTransaction.created_at":
 		if e.complexity.WalletSvcTransaction.CreatedAt == nil {
 			break
@@ -68512,6 +69657,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WalletSvcTransaction.Description(childComplexity), true
+
+	case "WalletSvcTransaction.external_ref":
+		if e.complexity.WalletSvcTransaction.ExternalRef == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransaction.ExternalRef(childComplexity), true
+
+	case "WalletSvcTransaction.failure_reason":
+		if e.complexity.WalletSvcTransaction.FailureReason == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransaction.FailureReason(childComplexity), true
 
 	case "WalletSvcTransaction.fee":
 		if e.complexity.WalletSvcTransaction.Fee == nil {
@@ -68555,6 +69714,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WalletSvcTransaction.Metadata(childComplexity), true
 
+	case "WalletSvcTransaction.reference_id":
+		if e.complexity.WalletSvcTransaction.ReferenceID == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransaction.ReferenceID(childComplexity), true
+
+	case "WalletSvcTransaction.refunded_amount":
+		if e.complexity.WalletSvcTransaction.RefundedAmount == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransaction.RefundedAmount(childComplexity), true
+
 	case "WalletSvcTransaction.status":
 		if e.complexity.WalletSvcTransaction.Status == nil {
 			break
@@ -68582,6 +69755,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WalletSvcTransaction.WalletID(childComplexity), true
+
+	case "WalletSvcTransactionPage.items":
+		if e.complexity.WalletSvcTransactionPage.Items == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransactionPage.Items(childComplexity), true
+
+	case "WalletSvcTransactionPage.page":
+		if e.complexity.WalletSvcTransactionPage.Page == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransactionPage.Page(childComplexity), true
+
+	case "WalletSvcTransactionPage.page_size":
+		if e.complexity.WalletSvcTransactionPage.PageSize == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransactionPage.PageSize(childComplexity), true
+
+	case "WalletSvcTransactionPage.total":
+		if e.complexity.WalletSvcTransactionPage.Total == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcTransactionPage.Total(childComplexity), true
 
 	case "WalletSvcWallet.balance":
 		if e.complexity.WalletSvcWallet.Balance == nil {
@@ -68611,6 +69812,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WalletSvcWallet.FrozenAmount(childComplexity), true
 
+	case "WalletSvcWallet.has_pin":
+		if e.complexity.WalletSvcWallet.HasPin == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcWallet.HasPin(childComplexity), true
+
 	case "WalletSvcWallet.id":
 		if e.complexity.WalletSvcWallet.ID == nil {
 			break
@@ -68624,6 +69832,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WalletSvcWallet.Status(childComplexity), true
+
+	case "WalletSvcWallet.tier":
+		if e.complexity.WalletSvcWallet.Tier == nil {
+			break
+		}
+
+		return e.complexity.WalletSvcWallet.Tier(childComplexity), true
 
 	case "WalletSvcWallet.updated_at":
 		if e.complexity.WalletSvcWallet.UpdatedAt == nil {
@@ -104468,6 +105683,29 @@ func (ec *executionContext) field_Mutation_walletSvcAuthorize_argsMetadata(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_walletSvcBlockCard_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcBlockCard_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcBlockCard_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_walletSvcCapture_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -104484,6 +105722,47 @@ func (ec *executionContext) field_Mutation_walletSvcCapture_argsID(
 ) (string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcChangeTier_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcChangeTier_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcChangeTier_argsTier(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["tier"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcChangeTier_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcChangeTier_argsTier(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("tier"))
+	if tmp, ok := rawArgs["tier"]; ok {
 		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
@@ -104637,6 +105916,945 @@ func (ec *executionContext) field_Mutation_walletSvcFreeze_argsID(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_walletSvcMyCancelPaymentRequest_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyCancelPaymentRequest_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyCancelPaymentRequest_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyCloseWallet_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyCloseWallet_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyCloseWallet_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyCreateWallet_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyCreateWallet_argsCurrency(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["currency"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyCreateWallet_argsCurrency(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
+	if tmp, ok := rawArgs["currency"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyDeclinePaymentRequest_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyDeclinePaymentRequest_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyDeclinePaymentRequest_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyIssueCard_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyIssueCard_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyIssueCard_argsIssuerBankID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["issuer_bank_id"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyIssueCard_argsNetwork(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["network"] = arg2
+	arg3, err := ec.field_Mutation_walletSvcMyIssueCard_argsHolderName(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["holder_name"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyIssueCard_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyIssueCard_argsIssuerBankID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("issuer_bank_id"))
+	if tmp, ok := rawArgs["issuer_bank_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyIssueCard_argsNetwork(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("network"))
+	if tmp, ok := rawArgs["network"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyIssueCard_argsHolderName(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("holder_name"))
+	if tmp, ok := rawArgs["holder_name"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyLinkBankAccount_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyLinkBankAccount_argsBankID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["bank_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyLinkBankAccount_argsAccountNumber(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["account_number"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyLinkBankAccount_argsAccountName(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["account_name"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyLinkBankAccount_argsBankID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("bank_id"))
+	if tmp, ok := rawArgs["bank_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyLinkBankAccount_argsAccountNumber(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("account_number"))
+	if tmp, ok := rawArgs["account_number"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyLinkBankAccount_argsAccountName(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("account_name"))
+	if tmp, ok := rawArgs["account_name"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPayPaymentRequest_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyPayPaymentRequest_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyPayPaymentRequest_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyPayPaymentRequest_argsPin(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pin"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyPayPaymentRequest_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPayPaymentRequest_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPayPaymentRequest_argsPin(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pin"))
+	if tmp, ok := rawArgs["pin"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPay_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyPay_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyPay_argsMerchantID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["merchant_id"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyPay_argsAmount(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["amount"] = arg2
+	arg3, err := ec.field_Mutation_walletSvcMyPay_argsPin(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pin"] = arg3
+	arg4, err := ec.field_Mutation_walletSvcMyPay_argsDescription(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["description"] = arg4
+	arg5, err := ec.field_Mutation_walletSvcMyPay_argsMetadata(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["metadata"] = arg5
+	arg6, err := ec.field_Mutation_walletSvcMyPay_argsIdempotencyKey(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["idempotency_key"] = arg6
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyPay_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPay_argsMerchantID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("merchant_id"))
+	if tmp, ok := rawArgs["merchant_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPay_argsAmount(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+	if tmp, ok := rawArgs["amount"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPay_argsPin(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pin"))
+	if tmp, ok := rawArgs["pin"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPay_argsDescription(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+	if tmp, ok := rawArgs["description"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPay_argsMetadata(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (map[string]any, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
+	if tmp, ok := rawArgs["metadata"]; ok {
+		return ec.unmarshalOMap2map(ctx, tmp)
+	}
+
+	var zeroVal map[string]any
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyPay_argsIdempotencyKey(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("idempotency_key"))
+	if tmp, ok := rawArgs["idempotency_key"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyRemoveBankAccount_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyRemoveBankAccount_argsAccountID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["account_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyRemoveBankAccount_argsAccountID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("account_id"))
+	if tmp, ok := rawArgs["account_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyRequestPayment_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyRequestPayment_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyRequestPayment_argsPayerUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["payer_user_id"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyRequestPayment_argsAmount(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["amount"] = arg2
+	arg3, err := ec.field_Mutation_walletSvcMyRequestPayment_argsNote(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["note"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyRequestPayment_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyRequestPayment_argsPayerUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("payer_user_id"))
+	if tmp, ok := rawArgs["payer_user_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyRequestPayment_argsAmount(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+	if tmp, ok := rawArgs["amount"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyRequestPayment_argsNote(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("note"))
+	if tmp, ok := rawArgs["note"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMySetDefaultBankAccount_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMySetDefaultBankAccount_argsAccountID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["account_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMySetDefaultBankAccount_argsAccountID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("account_id"))
+	if tmp, ok := rawArgs["account_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMySetPin_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMySetPin_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMySetPin_argsCurrentPin(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["current_pin"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMySetPin_argsNewPin(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["new_pin"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMySetPin_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMySetPin_argsCurrentPin(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("current_pin"))
+	if tmp, ok := rawArgs["current_pin"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMySetPin_argsNewPin(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("new_pin"))
+	if tmp, ok := rawArgs["new_pin"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTopUp_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyTopUp_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyTopUp_argsBankAccountID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["bank_account_id"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyTopUp_argsAmount(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["amount"] = arg2
+	arg3, err := ec.field_Mutation_walletSvcMyTopUp_argsDescription(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["description"] = arg3
+	arg4, err := ec.field_Mutation_walletSvcMyTopUp_argsIdempotencyKey(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["idempotency_key"] = arg4
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyTopUp_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTopUp_argsBankAccountID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("bank_account_id"))
+	if tmp, ok := rawArgs["bank_account_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTopUp_argsAmount(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+	if tmp, ok := rawArgs["amount"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTopUp_argsDescription(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+	if tmp, ok := rawArgs["description"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTopUp_argsIdempotencyKey(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("idempotency_key"))
+	if tmp, ok := rawArgs["idempotency_key"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyTransfer_argsFromWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from_wallet_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyTransfer_argsToWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to_wallet_id"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyTransfer_argsToUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to_user_id"] = arg2
+	arg3, err := ec.field_Mutation_walletSvcMyTransfer_argsAmount(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["amount"] = arg3
+	arg4, err := ec.field_Mutation_walletSvcMyTransfer_argsPin(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pin"] = arg4
+	arg5, err := ec.field_Mutation_walletSvcMyTransfer_argsDescription(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["description"] = arg5
+	arg6, err := ec.field_Mutation_walletSvcMyTransfer_argsIdempotencyKey(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["idempotency_key"] = arg6
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_argsFromWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from_wallet_id"))
+	if tmp, ok := rawArgs["from_wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_argsToWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to_wallet_id"))
+	if tmp, ok := rawArgs["to_wallet_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_argsToUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to_user_id"))
+	if tmp, ok := rawArgs["to_user_id"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_argsAmount(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+	if tmp, ok := rawArgs["amount"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_argsPin(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pin"))
+	if tmp, ok := rawArgs["pin"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_argsDescription(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+	if tmp, ok := rawArgs["description"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyTransfer_argsIdempotencyKey(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("idempotency_key"))
+	if tmp, ok := rawArgs["idempotency_key"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyWithdraw_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcMyWithdraw_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcMyWithdraw_argsBankAccountID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["bank_account_id"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcMyWithdraw_argsAmount(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["amount"] = arg2
+	arg3, err := ec.field_Mutation_walletSvcMyWithdraw_argsPin(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pin"] = arg3
+	arg4, err := ec.field_Mutation_walletSvcMyWithdraw_argsDescription(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["description"] = arg4
+	arg5, err := ec.field_Mutation_walletSvcMyWithdraw_argsIdempotencyKey(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["idempotency_key"] = arg5
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcMyWithdraw_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyWithdraw_argsBankAccountID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("bank_account_id"))
+	if tmp, ok := rawArgs["bank_account_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyWithdraw_argsAmount(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+	if tmp, ok := rawArgs["amount"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyWithdraw_argsPin(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pin"))
+	if tmp, ok := rawArgs["pin"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyWithdraw_argsDescription(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+	if tmp, ok := rawArgs["description"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcMyWithdraw_argsIdempotencyKey(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("idempotency_key"))
+	if tmp, ok := rawArgs["idempotency_key"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_walletSvcProcessClearing_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -104676,6 +106894,129 @@ func (ec *executionContext) field_Mutation_walletSvcProcessSettlement_argsBatchI
 ) (string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("batch_id"))
 	if tmp, ok := rawArgs["batch_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcRefund_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcRefund_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Mutation_walletSvcRefund_argsAmount(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["amount"] = arg1
+	arg2, err := ec.field_Mutation_walletSvcRefund_argsReason(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["reason"] = arg2
+	arg3, err := ec.field_Mutation_walletSvcRefund_argsIdempotencyKey(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["idempotency_key"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcRefund_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcRefund_argsAmount(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
+	if tmp, ok := rawArgs["amount"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcRefund_argsReason(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("reason"))
+	if tmp, ok := rawArgs["reason"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcRefund_argsIdempotencyKey(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("idempotency_key"))
+	if tmp, ok := rawArgs["idempotency_key"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcUnblockCard_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcUnblockCard_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcUnblockCard_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_walletSvcUnfreeze_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_walletSvcUnfreeze_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_walletSvcUnfreeze_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
 		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
@@ -133993,6 +136334,588 @@ func (ec *executionContext) field_Query_walletPockets_argsID(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_walletSvcBalance_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcBalance_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcBalance_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcCard_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcCard_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcCard_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyBalance_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyBalance_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyBalance_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyCards_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyCards_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyCards_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyLedger_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyLedger_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Query_walletSvcMyLedger_argsFrom(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from"] = arg1
+	arg2, err := ec.field_Query_walletSvcMyLedger_argsTo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to"] = arg2
+	arg3, err := ec.field_Query_walletSvcMyLedger_argsPage(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page"] = arg3
+	arg4, err := ec.field_Query_walletSvcMyLedger_argsPageSize(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page_size"] = arg4
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyLedger_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyLedger_argsFrom(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+	if tmp, ok := rawArgs["from"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyLedger_argsTo(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+	if tmp, ok := rawArgs["to"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyLedger_argsPage(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+	if tmp, ok := rawArgs["page"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyLedger_argsPageSize(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page_size"))
+	if tmp, ok := rawArgs["page_size"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyLimits_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyLimits_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyLimits_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyPaymentRequests_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyPaymentRequests_argsRole(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["role"] = arg0
+	arg1, err := ec.field_Query_walletSvcMyPaymentRequests_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg1
+	arg2, err := ec.field_Query_walletSvcMyPaymentRequests_argsPage(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page"] = arg2
+	arg3, err := ec.field_Query_walletSvcMyPaymentRequests_argsPageSize(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page_size"] = arg3
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyPaymentRequests_argsRole(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+	if tmp, ok := rawArgs["role"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyPaymentRequests_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyPaymentRequests_argsPage(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+	if tmp, ok := rawArgs["page"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyPaymentRequests_argsPageSize(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page_size"))
+	if tmp, ok := rawArgs["page_size"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyStatement_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyStatement_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Query_walletSvcMyStatement_argsFrom(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from"] = arg1
+	arg2, err := ec.field_Query_walletSvcMyStatement_argsTo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyStatement_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyStatement_argsFrom(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+	if tmp, ok := rawArgs["from"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyStatement_argsTo(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+	if tmp, ok := rawArgs["to"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyTransactions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyTransactions_argsWalletID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["wallet_id"] = arg0
+	arg1, err := ec.field_Query_walletSvcMyTransactions_argsType(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["type"] = arg1
+	arg2, err := ec.field_Query_walletSvcMyTransactions_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg2
+	arg3, err := ec.field_Query_walletSvcMyTransactions_argsFrom(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from"] = arg3
+	arg4, err := ec.field_Query_walletSvcMyTransactions_argsTo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to"] = arg4
+	arg5, err := ec.field_Query_walletSvcMyTransactions_argsPage(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page"] = arg5
+	arg6, err := ec.field_Query_walletSvcMyTransactions_argsPageSize(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page_size"] = arg6
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyTransactions_argsWalletID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("wallet_id"))
+	if tmp, ok := rawArgs["wallet_id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyTransactions_argsType(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+	if tmp, ok := rawArgs["type"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyTransactions_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyTransactions_argsFrom(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+	if tmp, ok := rawArgs["from"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyTransactions_argsTo(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+	if tmp, ok := rawArgs["to"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyTransactions_argsPage(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+	if tmp, ok := rawArgs["page"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyTransactions_argsPageSize(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page_size"))
+	if tmp, ok := rawArgs["page_size"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcMyWallet_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcMyWallet_argsCurrency(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["currency"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcMyWallet_argsCurrency(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
+	if tmp, ok := rawArgs["currency"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcPaymentRequest_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcPaymentRequest_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcPaymentRequest_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcStatement_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcStatement_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Query_walletSvcStatement_argsFrom(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from"] = arg1
+	arg2, err := ec.field_Query_walletSvcStatement_argsTo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcStatement_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcStatement_argsFrom(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+	if tmp, ok := rawArgs["from"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcStatement_argsTo(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+	if tmp, ok := rawArgs["to"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_walletSvcTransaction_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -134009,6 +136932,160 @@ func (ec *executionContext) field_Query_walletSvcTransaction_argsID(
 ) (string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcTransactions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcTransactions_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Query_walletSvcTransactions_argsType(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["type"] = arg1
+	arg2, err := ec.field_Query_walletSvcTransactions_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg2
+	arg3, err := ec.field_Query_walletSvcTransactions_argsFrom(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["from"] = arg3
+	arg4, err := ec.field_Query_walletSvcTransactions_argsTo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["to"] = arg4
+	arg5, err := ec.field_Query_walletSvcTransactions_argsPage(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page"] = arg5
+	arg6, err := ec.field_Query_walletSvcTransactions_argsPageSize(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["page_size"] = arg6
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcTransactions_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcTransactions_argsType(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+	if tmp, ok := rawArgs["type"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcTransactions_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcTransactions_argsFrom(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("from"))
+	if tmp, ok := rawArgs["from"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcTransactions_argsTo(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("to"))
+	if tmp, ok := rawArgs["to"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcTransactions_argsPage(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+	if tmp, ok := rawArgs["page"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcTransactions_argsPageSize(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page_size"))
+	if tmp, ok := rawArgs["page_size"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_walletSvcUserWallets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_walletSvcUserWallets_argsUserID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["user_id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_walletSvcUserWallets_argsUserID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("user_id"))
+	if tmp, ok := rawArgs["user_id"]; ok {
 		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
@@ -325578,6 +328655,10 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcCreateWallet(ctx cont
 				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
 			case "status":
 				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
 			case "version":
 				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
 			case "created_at":
@@ -325844,6 +328925,12 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcAuthorize(ctx context
 				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
 			case "wallet_id":
 				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
 			case "merchant_id":
 				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
 			case "acquirer_bank_id":
@@ -325860,6 +328947,8 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcAuthorize(ctx context
 				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
 			case "fee":
 				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
 			case "type":
 				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
 			case "status":
@@ -325868,6 +328957,10 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcAuthorize(ctx context
 				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
 			case "authorization_code":
 				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
 			case "batch_id":
 				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
 			case "metadata":
@@ -325968,6 +329061,12 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcCapture(ctx context.C
 				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
 			case "wallet_id":
 				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
 			case "merchant_id":
 				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
 			case "acquirer_bank_id":
@@ -325984,6 +329083,8 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcCapture(ctx context.C
 				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
 			case "fee":
 				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
 			case "type":
 				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
 			case "status":
@@ -325992,6 +329093,10 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcCapture(ctx context.C
 				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
 			case "authorization_code":
 				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
 			case "batch_id":
 				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
 			case "metadata":
@@ -326092,6 +329197,12 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcVoid(ctx context.Cont
 				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
 			case "wallet_id":
 				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
 			case "merchant_id":
 				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
 			case "acquirer_bank_id":
@@ -326108,6 +329219,8 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcVoid(ctx context.Cont
 				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
 			case "fee":
 				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
 			case "type":
 				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
 			case "status":
@@ -326116,6 +329229,10 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcVoid(ctx context.Cont
 				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
 			case "authorization_code":
 				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
 			case "batch_id":
 				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
 			case "metadata":
@@ -326388,6 +329505,1762 @@ func (ec *executionContext) fieldContext_Mutation_walletSvcProcessSettlement(ctx
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_walletSvcProcessSettlement_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyCreateWallet(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyCreateWallet(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyCreateWallet(rctx, fc.Args["currency"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcWallet)
+	fc.Result = res
+	return ec.marshalOWalletSvcWallet2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWallet(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyCreateWallet(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcWallet_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcWallet_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcWallet_balance(ctx, field)
+			case "frozen_amount":
+				return ec.fieldContext_WalletSvcWallet_frozen_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
+			case "version":
+				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcWallet_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcWallet_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcWallet", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyCreateWallet_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMySetPin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMySetPin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMySetPin(rctx, fc.Args["wallet_id"].(string), fc.Args["current_pin"].(*string), fc.Args["new_pin"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(any)
+	fc.Result = res
+	return ec.marshalOAny2interface(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMySetPin(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Any does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMySetPin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyCloseWallet(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyCloseWallet(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyCloseWallet(rctx, fc.Args["wallet_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcWallet)
+	fc.Result = res
+	return ec.marshalOWalletSvcWallet2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWallet(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyCloseWallet(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcWallet_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcWallet_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcWallet_balance(ctx, field)
+			case "frozen_amount":
+				return ec.fieldContext_WalletSvcWallet_frozen_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
+			case "version":
+				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcWallet_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcWallet_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcWallet", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyCloseWallet_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyTopUp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyTopUp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyTopUp(rctx, fc.Args["wallet_id"].(string), fc.Args["bank_account_id"].(string), fc.Args["amount"].(string), fc.Args["description"].(*string), fc.Args["idempotency_key"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcTransaction)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyTopUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcTransaction_id(ctx, field)
+			case "idempotency_key":
+				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
+			case "merchant_id":
+				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
+			case "acquirer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_acquirer_bank_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_issuer_bank_id(ctx, field)
+			case "card_id":
+				return ec.fieldContext_WalletSvcTransaction_card_id(ctx, field)
+			case "card_network":
+				return ec.fieldContext_WalletSvcTransaction_card_network(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcTransaction_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
+			case "fee":
+				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
+			case "type":
+				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcTransaction_status(ctx, field)
+			case "description":
+				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
+			case "authorization_code":
+				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
+			case "batch_id":
+				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
+			case "metadata":
+				return ec.fieldContext_WalletSvcTransaction_metadata(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcTransaction_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcTransaction_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransaction", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyTopUp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyWithdraw(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyWithdraw(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyWithdraw(rctx, fc.Args["wallet_id"].(string), fc.Args["bank_account_id"].(string), fc.Args["amount"].(string), fc.Args["pin"].(string), fc.Args["description"].(*string), fc.Args["idempotency_key"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcTransaction)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyWithdraw(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcTransaction_id(ctx, field)
+			case "idempotency_key":
+				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
+			case "merchant_id":
+				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
+			case "acquirer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_acquirer_bank_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_issuer_bank_id(ctx, field)
+			case "card_id":
+				return ec.fieldContext_WalletSvcTransaction_card_id(ctx, field)
+			case "card_network":
+				return ec.fieldContext_WalletSvcTransaction_card_network(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcTransaction_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
+			case "fee":
+				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
+			case "type":
+				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcTransaction_status(ctx, field)
+			case "description":
+				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
+			case "authorization_code":
+				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
+			case "batch_id":
+				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
+			case "metadata":
+				return ec.fieldContext_WalletSvcTransaction_metadata(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcTransaction_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcTransaction_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransaction", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyWithdraw_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyTransfer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyTransfer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyTransfer(rctx, fc.Args["from_wallet_id"].(string), fc.Args["to_wallet_id"].(*string), fc.Args["to_user_id"].(*string), fc.Args["amount"].(string), fc.Args["pin"].(string), fc.Args["description"].(*string), fc.Args["idempotency_key"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcTransaction)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyTransfer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcTransaction_id(ctx, field)
+			case "idempotency_key":
+				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
+			case "merchant_id":
+				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
+			case "acquirer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_acquirer_bank_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_issuer_bank_id(ctx, field)
+			case "card_id":
+				return ec.fieldContext_WalletSvcTransaction_card_id(ctx, field)
+			case "card_network":
+				return ec.fieldContext_WalletSvcTransaction_card_network(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcTransaction_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
+			case "fee":
+				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
+			case "type":
+				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcTransaction_status(ctx, field)
+			case "description":
+				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
+			case "authorization_code":
+				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
+			case "batch_id":
+				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
+			case "metadata":
+				return ec.fieldContext_WalletSvcTransaction_metadata(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcTransaction_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcTransaction_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransaction", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyTransfer_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyPay(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyPay(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyPay(rctx, fc.Args["wallet_id"].(string), fc.Args["merchant_id"].(string), fc.Args["amount"].(string), fc.Args["pin"].(string), fc.Args["description"].(*string), fc.Args["metadata"].(map[string]any), fc.Args["idempotency_key"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcTransaction)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyPay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcTransaction_id(ctx, field)
+			case "idempotency_key":
+				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
+			case "merchant_id":
+				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
+			case "acquirer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_acquirer_bank_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_issuer_bank_id(ctx, field)
+			case "card_id":
+				return ec.fieldContext_WalletSvcTransaction_card_id(ctx, field)
+			case "card_network":
+				return ec.fieldContext_WalletSvcTransaction_card_network(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcTransaction_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
+			case "fee":
+				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
+			case "type":
+				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcTransaction_status(ctx, field)
+			case "description":
+				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
+			case "authorization_code":
+				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
+			case "batch_id":
+				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
+			case "metadata":
+				return ec.fieldContext_WalletSvcTransaction_metadata(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcTransaction_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcTransaction_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransaction", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyPay_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyLinkBankAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyLinkBankAccount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyLinkBankAccount(rctx, fc.Args["bank_id"].(string), fc.Args["account_number"].(string), fc.Args["account_name"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcBankAccount)
+	fc.Result = res
+	return ec.marshalOWalletSvcBankAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBankAccount(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyLinkBankAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcBankAccount_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcBankAccount_user_id(ctx, field)
+			case "bank_id":
+				return ec.fieldContext_WalletSvcBankAccount_bank_id(ctx, field)
+			case "account_number":
+				return ec.fieldContext_WalletSvcBankAccount_account_number(ctx, field)
+			case "account_name":
+				return ec.fieldContext_WalletSvcBankAccount_account_name(ctx, field)
+			case "is_default":
+				return ec.fieldContext_WalletSvcBankAccount_is_default(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcBankAccount_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcBankAccount_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcBankAccount_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcBankAccount", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyLinkBankAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyRemoveBankAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyRemoveBankAccount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyRemoveBankAccount(rctx, fc.Args["account_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(any)
+	fc.Result = res
+	return ec.marshalOAny2interface(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyRemoveBankAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Any does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyRemoveBankAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMySetDefaultBankAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMySetDefaultBankAccount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMySetDefaultBankAccount(rctx, fc.Args["account_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcBankAccount)
+	fc.Result = res
+	return ec.marshalOWalletSvcBankAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBankAccount(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMySetDefaultBankAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcBankAccount_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcBankAccount_user_id(ctx, field)
+			case "bank_id":
+				return ec.fieldContext_WalletSvcBankAccount_bank_id(ctx, field)
+			case "account_number":
+				return ec.fieldContext_WalletSvcBankAccount_account_number(ctx, field)
+			case "account_name":
+				return ec.fieldContext_WalletSvcBankAccount_account_name(ctx, field)
+			case "is_default":
+				return ec.fieldContext_WalletSvcBankAccount_is_default(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcBankAccount_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcBankAccount_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcBankAccount_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcBankAccount", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMySetDefaultBankAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyIssueCard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyIssueCard(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyIssueCard(rctx, fc.Args["wallet_id"].(string), fc.Args["issuer_bank_id"].(string), fc.Args["network"].(string), fc.Args["holder_name"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcCard)
+	fc.Result = res
+	return ec.marshalOWalletSvcCard2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyIssueCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcCard_id(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcCard_wallet_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcCard_issuer_bank_id(ctx, field)
+			case "card_number":
+				return ec.fieldContext_WalletSvcCard_card_number(ctx, field)
+			case "holder_name":
+				return ec.fieldContext_WalletSvcCard_holder_name(ctx, field)
+			case "network":
+				return ec.fieldContext_WalletSvcCard_network(ctx, field)
+			case "expiry_month":
+				return ec.fieldContext_WalletSvcCard_expiry_month(ctx, field)
+			case "expiry_year":
+				return ec.fieldContext_WalletSvcCard_expiry_year(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcCard_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcCard_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcCard_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcCard", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyIssueCard_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyRequestPayment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyRequestPayment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyRequestPayment(rctx, fc.Args["wallet_id"].(string), fc.Args["payer_user_id"].(string), fc.Args["amount"].(string), fc.Args["note"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcPaymentRequest)
+	fc.Result = res
+	return ec.marshalOWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyRequestPayment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcPaymentRequest_id(ctx, field)
+			case "requester_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_user_id(ctx, field)
+			case "requester_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_wallet_id(ctx, field)
+			case "payer_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_user_id(ctx, field)
+			case "payer_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_wallet_id(ctx, field)
+			case "transaction_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_transaction_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcPaymentRequest_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcPaymentRequest_currency(ctx, field)
+			case "note":
+				return ec.fieldContext_WalletSvcPaymentRequest_note(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcPaymentRequest_status(ctx, field)
+			case "expires_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_expires_at(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcPaymentRequest", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyRequestPayment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyPayPaymentRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyPayPaymentRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyPayPaymentRequest(rctx, fc.Args["id"].(string), fc.Args["wallet_id"].(string), fc.Args["pin"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcPaymentRequest)
+	fc.Result = res
+	return ec.marshalOWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyPayPaymentRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcPaymentRequest_id(ctx, field)
+			case "requester_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_user_id(ctx, field)
+			case "requester_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_wallet_id(ctx, field)
+			case "payer_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_user_id(ctx, field)
+			case "payer_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_wallet_id(ctx, field)
+			case "transaction_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_transaction_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcPaymentRequest_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcPaymentRequest_currency(ctx, field)
+			case "note":
+				return ec.fieldContext_WalletSvcPaymentRequest_note(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcPaymentRequest_status(ctx, field)
+			case "expires_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_expires_at(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcPaymentRequest", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyPayPaymentRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyDeclinePaymentRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyDeclinePaymentRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyDeclinePaymentRequest(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcPaymentRequest)
+	fc.Result = res
+	return ec.marshalOWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyDeclinePaymentRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcPaymentRequest_id(ctx, field)
+			case "requester_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_user_id(ctx, field)
+			case "requester_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_wallet_id(ctx, field)
+			case "payer_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_user_id(ctx, field)
+			case "payer_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_wallet_id(ctx, field)
+			case "transaction_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_transaction_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcPaymentRequest_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcPaymentRequest_currency(ctx, field)
+			case "note":
+				return ec.fieldContext_WalletSvcPaymentRequest_note(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcPaymentRequest_status(ctx, field)
+			case "expires_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_expires_at(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcPaymentRequest", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyDeclinePaymentRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcMyCancelPaymentRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcMyCancelPaymentRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().WalletSvcMyCancelPaymentRequest(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcPaymentRequest)
+	fc.Result = res
+	return ec.marshalOWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcMyCancelPaymentRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcPaymentRequest_id(ctx, field)
+			case "requester_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_user_id(ctx, field)
+			case "requester_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_wallet_id(ctx, field)
+			case "payer_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_user_id(ctx, field)
+			case "payer_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_wallet_id(ctx, field)
+			case "transaction_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_transaction_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcPaymentRequest_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcPaymentRequest_currency(ctx, field)
+			case "note":
+				return ec.fieldContext_WalletSvcPaymentRequest_note(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcPaymentRequest_status(ctx, field)
+			case "expires_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_expires_at(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcPaymentRequest", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcMyCancelPaymentRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcUnfreeze(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcUnfreeze(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().WalletSvcUnfreeze(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal any
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal any
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal any
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(any); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be any`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(any)
+	fc.Result = res
+	return ec.marshalOAny2interface(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcUnfreeze(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Any does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcUnfreeze_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcChangeTier(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcChangeTier(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().WalletSvcChangeTier(rctx, fc.Args["id"].(string), fc.Args["tier"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcWallet
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.WalletSvcWallet
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcWallet
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcWallet); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcWallet`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcWallet)
+	fc.Result = res
+	return ec.marshalOWalletSvcWallet2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWallet(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcChangeTier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcWallet_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcWallet_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcWallet_balance(ctx, field)
+			case "frozen_amount":
+				return ec.fieldContext_WalletSvcWallet_frozen_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
+			case "version":
+				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcWallet_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcWallet_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcWallet", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcChangeTier_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcRefund(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcRefund(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().WalletSvcRefund(rctx, fc.Args["id"].(string), fc.Args["amount"].(*string), fc.Args["reason"].(*string), fc.Args["idempotency_key"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcTransaction
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.WalletSvcTransaction
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcTransaction
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcTransaction); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcTransaction`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcTransaction)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcRefund(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcTransaction_id(ctx, field)
+			case "idempotency_key":
+				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
+			case "merchant_id":
+				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
+			case "acquirer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_acquirer_bank_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_issuer_bank_id(ctx, field)
+			case "card_id":
+				return ec.fieldContext_WalletSvcTransaction_card_id(ctx, field)
+			case "card_network":
+				return ec.fieldContext_WalletSvcTransaction_card_network(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcTransaction_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
+			case "fee":
+				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
+			case "type":
+				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcTransaction_status(ctx, field)
+			case "description":
+				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
+			case "authorization_code":
+				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
+			case "batch_id":
+				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
+			case "metadata":
+				return ec.fieldContext_WalletSvcTransaction_metadata(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcTransaction_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcTransaction_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransaction", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcRefund_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcBlockCard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcBlockCard(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().WalletSvcBlockCard(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcCard); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcCard`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcCard)
+	fc.Result = res
+	return ec.marshalOWalletSvcCard2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcBlockCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcCard_id(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcCard_wallet_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcCard_issuer_bank_id(ctx, field)
+			case "card_number":
+				return ec.fieldContext_WalletSvcCard_card_number(ctx, field)
+			case "holder_name":
+				return ec.fieldContext_WalletSvcCard_holder_name(ctx, field)
+			case "network":
+				return ec.fieldContext_WalletSvcCard_network(ctx, field)
+			case "expiry_month":
+				return ec.fieldContext_WalletSvcCard_expiry_month(ctx, field)
+			case "expiry_year":
+				return ec.fieldContext_WalletSvcCard_expiry_year(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcCard_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcCard_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcCard_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcCard", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcBlockCard_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_walletSvcUnblockCard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_walletSvcUnblockCard(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().WalletSvcUnblockCard(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "MUTATION")
+			if err != nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcCard); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcCard`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcCard)
+	fc.Result = res
+	return ec.marshalOWalletSvcCard2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_walletSvcUnblockCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcCard_id(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcCard_wallet_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcCard_issuer_bank_id(ctx, field)
+			case "card_number":
+				return ec.fieldContext_WalletSvcCard_card_number(ctx, field)
+			case "holder_name":
+				return ec.fieldContext_WalletSvcCard_holder_name(ctx, field)
+			case "network":
+				return ec.fieldContext_WalletSvcCard_network(ctx, field)
+			case "expiry_month":
+				return ec.fieldContext_WalletSvcCard_expiry_month(ctx, field)
+			case "expiry_year":
+				return ec.fieldContext_WalletSvcCard_expiry_year(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcCard_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcCard_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcCard_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcCard", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_walletSvcUnblockCard_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -430064,6 +434937,10 @@ func (ec *executionContext) fieldContext_Query_walletSvcWallet(ctx context.Conte
 				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
 			case "status":
 				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
 			case "version":
 				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
 			case "created_at":
@@ -430162,6 +435039,12 @@ func (ec *executionContext) fieldContext_Query_walletSvcTransaction(ctx context.
 				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
 			case "wallet_id":
 				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
 			case "merchant_id":
 				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
 			case "acquirer_bank_id":
@@ -430178,6 +435061,8 @@ func (ec *executionContext) fieldContext_Query_walletSvcTransaction(ctx context.
 				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
 			case "fee":
 				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
 			case "type":
 				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
 			case "status":
@@ -430186,6 +435071,10 @@ func (ec *executionContext) fieldContext_Query_walletSvcTransaction(ctx context.
 				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
 			case "authorization_code":
 				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
 			case "batch_id":
 				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
 			case "metadata":
@@ -430206,6 +435095,1320 @@ func (ec *executionContext) fieldContext_Query_walletSvcTransaction(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_walletSvcTransaction_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyWallets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyWallets(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyWallets(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WalletSvcWallet)
+	fc.Result = res
+	return ec.marshalNWalletSvcWallet2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWalletᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyWallets(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcWallet_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcWallet_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcWallet_balance(ctx, field)
+			case "frozen_amount":
+				return ec.fieldContext_WalletSvcWallet_frozen_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
+			case "version":
+				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcWallet_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcWallet_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcWallet", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyWallet(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyWallet(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyWallet(rctx, fc.Args["currency"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcWallet)
+	fc.Result = res
+	return ec.marshalOWalletSvcWallet2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWallet(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyWallet(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcWallet_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcWallet_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcWallet_balance(ctx, field)
+			case "frozen_amount":
+				return ec.fieldContext_WalletSvcWallet_frozen_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
+			case "version":
+				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcWallet_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcWallet_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcWallet", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyWallet_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyBalance(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyBalance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyBalance(rctx, fc.Args["wallet_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcBalance)
+	fc.Result = res
+	return ec.marshalOWalletSvcBalance2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBalance(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyBalance(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcBalance_wallet_id(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcBalance_currency(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcBalance_balance(ctx, field)
+			case "held":
+				return ec.fieldContext_WalletSvcBalance_held(ctx, field)
+			case "available":
+				return ec.fieldContext_WalletSvcBalance_available(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcBalance_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcBalance", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyBalance_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyLimits(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyLimits(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyLimits(rctx, fc.Args["wallet_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcLimits)
+	fc.Result = res
+	return ec.marshalOWalletSvcLimits2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLimits(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyLimits(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcLimits_wallet_id(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcLimits_tier(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcLimits_currency(ctx, field)
+			case "limits":
+				return ec.fieldContext_WalletSvcLimits_limits(ctx, field)
+			case "used_today":
+				return ec.fieldContext_WalletSvcLimits_used_today(ctx, field)
+			case "remaining_today":
+				return ec.fieldContext_WalletSvcLimits_remaining_today(ctx, field)
+			case "resets_at":
+				return ec.fieldContext_WalletSvcLimits_resets_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcLimits", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyLimits_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyTransactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyTransactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyTransactions(rctx, fc.Args["wallet_id"].(string), fc.Args["type"].(*string), fc.Args["status"].(*string), fc.Args["from"].(*string), fc.Args["to"].(*string), fc.Args["page"].(*int), fc.Args["page_size"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcTransactionPage)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransactionPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransactionPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_WalletSvcTransactionPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_WalletSvcTransactionPage_total(ctx, field)
+			case "page":
+				return ec.fieldContext_WalletSvcTransactionPage_page(ctx, field)
+			case "page_size":
+				return ec.fieldContext_WalletSvcTransactionPage_page_size(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransactionPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyTransactions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyLedger(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyLedger(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyLedger(rctx, fc.Args["wallet_id"].(string), fc.Args["from"].(*string), fc.Args["to"].(*string), fc.Args["page"].(*int), fc.Args["page_size"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcLedgerPage)
+	fc.Result = res
+	return ec.marshalOWalletSvcLedgerPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLedgerPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyLedger(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_WalletSvcLedgerPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_WalletSvcLedgerPage_total(ctx, field)
+			case "page":
+				return ec.fieldContext_WalletSvcLedgerPage_page(ctx, field)
+			case "page_size":
+				return ec.fieldContext_WalletSvcLedgerPage_page_size(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcLedgerPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyLedger_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyStatement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyStatement(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyStatement(rctx, fc.Args["wallet_id"].(string), fc.Args["from"].(string), fc.Args["to"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcStatement)
+	fc.Result = res
+	return ec.marshalOWalletSvcStatement2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcStatement(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyStatement(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcStatement_wallet_id(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcStatement_currency(ctx, field)
+			case "from":
+				return ec.fieldContext_WalletSvcStatement_from(ctx, field)
+			case "to":
+				return ec.fieldContext_WalletSvcStatement_to(ctx, field)
+			case "opening_balance":
+				return ec.fieldContext_WalletSvcStatement_opening_balance(ctx, field)
+			case "closing_balance":
+				return ec.fieldContext_WalletSvcStatement_closing_balance(ctx, field)
+			case "total_credit":
+				return ec.fieldContext_WalletSvcStatement_total_credit(ctx, field)
+			case "total_debit":
+				return ec.fieldContext_WalletSvcStatement_total_debit(ctx, field)
+			case "net_change":
+				return ec.fieldContext_WalletSvcStatement_net_change(ctx, field)
+			case "credit_count":
+				return ec.fieldContext_WalletSvcStatement_credit_count(ctx, field)
+			case "debit_count":
+				return ec.fieldContext_WalletSvcStatement_debit_count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcStatement", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyStatement_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyCards(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyCards(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyCards(rctx, fc.Args["wallet_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WalletSvcCard)
+	fc.Result = res
+	return ec.marshalNWalletSvcCard2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCardᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyCards(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcCard_id(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcCard_wallet_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcCard_issuer_bank_id(ctx, field)
+			case "card_number":
+				return ec.fieldContext_WalletSvcCard_card_number(ctx, field)
+			case "holder_name":
+				return ec.fieldContext_WalletSvcCard_holder_name(ctx, field)
+			case "network":
+				return ec.fieldContext_WalletSvcCard_network(ctx, field)
+			case "expiry_month":
+				return ec.fieldContext_WalletSvcCard_expiry_month(ctx, field)
+			case "expiry_year":
+				return ec.fieldContext_WalletSvcCard_expiry_year(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcCard_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcCard_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcCard_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcCard", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyCards_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyBankAccounts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyBankAccounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyBankAccounts(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WalletSvcBankAccount)
+	fc.Result = res
+	return ec.marshalNWalletSvcBankAccount2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBankAccountᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyBankAccounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcBankAccount_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcBankAccount_user_id(ctx, field)
+			case "bank_id":
+				return ec.fieldContext_WalletSvcBankAccount_bank_id(ctx, field)
+			case "account_number":
+				return ec.fieldContext_WalletSvcBankAccount_account_number(ctx, field)
+			case "account_name":
+				return ec.fieldContext_WalletSvcBankAccount_account_name(ctx, field)
+			case "is_default":
+				return ec.fieldContext_WalletSvcBankAccount_is_default(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcBankAccount_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcBankAccount_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcBankAccount_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcBankAccount", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcMyPaymentRequests(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcMyPaymentRequests(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WalletSvcMyPaymentRequests(rctx, fc.Args["role"].(*string), fc.Args["status"].(*string), fc.Args["page"].(*int), fc.Args["page_size"].(*int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcPaymentRequestPage)
+	fc.Result = res
+	return ec.marshalOWalletSvcPaymentRequestPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequestPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcMyPaymentRequests(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_WalletSvcPaymentRequestPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_WalletSvcPaymentRequestPage_total(ctx, field)
+			case "page":
+				return ec.fieldContext_WalletSvcPaymentRequestPage_page(ctx, field)
+			case "page_size":
+				return ec.fieldContext_WalletSvcPaymentRequestPage_page_size(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcPaymentRequestPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcMyPaymentRequests_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcUserWallets(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcUserWallets(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().WalletSvcUserWallets(rctx, fc.Args["user_id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal []*model.WalletSvcWallet
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal []*model.WalletSvcWallet
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal []*model.WalletSvcWallet
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.WalletSvcWallet); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcWallet`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WalletSvcWallet)
+	fc.Result = res
+	return ec.marshalNWalletSvcWallet2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWalletᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcUserWallets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcWallet_id(ctx, field)
+			case "user_id":
+				return ec.fieldContext_WalletSvcWallet_user_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcWallet_balance(ctx, field)
+			case "frozen_amount":
+				return ec.fieldContext_WalletSvcWallet_frozen_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcWallet_currency(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcWallet_status(ctx, field)
+			case "tier":
+				return ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+			case "has_pin":
+				return ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
+			case "version":
+				return ec.fieldContext_WalletSvcWallet_version(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcWallet_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcWallet_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcWallet", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcUserWallets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcBalance(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcBalance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().WalletSvcBalance(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcBalance
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.WalletSvcBalance
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcBalance
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcBalance); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcBalance`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcBalance)
+	fc.Result = res
+	return ec.marshalOWalletSvcBalance2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBalance(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcBalance(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcBalance_wallet_id(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcBalance_currency(ctx, field)
+			case "balance":
+				return ec.fieldContext_WalletSvcBalance_balance(ctx, field)
+			case "held":
+				return ec.fieldContext_WalletSvcBalance_held(ctx, field)
+			case "available":
+				return ec.fieldContext_WalletSvcBalance_available(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcBalance_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcBalance", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcBalance_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcTransactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcTransactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().WalletSvcTransactions(rctx, fc.Args["id"].(string), fc.Args["type"].(*string), fc.Args["status"].(*string), fc.Args["from"].(*string), fc.Args["to"].(*string), fc.Args["page"].(*int), fc.Args["page_size"].(*int))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcTransactionPage
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.WalletSvcTransactionPage
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcTransactionPage
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcTransactionPage); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcTransactionPage`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcTransactionPage)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransactionPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransactionPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "items":
+				return ec.fieldContext_WalletSvcTransactionPage_items(ctx, field)
+			case "total":
+				return ec.fieldContext_WalletSvcTransactionPage_total(ctx, field)
+			case "page":
+				return ec.fieldContext_WalletSvcTransactionPage_page(ctx, field)
+			case "page_size":
+				return ec.fieldContext_WalletSvcTransactionPage_page_size(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransactionPage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcTransactions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcStatement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcStatement(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().WalletSvcStatement(rctx, fc.Args["id"].(string), fc.Args["from"].(string), fc.Args["to"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcStatement
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.WalletSvcStatement
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcStatement
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcStatement); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcStatement`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcStatement)
+	fc.Result = res
+	return ec.marshalOWalletSvcStatement2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcStatement(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcStatement(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcStatement_wallet_id(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcStatement_currency(ctx, field)
+			case "from":
+				return ec.fieldContext_WalletSvcStatement_from(ctx, field)
+			case "to":
+				return ec.fieldContext_WalletSvcStatement_to(ctx, field)
+			case "opening_balance":
+				return ec.fieldContext_WalletSvcStatement_opening_balance(ctx, field)
+			case "closing_balance":
+				return ec.fieldContext_WalletSvcStatement_closing_balance(ctx, field)
+			case "total_credit":
+				return ec.fieldContext_WalletSvcStatement_total_credit(ctx, field)
+			case "total_debit":
+				return ec.fieldContext_WalletSvcStatement_total_debit(ctx, field)
+			case "net_change":
+				return ec.fieldContext_WalletSvcStatement_net_change(ctx, field)
+			case "credit_count":
+				return ec.fieldContext_WalletSvcStatement_credit_count(ctx, field)
+			case "debit_count":
+				return ec.fieldContext_WalletSvcStatement_debit_count(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcStatement", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcStatement_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcCard(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcCard(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().WalletSvcCard(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcCard
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcCard); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcCard`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcCard)
+	fc.Result = res
+	return ec.marshalOWalletSvcCard2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCard(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcCard_id(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcCard_wallet_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcCard_issuer_bank_id(ctx, field)
+			case "card_number":
+				return ec.fieldContext_WalletSvcCard_card_number(ctx, field)
+			case "holder_name":
+				return ec.fieldContext_WalletSvcCard_holder_name(ctx, field)
+			case "network":
+				return ec.fieldContext_WalletSvcCard_network(ctx, field)
+			case "expiry_month":
+				return ec.fieldContext_WalletSvcCard_expiry_month(ctx, field)
+			case "expiry_year":
+				return ec.fieldContext_WalletSvcCard_expiry_year(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcCard_status(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcCard_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcCard_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcCard", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcCard_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_walletSvcPaymentRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_walletSvcPaymentRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().WalletSvcPaymentRequest(rctx, fc.Args["id"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			object, err := ec.unmarshalNString2string(ctx, "/graphql/wallet-service")
+			if err != nil {
+				var zeroVal *model.WalletSvcPaymentRequest
+				return zeroVal, err
+			}
+			action, err := ec.unmarshalNString2string(ctx, "QUERY")
+			if err != nil {
+				var zeroVal *model.WalletSvcPaymentRequest
+				return zeroVal, err
+			}
+			if ec.directives.HasPermission == nil {
+				var zeroVal *model.WalletSvcPaymentRequest
+				return zeroVal, errors.New("directive hasPermission is not implemented")
+			}
+			return ec.directives.HasPermission(ctx, nil, directive0, object, action)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WalletSvcPaymentRequest); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.WalletSvcPaymentRequest`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcPaymentRequest)
+	fc.Result = res
+	return ec.marshalOWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_walletSvcPaymentRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcPaymentRequest_id(ctx, field)
+			case "requester_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_user_id(ctx, field)
+			case "requester_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_wallet_id(ctx, field)
+			case "payer_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_user_id(ctx, field)
+			case "payer_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_wallet_id(ctx, field)
+			case "transaction_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_transaction_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcPaymentRequest_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcPaymentRequest_currency(ctx, field)
+			case "note":
+				return ec.fieldContext_WalletSvcPaymentRequest_note(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcPaymentRequest_status(ctx, field)
+			case "expires_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_expires_at(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcPaymentRequest", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_walletSvcPaymentRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -516843,6 +523046,3090 @@ func (ec *executionContext) fieldContext_WalletPocket_updated_at(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _WalletSvcBalance_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBalance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBalance_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBalance_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBalance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBalance_currency(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBalance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBalance_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Currency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBalance_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBalance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBalance_balance(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBalance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBalance_balance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Balance, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBalance_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBalance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBalance_held(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBalance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBalance_held(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Held, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBalance_held(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBalance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBalance_available(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBalance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBalance_available(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Available, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBalance_available(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBalance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBalance_status(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBalance) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBalance_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBalance_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBalance",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_user_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_bank_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_bank_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BankID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_bank_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_account_number(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_account_number(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_account_number(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_account_name(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_account_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_account_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_is_default(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_is_default(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsDefault, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_is_default(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_status(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_created_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcBankAccount_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcBankAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcBankAccount_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcBankAccount_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcBankAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_issuer_bank_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_issuer_bank_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IssuerBankID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_issuer_bank_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_card_number(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_card_number(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CardNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_card_number(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_holder_name(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_holder_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HolderName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_holder_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_network(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_network(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Network, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_network(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_expiry_month(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_expiry_month(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExpiryMonth, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_expiry_month(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_expiry_year(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_expiry_year(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExpiryYear, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_expiry_year(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_status(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_created_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcCard_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcCard) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcCard_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcCard_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcCard",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerEntry_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerEntry_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerEntry_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerEntry_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerEntry_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerEntry_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerEntry_transaction_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerEntry_transaction_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TransactionID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerEntry_transaction_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerEntry_direction(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerEntry_direction(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Direction, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerEntry_direction(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerEntry_amount(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerEntry_amount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Amount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerEntry_amount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerEntry_balance_after(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerEntry_balance_after(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BalanceAfter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerEntry_balance_after(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerEntry_created_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerEntry_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerEntry_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerPage_items(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WalletSvcLedgerEntry)
+	fc.Result = res
+	return ec.marshalOWalletSvcLedgerEntry2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLedgerEntryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcLedgerEntry_id(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcLedgerEntry_wallet_id(ctx, field)
+			case "transaction_id":
+				return ec.fieldContext_WalletSvcLedgerEntry_transaction_id(ctx, field)
+			case "direction":
+				return ec.fieldContext_WalletSvcLedgerEntry_direction(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcLedgerEntry_amount(ctx, field)
+			case "balance_after":
+				return ec.fieldContext_WalletSvcLedgerEntry_balance_after(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcLedgerEntry_created_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcLedgerEntry", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerPage_total(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerPage_page(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerPage_page(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Page, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerPage_page(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLedgerPage_page_size(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLedgerPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLedgerPage_page_size(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLedgerPage_page_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLedgerPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimitPair_per_transaction(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimitPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimitPair_per_transaction(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PerTransaction, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimitPair_per_transaction(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimitPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimitPair_daily(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimitPair) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimitPair_daily(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Daily, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimitPair_daily(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimitPair",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimits_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimits) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimits_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimits_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimits",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimits_tier(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimits) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimits_tier(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimits_tier(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimits",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimits_currency(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimits) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimits_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Currency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimits_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimits",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimits_limits(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimits) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimits_limits(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Limits, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.WalletSvcLimitPair)
+	fc.Result = res
+	return ec.marshalOWalletSvcLimitPair2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLimitPair(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimits_limits(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimits",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "per_transaction":
+				return ec.fieldContext_WalletSvcLimitPair_per_transaction(ctx, field)
+			case "daily":
+				return ec.fieldContext_WalletSvcLimitPair_daily(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcLimitPair", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimits_used_today(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimits) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimits_used_today(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UsedToday, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimits_used_today(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimits",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimits_remaining_today(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimits) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimits_remaining_today(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RemainingToday, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimits_remaining_today(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimits",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcLimits_resets_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcLimits) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcLimits_resets_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ResetsAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcLimits_resets_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcLimits",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_requester_user_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_requester_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RequesterUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_requester_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_requester_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_requester_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RequesterWalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_requester_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_payer_user_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_payer_user_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PayerUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_payer_user_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_payer_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_payer_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PayerWalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_payer_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_transaction_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_transaction_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TransactionID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_transaction_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_amount(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_amount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Amount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_amount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_currency(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Currency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_note(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_note(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Note, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_note(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_status(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_expires_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_expires_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExpiresAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_expires_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_created_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_created_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequest_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequest_updated_at(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequest_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequestPage_items(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequestPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequestPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WalletSvcPaymentRequest)
+	fc.Result = res
+	return ec.marshalOWalletSvcPaymentRequest2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequestᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequestPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequestPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcPaymentRequest_id(ctx, field)
+			case "requester_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_user_id(ctx, field)
+			case "requester_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_requester_wallet_id(ctx, field)
+			case "payer_user_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_user_id(ctx, field)
+			case "payer_wallet_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_payer_wallet_id(ctx, field)
+			case "transaction_id":
+				return ec.fieldContext_WalletSvcPaymentRequest_transaction_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcPaymentRequest_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcPaymentRequest_currency(ctx, field)
+			case "note":
+				return ec.fieldContext_WalletSvcPaymentRequest_note(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcPaymentRequest_status(ctx, field)
+			case "expires_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_expires_at(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcPaymentRequest_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcPaymentRequest", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequestPage_total(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequestPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequestPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequestPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequestPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequestPage_page(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequestPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequestPage_page(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Page, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequestPage_page(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequestPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcPaymentRequestPage_page_size(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcPaymentRequestPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcPaymentRequestPage_page_size(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcPaymentRequestPage_page_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcPaymentRequestPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_currency(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Currency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_from(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_from(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.From, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_from(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_to(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_to(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.To, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_to(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_opening_balance(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_opening_balance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OpeningBalance, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_opening_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_closing_balance(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_closing_balance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClosingBalance, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_closing_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_total_credit(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_total_credit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCredit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_total_credit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_total_debit(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_total_debit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalDebit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_total_debit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_net_change(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_net_change(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NetChange, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_net_change(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_credit_count(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_credit_count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreditCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_credit_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcStatement_debit_count(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcStatement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcStatement_debit_count(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DebitCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcStatement_debit_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcStatement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _WalletSvcTransaction_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_WalletSvcTransaction_id(ctx, field)
 	if err != nil {
@@ -516954,6 +526241,129 @@ func (ec *executionContext) _WalletSvcTransaction_wallet_id(ctx context.Context,
 }
 
 func (ec *executionContext) fieldContext_WalletSvcTransaction_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransaction_counterparty_wallet_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CounterpartyWalletID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransaction_counterparty_wallet_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransaction_bank_account_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BankAccountID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransaction_bank_account_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransaction_reference_id(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReferenceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransaction_reference_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "WalletSvcTransaction",
 		Field:      field,
@@ -517294,6 +526704,47 @@ func (ec *executionContext) fieldContext_WalletSvcTransaction_fee(_ context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _WalletSvcTransaction_refunded_amount(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefundedAmount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransaction_refunded_amount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _WalletSvcTransaction_type(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_WalletSvcTransaction_type(ctx, field)
 	if err != nil {
@@ -517446,6 +526897,88 @@ func (ec *executionContext) _WalletSvcTransaction_authorization_code(ctx context
 }
 
 func (ec *executionContext) fieldContext_WalletSvcTransaction_authorization_code(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransaction_external_ref(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExternalRef, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransaction_external_ref(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransaction_failure_reason(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FailureReason, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransaction_failure_reason(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "WalletSvcTransaction",
 		Field:      field,
@@ -517617,6 +527150,222 @@ func (ec *executionContext) fieldContext_WalletSvcTransaction_updated_at(_ conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransactionPage_items(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransactionPage_items(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Items, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WalletSvcTransaction)
+	fc.Result = res
+	return ec.marshalOWalletSvcTransaction2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransactionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransactionPage_items(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_WalletSvcTransaction_id(ctx, field)
+			case "idempotency_key":
+				return ec.fieldContext_WalletSvcTransaction_idempotency_key(ctx, field)
+			case "wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_wallet_id(ctx, field)
+			case "counterparty_wallet_id":
+				return ec.fieldContext_WalletSvcTransaction_counterparty_wallet_id(ctx, field)
+			case "bank_account_id":
+				return ec.fieldContext_WalletSvcTransaction_bank_account_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_WalletSvcTransaction_reference_id(ctx, field)
+			case "merchant_id":
+				return ec.fieldContext_WalletSvcTransaction_merchant_id(ctx, field)
+			case "acquirer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_acquirer_bank_id(ctx, field)
+			case "issuer_bank_id":
+				return ec.fieldContext_WalletSvcTransaction_issuer_bank_id(ctx, field)
+			case "card_id":
+				return ec.fieldContext_WalletSvcTransaction_card_id(ctx, field)
+			case "card_network":
+				return ec.fieldContext_WalletSvcTransaction_card_network(ctx, field)
+			case "amount":
+				return ec.fieldContext_WalletSvcTransaction_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_WalletSvcTransaction_currency(ctx, field)
+			case "fee":
+				return ec.fieldContext_WalletSvcTransaction_fee(ctx, field)
+			case "refunded_amount":
+				return ec.fieldContext_WalletSvcTransaction_refunded_amount(ctx, field)
+			case "type":
+				return ec.fieldContext_WalletSvcTransaction_type(ctx, field)
+			case "status":
+				return ec.fieldContext_WalletSvcTransaction_status(ctx, field)
+			case "description":
+				return ec.fieldContext_WalletSvcTransaction_description(ctx, field)
+			case "authorization_code":
+				return ec.fieldContext_WalletSvcTransaction_authorization_code(ctx, field)
+			case "external_ref":
+				return ec.fieldContext_WalletSvcTransaction_external_ref(ctx, field)
+			case "failure_reason":
+				return ec.fieldContext_WalletSvcTransaction_failure_reason(ctx, field)
+			case "batch_id":
+				return ec.fieldContext_WalletSvcTransaction_batch_id(ctx, field)
+			case "metadata":
+				return ec.fieldContext_WalletSvcTransaction_metadata(ctx, field)
+			case "created_at":
+				return ec.fieldContext_WalletSvcTransaction_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_WalletSvcTransaction_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WalletSvcTransaction", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransactionPage_total(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransactionPage_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransactionPage_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransactionPage_page(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransactionPage_page(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Page, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransactionPage_page(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcTransactionPage_page_size(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcTransactionPage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcTransactionPage_page_size(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcTransactionPage_page_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcTransactionPage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -517863,6 +527612,88 @@ func (ec *executionContext) fieldContext_WalletSvcWallet_status(_ context.Contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcWallet_tier(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcWallet) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcWallet_tier(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcWallet_tier(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcWallet",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WalletSvcWallet_has_pin(ctx context.Context, field graphql.CollectedField, obj *model.WalletSvcWallet) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WalletSvcWallet_has_pin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HasPin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WalletSvcWallet_has_pin(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WalletSvcWallet",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -564089,6 +573920,86 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_walletSvcProcessSettlement(ctx, field)
 			})
+		case "walletSvcMyCreateWallet":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyCreateWallet(ctx, field)
+			})
+		case "walletSvcMySetPin":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMySetPin(ctx, field)
+			})
+		case "walletSvcMyCloseWallet":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyCloseWallet(ctx, field)
+			})
+		case "walletSvcMyTopUp":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyTopUp(ctx, field)
+			})
+		case "walletSvcMyWithdraw":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyWithdraw(ctx, field)
+			})
+		case "walletSvcMyTransfer":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyTransfer(ctx, field)
+			})
+		case "walletSvcMyPay":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyPay(ctx, field)
+			})
+		case "walletSvcMyLinkBankAccount":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyLinkBankAccount(ctx, field)
+			})
+		case "walletSvcMyRemoveBankAccount":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyRemoveBankAccount(ctx, field)
+			})
+		case "walletSvcMySetDefaultBankAccount":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMySetDefaultBankAccount(ctx, field)
+			})
+		case "walletSvcMyIssueCard":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyIssueCard(ctx, field)
+			})
+		case "walletSvcMyRequestPayment":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyRequestPayment(ctx, field)
+			})
+		case "walletSvcMyPayPaymentRequest":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyPayPaymentRequest(ctx, field)
+			})
+		case "walletSvcMyDeclinePaymentRequest":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyDeclinePaymentRequest(ctx, field)
+			})
+		case "walletSvcMyCancelPaymentRequest":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcMyCancelPaymentRequest(ctx, field)
+			})
+		case "walletSvcUnfreeze":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcUnfreeze(ctx, field)
+			})
+		case "walletSvcChangeTier":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcChangeTier(ctx, field)
+			})
+		case "walletSvcRefund":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcRefund(ctx, field)
+			})
+		case "walletSvcBlockCard":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcBlockCard(ctx, field)
+			})
+		case "walletSvcUnblockCard":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_walletSvcUnblockCard(ctx, field)
+			})
 		case "wishlistCreate":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_wishlistCreate(ctx, field)
@@ -585024,6 +594935,322 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyWallets":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyWallets(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyWallet":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyWallet(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyBalance":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyBalance(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyLimits":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyLimits(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyTransactions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyTransactions(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyLedger":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyLedger(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyStatement":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyStatement(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyCards":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyCards(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyBankAccounts":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyBankAccounts(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcMyPaymentRequests":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcMyPaymentRequests(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcUserWallets":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcUserWallets(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcBalance":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcBalance(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcTransactions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcTransactions(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcStatement":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcStatement(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcCard":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcCard(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "walletSvcPaymentRequest":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_walletSvcPaymentRequest(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "webrtcIceServers":
 			field := field
 
@@ -599505,6 +609732,494 @@ func (ec *executionContext) _WalletPocket(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var walletSvcBalanceImplementors = []string{"WalletSvcBalance"}
+
+func (ec *executionContext) _WalletSvcBalance(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcBalance) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcBalanceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcBalance")
+		case "wallet_id":
+			out.Values[i] = ec._WalletSvcBalance_wallet_id(ctx, field, obj)
+		case "currency":
+			out.Values[i] = ec._WalletSvcBalance_currency(ctx, field, obj)
+		case "balance":
+			out.Values[i] = ec._WalletSvcBalance_balance(ctx, field, obj)
+		case "held":
+			out.Values[i] = ec._WalletSvcBalance_held(ctx, field, obj)
+		case "available":
+			out.Values[i] = ec._WalletSvcBalance_available(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._WalletSvcBalance_status(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcBankAccountImplementors = []string{"WalletSvcBankAccount"}
+
+func (ec *executionContext) _WalletSvcBankAccount(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcBankAccount) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcBankAccountImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcBankAccount")
+		case "id":
+			out.Values[i] = ec._WalletSvcBankAccount_id(ctx, field, obj)
+		case "user_id":
+			out.Values[i] = ec._WalletSvcBankAccount_user_id(ctx, field, obj)
+		case "bank_id":
+			out.Values[i] = ec._WalletSvcBankAccount_bank_id(ctx, field, obj)
+		case "account_number":
+			out.Values[i] = ec._WalletSvcBankAccount_account_number(ctx, field, obj)
+		case "account_name":
+			out.Values[i] = ec._WalletSvcBankAccount_account_name(ctx, field, obj)
+		case "is_default":
+			out.Values[i] = ec._WalletSvcBankAccount_is_default(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._WalletSvcBankAccount_status(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._WalletSvcBankAccount_created_at(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._WalletSvcBankAccount_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcCardImplementors = []string{"WalletSvcCard"}
+
+func (ec *executionContext) _WalletSvcCard(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcCard) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcCardImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcCard")
+		case "id":
+			out.Values[i] = ec._WalletSvcCard_id(ctx, field, obj)
+		case "wallet_id":
+			out.Values[i] = ec._WalletSvcCard_wallet_id(ctx, field, obj)
+		case "issuer_bank_id":
+			out.Values[i] = ec._WalletSvcCard_issuer_bank_id(ctx, field, obj)
+		case "card_number":
+			out.Values[i] = ec._WalletSvcCard_card_number(ctx, field, obj)
+		case "holder_name":
+			out.Values[i] = ec._WalletSvcCard_holder_name(ctx, field, obj)
+		case "network":
+			out.Values[i] = ec._WalletSvcCard_network(ctx, field, obj)
+		case "expiry_month":
+			out.Values[i] = ec._WalletSvcCard_expiry_month(ctx, field, obj)
+		case "expiry_year":
+			out.Values[i] = ec._WalletSvcCard_expiry_year(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._WalletSvcCard_status(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._WalletSvcCard_created_at(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._WalletSvcCard_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcLedgerEntryImplementors = []string{"WalletSvcLedgerEntry"}
+
+func (ec *executionContext) _WalletSvcLedgerEntry(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcLedgerEntry) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcLedgerEntryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcLedgerEntry")
+		case "id":
+			out.Values[i] = ec._WalletSvcLedgerEntry_id(ctx, field, obj)
+		case "wallet_id":
+			out.Values[i] = ec._WalletSvcLedgerEntry_wallet_id(ctx, field, obj)
+		case "transaction_id":
+			out.Values[i] = ec._WalletSvcLedgerEntry_transaction_id(ctx, field, obj)
+		case "direction":
+			out.Values[i] = ec._WalletSvcLedgerEntry_direction(ctx, field, obj)
+		case "amount":
+			out.Values[i] = ec._WalletSvcLedgerEntry_amount(ctx, field, obj)
+		case "balance_after":
+			out.Values[i] = ec._WalletSvcLedgerEntry_balance_after(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._WalletSvcLedgerEntry_created_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcLedgerPageImplementors = []string{"WalletSvcLedgerPage"}
+
+func (ec *executionContext) _WalletSvcLedgerPage(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcLedgerPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcLedgerPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcLedgerPage")
+		case "items":
+			out.Values[i] = ec._WalletSvcLedgerPage_items(ctx, field, obj)
+		case "total":
+			out.Values[i] = ec._WalletSvcLedgerPage_total(ctx, field, obj)
+		case "page":
+			out.Values[i] = ec._WalletSvcLedgerPage_page(ctx, field, obj)
+		case "page_size":
+			out.Values[i] = ec._WalletSvcLedgerPage_page_size(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcLimitPairImplementors = []string{"WalletSvcLimitPair"}
+
+func (ec *executionContext) _WalletSvcLimitPair(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcLimitPair) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcLimitPairImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcLimitPair")
+		case "per_transaction":
+			out.Values[i] = ec._WalletSvcLimitPair_per_transaction(ctx, field, obj)
+		case "daily":
+			out.Values[i] = ec._WalletSvcLimitPair_daily(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcLimitsImplementors = []string{"WalletSvcLimits"}
+
+func (ec *executionContext) _WalletSvcLimits(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcLimits) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcLimitsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcLimits")
+		case "wallet_id":
+			out.Values[i] = ec._WalletSvcLimits_wallet_id(ctx, field, obj)
+		case "tier":
+			out.Values[i] = ec._WalletSvcLimits_tier(ctx, field, obj)
+		case "currency":
+			out.Values[i] = ec._WalletSvcLimits_currency(ctx, field, obj)
+		case "limits":
+			out.Values[i] = ec._WalletSvcLimits_limits(ctx, field, obj)
+		case "used_today":
+			out.Values[i] = ec._WalletSvcLimits_used_today(ctx, field, obj)
+		case "remaining_today":
+			out.Values[i] = ec._WalletSvcLimits_remaining_today(ctx, field, obj)
+		case "resets_at":
+			out.Values[i] = ec._WalletSvcLimits_resets_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcPaymentRequestImplementors = []string{"WalletSvcPaymentRequest"}
+
+func (ec *executionContext) _WalletSvcPaymentRequest(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcPaymentRequest) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcPaymentRequestImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcPaymentRequest")
+		case "id":
+			out.Values[i] = ec._WalletSvcPaymentRequest_id(ctx, field, obj)
+		case "requester_user_id":
+			out.Values[i] = ec._WalletSvcPaymentRequest_requester_user_id(ctx, field, obj)
+		case "requester_wallet_id":
+			out.Values[i] = ec._WalletSvcPaymentRequest_requester_wallet_id(ctx, field, obj)
+		case "payer_user_id":
+			out.Values[i] = ec._WalletSvcPaymentRequest_payer_user_id(ctx, field, obj)
+		case "payer_wallet_id":
+			out.Values[i] = ec._WalletSvcPaymentRequest_payer_wallet_id(ctx, field, obj)
+		case "transaction_id":
+			out.Values[i] = ec._WalletSvcPaymentRequest_transaction_id(ctx, field, obj)
+		case "amount":
+			out.Values[i] = ec._WalletSvcPaymentRequest_amount(ctx, field, obj)
+		case "currency":
+			out.Values[i] = ec._WalletSvcPaymentRequest_currency(ctx, field, obj)
+		case "note":
+			out.Values[i] = ec._WalletSvcPaymentRequest_note(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._WalletSvcPaymentRequest_status(ctx, field, obj)
+		case "expires_at":
+			out.Values[i] = ec._WalletSvcPaymentRequest_expires_at(ctx, field, obj)
+		case "created_at":
+			out.Values[i] = ec._WalletSvcPaymentRequest_created_at(ctx, field, obj)
+		case "updated_at":
+			out.Values[i] = ec._WalletSvcPaymentRequest_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcPaymentRequestPageImplementors = []string{"WalletSvcPaymentRequestPage"}
+
+func (ec *executionContext) _WalletSvcPaymentRequestPage(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcPaymentRequestPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcPaymentRequestPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcPaymentRequestPage")
+		case "items":
+			out.Values[i] = ec._WalletSvcPaymentRequestPage_items(ctx, field, obj)
+		case "total":
+			out.Values[i] = ec._WalletSvcPaymentRequestPage_total(ctx, field, obj)
+		case "page":
+			out.Values[i] = ec._WalletSvcPaymentRequestPage_page(ctx, field, obj)
+		case "page_size":
+			out.Values[i] = ec._WalletSvcPaymentRequestPage_page_size(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcStatementImplementors = []string{"WalletSvcStatement"}
+
+func (ec *executionContext) _WalletSvcStatement(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcStatement) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcStatementImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcStatement")
+		case "wallet_id":
+			out.Values[i] = ec._WalletSvcStatement_wallet_id(ctx, field, obj)
+		case "currency":
+			out.Values[i] = ec._WalletSvcStatement_currency(ctx, field, obj)
+		case "from":
+			out.Values[i] = ec._WalletSvcStatement_from(ctx, field, obj)
+		case "to":
+			out.Values[i] = ec._WalletSvcStatement_to(ctx, field, obj)
+		case "opening_balance":
+			out.Values[i] = ec._WalletSvcStatement_opening_balance(ctx, field, obj)
+		case "closing_balance":
+			out.Values[i] = ec._WalletSvcStatement_closing_balance(ctx, field, obj)
+		case "total_credit":
+			out.Values[i] = ec._WalletSvcStatement_total_credit(ctx, field, obj)
+		case "total_debit":
+			out.Values[i] = ec._WalletSvcStatement_total_debit(ctx, field, obj)
+		case "net_change":
+			out.Values[i] = ec._WalletSvcStatement_net_change(ctx, field, obj)
+		case "credit_count":
+			out.Values[i] = ec._WalletSvcStatement_credit_count(ctx, field, obj)
+		case "debit_count":
+			out.Values[i] = ec._WalletSvcStatement_debit_count(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var walletSvcTransactionImplementors = []string{"WalletSvcTransaction"}
 
 func (ec *executionContext) _WalletSvcTransaction(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcTransaction) graphql.Marshaler {
@@ -599522,6 +610237,12 @@ func (ec *executionContext) _WalletSvcTransaction(ctx context.Context, sel ast.S
 			out.Values[i] = ec._WalletSvcTransaction_idempotency_key(ctx, field, obj)
 		case "wallet_id":
 			out.Values[i] = ec._WalletSvcTransaction_wallet_id(ctx, field, obj)
+		case "counterparty_wallet_id":
+			out.Values[i] = ec._WalletSvcTransaction_counterparty_wallet_id(ctx, field, obj)
+		case "bank_account_id":
+			out.Values[i] = ec._WalletSvcTransaction_bank_account_id(ctx, field, obj)
+		case "reference_id":
+			out.Values[i] = ec._WalletSvcTransaction_reference_id(ctx, field, obj)
 		case "merchant_id":
 			out.Values[i] = ec._WalletSvcTransaction_merchant_id(ctx, field, obj)
 		case "acquirer_bank_id":
@@ -599538,6 +610259,8 @@ func (ec *executionContext) _WalletSvcTransaction(ctx context.Context, sel ast.S
 			out.Values[i] = ec._WalletSvcTransaction_currency(ctx, field, obj)
 		case "fee":
 			out.Values[i] = ec._WalletSvcTransaction_fee(ctx, field, obj)
+		case "refunded_amount":
+			out.Values[i] = ec._WalletSvcTransaction_refunded_amount(ctx, field, obj)
 		case "type":
 			out.Values[i] = ec._WalletSvcTransaction_type(ctx, field, obj)
 		case "status":
@@ -599546,6 +610269,10 @@ func (ec *executionContext) _WalletSvcTransaction(ctx context.Context, sel ast.S
 			out.Values[i] = ec._WalletSvcTransaction_description(ctx, field, obj)
 		case "authorization_code":
 			out.Values[i] = ec._WalletSvcTransaction_authorization_code(ctx, field, obj)
+		case "external_ref":
+			out.Values[i] = ec._WalletSvcTransaction_external_ref(ctx, field, obj)
+		case "failure_reason":
+			out.Values[i] = ec._WalletSvcTransaction_failure_reason(ctx, field, obj)
 		case "batch_id":
 			out.Values[i] = ec._WalletSvcTransaction_batch_id(ctx, field, obj)
 		case "metadata":
@@ -599554,6 +610281,48 @@ func (ec *executionContext) _WalletSvcTransaction(ctx context.Context, sel ast.S
 			out.Values[i] = ec._WalletSvcTransaction_created_at(ctx, field, obj)
 		case "updated_at":
 			out.Values[i] = ec._WalletSvcTransaction_updated_at(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var walletSvcTransactionPageImplementors = []string{"WalletSvcTransactionPage"}
+
+func (ec *executionContext) _WalletSvcTransactionPage(ctx context.Context, sel ast.SelectionSet, obj *model.WalletSvcTransactionPage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, walletSvcTransactionPageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WalletSvcTransactionPage")
+		case "items":
+			out.Values[i] = ec._WalletSvcTransactionPage_items(ctx, field, obj)
+		case "total":
+			out.Values[i] = ec._WalletSvcTransactionPage_total(ctx, field, obj)
+		case "page":
+			out.Values[i] = ec._WalletSvcTransactionPage_page(ctx, field, obj)
+		case "page_size":
+			out.Values[i] = ec._WalletSvcTransactionPage_page_size(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -599600,6 +610369,10 @@ func (ec *executionContext) _WalletSvcWallet(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._WalletSvcWallet_currency(ctx, field, obj)
 		case "status":
 			out.Values[i] = ec._WalletSvcWallet_status(ctx, field, obj)
+		case "tier":
+			out.Values[i] = ec._WalletSvcWallet_tier(ctx, field, obj)
+		case "has_pin":
+			out.Values[i] = ec._WalletSvcWallet_has_pin(ctx, field, obj)
 		case "version":
 			out.Values[i] = ec._WalletSvcWallet_version(ctx, field, obj)
 		case "created_at":
@@ -612075,6 +622848,198 @@ func (ec *executionContext) marshalNWalletPocket2ᚖgithubᚗcomᚋJIeeiroSstᚋ
 		return graphql.Null
 	}
 	return ec._WalletPocket(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWalletSvcBankAccount2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBankAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WalletSvcBankAccount) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWalletSvcBankAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBankAccount(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNWalletSvcBankAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBankAccount(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcBankAccount) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WalletSvcBankAccount(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWalletSvcCard2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCardᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WalletSvcCard) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWalletSvcCard2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCard(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNWalletSvcCard2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCard(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcCard) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WalletSvcCard(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWalletSvcLedgerEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLedgerEntry(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcLedgerEntry) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WalletSvcLedgerEntry(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcPaymentRequest) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WalletSvcPaymentRequest(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcTransaction) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WalletSvcTransaction(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWalletSvcWallet2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWalletᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WalletSvcWallet) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWalletSvcWallet2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWallet(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNWalletSvcWallet2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWallet(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcWallet) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WalletSvcWallet(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNWalletTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletTransaction(ctx context.Context, sel ast.SelectionSet, v *model.WalletTransaction) graphql.Marshaler {
@@ -630664,11 +641629,222 @@ func (ec *executionContext) marshalOWalletPocket2ᚖgithubᚗcomᚋJIeeiroSstᚋ
 	return ec._WalletPocket(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOWalletSvcBalance2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBalance(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcBalance) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcBalance(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcBankAccount2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcBankAccount(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcBankAccount) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcBankAccount(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcCard2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcCard(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcCard) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcCard(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcLedgerEntry2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLedgerEntryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WalletSvcLedgerEntry) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWalletSvcLedgerEntry2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLedgerEntry(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOWalletSvcLedgerPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLedgerPage(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcLedgerPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcLedgerPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcLimitPair2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLimitPair(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcLimitPair) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcLimitPair(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcLimits2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcLimits(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcLimits) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcLimits(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcPaymentRequest2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequestᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WalletSvcPaymentRequest) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOWalletSvcPaymentRequest2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequest(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcPaymentRequest) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcPaymentRequest(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcPaymentRequestPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcPaymentRequestPage(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcPaymentRequestPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcPaymentRequestPage(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcStatement2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcStatement(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcStatement) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcStatement(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcTransaction2ᚕᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WalletSvcTransaction) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalOWalletSvcTransaction2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransaction(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcTransaction) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._WalletSvcTransaction(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWalletSvcTransactionPage2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcTransactionPage(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcTransactionPage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WalletSvcTransactionPage(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOWalletSvcWallet2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐWalletSvcWallet(ctx context.Context, sel ast.SelectionSet, v *model.WalletSvcWallet) graphql.Marshaler {

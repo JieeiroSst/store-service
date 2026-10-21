@@ -790,3 +790,11 @@ spec:
         helm:
           name: foodService.image.name
           tag: foodService.image.tag
+  - namePattern: wallet-service-dev
+    images:
+    - alias: walletService
+      imageName: localhost:5000/wallet-service
+      manifestTargets:
+        helm:
+          name: walletService.image.name
+          tag: walletService.image.tag

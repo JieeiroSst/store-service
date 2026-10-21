@@ -1,0 +1,11 @@
+.git
+.env
+.vscode
+.idea
+*.md
+Dockerfile
+.dockerignore
+Makefile
+docker-compose.yml
+bin
+**/*_test.go

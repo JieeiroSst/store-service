@@ -1,0 +1,186 @@
+# Base values: what `helm install` of the umbrella chart runs on a local
+# cluster. Environment overlays (values-dev.yaml, values-staging.yaml,
+# values-prod.yaml) are layered on top by Argo CD - see deploy/argocd.
+
+global:
+  environment: local
+
+walletService:
+  name: wallet-service
+  replicas: 1
+
+  image:
+    name: ghcr.io/jieeirosst/wallet-service
+    tag: latest
+    # Set to a sha256 digest to pin the exact scanned image (wins over tag).
+    digest: ""
+    pullPolicy: IfNotPresent
+    port: 8080
+
+  imagePullSecrets: []
+
+  # Internal only: gateway-api calls it through wallet-service-svc.
+  service:
+    name: wallet-service-svc
+    type: ClusterIP
+    port: 80
+
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    host: wallet-service.local
+    path: /
+    pathType: Prefix
+    tls:
+      enabled: false
+      secretName: ""
+
+  # The service reads its config from Consul KV `consul.key` (seeded from
+  # files/consul.json). The postgres chart provisions the wallet_service
+  # database and role, patches database.user/password into that key and
+  # creates `credentialsSecret`; the env vars below take precedence over Consul.
+  consul:
+    addr: http://consul-service
+    key: wallet-service
+  credentialsSecret: wallet-service-db-credentials
+  # Inserts demo banks and merchants (migrations/seed) on startup.
+  seedDevData: false
+
+  envFile:
+    enabled: true
+    mountPath: /app/.env
+    content: |
+      HostConsul="{{ .Values.walletService.consul.addr }}"
+      KeyConsul="{{ .Values.walletService.consul.key }}"
+      ServiceConsul="consul"
+
+  # Rendered through `tpl`, so values may reference other values.
+  containerEnv:
+    - name: SERVER_PORT
+      value: "{{ .Values.walletService.image.port }}"
+    - name: DATABASE_USER
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.walletService.credentialsSecret }}"
+          key: POSTGRES_USER
+    - name: DATABASE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.walletService.credentialsSecret }}"
+          key: POSTGRES_PASSWORD
+    - name: DATABASE_SEED_DEV_DATA
+      value: "true"
+      when: "{{ if .Values.walletService.seedDevData }}true{{ end }}"
+
+  probes:
+    # Migrations run before the server listens; give them time on first boot.
+    startup:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 5
+      failureThreshold: 36
+    readiness:
+      httpGet:
+        path: /health/ready
+        port: http
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 20
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 0
+  revisionHistoryLimit: 5
+  terminationGracePeriodSeconds: 30
+  preStopSleepSeconds: 5
+
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+    automountToken: false
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+    seccompProfile:
+      type: RuntimeDefault
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+
+  podAnnotations: {}
+  podLabels: {}
+
+  # Labels the platform chart's shared NetworkPolicies select on.
+  networkLabels:
+    consulClient: true
+
+  priorityClassName: ""
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  topologySpread:
+    enabled: false
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+  pdb:
+    enabled: false
+    maxUnavailable: 1
+
+  networkPolicy:
+    enabled: false
+    allowFromApps: []
+    allowToApps: []
+    ingress: []
+    egress: []
+
+  # The service has no /metrics endpoint yet; flip on once it does.
+  metrics:
+    enabled: false
+    path: /metrics
+    port: ""
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+
+  externalSecret:
+    enabled: false
+    targetName: wallet-service-db-credentials
+    refreshInterval: 1h
+    secretStoreRef:
+      kind: SecretStore
+      name: store-secrets
+    data: []
+
+  consulSeed:
+    image: curlimages/curl:8.10.1
+    enabled: true
+    key: wallet-service

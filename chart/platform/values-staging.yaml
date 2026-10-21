@@ -31,6 +31,7 @@ secretStore:
       - book-service-db-credentials
       - call-center-ai-db-credentials
       - ai-agent-system-db-credentials
+      - wallet-service-db-credentials
 infraAliases:
   namespace: default
   services:

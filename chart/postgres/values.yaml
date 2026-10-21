@@ -155,6 +155,15 @@ postgres:
       consulKey: ejabberd_service
       userField: .postgres.user
       passwordField: .postgres.password
+    # wallet-service reads Consul key wallet-service (database.user /
+    # database.password are patched there) and, taking precedence,
+    # DATABASE_USER / DATABASE_PASSWORD from wallet-service-db-credentials.
+    - name: wallet-service
+      database: wallet_service
+      role: wallet_service_svc
+      consulKey: wallet-service
+      userField: .database.user
+      passwordField: .database.password
     # lucky-service reads DB_USER / DB_PASSWORD from
     # lucky-service-db-credentials; it has no Consul key, so the KV patch
     # step is skipped.

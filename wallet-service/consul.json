@@ -1,0 +1,45 @@
+{
+    "server": {
+        "port": "8080",
+        "read_timeout": 30,
+        "write_timeout": 30,
+        "shutdown_timeout": 15,
+        "rate_limit_capacity": 100,
+        "rate_limit_per_sec": 50
+    },
+    "database": {
+        "host": "postgresdb",
+        "port": "80",
+        "user": "wallet_service_svc",
+        "password": "",
+        "name": "wallet_service",
+        "sslmode": "disable",
+        "max_open_conns": 25,
+        "max_idle_conns": 10,
+        "conn_max_lifetime": 300,
+        "auto_migrate": true,
+        "seed_dev_data": false
+    },
+    "redis": {
+        "addr": "redis-svc:80",
+        "password": "",
+        "db": 0
+    },
+    "log": {
+        "level": "info"
+    },
+    "fees": {
+        "withdrawal_rate": "0.005",
+        "withdrawal_min_usd": "0.5",
+        "transfer_rate": "0"
+    },
+    "security": {
+        "pin_bcrypt_cost": 10
+    },
+    "payment_requests": {
+        "ttl_hours": 168
+    },
+    "bank_gateway": {
+        "decline_above": "0"
+    }
+}

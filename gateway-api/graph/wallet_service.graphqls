@@ -5,6 +5,8 @@ type WalletSvcWallet {
   frozen_amount: String
   currency: String
   status: String
+  tier: String
+  has_pin: Boolean
   version: Int
   created_at: String
   updated_at: String
@@ -14,6 +16,9 @@ type WalletSvcTransaction {
   id: String
   idempotency_key: String
   wallet_id: String
+  counterparty_wallet_id: String
+  bank_account_id: String
+  reference_id: String
   merchant_id: String
   acquirer_bank_id: String
   issuer_bank_id: String
@@ -22,19 +27,149 @@ type WalletSvcTransaction {
   amount: String
   currency: String
   fee: String
+  refunded_amount: String
   type: String
   status: String
   description: String
   authorization_code: String
+  external_ref: String
+  failure_reason: String
   batch_id: String
   metadata: Map
   created_at: String
   updated_at: String
 }
 
+type WalletSvcBalance {
+  wallet_id: String
+  currency: String
+  balance: String
+  held: String
+  available: String
+  status: String
+}
+
+type WalletSvcLimitPair {
+  per_transaction: String
+  daily: String
+}
+
+type WalletSvcLimits {
+  wallet_id: String
+  tier: String
+  currency: String
+  limits: WalletSvcLimitPair
+  used_today: String
+  remaining_today: String
+  resets_at: String
+}
+
+type WalletSvcLedgerEntry {
+  id: String
+  wallet_id: String
+  transaction_id: String
+  direction: String
+  amount: String
+  balance_after: String
+  created_at: String
+}
+
+type WalletSvcStatement {
+  wallet_id: String
+  currency: String
+  from: String
+  to: String
+  opening_balance: String
+  closing_balance: String
+  total_credit: String
+  total_debit: String
+  net_change: String
+  credit_count: Int
+  debit_count: Int
+}
+
+type WalletSvcCard {
+  id: String
+  wallet_id: String
+  issuer_bank_id: String
+  card_number: String
+  holder_name: String
+  network: String
+  expiry_month: Int
+  expiry_year: Int
+  status: String
+  created_at: String
+  updated_at: String
+}
+
+type WalletSvcBankAccount {
+  id: String
+  user_id: String
+  bank_id: String
+  account_number: String
+  account_name: String
+  is_default: Boolean
+  status: String
+  created_at: String
+  updated_at: String
+}
+
+type WalletSvcPaymentRequest {
+  id: String
+  requester_user_id: String
+  requester_wallet_id: String
+  payer_user_id: String
+  payer_wallet_id: String
+  transaction_id: String
+  amount: String
+  currency: String
+  note: String
+  status: String
+  expires_at: String
+  created_at: String
+  updated_at: String
+}
+
+type WalletSvcTransactionPage {
+  items: [WalletSvcTransaction!]
+  total: Int
+  page: Int
+  page_size: Int
+}
+
+type WalletSvcLedgerPage {
+  items: [WalletSvcLedgerEntry!]
+  total: Int
+  page: Int
+  page_size: Int
+}
+
+type WalletSvcPaymentRequestPage {
+  items: [WalletSvcPaymentRequest!]
+  total: Int
+  page: Int
+  page_size: Int
+}
+
 extend type Query {
   walletSvcWallet(id: String!): WalletSvcWallet @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/wallets/{id}")
   walletSvcTransaction(id: String!): WalletSvcTransaction @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/transactions/{id}")
+  walletSvcMyWallets: [WalletSvcWallet!]! @rest(service: "wallet-service", path: "/api/v1/users/{$userId}/wallets", unwrap: "items")
+  walletSvcMyWallet(currency: String!): WalletSvcWallet @rest(service: "wallet-service", path: "/api/v1/users/{$userId}/wallets/{currency}")
+  walletSvcMyBalance(wallet_id: String!): WalletSvcBalance @rest(service: "wallet-service", path: "/api/v1/wallets/{wallet_id}/balance", owner: "user_id", ownerPath: "/api/v1/wallets/{wallet_id}")
+  walletSvcMyLimits(wallet_id: String!): WalletSvcLimits @rest(service: "wallet-service", path: "/api/v1/wallets/{wallet_id}/limits", owner: "user_id", ownerPath: "/api/v1/wallets/{wallet_id}")
+  walletSvcMyTransactions(wallet_id: String!, type: String, status: String, from: String, to: String, page: Int, page_size: Int): WalletSvcTransactionPage @rest(service: "wallet-service", path: "/api/v1/wallets/{wallet_id}/transactions", owner: "user_id", ownerPath: "/api/v1/wallets/{wallet_id}")
+  walletSvcMyLedger(wallet_id: String!, from: String, to: String, page: Int, page_size: Int): WalletSvcLedgerPage @rest(service: "wallet-service", path: "/api/v1/wallets/{wallet_id}/ledger", owner: "user_id", ownerPath: "/api/v1/wallets/{wallet_id}")
+  walletSvcMyStatement(wallet_id: String!, from: String!, to: String!): WalletSvcStatement @rest(service: "wallet-service", path: "/api/v1/wallets/{wallet_id}/statement", owner: "user_id", ownerPath: "/api/v1/wallets/{wallet_id}")
+  walletSvcMyCards(wallet_id: String!): [WalletSvcCard!]! @rest(service: "wallet-service", path: "/api/v1/wallets/{wallet_id}/cards", unwrap: "items", owner: "user_id", ownerPath: "/api/v1/wallets/{wallet_id}")
+  walletSvcMyBankAccounts: [WalletSvcBankAccount!]! @rest(service: "wallet-service", path: "/api/v1/users/{$userId}/bank-accounts", unwrap: "items")
+  walletSvcMyPaymentRequests(role: String, status: String, page: Int, page_size: Int): WalletSvcPaymentRequestPage @rest(service: "wallet-service", path: "/api/v1/users/{$userId}/payment-requests")
+  walletSvcUserWallets(user_id: String!): [WalletSvcWallet!]! @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/users/{user_id}/wallets", unwrap: "items")
+  walletSvcBalance(id: String!): WalletSvcBalance @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/wallets/{id}/balance")
+  walletSvcTransactions(id: String!, type: String, status: String, from: String, to: String, page: Int, page_size: Int): WalletSvcTransactionPage @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/wallets/{id}/transactions")
+  walletSvcStatement(id: String!, from: String!, to: String!): WalletSvcStatement @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/wallets/{id}/statement")
+  walletSvcCard(id: String!): WalletSvcCard @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/cards/{id}")
+  walletSvcPaymentRequest(id: String!): WalletSvcPaymentRequest @hasPermission(object: "/graphql/wallet-service", action: "QUERY") @rest(service: "wallet-service", path: "/api/v1/payment-requests/{id}")
 }
 
 extend type Mutation {
@@ -47,4 +182,24 @@ extend type Mutation {
   walletSvcCreateSettlementBatch(merchant_id: String!): Any @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "POST", path: "/api/v1/settlements/batches")
   walletSvcProcessClearing(batch_id: String!): Any @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "POST", path: "/api/v1/settlements/batches/{batch_id}/clear")
   walletSvcProcessSettlement(batch_id: String!): Any @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "POST", path: "/api/v1/settlements/batches/{batch_id}/settle")
+  walletSvcMyCreateWallet(currency: String!): WalletSvcWallet @rest(service: "wallet-service", method: "POST", path: "/api/v1/wallets", userField: "user_id")
+  walletSvcMySetPin(wallet_id: String!, current_pin: String, new_pin: String!): Any @rest(service: "wallet-service", method: "PUT", path: "/api/v1/wallets/{wallet_id}/pin", userField: "user_id")
+  walletSvcMyCloseWallet(wallet_id: String!): WalletSvcWallet @rest(service: "wallet-service", method: "POST", path: "/api/v1/wallets/{wallet_id}/close", userField: "user_id")
+  walletSvcMyTopUp(wallet_id: String!, bank_account_id: String!, amount: String!, description: String, idempotency_key: String!): WalletSvcTransaction @rest(service: "wallet-service", method: "POST", path: "/api/v1/wallets/{wallet_id}/topup", userField: "user_id", headerArgs: "idempotency_key:Idempotency-Key")
+  walletSvcMyWithdraw(wallet_id: String!, bank_account_id: String!, amount: String!, pin: String!, description: String, idempotency_key: String!): WalletSvcTransaction @rest(service: "wallet-service", method: "POST", path: "/api/v1/wallets/{wallet_id}/withdraw", userField: "user_id", headerArgs: "idempotency_key:Idempotency-Key")
+  walletSvcMyTransfer(from_wallet_id: String!, to_wallet_id: String, to_user_id: String, amount: String!, pin: String!, description: String, idempotency_key: String!): WalletSvcTransaction @rest(service: "wallet-service", method: "POST", path: "/api/v1/transfers", userField: "user_id", headerArgs: "idempotency_key:Idempotency-Key")
+  walletSvcMyPay(wallet_id: String!, merchant_id: String!, amount: String!, pin: String!, description: String, metadata: Map, idempotency_key: String!): WalletSvcTransaction @rest(service: "wallet-service", method: "POST", path: "/api/v1/payments", userField: "user_id", headerArgs: "idempotency_key:Idempotency-Key")
+  walletSvcMyLinkBankAccount(bank_id: String!, account_number: String!, account_name: String!): WalletSvcBankAccount @rest(service: "wallet-service", method: "POST", path: "/api/v1/users/{$userId}/bank-accounts")
+  walletSvcMyRemoveBankAccount(account_id: String!): Any @rest(service: "wallet-service", method: "DELETE", path: "/api/v1/users/{$userId}/bank-accounts/{account_id}")
+  walletSvcMySetDefaultBankAccount(account_id: String!): WalletSvcBankAccount @rest(service: "wallet-service", method: "POST", path: "/api/v1/users/{$userId}/bank-accounts/{account_id}/default")
+  walletSvcMyIssueCard(wallet_id: String!, issuer_bank_id: String!, network: String!, holder_name: String!): WalletSvcCard @rest(service: "wallet-service", method: "POST", path: "/api/v1/wallets/{wallet_id}/cards", owner: "user_id", ownerPath: "/api/v1/wallets/{wallet_id}")
+  walletSvcMyRequestPayment(wallet_id: String!, payer_user_id: String!, amount: String!, note: String): WalletSvcPaymentRequest @rest(service: "wallet-service", method: "POST", path: "/api/v1/payment-requests", userField: "user_id")
+  walletSvcMyPayPaymentRequest(id: String!, wallet_id: String!, pin: String!): WalletSvcPaymentRequest @rest(service: "wallet-service", method: "POST", path: "/api/v1/payment-requests/{id}/pay", userField: "user_id")
+  walletSvcMyDeclinePaymentRequest(id: String!): WalletSvcPaymentRequest @rest(service: "wallet-service", method: "POST", path: "/api/v1/payment-requests/{id}/decline", userField: "user_id")
+  walletSvcMyCancelPaymentRequest(id: String!): WalletSvcPaymentRequest @rest(service: "wallet-service", method: "POST", path: "/api/v1/payment-requests/{id}/cancel", userField: "user_id")
+  walletSvcUnfreeze(id: String!): Any @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "POST", path: "/api/v1/wallets/{id}/unfreeze")
+  walletSvcChangeTier(id: String!, tier: String!): WalletSvcWallet @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "PUT", path: "/api/v1/wallets/{id}/tier")
+  walletSvcRefund(id: String!, amount: String, reason: String, idempotency_key: String!): WalletSvcTransaction @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "POST", path: "/api/v1/transactions/{id}/refund", headerArgs: "idempotency_key:Idempotency-Key")
+  walletSvcBlockCard(id: String!): WalletSvcCard @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "POST", path: "/api/v1/cards/{id}/block")
+  walletSvcUnblockCard(id: String!): WalletSvcCard @hasPermission(object: "/graphql/wallet-service", action: "MUTATION") @rest(service: "wallet-service", method: "POST", path: "/api/v1/cards/{id}/unblock")
 }

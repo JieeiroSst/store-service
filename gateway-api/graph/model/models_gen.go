@@ -9746,26 +9746,143 @@ type WalletPocket struct {
 	UpdatedAt *string `json:"updated_at,omitempty"`
 }
 
+type WalletSvcBalance struct {
+	WalletID  *string `json:"wallet_id,omitempty"`
+	Currency  *string `json:"currency,omitempty"`
+	Balance   *string `json:"balance,omitempty"`
+	Held      *string `json:"held,omitempty"`
+	Available *string `json:"available,omitempty"`
+	Status    *string `json:"status,omitempty"`
+}
+
+type WalletSvcBankAccount struct {
+	ID            *string `json:"id,omitempty"`
+	UserID        *string `json:"user_id,omitempty"`
+	BankID        *string `json:"bank_id,omitempty"`
+	AccountNumber *string `json:"account_number,omitempty"`
+	AccountName   *string `json:"account_name,omitempty"`
+	IsDefault     *bool   `json:"is_default,omitempty"`
+	Status        *string `json:"status,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+	UpdatedAt     *string `json:"updated_at,omitempty"`
+}
+
+type WalletSvcCard struct {
+	ID           *string `json:"id,omitempty"`
+	WalletID     *string `json:"wallet_id,omitempty"`
+	IssuerBankID *string `json:"issuer_bank_id,omitempty"`
+	CardNumber   *string `json:"card_number,omitempty"`
+	HolderName   *string `json:"holder_name,omitempty"`
+	Network      *string `json:"network,omitempty"`
+	ExpiryMonth  *int    `json:"expiry_month,omitempty"`
+	ExpiryYear   *int    `json:"expiry_year,omitempty"`
+	Status       *string `json:"status,omitempty"`
+	CreatedAt    *string `json:"created_at,omitempty"`
+	UpdatedAt    *string `json:"updated_at,omitempty"`
+}
+
+type WalletSvcLedgerEntry struct {
+	ID            *string `json:"id,omitempty"`
+	WalletID      *string `json:"wallet_id,omitempty"`
+	TransactionID *string `json:"transaction_id,omitempty"`
+	Direction     *string `json:"direction,omitempty"`
+	Amount        *string `json:"amount,omitempty"`
+	BalanceAfter  *string `json:"balance_after,omitempty"`
+	CreatedAt     *string `json:"created_at,omitempty"`
+}
+
+type WalletSvcLedgerPage struct {
+	Items    []*WalletSvcLedgerEntry `json:"items,omitempty"`
+	Total    *int                    `json:"total,omitempty"`
+	Page     *int                    `json:"page,omitempty"`
+	PageSize *int                    `json:"page_size,omitempty"`
+}
+
+type WalletSvcLimitPair struct {
+	PerTransaction *string `json:"per_transaction,omitempty"`
+	Daily          *string `json:"daily,omitempty"`
+}
+
+type WalletSvcLimits struct {
+	WalletID       *string             `json:"wallet_id,omitempty"`
+	Tier           *string             `json:"tier,omitempty"`
+	Currency       *string             `json:"currency,omitempty"`
+	Limits         *WalletSvcLimitPair `json:"limits,omitempty"`
+	UsedToday      *string             `json:"used_today,omitempty"`
+	RemainingToday *string             `json:"remaining_today,omitempty"`
+	ResetsAt       *string             `json:"resets_at,omitempty"`
+}
+
+type WalletSvcPaymentRequest struct {
+	ID                *string `json:"id,omitempty"`
+	RequesterUserID   *string `json:"requester_user_id,omitempty"`
+	RequesterWalletID *string `json:"requester_wallet_id,omitempty"`
+	PayerUserID       *string `json:"payer_user_id,omitempty"`
+	PayerWalletID     *string `json:"payer_wallet_id,omitempty"`
+	TransactionID     *string `json:"transaction_id,omitempty"`
+	Amount            *string `json:"amount,omitempty"`
+	Currency          *string `json:"currency,omitempty"`
+	Note              *string `json:"note,omitempty"`
+	Status            *string `json:"status,omitempty"`
+	ExpiresAt         *string `json:"expires_at,omitempty"`
+	CreatedAt         *string `json:"created_at,omitempty"`
+	UpdatedAt         *string `json:"updated_at,omitempty"`
+}
+
+type WalletSvcPaymentRequestPage struct {
+	Items    []*WalletSvcPaymentRequest `json:"items,omitempty"`
+	Total    *int                       `json:"total,omitempty"`
+	Page     *int                       `json:"page,omitempty"`
+	PageSize *int                       `json:"page_size,omitempty"`
+}
+
+type WalletSvcStatement struct {
+	WalletID       *string `json:"wallet_id,omitempty"`
+	Currency       *string `json:"currency,omitempty"`
+	From           *string `json:"from,omitempty"`
+	To             *string `json:"to,omitempty"`
+	OpeningBalance *string `json:"opening_balance,omitempty"`
+	ClosingBalance *string `json:"closing_balance,omitempty"`
+	TotalCredit    *string `json:"total_credit,omitempty"`
+	TotalDebit     *string `json:"total_debit,omitempty"`
+	NetChange      *string `json:"net_change,omitempty"`
+	CreditCount    *int    `json:"credit_count,omitempty"`
+	DebitCount     *int    `json:"debit_count,omitempty"`
+}
+
 type WalletSvcTransaction struct {
-	ID                *string        `json:"id,omitempty"`
-	IdempotencyKey    *string        `json:"idempotency_key,omitempty"`
-	WalletID          *string        `json:"wallet_id,omitempty"`
-	MerchantID        *string        `json:"merchant_id,omitempty"`
-	AcquirerBankID    *string        `json:"acquirer_bank_id,omitempty"`
-	IssuerBankID      *string        `json:"issuer_bank_id,omitempty"`
-	CardID            *string        `json:"card_id,omitempty"`
-	CardNetwork       *string        `json:"card_network,omitempty"`
-	Amount            *string        `json:"amount,omitempty"`
-	Currency          *string        `json:"currency,omitempty"`
-	Fee               *string        `json:"fee,omitempty"`
-	Type              *string        `json:"type,omitempty"`
-	Status            *string        `json:"status,omitempty"`
-	Description       *string        `json:"description,omitempty"`
-	AuthorizationCode *string        `json:"authorization_code,omitempty"`
-	BatchID           *string        `json:"batch_id,omitempty"`
-	Metadata          map[string]any `json:"metadata,omitempty"`
-	CreatedAt         *string        `json:"created_at,omitempty"`
-	UpdatedAt         *string        `json:"updated_at,omitempty"`
+	ID                   *string        `json:"id,omitempty"`
+	IdempotencyKey       *string        `json:"idempotency_key,omitempty"`
+	WalletID             *string        `json:"wallet_id,omitempty"`
+	CounterpartyWalletID *string        `json:"counterparty_wallet_id,omitempty"`
+	BankAccountID        *string        `json:"bank_account_id,omitempty"`
+	ReferenceID          *string        `json:"reference_id,omitempty"`
+	MerchantID           *string        `json:"merchant_id,omitempty"`
+	AcquirerBankID       *string        `json:"acquirer_bank_id,omitempty"`
+	IssuerBankID         *string        `json:"issuer_bank_id,omitempty"`
+	CardID               *string        `json:"card_id,omitempty"`
+	CardNetwork          *string        `json:"card_network,omitempty"`
+	Amount               *string        `json:"amount,omitempty"`
+	Currency             *string        `json:"currency,omitempty"`
+	Fee                  *string        `json:"fee,omitempty"`
+	RefundedAmount       *string        `json:"refunded_amount,omitempty"`
+	Type                 *string        `json:"type,omitempty"`
+	Status               *string        `json:"status,omitempty"`
+	Description          *string        `json:"description,omitempty"`
+	AuthorizationCode    *string        `json:"authorization_code,omitempty"`
+	ExternalRef          *string        `json:"external_ref,omitempty"`
+	FailureReason        *string        `json:"failure_reason,omitempty"`
+	BatchID              *string        `json:"batch_id,omitempty"`
+	Metadata             map[string]any `json:"metadata,omitempty"`
+	CreatedAt            *string        `json:"created_at,omitempty"`
+	UpdatedAt            *string        `json:"updated_at,omitempty"`
+}
+
+type WalletSvcTransactionPage struct {
+	Items    []*WalletSvcTransaction `json:"items,omitempty"`
+	Total    *int                    `json:"total,omitempty"`
+	Page     *int                    `json:"page,omitempty"`
+	PageSize *int                    `json:"page_size,omitempty"`
 }
 
 type WalletSvcWallet struct {
@@ -9775,6 +9892,8 @@ type WalletSvcWallet struct {
 	FrozenAmount *string `json:"frozen_amount,omitempty"`
 	Currency     *string `json:"currency,omitempty"`
 	Status       *string `json:"status,omitempty"`
+	Tier         *string `json:"tier,omitempty"`
+	HasPin       *bool   `json:"has_pin,omitempty"`
 	Version      *int    `json:"version,omitempty"`
 	CreatedAt    *string `json:"created_at,omitempty"`
 	UpdatedAt    *string `json:"updated_at,omitempty"`

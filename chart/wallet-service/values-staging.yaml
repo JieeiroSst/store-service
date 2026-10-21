@@ -1,0 +1,62 @@
+# Argo CD: namespace store-staging, auto-synced. Promoted from dev with the
+# "Promote image" workflow; mirrors prod topology at smaller scale.
+global:
+  environment: staging
+
+walletService:
+  image:
+    tag: latest
+
+  consul:
+    addr: http://consul-service.default.svc.cluster.local
+  consulSeed:
+    enabled: true
+    key: wallet-service
+    addr: http://consul-service.default.svc.cluster.local
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+
+  pdb:
+    enabled: true
+    maxUnavailable: 1
+
+  topologySpread:
+    enabled: true
+
+  networkPolicy:
+    enabled: true
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: redis-deployment
+        ports:
+          - port: 6379
+            protocol: TCP
+
+  # Staging shares the non-prod Postgres, so it reads the same Secret as dev.
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: wallet-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: wallet-service-db-credentials
+        property: POSTGRES_PASSWORD

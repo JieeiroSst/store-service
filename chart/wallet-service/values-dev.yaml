@@ -1,0 +1,67 @@
+# Argo CD: namespace store-dev, auto-synced. CI bumps image.tag on every
+# merge to master (deploy/ci, image updater).
+global:
+  environment: dev
+
+walletService:
+  image:
+    tag: latest
+
+  # Shared infra (Consul, Postgres, Redis) still runs from the umbrella chart
+  # in the `default` namespace on non-prod clusters.
+  consul:
+    addr: http://consul-service.default.svc.cluster.local
+  consulSeed:
+    enabled: true
+    key: wallet-service
+    addr: http://consul-service.default.svc.cluster.local
+
+  seedDevData: true
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+
+  # Laptop-sized: small requests so ~70 services fit one docker-desktop node;
+  # limits from values.yaml still cap each pod.
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  networkPolicy:
+    enabled: true
+    egress:
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: postgresdb
+        ports:
+          - port: 5432
+            protocol: TCP
+      - to:
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: default
+            podSelector:
+              matchLabels:
+                app: redis-deployment
+        ports:
+          - port: 6379
+            protocol: TCP
+
+  # Copies the Secret the postgres chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-dev.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: POSTGRES_USER
+        remoteKey: wallet-service-db-credentials
+        property: POSTGRES_USER
+      - secretKey: POSTGRES_PASSWORD
+        remoteKey: wallet-service-db-credentials
+        property: POSTGRES_PASSWORD

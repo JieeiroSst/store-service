@@ -1,85 +1,202 @@
-// Package di wires all application components using uber-go/fx.
-// Follows the hexagonal architecture: core domain is injected with adapters via interfaces.
 package di
 
 import (
-	"context"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
+	"github.com/redis/go-redis/v9"
+	"github.com/shopspring/decimal"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 
-	apphttp "github.com/JIeeiroSst/wallet-service/internal/adapters/primary/http"
-	"github.com/JIeeiroSst/wallet-service/internal/adapters/primary/http/handler"
-	"github.com/JIeeiroSst/wallet-service/internal/adapters/secondary/postgres"
-	"github.com/JIeeiroSst/wallet-service/internal/adapters/secondary/rediscache"
-	"github.com/JIeeiroSst/wallet-service/internal/core/services"
-	"github.com/JIeeiroSst/wallet-service/internal/infrastructure/config"
+	"github.com/JIeeiroSst/wallet-service/internal/adapter/primary/httpapi"
+	"github.com/JIeeiroSst/wallet-service/internal/adapter/secondary/bankgateway"
+	"github.com/JIeeiroSst/wallet-service/internal/adapter/secondary/pinhash"
+	"github.com/JIeeiroSst/wallet-service/internal/adapter/secondary/postgres"
+	"github.com/JIeeiroSst/wallet-service/internal/adapter/secondary/rediscache"
+	"github.com/JIeeiroSst/wallet-service/internal/application"
+	"github.com/JIeeiroSst/wallet-service/internal/config"
+	"github.com/JIeeiroSst/wallet-service/internal/domain/model"
+	"github.com/JIeeiroSst/wallet-service/internal/domain/port"
 	"github.com/JIeeiroSst/wallet-service/internal/infrastructure/database"
 	"github.com/JIeeiroSst/wallet-service/internal/infrastructure/logger"
+	"github.com/JIeeiroSst/wallet-service/internal/infrastructure/server"
 )
-
-func provideLogger(cfg *config.Config) (*zap.Logger, error) {
-	return logger.New(cfg.Log.Level)
-}
 
 var InfrastructureModule = fx.Module("infrastructure",
-	fx.Provide(config.Load),
-	fx.Provide(database.NewPostgresDB),
-	fx.Provide(database.NewRedisClient),
-	fx.Provide(provideLogger),
+	fx.Provide(
+		config.Load,
+		func(cfg *config.Config) (*zap.Logger, error) {
+			log, err := logger.New(cfg.Log.Level)
+			if err != nil {
+				return nil, err
+			}
+			log.Info("configuration loaded", zap.String("source", cfg.Source))
+			return log, nil
+		},
+		database.NewPostgres,
+		database.NewRedis,
+	),
 )
 
-var RepositoryModule = fx.Module("repositories",
-	fx.Provide(postgres.NewWalletRepository),
-	fx.Provide(postgres.NewTransactionRepository),
-	fx.Provide(postgres.NewCardRepository),
-	fx.Provide(postgres.NewSettlementBatchRepository),
-	fx.Provide(postgres.NewClearingRepository),
-	fx.Provide(postgres.NewBankRepository),
-	fx.Provide(postgres.NewMerchantRepository),
-	fx.Provide(rediscache.NewCacheRepository),
+var AdapterModule = fx.Module("adapters",
+	fx.Provide(
+		postgres.NewTxManager,
+		postgres.NewWalletRepository,
+		postgres.NewTransactionRepository,
+		postgres.NewLedgerRepository,
+		postgres.NewCardRepository,
+		postgres.NewBankRepository,
+		postgres.NewMerchantRepository,
+		postgres.NewBankAccountRepository,
+		postgres.NewPaymentRequestRepository,
+		postgres.NewSettlementBatchRepository,
+		postgres.NewClearingRepository,
+		func(client *redis.Client) port.Cache { return rediscache.New(client) },
+		func(cfg *config.Config) port.PinHasher { return pinhash.NewBcrypt(cfg.Security.PinBcryptCost) },
+		func(cfg *config.Config, log *zap.Logger) (port.BankGateway, error) {
+			limit, err := decimal.NewFromString(cfg.BankGateway.DeclineAbove)
+			if err != nil {
+				return nil, err
+			}
+			return bankgateway.NewSimulated(limit, log), nil
+		},
+	),
 )
 
-var ServiceModule = fx.Module("services",
-	fx.Provide(services.NewWalletService),
-	fx.Provide(services.NewTransactionService),
-	fx.Provide(services.NewCardService),
-	fx.Provide(services.NewFeeCalculator),
+type depsIn struct {
+	fx.In
+
+	Tx              port.TxManager
+	Wallets         port.WalletRepository
+	Transactions    port.TransactionRepository
+	Ledger          port.LedgerRepository
+	Cards           port.CardRepository
+	Banks           port.BankRepository
+	Merchants       port.MerchantRepository
+	BankAccounts    port.BankAccountRepository
+	PaymentRequests port.PaymentRequestRepository
+	Batches         port.SettlementBatchRepository
+	Clearing        port.ClearingRepository
+	Cache           port.Cache
+	Pins            port.PinHasher
+	BankGateway     port.BankGateway
+	Config          *config.Config
+	Logger          *zap.Logger
+}
+
+func provideDeps(in depsIn) (application.Deps, error) {
+	fees, err := feeSchedule(in.Config.Fees)
+	if err != nil {
+		return application.Deps{}, err
+	}
+	return application.Deps{
+		Tx:              in.Tx,
+		Wallets:         in.Wallets,
+		Transactions:    in.Transactions,
+		Ledger:          in.Ledger,
+		Cards:           in.Cards,
+		Banks:           in.Banks,
+		Merchants:       in.Merchants,
+		BankAccounts:    in.BankAccounts,
+		PaymentRequests: in.PaymentRequests,
+		Batches:         in.Batches,
+		Clearing:        in.Clearing,
+		Cache:           in.Cache,
+		Pins:            in.Pins,
+		BankGateway:     in.BankGateway,
+		Fees:            fees,
+		PaymentRequest:  application.PaymentRequestPolicy{TTL: in.Config.PaymentRequests.TTL()},
+		Clock:           time.Now,
+		Logger:          in.Logger,
+	}, nil
+}
+
+func feeSchedule(cfg config.FeesConfig) (model.FeeSchedule, error) {
+	fees := model.DefaultFeeSchedule()
+	for _, f := range []struct {
+		raw string
+		dst *decimal.Decimal
+	}{
+		{cfg.WithdrawalRate, &fees.WithdrawalRate},
+		{cfg.WithdrawalMinUSD, &fees.WithdrawalMinUSD},
+		{cfg.TransferRate, &fees.TransferRate},
+	} {
+		if f.raw == "" {
+			continue
+		}
+		v, err := decimal.NewFromString(f.raw)
+		if err != nil {
+			return model.FeeSchedule{}, err
+		}
+		*f.dst = v
+	}
+	return fees, nil
+}
+
+var ApplicationModule = fx.Module("application",
+	fx.Provide(
+		provideDeps,
+		application.NewWalletService,
+		application.NewFundingService,
+		application.NewTransferService,
+		application.NewPaymentService,
+		application.NewCardPaymentService,
+		application.NewSettlementService,
+		application.NewHistoryService,
+		application.NewCardService,
+		application.NewBankAccountService,
+		application.NewPaymentRequestService,
+	),
 )
 
-var HandlerModule = fx.Module("handlers",
-	fx.Provide(handler.NewWalletHandler),
-	fx.Provide(handler.NewTransactionHandler),
-	fx.Provide(func(wh *handler.WalletHandler, th *handler.TransactionHandler) *gin.Engine {
-		return apphttp.NewRouter(wh, th)
-	}),
+type servicesIn struct {
+	fx.In
+
+	Wallets         port.WalletService
+	Funding         port.FundingService
+	Transfers       port.TransferService
+	Payments        port.PaymentService
+	CardPayments    port.CardPaymentService
+	Settlements     port.SettlementService
+	History         port.HistoryService
+	Cards           port.CardService
+	BankAccounts    port.BankAccountService
+	PaymentRequests port.PaymentRequestService
+}
+
+func provideRouter(in servicesIn, db *sqlx.DB, cfg *config.Config, log *zap.Logger) *gin.Engine {
+	return httpapi.NewRouter(httpapi.Services{
+		Wallets:         in.Wallets,
+		Funding:         in.Funding,
+		Transfers:       in.Transfers,
+		Payments:        in.Payments,
+		CardPayments:    in.CardPayments,
+		Settlements:     in.Settlements,
+		History:         in.History,
+		Cards:           in.Cards,
+		BankAccounts:    in.BankAccounts,
+		PaymentRequests: in.PaymentRequests,
+	}, httpapi.RouterOptions{
+		RateLimitCapacity: cfg.Server.RateLimitCapacity,
+		RateLimitPerSec:   cfg.Server.RateLimitPerSec,
+		Ready:             db.PingContext,
+	}, log)
+}
+
+var HTTPModule = fx.Module("http",
+	fx.Provide(
+		provideRouter,
+		func(engine *gin.Engine, cfg *config.Config) *http.Server { return server.New(engine, cfg) },
+	),
+	fx.Invoke(server.Register),
 )
 
 var App = fx.Options(
 	InfrastructureModule,
-	RepositoryModule,
-	ServiceModule,
-	HandlerModule,
-	fx.Invoke(startServer),
+	AdapterModule,
+	ApplicationModule,
+	HTTPModule,
 )
-
-func startServer(lc fx.Lifecycle, engine *gin.Engine, cfg *config.Config, log *zap.Logger) {
-	server := &http.Server{Addr: cfg.Server.Port, Handler: engine}
-	lc.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			log.Info("wallet-service starting", zap.String("addr", cfg.Server.Port))
-			go func() {
-				if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-					log.Fatal("http server error", zap.Error(err))
-				}
-			}()
-			return nil
-		},
-		OnStop: func(ctx context.Context) error {
-			log.Info("wallet-service shutting down")
-			return server.Shutdown(ctx)
-		},
-	})
-}

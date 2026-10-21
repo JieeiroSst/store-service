@@ -1477,3 +1477,27 @@ jobs:
         AI_AGENT_TEST_MYSQL_PASSWORD: pw
         AI_AGENT_TEST_MYSQL_DATABASE: aiagent
       run: cd ai-agent-system && make test
+
+  wallet_service:
+    name: wallet_service
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: wallet-service/go.mod
+        cache-dependency-path: wallet-service/go.sum
+
+    - name: Format
+      run: cd wallet-service && make fmt-check
+
+    - name: Build
+      run: cd wallet-service && make build
+
+    - name: Vet
+      run: cd wallet-service && make vet
+
+    - name: Test
+      run: cd wallet-service && make test-race
