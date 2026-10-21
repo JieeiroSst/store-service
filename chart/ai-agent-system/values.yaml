@@ -39,32 +39,62 @@ aiAgentSystem:
 
   autoscaling:
     enabled: false
+
+  # MySQL from chart/mysql (database + user ai_agent_system_svc). Its
+  # provisioner creates the credentials Secret in `default`; other namespaces
+  # mirror it with an ExternalSecret (values-dev.yaml / values-staging.yaml).
+  mysql:
+    host: mysql-svc
+    port: 80
+    database: ai_agent_system
+    credentialsSecret: ai-agent-system-db-credentials
+
+  ollama:
+    baseUrl: http://ollama-model-py-svc:11435
+    model: custom-model
+
   containerEnv:
     - name: PORT
       value: '{{ .Values.aiAgentSystem.image.port }}'
     - name: OLLAMA_BASE_URL
-      value: 'http://ollama-model-py-svc:11435'
+      value: '{{ .Values.aiAgentSystem.ollama.baseUrl }}'
     - name: OLLAMA_MODEL
-      value: 'custom-model'
+      value: '{{ .Values.aiAgentSystem.ollama.model }}'
+    - name: MYSQL_HOST
+      value: '{{ .Values.aiAgentSystem.mysql.host }}'
+    - name: MYSQL_PORT
+      value: '{{ .Values.aiAgentSystem.mysql.port }}'
+    - name: MYSQL_DATABASE
+      value: '{{ .Values.aiAgentSystem.mysql.database }}'
+    - name: MYSQL_USER
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.aiAgentSystem.mysql.credentialsSecret }}'
+          key: MYSQL_USER
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: '{{ .Values.aiAgentSystem.mysql.credentialsSecret }}'
+          key: MYSQL_PASSWORD
   envFile:
-    enabled: true
-    mountPath: /app/.env
-    content: |
-      MYSQL_DSN=root:password@tcp(mysql-svc:80)/ai_agent_system?parseTime=true
-  # No health endpoint known for this service: TCP checks on the http port.
+    enabled: false
+  # /healthz is process liveness; /readyz also pings MySQL.
   probes:
     startup:
-      tcpSocket:
+      httpGet:
+        path: /healthz
         port: http
       periodSeconds: 5
       failureThreshold: 30
     readiness:
-      tcpSocket:
+      httpGet:
+        path: /readyz
         port: http
       periodSeconds: 10
       failureThreshold: 3
     liveness:
-      tcpSocket:
+      httpGet:
+        path: /healthz
         port: http
       periodSeconds: 20
       failureThreshold: 3
@@ -116,7 +146,7 @@ aiAgentSystem:
       interval: 30s
   externalSecret:
     enabled: false
-    targetName: ''
+    targetName: ai-agent-system-db-credentials
     refreshInterval: 1h
     secretStoreRef:
       kind: SecretStore

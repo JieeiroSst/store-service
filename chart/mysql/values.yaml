@@ -72,3 +72,10 @@ mysql:
       consulKey: call_center_ai
       userField: .mysql.user
       passwordField: .mysql.password
+    # ai-agent-system reads plain env vars (chart/ai-agent-system), no Consul key.
+    - name: ai-agent-system
+      database: ai_agent_system
+      user: ai_agent_system_svc
+      consulKey: ai_agent_system
+      userField: .mysql.user
+      passwordField: .mysql.password

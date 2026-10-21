@@ -34,3 +34,14 @@ aiAgentSystem:
     requests:
       cpu: 10m
       memory: 64Mi
+  # Copies the Secret the mysql chart created in `default` (see the
+  # kubernetes-provider SecretStore in chart/platform/values-dev.yaml).
+  externalSecret:
+    enabled: true
+    data:
+      - secretKey: MYSQL_USER
+        remoteKey: ai-agent-system-db-credentials
+        property: MYSQL_USER
+      - secretKey: MYSQL_PASSWORD
+        remoteKey: ai-agent-system-db-credentials
+        property: MYSQL_PASSWORD

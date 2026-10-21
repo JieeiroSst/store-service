@@ -5,10 +5,14 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w" -o ai-agent-system ./cmd/server
+COPY cmd ./cmd
+COPY internal ./internal
+ARG VERSION=dev
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath \
+    -ldflags="-s -w -X aiagentsystem/internal/config.Version=${VERSION}" \
+    -o ai-agent-system ./cmd/server
 
-FROM alpine:3.19
+FROM alpine:3.20
 
 WORKDIR /app
 

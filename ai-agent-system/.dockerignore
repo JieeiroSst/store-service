@@ -5,3 +5,7 @@
 *.md
 Dockerfile
 .dockerignore
+Makefile
+docker-compose.yml
+.env.example
+**/*_test.go

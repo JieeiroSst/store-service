@@ -10,33 +10,44 @@ web/mobile  --WebSocket-->  ai-agent-system  --HTTP (Ollama API)-->  Ollama-comp
 other Ollama-style clients --HTTP--> ai-agent-system's own /api/... facade --(same path above)
 ```
 
-Every entry point funnels through one shared core (`internal/chat.Service`): relay the question to the configured Ollama-compatible backend and log the turn. FAQ short-circuiting (scripted, mandatory Q&A that must bypass the LLM) is **not** handled here — it lives in [`../ollama-model-py`](../ollama-model-py/), which checks its own JSON FAQ file before ever calling a real LLM. This server has no opinion on whether a given answer came from a script or a model; both arrive the same way over `/api/chat`.
+Every entry point funnels through one shared use case (`application.ChatService`): relay the question to the configured Ollama-compatible backend and log the turn. FAQ short-circuiting (scripted, mandatory Q&A that must bypass the LLM) is **not** handled here — it lives in [`../ollama-model-py`](../ollama-model-py/), which checks its own JSON FAQ file before ever calling a real LLM. This server has no opinion on whether a given answer came from a script or a model; both arrive the same way over `/api/chat`.
 
-## Architecture
+## Architecture (hexagonal)
 
 ```
-cmd/server/main.go        wiring + graceful shutdown
+cmd/server/main.go                 composition root: config -> adapters -> use cases -> HTTP server
 internal/
-  config/                 env-var configuration, validated at startup
-  proxy/                  ALL outbound calls to external services live here
-    ollama_client.go        HTTP client for the Ollama-compatible backend's /api/chat
-    retry.go                backoff helper
-    errors.go                normalizes Ollama errors into one Error{Kind}
-  chat/                   the ONE shared "answer a question" path
-    service.go               AnswerQuestion / AnswerQuestionStream
-  history/                chat history audit log, persisted to MySQL
-  httpapi/                WebSocket + history-lookup surface (/v1/...)
-  ollamaapi/              Ollama wire-compatible facade (/api/...) for other systems
-docker-compose.yml        local MySQL for development
+  domain/
+    model/                         Question, Answer, Completion, Turn, HistoryEntry, Error{Kind}
+    port/
+      driving.go                   ChatService, HistoryService        (what the app offers)
+      driven.go                    LLMClient, DeltaStream, HistoryRepository (what the app needs)
+  application/                     use cases, depend only on domain/port
+    chat.go                        Answer / AnswerStream, async best-effort history logging
+    history.go                     List with default/max limits
+  adapter/
+    primary/                       driving adapters (call application through port.*Service)
+      httpapi/                     /v1/chat/ws, /v1/chat/history, /healthz, /readyz
+      ollamaapi/                   Ollama wire-compatible facade (/api/...)
+    secondary/                     driven adapters (implement port.LLMClient / HistoryRepository)
+      ollama/                      HTTP client for the backend's /api/chat, retries, error mapping
+      mysql/                       chat_messages table, schema migration
+  infrastructure/
+    database/                      MySQL pool + ping
+    server/                        http.Server, logging/recover middleware, graceful shutdown
+  config/                          env-var configuration, validated at startup
 ```
 
-`../ollama-model-py` is a separate, standalone service (own repo path, own Python source tree) that speaks Ollama's wire format and owns the scripted FAQ check — a drop-in alternative to a real Ollama install; see its own README for details.
+```
+ httpapi ─┐                                   ┌─> ollama  ──> Ollama-compatible backend
+          ├─> port.ChatService ─> application ┤
+ollamaapi ┘   port.HistoryService             └─> mysql   ──> MySQL (chat_messages)
+                                   (via port.LLMClient / port.HistoryRepository)
+```
 
-**Dependency direction:** `httpapi`, `ollamaapi` → `chat` → `proxy`. Neither HTTP surface imports `proxy` directly — they only know `chat` types, so every request path shares exactly one relay-then-log path.
+**Dependency rule:** `domain` imports nothing from the project; `application` imports only `domain`; adapters import `domain` (and never each other); only `cmd/server` knows the concrete types and wires them together. Adapters translate their own failures into `model.Error{Kind}` (`bad_request`, `rate_limited`, `upstream_unavailable`, `internal`), so each primary adapter maps one error type to its own wire format.
 
-### Why a `proxy` package
-
-The Ollama-compatible backend has no Go SDK, so `internal/proxy/ollama_client.go` talks to it over raw HTTP using its own wire format (the same shapes `internal/ollamaapi` implements as a server, redefined locally to avoid a cross-package refactor for a handful of small structs). Timeouts, retries, and request construction are centralized in `internal/proxy` so no other package needs to know how to talk to an external service directly.
+`../ollama-model-py` is a separate, standalone service that speaks Ollama's wire format and owns the scripted FAQ check — a drop-in alternative to a real Ollama install; see its own README for details.
 
 ## Setup
 
@@ -52,12 +63,13 @@ This expects an **Ollama-compatible backend** already running somewhere reachabl
 
 | Env var | Default | Description |
 |---|---|---|
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | Base URL of the Ollama-compatible backend |
+| `OLLAMA_BASE_URL` | `http://localhost:11435` | Base URL of the Ollama-compatible backend |
 | `OLLAMA_MODEL` | — (required) | Model name to request from that backend (must already be pulled there, if it's a real Ollama server) |
-| `MYSQL_DSN` | — (required) | Go MySQL DSN, e.g. `app:app@tcp(localhost:3307)/aiagent?parseTime=true&loc=Local` |
+| `MYSQL_DSN` | — | Go MySQL DSN, e.g. `app:app@tcp(localhost:3307)/aiagent?parseTime=true&loc=Local`; wins over the `MYSQL_*` parts below |
+| `MYSQL_HOST` / `MYSQL_PORT` / `MYSQL_USER` / `MYSQL_PASSWORD` / `MYSQL_DATABASE` | port `3306` | Used when `MYSQL_DSN` is empty (this is how the Helm chart passes the provisioned credentials Secret); `MYSQL_HOST` and `MYSQL_DATABASE` are required in that case |
 | `PORT` | `8080` | HTTP listen port |
 
-The server fails fast at startup if `OLLAMA_MODEL` or `MYSQL_DSN` is missing, or if MySQL is unreachable — all treated as hard requirements, not best-effort features. It does **not** check at startup that the backend can serve `OLLAMA_MODEL` — that's only discovered on the first question (surfaced as an `upstream_unavailable` error), since the backend being temporarily down shouldn't block the whole process from starting.
+The server fails fast at startup if `OLLAMA_MODEL` or the MySQL settings are missing, or if MySQL is unreachable — all treated as hard requirements, not best-effort features. It does **not** check at startup that the backend can serve `OLLAMA_MODEL` — that's only discovered on the first question (surfaced as an `upstream_unavailable` error), since the backend being temporarily down shouldn't block the whole process from starting.
 
 ## Run
 
@@ -98,7 +110,7 @@ One connection handles many turns — send another `{"question": "..."}` frame a
 
 The server also sends periodic ping frames to keep the connection alive through proxies/browsers; respond to them automatically (every standard WebSocket client does this transparently).
 
-> `CheckOrigin` is currently permissive (accepts any origin) — tighten this in `internal/httpapi/ws_handler.go` before exposing this endpoint outside a trusted network.
+> `CheckOrigin` is currently permissive (accepts any origin) — tighten this in `internal/adapter/primary/httpapi/ws_handler.go` before exposing this endpoint outside a trusted network.
 
 ## Ollama-compatible facade (`/api/...`) — for other systems
 
@@ -130,10 +142,30 @@ python -c "import ollama; c=ollama.Client(host='http://localhost:8080'); print(c
 
 WebSocket errors arrive as an in-band `{"type":"error","message":"..."}` frame (the connection itself stays open). The `/api/...` facade and `/v1/chat/history` use Ollama-flat (`{"error":"..."}`) and nested (`{"error":{"message":"...","type":"..."}}`) JSON error bodies respectively, with `429`/`503`/`400`/`500` status codes for rate-limited/upstream-unavailable/bad-request/internal failures.
 
+## Health
+
+| Path | Meaning |
+|---|---|
+| `GET /healthz` | Process is up (liveness/startup probe) |
+| `GET /readyz` | Also pings MySQL; `503` while the database is unreachable (readiness probe) |
+
 ## Development
 
 ```bash
-go build ./...
-go vet ./...
-gofmt -l .
+make fmt-check build vet
+make test                       # unit tests; the MySQL repository test is skipped
+make db-up                      # local MySQL on :3307, then run the repository test too:
+AI_AGENT_TEST_MYSQL_ADDR=127.0.0.1:3307 AI_AGENT_TEST_MYSQL_USER=app \
+AI_AGENT_TEST_MYSQL_PASSWORD=app AI_AGENT_TEST_MYSQL_DATABASE=aiagent make test
 ```
+
+## CI/CD
+
+| Stage | Where | What |
+|---|---|---|
+| PR / push to `master` | `.github/workflows/go.yml` (job `ai_agent_system`) | gofmt, build, vet, `go test -race` with a MySQL service container |
+| Dev deploy | in-cluster CI (`deploy/ci/services.yaml`, entry `ai-agent-system`) | every push to `master` is tested (MySQL sidecar), built to `localhost:5000/ai-agent-system`, and Argo CD Image Updater rolls it out to `store-dev` |
+| Release image | `.github/workflows/ai-agent-system-cicd.yml` (manual) | same tests, then multi-arch image `ghcr.io/jieeirosst/ai-agent-system:<sha7>` with SBOM/provenance, blocked on critical CVEs (Trivy) |
+| Staging / prod | `.github/workflows/promote.yml` (`service: ai-agent-system`) | opens a PR setting the tag in `chart/ai-agent-system/values-<env>.yaml`; staging auto-syncs, prod is synced by hand |
+
+Database: `chart/mysql` provisions database `ai_agent_system` and user `ai_agent_system_svc`; the credentials Secret `ai-agent-system-db-credentials` is mirrored into `store-dev`/`store-staging` by ExternalSecret. Prod reads `store/prod/ai-agent-system/mysql` (`username`, `password`) from the secret manager — create that key before the first prod sync.

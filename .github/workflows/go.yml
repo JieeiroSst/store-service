@@ -1435,3 +1435,45 @@ jobs:
         LUCKY_TEST_DB_PASSWORD: lucky
         LUCKY_TEST_DB_NAME: lucky
       run: cd lucky-service && make test
+
+  ai_agent_system:
+    name: ai_agent_system
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: pw
+          MYSQL_DATABASE: aiagent
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -ppw"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 30
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: ai-agent-system/go.mod
+        cache-dependency-path: ai-agent-system/go.sum
+
+    - name: Format
+      run: cd ai-agent-system && make fmt-check
+
+    - name: Build
+      run: cd ai-agent-system && make build
+
+    - name: Vet
+      run: cd ai-agent-system && make vet
+
+    - name: Test
+      env:
+        AI_AGENT_TEST_MYSQL_ADDR: 127.0.0.1:3306
+        AI_AGENT_TEST_MYSQL_USER: root
+        AI_AGENT_TEST_MYSQL_PASSWORD: pw
+        AI_AGENT_TEST_MYSQL_DATABASE: aiagent
+      run: cd ai-agent-system && make test

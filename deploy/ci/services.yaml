@@ -559,6 +559,13 @@ services:
   - aiAgentSystem
   lang: go
   goVersion: '1.26'
+  testEnv:
+    AI_AGENT_TEST_MYSQL_ADDR: 127.0.0.1:3306
+    AI_AGENT_TEST_MYSQL_USER: root
+    AI_AGENT_TEST_MYSQL_PASSWORD: pw
+    AI_AGENT_TEST_MYSQL_DATABASE: shop
+  testServices:
+  - mysql
 - name: goflow-service
   context: goflow-service
   image: goflow-service

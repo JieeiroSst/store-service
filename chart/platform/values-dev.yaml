@@ -33,6 +33,7 @@ secretStore:
       - voucher-service-db-credentials
       - book-service-db-credentials
       - call-center-ai-db-credentials
+      - ai-agent-system-db-credentials
 infraAliases:
   namespace: default
   services:
