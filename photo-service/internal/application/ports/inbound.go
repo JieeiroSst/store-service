@@ -10,9 +10,11 @@ type ComposeImagesCommand struct {
 	Sources        []domain.ImageSource
 	Layout         domain.LayoutConfig
 	IdempotencyKey string
+	OwnerID        string
 }
 
 type ComposeImageUseCase interface {
 	ComposeImages(ctx context.Context, cmd ComposeImagesCommand) (*domain.CompositionJob, error)
 	GetComposition(ctx context.Context, id string) (*domain.CompositionJob, error)
+	ListCompositions(ctx context.Context, ownerID string, limit int) ([]*domain.CompositionJob, error)
 }

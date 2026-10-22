@@ -17,6 +17,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/JIeeiroSst/gateway-api/config"
 	"github.com/JIeeiroSst/gateway-api/graph"
+	"github.com/JIeeiroSst/gateway-api/media"
 	"github.com/JIeeiroSst/gateway-api/middlware"
 	"github.com/JIeeiroSst/gateway-api/proxy"
 	"github.com/JIeeiroSst/utils/consul"
@@ -86,6 +87,11 @@ func main() {
 
 	router.POST("/query", middlware.ClientInfo(), middlware.Authenticate(p.User), graphqlHandler(p))
 	router.GET("/", playgroundHandler())
+	mediaHandler := gin.WrapH(media.Handler("/media/", func(service string) string { return p.REST(service).BaseURL() }))
+	router.GET("/media/*path", mediaHandler)
+	router.HEAD("/media/*path", mediaHandler)
+	router.GET("/chat/ws", middlware.Authenticate(p.User), gin.WrapH(media.Socket("ollama-service", "/ws", func(service string) string { return p.REST(service).BaseURL() })))
+	router.GET("/rtc/ws", middlware.Authenticate(p.User), gin.WrapH(media.Signaling("webrtc-service", func(service string) string { return p.REST(service).BaseURL() })))
 
 	httpSrv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),

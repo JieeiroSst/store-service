@@ -1,11 +1,11 @@
 {
-    "name": "keikiapp",
-    "short_name": "keikiapp",
+    "name": "Keikibook",
+    "short_name": "Keikibook",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#5B3BE0",
+    "theme_color": "#5B3BE0",
+    "description": "Keikibook — mọi dịch vụ trong một ứng dụng",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

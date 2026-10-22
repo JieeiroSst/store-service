@@ -126,7 +126,7 @@ func (recs sourceRecords) toDomain() []domain.ImageSource {
 	return out
 }
 
-const jobColumns = `id, status, layout, sources, idempotency_key, result_object_key, result_url, width, height, format, size_bytes, error_message, created_at, updated_at`
+const jobColumns = `id, owner_id, status, layout, sources, idempotency_key, result_object_key, result_url, width, height, format, size_bytes, error_message, created_at, updated_at`
 
 func (r *JobRepository) Save(ctx context.Context, job *domain.CompositionJob) error {
 	layoutJSON, err := json.Marshal(toLayoutRecord(job.Layout))
@@ -141,9 +141,9 @@ func (r *JobRepository) Save(ctx context.Context, job *domain.CompositionJob) er
 	_, err = r.pool.Exec(ctx, `
 		INSERT INTO composition_jobs (
 			id, status, layout, sources, idempotency_key, result_object_key, result_url,
-			width, height, format, size_bytes, error_message, created_at, updated_at
+			width, height, format, size_bytes, error_message, created_at, updated_at, owner_id
 		)
-		VALUES ($1, $2, $3, $4, NULLIF($5, ''), NULLIF($6, ''), NULLIF($7, ''), NULLIF($8, 0), NULLIF($9, 0), NULLIF($10, ''), NULLIF($11, 0), NULLIF($12, ''), $13, $14)
+		VALUES ($1, $2, $3, $4, NULLIF($5, ''), NULLIF($6, ''), NULLIF($7, ''), NULLIF($8, 0), NULLIF($9, 0), NULLIF($10, ''), NULLIF($11, 0), NULLIF($12, ''), $13, $14, NULLIF($15, ''))
 		ON CONFLICT (id) DO UPDATE SET
 			status = EXCLUDED.status,
 			result_object_key = EXCLUDED.result_object_key,
@@ -155,7 +155,7 @@ func (r *JobRepository) Save(ctx context.Context, job *domain.CompositionJob) er
 			error_message = EXCLUDED.error_message,
 			updated_at = EXCLUDED.updated_at
 	`, job.ID, string(job.Status), layoutJSON, sourcesJSON, job.IdempotencyKey, job.ResultObjectKey, job.ResultURL,
-		job.Width, job.Height, string(job.Format), job.SizeBytes, job.ErrorMessage, job.CreatedAt, job.UpdatedAt)
+		job.Width, job.Height, string(job.Format), job.SizeBytes, job.ErrorMessage, job.CreatedAt, job.UpdatedAt, job.OwnerID)
 	if err != nil {
 		return fmt.Errorf("save composition job: %w", err)
 	}
@@ -167,18 +167,35 @@ func (r *JobRepository) FindByID(ctx context.Context, id string) (*domain.Compos
 	return scanJob(row)
 }
 
+func (r *JobRepository) FindByOwner(ctx context.Context, ownerID string, limit int) ([]*domain.CompositionJob, error) {
+	rows, err := r.pool.Query(ctx, `SELECT `+jobColumns+` FROM composition_jobs WHERE owner_id = $1 ORDER BY created_at DESC LIMIT $2`, ownerID, limit)
+	if err != nil {
+		return nil, fmt.Errorf("list composition jobs: %w", err)
+	}
+	defer rows.Close()
+	var jobs []*domain.CompositionJob
+	for rows.Next() {
+		job, err := scanJob(rows)
+		if err != nil {
+			return nil, err
+		}
+		jobs = append(jobs, job)
+	}
+	return jobs, rows.Err()
+}
+
 func scanJob(row pgx.Row) (*domain.CompositionJob, error) {
 	var (
-		job                                       domain.CompositionJob
-		status, format                            string
-		layoutJSON, sourcesJSON                   []byte
-		idempotencyKey, resultKey, resultURL, msg *string
-		width, height                             *int
-		sizeBytes                                 *int64
+		job                                                domain.CompositionJob
+		status, format                                     string
+		layoutJSON, sourcesJSON                            []byte
+		ownerID, idempotencyKey, resultKey, resultURL, msg *string
+		width, height                                      *int
+		sizeBytes                                          *int64
 	)
 
 	err := row.Scan(
-		&job.ID, &status, &layoutJSON, &sourcesJSON, &idempotencyKey, &resultKey, &resultURL,
+		&job.ID, &ownerID, &status, &layoutJSON, &sourcesJSON, &idempotencyKey, &resultKey, &resultURL,
 		&width, &height, &format, &sizeBytes, &msg, &job.CreatedAt, &job.UpdatedAt,
 	)
 	if err != nil {
@@ -201,6 +218,9 @@ func scanJob(row pgx.Row) (*domain.CompositionJob, error) {
 	job.Layout = layout.toDomain()
 	job.Sources = sourceRecords(sources).toDomain()
 	job.Format = domain.OutputFormat(format)
+	if ownerID != nil {
+		job.OwnerID = *ownerID
+	}
 	if idempotencyKey != nil {
 		job.IdempotencyKey = *idempotencyKey
 	}

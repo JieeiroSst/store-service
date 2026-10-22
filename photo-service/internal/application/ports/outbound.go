@@ -30,6 +30,7 @@ type ImageStorage interface {
 type JobRepository interface {
 	Save(ctx context.Context, job *domain.CompositionJob) error
 	FindByID(ctx context.Context, id string) (*domain.CompositionJob, error)
+	FindByOwner(ctx context.Context, ownerID string, limit int) ([]*domain.CompositionJob, error)
 }
 
 type CacheRepository interface {

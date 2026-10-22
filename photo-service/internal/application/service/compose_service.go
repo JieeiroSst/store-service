@@ -87,6 +87,7 @@ func (s *ComposeService) ComposeImages(ctx context.Context, cmd ports.ComposeIma
 		Layout:         layout,
 		Sources:        cmd.Sources,
 		IdempotencyKey: cmd.IdempotencyKey,
+		OwnerID:        cmd.OwnerID,
 		CreatedAt:      now,
 		UpdatedAt:      now,
 	}
@@ -105,7 +106,6 @@ func (s *ComposeService) ComposeImages(ctx context.Context, cmd ports.ComposeIma
 
 	return job, nil
 }
-
 
 func (s *ComposeService) process(ctx context.Context, job *domain.CompositionJob) {
 	job.MarkProcessing()
@@ -226,27 +226,43 @@ func (s *ComposeService) GetComposition(ctx context.Context, id string) (*domain
 	if err != nil {
 		return nil, err
 	}
+	s.refreshResultURL(ctx, job)
+	return job, nil
+}
 
+func (s *ComposeService) ListCompositions(ctx context.Context, ownerID string, limit int) ([]*domain.CompositionJob, error) {
+	if limit <= 0 || limit > 100 {
+		limit = 50
+	}
+	jobs, err := s.jobs.FindByOwner(ctx, ownerID, limit)
+	if err != nil {
+		return nil, err
+	}
+	for _, job := range jobs {
+		s.refreshResultURL(ctx, job)
+	}
+	return jobs, nil
+}
+
+func (s *ComposeService) refreshResultURL(ctx context.Context, job *domain.CompositionJob) {
 	if job.Status != domain.JobStatusCompleted || job.ResultObjectKey == "" {
-		return job, nil
+		return
 	}
 
 	if cached, err := s.cache.Get(ctx, presignedURLCachePrefix+job.ResultObjectKey); err == nil {
 		job.ResultURL = cached
-		return job, nil
+		return
 	}
 
 	presigned, err := s.storage.PresignedURL(ctx, job.ResultObjectKey, defaultPresignTTL)
 	if err != nil {
 		s.log.Warn("failed to refresh presigned url", "error", err, "object_key", job.ResultObjectKey)
-		return job, nil
+		return
 	}
 	job.ResultURL = presigned
 	if err := s.cache.Set(ctx, presignedURLCachePrefix+job.ResultObjectKey, presigned, defaultPresignTTL); err != nil {
 		s.log.Warn("failed to cache refreshed presigned url", "error", err, "object_key", job.ResultObjectKey)
 	}
-
-	return job, nil
 }
 
 func extensionFor(f domain.OutputFormat) string {

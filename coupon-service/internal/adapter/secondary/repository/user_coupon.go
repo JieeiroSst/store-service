@@ -62,7 +62,7 @@ func (r *userCouponRepository) Delete(ctx context.Context, id int64) error {
 
 func (r *userCouponRepository) ListByUser(ctx context.Context, userID int64) ([]model.UserCoupon, error) {
 	var userCoupons []model.UserCoupon
-	err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&userCoupons).Error
+	err := r.db.WithContext(ctx).Preload("Coupon").Where("user_id = ?", userID).Find(&userCoupons).Error
 	return userCoupons, err
 }
 

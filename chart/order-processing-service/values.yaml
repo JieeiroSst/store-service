@@ -8,6 +8,11 @@ orderProcessingService:
   containerName: order-processing-service
   replicas: 1
 
+  # order_order / order_line live in the basket_service MySQL schema that
+  # basket-service reads; local dev credentials only.
+  env:
+    orderDbDsn: 'root:password@tcp(mysql-svc:80)/basket_service?charset=utf8mb4&parseTime=True&loc=UTC'
+
   image:
     name: ghcr.io/jieeirosst/order-processing-service
     tag: latest
@@ -30,6 +35,13 @@ orderProcessingService:
       value: 'temporal-service:7233'
     - name: TEMPORAL_NAMESPACE
       value: 'default'
+    - name: ORDER_DB_DSN
+      valueFrom:
+        secretKeyRef:
+          name: order-processing-service-secret
+          key: orderDbDsn
+    - name: NOTIFICATION_SERVICE_URL
+      value: 'http://notification-service-svc'
 
   # Production contract, see chart/common/templates
   strategy:

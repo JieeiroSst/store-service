@@ -65,3 +65,14 @@ func (r *basketRepository) List(ctx context.Context) ([]model.Basket, error) {
 	}
 	return baskets, nil
 }
+
+func (r *basketRepository) ListAwaitingFulfillment(ctx context.Context, limit int) ([]model.Basket, error) {
+	var baskets []model.Basket
+	err := r.db.WithContext(ctx).
+		Where("status = ? AND (fulfillment_id IS NULL OR fulfillment_id = '')", model.BasketStatusSubmitted).
+		Order("id").Limit(limit).Find(&baskets).Error
+	if err != nil {
+		return nil, common.ErrDBFailed
+	}
+	return baskets, nil
+}

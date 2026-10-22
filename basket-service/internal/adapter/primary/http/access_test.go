@@ -83,7 +83,7 @@ func newTestRouter() (*gin.Engine, *fakeBaskets) {
 		10: {ID: 10, UserID: 1, Status: "Open"},
 		20: {ID: 20, UserID: 2, Status: "Open"},
 	}}
-	h := NewHandler(baskets, nil, nil, nil, nil)
+	h := NewHandler(baskets, nil, nil, nil, nil, nil)
 	return NewRouter(h, fakeAuthn{}), baskets
 }
 

@@ -125,6 +125,13 @@ func (s *PaymentService) GetPayment(ctx context.Context, paymentID string) (*ent
 	return payment, nil
 }
 
+func (s *PaymentService) ListUserPayments(ctx context.Context, userID string) ([]*entities.Payment, error) {
+	if userID == "" {
+		return nil, errors.New("user id is required")
+	}
+	return s.paymentRepo.GetByUserID(ctx, userID)
+}
+
 func (s *PaymentService) GetPaymentStatus(ctx context.Context, paymentID string) (entities.PaymentStatus, error) {
 	payment, err := s.paymentRepo.GetByID(ctx, paymentID)
 	if err != nil {

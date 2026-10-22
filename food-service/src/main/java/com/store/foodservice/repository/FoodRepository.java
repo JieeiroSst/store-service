@@ -8,4 +8,6 @@ import com.store.foodservice.model.Food;
 
 public interface FoodRepository extends JpaRepository<Food, Long>{
     List<Food> findByNameContaining(String name);
+
+    List<Food> findByRestaurantId(Long restaurantId);
 }

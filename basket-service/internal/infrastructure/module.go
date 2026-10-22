@@ -3,8 +3,11 @@ package infrastructure
 import (
 	cronadapter "github.com/JIeeiroSst/basket-service/internal/adapter/primary/cron"
 	httpadapter "github.com/JIeeiroSst/basket-service/internal/adapter/primary/http"
+	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/catalogue"
+	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/fulfillment"
 	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/repository"
 	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/userservice"
+	"github.com/JIeeiroSst/basket-service/internal/adapter/secondary/wallet"
 	"github.com/JIeeiroSst/basket-service/internal/application"
 	"github.com/JIeeiroSst/basket-service/internal/infrastructure/cache"
 	"github.com/JIeeiroSst/basket-service/internal/infrastructure/database"
@@ -23,6 +26,9 @@ var Module = fx.Options(
 	repository.Module, // port.*Repository
 
 	userservice.Module, // *userservice.Client, port.UserDirectory
+	catalogue.Module,
+	wallet.Module,
+	fulfillment.Module,
 
 	application.Module, // port.*Usecase
 

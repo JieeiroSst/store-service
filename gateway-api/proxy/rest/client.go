@@ -69,6 +69,8 @@ func New(name, baseURL string, timeout time.Duration, opts ...Options) *Client {
 
 func (c *Client) Name() string { return c.name }
 
+func (c *Client) BaseURL() string { return c.baseURL }
+
 func (c *Client) Get(ctx context.Context, path string, query url.Values, out any) error {
 	return c.Do(ctx, Request{Method: http.MethodGet, Path: path, Query: query}, out)
 }

@@ -5,10 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strconv"
 
 	"github.com/JIeeiroSst/doordash-service/config"
 	"github.com/JIeeiroSst/doordash-service/internal/domain/model"
 	"github.com/JIeeiroSst/doordash-service/internal/domain/port"
+	"github.com/JIeeiroSst/doordash-service/pkg/authn"
 )
 
 type httpUserClient struct {
@@ -23,19 +26,23 @@ func NewUserClient(cfg *config.Config) port.UserClient {
 	}
 }
 
-type customerResponse struct {
-	ID          string `json:"user_id"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	PhoneNumber string `json:"phone_number"`
+type profileResponse struct {
+	ID       int64  `json:"id"`
+	Username string `json:"username"`
+	Name     string `json:"name"`
+	Active   bool   `json:"active"`
 }
 
 func (c *httpUserClient) GetCustomer(ctx context.Context, customerID string) (*model.Customer, error) {
-	var body customerResponse
-	if err := c.get(ctx, fmt.Sprintf("%s/v1/users/%s", c.baseURL, customerID), &body); err != nil {
+	var body profileResponse
+	if err := c.get(ctx, fmt.Sprintf("%s/api/v1/users/%s/profile", c.baseURL, url.PathEscape(customerID)), &body); err != nil {
 		return nil, err
 	}
-	return &model.Customer{ID: body.ID, Name: fullName(body.FirstName, body.LastName), Phone: body.PhoneNumber}, nil
+	name := body.Name
+	if name == "" {
+		name = body.Username
+	}
+	return &model.Customer{ID: strconv.FormatInt(body.ID, 10), Name: name}, nil
 }
 
 type driverResponse struct {
@@ -62,6 +69,11 @@ func (c *httpUserClient) get(ctx context.Context, url string, out any) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return fmt.Errorf("build request: %w", err)
+	}
+	if p, ok := authn.FromContext(ctx); ok && p.Token != "" {
+		req.Header.Set("Authorization", "Bearer "+p.Token)
+	} else {
+		authn.SetInternalToken(req.Header)
 	}
 
 	resp, err := c.client.Do(req)

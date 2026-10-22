@@ -46,6 +46,13 @@ func (s *reservationService) FindByID(ctx context.Context, id int) (*model.Reser
 	return s.repo.FindByID(ctx, id)
 }
 
+func (s *reservationService) FindByUser(ctx context.Context, userID string, limit int) ([]model.Reservation, error) {
+	if limit <= 0 || limit > 200 {
+		limit = 50
+	}
+	return s.repo.FindByUser(ctx, userID, limit)
+}
+
 func (s *reservationService) FindAll(ctx context.Context, pagination logger.Pagination) (logger.Pagination, error) {
 	return s.repo.FindAll(ctx, pagination)
 }

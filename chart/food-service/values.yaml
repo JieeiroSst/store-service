@@ -39,6 +39,10 @@ foodService:
 
   autoscaling:
     enabled: false
+  env:
+    datasourcePassword: password
+    redisPassword: ''
+
   containerEnv:
     - name: SERVER_PORT
       value: '{{ .Values.foodService.image.port }}'
@@ -47,7 +51,10 @@ foodService:
     - name: SPRING_DATASOURCE_USERNAME
       value: 'root'
     - name: SPRING_DATASOURCE_PASSWORD
-      value: 'password'
+      valueFrom:
+        secretKeyRef:
+          name: food-service-secret
+          key: datasourcePassword
     - name: REDIS_HOST
       value: 'redis-svc'
     - name: REDIS_PORT
@@ -55,7 +62,10 @@ foodService:
     - name: REDIS_USER
       value: 'default'
     - name: REDIS_PASSWORD
-      value: ''
+      valueFrom:
+        secretKeyRef:
+          name: food-service-secret
+          key: redisPassword
     - name: SPRING_RABBITMQ_HOST
       value: 'rabbitmq-service'
     - name: JAVA_TOOL_OPTIONS

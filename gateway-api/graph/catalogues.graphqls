@@ -93,6 +93,31 @@ type CatalogueProduct {
   option_ids: [Int!]
   images: [CatalogueProductImage!]
   recommendations: [CatalogueRecommendation!]
+  stockrecords: [CatalogueStockRecord!]
+  price: Float
+  price_currency: String
+  num_available: Int
+  in_stock: Boolean
+}
+
+type CatalogueStockRecord {
+  id: Int!
+  product_id: Int!
+  partner_sku: String
+  price_currency: String!
+  price: Float!
+  num_in_stock: Int
+  num_allocated: Int
+  num_available: Int
+  date_created: String
+  date_updated: String
+}
+
+input CatalogueStockRecordInput {
+  partner_sku: String
+  price_currency: String
+  price: Float!
+  num_in_stock: Int
 }
 
 input CatalogueProductInput {
@@ -128,6 +153,8 @@ extend type Query {
   catalogueProducts(q: String, category_id: Int, limit: Int, offset: Int): [CatalogueProduct!]! @public @rest(service: "catalogues-service", path: "/v1/products", fixed: "{\"public\":\"true\"}")
   catalogueAdminProducts(q: String, category_id: Int, public: Boolean, limit: Int, offset: Int): [CatalogueProduct!]! @hasPermission(object: "/graphql/catalogues-service", action: "QUERY") @rest(service: "catalogues-service", path: "/v1/products")
   catalogueProduct(id: Int!): CatalogueProduct @public @rest(service: "catalogues-service", path: "/v1/products/{id}")
+  catalogueStockRecords(product_id: Int!): [CatalogueStockRecord!]! @public @rest(service: "catalogues-service", path: "/v1/products/{product_id}/stockrecords")
+  catalogueStockRecord(id: Int!): CatalogueStockRecord @public @rest(service: "catalogues-service", path: "/v1/stockrecords/{id}")
 }
 
 extend type Mutation {
@@ -146,4 +173,7 @@ extend type Mutation {
   catalogueAddProductImage(id: Int!, input: CatalogueImageInput!): CatalogueProductImage @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "POST", path: "/v1/products/{id}/images")
   catalogueDeleteProductImage(id: Int!, image_id: Int!): Boolean! @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "DELETE", path: "/v1/products/{id}/images/{image_id}")
   catalogueSetRecommendations(id: Int!, recommendations: [CatalogueRecommendationInput!]!): CatalogueProduct @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "PUT", path: "/v1/products/{id}/recommendations")
+  catalogueCreateStockRecord(product_id: Int!, input: CatalogueStockRecordInput!): CatalogueStockRecord @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "POST", path: "/v1/products/{product_id}/stockrecords")
+  catalogueUpdateStockRecord(id: Int!, input: CatalogueStockRecordInput!): CatalogueStockRecord @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "PUT", path: "/v1/stockrecords/{id}")
+  catalogueDeleteStockRecord(id: Int!): Boolean! @hasPermission(object: "/graphql/catalogues-service", action: "MUTATION") @rest(service: "catalogues-service", method: "DELETE", path: "/v1/stockrecords/{id}")
 }

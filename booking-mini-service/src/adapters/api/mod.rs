@@ -8,6 +8,11 @@ pub fn config_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/api")
             .service(
+                web::scope("/me")
+                    .route("/bookings", web::get().to(booking_handlers::my_bookings))
+                    .route("/passengers", web::get().to(passenger_handlers::my_passengers))
+            )
+            .service(
                 web::scope("/rooms")
                     .route("", web::get().to(booking_handlers::get_available_rooms))
             )

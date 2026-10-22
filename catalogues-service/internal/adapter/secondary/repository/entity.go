@@ -151,6 +151,6 @@ func Entities() []any {
 	return []any{
 		&categoryEntity{}, &optionEntity{}, &productClassEntity{}, &productClassOptionEntity{},
 		&productEntity{}, &productCategoryEntity{}, &productOptionEntity{},
-		&productImageEntity{}, &recommendationEntity{},
+		&productImageEntity{}, &recommendationEntity{}, &stockRecordEntity{},
 	}
 }

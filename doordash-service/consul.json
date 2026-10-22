@@ -15,15 +15,19 @@
         "timeout": "5s"
     },
     "restaurantService": {
-        "baseURL": "http://restaurant-service-svc",
+        "baseURL": "http://food-service-svc:8080",
         "timeout": "5s"
     },
     "paymentService": {
-        "baseURL": "http://payment-service-svc",
+        "baseURL": "http://wallet-service-svc",
         "timeout": "5s"
     },
     "notificationService": {
         "baseURL": "http://notification-service-svc",
         "timeout": "5s"
+    },
+    "wallet": {
+        "merchantID": "55555555-5555-5555-5555-555555555555",
+        "currency": "VND"
     }
 }

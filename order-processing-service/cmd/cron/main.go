@@ -40,9 +40,9 @@ func main() {
 	workflowOptions := client.StartWorkflowOptions{
 		ID:                       constants.CronWorkflowID,
 		TaskQueue:                constants.OrderProcessingTaskQueue,
-		CronSchedule:            constants.OrderCleanupCronSchedule,
+		CronSchedule:             constants.OrderCleanupCronSchedule,
 		WorkflowExecutionTimeout: 365 * 24 * time.Hour, // Run for up to 1 year
-		WorkflowRunTimeout:       5 * time.Minute,       // Each cron run has 5 min max
+		WorkflowRunTimeout:       5 * time.Minute,      // Each cron run has 5 min max
 	}
 
 	workflowRun, err := temporalClient.ExecuteWorkflow(

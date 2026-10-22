@@ -15,6 +15,7 @@ type Handler struct {
 	basketLineAttr port.BasketLineAttributeUsecase
 	order          port.OrderUsecase
 	user           port.UserUsecase
+	checkout       port.CheckoutUsecase
 }
 
 func NewHandler(
@@ -23,6 +24,7 @@ func NewHandler(
 	basketLineAttr port.BasketLineAttributeUsecase,
 	order port.OrderUsecase,
 	user port.UserUsecase,
+	checkout port.CheckoutUsecase,
 ) *Handler {
 	return &Handler{
 		basket:         basket,
@@ -30,6 +32,7 @@ func NewHandler(
 		basketLineAttr: basketLineAttr,
 		order:          order,
 		user:           user,
+		checkout:       checkout,
 	}
 }
 
@@ -40,6 +43,12 @@ func writeError(c *gin.Context, err error) {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 	case errors.Is(err, common.ErrInvalidRequest):
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	case errors.Is(err, common.ErrOutOfStock), errors.Is(err, common.ErrConflict):
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+	case errors.Is(err, common.ErrPaymentFailed):
+		c.JSON(http.StatusPaymentRequired, gin.H{"error": err.Error()})
+	case errors.Is(err, common.ErrUpstream):
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 	default:
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}

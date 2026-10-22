@@ -45,8 +45,9 @@ doordashService:
     # enrich orders (see Readme.md section 5) - override with the real
     # in-cluster Service names for each once they're deployed.
     userServiceBaseURL: http://user-api-svc
-    restaurantServiceBaseURL: http://restaurant-service-svc
-    paymentServiceBaseURL: http://payment-service-svc
+    restaurantServiceBaseURL: http://food-service-svc:8080
+    paymentServiceBaseURL: http://wallet-service-svc
+    walletMerchantID: 55555555-5555-5555-5555-555555555555
     notificationServiceBaseURL: http://notification-service-svc
 
   resources:
@@ -88,6 +89,8 @@ doordashService:
       value: '{{ .Values.doordashService.env.paymentServiceBaseURL }}'
     - name: NOTIFICATION_SERVICE_BASE_URL
       value: '{{ .Values.doordashService.env.notificationServiceBaseURL }}'
+    - name: WALLET_MERCHANT_ID
+      value: '{{ .Values.doordashService.env.walletMerchantID }}'
   envFile:
     enabled: true
     mountPath: /app/.env

@@ -39,6 +39,30 @@ impl PostgresRepository {
         Ok(owner)
     }
 
+    pub async fn passengers_owned_by(&self, user_id: &str) -> Result<Vec<Passenger>, Box<dyn Error>> {
+        let rows: Vec<(i32, String)> = sqlx::query_as("SELECT PassengerId, Name FROM Passengers WHERE UserId = $1 ORDER BY PassengerId")
+            .bind(user_id)
+            .fetch_all(&self.pool)
+            .await?;
+        Ok(rows.into_iter().map(|(id, name)| Passenger { id, name }).collect())
+    }
+
+    pub async fn bookings_owned_by(&self, user_id: &str) -> Result<Vec<Booking>, Box<dyn Error>> {
+        let ids: Vec<i32> = sqlx::query_scalar(
+            "SELECT b.BookingId FROM Bookings b JOIN Passengers p ON b.PassengerId = p.PassengerId WHERE p.UserId = $1 ORDER BY b.FromDate DESC, b.BookingId DESC",
+        )
+            .bind(user_id)
+            .fetch_all(&self.pool)
+            .await?;
+        let mut bookings = Vec::with_capacity(ids.len());
+        for id in ids {
+            if let Some(b) = self.get_booking(id).await? {
+                bookings.push(b);
+            }
+        }
+        Ok(bookings)
+    }
+
     pub async fn booking_owner(&self, booking_id: i32) -> Result<Option<Option<String>>, Box<dyn Error>> {
         let owner: Option<Option<String>> = sqlx::query_scalar(
             "SELECT p.UserId FROM Bookings b JOIN Passengers p ON b.PassengerId = p.PassengerId WHERE b.BookingId = $1",

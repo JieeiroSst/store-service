@@ -22,5 +22,19 @@
     "cache": {
         "host": "redis-svc:80",
         "password": ""
+    },
+    "catalogue_service": {
+        "base_url": "http://catalogues-service-svc",
+        "timeout_seconds": 5
+    },
+    "wallet_service": {
+        "base_url": "http://wallet-service-svc",
+        "timeout_seconds": 10,
+        "merchant_id": "66666666-6666-6666-6666-666666666666"
+    },
+    "temporal": {
+        "address": "temporal-service:7233",
+        "namespace": "default",
+        "task_queue": "ORDER_PROCESSING_TASK_QUEUE"
     }
 }

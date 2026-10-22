@@ -104,6 +104,7 @@ func (s *orderService) CreateOrder(ctx context.Context, in port.CreateOrderInput
 		return nil, port.ErrPaymentAuthorizationFailed
 	}
 	order.PaymentStatus = model.PaymentStatusAuthorized
+	order.PaymentID = authorization.PaymentID
 
 	created, err := s.orders.Create(ctx, order)
 	if err != nil {
@@ -127,6 +128,25 @@ func (s *orderService) CreateOrder(ctx context.Context, in port.CreateOrderInput
 	})
 
 	return created, nil
+}
+
+func (s *orderService) settlePayment(ctx context.Context, order *model.Order, status string) {
+	if order.PaymentID == "" || order.PaymentStatus != model.PaymentStatusAuthorized {
+		return
+	}
+	var err error
+	if status == model.PaymentStatusCaptured {
+		err = s.payments.CapturePayment(ctx, order.PaymentID)
+	} else {
+		err = s.payments.VoidPayment(ctx, order.PaymentID)
+	}
+	if err != nil {
+		log.Printf("doordash: %s payment %s for order %d: %v", status, order.PaymentID, order.ID, err)
+		return
+	}
+	if err := s.orders.UpdatePaymentStatus(ctx, order.ID, status); err != nil {
+		log.Printf("doordash: record payment status %s for order %d: %v", status, order.ID, err)
+	}
 }
 
 func (s *orderService) GetOrder(ctx context.Context, id int64) (*model.Order, error) {
@@ -161,6 +181,10 @@ func (s *orderService) UpdateOrderStatus(ctx context.Context, id int64, status m
 		if err := s.orders.SetActualDeliveryTime(ctx, id, time.Now()); err != nil {
 			log.Printf("doordash: set actual delivery time for order %d: %v", id, err)
 		}
+		s.settlePayment(ctx, order, model.PaymentStatusCaptured)
+	}
+	if status == model.OrderStatusCancelled {
+		s.settlePayment(ctx, order, model.PaymentStatusVoided)
 	}
 
 	if err := s.tracking.Create(ctx, &model.OrderTracking{
@@ -197,6 +221,7 @@ func (s *orderService) CancelOrder(ctx context.Context, id int64, reason string)
 	if err := s.orders.UpdateStatus(ctx, id, model.OrderStatusCancelled); err != nil {
 		return nil, err
 	}
+	s.settlePayment(ctx, order, model.PaymentStatusVoided)
 	if err := s.tracking.Create(ctx, &model.OrderTracking{
 		OrderID:   id,
 		Status:    model.OrderStatusCancelled,

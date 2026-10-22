@@ -35,6 +35,6 @@ func (r *PaymentRepository) Update(ctx context.Context, payment *entities.Paymen
 
 func (r *PaymentRepository) GetByUserID(ctx context.Context, userID string) ([]*entities.Payment, error) {
 	var payments []*entities.Payment
-	err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&payments).Error
+	err := r.db.WithContext(ctx).Where("user_id = ?", userID).Order("created_at DESC").Limit(200).Find(&payments).Error
 	return payments, err
 }

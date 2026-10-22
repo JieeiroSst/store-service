@@ -16,6 +16,7 @@ type OrderRepository interface {
 	UpdateStatus(ctx context.Context, id int64, status model.OrderStatus) error
 	AssignDriver(ctx context.Context, id int64, driverID string) error
 	SetActualDeliveryTime(ctx context.Context, id int64, deliveredAt time.Time) error
+	UpdatePaymentStatus(ctx context.Context, id int64, status string) error
 }
 
 type OrderTrackingRepository interface {
@@ -49,6 +50,8 @@ type AuthorizePaymentInput struct {
 
 type PaymentClient interface {
 	AuthorizePayment(ctx context.Context, in AuthorizePaymentInput) (*model.PaymentAuthorization, error)
+	CapturePayment(ctx context.Context, paymentID string) error
+	VoidPayment(ctx context.Context, paymentID string) error
 }
 
 type NotifyInput struct {

@@ -26,6 +26,8 @@ func SetupRoutes(r *gin.Engine, paymentHandler *handlers.PaymentHandler, authn m
 			payments.GET("/:id/status", paymentHandler.GetPaymentStatus)
 		}
 
+		api.GET("/me/payments", middleware.RequireAuth(authn), paymentHandler.ListMyPayments)
+
 		webhooks := api.Group("/webhooks")
 		{
 			webhooks.POST("/momo", paymentHandler.HandleMoMoWebhook)

@@ -30,6 +30,16 @@ type OptionService interface {
 	Delete(ctx context.Context, id int64) error
 }
 
+type StockRecordService interface {
+	Create(ctx context.Context, s model.StockRecord) (*model.StockRecord, error)
+	Get(ctx context.Context, id int64) (*model.StockRecord, error)
+	ListByProduct(ctx context.Context, productID int64) ([]model.StockRecord, error)
+	Update(ctx context.Context, s model.StockRecord) (*model.StockRecord, error)
+	Delete(ctx context.Context, id int64) error
+	Allocate(ctx context.Context, id int64, qty int) (*model.StockRecord, error)
+	Release(ctx context.Context, id int64, qty int) (*model.StockRecord, error)
+}
+
 type ProductService interface {
 	Create(ctx context.Context, p model.Product) (*model.Product, error)
 	Get(ctx context.Context, id int64) (*model.Product, error)

@@ -182,3 +182,37 @@ func TestReadinessReflectsDependency(t *testing.T) {
 		t.Fatalf("liveness must not depend on the database, got %d", rec.Code)
 	}
 }
+
+type stubUserWallets struct {
+	port.WalletService
+	user uuid.UUID
+}
+
+func (s *stubUserWallets) ListByUser(_ context.Context, userID uuid.UUID) ([]*model.Wallet, error) {
+	s.user = userID
+	return []*model.Wallet{{ID: uuid.New(), UserID: userID, Currency: model.CurrencyUSD}}, nil
+}
+
+func TestNumericUserIDsMapToStableUUIDs(t *testing.T) {
+	a, ok := UserUUID("7")
+	b, _ := UserUUID(" 7 ")
+	other, _ := UserUUID("8")
+	if !ok || a != b || a == other || a.Version() != 5 {
+		t.Fatalf("numeric ids must map to a stable v5 uuid: %v %v %v", a, b, other)
+	}
+	existing := uuid.New()
+	if got, ok := UserUUID(existing.String()); !ok || got != existing {
+		t.Fatalf("uuid ids must pass through unchanged, got %v", got)
+	}
+	for _, bad := range []string{"nope", "-3", "0", "1.5"} {
+		if _, ok := UserUUID(bad); ok {
+			t.Fatalf("%q must be rejected", bad)
+		}
+	}
+
+	wallets := &stubUserWallets{}
+	rec := do(t, newTestRouter(Services{Wallets: wallets}), http.MethodGet, "/api/v1/users/7/wallets", nil, nil)
+	if rec.Code != http.StatusOK || wallets.user != a {
+		t.Fatalf("expected numeric path id to resolve to %v, got %d %v: %s", a, rec.Code, wallets.user, rec.Body.String())
+	}
+}

@@ -17,6 +17,7 @@ func NewRouter(handler *CompositionHandler) *gin.Engine {
 	v1 := r.Group("/v1")
 	{
 		v1.POST("/compositions", handler.Create)
+		v1.GET("/compositions", handler.List)
 		v1.GET("/compositions/:id", handler.Get)
 	}
 

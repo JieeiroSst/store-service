@@ -35,3 +35,14 @@ foodService:
   topologySpread:
     enabled: true
   priorityClassName: store-standard
+  externalSecret:
+    enabled: true
+    targetName: food-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: datasourcePassword
+        remoteKey: store/prod/food-service
+        property: datasourcePassword
+      - secretKey: redisPassword
+        remoteKey: store/prod/food-service
+        property: redisPassword

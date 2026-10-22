@@ -36,14 +36,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Development Code
-        uses: actions/checkout@v2
-      - name: Use Node.js 17.x
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 17.x
-      - run: cd keikibook && npm install
-      # - run: cd keikibook && npm run build --if-present
+          node-version: 20
+          cache: npm
+          cache-dependency-path: keikibook/package-lock.json
+      - run: cd keikibook && npm ci
+      - run: cd keikibook && npm run build
 
 
   recompense_service:

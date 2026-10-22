@@ -31,6 +31,14 @@ func (r *mutationResolver) FoodCreateIngredient(ctx context.Context, name string
 	return restCall[*model.FoodIngredient](ctx, r.Proxy, "food-service", rest.Request{Method: "POST", Path: "/api/ingredient", Body: map[string]any{"name": name, "unit": unit}}, "")
 }
 
+func (r *mutationResolver) FoodCreateRestaurant(ctx context.Context, input model.FoodRestaurantInput) (*model.FoodRestaurant, error) {
+	return restCall[*model.FoodRestaurant](ctx, r.Proxy, "food-service", rest.Request{Method: "POST", Path: "/api/restaurants", Body: input}, "")
+}
+
+func (r *mutationResolver) FoodUpdateRestaurant(ctx context.Context, id int, input model.FoodRestaurantInput) (*model.FoodRestaurant, error) {
+	return restCall[*model.FoodRestaurant](ctx, r.Proxy, "food-service", rest.Request{Method: "PUT", Path: rest.P("/api/restaurants/%v", id), Body: input}, "")
+}
+
 func (r *queryResolver) Food(ctx context.Context, id int) (*model.FoodFood, error) {
 	return restCall[*model.FoodFood](ctx, r.Proxy, "food-service", rest.Request{Method: "GET", Path: rest.P("/api/food/%v", id)}, "")
 }
@@ -41,4 +49,16 @@ func (r *queryResolver) Foods(ctx context.Context) ([]*model.FoodFood, error) {
 
 func (r *queryResolver) FoodSearchFoods(ctx context.Context, name string) ([]*model.FoodFood, error) {
 	return restCall[[]*model.FoodFood](ctx, r.Proxy, "food-service", rest.Request{Method: "GET", Path: "/api/food/search", Query: restQuery("name", name)}, "")
+}
+
+func (r *queryResolver) FoodRestaurants(ctx context.Context, q *string) ([]*model.FoodRestaurant, error) {
+	return restCall[[]*model.FoodRestaurant](ctx, r.Proxy, "food-service", rest.Request{Method: "GET", Path: "/api/restaurants", Query: restQuery("q", q)}, "")
+}
+
+func (r *queryResolver) FoodRestaurant(ctx context.Context, id int) (*model.FoodRestaurant, error) {
+	return restCall[*model.FoodRestaurant](ctx, r.Proxy, "food-service", rest.Request{Method: "GET", Path: rest.P("/api/restaurants/%v", id)}, "")
+}
+
+func (r *queryResolver) FoodRestaurantMenu(ctx context.Context, id int) ([]*model.FoodFood, error) {
+	return restCall[[]*model.FoodFood](ctx, r.Proxy, "food-service", rest.Request{Method: "GET", Path: rest.P("/api/restaurants/%v/foods", id)}, "")
 }

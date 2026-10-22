@@ -101,6 +101,20 @@ func (h *PaymentHandler) GetPayment(c *gin.Context) {
 	utils.SuccessResponse(c, response)
 }
 
+func (h *PaymentHandler) ListMyPayments(c *gin.Context) {
+	userID := middleware.UserID(c)
+	if userID == "" {
+		utils.ErrorResponse(c, http.StatusUnauthorized, "Authentication required", nil)
+		return
+	}
+	payments, err := h.paymentService.ListUserPayments(c.Request.Context(), userID)
+	if err != nil {
+		utils.ErrorResponse(c, http.StatusInternalServerError, "Failed to list payments", err)
+		return
+	}
+	utils.SuccessResponse(c, payments)
+}
+
 func (h *PaymentHandler) GetPaymentStatus(c *gin.Context) {
 	paymentID := c.Param("id")
 	if !h.authorizePayment(c, paymentID) {

@@ -73,3 +73,29 @@ func TestPathID(t *testing.T) {
 		t.Errorf("missing option: status %d", got)
 	}
 }
+
+func TestProductJSONSummarisesStock(t *testing.T) {
+	five, two, zero := 5, 2, 0
+	p := model.Product{ID: 1, Title: "Áo", StockRecords: []model.StockRecord{
+		{ID: 1, Price: 300, PriceCurrency: "VND", NumInStock: &five, NumAllocated: 5},
+		{ID: 2, Price: 250, PriceCurrency: "VND", NumInStock: &two},
+		{ID: 3, Price: 100, PriceCurrency: "VND", NumInStock: &zero},
+	}}
+	out := toProductJSON(p)
+	if out.Price == nil || *out.Price != 250 || out.PriceCurrency != "VND" || !out.InStock {
+		t.Fatalf("cheapest purchasable offer must win: %+v", out)
+	}
+	if out.NumAvailable == nil || *out.NumAvailable != 2 {
+		t.Fatalf("available = %v, want 2", out.NumAvailable)
+	}
+
+	empty := toProductJSON(model.Product{ID: 2})
+	if empty.Price != nil || empty.InStock || empty.NumAvailable != nil || empty.StockRecords == nil {
+		t.Fatalf("product without stock must be unpriced: %+v", empty)
+	}
+
+	untracked := toProductJSON(model.Product{ID: 3, StockRecords: []model.StockRecord{{Price: 9}}})
+	if untracked.NumAvailable != nil || !untracked.InStock {
+		t.Fatalf("untracked stock is always available: %+v", untracked)
+	}
+}

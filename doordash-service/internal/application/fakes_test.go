@@ -93,6 +93,15 @@ func (r *fakeOrderRepo) SetActualDeliveryTime(_ context.Context, id int64, deliv
 	return nil
 }
 
+func (r *fakeOrderRepo) UpdatePaymentStatus(_ context.Context, id int64, status string) error {
+	o, ok := r.byID[id]
+	if !ok {
+		return port.ErrNotFound
+	}
+	o.PaymentStatus = status
+	return nil
+}
+
 type fakeTrackingRepo struct {
 	events []model.OrderTracking
 }
@@ -205,6 +214,25 @@ func (c *fakeRestaurantClient) GetMenuItems(_ context.Context, menuItemIDs []str
 type fakePaymentClient struct {
 	authorizeStatus string
 	authorizeErr    error
+	captured        []string
+	voided          []string
+	settleErr       error
+}
+
+func (c *fakePaymentClient) CapturePayment(_ context.Context, paymentID string) error {
+	if c.settleErr != nil {
+		return c.settleErr
+	}
+	c.captured = append(c.captured, paymentID)
+	return nil
+}
+
+func (c *fakePaymentClient) VoidPayment(_ context.Context, paymentID string) error {
+	if c.settleErr != nil {
+		return c.settleErr
+	}
+	c.voided = append(c.voided, paymentID)
+	return nil
 }
 
 func (c *fakePaymentClient) AuthorizePayment(_ context.Context, in port.AuthorizePaymentInput) (*model.PaymentAuthorization, error) {

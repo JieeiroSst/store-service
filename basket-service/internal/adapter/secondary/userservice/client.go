@@ -23,8 +23,8 @@ var (
 type Identity struct {
 	UserID   string
 	Username string
-	Role     string 
-	Roles    []string 
+	Role     string
+	Roles    []string
 }
 
 // HasRole reports whether role is among the caller's effective roles.

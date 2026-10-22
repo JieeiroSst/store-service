@@ -365,6 +365,13 @@ func build(fset *token.FileSet, src []byte, fd *ast.FuncDecl, s spec) (string, e
 				fields = append(fields, fmt.Sprintf("%q: %s", wire(a.Name), p.name))
 			}
 		}
+		if s.userField != "" {
+			field, getter := s.userField, "userIDOf(ctx)"
+			if strings.HasSuffix(field, ":int") {
+				field, getter = strings.TrimSuffix(field, ":int"), "userIDInt(ctx)"
+			}
+			fields = append(fields, fmt.Sprintf("%q: %s", field, getter))
+		}
 		method := s.method
 		if method == "GET" {
 			method = "POST"

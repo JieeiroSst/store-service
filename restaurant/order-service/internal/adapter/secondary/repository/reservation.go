@@ -45,6 +45,16 @@ func (r *reservationRepository) FindAll(ctx context.Context, pagination logger.P
 	return pagination, nil
 }
 
+func (r *reservationRepository) FindByUser(ctx context.Context, userID string, limit int) ([]model.Reservation, error) {
+	var reservations []model.Reservation
+	err := r.db.WithContext(ctx).
+		Where("user_id = ?", userID).
+		Order("reserved_at DESC").
+		Limit(limit).
+		Find(&reservations).Error
+	return reservations, err
+}
+
 func (r *reservationRepository) FindConflicting(ctx context.Context, tableName string, at time.Time, window time.Duration) ([]model.Reservation, error) {
 	var reservations []model.Reservation
 	err := r.db.WithContext(ctx).

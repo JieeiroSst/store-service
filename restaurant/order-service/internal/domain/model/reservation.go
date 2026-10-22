@@ -12,6 +12,7 @@ const (
 // it (Order.TableName references the same table naming).
 type Reservation struct {
 	ID           int       `json:"id,omitempty"`
+	UserID       string    `json:"user_id,omitempty" form:"user_id" gorm:"index"`
 	TableName    string    `json:"table_name" form:"table_name"`
 	CustomerName string    `json:"customer_name" form:"customer_name"`
 	PartySize    int       `json:"party_size" form:"party_size"`

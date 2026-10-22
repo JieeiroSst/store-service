@@ -21,11 +21,40 @@ public class Food {
     @Column(name = "category")
     private String category;
 
+    @Column(name = "restaurant_id")
+    private Long restaurantId;
+
+    @Column(name = "is_active")
+    private Boolean active;
+
+    public Food() {
+    }
+
     public Food(String name, String description, long price, String category) {
         this.name = name;
+        this.description = description;
         this.price = price;
         this.category = category;
-        this.category = category;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("restaurant_id")
+    public Long getRestaurantId() {
+        return restaurantId;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("restaurant_id")
+    public void setRestaurantId(Long restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("is_active")
+    public boolean isActive() {
+        return active == null || active;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonProperty("is_active")
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public String getCategory() {

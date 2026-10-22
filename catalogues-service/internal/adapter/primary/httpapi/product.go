@@ -73,6 +73,11 @@ type productJSON struct {
 	OptionIDs       []int64              `json:"option_ids"`
 	Images          []imageJSON          `json:"images"`
 	Recommendations []recommendationJSON `json:"recommendations"`
+	StockRecords    []stockRecordJSON    `json:"stockrecords"`
+	Price           *float64             `json:"price"`
+	PriceCurrency   string               `json:"price_currency,omitempty"`
+	NumAvailable    *int                 `json:"num_available"`
+	InStock         bool                 `json:"in_stock"`
 }
 
 func toImageJSON(m model.ProductImage) imageJSON {
@@ -105,6 +110,26 @@ func toProductJSON(p model.Product) productJSON {
 	for i, r := range p.Recommendations {
 		out.Recommendations[i] = recommendationJSON{ProductID: r.RecommendedID, Ranking: r.Ranking}
 	}
+	out.StockRecords = make([]stockRecordJSON, len(p.StockRecords))
+	untracked := false
+	total := 0
+	for i, s := range p.StockRecords {
+		out.StockRecords[i] = toStockJSON(s)
+		if a := s.Available(); a == nil {
+			untracked = true
+		} else {
+			total += *a
+		}
+		if s.CanSupply(1) && (out.Price == nil || s.Price < *out.Price) {
+			price := s.Price
+			out.Price = &price
+			out.PriceCurrency = s.PriceCurrency
+		}
+	}
+	if len(p.StockRecords) > 0 && !untracked {
+		out.NumAvailable = &total
+	}
+	out.InStock = out.Price != nil
 	return out
 }
 

@@ -70,8 +70,8 @@ type ShopifyLineItem {
 extend type Query {
   shopifyProducts(limit: Int, offset: Int): ShopifyProductList @public @rest(service: "shopify-service", path: "/api/v1/products")
   shopifyProduct(id: Int!): ShopifyProduct @public @rest(service: "shopify-service", path: "/api/v1/products/{id}")
-  shopifyOrders(limit: Int, offset: Int): ShopifyOrderList @public @rest(service: "shopify-service", path: "/api/v1/orders")
-  shopifyOrder(id: Int!): ShopifyOrder @public @rest(service: "shopify-service", path: "/api/v1/orders/{id}")
+  shopifyOrders(limit: Int, offset: Int): ShopifyOrderList @hasPermission(object: "/graphql/shopify-service", action: "QUERY") @rest(service: "shopify-service", path: "/api/v1/orders")
+  shopifyOrder(id: Int!): ShopifyOrder @hasPermission(object: "/graphql/shopify-service", action: "QUERY") @rest(service: "shopify-service", path: "/api/v1/orders/{id}")
 }
 
 extend type Mutation {

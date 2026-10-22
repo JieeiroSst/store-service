@@ -17,6 +17,12 @@ type Config struct {
 	RestaurantService   ExternalServiceConfig
 	PaymentService      ExternalServiceConfig
 	NotificationService ExternalServiceConfig
+	Wallet              WalletConfig
+}
+
+type WalletConfig struct {
+	MerchantID string
+	Currency   string
 }
 
 type ServerConfig struct {
@@ -62,16 +68,20 @@ func FromEnv() *Config {
 			Timeout: getEnv("USER_SERVICE_TIMEOUT", "5s"),
 		},
 		RestaurantService: ExternalServiceConfig{
-			BaseURL: getEnv("RESTAURANT_SERVICE_BASE_URL", "http://restaurant-service-svc"),
+			BaseURL: getEnv("RESTAURANT_SERVICE_BASE_URL", "http://food-service-svc:8080"),
 			Timeout: getEnv("RESTAURANT_SERVICE_TIMEOUT", "5s"),
 		},
 		PaymentService: ExternalServiceConfig{
-			BaseURL: getEnv("PAYMENT_SERVICE_BASE_URL", "http://payment-service-svc"),
+			BaseURL: getEnv("PAYMENT_SERVICE_BASE_URL", "http://wallet-service-svc"),
 			Timeout: getEnv("PAYMENT_SERVICE_TIMEOUT", "5s"),
 		},
 		NotificationService: ExternalServiceConfig{
 			BaseURL: getEnv("NOTIFICATION_SERVICE_BASE_URL", "http://notification-service-svc"),
 			Timeout: getEnv("NOTIFICATION_SERVICE_TIMEOUT", "5s"),
+		},
+		Wallet: WalletConfig{
+			MerchantID: getEnv("WALLET_MERCHANT_ID", "55555555-5555-5555-5555-555555555555"),
+			Currency:   getEnv("WALLET_CURRENCY", "VND"),
 		},
 	}
 }

@@ -33,6 +33,7 @@ input IntPayCreatePaymentInput {
 }
 
 extend type Query {
+  myIntPayPayments: [IntPayPayment!]! @rest(service: "integrated-payment-service", path: "/api/v1/me/payments", unwrap: "data")
   intPayPayment(id: String!): IntPayPayment @rest(service: "integrated-payment-service", path: "/api/v1/payments/{id}", unwrap: "data")
   intPayPaymentStatus(id: String!): String @rest(service: "integrated-payment-service", path: "/api/v1/payments/{id}/status", unwrap: "data")
 }

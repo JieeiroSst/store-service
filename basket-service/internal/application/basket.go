@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"time"
 
 	"github.com/JIeeiroSst/basket-service/internal/domain/model"
 	"github.com/JIeeiroSst/basket-service/internal/domain/port"
@@ -16,6 +17,11 @@ func NewBasketService(repo port.BasketRepository) port.BasketUsecase {
 }
 
 func (s *basketService) CreateBasket(ctx context.Context, basket *model.Basket) (*model.Basket, error) {
+	basket.ID = 0
+	basket.Status = model.BasketStatusOpen
+	basket.DateCreated = time.Now().UTC().Format(time.RFC3339Nano)
+	basket.DateSubmitted, basket.DatePlaced, basket.DateMerged = "", "", ""
+	basket.Currency, basket.TotalInclTax, basket.PaymentReference, basket.FulfillmentID = "", 0, "", ""
 	if err := s.repo.Create(ctx, basket); err != nil {
 		return nil, err
 	}
@@ -35,9 +41,19 @@ func (s *basketService) ListBasketsByUser(ctx context.Context, userID int) ([]mo
 }
 
 func (s *basketService) UpdateBasket(ctx context.Context, basket *model.Basket) (*model.Basket, error) {
-	if _, err := s.repo.GetByID(ctx, basket.ID); err != nil {
+	current, err := s.repo.GetByID(ctx, basket.ID)
+	if err != nil {
 		return nil, err
 	}
+	basket.Status = current.Status
+	basket.DateCreated = current.DateCreated
+	basket.DateSubmitted = current.DateSubmitted
+	basket.DatePlaced = current.DatePlaced
+	basket.DateMerged = current.DateMerged
+	basket.Currency = current.Currency
+	basket.TotalInclTax = current.TotalInclTax
+	basket.PaymentReference = current.PaymentReference
+	basket.FulfillmentID = current.FulfillmentID
 	if err := s.repo.Update(ctx, basket); err != nil {
 		return nil, err
 	}

@@ -6,7 +6,6 @@ import (
 	"github.com/JIeeiroSst/catalogues-service/internal/domain/model"
 )
 
-
 type CategoryRepository interface {
 	Create(ctx context.Context, c *model.Category) error
 	Get(ctx context.Context, id int64) (*model.Category, error)
@@ -29,6 +28,16 @@ type OptionRepository interface {
 	List(ctx context.Context) ([]model.Option, error)
 	Update(ctx context.Context, o *model.Option) error
 	Delete(ctx context.Context, id int64) error
+}
+
+type StockRecordRepository interface {
+	Create(ctx context.Context, s *model.StockRecord) error
+	Get(ctx context.Context, id int64) (*model.StockRecord, error)
+	ListByProducts(ctx context.Context, productIDs []int64) ([]model.StockRecord, error)
+	Update(ctx context.Context, s *model.StockRecord) error
+	Delete(ctx context.Context, id int64) error
+	Allocate(ctx context.Context, id int64, qty int) error
+	Release(ctx context.Context, id int64, qty int) error
 }
 
 type ProductRepository interface {

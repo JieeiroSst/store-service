@@ -12,8 +12,8 @@ import (
 	wf "github.com/JIeeiroSst/order-processing-service/internal/workflow"
 	"github.com/JIeeiroSst/order-processing-service/pkg/constants"
 	"github.com/JIeeiroSst/order-processing-service/pkg/logger"
-	"go.temporal.io/sdk/client"
 	enumspb "go.temporal.io/api/enums/v1"
+	"go.temporal.io/sdk/client"
 )
 
 func main() {

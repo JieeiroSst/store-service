@@ -46,8 +46,8 @@ type InventoryReserveResponse struct {
 }
 
 type ShippingRequest struct {
-	OrderID    string `json:"order_id"`
-	CustomerID string `json:"customer_id"`
+	OrderID    string  `json:"order_id"`
+	CustomerID string  `json:"customer_id"`
 	Address    Address `json:"address"`
 }
 

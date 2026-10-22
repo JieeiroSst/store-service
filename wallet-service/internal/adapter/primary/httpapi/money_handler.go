@@ -27,7 +27,7 @@ func (a *API) topUp(c *gin.Context) {
 	var p ids
 	cmd := port.TopUpCommand{
 		IdempotencyKey: idempotencyKey(c, req.IdempotencyKey),
-		UserID:         p.required("user_id", req.UserID),
+		UserID:         p.requiredUser("user_id", req.UserID),
 		WalletID:       walletID,
 		BankAccountID:  p.required("bank_account_id", req.BankAccountID),
 		Amount:         req.Amount,
@@ -63,7 +63,7 @@ func (a *API) withdraw(c *gin.Context) {
 	var p ids
 	cmd := port.WithdrawCommand{
 		IdempotencyKey: idempotencyKey(c, req.IdempotencyKey),
-		UserID:         p.required("user_id", req.UserID),
+		UserID:         p.requiredUser("user_id", req.UserID),
 		WalletID:       walletID,
 		BankAccountID:  p.required("bank_account_id", req.BankAccountID),
 		Amount:         req.Amount,
@@ -98,10 +98,10 @@ func (a *API) transfer(c *gin.Context) {
 	var p ids
 	cmd := port.TransferCommand{
 		IdempotencyKey: idempotencyKey(c, req.IdempotencyKey),
-		UserID:         p.required("user_id", req.UserID),
+		UserID:         p.requiredUser("user_id", req.UserID),
 		FromWalletID:   p.required("from_wallet_id", req.FromWalletID),
 		ToWalletID:     p.optional("to_wallet_id", req.ToWalletID),
-		ToUserID:       p.optional("to_user_id", req.ToUserID),
+		ToUserID:       p.optionalUser("to_user_id", req.ToUserID),
 		Amount:         req.Amount,
 		Pin:            req.Pin,
 		Description:    req.Description,
@@ -134,7 +134,7 @@ func (a *API) pay(c *gin.Context) {
 	var p ids
 	cmd := port.PayCommand{
 		IdempotencyKey: idempotencyKey(c, req.IdempotencyKey),
-		UserID:         p.required("user_id", req.UserID),
+		UserID:         p.requiredUser("user_id", req.UserID),
 		WalletID:       p.required("wallet_id", req.WalletID),
 		MerchantID:     p.required("merchant_id", req.MerchantID),
 		Amount:         req.Amount,

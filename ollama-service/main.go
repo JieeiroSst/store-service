@@ -83,7 +83,6 @@ type Client struct {
 	Conn     *websocket.Conn
 	SendChan chan Message
 	UserID   int64
-	Groups   map[int64]bool 
 }
 
 type ChatServer struct {
@@ -193,102 +192,85 @@ func (server *ChatServer) Run() {
 			server.Clients[client] = true
 			server.Mutex.Unlock()
 
-			server.loadUserGroups(client)
-
 		case client := <-server.Unregister:
-			server.Mutex.Lock()
-			if _, ok := server.Clients[client]; ok {
-				delete(server.Clients, client)
-				close(client.SendChan)
-			}
-			server.Mutex.Unlock()
+			server.drop(client)
 
 		case message := <-server.Broadcast:
-			if message.GroupID > 0 {
-				server.broadcastToGroup(message)
-			} else if message.RecipientID != "" {
-				server.sendDirectMessage(message)
-			} else {
-				server.broadcastToAll(message)
-			}
+			server.route(message)
 		}
 	}
 }
 
-func (server *ChatServer) loadUserGroups(client *Client) {
-	rows, err := db.Query("SELECT group_id FROM group_members WHERE user_id = $1", client.UserID)
-	if err != nil {
-		log.Println("Error loading user groups:", err)
-		return
+func (server *ChatServer) route(message Message) {
+	switch {
+	case message.GroupID > 0:
+		saveMessage(message)
+		members, err := groupMembersOf(message.GroupID)
+		if err != nil {
+			log.Println("Error loading group members:", err)
+			return
+		}
+		server.deliver(message, func(c *Client) bool { return members[c.UserID] })
+	case message.RecipientID != "":
+		recipientID, err := strconv.ParseInt(message.RecipientID, 10, 64)
+		if err != nil {
+			log.Println("Dropping message with invalid recipient:", message.RecipientID)
+			return
+		}
+		saveMessage(message)
+		senderID, _ := strconv.ParseInt(message.SenderID, 10, 64)
+		server.deliver(message, func(c *Client) bool { return c.UserID == recipientID || c.UserID == senderID })
+	default:
+		log.Println("Dropping message without recipient or group from", message.SenderID)
 	}
-	defer rows.Close()
+}
 
-	for rows.Next() {
-		var groupID int64
-		if err := rows.Scan(&groupID); err != nil {
-			log.Println("Error scanning group ID:", err)
+func (server *ChatServer) deliver(message Message, to func(*Client) bool) {
+	var slow []*Client
+	server.Mutex.RLock()
+	for client := range server.Clients {
+		if !to(client) {
 			continue
 		}
-		client.Groups[groupID] = true
-	}
-}
-
-func (server *ChatServer) broadcastToGroup(message Message) {
-	saveMessageToDB(message)
-
-	server.Mutex.RLock()
-	defer server.Mutex.RUnlock()
-
-	for client := range server.Clients {
-		if _, ok := client.Groups[message.GroupID]; ok {
-			select {
-			case client.SendChan <- message:
-			default:
-				close(client.SendChan)
-				delete(server.Clients, client)
-			}
-		}
-	}
-}
-
-func (server *ChatServer) sendDirectMessage(message Message) {
-	saveMessageToDB(message)
-
-	recipientID, _ := strconv.ParseInt(message.RecipientID, 10, 64)
-	senderID, _ := strconv.ParseInt(message.SenderID, 10, 64)
-
-	server.Mutex.RLock()
-	defer server.Mutex.RUnlock()
-
-	for client := range server.Clients {
-		if client.UserID == recipientID || client.UserID == senderID {
-			select {
-			case client.SendChan <- message:
-			default:
-				close(client.SendChan)
-				delete(server.Clients, client)
-			}
-		}
-	}
-}
-
-func (server *ChatServer) broadcastToAll(message Message) {
-	if message.SenderID != "system" {
-		saveMessageToDB(message)
-	}
-
-	server.Mutex.RLock()
-	defer server.Mutex.RUnlock()
-
-	for client := range server.Clients {
 		select {
 		case client.SendChan <- message:
 		default:
-			close(client.SendChan)
-			delete(server.Clients, client)
+			slow = append(slow, client)
 		}
 	}
+	server.Mutex.RUnlock()
+	for _, client := range slow {
+		server.drop(client)
+	}
 }
+
+func (server *ChatServer) drop(client *Client) {
+	server.Mutex.Lock()
+	defer server.Mutex.Unlock()
+	if _, ok := server.Clients[client]; ok {
+		delete(server.Clients, client)
+		close(client.SendChan)
+	}
+}
+
+func loadGroupMemberIDs(groupID int64) (map[int64]bool, error) {
+	rows, err := db.Query("SELECT user_id FROM group_members WHERE group_id = $1", groupID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	members := map[int64]bool{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		members[id] = true
+	}
+	return members, rows.Err()
+}
+
+var saveMessage = saveMessageToDB
 
 func saveMessageToDB(message Message) {
 	var senderID int64
@@ -353,7 +335,6 @@ func (server *ChatServer) HandleWebSocket(c *gin.Context) {
 		Conn:     conn,
 		SendChan: make(chan Message, 256),
 		UserID:   userID,
-		Groups:   make(map[int64]bool),
 	}
 
 	server.Register <- client
@@ -363,7 +344,9 @@ func (server *ChatServer) HandleWebSocket(c *gin.Context) {
 }
 
 func (server *ChatServer) writePump(client *Client) {
+	ping := time.NewTicker(wsPingPeriod)
 	defer func() {
+		ping.Stop()
 		client.Conn.Close()
 		server.Unregister <- client
 	}()
@@ -371,12 +354,17 @@ func (server *ChatServer) writePump(client *Client) {
 	for {
 		select {
 		case message, ok := <-client.SendChan:
+			client.Conn.SetWriteDeadline(time.Now().Add(wsWriteWait))
 			if !ok {
 				client.Conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-			err := client.Conn.WriteJSON(message)
-			if err != nil {
+			if err := client.Conn.WriteJSON(message); err != nil {
+				return
+			}
+		case <-ping.C:
+			client.Conn.SetWriteDeadline(time.Now().Add(wsWriteWait))
+			if err := client.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
 		}
@@ -388,6 +376,12 @@ func (server *ChatServer) readPump(client *Client) {
 		server.Unregister <- client
 		client.Conn.Close()
 	}()
+
+	client.Conn.SetReadLimit(wsMaxMessage)
+	client.Conn.SetReadDeadline(time.Now().Add(wsPongWait))
+	client.Conn.SetPongHandler(func(string) error {
+		return client.Conn.SetReadDeadline(time.Now().Add(wsPongWait))
+	})
 
 	for {
 		_, payload, err := client.Conn.ReadMessage()
@@ -413,8 +407,18 @@ func (server *ChatServer) processMessage(message Message) {
 	case "bot":
 		go server.handleBotMessage(message)
 	case "user":
+		if _, err := strconv.ParseInt(message.RecipientID, 10, 64); err != nil {
+			log.Println("Dropping direct message without a valid recipient from", message.SenderID)
+			return
+		}
+		message.GroupID = 0
 		server.Broadcast <- message
 	case "group":
+		senderID, err := strconv.ParseInt(message.SenderID, 10, 64)
+		if err != nil || !groupMembershipFor(message.GroupID, senderID) {
+			log.Println("Dropping group message from non-member:", message.SenderID, message.GroupID)
+			return
+		}
 		server.Broadcast <- message
 	default:
 		log.Println("Unknown message type:", message.Type)
@@ -441,10 +445,10 @@ func (server *ChatServer) handleBotMessage(message Message) {
 		Timestamp: time.Now(),
 	}
 
-	if message.GroupID > 0 {
+	if message.GroupID > 0 && groupMembershipFor(message.GroupID, mustID(message.SenderID)) {
 		botMessage.GroupID = message.GroupID
-	} else if message.RecipientID != "" {
-		botMessage.RecipientID = message.SenderID 
+	} else {
+		botMessage.RecipientID = message.SenderID
 	}
 
 	server.Broadcast <- botMessage
@@ -1297,6 +1301,7 @@ func setupRouter(chatServer *ChatServer) *gin.Engine {
 	chat := router.Group("/chat", requireAuth())
 	{
 		chat.GET("/history", GetChatHistoryHandler)
+		chat.POST("/messages", SendMessageHandler(chatServer))
 	}
 
 	router.GET("/ws", func(c *gin.Context) {
@@ -1353,7 +1358,6 @@ func handleWebSocketConnection(chatServer *ChatServer, w http.ResponseWriter, r 
 		Conn:     conn,
 		SendChan: make(chan Message, 256),
 		UserID:   userID,
-		Groups:   make(map[int64]bool),
 	}
 
 	chatServer.Register <- client

@@ -12,7 +12,27 @@ type Config struct {
 	Secret SecretConfig `json:"secret"`
 	Cache  CacheConfig  `json:"cache"`
 
-	UserService UserServiceConfig `json:"user_service"`
+	UserService      UserServiceConfig   `json:"user_service"`
+	CatalogueService UpstreamConfig      `json:"catalogue_service"`
+	WalletService    WalletServiceConfig `json:"wallet_service"`
+	Temporal         TemporalConfig      `json:"temporal"`
+}
+
+type TemporalConfig struct {
+	Address   string `json:"address"`
+	Namespace string `json:"namespace"`
+	TaskQueue string `json:"task_queue"`
+}
+
+type UpstreamConfig struct {
+	BaseURL        string `json:"base_url"`
+	TimeoutSeconds int    `json:"timeout_seconds"`
+}
+
+type WalletServiceConfig struct {
+	BaseURL        string `json:"base_url"`
+	TimeoutSeconds int    `json:"timeout_seconds"`
+	MerchantID     string `json:"merchant_id"`
 }
 
 type UserServiceConfig struct {
@@ -63,4 +83,3 @@ func ReadFileEnv(dir string) (*Dir, error) {
 	}
 	return data, nil
 }
-

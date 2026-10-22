@@ -25,6 +25,8 @@ func writeError(w http.ResponseWriter, err error) {
 	switch {
 	case errors.Is(err, model.ErrNotFound):
 		status, msg = http.StatusNotFound, "not found"
+	case errors.Is(err, model.ErrOutOfStock):
+		status, msg = http.StatusConflict, "not enough stock"
 	case errors.Is(err, model.ErrConflict):
 		status, msg = http.StatusConflict, "already exists or still in use"
 	case errors.Is(err, model.ErrInvalid):

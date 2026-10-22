@@ -54,6 +54,18 @@ func (r *orderRepository) ListByDriver(ctx context.Context, driverID string) ([]
 	return orders, err
 }
 
+func (r *orderRepository) UpdatePaymentStatus(ctx context.Context, id int64, status string) error {
+	result := r.db.WithContext(ctx).Model(&model.Order{}).Where("id = ?", id).
+		Updates(map[string]any{"payment_status": status, "updated_at": time.Now()})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return port.ErrNotFound
+	}
+	return nil
+}
+
 func (r *orderRepository) UpdateStatus(ctx context.Context, id int64, status model.OrderStatus) error {
 	result := r.db.WithContext(ctx).Model(&model.Order{}).Where("id = ?", id).
 		Updates(map[string]any{"status": status, "updated_at": time.Now()})

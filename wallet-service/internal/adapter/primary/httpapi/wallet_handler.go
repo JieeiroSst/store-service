@@ -19,7 +19,7 @@ func (a *API) createWallet(c *gin.Context) {
 		return
 	}
 	var p ids
-	userID := p.required("user_id", req.UserID)
+	userID := p.requiredUser("user_id", req.UserID)
 	if !p.ok(c) {
 		return
 	}
@@ -45,7 +45,7 @@ func (a *API) getWallet(c *gin.Context) {
 }
 
 func (a *API) listUserWallets(c *gin.Context) {
-	userID, ok := pathID(c, "user_id")
+	userID, ok := pathUserID(c)
 	if !ok {
 		return
 	}
@@ -58,7 +58,7 @@ func (a *API) listUserWallets(c *gin.Context) {
 }
 
 func (a *API) getUserWallet(c *gin.Context) {
-	userID, ok := pathID(c, "user_id")
+	userID, ok := pathUserID(c)
 	if !ok {
 		return
 	}
@@ -160,7 +160,7 @@ func (a *API) closeWallet(c *gin.Context) {
 		return
 	}
 	var p ids
-	userID := p.required("user_id", req.UserID)
+	userID := p.requiredUser("user_id", req.UserID)
 	if !p.ok(c) {
 		return
 	}
@@ -205,7 +205,7 @@ func (a *API) setPin(c *gin.Context) {
 		return
 	}
 	var p ids
-	userID := p.required("user_id", req.UserID)
+	userID := p.requiredUser("user_id", req.UserID)
 	if !p.ok(c) {
 		return
 	}

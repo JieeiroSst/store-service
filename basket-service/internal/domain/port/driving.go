@@ -21,6 +21,7 @@ type BasketLineUsecase interface {
 	ListBasketLines(ctx context.Context) ([]model.BasketLine, error)
 	UpdateBasketLine(ctx context.Context, line *model.BasketLine) (*model.BasketLine, error)
 	DeleteBasketLine(ctx context.Context, id int) error
+	ListBasketLinesByBasket(ctx context.Context, basketID int) ([]model.BasketLine, error)
 }
 
 type BasketLineAttributeUsecase interface {
@@ -29,6 +30,19 @@ type BasketLineAttributeUsecase interface {
 	ListBasketLineAttributes(ctx context.Context) ([]model.BasketLineAttribute, error)
 	UpdateBasketLineAttribute(ctx context.Context, attribute *model.BasketLineAttribute) (*model.BasketLineAttribute, error)
 	DeleteBasketLineAttribute(ctx context.Context, id int) error
+}
+
+type CheckoutCommand struct {
+	BasketID          int
+	UserID            int
+	WalletID          string
+	Pin               string
+	ShippingAddressID int
+}
+
+type CheckoutUsecase interface {
+	Checkout(ctx context.Context, cmd CheckoutCommand) (*model.Basket, error)
+	RetryFulfillment(ctx context.Context, limit int) (int, error)
 }
 
 type OrderUsecase interface {

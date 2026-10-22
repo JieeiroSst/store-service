@@ -27,6 +27,14 @@ func (r *queryResolver) BookingMiniBooking(ctx context.Context, id int) (*model.
 	return restCall[*model.BookingMiniBooking](ctx, r.Proxy, "booking-mini-service", rest.Request{Method: "GET", Path: rest.P("/api/bookings/%v", id)}, "")
 }
 
+func (r *queryResolver) MyBookingMiniBookings(ctx context.Context) ([]*model.BookingMiniBooking, error) {
+	return restCall[[]*model.BookingMiniBooking](ctx, r.Proxy, "booking-mini-service", rest.Request{Method: "GET", Path: "/api/me/bookings"}, "")
+}
+
+func (r *queryResolver) MyBookingMiniPassengers(ctx context.Context) ([]*model.BookingMiniPassenger, error) {
+	return restCall[[]*model.BookingMiniPassenger](ctx, r.Proxy, "booking-mini-service", rest.Request{Method: "GET", Path: "/api/me/passengers"}, "")
+}
+
 func (r *queryResolver) BookingMiniPassenger(ctx context.Context, id int) (*model.BookingMiniPassenger, error) {
 	return restCall[*model.BookingMiniPassenger](ctx, r.Proxy, "booking-mini-service", rest.Request{Method: "GET", Path: rest.P("/api/passengers/%v", id)}, "")
 }

@@ -7,6 +7,10 @@ import (
 	"github.com/JIeeiroSst/gateway-api/proxy/rest"
 )
 
+func (r *mutationResolver) OllamaChatSendMessage(ctx context.Context, recipientID *int, groupID *int, content *string, url *string, messageType *string) (*model.OllamaChatSentMessage, error) {
+	return restCall[*model.OllamaChatSentMessage](ctx, r.Proxy, "ollama-service", rest.Request{Method: "POST", Path: "/chat/messages", Body: map[string]any{"recipient_id": recipientID, "group_id": groupID, "content": content, "url": url, "message_type": messageType}}, "")
+}
+
 func (r *mutationResolver) OllamaChatCreateGroup(ctx context.Context, name string, description *string) (any, error) {
 	return restCall[any](ctx, r.Proxy, "ollama-service", rest.Request{Method: "POST", Path: "/groups/create", Body: map[string]any{"name": name, "description": description}}, "")
 }

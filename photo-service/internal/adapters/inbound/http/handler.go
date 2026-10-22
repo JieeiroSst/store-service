@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -93,6 +94,7 @@ func (h *CompositionHandler) compose(c *gin.Context, sources []domain.ImageSourc
 		Sources:        sources,
 		Layout:         dto.toDomain(),
 		IdempotencyKey: c.GetHeader("Idempotency-Key"),
+		OwnerID:        ownerOf(c),
 	}
 
 	job, err := h.useCase.ComposeImages(c.Request.Context(), cmd)
@@ -106,6 +108,32 @@ func (h *CompositionHandler) compose(c *gin.Context, sources []domain.ImageSourc
 
 func isMultipart(c *gin.Context) bool {
 	return strings.HasPrefix(c.ContentType(), "multipart/form-data")
+}
+
+func ownerOf(c *gin.Context) string {
+	if v := strings.TrimSpace(c.PostForm("owner_id")); v != "" {
+		return v
+	}
+	return strings.TrimSpace(c.Query("owner_id"))
+}
+
+func (h *CompositionHandler) List(c *gin.Context) {
+	owner := strings.TrimSpace(c.Query("owner_id"))
+	if owner == "" {
+		c.JSON(http.StatusBadRequest, errorResponse{Error: "owner_id is required"})
+		return
+	}
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	jobs, err := h.useCase.ListCompositions(c.Request.Context(), owner, limit)
+	if err != nil {
+		c.JSON(statusForError(err), errorResponse{Error: err.Error()})
+		return
+	}
+	out := make([]compositionResponse, len(jobs))
+	for i, job := range jobs {
+		out[i] = newCompositionResponse(job)
+	}
+	c.JSON(http.StatusOK, out)
 }
 
 // Get handles GET /v1/compositions/{id}.

@@ -33,7 +33,7 @@ func OrderCleanupCronWorkflow(ctx workflow.Context) (*entity.CronResult, error) 
 		}
 	}
 
-	_ = lastRunTime 
+	_ = lastRunTime
 
 	var activities *activity.OrderActivities
 

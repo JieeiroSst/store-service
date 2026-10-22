@@ -62,3 +62,17 @@ pub fn passenger_owner_for(principal: &Principal, requested: Option<String>) -> 
         _ => principal.user_id.clone(),
     }
 }
+
+pub async fn my_passengers(
+    principal: Principal,
+    repo: web::Data<Arc<PostgresRepository>>,
+) -> Result<HttpResponse, actix_web::Error> {
+    let user_id = super::require_user(&principal)?;
+    let passengers = repo.passengers_owned_by(user_id)
+        .await
+        .map_err(|e| {
+            log::error!("Error listing passengers: {:?}", e);
+            actix_web::error::ErrorInternalServerError(e.to_string())
+        })?;
+    Ok(HttpResponse::Ok().json(passengers))
+}

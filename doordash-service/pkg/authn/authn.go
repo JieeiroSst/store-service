@@ -43,6 +43,7 @@ type Principal struct {
 	Role     string
 	Roles    []string
 	Service  bool
+	Token    string `json:"-"`
 }
 
 func (p Principal) IsAdmin() bool {
@@ -208,7 +209,9 @@ func (a *Authenticator) user(ctx context.Context, token string) (Principal, erro
 	e, ok := a.cache[token]
 	a.mu.Unlock()
 	if ok && time.Now().Before(e.expires) {
-		return e.p, nil
+		p := e.p
+		p.Token = token
+		return p, nil
 	}
 	userID, err := a.validate(ctx, token)
 	if err != nil {
@@ -222,6 +225,7 @@ func (a *Authenticator) user(ctx context.Context, token string) (Principal, erro
 	}
 	a.cache[token] = cacheEntry{p: p, expires: time.Now().Add(identityTTL)}
 	a.mu.Unlock()
+	p.Token = token
 	return p, nil
 }
 

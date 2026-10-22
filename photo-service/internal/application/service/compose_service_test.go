@@ -37,6 +37,16 @@ func (m *mockJobRepository) FindByID(ctx context.Context, id string) (*domain.Co
 	return nil, domain.ErrJobNotFound
 }
 
+func (m *mockJobRepository) FindByOwner(ctx context.Context, ownerID string, limit int) ([]*domain.CompositionJob, error) {
+	var out []*domain.CompositionJob
+	for _, j := range m.saved {
+		if j.OwnerID == ownerID && len(out) < limit {
+			out = append(out, j)
+		}
+	}
+	return out, nil
+}
+
 var _ ports.JobRepository = (*mockJobRepository)(nil)
 
 type mockImageStorage struct {

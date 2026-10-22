@@ -6,6 +6,7 @@ type Config struct {
 	Env      string
 	Temporal TemporalConfig
 	Services ServicesConfig
+	OrderDB  string
 }
 
 type TemporalConfig struct {
@@ -26,7 +27,8 @@ type ServicesConfig struct {
 
 func Load() *Config {
 	return &Config{
-		Env: getEnv("APP_ENV", "development"),
+		Env:     getEnv("APP_ENV", "development"),
+		OrderDB: getEnv("ORDER_DB_DSN", ""),
 		Temporal: TemporalConfig{
 			HostPort:  getEnv("TEMPORAL_HOST_PORT", "localhost:7233"),
 			Namespace: getEnv("TEMPORAL_NAMESPACE", "default"),

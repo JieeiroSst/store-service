@@ -57,3 +57,11 @@ func (r *basketLineRepository) List(ctx context.Context) ([]model.BasketLine, er
 	}
 	return lines, nil
 }
+
+func (r *basketLineRepository) ListByBasket(ctx context.Context, basketID int) ([]model.BasketLine, error) {
+	var lines []model.BasketLine
+	if err := r.db.WithContext(ctx).Where("basket_id = ?", basketID).Order("id").Find(&lines).Error; err != nil {
+		return nil, common.ErrDBFailed
+	}
+	return lines, nil
+}

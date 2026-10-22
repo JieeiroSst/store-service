@@ -1004,15 +1004,19 @@ type BankingTransactionInput struct {
 }
 
 type BasketBasket struct {
-	ID                int    `json:"id"`
-	Status            string `json:"status"`
-	DatePlaced        string `json:"date_placed"`
-	DateCreated       string `json:"date_created"`
-	DateMerged        string `json:"date_merged"`
-	DateSubmitted     string `json:"date_submitted"`
-	BillingAddressID  int    `json:"billing_address_id"`
-	ShippingAddressID int    `json:"shipping_address_id"`
-	UserID            int    `json:"user_id"`
+	ID                int      `json:"id"`
+	Status            string   `json:"status"`
+	DatePlaced        string   `json:"date_placed"`
+	DateCreated       string   `json:"date_created"`
+	DateMerged        string   `json:"date_merged"`
+	DateSubmitted     string   `json:"date_submitted"`
+	BillingAddressID  int      `json:"billing_address_id"`
+	ShippingAddressID int      `json:"shipping_address_id"`
+	UserID            int      `json:"user_id"`
+	Currency          *string  `json:"currency,omitempty"`
+	TotalInclTax      *float64 `json:"total_incl_tax,omitempty"`
+	PaymentReference  *string  `json:"payment_reference,omitempty"`
+	FulfillmentID     *string  `json:"fulfillment_id,omitempty"`
 }
 
 type BasketBasketInput struct {
@@ -2170,6 +2174,11 @@ type CatalogueProduct struct {
 	OptionIds       []int                      `json:"option_ids,omitempty"`
 	Images          []*CatalogueProductImage   `json:"images,omitempty"`
 	Recommendations []*CatalogueRecommendation `json:"recommendations,omitempty"`
+	Stockrecords    []*CatalogueStockRecord    `json:"stockrecords,omitempty"`
+	Price           *float64                   `json:"price,omitempty"`
+	PriceCurrency   *string                    `json:"price_currency,omitempty"`
+	NumAvailable    *int                       `json:"num_available,omitempty"`
+	InStock         *bool                      `json:"in_stock,omitempty"`
 }
 
 type CatalogueProductClass struct {
@@ -2223,6 +2232,26 @@ type CatalogueRecommendation struct {
 type CatalogueRecommendationInput struct {
 	ProductID *int `json:"product_id,omitempty"`
 	Ranking   *int `json:"ranking,omitempty"`
+}
+
+type CatalogueStockRecord struct {
+	ID            int     `json:"id"`
+	ProductID     int     `json:"product_id"`
+	PartnerSku    *string `json:"partner_sku,omitempty"`
+	PriceCurrency string  `json:"price_currency"`
+	Price         float64 `json:"price"`
+	NumInStock    *int    `json:"num_in_stock,omitempty"`
+	NumAllocated  *int    `json:"num_allocated,omitempty"`
+	NumAvailable  *int    `json:"num_available,omitempty"`
+	DateCreated   *string `json:"date_created,omitempty"`
+	DateUpdated   *string `json:"date_updated,omitempty"`
+}
+
+type CatalogueStockRecordInput struct {
+	PartnerSku    *string `json:"partner_sku,omitempty"`
+	PriceCurrency *string `json:"price_currency,omitempty"`
+	Price         float64 `json:"price"`
+	NumInStock    *int    `json:"num_in_stock,omitempty"`
 }
 
 type CdnDownload struct {
@@ -2385,12 +2414,13 @@ type CouponUsage struct {
 }
 
 type CouponUserCoupon struct {
-	ID         int     `json:"id"`
-	UserID     int     `json:"user_id"`
-	CouponID   int     `json:"coupon_id"`
-	IsUsed     bool    `json:"is_used"`
-	AssignedAt *string `json:"assigned_at,omitempty"`
-	UsedAt     *string `json:"used_at,omitempty"`
+	ID         int           `json:"id"`
+	UserID     int           `json:"user_id"`
+	CouponID   int           `json:"coupon_id"`
+	IsUsed     bool          `json:"is_used"`
+	AssignedAt *string       `json:"assigned_at,omitempty"`
+	UsedAt     *string       `json:"used_at,omitempty"`
+	Coupon     *CouponCoupon `json:"coupon,omitempty"`
 }
 
 type CouponValidateInput struct {
@@ -2941,24 +2971,47 @@ type FoodAllergen struct {
 }
 
 type FoodFood struct {
-	ID          *int    `json:"id,omitempty"`
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Price       *int    `json:"price,omitempty"`
-	Category    *string `json:"category,omitempty"`
+	ID           *int    `json:"id,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	Price        *int    `json:"price,omitempty"`
+	Category     *string `json:"category,omitempty"`
+	RestaurantID *int    `json:"restaurant_id,omitempty"`
+	IsActive     *bool   `json:"is_active,omitempty"`
 }
 
 type FoodFoodInput struct {
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Price       *int    `json:"price,omitempty"`
-	Category    *string `json:"category,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Description  *string `json:"description,omitempty"`
+	Price        *int    `json:"price,omitempty"`
+	Category     *string `json:"category,omitempty"`
+	RestaurantID *int    `json:"restaurant_id,omitempty"`
+	IsActive     *bool   `json:"is_active,omitempty"`
 }
 
 type FoodIngredient struct {
 	ID   *int    `json:"id,omitempty"`
 	Name *string `json:"name,omitempty"`
 	Unit *string `json:"unit,omitempty"`
+}
+
+type FoodRestaurant struct {
+	ID             *int     `json:"id,omitempty"`
+	Name           *string  `json:"name,omitempty"`
+	Description    *string  `json:"description,omitempty"`
+	Address        *string  `json:"address,omitempty"`
+	ImageURL       *string  `json:"image_url,omitempty"`
+	IsActive       *bool    `json:"is_active,omitempty"`
+	CommissionRate *float64 `json:"commission_rate,omitempty"`
+}
+
+type FoodRestaurantInput struct {
+	Name           *string  `json:"name,omitempty"`
+	Description    *string  `json:"description,omitempty"`
+	Address        *string  `json:"address,omitempty"`
+	ImageURL       *string  `json:"image_url,omitempty"`
+	IsActive       *bool    `json:"is_active,omitempty"`
+	CommissionRate *float64 `json:"commission_rate,omitempty"`
 }
 
 type GeoDistrict struct {
@@ -5336,6 +5389,16 @@ type OllamaChatMessage struct {
 	SenderName  *string `json:"sender_name,omitempty"`
 }
 
+type OllamaChatSentMessage struct {
+	MessageType *string `json:"message_type,omitempty"`
+	SenderID    *int    `json:"sender_id,omitempty"`
+	RecipientID *int    `json:"recipient_id,omitempty"`
+	GroupID     *int    `json:"group_id,omitempty"`
+	Content     *string `json:"content,omitempty"`
+	URL         *string `json:"url,omitempty"`
+	CreatedAt   *string `json:"created_at,omitempty"`
+}
+
 type OllamaPyChat struct {
 	Model         *string          `json:"model,omitempty"`
 	CreatedAt     *string          `json:"created_at,omitempty"`
@@ -5650,6 +5713,7 @@ type PaymentTransaction struct {
 
 type PhotoComposition struct {
 	ID           *string           `json:"id,omitempty"`
+	OwnerID      *string           `json:"owner_id,omitempty"`
 	Status       *string           `json:"status,omitempty"`
 	Layout       *PhotolayoutDto   `json:"layout,omitempty"`
 	Sources      []*PhotosourceDto `json:"sources,omitempty"`
@@ -6421,6 +6485,7 @@ type ROrderOrderPage struct {
 
 type ROrderReservation struct {
 	ID           *int    `json:"id,omitempty"`
+	UserID       *string `json:"user_id,omitempty"`
 	TableName    *string `json:"table_name,omitempty"`
 	CustomerName *string `json:"customer_name,omitempty"`
 	PartySize    *int    `json:"party_size,omitempty"`

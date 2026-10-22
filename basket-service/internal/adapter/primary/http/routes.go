@@ -25,6 +25,8 @@ func RegisterRoutes(api *gin.RouterGroup, h *Handler) {
 		baskets.GET("/:id", h.GetBasket)
 		baskets.PUT("/:id", h.UpdateBasket)
 		baskets.DELETE("/:id", h.DeleteBasket)
+		baskets.GET("/:id/lines", h.ListBasketLinesOfBasket)
+		baskets.POST("/:id/checkout", h.CheckoutBasket)
 	}
 
 	basketLines := api.Group("/basket-lines")

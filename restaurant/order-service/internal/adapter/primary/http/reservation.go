@@ -61,6 +61,16 @@ func (h *Handler) GetReservation(c *gin.Context) {
 }
 
 func (h *Handler) ListReservations(c *gin.Context) {
+	if userID := c.Query("user_id"); userID != "" {
+		limit, _ := strconv.Atoi(c.Query("limit"))
+		reservations, err := h.reservation.FindByUser(c, userID, limit)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": reservations})
+		return
+	}
 	var pagination logger.Pagination
 	if err := c.ShouldBindQuery(&pagination); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

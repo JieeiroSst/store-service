@@ -67,6 +67,18 @@ func (r *mutationResolver) CatalogueSetRecommendations(ctx context.Context, id i
 	return restCall[*model.CatalogueProduct](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "PUT", Path: rest.P("/v1/products/%v/recommendations", id), Body: map[string]any{"recommendations": recommendations}}, "")
 }
 
+func (r *mutationResolver) CatalogueCreateStockRecord(ctx context.Context, productID int, input model.CatalogueStockRecordInput) (*model.CatalogueStockRecord, error) {
+	return restCall[*model.CatalogueStockRecord](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "POST", Path: rest.P("/v1/products/%v/stockrecords", productID), Body: input}, "")
+}
+
+func (r *mutationResolver) CatalogueUpdateStockRecord(ctx context.Context, id int, input model.CatalogueStockRecordInput) (*model.CatalogueStockRecord, error) {
+	return restCall[*model.CatalogueStockRecord](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "PUT", Path: rest.P("/v1/stockrecords/%v", id), Body: input}, "")
+}
+
+func (r *mutationResolver) CatalogueDeleteStockRecord(ctx context.Context, id int) (bool, error) {
+	return restCall[bool](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "DELETE", Path: rest.P("/v1/stockrecords/%v", id)}, "")
+}
+
 func (r *queryResolver) CatalogueCategories(ctx context.Context) ([]*model.CatalogueCategory, error) {
 	return restCall[[]*model.CatalogueCategory](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "GET", Path: "/v1/categories"}, "")
 }
@@ -101,4 +113,12 @@ func (r *queryResolver) CatalogueAdminProducts(ctx context.Context, q *string, c
 
 func (r *queryResolver) CatalogueProduct(ctx context.Context, id int) (*model.CatalogueProduct, error) {
 	return restCall[*model.CatalogueProduct](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "GET", Path: rest.P("/v1/products/%v", id)}, "")
+}
+
+func (r *queryResolver) CatalogueStockRecords(ctx context.Context, productID int) ([]*model.CatalogueStockRecord, error) {
+	return restCall[[]*model.CatalogueStockRecord](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "GET", Path: rest.P("/v1/products/%v/stockrecords", productID)}, "")
+}
+
+func (r *queryResolver) CatalogueStockRecord(ctx context.Context, id int) (*model.CatalogueStockRecord, error) {
+	return restCall[*model.CatalogueStockRecord](ctx, r.Proxy, "catalogues-service", rest.Request{Method: "GET", Path: rest.P("/v1/stockrecords/%v", id)}, "")
 }

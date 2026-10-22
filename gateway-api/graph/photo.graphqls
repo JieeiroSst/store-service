@@ -1,5 +1,6 @@
 type PhotoComposition {
   id: String
+  owner_id: String
   status: String
   layout: PhotolayoutDTO
   sources: [PhotosourceDTO!]
@@ -45,9 +46,10 @@ type PhotocellDTO {
 }
 
 extend type Query {
-  photoComposition(id: String!): PhotoComposition @rest(service: "photo-service", path: "/v1/compositions/{id}")
+  photoComposition(id: String!): PhotoComposition @rest(service: "photo-service", path: "/v1/compositions/{id}", owner: "owner_id")
+  myPhotoCompositions(limit: Int): [PhotoComposition!]! @rest(service: "photo-service", path: "/v1/compositions", userQuery: "owner_id")
 }
 
 extend type Mutation {
-  photoCreateComposition(images: [Upload!], urls: [String!], layout: String): PhotoComposition @rest(service: "photo-service", method: "POST", path: "/v1/compositions", multipart: true)
+  photoCreateComposition(images: [Upload!], urls: [String!], layout: String): PhotoComposition @rest(service: "photo-service", method: "POST", path: "/v1/compositions", multipart: true, userField: "owner_id")
 }

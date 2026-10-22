@@ -8,12 +8,15 @@ import (
 
 	"github.com/JIeeiroSst/order-processing-service/internal/activity"
 	"github.com/JIeeiroSst/order-processing-service/internal/config"
-	infraHTTP "github.com/JIeeiroSst/order-processing-service/internal/infrastructure/http"
-	infraTemporal "github.com/JIeeiroSst/order-processing-service/internal/infrastructure/temporal"
 	"github.com/JIeeiroSst/order-processing-service/internal/domain/usecase"
+	infraHTTP "github.com/JIeeiroSst/order-processing-service/internal/infrastructure/http"
+	infraMySQL "github.com/JIeeiroSst/order-processing-service/internal/infrastructure/mysql"
+	infraTemporal "github.com/JIeeiroSst/order-processing-service/internal/infrastructure/temporal"
 	"github.com/JIeeiroSst/order-processing-service/internal/proxy"
 	"github.com/JIeeiroSst/order-processing-service/internal/worker"
 	"github.com/JIeeiroSst/order-processing-service/pkg/logger"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -46,8 +49,23 @@ func main() {
 	// Initialize activities
 	activities := activity.NewOrderActivities(orderUseCase)
 
+	var paid *activity.PaidOrderActivities
+	if cfg.OrderDB != "" {
+		db, err := gorm.Open(mysql.Open(cfg.OrderDB), &gorm.Config{TranslateError: true})
+		if err != nil {
+			log.Fatalf("Failed to open order database: %v", err)
+		}
+		store, err := infraMySQL.NewPaidOrderStore(db)
+		if err != nil {
+			log.Fatalf("Failed to prepare order tables: %v", err)
+		}
+		paid = &activity.PaidOrderActivities{Store: store, Notifier: notifyProxy}
+	} else {
+		logger.Logger.Warn("ORDER_DB_DSN is not set: PaidOrderWorkflow is not registered")
+	}
+
 	// Create and start worker
-	w := worker.NewOrderWorker(temporalClient, activities)
+	w := worker.NewOrderWorker(temporalClient, activities, paid)
 
 	logger.Logger.Infow("Starting Temporal Worker",
 		"taskQueue", "ORDER_PROCESSING_TASK_QUEUE",

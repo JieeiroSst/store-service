@@ -2,32 +2,40 @@ package cron
 
 import (
 	"context"
-	"fmt"
+	"log"
+	"time"
+
+	"github.com/JIeeiroSst/basket-service/internal/domain/port"
 
 	"github.com/robfig/cron/v3"
 	"go.uber.org/fx"
 )
 
 type Runner struct {
-	c *cron.Cron
+	c        *cron.Cron
+	checkout port.CheckoutUsecase
 }
 
-func NewRunner() *Runner {
-	return &Runner{c: cron.New()}
+func NewRunner(checkout port.CheckoutUsecase) *Runner {
+	return &Runner{c: cron.New(), checkout: checkout}
 }
 
 func (r *Runner) registerJobs() error {
-	if _, err := r.c.AddFunc("*/5 * * * *", func() {
-		fmt.Println("Chạy job 1")
-	}); err != nil {
-		return err
+	_, err := r.c.AddFunc("* * * * *", r.retryFulfillment)
+	return err
+}
+
+func (r *Runner) retryFulfillment() {
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Second)
+	defer cancel()
+	n, err := r.checkout.RetryFulfillment(ctx, 50)
+	if err != nil {
+		log.Printf("cron: retry order fulfillment: %v", err)
+		return
 	}
-	if _, err := r.c.AddFunc("*/10 * * * *", func() {
-		fmt.Println("Chạy job 2")
-	}); err != nil {
-		return err
+	if n > 0 {
+		log.Printf("cron: started %d order workflows for paid baskets", n)
 	}
-	return nil
 }
 
 func registerLifecycle(lc fx.Lifecycle, r *Runner) {

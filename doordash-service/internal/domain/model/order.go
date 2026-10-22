@@ -53,6 +53,7 @@ const (
 	PaymentStatusCaptured   = "captured"
 	PaymentStatusRefunded   = "refunded"
 	PaymentStatusFailed     = "failed"
+	PaymentStatusVoided     = "voided"
 )
 
 type Order struct {
@@ -73,6 +74,7 @@ type Order struct {
 	TotalAmount           float64     `gorm:"column:total_amount" json:"total_amount"`
 	PaymentMethodID       string      `gorm:"column:payment_method_id" json:"payment_method_id"`
 	PaymentStatus         string      `gorm:"column:payment_status" json:"payment_status"`
+	PaymentID             string      `gorm:"column:payment_id" json:"payment_id,omitempty"`
 	SpecialInstructions   string      `gorm:"column:special_instructions" json:"special_instructions,omitempty"`
 	CreatedAt             time.Time   `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt             time.Time   `gorm:"column:updated_at" json:"updated_at"`

@@ -9,9 +9,13 @@ import (
 )
 
 func (r *mutationResolver) PhotoCreateComposition(ctx context.Context, images []*graphql.Upload, urls []string, layout *string) (*model.PhotoComposition, error) {
-	return restMultipart[*model.PhotoComposition](ctx, r.Proxy, "photo-service", rest.Request{Method: "POST", Path: "/v1/compositions"}, map[string]any{"urls": urls, "layout": layout}, uploadFiles("images", images), "")
+	return restMultipart[*model.PhotoComposition](ctx, r.Proxy, "photo-service", rest.Request{Method: "POST", Path: "/v1/compositions"}, map[string]any{"urls": urls, "layout": layout, "owner_id": userIDOf(ctx)}, uploadFiles("images", images), "")
 }
 
 func (r *queryResolver) PhotoComposition(ctx context.Context, id string) (*model.PhotoComposition, error) {
-	return restCall[*model.PhotoComposition](ctx, r.Proxy, "photo-service", rest.Request{Method: "GET", Path: rest.P("/v1/compositions/%v", id)}, "")
+	return restOwned[*model.PhotoComposition](ctx, r.Proxy, "photo-service", rest.Request{Method: "GET", Path: rest.P("/v1/compositions/%v", id)}, "", "owner_id", nil, "")
+}
+
+func (r *queryResolver) MyPhotoCompositions(ctx context.Context, limit *int) ([]*model.PhotoComposition, error) {
+	return restCall[[]*model.PhotoComposition](ctx, r.Proxy, "photo-service", rest.Request{Method: "GET", Path: "/v1/compositions", Query: restQuery("limit", limit, "owner_id", userIDOf(ctx))}, "")
 }

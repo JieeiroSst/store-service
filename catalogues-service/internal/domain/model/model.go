@@ -87,6 +87,7 @@ type Product struct {
 	OptionIDs       []int64
 	Images          []ProductImage
 	Recommendations []Recommendation
+	StockRecords    []StockRecord
 }
 
 type ProductImage struct {

@@ -9,6 +9,7 @@ type UserCoupon struct {
 	IsUsed     bool       `gorm:"column:is_used" json:"is_used"`
 	AssignedAt time.Time  `gorm:"column:assigned_at" json:"assigned_at"`
 	UsedAt     *time.Time `gorm:"column:used_at" json:"used_at,omitempty"`
+	Coupon     *Coupon    `gorm:"foreignKey:CouponID;references:ID" json:"coupon,omitempty"`
 }
 
 func (UserCoupon) TableName() string { return "user_coupons" }

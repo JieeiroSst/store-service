@@ -9,7 +9,7 @@ import (
 )
 
 func (a *API) linkBankAccount(c *gin.Context) {
-	userID, ok := pathID(c, "user_id")
+	userID, ok := pathUserID(c)
 	if !ok {
 		return
 	}
@@ -40,7 +40,7 @@ func (a *API) linkBankAccount(c *gin.Context) {
 }
 
 func (a *API) listBankAccounts(c *gin.Context) {
-	userID, ok := pathID(c, "user_id")
+	userID, ok := pathUserID(c)
 	if !ok {
 		return
 	}
@@ -53,7 +53,7 @@ func (a *API) listBankAccounts(c *gin.Context) {
 }
 
 func (a *API) removeBankAccount(c *gin.Context) {
-	userID, ok := pathID(c, "user_id")
+	userID, ok := pathUserID(c)
 	if !ok {
 		return
 	}
@@ -69,7 +69,7 @@ func (a *API) removeBankAccount(c *gin.Context) {
 }
 
 func (a *API) setDefaultBankAccount(c *gin.Context) {
-	userID, ok := pathID(c, "user_id")
+	userID, ok := pathUserID(c)
 	if !ok {
 		return
 	}

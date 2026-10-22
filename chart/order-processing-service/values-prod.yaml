@@ -33,3 +33,11 @@ orderProcessingService:
   topologySpread:
     enabled: true
   priorityClassName: store-standard
+  externalSecret:
+    enabled: true
+    targetName: order-processing-service-secret
+    refreshInterval: 15m
+    data:
+      - secretKey: orderDbDsn
+        remoteKey: store/prod/order-processing-service
+        property: orderDbDsn

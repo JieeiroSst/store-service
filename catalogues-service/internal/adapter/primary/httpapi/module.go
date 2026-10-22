@@ -12,5 +12,6 @@ var Module = fx.Options(
 		asHandler(NewProductClassHandler),
 		asHandler(NewOptionHandler),
 		asHandler(NewProductHandler),
+		asHandler(NewStockRecordHandler),
 	),
 )

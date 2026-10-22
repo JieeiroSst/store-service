@@ -20,4 +20,5 @@ type ReservationUsecase interface {
 	Cancel(ctx context.Context, id int) error
 	FindByID(ctx context.Context, id int) (*model.Reservation, error)
 	FindAll(ctx context.Context, pagination logger.Pagination) (logger.Pagination, error)
+	FindByUser(ctx context.Context, userID string, limit int) ([]model.Reservation, error)
 }

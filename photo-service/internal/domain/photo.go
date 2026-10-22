@@ -227,6 +227,7 @@ type ImageSource struct {
 
 type CompositionJob struct {
 	ID              string
+	OwnerID         string
 	Status          JobStatus
 	Layout          LayoutConfig
 	Sources         []ImageSource

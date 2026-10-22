@@ -85,3 +85,5 @@ CREATE TABLE IF NOT EXISTS driver_assignments (
 );
 CREATE INDEX IF NOT EXISTS idx_driver_assignments_driver ON driver_assignments(driver_id);
 CREATE INDEX IF NOT EXISTS idx_driver_assignments_order ON driver_assignments(order_id);
+
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_id VARCHAR(64);

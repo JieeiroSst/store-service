@@ -84,6 +84,7 @@ type sourceDTO struct {
 
 type compositionResponse struct {
 	ID           string      `json:"id"`
+	OwnerID      string      `json:"owner_id,omitempty"`
 	Status       string      `json:"status"`
 	Layout       layoutDTO   `json:"layout"`
 	Sources      []sourceDTO `json:"sources"`
@@ -105,6 +106,7 @@ func newCompositionResponse(job *domain.CompositionJob) compositionResponse {
 	}
 	return compositionResponse{
 		ID:           job.ID,
+		OwnerID:      job.OwnerID,
 		Status:       string(job.Status),
 		Layout:       newLayoutDTO(job.Layout),
 		Sources:      sources,

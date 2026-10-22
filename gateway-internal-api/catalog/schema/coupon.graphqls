@@ -59,6 +59,7 @@ type CouponUserCoupon {
   is_used: Boolean!
   assigned_at: String
   used_at: String
+  coupon: CouponCoupon
 }
 
 type CouponValidation {

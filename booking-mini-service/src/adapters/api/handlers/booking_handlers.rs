@@ -130,6 +130,15 @@ pub async fn cancel_booking(
         Ok(HttpResponse::NotFound().finish())
     }
 }
+pub async fn my_bookings(
+    principal: Principal,
+    repo: web::Data<Arc<PostgresRepository>>,
+) -> Result<HttpResponse, actix_web::Error> {
+    let user_id = super::require_user(&principal)?;
+    let bookings = repo.bookings_owned_by(user_id).await.map_err(internal_error)?;
+    Ok(HttpResponse::Ok().json(bookings))
+}
+
 fn internal_error(e: Box<dyn std::error::Error>) -> actix_web::Error {
     log::error!("Error checking ownership: {:?}", e);
     actix_web::error::ErrorInternalServerError(e.to_string())

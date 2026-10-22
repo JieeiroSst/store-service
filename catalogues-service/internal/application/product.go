@@ -13,10 +13,35 @@ const (
 	maxPageSize     = 200
 )
 
-type productService struct{ repo port.ProductRepository }
+type productService struct {
+	repo  port.ProductRepository
+	stock port.StockRecordRepository
+}
 
-func NewProductService(repo port.ProductRepository) port.ProductService {
-	return &productService{repo: repo}
+func NewProductService(repo port.ProductRepository, stock port.StockRecordRepository) port.ProductService {
+	return &productService{repo: repo, stock: stock}
+}
+
+func (s *productService) withStock(ctx context.Context, ps []model.Product) ([]model.Product, error) {
+	if s.stock == nil || len(ps) == 0 {
+		return ps, nil
+	}
+	ids := make([]int64, len(ps))
+	for i, p := range ps {
+		ids[i] = p.ID
+	}
+	records, err := s.stock.ListByProducts(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	byProduct := map[int64][]model.StockRecord{}
+	for _, r := range records {
+		byProduct[r.ProductID] = append(byProduct[r.ProductID], r)
+	}
+	for i := range ps {
+		ps[i].StockRecords = byProduct[ps[i].ID]
+	}
+	return ps, nil
 }
 
 func prepareProduct(p *model.Product) error {
@@ -68,7 +93,15 @@ func (s *productService) Create(ctx context.Context, p model.Product) (*model.Pr
 }
 
 func (s *productService) Get(ctx context.Context, id int64) (*model.Product, error) {
-	return s.repo.Get(ctx, id)
+	p, err := s.repo.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	out, err := s.withStock(ctx, []model.Product{*p})
+	if err != nil {
+		return nil, err
+	}
+	return &out[0], nil
 }
 
 func (s *productService) List(ctx context.Context, f model.ProductFilter) ([]model.Product, error) {
@@ -82,7 +115,11 @@ func (s *productService) List(ctx context.Context, f model.ProductFilter) ([]mod
 		f.Offset = 0
 	}
 	f.Query = strings.TrimSpace(f.Query)
-	return s.repo.List(ctx, f)
+	ps, err := s.repo.List(ctx, f)
+	if err != nil {
+		return nil, err
+	}
+	return s.withStock(ctx, ps)
 }
 
 func (s *productService) Update(ctx context.Context, p model.Product) (*model.Product, error) {

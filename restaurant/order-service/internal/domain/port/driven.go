@@ -34,6 +34,7 @@ type ReservationRepository interface {
 	Cancel(ctx context.Context, id int) error
 	FindByID(ctx context.Context, id int) (*model.Reservation, error)
 	FindAll(ctx context.Context, pagination logger.Pagination) (logger.Pagination, error)
+	FindByUser(ctx context.Context, userID string, limit int) ([]model.Reservation, error)
 	// FindConflicting returns bookings for the same table within window of
 	// at, used to reject double-booking a table.
 	FindConflicting(ctx context.Context, tableName string, at time.Time, window time.Duration) ([]model.Reservation, error)

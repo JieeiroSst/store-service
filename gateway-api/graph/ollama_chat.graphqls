@@ -59,6 +59,16 @@ type OllamaChatMessage {
   sender_name: String
 }
 
+type OllamaChatSentMessage {
+  message_type: String
+  sender_id: Int
+  recipient_id: Int
+  group_id: Int
+  content: String
+  url: String
+  created_at: String
+}
+
 type OllamaChatHistory {
   messages: [OllamaChatMessage!]
   count: Int
@@ -75,6 +85,7 @@ extend type Query {
 }
 
 extend type Mutation {
+  ollamaChatSendMessage(recipient_id: Int, group_id: Int, content: String, url: String, message_type: String): OllamaChatSentMessage @rest(service: "ollama-service", method: "POST", path: "/chat/messages")
   ollamaChatCreateGroup(name: String!, description: String): Any @rest(service: "ollama-service", method: "POST", path: "/groups/create")
   ollamaChatInviteToGroup(group_id: Int!, user_id: Int!, role: String!): Any @rest(service: "ollama-service", method: "POST", path: "/groups/invite")
   ollamaChatLeaveGroup(groupId: Int!): Any @rest(service: "ollama-service", method: "DELETE", path: "/groups/{groupId}/leave")

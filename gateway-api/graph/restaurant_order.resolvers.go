@@ -8,11 +8,11 @@ import (
 )
 
 func (r *mutationResolver) ROrderCreateReservation(ctx context.Context, input map[string]any) (any, error) {
-	return restCall[any](ctx, r.Proxy, "order-service", rest.Request{Method: "POST", Path: "/api/v1/reservations", Body: input}, "")
+	return restCall[any](ctx, r.Proxy, "order-service", rest.Request{Method: "POST", Path: "/api/v1/reservations", Body: withField(input, "user_id", userIDOf(ctx))}, "")
 }
 
 func (r *mutationResolver) ROrderCancelReservation(ctx context.Context, id string) (any, error) {
-	return restCall[any](ctx, r.Proxy, "order-service", rest.Request{Method: "DELETE", Path: rest.P("/api/v1/reservations/%v", id)}, "")
+	return restOwned[any](ctx, r.Proxy, "order-service", rest.Request{Method: "DELETE", Path: rest.P("/api/v1/reservations/%v", id)}, "", "user_id", &rest.Request{Method: "GET", Path: rest.P("/api/v1/reservations/%v", id)}, "data")
 }
 
 func (r *queryResolver) ROrderOrder(ctx context.Context, id int) (*model.ROrderOrder, error) {
@@ -25,6 +25,10 @@ func (r *queryResolver) ROrderOrders(ctx context.Context, limit *int, page *int,
 
 func (r *queryResolver) ROrderReservations(ctx context.Context, limit *int, page *int, sort *string) (*model.ROrderReservationPage, error) {
 	return restCall[*model.ROrderReservationPage](ctx, r.Proxy, "order-service", rest.Request{Method: "GET", Path: "/api/v1/reservations", Query: restQuery("Limit", limit, "Page", page, "Sort", sort)}, "data")
+}
+
+func (r *queryResolver) MyROrderReservations(ctx context.Context, limit *int) ([]*model.ROrderReservation, error) {
+	return restCall[[]*model.ROrderReservation](ctx, r.Proxy, "order-service", rest.Request{Method: "GET", Path: "/api/v1/reservations", Query: restQuery("limit", limit, "user_id", userIDOf(ctx))}, "data")
 }
 
 func (r *queryResolver) ROrderReservation(ctx context.Context, id int) (*model.ROrderReservation, error) {

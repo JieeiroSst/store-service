@@ -88,6 +88,43 @@ func (p *ids) parse(name, raw string, required bool) uuid.UUID {
 	return id
 }
 
+var userNamespace = uuid.MustParse("8f9d4c62-1e2b-5a7c-9d3e-4b6a1c8f0e57")
+
+func UserUUID(raw string) (uuid.UUID, bool) {
+	raw = strings.TrimSpace(raw)
+	if id, err := uuid.Parse(raw); err == nil {
+		return id, true
+	}
+	if n, err := strconv.ParseInt(raw, 10, 64); err == nil && n > 0 {
+		return uuid.NewSHA1(userNamespace, []byte(strconv.FormatInt(n, 10))), true
+	}
+	return uuid.Nil, false
+}
+
+func (p *ids) user(name, raw string, required bool) uuid.UUID {
+	if strings.TrimSpace(raw) == "" {
+		if required && p.err == nil {
+			p.err = fmt.Errorf("%s is required", name)
+		}
+		return uuid.Nil
+	}
+	id, ok := UserUUID(raw)
+	if !ok && p.err == nil {
+		p.err = fmt.Errorf("%s must be a UUID or a numeric user id", name)
+	}
+	return id
+}
+
+func (p *ids) requiredUser(name, raw string) uuid.UUID { return p.user(name, raw, true) }
+
+func (p *ids) optionalUser(name, raw string) uuid.UUID { return p.user(name, raw, false) }
+
+func pathUserID(c *gin.Context) (uuid.UUID, bool) {
+	var p ids
+	id := p.requiredUser("user_id", c.Param("user_id"))
+	return id, p.ok(c)
+}
+
 func (p *ids) required(name, raw string) uuid.UUID { return p.parse(name, raw, true) }
 
 func (p *ids) optional(name, raw string) uuid.UUID { return p.parse(name, raw, false) }

@@ -49,6 +49,8 @@ public class FoodController {
             _food.setDescription(food.getDescription());
             _food.setCategory(food.getCategory());
             _food.setPrice(food.getPrice());
+            _food.setRestaurantId(food.getRestaurantId());
+            _food.setActive(food.isActive());
             return new ResponseEntity<>(foodUsecase.update(_food), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

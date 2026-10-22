@@ -25,9 +25,9 @@ func (a *API) createPaymentRequest(c *gin.Context) {
 	}
 	var p ids
 	cmd := port.CreatePaymentRequestCommand{
-		RequesterUserID:   p.required("user_id", req.UserID),
+		RequesterUserID:   p.requiredUser("user_id", req.UserID),
 		RequesterWalletID: p.required("wallet_id", req.WalletID),
-		PayerUserID:       p.required("payer_user_id", req.PayerUserID),
+		PayerUserID:       p.requiredUser("payer_user_id", req.PayerUserID),
 		Amount:            req.Amount,
 		Note:              req.Note,
 	}
@@ -56,7 +56,7 @@ func (a *API) getPaymentRequest(c *gin.Context) {
 }
 
 func (a *API) listPaymentRequests(c *gin.Context) {
-	userID, ok := pathID(c, "user_id")
+	userID, ok := pathUserID(c)
 	if !ok {
 		return
 	}
@@ -91,7 +91,7 @@ func (a *API) payPaymentRequest(c *gin.Context) {
 	var p ids
 	cmd := port.PayPaymentRequestCommand{
 		RequestID: id,
-		UserID:    p.required("user_id", req.UserID),
+		UserID:    p.requiredUser("user_id", req.UserID),
 		WalletID:  p.required("wallet_id", req.WalletID),
 		Pin:       req.Pin,
 	}
@@ -126,7 +126,7 @@ func (a *API) paymentRequestAction(c *gin.Context, fn func(context.Context, uuid
 		return
 	}
 	var p ids
-	userID := p.required("user_id", req.UserID)
+	userID := p.requiredUser("user_id", req.UserID)
 	if !p.ok(c) {
 		return
 	}
