@@ -60,6 +60,14 @@ class MovieApi {
     return data['movieNewReleases'] == null ? null : MoviePage.fromJson((data['movieNewReleases'] as Map).cast<String, dynamic>());
   }
 
+  Future<MovieVideo?> movieVideo({required String id, String? selectionSet}) async {
+    final data = await _executor.public('query movieVideo(\$id: String!) { movieVideo(id: \$id) ${selectionSet ?? '{ id title description tags status duration views created_at }'} }', variables: {
+      'id': id,
+    }
+    );
+    return data['movieVideo'] == null ? null : MovieVideo.fromJson((data['movieVideo'] as Map).cast<String, dynamic>());
+  }
+
   Future<MoviePage?> movieSimilar({required String id, int? page, int? pageSize, String? snapshot, String? selectionSet}) async {
     final data = await _executor.public('query movieSimilar(\$id: String!, \$page: Int, \$page_size: Int, \$snapshot: String) { movieSimilar(id: \$id, page: \$page, page_size: \$page_size, snapshot: \$snapshot) ${selectionSet ?? '{ items { video { id title description tags status duration views created_at } score reason because { id title description tags status duration views created_at } progress at } total page page_size snapshot }'} }', variables: {
       'id': id,

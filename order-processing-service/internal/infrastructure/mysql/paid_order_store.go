@@ -21,6 +21,7 @@ type orderRow struct {
 	ShippingExclTax   float64   `gorm:"column:shipping_excl_tax"`
 	ShippingMethod    string    `gorm:"column:shipping_method"`
 	ShippingCode      string    `gorm:"column:shipping_code"`
+	CarrierFee        float64   `gorm:"column:shipping_carrier_fee"`
 	Status            string    `gorm:"column:status;size:32"`
 	GuestEmail        string    `gorm:"column:guest_email"`
 	SiteID            int       `gorm:"column:site_id"`
@@ -71,6 +72,8 @@ func (s *store) CreatePaidOrder(ctx context.Context, in entity.PaidOrderInput) (
 		Currency:          in.Currency,
 		TotalInclTax:      in.Total,
 		TotalExclTax:      in.Total,
+		ShippingInclTax:   in.ShippingFee,
+		ShippingExclTax:   in.ShippingFee,
 		Status:            "Paid",
 		UserID:            in.UserID,
 		OwnerID:           in.UserID,
@@ -103,6 +106,34 @@ func (s *store) CreatePaidOrder(ctx context.Context, in entity.PaidOrderInput) (
 
 func (s *store) SetStatus(ctx context.Context, number, status string) error {
 	res := s.db.WithContext(ctx).Model(&orderRow{}).Where("number = ?", number).Update("status", status)
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return fmt.Errorf("order %s not found", number)
+	}
+	return nil
+}
+
+const (
+	StatusAwaitingPickup = "Awaiting pickup"
+	StatusNeedsShipping  = "Needs shipping"
+)
+
+func (s *store) SetShipment(ctx context.Context, number string, shipment entity.ShipmentResult) error {
+	updates := map[string]any{"shipping_method": "GHN"}
+	switch shipment.Outcome {
+	case entity.ShipmentOutcomeCreated:
+		updates["shipping_code"] = shipment.Code
+		updates["shipping_carrier_fee"] = float64(shipment.Fee)
+		updates["status"] = StatusAwaitingPickup
+	default:
+		if shipment.Code != "" {
+			updates["shipping_code"] = shipment.Code
+		}
+		updates["status"] = StatusNeedsShipping
+	}
+	res := s.db.WithContext(ctx).Model(&orderRow{}).Where("number = ?", number).Updates(updates)
 	if res.Error != nil {
 		return res.Error
 	}

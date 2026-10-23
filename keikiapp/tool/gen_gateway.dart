@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:gql/ast.dart';
 import 'package:gql/language.dart' as lang;
 
+part 'gen_admin.dart';
+
 const _scalars = {'String', 'ID', 'UUID', 'Int', 'Int64', 'Int32', 'Float', 'Boolean', 'Map', 'Any', 'Upload'};
 const _rootTypes = {'Query', 'Mutation'};
 const _maxDepth = 2;
@@ -93,6 +95,7 @@ void main(List<String> argv) {
   File('${outDir.path}/gateway_api.g.dart').writeAsStringSync(_gatewayApi(services));
   assetFile.parent.createSync(recursive: true);
   assetFile.writeAsStringSync(jsonEncode(_catalog(services)));
+  _writeAdminConsoles(services, Directory(argv.length > 3 ? argv[3] : 'lib/features/admin/console/gen'));
 
   stdout.writeln('gen_gateway: ${operations.length} operations, ${services.length} services, '
       '${types.values.where((t) => t.kind == 'object').length} object types, '

@@ -50,6 +50,7 @@ extend type Query {
   movieContinueWatching(user_id: String!, page: Int, page_size: Int, snapshot: String): MoviePage @hasPermission(object: "/graphql/movie-recommendation-service", action: "QUERY") @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{user_id}/continue-watching")
   movieHistory(user_id: String!, page: Int, page_size: Int, snapshot: String): MoviePage @hasPermission(object: "/graphql/movie-recommendation-service", action: "QUERY") @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{user_id}/history")
   movieNewReleases(page: Int, page_size: Int, snapshot: String): MoviePage @public @rest(service: "movie-recommendation-service", path: "/api/recommendations/new")
+  movieVideo(id: String!): MovieVideo @public @rest(service: "movie-recommendation-service", path: "/api/recommendations/videos/{id}")
   movieSimilar(id: String!, page: Int, page_size: Int, snapshot: String): MoviePage @public @rest(service: "movie-recommendation-service", path: "/api/recommendations/videos/{id}/similar")
   movieTrending(page: Int, page_size: Int, snapshot: String): MoviePage @public @rest(service: "movie-recommendation-service", path: "/api/recommendations/trending")
   myMovieForUser(page: Int, page_size: Int, snapshot: String): MoviePage @rest(service: "movie-recommendation-service", path: "/api/recommendations/users/{$userId}")

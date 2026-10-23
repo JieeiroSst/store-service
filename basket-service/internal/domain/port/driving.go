@@ -38,10 +38,30 @@ type CheckoutCommand struct {
 	WalletID          string
 	Pin               string
 	ShippingAddressID int
+	AccessToken       string
+	ShippingFee       *float64
+}
+
+type ShippingQuoteCommand struct {
+	BasketID          int
+	UserID            int
+	ShippingAddressID int
+	AccessToken       string
+}
+
+type ShippingQuoteResult struct {
+	Currency           string  `json:"currency"`
+	Subtotal           float64 `json:"subtotal"`
+	ShippingFee        float64 `json:"shipping_fee"`
+	Total              float64 `json:"total"`
+	ShippingCharged    bool    `json:"shipping_charged"`
+	ServiceName        string  `json:"service_name,omitempty"`
+	ExpectedDeliveryAt string  `json:"expected_delivery_at,omitempty"`
 }
 
 type CheckoutUsecase interface {
 	Checkout(ctx context.Context, cmd CheckoutCommand) (*model.Basket, error)
+	QuoteShipping(ctx context.Context, cmd ShippingQuoteCommand) (*ShippingQuoteResult, error)
 	RetryFulfillment(ctx context.Context, limit int) (int, error)
 }
 

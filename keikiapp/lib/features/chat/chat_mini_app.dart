@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/deep_links.dart';
+
 import '../../app/mini_app.dart';
 import '../auth/bloc/auth_bloc.dart';
 import 'bloc/chat_cubit.dart';
@@ -19,10 +21,7 @@ final chatMiniApp = MiniApp(
   path: '/chat',
   routes: [
     ShellRoute(
-      builder: (context, state, child) => BlocProvider(
-        create: (context) => ChatListCubit(context.read<ChatRepository>())..load(),
-        child: child,
-      ),
+      builder: (context, state, child) => BlocProvider(create: (context) => ChatListCubit(context.read<ChatRepository>())..load(), child: child),
       routes: [
         GoRoute(
           path: '/chat',
@@ -37,25 +36,23 @@ final chatMiniApp = MiniApp(
             ),
             GoRoute(
               path: 'direct/:id',
-              builder: (context, state) => BlocProvider(
-                create: (context) => ConversationCubit.direct(
-                  context.read<ChatRepository>(),
-                  myId: _myId(context),
-                  recipientId: int.parse(state.pathParameters['id']!),
-                )..load(),
-                child: ConversationPage(title: state.extra as String? ?? 'Trò chuyện'),
-              ),
+              builder: (context, state) => intParam(state, 'id') == null
+                  ? LinkNotFoundPage(location: state.uri.toString())
+                  : BlocProvider(
+                      create: (context) =>
+                          ConversationCubit.direct(context.read<ChatRepository>(), myId: _myId(context), recipientId: intParam(state, 'id')!)..load(),
+                      child: ConversationPage(title: state.extra as String? ?? 'Trò chuyện'),
+                    ),
             ),
             GoRoute(
               path: 'group/:id',
-              builder: (context, state) => BlocProvider(
-                create: (context) => ConversationCubit.group(
-                  context.read<ChatRepository>(),
-                  myId: _myId(context),
-                  groupId: int.parse(state.pathParameters['id']!),
-                )..load(),
-                child: ConversationPage(title: state.extra as String? ?? 'Nhóm'),
-              ),
+              builder: (context, state) => intParam(state, 'id') == null
+                  ? LinkNotFoundPage(location: state.uri.toString())
+                  : BlocProvider(
+                      create: (context) =>
+                          ConversationCubit.group(context.read<ChatRepository>(), myId: _myId(context), groupId: intParam(state, 'id')!)..load(),
+                      child: ConversationPage(title: state.extra as String? ?? 'Nhóm'),
+                    ),
             ),
           ],
         ),

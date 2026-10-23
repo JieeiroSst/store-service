@@ -55,6 +55,7 @@ class BookDetailPage extends StatelessWidget {
         final chapters = d.$2;
         return DetailPage(
           title: b?.title ?? 'Sách',
+          actions: [ShareLinkButton(path: '/book/$id', title: b?.title ?? 'Sách')],
           header: Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Row(
@@ -235,6 +236,7 @@ class _StoreBookPage extends StatelessWidget {
     final b = book;
     return DetailPage(
       title: b.name_ ?? 'Sách',
+      actions: [if (b.id != null) ShareLinkButton(path: '/store-book/${b.id}', title: b.name_ ?? 'Sách')],
       header: HeroHeader(title: b.name_ ?? 'Sách', subtitle: b.author?.name_, icon: Icons.menu_book_rounded, badges: [if (b.category?.name_ != null) Pill(b.category!.name_!)]),
       bottom: Row(
         children: [
@@ -278,4 +280,17 @@ class _StoreBookPage extends StatelessWidget {
       ],
     );
   }
+}
+
+class StoreBookLinkPage extends StatelessWidget {
+  const StoreBookLinkPage({super.key, required this.id});
+
+  final int id;
+
+  @override
+  Widget build(BuildContext context) => AsyncBuilder<BookStoreBook?>(
+        load: () => context.api.bookStore.bookStoreBook(id: id),
+        loading: const Scaffold(body: SkeletonList()),
+        builder: (context, b, _) => b == null ? const DetailPage(title: 'Sách', children: [EmptyView(message: 'Không tìm thấy sách')]) : _StoreBookPage(book: b),
+      );
 }

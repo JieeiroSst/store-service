@@ -268,7 +268,7 @@ class _WishlistsState extends State<_Wishlists> {
             await showFormSheet(
               context,
               title: 'Danh sách được chia sẻ',
-              fields: const [KField('key', 'Mã chia sẻ', required: true)],
+              fields: const [KField('key', 'Mã chia sẻ', required: true, scannable: true)],
               submitLabel: 'Xem',
               onSubmit: (v) async {
                 key = v.str('key');
@@ -1321,7 +1321,7 @@ class VoucherBusinessPage extends StatelessWidget {
               onPressed: () => showFormSheet(
                 context,
                 title: 'Thu hồi',
-                fields: const [KField('id', 'Mã voucher', required: true)],
+                fields: const [KField('id', 'Mã voucher', required: true, scannable: true)],
                 success: 'Đã thu hồi',
                 onSubmit: (v) => api.voucherRevoke(id: v.str('id')!),
               ),
@@ -1358,4 +1358,13 @@ class VoucherBusinessPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class QrLinkPage extends StatelessWidget {
+  const QrLinkPage({super.key, required this.id});
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context) => _QrPage(id: id);
 }

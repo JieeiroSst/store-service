@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/scan/scan.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/status_view.dart';
 import '../../../core/widgets/ui.dart';
@@ -19,6 +20,7 @@ class WalletPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Ví Keiki'),
         actions: [
+          IconButton(tooltip: 'Quét mã thanh toán', icon: const Icon(Icons.qr_code_scanner), onPressed: () => scanAndOpen(context)),
           IconButton(
             tooltip: 'Quản lý ví',
             icon: const Icon(Icons.manage_accounts_outlined),

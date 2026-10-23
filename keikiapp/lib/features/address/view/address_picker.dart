@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/widgets/status_view.dart';
 import '../data/address_repository.dart';
+import '../../../gen/gateway_api.g.dart';
+import 'ghn_area_picker.dart';
 
 Future<UserAddress?> pickAddress(BuildContext context) {
   return showModalBottomSheet<UserAddress>(
@@ -56,8 +58,25 @@ class _AddressSheetState extends State<_AddressSheet> {
                   ListTile(
                     leading: Icon(a.isDefaultShipping ? Icons.home : Icons.location_on_outlined),
                     title: Text(a.fullName.isEmpty ? a.line1 : '${a.fullName} • ${a.phone}'),
-                    subtitle: Text(a.summary),
-                    onTap: () => Navigator.pop(context, a),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(a.summary),
+                        if (!a.hasGhnArea)
+                          Text(
+                            'Cần bổ sung Tỉnh/Quận/Phường để giao hàng',
+                            style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
+                          ),
+                      ],
+                    ),
+                    onTap: () async {
+                      if (a.hasGhnArea) {
+                        Navigator.pop(context, a);
+                        return;
+                      }
+                      final fixed = await fixAddressArea(context, a);
+                      if (fixed != null && context.mounted) Navigator.pop(context, fixed);
+                    },
                   ),
                 ListTile(leading: const Icon(Icons.add_location_alt_outlined), title: const Text('Thêm địa chỉ mới'), onTap: _add),
               ],
@@ -81,13 +100,12 @@ class _AddressDialogState extends State<_AddressDialog> {
   final _name = TextEditingController();
   final _phone = TextEditingController();
   final _line1 = TextEditingController();
-  final _line2 = TextEditingController();
-  final _state = TextEditingController();
+  GhnArea _area = const GhnArea();
   bool _saving = false;
 
   @override
   void dispose() {
-    for (final c in [_name, _phone, _line1, _line2, _state]) {
+    for (final c in [_name, _phone, _line1]) {
       c.dispose();
     }
     super.dispose();
@@ -102,8 +120,9 @@ class _AddressDialogState extends State<_AddressDialog> {
             firstName: parts.length > 1 ? parts.sublist(0, parts.length - 1).join(' ') : parts.first,
             lastName: parts.length > 1 ? parts.last : '',
             line1: _line1.text.trim(),
-            line2: _line2.text.trim(),
-            state: _state.text.trim(),
+            line2: [_area.wardName, _area.districtName].where((s) => s.isNotEmpty).join(', '),
+            state: _area.provinceName,
+            postcode: _area.complete ? _area.code : null,
             phone: _phone.text.trim(),
             isDefault: true,
           );
@@ -131,8 +150,7 @@ class _AddressDialogState extends State<_AddressDialog> {
               TextFormField(controller: _name, decoration: const InputDecoration(labelText: 'Người nhận'), validator: _required),
               TextFormField(controller: _phone, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Số điện thoại'), validator: _required),
               TextFormField(controller: _line1, decoration: const InputDecoration(labelText: 'Số nhà, đường'), validator: _required),
-              TextFormField(controller: _line2, decoration: const InputDecoration(labelText: 'Phường/Xã, Quận/Huyện')),
-              TextFormField(controller: _state, decoration: const InputDecoration(labelText: 'Tỉnh/Thành phố')),
+              GhnAreaPicker(onChanged: (a) => _area = a),
             ],
           ),
         ),
@@ -140,6 +158,91 @@ class _AddressDialogState extends State<_AddressDialog> {
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huỷ')),
         FilledButton(onPressed: _saving ? null : _save, child: const Text('Lưu')),
+      ],
+    );
+  }
+}
+
+Future<UserAddress?> fixAddressArea(BuildContext context, UserAddress address) => showDialog<UserAddress>(
+      context: context,
+      builder: (_) => RepositoryProvider.value(value: context.read<AddressRepository>(), child: _FixAreaDialog(address: address)),
+    );
+
+class _FixAreaDialog extends StatefulWidget {
+  const _FixAreaDialog({required this.address});
+
+  final UserAddress address;
+
+  @override
+  State<_FixAreaDialog> createState() => _FixAreaDialogState();
+}
+
+class _FixAreaDialogState extends State<_FixAreaDialog> {
+  final _form = GlobalKey<FormState>();
+  GhnArea? _guess;
+  GhnArea _area = const GhnArea();
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final a = widget.address;
+    guessGhnArea(context.read<GatewayApi>().shipping, province: a.state, district: a.districtText, ward: a.wardText).then((g) {
+      if (mounted) setState(() => _guess = _area = g);
+    }).catchError((_) {
+      if (mounted) setState(() => _guess = const GhnArea());
+    });
+  }
+
+  Future<void> _save() async {
+    if (!_form.currentState!.validate() || !_area.complete) return;
+    setState(() => _saving = true);
+    try {
+      final updated = await context.read<AddressRepository>().setArea(
+            widget.address,
+            line2: '${_area.wardName}, ${_area.districtName}',
+            state: _area.provinceName,
+            postcode: _area.code,
+          );
+      if (mounted) Navigator.pop(context, updated);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _saving = false);
+        showSnack(context, e.toString());
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final guess = _guess;
+    return AlertDialog(
+      title: const Text('Bổ sung khu vực giao hàng'),
+      content: Form(
+        key: _form,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('${widget.address.fullName}\n${widget.address.summary}', style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 8),
+              if (guess == null)
+                const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator()))
+              else ...[
+                if (guess.complete)
+                  const Text('Đã tự tìm khu vực theo địa chỉ cũ, kiểm tra lại rồi bấm Lưu.')
+                else
+                  const Text('Chọn Tỉnh/Quận/Phường theo danh mục của GHN.'),
+                GhnAreaPicker(initial: guess, onChanged: (a) => _area = a),
+              ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Huỷ')),
+        FilledButton(onPressed: _saving || guess == null ? null : _save, child: const Text('Lưu')),
       ],
     );
   }

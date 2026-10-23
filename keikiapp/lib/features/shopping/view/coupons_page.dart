@@ -59,7 +59,7 @@ class _CouponsPageState extends State<CouponsPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              FilledButton(onPressed: _checking ? null : _check, child: const Text('Kiểm tra')),
+              FilledButton(style: FilledButton.styleFrom(minimumSize: const Size(0, 54)), onPressed: _checking ? null : _check, child: const Text('Kiểm tra')),
             ],
           ),
           if (_found != null) _CouponCard(coupon: _found!),

@@ -30,6 +30,12 @@ func (f *fakeUsecase) ForUser(_ context.Context, user string, q port.PageQuery) 
 		Total: 41, Page: q.Page, PageSize: q.PageSize,
 	}, nil
 }
+func (f *fakeUsecase) Video(_ context.Context, id string) (*model.Video, error) {
+	if id != "v1" {
+		return nil, port.ErrNotFound
+	}
+	return &model.Video{ID: "v1", Title: "Mắt Biếc", Tags: []string{"drama"}, Status: model.StatusReady}, nil
+}
 func (f *fakeUsecase) Similar(context.Context, string, port.PageQuery) (*port.Page, error) {
 	return nil, port.ErrNotFound
 }
@@ -139,5 +145,18 @@ func TestFeedEndpoints(t *testing.T) {
 	uc.err = port.ErrInvalid
 	if w := do(t, uc, "DELETE", "/api/recommendations/users/u1/history/v9", ""); w.Code != http.StatusBadRequest {
 		t.Fatalf("remove invalid %d", w.Code)
+	}
+}
+
+func TestVideoByID(t *testing.T) {
+	w := do(t, &fakeUsecase{}, "GET", "/api/recommendations/videos/v1", "")
+	if w.Code != 200 || !strings.Contains(w.Body.String(), `"title":"Mắt Biếc"`) {
+		t.Fatalf("%d %s", w.Code, w.Body.String())
+	}
+	if w := do(t, &fakeUsecase{}, "GET", "/api/recommendations/videos/missing", ""); w.Code != 404 {
+		t.Fatalf("missing video: %d", w.Code)
+	}
+	if w := do(t, &fakeUsecase{}, "GET", "/api/recommendations/videos/missing/similar", ""); w.Code != 404 {
+		t.Fatalf("similar route shadowed: %d", w.Code)
 	}
 }

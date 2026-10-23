@@ -144,12 +144,47 @@ func (f *fakeWallet) Pay(_ context.Context, p port.WalletPayment) (string, error
 	return fmt.Sprintf("tx-%d", len(f.payments)), nil
 }
 
+type fakeAddresses struct {
+	token string
+	err   error
+	plain bool
+}
+
+func (f *fakeAddresses) ShippingAddress(_ context.Context, token string, id int) (*port.ShippingAddress, error) {
+	f.token = token
+	if f.err != nil {
+		return nil, f.err
+	}
+	if f.plain {
+		return &port.ShippingAddress{Name: "Lưu Mạnh Quân", Phone: "0912345678", Street: "24 Lê Văn Hưu"}, nil
+	}
+	return &port.ShippingAddress{Name: "Lưu Mạnh Quân", Phone: "0912345678", Street: "24 Lê Văn Hưu", WardCode: "20109", DistrictID: 1442, ProvinceID: 202}, nil
+}
+
+type fakeRates struct {
+	fee   int64
+	err   error
+	calls int
+	items []port.ShippingItem
+	to    port.ShippingAddress
+}
+
+func (f *fakeRates) Quote(_ context.Context, to port.ShippingAddress, items []port.ShippingItem, _ int64) (*port.ShippingQuote, error) {
+	f.calls++
+	f.to, f.items = to, items
+	if f.err != nil {
+		return nil, f.err
+	}
+	return &port.ShippingQuote{Fee: f.fee, ServiceName: "Chuẩn", WarehouseID: 2, ServiceID: 53320}, nil
+}
+
 type fixture struct {
 	baskets   *memBaskets
 	lines     *memLines
 	catalogue *fakeCatalogue
 	wallet    *fakeWallet
 	orders    *fakeFulfillment
+	addresses *fakeAddresses
 	lineSvc   port.BasketLineUsecase
 	checkout  port.CheckoutUsecase
 	basketID  int
@@ -165,7 +200,8 @@ func newFixture(t *testing.T) *fixture {
 		orders:    &fakeFulfillment{},
 	}
 	f.lineSvc = NewBasketLineService(f.lines, f.baskets, f.catalogue)
-	f.checkout = NewCheckoutService(f.baskets, f.lines, f.catalogue, f.wallet, f.orders)
+	f.addresses = &fakeAddresses{}
+	f.checkout = NewCheckoutService(f.baskets, f.lines, f.catalogue, f.wallet, f.orders, f.addresses, nil)
 	b, err := NewBasketService(f.baskets).CreateBasket(context.Background(), &model.Basket{UserID: 7, Status: "Submitted", TotalInclTax: 1})
 	if err != nil {
 		t.Fatal(err)
@@ -337,5 +373,157 @@ func TestFulfillmentOutageIsRetriedLater(t *testing.T) {
 	}
 	if n, _ := f.checkout.RetryFulfillment(context.Background(), 10); n != 0 {
 		t.Fatalf("already fulfilled baskets must be skipped, started %d", n)
+	}
+}
+
+func TestCheckoutSnapshotsTheGHNAddressForTheOrder(t *testing.T) {
+	f := newFixture(t)
+	f.add(t, 10, 1)
+	b, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4, AccessToken: "Bearer user-token"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if f.addresses.token != "Bearer user-token" {
+		t.Fatalf("the buyer token must be forwarded, got %q", f.addresses.token)
+	}
+	if b.ShippingSnapshot == "" || len(f.orders.orders) != 1 {
+		t.Fatalf("snapshot=%q orders=%d", b.ShippingSnapshot, len(f.orders.orders))
+	}
+	addr := f.orders.orders[0].ShippingAddress
+	if addr == nil || addr.WardCode != "20109" || addr.DistrictID != 1442 || addr.Phone != "0912345678" {
+		t.Fatalf("order address: %+v", addr)
+	}
+}
+
+func TestCheckoutRejectsSomeoneElsesAddressBeforeCharging(t *testing.T) {
+	f := newFixture(t)
+	f.add(t, 10, 1)
+	f.addresses.err = common.ErrNotFound
+	_, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 99})
+	if !errors.Is(err, common.ErrInvalidRequest) {
+		t.Fatalf("expected invalid request, got %v", err)
+	}
+	if len(f.wallet.payments) != 0 || f.catalogue.allocated[10] != 0 {
+		t.Fatalf("nothing may be charged or reserved: payments=%d allocated=%v", len(f.wallet.payments), f.catalogue.allocated)
+	}
+}
+
+func TestCheckoutStillSellsWhenTheAddressServiceIsDown(t *testing.T) {
+	f := newFixture(t)
+	f.add(t, 10, 1)
+	f.addresses.err = fmt.Errorf("%w: address service returned 503", common.ErrUpstream)
+	b, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if b.ShippingSnapshot != "" || f.orders.orders[0].ShippingAddress != nil || f.orders.orders[0].ShippingAddressID != 4 {
+		t.Fatalf("order must keep the address id without a snapshot: %+v", f.orders.orders[0])
+	}
+}
+
+func TestRetriedFulfillmentKeepsTheAddressSnapshot(t *testing.T) {
+	f := newFixture(t)
+	f.add(t, 10, 1)
+	f.orders.err = errors.New("temporal down")
+	if _, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4}); err != nil {
+		t.Fatal(err)
+	}
+	f.orders.err = nil
+	if n, err := f.checkout.RetryFulfillment(context.Background(), 10); err != nil || n != 1 {
+		t.Fatalf("retry: %d %v", n, err)
+	}
+	if addr := f.orders.orders[0].ShippingAddress; addr == nil || addr.WardCode != "20109" {
+		t.Fatalf("retried order lost the address: %+v", addr)
+	}
+}
+
+func withRates(t *testing.T, fee int64) (*fixture, *fakeRates) {
+	t.Helper()
+	f := newFixture(t)
+	rates := &fakeRates{fee: fee}
+	f.checkout = NewCheckoutService(f.baskets, f.lines, f.catalogue, f.wallet, f.orders, f.addresses, rates)
+	f.add(t, 10, 2)
+	return f, rates
+}
+
+func fee(v float64) *float64 { return &v }
+
+func TestQuoteShippingAddsTheFeeToTheTotal(t *testing.T) {
+	f, rates := withRates(t, 32000)
+	q, err := f.checkout.QuoteShipping(context.Background(), port.ShippingQuoteCommand{BasketID: f.basketID, UserID: 7, ShippingAddressID: 4, AccessToken: "Bearer t"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if q.Subtotal != 300000 || q.ShippingFee != 32000 || q.Total != 332000 || !q.ShippingCharged || q.Currency != "VND" {
+		t.Fatalf("quote %+v", q)
+	}
+	if rates.to.WardCode != "20109" || len(rates.items) != 1 || rates.items[0].Quantity != 2 || rates.items[0].Price != 150000 {
+		t.Fatalf("rates got %+v %+v", rates.to, rates.items)
+	}
+	if len(f.wallet.payments) != 0 {
+		t.Fatal("a quote must not charge")
+	}
+}
+
+func TestCheckoutChargesTheConfirmedShippingFee(t *testing.T) {
+	f, _ := withRates(t, 32000)
+	b, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4, ShippingFee: fee(32000)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if f.wallet.payments[0].Amount != 332000 || f.wallet.payments[0].Metadata["shipping_fee"] != "32000" {
+		t.Fatalf("payment %+v", f.wallet.payments[0])
+	}
+	if b.TotalInclTax != 332000 || b.ShippingInclTax != 32000 {
+		t.Fatalf("basket %+v", b)
+	}
+	if o := f.orders.orders[0]; o.Total != 332000 || o.ShippingFee != 32000 || o.ShippingRoute == nil || o.ShippingRoute.WarehouseID != 2 || o.ShippingRoute.ServiceID != 53320 || o.ShippingRoute.Fee != 32000 {
+		t.Fatalf("order %+v", o)
+	}
+}
+
+func TestCheckoutNeverChargesMoreShippingThanConfirmed(t *testing.T) {
+	for name, confirmed := range map[string]*float64{"unconfirmed": nil, "fee went up": fee(30000)} {
+		f, _ := withRates(t, 32000)
+		_, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4, ShippingFee: confirmed})
+		if !errors.Is(err, common.ErrConflict) {
+			t.Fatalf("%s: expected conflict, got %v", name, err)
+		}
+		if len(f.wallet.payments) != 0 || f.catalogue.allocated[10] != 0 {
+			t.Fatalf("%s: nothing may be charged or reserved", name)
+		}
+	}
+	f, _ := withRates(t, 28000)
+	b, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4, ShippingFee: fee(32000)})
+	if err != nil || b.ShippingInclTax != 28000 || f.wallet.payments[0].Amount != 328000 {
+		t.Fatalf("a cheaper fee is charged as is: %+v %v", b, err)
+	}
+}
+
+func TestCheckoutNeedsADeliverableGHNAddress(t *testing.T) {
+	f, rates := withRates(t, 32000)
+	f.addresses.plain = true
+	_, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4, ShippingFee: fee(32000)})
+	if !errors.Is(err, common.ErrInvalidRequest) || rates.calls != 0 || len(f.wallet.payments) != 0 {
+		t.Fatalf("err=%v calls=%d", err, rates.calls)
+	}
+}
+
+func TestCheckoutStopsWhenShippingCannotBePriced(t *testing.T) {
+	for _, upstream := range []error{
+		fmt.Errorf("%w: shipping service returned 503", common.ErrUpstream),
+		fmt.Errorf("%w: không giao được tới địa chỉ này", common.ErrInvalidRequest),
+	} {
+		f, rates := withRates(t, 0)
+		rates.err = upstream
+		_, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4, ShippingFee: fee(50000)})
+		if !errors.Is(err, upstream) || len(f.wallet.payments) != 0 {
+			t.Fatalf("err=%v payments=%d", err, len(f.wallet.payments))
+		}
+	}
+	f, _ := withRates(t, 32000)
+	f.addresses.err = fmt.Errorf("%w: address service returned 503", common.ErrUpstream)
+	if _, err := f.checkout.Checkout(context.Background(), port.CheckoutCommand{BasketID: f.basketID, UserID: 7, WalletID: "w-1", Pin: "123456", ShippingAddressID: 4, ShippingFee: fee(32000)}); !errors.Is(err, common.ErrUpstream) {
+		t.Fatalf("without the address the fee is unknown, got %v", err)
 	}
 }

@@ -438,3 +438,24 @@ func TestBadSnapshotIsInvalid(t *testing.T) {
 		}
 	}
 }
+
+func TestVideoByID(t *testing.T) {
+	s := newService(newMemRepo(), fakeSource{})
+	ctx := context.Background()
+	if _, err := s.Video(ctx, "x"); !errors.Is(err, port.ErrNotFound) {
+		t.Fatalf("missing video err = %v", err)
+	}
+	if err := s.UpsertVideo(ctx, model.Video{ID: "x", Title: "Manual"}); err != nil {
+		t.Fatal(err)
+	}
+	v, err := s.Video(ctx, "x")
+	if err != nil || v.Title != "Manual" {
+		t.Fatalf("video = %+v, %v", v, err)
+	}
+	if err := s.UpsertVideo(ctx, model.Video{ID: "draft", Title: "Draft", Status: "processing"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Video(ctx, "draft"); !errors.Is(err, port.ErrNotFound) {
+		t.Fatalf("unready video served: %v", err)
+	}
+}

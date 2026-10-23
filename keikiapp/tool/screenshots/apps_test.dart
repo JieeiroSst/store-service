@@ -23,6 +23,8 @@ GraphQLClient _client() => GraphQLClient(
         Object? data;
         if (q.contains('me {')) {
           data = {'me': {'id': 7, 'username': 'quan', 'email': 'quan@keiki.vn', 'name': 'Lưu Mạnh Quân', 'roles': []}};
+        } else if (q.contains('myPermissions')) {
+          data = {'myPermissions': fixtures['myPermissions'], 'myRoles': {'effectiveRoles': []}};
         } else {
           final name = _field.firstMatch(q)?.group(1);
           data = {?name: fixtures[name]};

@@ -161,6 +161,7 @@ class _VehiclePage extends StatelessWidget {
     final api = context.api.carRental;
     return DetailPage(
       title: '${v.make ?? ''} ${v.model ?? ''}',
+      actions: [ShareLinkButton(path: '/vehicle/${v.vehicleId}', title: '${v.make ?? ''} ${v.model ?? ''}'.trim())],
       header: HeroHeader(
         title: '${v.make ?? ''} ${v.model ?? ''}',
         subtitle: '${v.year ?? ''} • ${v.color ?? ''} • ${v.registrationNumber ?? ''}',
@@ -525,7 +526,7 @@ class ParkingApp extends StatelessWidget {
         context,
         title: 'Lấy xe & thanh toán',
         fields: const [
-          KField('ticket', 'Mã vé gửi xe', required: true, icon: Icons.confirmation_number_outlined),
+          KField('ticket', 'Mã vé gửi xe', required: true, icon: Icons.confirmation_number_outlined, scannable: true),
           KField('method', 'Thanh toán', kind: FieldKind.choice, options: [('wallet', 'Ví Keiki'), ('cash', 'Tiền mặt'), ('card', 'Thẻ')]),
         ],
         submitLabel: 'Lấy xe',
@@ -604,4 +605,17 @@ class _ParkingHistoryState extends State<_ParkingHistory> {
       ],
     );
   }
+}
+
+class VehicleLinkPage extends StatelessWidget {
+  const VehicleLinkPage({super.key, required this.id});
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context) => AsyncBuilder<CarRentalVehicleResponse?>(
+        load: () => context.api.carRental.carRentalGetVehicle(input: CarRentalGetVehicleRequestInput(vehicleId: id)),
+        loading: const Scaffold(body: SkeletonList()),
+        builder: (context, v, _) => v == null ? const DetailPage(title: 'Thuê xe', children: [EmptyView(message: 'Không tìm thấy xe')]) : _VehiclePage(vehicle: v),
+      );
 }

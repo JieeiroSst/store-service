@@ -13,6 +13,8 @@ import '../apps/travel/stays_host.dart';
 import '../services/bloc/services_cubit.dart';
 import '../services/data/schema_catalog.dart';
 import '../services/data/service_meta.dart';
+import 'console/admin_console_page.dart';
+import '../tracking/link_tracking_page.dart';
 
 class _Console {
   const _Console(this.title, this.subtitle, this.icon, this.color, this.open);
@@ -38,6 +40,7 @@ final _consoles = <_Console>[
   _Console('Chuyên mục bài viết', 'Tạo, sửa, xoá chuyên mục', Icons.folder_special_outlined, const Color(0xFF9333EA), (c) => _push(c, const Color(0xFF9333EA), const PostCategoryManager())),
   _Console('Chuyến giao tài xế', 'Đơn được giao cho tài xế', Icons.delivery_dining_outlined, const Color(0xFFEA580C), (c) => _push(c, const Color(0xFFEA580C), const DriverJobsPage())),
   _Console('Deep link & đo lường', 'Ghi nhận cài đặt, AASA, asset links', Icons.analytics_outlined, const Color(0xFF0891B2), (c) => _push(c, const Color(0xFF0891B2), const ShortlinkToolsPage())),
+  _Console('Kiểm tra link & tracking', 'Branch, mã mời, nguồn cài đặt', Icons.alt_route, const Color(0xFF0E7490), (c) => _push(c, const Color(0xFF0E7490), const LinkTrackingPage())),
   _Console('Đăng nhập SSO', 'Keycloak cho cổng đối tác', Icons.key_outlined, const Color(0xFF334155), (c) => c.push('/services/manage')),
 ];
 
@@ -51,7 +54,7 @@ class AdminHomePage extends StatelessWidget {
       final s = c.state;
       return [
         for (final svc in s.visibleServices)
-          if (s.visibleOperations(svc).any((o) => o.access == OperationAccess.admin)) (svc, s.visibleOperations(svc).where((o) => o.access == OperationAccess.admin).length),
+          if (adminConsoleSize(svc.id) > 0 && s.visibleOperations(svc).any((o) => o.access == OperationAccess.admin)) (svc, s.visibleOperations(svc).where((o) => o.access == OperationAccess.admin).length),
       ];
     });
     return Scaffold(
@@ -115,7 +118,7 @@ class AdminHomePage extends StatelessWidget {
                 title: Text(meta.title),
                 subtitle: Text('$count chức năng quản trị'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push('/services/${svc.id}?all=1'),
+                onTap: () => _push(context, meta.category.color, AdminConsolePage(serviceId: svc.id)),
               );
             },
           ),

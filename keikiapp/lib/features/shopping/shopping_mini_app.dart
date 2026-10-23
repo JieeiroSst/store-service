@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/deep_links.dart';
+
 import '../../app/mini_app.dart';
 import 'bloc/cart_cubit.dart';
 import 'bloc/shopping_cubit.dart';
@@ -36,7 +38,7 @@ final shoppingMiniApp = MiniApp(
           routes: [
             GoRoute(
               path: 'products/:id',
-              builder: (_, state) => ProductPage(productId: int.parse(state.pathParameters['id']!)),
+              builder: (_, state) => intParam(state, 'id') == null ? LinkNotFoundPage(location: state.uri.toString()) : ProductPage(productId: intParam(state, 'id')!),
             ),
             GoRoute(path: 'wishlist', builder: (_, _) => const WishlistPage()),
             GoRoute(path: 'coupons', builder: (_, _) => const CouponsPage()),

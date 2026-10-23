@@ -43,8 +43,8 @@ func (r *mutationResolver) BasketDeleteLineAttribute(ctx context.Context, id int
 	return restCall[bool](ctx, r.Proxy, "basket-service", rest.Request{Method: "DELETE", Path: rest.P("/api/v1/basket-line-attributes/%v", id)}, "")
 }
 
-func (r *mutationResolver) BasketCheckout(ctx context.Context, id int, walletID string, pin string, shippingAddressID *int) (*model.BasketBasket, error) {
-	return restCall[*model.BasketBasket](ctx, r.Proxy, "basket-service", rest.Request{Method: "POST", Path: rest.P("/api/v1/baskets/%v/checkout", id), Body: map[string]any{"wallet_id": walletID, "pin": pin, "shipping_address_id": shippingAddressID}}, "")
+func (r *mutationResolver) BasketCheckout(ctx context.Context, id int, walletID string, pin string, shippingAddressID *int, shippingFee *float64) (*model.BasketBasket, error) {
+	return restCall[*model.BasketBasket](ctx, r.Proxy, "basket-service", rest.Request{Method: "POST", Path: rest.P("/api/v1/baskets/%v/checkout", id), Body: map[string]any{"wallet_id": walletID, "pin": pin, "shipping_address_id": shippingAddressID, "shipping_fee": shippingFee}}, "")
 }
 
 func (r *queryResolver) BasketBaskets(ctx context.Context) ([]*model.BasketBasket, error) {
@@ -85,4 +85,8 @@ func (r *queryResolver) BasketUser(ctx context.Context, id int) (*model.BasketUs
 
 func (r *queryResolver) BasketBasketLines(ctx context.Context, id int) ([]*model.BasketLine, error) {
 	return restCall[[]*model.BasketLine](ctx, r.Proxy, "basket-service", rest.Request{Method: "GET", Path: rest.P("/api/v1/baskets/%v/lines", id)}, "")
+}
+
+func (r *queryResolver) BasketShippingQuote(ctx context.Context, id int, shippingAddressID int) (*model.BasketShippingQuote, error) {
+	return restCall[*model.BasketShippingQuote](ctx, r.Proxy, "basket-service", rest.Request{Method: "POST", Path: rest.P("/api/v1/baskets/%v/shipping-quote", id), Body: map[string]any{"shipping_address_id": shippingAddressID}}, "")
 }

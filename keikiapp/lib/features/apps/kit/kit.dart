@@ -4,8 +4,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/graphql_exception.dart';
+import '../../../core/scan/scan.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/status_view.dart';
 import '../../../core/widgets/ui.dart';
@@ -16,6 +18,8 @@ import '../../services/data/service_meta.dart';
 import '../../../app/role.dart';
 
 export '../../../core/utils/formatters.dart';
+export '../../../core/links/share_link.dart' show ShareLinkButton, shareDeepLink, buildShareLink, webLinkFor, appLinkFor;
+export '../../../core/scan/scan.dart' show scanCode, scanAndOpen, openScanned, codeValue;
 export '../../../gen/gateway_executor.dart' show GqlUpload;
 export '../../../core/widgets/status_view.dart' show showSnack, askPin, EmptyView, ErrorView;
 export '../../../core/widgets/ui.dart' show IconBadge, SectionHeader, Pill, LoadingButton, BottomActionBar, Skeleton, SkeletonList;
@@ -978,7 +982,7 @@ class StatusPill extends StatelessWidget {
 enum FieldKind { text, number, multiline, email, phone, password, date, datetime, choice, file, toggle }
 
 class KField {
-  const KField(this.key, this.label, {this.kind = FieldKind.text, this.required = false, this.initial, this.hint, this.options = const [], this.icon});
+  const KField(this.key, this.label, {this.kind = FieldKind.text, this.required = false, this.initial, this.hint, this.options = const [], this.icon, this.scannable = false});
 
   final String key;
   final String label;
@@ -988,6 +992,7 @@ class KField {
   final String? hint;
   final List<(String, String)> options;
   final IconData? icon;
+  final bool scannable;
 }
 
 class FormData {
@@ -1029,7 +1034,30 @@ const _mimes = {
   'txt': 'text/plain',
 };
 
-Future<GqlUpload?> pickUpload() async {
+Future<GqlUpload?> pickUpload([BuildContext? context]) async {
+  if (context != null && cameraSupported) {
+    final source = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(leading: const Icon(Icons.photo_camera_outlined), title: const Text('Chụp ảnh'), onTap: () => Navigator.pop(context, 'camera')),
+            ListTile(leading: const Icon(Icons.photo_library_outlined), title: const Text('Chọn từ thư viện ảnh'), onTap: () => Navigator.pop(context, 'gallery')),
+            ListTile(leading: const Icon(Icons.folder_open_outlined), title: const Text('Chọn tệp khác'), onTap: () => Navigator.pop(context, 'file')),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return null;
+    if (source != 'file') {
+      final x = await ImagePicker().pickImage(source: source == 'camera' ? ImageSource.camera : ImageSource.gallery, maxWidth: 2400, imageQuality: 88);
+      if (x == null) return null;
+      final ext = x.name.split('.').last.toLowerCase();
+      return GqlUpload(bytes: await x.readAsBytes(), filename: x.name, contentType: x.mimeType ?? _mimes[ext] ?? 'image/jpeg');
+    }
+  }
   final file = await FilePicker.pickFile();
   if (file == null) return null;
   final ext = (file.extension ?? '').replaceFirst('.', '').toLowerCase();
@@ -1139,7 +1167,7 @@ class _FormSheetState extends State<_FormSheet> {
         builder: (state) => InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () async {
-            final u = await pickUpload();
+            final u = await pickUpload(context);
             if (u != null) setState(() => _files[f.key] = u);
           },
           child: InputDecorator(
@@ -1201,6 +1229,16 @@ class _FormSheetState extends State<_FormSheet> {
         labelText: f.label,
         hintText: f.hint,
         prefixIcon: f.icon == null ? (f.kind == FieldKind.date ? const Icon(Icons.event_outlined) : null) : Icon(f.icon),
+        suffixIcon: f.scannable
+            ? IconButton(
+                tooltip: 'Quét mã',
+                icon: const Icon(Icons.qr_code_scanner),
+                onPressed: () async {
+                  final code = await scanCode(context, title: f.label);
+                  if (code != null) c.text = codeValue(code);
+                },
+              )
+            : null,
       ),
       validator: validate,
     );

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/config/env.dart';
+import 'deep_links.dart';
+import '../core/scan/scan.dart';
 import '../core/widgets/ui.dart';
 import '../features/auth/bloc/auth_bloc.dart';
 import '../features/auth/view/login_page.dart';
@@ -20,7 +23,7 @@ import 'role.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
 
-GoRouter buildRouter(AuthBloc auth, RoleCubit role) {
+GoRouter buildRouter(AuthBloc auth, RoleCubit role, {void Function(Uri uri)? onLink}) {
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: '/',
@@ -29,12 +32,25 @@ GoRouter buildRouter(AuthBloc auth, RoleCubit role) {
       _StreamListenable(role.stream.map((s) => s.isAdmin).distinct()),
     ]),
     redirect: (context, state) {
+      if (state.uri.hasScheme) {
+        if (Env.isBranchHost(state.uri.host)) return '/';
+        onLink?.call(state.uri);
+        final link = routeForCode(state.uri.toString());
+        if (link != null) return link;
+        if (state.uri.path.isEmpty || state.uri.path == '/') return '/';
+      }
       final status = auth.state.status;
       final loc = state.matchedLocation;
       final atAuth = loc == '/login' || loc == '/signup';
-      if (status == AuthStatus.unknown) return loc == '/splash' ? null : '/splash';
-      if (status == AuthStatus.unauthenticated) return atAuth ? null : '/login';
-      if (atAuth || loc == '/splash') return '/';
+      final from = state.uri.queryParameters['from'];
+      String hold(String path) => Uri(path: path, queryParameters: {'from': from ?? state.uri.toString()}).toString();
+      final target = !atAuth && loc != '/splash' && loc != '/';
+      if (status == AuthStatus.unknown) return loc == '/splash' ? null : (target ? hold('/splash') : '/splash');
+      if (status == AuthStatus.unauthenticated) {
+        if (atAuth) return null;
+        return target || from != null ? hold('/login') : '/login';
+      }
+      if (atAuth || loc == '/splash') return from != null && from.startsWith('/') ? from : '/';
       if (loc.startsWith('/admin') && !role.state.isAdmin) return '/';
       return null;
     },
@@ -60,7 +76,9 @@ GoRouter buildRouter(AuthBloc auth, RoleCubit role) {
         ),
       ),
       ...miniAppRoutes,
+      ...deepLinkRoutes,
     ],
+    errorBuilder: (context, state) => LinkNotFoundPage(location: state.uri.toString()),
   );
 }
 

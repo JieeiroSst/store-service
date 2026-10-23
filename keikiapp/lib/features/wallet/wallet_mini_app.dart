@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/mini_app.dart';
 import 'view/wallet_forms.dart';
+import 'view/wallet_gate.dart';
 import 'view/wallet_page.dart';
 
 final walletMiniApp = MiniApp(
@@ -16,19 +17,22 @@ final walletMiniApp = MiniApp(
       path: '/wallet',
       builder: (_, _) => const WalletPage(),
       routes: [
-        GoRoute(path: 'topup', builder: (_, _) => const TopUpPage()),
-        GoRoute(path: 'withdraw', builder: (_, _) => const WithdrawPage()),
+        GoRoute(path: 'topup', builder: (_, _) => const WalletGate(title: 'Nạp tiền', child: TopUpPage())),
+        GoRoute(path: 'withdraw', builder: (_, _) => const WalletGate(title: 'Rút tiền', child: WithdrawPage())),
         GoRoute(
           path: 'transfer',
-          builder: (_, state) => TransferPage(
-            initialWalletId: state.uri.queryParameters['wallet_id'],
-            initialAmount: state.uri.queryParameters['amount'],
+          builder: (_, state) => WalletGate(
+            title: 'Chuyển tiền',
+            child: TransferPage(
+              initialWalletId: state.uri.queryParameters['wallet_id'],
+              initialAmount: state.uri.queryParameters['amount'],
+            ),
           ),
         ),
-        GoRoute(path: 'receive', builder: (_, _) => const ReceivePage()),
-        GoRoute(path: 'pin', builder: (_, _) => const SetPinPage()),
-        GoRoute(path: 'banks', builder: (_, _) => const BankAccountsPage()),
-        GoRoute(path: 'transactions', builder: (_, _) => const TransactionsPage()),
+        GoRoute(path: 'receive', builder: (_, _) => const WalletGate(title: 'Nhận tiền', child: ReceivePage())),
+        GoRoute(path: 'pin', builder: (_, _) => const WalletGate(title: 'Mã PIN', child: SetPinPage())),
+        GoRoute(path: 'banks', builder: (_, _) => const WalletGate(title: 'Tài khoản ngân hàng', child: BankAccountsPage())),
+        GoRoute(path: 'transactions', builder: (_, _) => const WalletGate(title: 'Lịch sử giao dịch', child: TransactionsPage())),
       ],
     ),
   ],

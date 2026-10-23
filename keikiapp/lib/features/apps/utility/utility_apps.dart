@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../gen/models.g.dart';
 import '../extras/extras.dart';
 import '../kit/kit.dart';
+import '../../address/view/ghn_area_picker.dart';
 
 String _size(num? bytes) {
   final b = (bytes ?? 0).toDouble();
@@ -549,7 +550,7 @@ class GymApp extends StatelessWidget {
                             await showFormSheet(
                               context,
                               title: 'Kiểm tra thẻ',
-                              fields: const [KField('id', 'Mã thẻ', required: true)],
+                              fields: const [KField('id', 'Mã thẻ', required: true, scannable: true)],
                               submitLabel: 'Kiểm tra',
                               onSubmit: (v) async => pass = await api.gymPassVerification(gymPassId: v.str('id')!),
                             );
@@ -719,7 +720,7 @@ class ShortlinkApp extends StatelessWidget {
                       await showFormSheet(
                         context,
                         title: 'Mã link rút gọn',
-                        fields: const [KField('code', 'Mã (phần sau dấu /)', required: true, hint: 'abc123')],
+                        fields: const [KField('code', 'Mã (phần sau dấu /)', required: true, hint: 'abc123', scannable: true)],
                         submitLabel: 'Tra cứu',
                         onSubmit: (v) async => r = await api.shortlinkResolve(shortCode: v.str('code')!.split('/').last),
                       );
@@ -1036,7 +1037,13 @@ class ShippingApp extends StatelessWidget {
                     child: FilledButton.icon(
                       icon: const Icon(Icons.calculate_outlined),
                       label: const Text('Tính phí'),
-                      onPressed: () => _quote(context, provinces ?? const []),
+                      onPressed: () => showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        showDragHandle: true,
+                        useSafeArea: true,
+                        builder: (_) => appScope(context, context.appColor, const _ShipQuoteSheet()),
+                      ),
                     ),
                   ),
                   InfoSection(title: 'Khu vực hỗ trợ', rows: [('Tỉnh/thành', '${(provinces ?? const []).length}')]),
@@ -1047,41 +1054,121 @@ class ShippingApp extends StatelessWidget {
     );
   }
 
-  Future<void> _quote(BuildContext context, List<ShipProvince> provinces) async {
+}
+
+class _ShipQuoteSheet extends StatefulWidget {
+  const _ShipQuoteSheet();
+
+  @override
+  State<_ShipQuoteSheet> createState() => _ShipQuoteSheetState();
+}
+
+class _ShipQuoteSheetState extends State<_ShipQuoteSheet> {
+  final _form = GlobalKey<FormState>();
+  final _address = TextEditingController();
+  late final _name = TextEditingController(text: context.userName);
+  final _phone = TextEditingController();
+  final _weight = TextEditingController(text: '500');
+  final _cod = TextEditingController(text: '0');
+  GhnArea _area = const GhnArea();
+  Object? _result;
+  String? _error;
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _address.dispose();
+    _name.dispose();
+    _phone.dispose();
+    _weight.dispose();
+    _cod.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_form.currentState!.validate()) return;
     final api = context.api.shipping;
-    Object? result;
-    await showFormSheet(
-      context,
-      title: 'Thông tin gói hàng',
-      fields: [
-        KField('province', 'Tỉnh/thành nhận', kind: FieldKind.choice, options: [for (final p in provinces) ('${p.id}', p.name_ ?? '')]),
-        const KField('address', 'Địa chỉ chi tiết', required: true),
-        const KField('weight', 'Khối lượng (gram)', kind: FieldKind.number, required: true, initial: '500'),
-        const KField('cod', 'Thu hộ COD (₫)', kind: FieldKind.number, initial: '0'),
-      ],
-      submitLabel: 'Báo giá',
-      onSubmit: (v) async {
-        final provinceId = v.integer('province');
-        final districts = provinceId == null ? const <ShipDistrict>[] : (await api.shipDistricts(provinceId: provinceId) ?? const <ShipDistrict>[]);
-        final wards = districts.isEmpty ? const <ShipWard>[] : (await api.shipWards(districtId: districts.first.id!).catchError((_) => null) ?? const <ShipWard>[]);
-        result = await api.shipQuote(
-          input: ShipQuoteInput(
-            recipient: ShipAddressInput(provinceId: provinceId, districtId: districts.isEmpty ? null : districts.first.id, wardCode: wards.isEmpty ? null : wards.first.code, address: v.str('address'), name_: 'Khách Keiki'),
-            parcel: ShipParcelInput(weight: v.integer('weight'), length: 20, width: 15, height: 10),
-            codAmount: v.integer('cod'),
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final r = await api.shipQuote(
+        input: ShipQuoteInput(
+          recipient: ShipAddressInput(
+            name_: _name.text.trim(),
+            phone: _phone.text.trim(),
+            street: _address.text.trim(),
+            provinceId: _area.provinceId,
+            districtId: _area.districtId,
+            wardCode: _area.wardCode,
           ),
-        );
-      },
-    );
-    if (result == null || !context.mounted) return;
-    final quotes = result is List ? result as List : (pick(result, 'quotes') ?? pick(result, 'items') ?? const []) as List;
-    await showResult(
-      context,
-      icon: Icons.local_shipping_rounded,
-      title: 'Báo giá',
-      message: quotes.isEmpty
-          ? 'Phí: ${vnd(pickInt(result, 'total') ?? pickInt(result, 'fee'))}'
-          : quotes.map((q) => '${pick(q, 'carrier') ?? pick(q, 'provider') ?? ''}: ${vnd(pickInt(q, 'total') ?? pickInt(q, 'fee'))}').join('\n'),
+          parcel: ShipParcelInput(
+            weightGram: int.tryParse(_weight.text.trim()) ?? 500,
+            lengthCm: 20,
+            widthCm: 15,
+            heightCm: 10,
+            items: [ShipParcelItemInput(name_: 'Gói hàng', quantity: 1, weightGram: int.tryParse(_weight.text.trim()) ?? 500)],
+          ),
+          codAmount: int.tryParse(_cod.text.replaceAll('.', '').trim()) ?? 0,
+        ),
+      );
+      if (mounted) setState(() => _result = r);
+    } catch (e) {
+      if (mounted) setState(() => _error = errorMessage(e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final r = _result;
+    final quotes = r == null ? const [] : (r is List ? r : (pick(r, 'options') ?? pick(r, 'quotes') ?? const []) as List);
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+        child: Form(
+          key: _form,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Thông tin gói hàng', style: Theme.of(context).textTheme.titleLarge),
+              GhnAreaPicker(onChanged: (a) => _area = a),
+              const SizedBox(height: 8),
+              TextFormField(controller: _name, decoration: const InputDecoration(labelText: 'Người nhận'), validator: (v) => (v ?? '').trim().isEmpty ? 'Bắt buộc' : null),
+              const SizedBox(height: 8),
+              TextFormField(controller: _phone, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Số điện thoại'), validator: (v) => (v ?? '').trim().isEmpty ? 'Bắt buộc' : null),
+              const SizedBox(height: 8),
+              TextFormField(controller: _address, decoration: const InputDecoration(labelText: 'Số nhà, đường'), validator: (v) => (v ?? '').trim().isEmpty ? 'Bắt buộc' : null),
+              const SizedBox(height: 8),
+              TextFormField(controller: _weight, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Khối lượng (gram)')),
+              const SizedBox(height: 8),
+              TextFormField(controller: _cod, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Thu hộ COD (₫)')),
+              const SizedBox(height: 16),
+              LoadingButton(label: 'Báo giá', loading: _busy, onPressed: _submit),
+              if (_error != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error))),
+              if (r != null) ...[
+                const SizedBox(height: 16),
+                if (quotes.isEmpty)
+                  ListTile(leading: const Icon(Icons.local_shipping_rounded), title: const Text('Phí giao hàng'), trailing: Text(vnd(ghnFee(r)), style: const TextStyle(fontWeight: FontWeight.w800)))
+                else
+                  for (final q in quotes)
+                    ListTile(
+                      leading: const Icon(Icons.local_shipping_rounded),
+                      title: Text('${pick(q, 'service_name') ?? pick(q, 'carrier') ?? 'GHN'}'),
+                      subtitle: Text([
+                        if (pick(q, 'warehouse_code') != null) 'Kho ${pick(q, 'warehouse_code')}',
+                        if (pick(q, 'expected_delivery_at') != null) 'Dự kiến ${shortDate('${pick(q, 'expected_delivery_at')}')}',
+                      ].join(' • ')),
+                      trailing: Text(vnd(ghnFee(q)), style: const TextStyle(fontWeight: FontWeight.w800)),
+                    ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

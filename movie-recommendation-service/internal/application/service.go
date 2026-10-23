@@ -88,6 +88,14 @@ func (s *Service) ForUser(ctx context.Context, userID string, q port.PageQuery) 
 	})
 }
 
+func (s *Service) Video(_ context.Context, videoID string) (*model.Video, error) {
+	v, ok := s.model.Load().Video(videoID)
+	if !ok {
+		return nil, port.ErrNotFound
+	}
+	return &v, nil
+}
+
 func (s *Service) Similar(ctx context.Context, videoID string, q port.PageQuery) (*port.Page, error) {
 	return s.rank(ctx, "similar:"+videoID, q, func(m *engine.Model) ([]engine.Scored, error) {
 		ranked, ok := m.Similar(videoID, maxCandidates)

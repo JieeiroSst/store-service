@@ -27,6 +27,10 @@ dependencies:
   video_player: ^2.14.1
   flutter_webrtc: ^1.6.2+hotfix.4
   web_socket_channel: ^3.0.3
+  mobile_scanner: ^7.4.2
+  image_picker: ^1.2.4
+  flutter_branch_sdk: ^9.3.6
+  share_plus: ^13.3.1
 
 dev_dependencies:
   flutter_test:

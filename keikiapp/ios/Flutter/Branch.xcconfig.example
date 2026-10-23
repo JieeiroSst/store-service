@@ -1,0 +1,5 @@
+// Copy to Branch.xcconfig (gitignored) and fill in the keys from the Branch dashboard.
+// The same values must be passed to Flutter: --dart-define=BRANCH_KEY=... --dart-define=BRANCH_LINK_DOMAIN=...
+BRANCH_KEY = key_live_xxxxxxxxxxxxxxxx
+BRANCH_LINK_DOMAIN = keikibook.app.link
+BRANCH_ALTERNATE_DOMAIN = keikibook-alternate.app.link

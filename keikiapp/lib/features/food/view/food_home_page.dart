@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/links/share_link.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/status_view.dart';
 import '../bloc/food_cubit.dart';
@@ -184,16 +185,49 @@ class _RestaurantPlaceholder extends StatelessWidget {
   }
 }
 
-class RestaurantPage extends StatelessWidget {
-  const RestaurantPage({super.key});
+class RestaurantPage extends StatefulWidget {
+  const RestaurantPage({super.key, this.id});
+
+  final int? id;
+
+  @override
+  State<RestaurantPage> createState() => _RestaurantPageState();
+}
+
+class _RestaurantPageState extends State<RestaurantPage> {
+  bool _missing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final id = widget.id;
+    final menu = context.read<FoodMenuCubit>();
+    if (id == null || menu.state.restaurant?.id == id) return;
+    context.read<FoodRepository>().restaurants().then((all) {
+      final r = all.where((r) => r.id == id).firstOrNull;
+      if (!mounted) return;
+      if (r == null) {
+        setState(() => _missing = true);
+      } else {
+        menu.openRestaurant(r);
+      }
+    }).catchError((_) {
+      if (mounted) setState(() => _missing = true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_missing) return Scaffold(appBar: AppBar(), body: const EmptyView(message: 'Không tìm thấy nhà hàng'));
     return BlocBuilder<FoodMenuCubit, FoodMenuState>(
       builder: (context, state) {
         final cubit = context.read<FoodMenuCubit>();
+        final r = state.restaurant;
         return Scaffold(
-          appBar: AppBar(title: Text(state.restaurant?.name ?? 'Thực đơn')),
+          appBar: AppBar(
+            title: Text(r?.name ?? 'Thực đơn'),
+            actions: [if (r != null) ShareLinkButton(path: '/food/restaurants/${r.id}', title: r.name, description: r.address, imageUrl: r.imageUrl)],
+          ),
           floatingActionButton: const CartButton(),
           body: Column(
             children: [

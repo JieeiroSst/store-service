@@ -283,6 +283,7 @@ class _ThreadPageState extends State<_ThreadPage> {
     final id = (widget.post.originalPost ?? widget.post).id!;
     return DetailPage(
       title: 'Bài viết',
+      actions: [if (widget.post.id != null) ShareLinkButton(path: '/thread/${widget.post.id}', title: widget.post.content ?? 'Threads')],
       bottom: Row(
         children: [
           Expanded(
@@ -415,30 +416,71 @@ class _ArticleTile extends StatelessWidget {
       icon: Icons.article_rounded,
       caption: shortDate(p.createdAt),
       badges: [for (final c in (p.categories ?? const <PostCategory>[]).take(2)) Pill(c.name_ ?? '')],
-      onTap: () => openPage(
-        context,
-        AsyncBuilder<PostPost?>(
-          load: () => context.api.post.post(id: p.id!),
-          loading: const Scaffold(body: SkeletonList()),
-          builder: (context, full, reload) => DetailPage(
-            title: full?.name_ ?? p.name_ ?? '',
-            actions: [
-              if (full?.authorId == '${context.userId}')
-                IconButton(
-                  tooltip: 'Sửa bài',
-                  icon: const Icon(Icons.edit_outlined),
-                  onPressed: () async {
-                    if (await editPost(context, full!)) await reload();
-                  },
-                ),
-            ],
-            header: HeroHeader(title: full?.name_ ?? '', subtitle: full?.description, imageUrl: full?.media?.url, icon: Icons.article_rounded, badges: [Pill(formatDate(full?.createdAt))]),
-            children: [Paragraph(full?.content)],
-          ),
-        ),
+      onTap: () => openPage(context, PostDetailPage(id: p.id!, preview: p)),
+    );
+  }
+}
+
+class PostDetailPage extends StatelessWidget {
+  const PostDetailPage({super.key, required this.id, this.preview});
+
+  final String id;
+  final PostPost? preview;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = preview;
+    return AsyncBuilder<PostPost?>(
+      load: () => context.api.post.post(id: id),
+      loading: const Scaffold(body: SkeletonList()),
+      builder: (context, full, reload) => DetailPage(
+        title: full?.name_ ?? p?.name_ ?? '',
+        actions: [
+          ShareLinkButton(path: '/post/$id', title: full?.name_ ?? p?.name_ ?? 'Bài viết'),
+          if (full?.authorId == '${context.userId}')
+            IconButton(
+              tooltip: 'Sửa bài',
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () async {
+                if (await editPost(context, full!)) await reload();
+              },
+            ),
+        ],
+        header: HeroHeader(title: full?.name_ ?? '', subtitle: full?.description, imageUrl: full?.media?.url, icon: Icons.article_rounded, badges: [Pill(formatDate(full?.createdAt))]),
+        children: [if (full == null) const EmptyView(message: 'Bài viết không tồn tại hoặc đã bị xoá') else Paragraph(full.content)],
       ),
     );
   }
+}
+
+class ThreadLinkPage extends StatelessWidget {
+  const ThreadLinkPage({super.key, required this.id});
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context) => AsyncBuilder<ThreadsPost?>(
+        load: () => context.api.threads.threadsPost(id: id),
+        loading: const Scaffold(body: SkeletonList()),
+        builder: (context, post, _) => post == null
+            ? const DetailPage(title: 'Threads', children: [EmptyView(message: 'Bài đăng không tồn tại hoặc đã bị xoá')])
+            : _ThreadPage(post: post),
+      );
+}
+
+class RoomLinkPage extends StatelessWidget {
+  const RoomLinkPage({super.key, required this.id});
+
+  final int id;
+
+  @override
+  Widget build(BuildContext context) => AsyncBuilder<RoomRoom?>(
+        load: () => context.api.room.room(id: id),
+        loading: const Scaffold(body: SkeletonList()),
+        builder: (context, room, _) => room == null
+            ? const DetailPage(title: 'Phòng chat', children: [EmptyView(message: 'Phòng không tồn tại')])
+            : _RoomPage(room: room),
+      );
 }
 
 class RoomApp extends StatelessWidget {
@@ -509,6 +551,7 @@ class _RoomPage extends StatelessWidget {
       builder: (context, d, reload) => DetailPage(
         title: room.name_ ?? 'Phòng',
         actions: [
+          if (room.id != null) ShareLinkButton(path: '/room/${room.id}', title: room.name_ ?? 'Phòng chat'),
           IconButton(
             tooltip: 'Thêm thành viên',
             icon: const Icon(Icons.person_add_alt_1),
@@ -866,7 +909,7 @@ class WebrtcApp extends StatelessWidget {
                                 await showFormSheet(
                                   context,
                                   title: 'Mã phòng',
-                                  fields: const [KField('room', 'Mã phòng', required: true)],
+                                  fields: const [KField('room', 'Mã phòng', required: true, scannable: true)],
                                   submitLabel: 'Vào phòng',
                                   onSubmit: (v) async {
                                     code = v.str('room');
@@ -959,7 +1002,7 @@ class RecruitmentApp extends StatelessWidget {
                                 const KField('email', 'Email', kind: FieldKind.email, required: true),
                                 const KField('phone', 'Số điện thoại', kind: FieldKind.phone),
                                 const KField('company', 'Công ty'),
-                                const KField('ref', 'Mã giới thiệu'),
+                                const KField('ref', 'Mã giới thiệu', scannable: true),
                               ],
                               submitLabel: 'Đăng ký',
                               onSubmit: (v) async => p = await api.recruitRegisterPartner(

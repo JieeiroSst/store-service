@@ -20,6 +20,7 @@ func NewRouter(h *Handler, cfg *config.Config) *gin.Engine {
 
 	api := r.Group("/api/recommendations", authenticate(authn.FromEnv()))
 	api.GET("/new", h.NewReleases)
+	api.GET("/videos/:id", h.Video)
 	api.GET("/videos/:id/similar", h.Similar)
 	api.GET("/trending", h.Trending)
 

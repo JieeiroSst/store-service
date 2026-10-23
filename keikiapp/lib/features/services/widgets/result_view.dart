@@ -26,6 +26,15 @@ String? _pick(Map m, List<String> keys) {
   return null;
 }
 
+String? _pickSuffix(Map m, List<String> suffixes) {
+  for (final e in m.entries) {
+    final k = '${e.key}'.toLowerCase();
+    final v = e.value;
+    if (v is String && v.trim().isNotEmpty && suffixes.any(k.endsWith)) return v;
+  }
+  return null;
+}
+
 String formatValue(String key, Object? v) {
   if (v == null) return '—';
   if (v is bool) return v ? 'Có' : 'Không';
@@ -63,7 +72,11 @@ class _ResultViewState extends State<ResultView> {
       children: [
         Row(
           children: [
-            SegmentedButton<bool>(
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: SegmentedButton<bool>(
               showSelectedIcon: false,
               segments: const [
                 ButtonSegment(value: false, label: Text('Kết quả'), icon: Icon(Icons.view_agenda_outlined)),
@@ -71,8 +84,9 @@ class _ResultViewState extends State<ResultView> {
               ],
               selected: {_raw},
               onSelectionChanged: (s) => setState(() => _raw = s.first),
+                ),
+              ),
             ),
-            const Spacer(),
             IconButton(
               tooltip: 'Sao chép JSON',
               icon: const Icon(Icons.copy_all_outlined),
@@ -199,7 +213,7 @@ class _ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = _pick(map, _titleKeys) ?? (map['id'] != null ? '#${map['id']}' : 'Mục ${index + 1}');
+    final title = _pick(map, _titleKeys) ?? _pickSuffix(map, const ['name', 'title', 'code', 'email']) ?? (map['id'] != null ? '#${map['id']}' : 'Mục ${index + 1}');
     final subtitle = _pick(map, _subtitleKeys.where((k) => !_titleKeys.contains(k) || map[k] != title).toList());
     final image = _imageKeys.map((k) => map[k]).firstWhere(_isImageUrl, orElse: () => null) as String?;
     final status = map['status'] ?? map['state'];

@@ -12,8 +12,12 @@ type Basket struct {
 	UserID            int     `json:"user_id" gorm:"column:user_id"`
 	Currency          string  `json:"currency" gorm:"column:currency"`
 	TotalInclTax      float64 `json:"total_incl_tax" gorm:"column:total_incl_tax"`
+	ShippingInclTax   float64 `json:"shipping_incl_tax" gorm:"column:shipping_incl_tax"`
 	PaymentReference  string  `json:"payment_reference" gorm:"column:payment_reference"`
 	FulfillmentID     string  `json:"fulfillment_id" gorm:"column:fulfillment_id"`
+	ShippingSnapshot  string  `json:"-" gorm:"column:shipping_address_snapshot;type:text"`
+	ShippingWarehouse int64   `json:"-" gorm:"column:shipping_warehouse_id"`
+	ShippingService   int     `json:"-" gorm:"column:shipping_service_id"`
 }
 
 const (

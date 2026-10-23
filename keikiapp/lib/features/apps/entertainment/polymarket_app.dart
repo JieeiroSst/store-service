@@ -133,6 +133,7 @@ class PolyEventPage extends StatelessWidget {
         return DetailPage(
           title: e.title ?? 'Sự kiện',
           actions: [
+            ShareLinkButton(path: '/prediction/${e.slug ?? id}', title: e.title ?? 'Sự kiện dự đoán', imageUrl: e.imageUrl),
             IconButton(
               tooltip: 'Theo dõi',
               icon: const Icon(Icons.bookmark_add_outlined),

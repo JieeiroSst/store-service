@@ -86,14 +86,58 @@ type PaidOrderLine struct {
 	UnitPrice     float64 `json:"unit_price"`
 }
 
+type ShippingAddress struct {
+	Name       string `json:"name"`
+	Phone      string `json:"phone"`
+	Street     string `json:"street"`
+	Ward       string `json:"ward,omitempty"`
+	District   string `json:"district,omitempty"`
+	Province   string `json:"province,omitempty"`
+	WardCode   string `json:"ward_code"`
+	DistrictID int    `json:"district_id"`
+	ProvinceID int    `json:"province_id"`
+}
+
+type AddressBook interface {
+	ShippingAddress(ctx context.Context, accessToken string, id int) (*ShippingAddress, error)
+}
+
+type ShippingItem struct {
+	Name     string
+	Code     string
+	Quantity int
+	Price    int64
+}
+
+type ShippingQuote struct {
+	Fee                int64
+	WarehouseID        int64
+	ServiceID          int
+	ServiceName        string
+	ExpectedDeliveryAt string
+}
+
+type ShippingRates interface {
+	Quote(ctx context.Context, to ShippingAddress, items []ShippingItem, insurance int64) (*ShippingQuote, error)
+}
+
+type ShippingRoute struct {
+	WarehouseID int64   `json:"warehouse_id"`
+	ServiceID   int     `json:"service_id"`
+	Fee         float64 `json:"fee"`
+}
+
 type PaidOrder struct {
-	BasketID          int             `json:"basket_id"`
-	UserID            int             `json:"user_id"`
-	Currency          string          `json:"currency"`
-	Total             float64         `json:"total"`
-	PaymentReference  string          `json:"payment_reference"`
-	ShippingAddressID int             `json:"shipping_address_id"`
-	Lines             []PaidOrderLine `json:"lines"`
+	BasketID          int              `json:"basket_id"`
+	UserID            int              `json:"user_id"`
+	Currency          string           `json:"currency"`
+	Total             float64          `json:"total"`
+	ShippingFee       float64          `json:"shipping_fee,omitempty"`
+	PaymentReference  string           `json:"payment_reference"`
+	ShippingAddressID int              `json:"shipping_address_id"`
+	ShippingAddress   *ShippingAddress `json:"shipping_address,omitempty"`
+	ShippingRoute     *ShippingRoute   `json:"shipping_route,omitempty"`
+	Lines             []PaidOrderLine  `json:"lines"`
 }
 
 type Fulfillment interface {

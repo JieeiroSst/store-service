@@ -9,6 +9,8 @@ import '../core/network/graphql_client.dart';
 import '../core/push/firebase_push_transport.dart';
 import '../core/push/push_service.dart';
 import '../core/storage/token_storage.dart';
+import '../core/tracking/attribution_cubit.dart';
+import '../core/tracking/link_source.dart';
 import '../features/address/data/address_repository.dart';
 import '../features/auth/bloc/auth_bloc.dart';
 import '../features/auth/data/auth_repository.dart';
@@ -26,11 +28,13 @@ import 'router.dart';
 import 'theme.dart';
 
 class KeikiApp extends StatefulWidget {
-  const KeikiApp({super.key, this.client, this.catalogLoader, this.pushTransport});
+  const KeikiApp({super.key, this.client, this.catalogLoader, this.pushTransport, this.linkSource, this.attributionStore});
 
   final GraphQLClient? client;
   final Future<SchemaCatalog> Function()? catalogLoader;
   final PushTransport? pushTransport;
+  final LinkSource? linkSource;
+  final AttributionStore? attributionStore;
 
   @override
   State<KeikiApp> createState() => _KeikiAppState();
@@ -44,7 +48,14 @@ class _KeikiAppState extends State<KeikiApp> {
   late final WalletCubit _wallet = WalletCubit(_walletRepository);
   late final ServicesCubit _services = ServicesCubit(_client, loader: widget.catalogLoader)..load();
   final RoleCubit _role = RoleCubit();
-  late final GoRouter _router = buildRouter(_auth, _role);
+  late final GatewayApi _api = GatewayApi(_client);
+  late final AttributionCubit _attribution = AttributionCubit(
+    source: widget.linkSource ?? BranchLinkSource.fromEnv(),
+    api: _api,
+    deviceId: _client.storage.deviceId,
+    store: widget.attributionStore ?? const SecureAttributionStore(),
+  );
+  late final GoRouter _router = buildRouter(_auth, _role, onLink: _attribution.observeUri);
   late final NotificationRepository _notifications = NotificationRepository(_client);
   late final PushService _push = PushService(_notifications, widget.pushTransport ?? (FirebasePushConfig.configured ? FirebasePushTransport() : null));
   final _messenger = GlobalKey<ScaffoldMessengerState>();
@@ -57,6 +68,9 @@ class _KeikiAppState extends State<KeikiApp> {
       ..add(_push.navigate.listen(_router.push))
       ..add(_push.foreground.listen(_showForeground));
     _push.start();
+    _attribution
+      ..onNavigate = _router.push
+      ..start();
   }
 
   void _showForeground(PushMessage m) {
@@ -81,6 +95,7 @@ class _KeikiAppState extends State<KeikiApp> {
     _wallet.close();
     _services.close();
     _role.close();
+    _attribution.close();
     _auth.close();
     _client.dispose();
     super.dispose();
@@ -91,7 +106,7 @@ class _KeikiAppState extends State<KeikiApp> {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(value: _client),
-        RepositoryProvider(create: (_) => GatewayApi(_client)),
+        RepositoryProvider.value(value: _api),
         RepositoryProvider.value(value: _authRepository),
         RepositoryProvider.value(value: _walletRepository),
         RepositoryProvider(create: (_) => AddressRepository(_client)),
@@ -107,6 +122,7 @@ class _KeikiAppState extends State<KeikiApp> {
           BlocProvider.value(value: _wallet),
           BlocProvider.value(value: _services),
           BlocProvider.value(value: _role),
+          BlocProvider.value(value: _attribution),
         ],
         child: MultiBlocListener(
           listeners: [
@@ -123,12 +139,15 @@ class _KeikiAppState extends State<KeikiApp> {
               listener: (context, state) {
                 if (state.status == AuthStatus.authenticated) {
                   _role.report('me', state.user?.roles ?? const []);
+                  final uid = state.user?.id;
+                  if (uid != null) _attribution.onAuthenticated('$uid');
                   _wallet.load();
                   _services.loadPermissions();
                   _push.onLogin();
                 }
                 if (state.status == AuthStatus.unauthenticated) {
                   _role.reset();
+                  _attribution.onLoggedOut();
                   _wallet.reset();
                   _services.clearPermissions();
                 }

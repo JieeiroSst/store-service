@@ -112,7 +112,196 @@ Tab Quản trị gom số mục chờ duyệt (sự kiện, khách sạn, homest
 
 ### Độ phủ API
 
-Màn viết tay gọi 674/675 operation GraphQL không phải admin (165 public, 509 user). Op duy nhất không dùng là `carRentalRegisterUser`: car-rental-service luôn trả Unimplemented vì tài khoản nằm ở user-service. 1185 op admin vẫn dùng màn động "Tất cả chức năng". Kiểm tra lại độ phủ bằng cách so tên root field trong `assets/gateway_schema.json` với mã trong `lib/` (trừ `lib/gen`).
+App gọi 1860/1861 operation GraphQL:
+
+- **166 public + 509 user:** màn viết tay trong các mini-app. Op duy nhất không dùng là `carRentalRegisterUser`, vì car-rental-service luôn trả Unimplemented (tài khoản nằm ở user-service).
+- **1185 admin:** console quản trị sinh tự động, một console cho mỗi service (68 console). Mở từ tab Quản trị → "Dịch vụ quản trị".
+
+Kiểm tra lại độ phủ bằng cách so tên root field trong `assets/gateway_schema.json` với mã trong `lib/` (trừ `lib/gen`). Test `test/admin_console_test.dart` cũng kiểm tra mọi op admin đều có console.
+
+### Quét mã, deep link và địa chỉ giao hàng
+
+- **Quét QR** (`lib/core/scan/scan.dart`, dùng `mobile_scanner`):
+  - mở từ nút quét ở trang chủ, Ví Keiki và trong các ô nhập mã có `KField(..., scannable: true)` (mã ví, yêu cầu thanh toán, voucher, vé gửi xe, mã đặt xe…);
+  - ban tổ chức soát vé liên tục bằng camera, mỗi lần quét tự check-in;
+  - đọc được mã trong ảnh có sẵn; thiết bị không có camera thì nhập tay.
+- **Điều hướng theo nội dung mã:**
+  - `keiki://pay?wallet_id=…&amount=…` (QR ở màn Nhận tiền) mở Chuyển tiền đã điền sẵn;
+  - `keikibook://app/<đường dẫn>` và `https://keikibook.vn/<đường dẫn>` mở màn tương ứng;
+  - nội dung khác hiện ra để sao chép.
+- **Deep link từ ngoài app:**
+  - Android khai báo `keikibook://`, `keiki://pay` và App Link `https://keikibook.vn` (cần `assetlinks.json` trên domain, xem console "Deep link & đo lường");
+  - iOS khai báo hai scheme trên;
+  - nếu chưa đăng nhập, đích đến được giữ qua `?from=` và mở ngay sau khi đăng nhập.
+- **Ví:** các route `/wallet/*` được bọc `WalletGate`, nên link mở lúc ví đang tải hoặc khi người dùng chưa có ví sẽ hiện màn chờ hoặc hướng dẫn kích hoạt thay vì lỗi.
+- **Ảnh:** trường tệp trong form cho chọn Chụp ảnh, Thư viện ảnh hoặc Tệp khác (`image_picker`), dùng cho eKYC và các form tải ảnh.
+- **Địa chỉ giao hàng:**
+  - chọn Tỉnh → Quận → Phường từ danh mục GHN (`shipProvinces/Districts/Wards`, có tìm kiếm không dấu);
+  - mã GHN được lưu vào trường `postcode` của địa chỉ dưới dạng `ghn:<tỉnh>:<quận>:<mã phường>`;
+  - **khách trả phí ship:** giỏ hàng gọi `basketShippingQuote`. basket-service tính phí bằng đúng logic của checkout (giá hàng từ catalogue, địa chỉ đọc bằng token người mua, báo giá GHN qua shipping-service) rồi trả về tạm tính, phí ship và tổng;
+  - thanh toán gửi kèm `shipping_fee` mà khách đã thấy:
+    - server tính lại phí; nếu phí thật cao hơn thì trả 409 và không trừ tiền, app hiện phí mới để khách xác nhận lại;
+    - nếu phí thật thấp hơn hoặc bằng thì trừ theo phí thật;
+    - ví bị trừ tiền hàng + phí ship, đơn lưu phí ở `shipping_incl_tax`;
+  - địa chỉ cũ (tạo trước khi có bộ chọn GHN) được đánh dấu "Cần bổ sung Tỉnh/Quận/Phường" trong danh sách địa chỉ:
+    - khi chọn, app tự đoán khu vực từ chữ đã lưu (so khớp không dấu, bỏ tiền tố "TP.", "Quận", "P."…);
+    - người dùng kiểm tra lại rồi Lưu; app gọi `updateMyUserAddress` để cập nhật `line2`/`state`/`postcode`, các trường khác giữ nguyên;
+    - phần nào đoán không chắc (ví dụ tên trùng một phần) thì để trống cho người dùng tự chọn;
+  - GHN không giao tới được thì không cho thanh toán, kèm thông báo cụ thể;
+  - tuyến được báo giá (kho + dịch vụ GHN) được khoá đến lúc tạo vận đơn; nếu tuyến đó không còn thì order-processing-service chuyển sang tuyến rẻ nhất;
+  - khi đơn được thanh toán, server tự tạo vận đơn GHN cho địa chỉ này;
+  - mini-app Vận chuyển cũng báo giá theo đúng phường đã chọn.
+- **Kích thước APK:** Android dùng bản ML Kit tải qua Google Play Services (`dev.steenbakker.mobile_scanner.useUnbundled=true`), nên APK nhỏ hơn bản nhúng model khoảng 15 MB.
+
+### Deep link
+
+Mọi màn có thể chia sẻ đều có đường dẫn riêng. Danh mục (53 link) nằm ở `lib/app/deep_links.dart` (`deepLinkCatalog`), và các route nội dung cũng đăng ký ở cùng file đó. Mỗi đường dẫn mở được bằng ba cách:
+
+- `keikibook://app<đường dẫn>`, ví dụ `keikibook://app/event/9`;
+- `https://keikibook.vn<đường dẫn>` (App Link Android; tên miền đổi được bằng `--dart-define=WEB_HOST=...`);
+- link Branch có `$deeplink_path=<đường dẫn>`, kể cả lần mở đầu sau khi cài app.
+
+| Nhóm | Đường dẫn | Màn | Ví dụ |
+| --- | --- | --- | --- |
+| Màn chính | `/` | Trang chủ | `/` |
+| Màn chính | `/services` | Tất cả dịch vụ | `/services` |
+| Màn chính | `/services/:service` | Mở một mini-app | `/services/ticket` |
+| Màn chính | `/services/:service?all=1` | Tất cả chức năng của dịch vụ | `/services/movie?all=1` |
+| Màn chính | `/profile` | Tài khoản | `/profile` |
+| Màn chính | `/profile/edit` | Sửa hồ sơ | `/profile/edit` |
+| Màn chính | `/notifications` | Thông báo | `/notifications` |
+| Màn chính | `/scan` | Quét mã QR | `/scan` |
+| Ví | `/wallet` | Ví Keiki | `/wallet` |
+| Ví | `/wallet/transfer?wallet_id=&amount=` | Chuyển tiền (điền sẵn) | `/wallet/transfer?wallet_id=w-123&amount=50000` |
+| Ví | `/wallet/receive` | Nhận tiền (QR) | `/wallet/receive` |
+| Ví | `/wallet/topup` | Nạp tiền | `/wallet/topup` |
+| Ví | `/wallet/withdraw` | Rút tiền | `/wallet/withdraw` |
+| Ví | `/wallet/transactions` | Lịch sử giao dịch | `/wallet/transactions` |
+| Ví | `/wallet/banks` | Tài khoản ngân hàng | `/wallet/banks` |
+| Ví | `/wallet/pin` | Mã PIN ví | `/wallet/pin` |
+| Mua sắm & đồ ăn | `/shop` | Mua sắm | `/shop` |
+| Mua sắm & đồ ăn | `/shop/products/:id` | Sản phẩm | `/shop/products/12` |
+| Mua sắm & đồ ăn | `/shop/cart` | Giỏ hàng | `/shop/cart` |
+| Mua sắm & đồ ăn | `/shop/purchases` | Đơn mua | `/shop/purchases` |
+| Mua sắm & đồ ăn | `/shop/wishlist` | Yêu thích | `/shop/wishlist` |
+| Mua sắm & đồ ăn | `/shop/coupons` | Mã giảm giá | `/shop/coupons` |
+| Mua sắm & đồ ăn | `/food` | Đồ ăn | `/food` |
+| Mua sắm & đồ ăn | `/food/restaurants/:id` | Nhà hàng | `/food/restaurants/3` |
+| Mua sắm & đồ ăn | `/food/orders/:id` | Đơn đồ ăn | `/food/orders/41` |
+| Kết nối | `/chat` | Trò chuyện | `/chat` |
+| Kết nối | `/chat/assistant` | Trợ lý AI | `/chat/assistant` |
+| Kết nối | `/chat/direct/:userId` | Nhắn tin với một người | `/chat/direct/7` |
+| Kết nối | `/chat/group/:id` | Nhóm chat | `/chat/group/5` |
+| Kết nối | `/room/:id` | Phòng chat | `/room/2` |
+| Kết nối | `/thread/:id` | Bài đăng Threads | `/thread/66f0a1` |
+| Kết nối | `/post/:id` | Bài viết | `/post/3b9c` |
+| Giải trí | `/event/:id` | Sự kiện bán vé | `/event/9` |
+| Giải trí | `/ticket-order/:id` | Đơn vé của tôi | `/ticket-order/120` |
+| Giải trí | `/prediction/:id` | Sự kiện dự đoán | `/prediction/aff-cup-2026` |
+| Giải trí | `/market/:id` | Thị trường dự đoán | `/market/1` |
+| Giải trí | `/book/:id` | Sách đọc online | `/book/15` |
+| Giải trí | `/store-book/:id` | Sách trong nhà sách | `/store-book/8` |
+| Giải trí | `/movie/:id` | Phim | `/movie/mat-biec` |
+| Giải trí | `/video/:id` | Video | `/video/a1b2` |
+| Giải trí | `/live/:id` | Phòng livestream | `/live/room-1` |
+| Giải trí | `/lucky/:game` | Trò chơi may mắn | `/lucky/wheel` |
+| Du lịch | `/vehicle/:id` | Xe cho thuê | `/vehicle/veh-01` |
+| Du lịch | `/hotel/:id?check_in=&check_out=&guests=` | Khách sạn | `/hotel/4?check_in=2026-12-24&check_out=2026-12-26&guests=2` |
+| Du lịch | `/homestay/:id?check_in=&check_out=&guests=` | Homestay | `/homestay/11?guests=4` |
+| Du lịch | `/reservation/:id` | Đặt phòng khách sạn | `/reservation/77` |
+| Du lịch | `/homestay-booking/:id` | Đặt homestay | `/homestay-booking/31` |
+| Du lịch | `/lease/:id` | Hợp đồng thuê | `/lease/5` |
+| Tiện ích | `/qr/:id` | Mã QR của tôi | `/qr/qr_123` |
+| Tiện ích | `/r/:code` | Link mời bạn bè | `/r/ABC12345` |
+| Quản trị | `/admin` | Quản trị (chỉ admin) | `/admin` |
+| Quản trị | `/admin/console/:service` | Console quản trị dịch vụ (chỉ admin) | `/admin/console/crm` |
+| Quản trị | `/admin/tracking` | Kiểm tra link & tracking (chỉ admin) | `/admin/tracking` |
+
+- **Chia sẻ:**
+  - các màn nội dung có nút Chia sẻ (`ShareLinkButton`): sự kiện, đơn vé, dự đoán, thị trường, sách, video, live, bài viết, Threads, phòng chat, khách sạn, homestay, sản phẩm, nhà hàng;
+  - khi Branch bật, nút tạo short link Branch (`feature=share`, `$deeplink_path`, `$fallback_url` là link web); không có Branch hoặc lỗi mạng thì dùng link web;
+  - bảng chia sẻ có Sao chép và Gửi (qua `share_plus`).
+- **Khách sạn/homestay:** link giữ ngày nhận/trả phòng và số khách (`check_in`, `check_out`, `guests`).
+- **Link sai:** id sai định dạng, nội dung không còn hoặc đường dẫn không có trong app thì hiện màn "Link không hợp lệ" có nút về trang chủ, thay vì lỗi.
+- **Chưa đăng nhập:** đích đến được giữ qua màn đăng nhập (`?from=`).
+- **Màn Kiểm tra link & tracking:** liệt kê toàn bộ danh mục theo nhóm; bấm để mở thử, menu bên cạnh để sao chép link web, link app hoặc kiểm tra link mẫu.
+- **Thêm deep link mới:**
+  1. thêm `DeepLinkSpec` vào `deepLinkCatalog`;
+  2. nếu là màn mới, thêm route vào `deepLinkRoutes` (`_content(path, serviceId, builder)` tự bọc màu của mini-app và trả màn "Link không hợp lệ" khi builder trả `null`);
+  3. gắn `ShareLinkButton(path: ...)` vào màn;
+  4. test `every catalog link opens a real screen` trong `test/deep_links_test.dart` sẽ mở thử mọi link trong danh mục.
+- **Phim và xe thuê:** màn chi tiết tải theo id qua `movieVideo` (gateway gọi `GET /api/recommendations/videos/:id` mới của movie-recommendation-service, chỉ trả phim đã sẵn sàng) và `carRentalGetVehicle`.
+- **Chuyển giữa hai link cùng loại** (ví dụ `/movie/a` rồi `/movie/b`): route nội dung được gắn key theo URI, nên màn tải lại đúng nội dung mới.
+
+### Branch.io và luồng tracking link
+
+App dùng [`flutter_branch_sdk`](https://pub.dev/packages/flutter_branch_sdk) để nhận link Branch, kể cả deferred deep link sau khi cài app. App gửi nguồn mời về referral-service theo đúng luồng mô tả trong `referral-service/README.md`, mục "Branch.io (deferred deep link)".
+
+```text
+link Branch / keikibook:// / QR mời
+        │
+        ▼
+AttributionCubit (lib/core/tracking/)
+  ├─ đọc ref_code, click_id, utm_*, ~channel, ~campaign, $deeplink_path
+  ├─ mở màn $deeplink_path qua router
+  ├─ lưu "đang chờ gửi" vào secure storage (giữ qua lần mở app sau)
+  └─ khi có người dùng đăng nhập:
+       lần mở đầu sau khi cài (+is_first_session) → referralConfirmInstall
+       các trường hợp khác                        → referralActivate
+       (gateway tự điền user, app gửi kèm device_id và UTM)
+```
+
+- **Lỗi khi gửi:**
+  - lỗi vĩnh viễn (tự mời mình, link hết hạn hoặc không tồn tại) thì bỏ link đang chờ;
+  - lỗi mạng thì giữ lại để gửi lại ở lần đăng nhập sau.
+- **Nhập mã mời tay** (Công cụ giới thiệu) cũng đi qua cubit này.
+- **Đăng nhập/đăng xuất:** gọi `setIdentity`/`logout` của Branch.
+- **Link từ hệ điều hành:** deep link mặc định của Flutter vẫn bật để `keikibook://` và QR thanh toán chạy cả khi chưa có key Branch. Router bỏ qua domain `*.app.link` (về trang chủ), còn Branch SDK lo điều hướng và ghi nhận cho link Branch.
+- **Màn "Kiểm tra link & tracking"** (tab Quản trị → Khu quản lý):
+  - dán hoặc quét một link để xem app hiểu link đó thế nào: loại link, màn sẽ mở, mã mời, click_id, UTM;
+  - đối chiếu mã mời với referral-service: trạng thái, người mời, cảnh báo tự mời;
+  - "Mở như người dùng bấm" chạy link qua đúng luồng; link Branch được gửi cho SDK giải mã (`handleDeepLink`);
+  - xem link đang chờ gửi, kết quả lần gửi gần nhất và nguồn cài đặt server đang lưu (`myReferralAttribution`);
+  - xem tham số Branch lần cài đầu / gần nhất, chạy `validateSDKIntegration`, xem lịch sử 20 link gần nhất.
+
+**Cấu hình key** (không commit key):
+
+| Nền tảng | Cách đặt |
+| --- | --- |
+| Dart + Android | `flutter run/build ... --dart-define=BRANCH_KEY=key_live_xxx --dart-define=BRANCH_LINK_DOMAIN=keikibook.app.link`. Gradle đọc thẳng dart-define (hoặc gradle property / biến môi trường cùng tên) để điền `io.branch.sdk.BranchKey` và intent filter App Link cho domain chính cùng domain `-alternate`. Thêm `BRANCH_TEST_MODE=true` để dùng test key. |
+| iOS | Chép `ios/Flutter/Branch.xcconfig.example` thành `ios/Flutter/Branch.xcconfig` (đã gitignore) rồi điền key và domain; `Info.plist` đọc `$(BRANCH_KEY)`, `$(BRANCH_LINK_DOMAIN)`. Vẫn phải truyền dart-define như trên để phía Dart bật SDK. |
+| CI | Secret `KEIKI_BRANCH_KEY` và biến `KEIKI_BRANCH_LINK_DOMAIN` trong `.github/workflows/keikiapp-build.yml`; job iOS tự sinh `Branch.xcconfig`. |
+
+Không có `BRANCH_KEY` thì SDK không khởi tạo: deep link thường và QR vẫn được ghi nhận, nhưng không có deferred deep link.
+
+Phía Branch dashboard:
+- khai báo domain `keikibook.app.link`;
+- khai báo package `com.example.keikiapp` cùng SHA-256 của khoá ký (để App Link tự xác minh);
+- trỏ `$android_url`/`$ios_url` về store.
+
+Phía server cần đặt `BRANCH_KEY` và `BRANCH_LINK_DOMAIN` cho referral-service, để `/r/:ref_code` chuyển hướng qua Branch.
+
+### Console quản trị
+
+`dart run tool/gen_gateway.dart` sinh cả SDK lẫn console. Phần sinh console nằm ở `tool/gen_admin.dart` và ghi ra `lib/features/admin/console/gen/`. Mỗi op admin được sinh thành một `AdminOp` gồm:
+
+- **Nhóm:** tài nguyên suy ra từ tên op (ví dụ `crmCreateCampaign` → nhóm "Chiến dịch", động từ `create`).
+- **Form:**
+  - mỗi trường của input type thành một ô nhập;
+  - `Int`/`Float` → ô số, `Boolean` → công tắc, enum → danh sách chọn, `Upload` → chọn tệp;
+  - danh sách giá trị đơn giản → nhập cách nhau bởi dấu phẩy;
+  - kiểu lồng nhau và `Map` → ô JSON có sẵn mẫu.
+- **Lời gọi:** gọi SDK có kiểu (`api.<service>.<op>(...)`). Thiếu trường bắt buộc hoặc JSON sai thì báo lỗi dễ hiểu trước khi gửi.
+
+Phần giao diện viết tay nằm ở `lib/features/admin/console/admin_console_page.dart`:
+
+- **Trang console:** thống kê, tìm kiếm, lọc Tra cứu/Thao tác, danh sách nhóm.
+- **Trang chức năng:**
+  - query không có trường bắt buộc tự tải khi mở;
+  - kết quả hiện dạng thẻ hoặc JSON;
+  - thao tác xoá/thu hồi/huỷ được tô đỏ.
+
+Console chỉ hiện các op mà tài khoản có grant trong authorize-service (`myPermissions`). Server vẫn kiểm tra quyền ở từng lời gọi. Tên tiếng Việt lấy từ `lib/features/services/data/humanize.dart`; thêm từ vào `_words` nếu một nhóm còn hiện tiếng Anh.
 
 Ngoài phần cho khách, một số mini-app có khu quản lý mở từ nút trên thanh tiêu đề (server vẫn kiểm tra quyền từng lời gọi):
 
@@ -150,7 +339,7 @@ Ngoài phần cho khách, một số mini-app có khu quản lý mở từ nút 
 
   ```bash
   flutter test --update-goldens tool/screenshots/screens_test.dart   # ảnh ra tool/screenshots/screens/
-  flutter test --update-goldens tool/screenshots/apps_test.dart      # 41 màn của các mini-app dịch vụ, ra tool/screenshots/screens/apps/
+  flutter test --update-goldens tool/screenshots/apps_test.dart      # 43 màn của các mini-app dịch vụ và console quản trị, ra tool/screenshots/screens/apps/
   ```
 
   Dữ liệu mẫu cho mini-app nằm ở `tool/screenshots/fixtures/batch*.dart`, khoá theo tên root field GraphQL.
@@ -230,12 +419,30 @@ Bộ test gồm:
 - các cubit (auth, food, giỏ hàng, chat), push service;
 - widget test cho trang chủ, màn hình nhỏ và luồng "Tất cả dịch vụ";
 - smoke test mở lần lượt 54 mini-app dịch vụ (và mọi tab) cùng 23 trang quản lý/công cụ trên màn hình 360×640;
-- test vai trò: khách hàng không thấy tab Quản trị hay nút quản lý, admin (từ `me` hoặc authorize-service) thấy đủ, chế độ xem như khách.
+- test vai trò: khách hàng không thấy tab Quản trị hay nút quản lý, admin (từ `me` hoặc authorize-service) thấy đủ, chế độ xem như khách;
+- console quản trị:
+  - mọi op admin trong schema đều có console;
+  - cả 1185 op chạy được với dữ liệu mẫu và gửi đủ biến bắt buộc;
+  - 68 console hiển thị không tràn trên màn hình 360×640;
+  - luồng tra cứu và thao tác có form;
+- quét mã và deep link:
+  - phân tích nội dung QR;
+  - nhập tay khi không có camera;
+  - QR thanh toán mở Chuyển tiền đã điền sẵn, chưa có ví thì hướng dẫn kích hoạt;
+  - giữ đích đến qua màn đăng nhập;
+- khu vực GHN: chọn Tỉnh → Quận → Phường và đọc phí từ nhiều dạng báo giá;
+- deep link (`test/deep_links_test.dart`):
+  - mở lần lượt mọi link trong danh mục và kiểm tra không lỗi, không rơi vào màn "Link không hợp lệ";
+  - link sai định dạng hiện màn báo lỗi thân thiện;
+  - `keikibook://` và `https://keikibook.vn` mở đúng nội dung;
+  - link nhà hàng mở đúng nhà hàng kể cả khi app vừa khởi động;
+  - tạo link chia sẻ có và không có Branch;
+- tracking link (`test/link_tracking_test.dart`):
+  - đọc tham số Branch và URI;
+  - link đến trước khi đăng nhập được giữ lại rồi gửi activate sau khi đăng nhập;
+  - lần cài đầu dùng confirm-install;
+  - chống ghi trùng, phân biệt lỗi vĩnh viễn và lỗi mạng, khôi phục sau khi khởi động lại;
+  - màn kiểm tra link đối chiếu với server;
+  - link Branch trong app mở đúng màn và được ghi nhận.
 
 Widget test phải truyền `catalogLoader: loadTestCatalog` vào `KeikiApp`, vì đọc asset bằng `compute` không bao giờ hoàn thành trong môi trường fake-async của test.
-
-## Hạn chế hiện tại
-
-- Gọi video và chat realtime chạy trên Android/iOS/macOS; bản web chưa hỗ trợ vì trình duyệt không gửi được header `Authorization` khi mở WebSocket (chat trên web tự chuyển sang hỏi lại lịch sử 15 giây/lần).
-- Chưa tự động tạo vận đơn GHN cho đơn mua, vì cần ánh xạ địa chỉ của user sang mã quận/phường của GHN.
-- Bản iOS từ CI chưa được ký, chưa cài lên máy thật được.

@@ -55,12 +55,18 @@ class CartCubit extends Cubit<CartState> {
 
   Future<void> setQuantity(CartLine line, int quantity) => _mutate(() => _repository.setQuantity(line.id, quantity));
 
-  Future<BasketBasket?> checkout({required String walletId, required String pin, int? addressId}) async {
+  Future<BasketShippingQuote?> shippingQuote(int addressId) async {
+    final basket = state.basket;
+    if (basket?.id == null) return null;
+    return _repository.shippingQuote(basketId: basket!.id!, addressId: addressId);
+  }
+
+  Future<BasketBasket?> checkout({required String walletId, required String pin, int? addressId, double? shippingFee}) async {
     final basket = state.basket;
     if (basket == null) return null;
     emit(state.copyWith(busy: true));
     try {
-      final done = await _repository.checkout(basketId: basket.id ?? 0, walletId: walletId, pin: pin, addressId: addressId);
+      final done = await _repository.checkout(basketId: basket.id ?? 0, walletId: walletId, pin: pin, addressId: addressId, shippingFee: shippingFee);
       emit(const CartState(status: LoadStatus.loading));
       await load();
       return done;

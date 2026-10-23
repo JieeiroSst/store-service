@@ -1,6 +1,6 @@
 {
   "source": "gateway-api/graph",
-  "synced_at": "2026-10-22T03:48:01Z",
+  "synced_at": "2026-10-23T03:15:38Z",
   "calls": {
     "Mutation.accountTxCreateAccount": [
       {

@@ -1,2 +1,7 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+
+BRANCH_KEY =
+BRANCH_LINK_DOMAIN = keikibook.app.link
+BRANCH_ALTERNATE_DOMAIN = keikibook-alternate.app.link
+#include? "Branch.xcconfig"

@@ -66,6 +66,7 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
       loading: const Scaffold(body: SkeletonList()),
       builder: (context, v, _) => DetailPage(
         title: v?.title ?? 'Video',
+        actions: [ShareLinkButton(path: '/video/${widget.id}', title: v?.title ?? 'Video')],
         bottom: FilledButton.icon(
           icon: const Icon(Icons.play_arrow_rounded),
           label: const Text('Phát video'),
@@ -220,6 +221,7 @@ class LiveRoomPage extends StatelessWidget {
         final session = newIdempotencyKey();
         return DetailPage(
           title: room?.title ?? 'Phòng live',
+          actions: [ShareLinkButton(path: '/live/$id', title: room?.title ?? 'Livestream', description: room?.description)],
           bottom: FilledButton.icon(
             icon: const Icon(Icons.live_tv_rounded),
             label: Text(playback?.isLive == true ? 'Xem trực tiếp' : 'Chưa phát sóng'),

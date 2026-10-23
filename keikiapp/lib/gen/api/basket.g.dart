@@ -10,13 +10,13 @@ class BasketApi {
   final GatewayExecutor _executor;
 
   Future<List<BasketBasket>?> basketBaskets({String? selectionSet}) async {
-    final data = await _executor.query('query basketBaskets { basketBaskets ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax payment_reference fulfillment_id }'} }'
+    final data = await _executor.query('query basketBaskets { basketBaskets ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax shipping_incl_tax payment_reference fulfillment_id }'} }'
     );
     return (data['basketBaskets'] as List?)?.map((e) => (e == null ? null : BasketBasket.fromJson((e as Map).cast<String, dynamic>()))!).toList();
   }
 
   Future<BasketBasket?> basketBasket({required int id, String? selectionSet}) async {
-    final data = await _executor.query('query basketBasket(\$id: Int!) { basketBasket(id: \$id) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax payment_reference fulfillment_id }'} }', variables: {
+    final data = await _executor.query('query basketBasket(\$id: Int!) { basketBasket(id: \$id) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax shipping_incl_tax payment_reference fulfillment_id }'} }', variables: {
       'id': id,
     }
     );
@@ -81,8 +81,17 @@ class BasketApi {
     return (data['basketBasketLines'] as List?)?.map((e) => (e == null ? null : BasketLine.fromJson((e as Map).cast<String, dynamic>()))!).toList();
   }
 
+  Future<BasketShippingQuote?> basketShippingQuote({required int id, required int shippingAddressId, String? selectionSet}) async {
+    final data = await _executor.query('query basketShippingQuote(\$id: Int!, \$shipping_address_id: Int!) { basketShippingQuote(id: \$id, shipping_address_id: \$shipping_address_id) ${selectionSet ?? '{ currency subtotal shipping_fee total shipping_charged service_name expected_delivery_at }'} }', variables: {
+      'id': id,
+      'shipping_address_id': shippingAddressId,
+    }
+    );
+    return data['basketShippingQuote'] == null ? null : BasketShippingQuote.fromJson((data['basketShippingQuote'] as Map).cast<String, dynamic>());
+  }
+
   Future<BasketBasket?> basketCreateBasket({required BasketBasketInput input, String? selectionSet}) async {
-    final data = await _executor.mutation('mutation basketCreateBasket(\$input: BasketBasketInput!) { basketCreateBasket(input: \$input) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax payment_reference fulfillment_id }'} }', variables: {
+    final data = await _executor.mutation('mutation basketCreateBasket(\$input: BasketBasketInput!) { basketCreateBasket(input: \$input) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax shipping_incl_tax payment_reference fulfillment_id }'} }', variables: {
       'input': input.toJson(),
     }
     );
@@ -90,7 +99,7 @@ class BasketApi {
   }
 
   Future<BasketBasket?> basketUpdateBasket({required int id, required BasketBasketInput input, String? selectionSet}) async {
-    final data = await _executor.mutation('mutation basketUpdateBasket(\$id: Int!, \$input: BasketBasketInput!) { basketUpdateBasket(id: \$id, input: \$input) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax payment_reference fulfillment_id }'} }', variables: {
+    final data = await _executor.mutation('mutation basketUpdateBasket(\$id: Int!, \$input: BasketBasketInput!) { basketUpdateBasket(id: \$id, input: \$input) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax shipping_incl_tax payment_reference fulfillment_id }'} }', variables: {
       'id': id,
       'input': input.toJson(),
     }
@@ -156,12 +165,13 @@ class BasketApi {
     return data['basketDeleteLineAttribute'] as bool?;
   }
 
-  Future<BasketBasket?> basketCheckout({required int id, required String walletId, required String pin, int? shippingAddressId, String? selectionSet}) async {
-    final data = await _executor.mutation('mutation basketCheckout(\$id: Int!, \$wallet_id: String!, \$pin: String!, \$shipping_address_id: Int) { basketCheckout(id: \$id, wallet_id: \$wallet_id, pin: \$pin, shipping_address_id: \$shipping_address_id) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax payment_reference fulfillment_id }'} }', variables: {
+  Future<BasketBasket?> basketCheckout({required int id, required String walletId, required String pin, int? shippingAddressId, double? shippingFee, String? selectionSet}) async {
+    final data = await _executor.mutation('mutation basketCheckout(\$id: Int!, \$wallet_id: String!, \$pin: String!, \$shipping_address_id: Int, \$shipping_fee: Float) { basketCheckout(id: \$id, wallet_id: \$wallet_id, pin: \$pin, shipping_address_id: \$shipping_address_id, shipping_fee: \$shipping_fee) ${selectionSet ?? '{ id status date_placed date_created date_merged date_submitted billing_address_id shipping_address_id user_id currency total_incl_tax shipping_incl_tax payment_reference fulfillment_id }'} }', variables: {
       'id': id,
       'wallet_id': walletId,
       'pin': pin,
       'shipping_address_id': ?shippingAddressId,
+      'shipping_fee': ?shippingFee,
     }
     );
     return data['basketCheckout'] == null ? null : BasketBasket.fromJson((data['basketCheckout'] as Map).cast<String, dynamic>());

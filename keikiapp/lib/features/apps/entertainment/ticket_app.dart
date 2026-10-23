@@ -188,6 +188,7 @@ class _TicketEventPageState extends State<TicketEventPage> {
         return DetailPage(
           title: e.title ?? 'Sự kiện',
           actions: [
+            ShareLinkButton(path: '/event/${widget.id}', title: e.title ?? 'Sự kiện', imageUrl: e.bannerUrl),
             IconButton(
               tooltip: 'Sơ đồ chỗ ngồi',
               icon: const Icon(Icons.event_seat_outlined),

@@ -166,6 +166,7 @@ class _PolyMarketPageState extends State<PolyMarketPage> {
         return DetailPage(
           title: m.groupItemTitle ?? m.question ?? 'Thị trường',
           actions: [
+            ShareLinkButton(path: '/market/${widget.id}', title: m.question ?? m.groupItemTitle ?? 'Thị trường dự đoán'),
             PopupMenuButton<String>(
               onSelected: (a) => _resolution(m, a),
               itemBuilder: (_) => [
@@ -475,7 +476,7 @@ class _PolyAccountState extends State<PolyAccount> {
                               if (await showFormSheet(
                                 context,
                                 title: 'Mã giới thiệu',
-                                fields: const [KField('code', 'Mã', required: true)],
+                                fields: const [KField('code', 'Mã', required: true, scannable: true)],
                                 success: 'Đã áp dụng mã',
                                 onSubmit: (v) => api.polyRedeemReferral(refCode: v.str('code')!),
                               )) {

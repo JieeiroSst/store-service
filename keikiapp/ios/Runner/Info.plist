@@ -3,7 +3,30 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Keikibook dùng camera cho cuộc gọi video và chụp giấy tờ eKYC.</string>
+	<string>Keikibook dùng camera để quét mã QR, gọi video và chụp giấy tờ eKYC.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Keikibook cần truy cập ảnh để bạn gửi ảnh, tải giấy tờ eKYC và đọc mã QR có sẵn.</string>
+	<key>branch_key</key>
+	<string>$(BRANCH_KEY)</string>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>$(BRANCH_LINK_DOMAIN)</string>
+		<string>$(BRANCH_ALTERNATE_DOMAIN)</string>
+	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>vn.keikibook.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>keikibook</string>
+				<string>keiki</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Keikibook dùng micro cho cuộc gọi video.</string>
 	<key>UIBackgroundModes</key>

@@ -5,6 +5,7 @@ Recommendation engine for [video-service](../video-service). It answers three qu
 | Endpoint | Meaning |
 |---|---|
 | `GET /api/recommendations/users/:user_id?page=&page_size=` | "For you" - personalized, excludes videos the user already interacted with |
+| `GET /api/recommendations/videos/:id` | One ready video from the catalog (deep links, share pages); 404 if missing or not ready |
 | `GET /api/recommendations/videos/:id/similar?page=&page_size=` | "Related" - shown next to a video |
 | `GET /api/recommendations/trending?page=&page_size=` | Popular right now; also the cold-start fallback |
 | `GET /api/recommendations/users/:user_id/home` | Ready-made home rows: continue watching, recommended for you, up to two "because you watched X", new releases, trending. No video appears twice; empty rows are omitted |

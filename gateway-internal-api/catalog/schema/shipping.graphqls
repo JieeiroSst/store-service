@@ -127,12 +127,21 @@ input ShipAddressInput {
   address: String
 }
 
+input ShipParcelItemInput {
+  name: String!
+  code: String
+  quantity: Int!
+  weight_gram: Int
+  price: Int64
+}
+
 input ShipParcelInput {
-  weight: Int
-  length: Int
-  width: Int
-  height: Int
-  items: [Map!]
+  weight_gram: Int!
+  length_cm: Int!
+  width_cm: Int!
+  height_cm: Int!
+  content: String
+  items: [ShipParcelItemInput!]!
 }
 
 input ShipQuoteInput {

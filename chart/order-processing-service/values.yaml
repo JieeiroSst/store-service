@@ -12,6 +12,8 @@ orderProcessingService:
   # basket-service reads; local dev credentials only.
   env:
     orderDbDsn: 'root:password@tcp(mysql-svc:80)/basket_service?charset=utf8mb4&parseTime=True&loc=UTC'
+    shippingApiKey: ''
+    parcelItemWeightGram: '500'
 
   image:
     name: ghcr.io/jieeirosst/order-processing-service
@@ -42,6 +44,16 @@ orderProcessingService:
           key: orderDbDsn
     - name: NOTIFICATION_SERVICE_URL
       value: 'http://notification-service-svc'
+    - name: SHIPPING_SERVICE_URL
+      value: 'http://shipping-service-svc'
+    - name: SHIPPING_SERVICE_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: order-processing-service-secret
+          key: shippingApiKey
+          optional: true
+    - name: PARCEL_ITEM_WEIGHT_GRAM
+      value: '{{ .Values.orderProcessingService.env.parcelItemWeightGram }}'
 
   # Production contract, see chart/common/templates
   strategy:

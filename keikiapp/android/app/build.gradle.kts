@@ -1,8 +1,22 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val dartDefines: Map<String, String> = (project.findProperty("dart-defines") as String?)
+    ?.split(",")
+    ?.mapNotNull { runCatching { String(Base64.getDecoder().decode(it)) }.getOrNull() }
+    ?.mapNotNull { entry -> entry.split("=", limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] } }
+    ?.toMap()
+    ?: emptyMap()
+
+fun buildSetting(name: String, fallback: String = ""): String =
+    listOf(dartDefines[name], project.findProperty(name) as String?, System.getenv(name)).firstOrNull { !it.isNullOrBlank() } ?: fallback
+
+val branchLinkDomain = buildSetting("BRANCH_LINK_DOMAIN", "keikibook.app.link")
 
 android {
     namespace = "com.example.keikiapp"
@@ -27,6 +41,10 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["branchKey"] = buildSetting("BRANCH_KEY")
+        manifestPlaceholders["branchTestMode"] = buildSetting("BRANCH_TEST_MODE", "false")
+        manifestPlaceholders["branchLinkDomain"] = branchLinkDomain
+        manifestPlaceholders["branchAlternateDomain"] = Regex("^([^.]+)\\.((test-)?app\\.link)$").replace(branchLinkDomain, "$1-alternate.$2")
     }
 
     buildTypes {

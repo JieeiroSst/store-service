@@ -1,10 +1,20 @@
 import 'package:flutter/widgets.dart';
 import 'package:keikiapp/features/admin/admin_home_page.dart';
+import 'package:keikiapp/features/admin/console/admin_console_page.dart';
+import 'package:keikiapp/features/admin/console/gen/admin_consoles.g.dart';
 import 'package:keikiapp/features/apps/commerce/commerce_more.dart';
 import 'package:keikiapp/features/apps/entertainment/polymarket_more.dart';
 import 'package:keikiapp/features/apps/entertainment/ticket_organizer.dart';
 
 final batch6 = <String, Object?>{
+  'myPermissions': [
+    {'object': '/graphql/*', 'action': '.*'},
+  ],
+  'crmCampaigns': [
+    {'id': 1, 'campaign_name': 'Ra mắt Keikibook', 'campaign_sponsor': 'Keiki Group', 'campaign_objectives': 'Thu hút 100.000 người dùng đầu tiên', 'campaign_start_date': '2026-10-01T00:00:00Z'},
+    {'id': 2, 'campaign_name': 'Tết Đinh Mùi 2027', 'campaign_sponsor': 'Keiki Pay', 'campaign_objectives': 'Hoàn tiền 10% khi thanh toán bằng ví', 'campaign_start_date': '2027-01-15T00:00:00Z'},
+    {'id': 3, 'campaign_name': 'Đối tác khách sạn miền Trung', 'campaign_sponsor': 'Keiki Travel', 'campaign_objectives': 'Ký mới 50 khách sạn', 'campaign_start_date': '2026-11-01T00:00:00Z'},
+  ],
   'ticketEventReviewQueue': {
     'items': [
       {'id': 9, 'title': 'Lễ hội ánh sáng Hội An', 'status': 'pending_review'},
@@ -81,4 +91,6 @@ final pageShots = <String, Widget Function()>{
   'poly_market': () => const PolyMarketPage(id: '1'),
   'wallet_more': () => const WalletMorePage(),
   'admin_home': () => const AdminHomePage(),
+  'admin_console_crm': () => const AdminConsolePage(serviceId: 'crm'),
+  'admin_op_crm': () => AdminOpPage(serviceId: 'crm', op: adminConsoles['crm']!.firstWhere((o) => o.name == 'crmCampaigns'), title: 'Danh sách chiến dịch'),
 };

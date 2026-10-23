@@ -490,7 +490,7 @@ class _WalletHome extends StatelessWidget {
                           context,
                           title: 'Chuyển tiền',
                           fields: const [
-                            KField('to', 'Mã ví người nhận', required: true),
+                            KField('to', 'Mã ví người nhận', required: true, scannable: true),
                             KField('amount', 'Số tiền (₫)', kind: FieldKind.number, required: true),
                             KField('note', 'Lời nhắn'),
                           ],
@@ -521,7 +521,7 @@ class _WalletHome extends StatelessWidget {
                           title: 'Yêu cầu thanh toán',
                           fields: const [
                             KField('amount', 'Số tiền (₫)', kind: FieldKind.number, required: true),
-                            KField('payer', 'Mã ví người trả (tuỳ chọn)'),
+                            KField('payer', 'Mã ví người trả (tuỳ chọn)', scannable: true),
                             KField('note', 'Nội dung'),
                           ],
                           submitLabel: 'Tạo yêu cầu',
@@ -542,7 +542,7 @@ class _WalletHome extends StatelessWidget {
                       if (await showFormSheet(
                         context,
                         title: 'Trả yêu cầu thanh toán',
-                        fields: const [KField('id', 'Mã yêu cầu', required: true)],
+                        fields: const [KField('id', 'Mã yêu cầu', required: true, scannable: true)],
                         submitLabel: 'Thanh toán',
                         success: 'Đã thanh toán',
                         onSubmit: (v) => api.payPaymentRequestFromMyWallet(id: v.str('id')!, payerWalletId: id),
@@ -784,7 +784,7 @@ class VoucherApp extends StatelessWidget {
                                 onPressed: () => showFormSheet(
                                   context,
                                   title: 'Nhận voucher',
-                                  fields: const [KField('token', 'Mã nhận quà', required: true)],
+                                  fields: const [KField('token', 'Mã nhận quà', required: true, scannable: true)],
                                   success: 'Đã nhận voucher',
                                   onSubmit: (v) => api.voucherClaim(token: v.str('token')!),
                                 ),
@@ -852,7 +852,7 @@ class VoucherApp extends StatelessWidget {
     await showFormSheet(
       context,
       title: 'Kiểm tra voucher',
-      fields: const [KField('id', 'Mã voucher', required: true), KField('pin', 'PIN (nếu có)', kind: FieldKind.password)],
+      fields: const [KField('id', 'Mã voucher', required: true, scannable: true), KField('pin', 'PIN (nếu có)', kind: FieldKind.password)],
       submitLabel: 'Kiểm tra',
       onSubmit: (v) async => r = await context.api.voucher.voucherValidate(id: v.str('id')!, pin: v.str('pin')),
     );

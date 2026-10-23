@@ -10,6 +10,24 @@ String _iso(DateTime d) => d.toIso8601String().substring(0, 10);
 class _StayQuery {
   _StayQuery() : checkIn = DateTime.now().add(const Duration(days: 1)), checkOut = DateTime.now().add(const Duration(days: 3));
 
+  factory _StayQuery.from(Map<String, String> q) {
+    final r = _StayQuery();
+    final inDate = DateTime.tryParse(q['check_in'] ?? '');
+    final outDate = DateTime.tryParse(q['check_out'] ?? '');
+    if (inDate != null) r.checkIn = inDate;
+    if (outDate != null && outDate.isAfter(r.checkIn)) {
+      r.checkOut = outDate;
+    } else if (inDate != null) {
+      r.checkOut = r.checkIn.add(const Duration(days: 1));
+    }
+    r.guests = (int.tryParse(q['guests'] ?? '') ?? r.guests).clamp(1, 30);
+    return r;
+  }
+
+  Map<String, String> get params => {'check_in': _day(checkIn), 'check_out': _day(checkOut), 'guests': '$guests'};
+
+  static String _day(DateTime d) => d.toIso8601String().substring(0, 10);
+
   DateTime checkIn;
   DateTime checkOut;
   int guests = 2;
@@ -246,6 +264,7 @@ class _HomestayPage extends StatelessWidget {
         return DetailPage(
           title: h.name_ ?? 'Homestay',
           actions: [
+            ShareLinkButton(path: Uri(path: '/homestay/$id', queryParameters: query.params).toString(), title: h.name_ ?? 'Homestay', description: h.address, imageUrl: (h.images ?? const []).firstOrNull),
             IconButton(
               tooltip: 'Yêu thích',
               icon: const Icon(Icons.favorite_border),
@@ -509,6 +528,7 @@ class _HotelPage extends StatelessWidget {
         return DetailPage(
           title: h.name_ ?? 'Khách sạn',
           actions: [
+            ShareLinkButton(path: Uri(path: '/hotel/$id', queryParameters: query.params).toString(), title: h.name_ ?? 'Khách sạn', description: [h.address, h.city].whereType<String>().join(', ')),
             IconButton(
               tooltip: 'Yêu thích',
               icon: const Icon(Icons.favorite_border),
@@ -605,7 +625,7 @@ class _HotelPage extends StatelessWidget {
       fields: [
         KField('adults', 'Người lớn', kind: FieldKind.number, required: true, initial: '${query.guests}'),
         const KField('children', 'Trẻ em', kind: FieldKind.number, initial: '0'),
-        const KField('promo', 'Mã khuyến mãi'),
+        const KField('promo', 'Mã khuyến mãi', scannable: true),
         const KField('requests', 'Yêu cầu đặc biệt', kind: FieldKind.multiline),
       ],
       submitLabel: 'Giữ phòng',
@@ -695,4 +715,24 @@ class _ResvTile extends StatelessWidget {
       ),
     );
   }
+}
+
+class HotelLinkPage extends StatelessWidget {
+  const HotelLinkPage({super.key, required this.id, this.query = const {}});
+
+  final int id;
+  final Map<String, String> query;
+
+  @override
+  Widget build(BuildContext context) => _HotelPage(id: id, query: _StayQuery.from(query));
+}
+
+class HomestayLinkPage extends StatelessWidget {
+  const HomestayLinkPage({super.key, required this.id, this.query = const {}});
+
+  final int id;
+  final Map<String, String> query;
+
+  @override
+  Widget build(BuildContext context) => _HomestayPage(id: id, query: _StayQuery.from(query));
 }

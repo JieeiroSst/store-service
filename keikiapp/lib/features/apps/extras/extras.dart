@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 
 import '../../../gen/models.g.dart';
 import '../kit/kit.dart';
+import '../../../core/tracking/attribution_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> _copy(BuildContext context, String text) async {
   await Clipboard.setData(ClipboardData(text: text));
@@ -221,7 +223,7 @@ class CarStaffPage extends StatelessWidget {
               await showFormSheet(
                 context,
                 title: 'Giao xe cho khách',
-                fields: const [KField('resv', 'Mã đặt xe', required: true), KField('km', 'Số km lúc giao', kind: FieldKind.number, required: true)],
+                fields: const [KField('resv', 'Mã đặt xe', required: true, scannable: true), KField('km', 'Số km lúc giao', kind: FieldKind.number, required: true)],
                 submitLabel: 'Giao xe',
                 onSubmit: (v) async {
                   final resv = await api.carRentalGetReservation(input: CarRentalGetReservationRequestInput(reservationId: v.str('resv')));
@@ -242,7 +244,7 @@ class CarStaffPage extends StatelessWidget {
                 context,
                 title: 'Nhận lại xe',
                 fields: const [
-                  KField('rental', 'Mã chuyến thuê', required: true),
+                  KField('rental', 'Mã chuyến thuê', required: true, scannable: true),
                   KField('km', 'Số km lúc trả', kind: FieldKind.number, required: true),
                   KField('fuel', 'Phụ phí nhiên liệu (₫)', kind: FieldKind.number),
                   KField('damage', 'Phụ phí hư hỏng (₫)', kind: FieldKind.number),
@@ -353,11 +355,8 @@ class ReferralToolsPage extends StatelessWidget {
                     fields: const [KField('code', 'Mã', required: true)],
                     success: 'Đã nhận lời mời, phần thưởng sẽ được cộng',
                     onSubmit: (v) async {
-                      final code = v.str('code')!.toUpperCase();
-                      final platform = Theme.of(context).platform.name;
-                      await api.referralTrackEvent(refCode: code, eventType: 'click', platform: platform, channel: 'manual');
-                      await api.referralConfirmInstall(refCode: code, platform: platform);
-                      await api.referralActivate(refCode: code, platform: platform);
+                      final r = await context.read<AttributionCubit>().applyManual(v.str('code')!);
+                      if (r != null && r.ok && !r.attributed) throw Exception('Tài khoản đã được ghi nhận nguồn mời trước đó');
                     },
                   )) {
                     await reload();
@@ -405,7 +404,7 @@ class ReferralToolsPage extends StatelessWidget {
                           title: Text(t.label ?? t.channel ?? ''),
                           subtitle: Text(t.shareUrl ?? '', maxLines: 1, overflow: TextOverflow.ellipsis),
                           onTap: () async {
-                            await api.referralTrackEvent(refCode: link!.refCode!, eventType: 'share', channel: t.channel).catchError((_) => null);
+                            await api.referralTrackEvent(refCode: link!.refCode!, eventType: 'link_copied', channel: t.channel).catchError((_) => null);
                             if (context.mounted) await _copy(context, t.shareUrl ?? '');
                           },
                         ),

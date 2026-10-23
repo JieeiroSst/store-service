@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:go_router/go_router.dart';
 
+import '../../../core/links/share_link.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/status_view.dart';
 import '../../../core/widgets/ui.dart';
@@ -92,6 +93,7 @@ class _ProductBodyState extends State<_ProductBody> {
                   ),
           ),
           actions: [
+            ShareLinkButton(path: '/shop/products/${product.id}', title: product.title, imageUrl: product.thumbnail),
             IconButton(
               icon: Icon(liked ? Icons.favorite : Icons.favorite_border, color: liked ? Colors.red : null),
               onPressed: () => context.read<WishlistCubit>().toggle(product).catchError((Object e) {

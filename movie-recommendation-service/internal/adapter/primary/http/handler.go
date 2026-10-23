@@ -27,6 +27,15 @@ func (h *Handler) ForUser(c *gin.Context) {
 	respond(c, page, err)
 }
 
+func (h *Handler) Video(c *gin.Context) {
+	v, err := h.usecase.Video(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		fail(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, v)
+}
+
 func (h *Handler) Similar(c *gin.Context) {
 	page, err := h.usecase.Similar(c.Request.Context(), c.Param("id"), pageQuery(c))
 	respond(c, page, err)

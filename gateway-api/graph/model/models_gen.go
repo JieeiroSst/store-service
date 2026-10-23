@@ -1015,6 +1015,7 @@ type BasketBasket struct {
 	UserID            int      `json:"user_id"`
 	Currency          *string  `json:"currency,omitempty"`
 	TotalInclTax      *float64 `json:"total_incl_tax,omitempty"`
+	ShippingInclTax   *float64 `json:"shipping_incl_tax,omitempty"`
 	PaymentReference  *string  `json:"payment_reference,omitempty"`
 	FulfillmentID     *string  `json:"fulfillment_id,omitempty"`
 }
@@ -1082,6 +1083,16 @@ type BasketOrder struct {
 	SiteID          int     `json:"site_id"`
 	UserID          int     `json:"user_id"`
 	OwnerID         int     `json:"owner_id"`
+}
+
+type BasketShippingQuote struct {
+	Currency           *string  `json:"currency,omitempty"`
+	Subtotal           *float64 `json:"subtotal,omitempty"`
+	ShippingFee        *float64 `json:"shipping_fee,omitempty"`
+	Total              *float64 `json:"total,omitempty"`
+	ShippingCharged    *bool    `json:"shipping_charged,omitempty"`
+	ServiceName        *string  `json:"service_name,omitempty"`
+	ExpectedDeliveryAt *string  `json:"expected_delivery_at,omitempty"`
 }
 
 type BasketUser struct {
@@ -7971,11 +7982,20 @@ type ShipParcel struct {
 }
 
 type ShipParcelInput struct {
-	Weight *int             `json:"weight,omitempty"`
-	Length *int             `json:"length,omitempty"`
-	Width  *int             `json:"width,omitempty"`
-	Height *int             `json:"height,omitempty"`
-	Items  []map[string]any `json:"items,omitempty"`
+	WeightGram int                    `json:"weight_gram"`
+	LengthCm   int                    `json:"length_cm"`
+	WidthCm    int                    `json:"width_cm"`
+	HeightCm   int                    `json:"height_cm"`
+	Content    *string                `json:"content,omitempty"`
+	Items      []*ShipParcelItemInput `json:"items"`
+}
+
+type ShipParcelItemInput struct {
+	Name       string  `json:"name"`
+	Code       *string `json:"code,omitempty"`
+	Quantity   int     `json:"quantity"`
+	WeightGram *int    `json:"weight_gram,omitempty"`
+	Price      *int    `json:"price,omitempty"`
 }
 
 type ShipProvince struct {

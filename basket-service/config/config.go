@@ -15,6 +15,8 @@ type Config struct {
 	UserService      UserServiceConfig   `json:"user_service"`
 	CatalogueService UpstreamConfig      `json:"catalogue_service"`
 	WalletService    WalletServiceConfig `json:"wallet_service"`
+	AddressService   UpstreamConfig      `json:"address_service"`
+	ShippingService  ShippingConfig      `json:"shipping_service"`
 	Temporal         TemporalConfig      `json:"temporal"`
 }
 
@@ -22,6 +24,12 @@ type TemporalConfig struct {
 	Address   string `json:"address"`
 	Namespace string `json:"namespace"`
 	TaskQueue string `json:"task_queue"`
+}
+
+type ShippingConfig struct {
+	BaseURL        string `json:"base_url"`
+	APIKey         string `json:"api_key"`
+	TimeoutSeconds int    `json:"timeout_seconds"`
 }
 
 type UpstreamConfig struct {

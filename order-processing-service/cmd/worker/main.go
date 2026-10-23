@@ -59,7 +59,14 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to prepare order tables: %v", err)
 		}
-		paid = &activity.PaidOrderActivities{Store: store, Notifier: notifyProxy}
+		parcel := activity.DefaultParcel()
+		parcel.ItemWeightGram = cfg.Services.ParcelItemWeightGram
+		paid = &activity.PaidOrderActivities{Store: store, Notifier: notifyProxy, Parcel: parcel}
+		if cfg.Services.ShippingAPIKey != "" {
+			paid.Shipments = proxy.NewShipmentProxy(cfg.Services.ShippingBaseURL, cfg.Services.ShippingAPIKey)
+		} else {
+			logger.Logger.Warn("SHIPPING_SERVICE_API_KEY is not set: paid orders are marked 'Needs shipping' instead of creating GHN shipments")
+		}
 	} else {
 		logger.Logger.Warn("ORDER_DB_DSN is not set: PaidOrderWorkflow is not registered")
 	}

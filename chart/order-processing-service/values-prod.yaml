@@ -41,3 +41,6 @@ orderProcessingService:
       - secretKey: orderDbDsn
         remoteKey: store/prod/order-processing-service
         property: orderDbDsn
+      - secretKey: shippingApiKey
+        remoteKey: store/prod/order-processing-service
+        property: shippingApiKey

@@ -22,6 +22,7 @@ type Page struct {
 
 type RecommendationUsecase interface {
 	ForUser(ctx context.Context, userID string, q PageQuery) (*Page, error)
+	Video(ctx context.Context, videoID string) (*model.Video, error)
 	Similar(ctx context.Context, videoID string, q PageQuery) (*Page, error)
 	Trending(ctx context.Context, q PageQuery) (*Page, error)
 	NewReleases(ctx context.Context, q PageQuery) (*Page, error)

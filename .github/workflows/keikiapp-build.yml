@@ -20,6 +20,8 @@ env:
     --dart-define=FIREBASE_SENDER_ID=${{ secrets.KEIKI_FIREBASE_SENDER_ID }}
     --dart-define=FIREBASE_PROJECT_ID=${{ secrets.KEIKI_FIREBASE_PROJECT_ID }}
     --dart-define=FIREBASE_IOS_BUNDLE_ID=${{ vars.KEIKI_IOS_BUNDLE_ID }}
+    --dart-define=BRANCH_KEY=${{ secrets.KEIKI_BRANCH_KEY }}
+    --dart-define=BRANCH_LINK_DOMAIN=${{ vars.KEIKI_BRANCH_LINK_DOMAIN || 'keikibook.app.link' }}
 
 defaults:
   run:
@@ -71,6 +73,13 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
+      - name: Branch keys for iOS
+        env:
+          BRANCH_KEY: ${{ secrets.KEIKI_BRANCH_KEY }}
+          BRANCH_LINK_DOMAIN: ${{ vars.KEIKI_BRANCH_LINK_DOMAIN || 'keikibook.app.link' }}
+        run: |
+          alt=$(echo "$BRANCH_LINK_DOMAIN" | sed -E 's/^([^.]+)\.((test-)?app\.link)$/\1-alternate.\2/')
+          printf 'BRANCH_KEY = %s\nBRANCH_LINK_DOMAIN = %s\nBRANCH_ALTERNATE_DOMAIN = %s\n' "$BRANCH_KEY" "$BRANCH_LINK_DOMAIN" "$alt" > ios/Flutter/Branch.xcconfig
       - run: flutter build ios --release --no-codesign $DART_DEFINES
       - run: cd build/ios/iphoneos && zip -qry Runner.app.zip Runner.app
       - uses: actions/upload-artifact@v4

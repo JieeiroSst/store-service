@@ -1,0 +1,143 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND. Run: dart run tool/gen_gateway.dart
+// ignore_for_file: type=lint
+
+import '../admin_op.dart';
+import 'account_transaction.g.dart';
+import 'address.g.dart';
+import 'admanagement.g.dart';
+import 'airflow.g.dart';
+import 'arrange.g.dart';
+import 'authorize.g.dart';
+import 'automatic_payment.g.dart';
+import 'banking.g.dart';
+import 'billing.g.dart';
+import 'book.g.dart';
+import 'book_store.g.dart';
+import 'bot.g.dart';
+import 'call_center.g.dart';
+import 'car_rental.g.dart';
+import 'catalogues.g.dart';
+import 'cdn.g.dart';
+import 'chat.g.dart';
+import 'coupon.g.dart';
+import 'crm.g.dart';
+import 'doordash.g.dart';
+import 'ejabberd.g.dart';
+import 'food.g.dart';
+import 'hospital.g.dart';
+import 'identified.g.dart';
+import 'kms.g.dart';
+import 'livestream.g.dart';
+import 'lottery.g.dart';
+import 'lucky.g.dart';
+import 'manage.g.dart';
+import 'media.g.dart';
+import 'medical.g.dart';
+import 'message.g.dart';
+import 'movie.g.dart';
+import 'networking.g.dart';
+import 'notification.g.dart';
+import 'notifyhub.g.dart';
+import 'parking_lot.g.dart';
+import 'partner.g.dart';
+import 'payer.g.dart';
+import 'payment.g.dart';
+import 'payment_wallet.g.dart';
+import 'point.g.dart';
+import 'qr.g.dart';
+import 'recompense.g.dart';
+import 'recruitment.g.dart';
+import 'referral.g.dart';
+import 'restaurant_accounting.g.dart';
+import 'restaurant_consumer.g.dart';
+import 'restaurant_delivery.g.dart';
+import 'restaurant_kitchen.g.dart';
+import 'restaurant_order.g.dart';
+import 'reward.g.dart';
+import 'sard_auth.g.dart';
+import 'sard_card.g.dart';
+import 'sard_customer.g.dart';
+import 'search.g.dart';
+import 'serpapi.g.dart';
+import 'shipping.g.dart';
+import 'shopify.g.dart';
+import 'shortlink.g.dart';
+import 'solana.g.dart';
+import 'toggle.g.dart';
+import 'tool.g.dart';
+import 'user.g.dart';
+import 'vending.g.dart';
+import 'video.g.dart';
+import 'wallet_service.g.dart';
+import 'workflow.g.dart';
+
+final adminConsoles = <String, List<AdminOp>>{
+  'account_transaction': accountTransactionAdminOps,
+  'address': addressAdminOps,
+  'admanagement': admanagementAdminOps,
+  'airflow': airflowAdminOps,
+  'arrange': arrangeAdminOps,
+  'authorize': authorizeAdminOps,
+  'automatic_payment': automaticPaymentAdminOps,
+  'banking': bankingAdminOps,
+  'billing': billingAdminOps,
+  'book': bookAdminOps,
+  'book_store': bookStoreAdminOps,
+  'bot': botAdminOps,
+  'call_center': callCenterAdminOps,
+  'car_rental': carRentalAdminOps,
+  'catalogues': cataloguesAdminOps,
+  'cdn': cdnAdminOps,
+  'chat': chatAdminOps,
+  'coupon': couponAdminOps,
+  'crm': crmAdminOps,
+  'doordash': doordashAdminOps,
+  'ejabberd': ejabberdAdminOps,
+  'food': foodAdminOps,
+  'hospital': hospitalAdminOps,
+  'identified': identifiedAdminOps,
+  'kms': kmsAdminOps,
+  'livestream': livestreamAdminOps,
+  'lottery': lotteryAdminOps,
+  'lucky': luckyAdminOps,
+  'manage': manageAdminOps,
+  'media': mediaAdminOps,
+  'medical': medicalAdminOps,
+  'message': messageAdminOps,
+  'movie': movieAdminOps,
+  'networking': networkingAdminOps,
+  'notification': notificationAdminOps,
+  'notifyhub': notifyhubAdminOps,
+  'parking_lot': parkingLotAdminOps,
+  'partner': partnerAdminOps,
+  'payer': payerAdminOps,
+  'payment': paymentAdminOps,
+  'payment_wallet': paymentWalletAdminOps,
+  'point': pointAdminOps,
+  'qr': qrAdminOps,
+  'recompense': recompenseAdminOps,
+  'recruitment': recruitmentAdminOps,
+  'referral': referralAdminOps,
+  'restaurant_accounting': restaurantAccountingAdminOps,
+  'restaurant_consumer': restaurantConsumerAdminOps,
+  'restaurant_delivery': restaurantDeliveryAdminOps,
+  'restaurant_kitchen': restaurantKitchenAdminOps,
+  'restaurant_order': restaurantOrderAdminOps,
+  'reward': rewardAdminOps,
+  'sard_auth': sardAuthAdminOps,
+  'sard_card': sardCardAdminOps,
+  'sard_customer': sardCustomerAdminOps,
+  'search': searchAdminOps,
+  'serpapi': serpapiAdminOps,
+  'shipping': shippingAdminOps,
+  'shopify': shopifyAdminOps,
+  'shortlink': shortlinkAdminOps,
+  'solana': solanaAdminOps,
+  'toggle': toggleAdminOps,
+  'tool': toolAdminOps,
+  'user': userAdminOps,
+  'vending': vendingAdminOps,
+  'video': videoAdminOps,
+  'wallet_service': walletServiceAdminOps,
+  'workflow': workflowAdminOps,
+};

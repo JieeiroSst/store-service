@@ -799,6 +799,16 @@ class _ScannerState extends State<_Scanner> {
     }
   }
 
+  Future<void> _scanLoop() async {
+    while (_event != null) {
+      if (!mounted) return;
+      final code = await scanCode(context, title: 'Soát vé · ${_event!.title ?? ''}');
+      if (code == null || !mounted) return;
+      _code.text = codeValue(code);
+      await _lookup(checkIn: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final api = context.api.ticket;
@@ -837,8 +847,9 @@ class _ScannerState extends State<_Scanner> {
           ),
         ),
         ActionButtons([
+          FilledButton.icon(onPressed: _busy ? null : _scanLoop, icon: const Icon(Icons.qr_code_scanner), label: const Text('Quét vé bằng camera')),
           OutlinedButton.icon(onPressed: _busy ? null : _lookup, icon: const Icon(Icons.search), label: const Text('Tra cứu')),
-          FilledButton.icon(onPressed: _busy ? null : () => _lookup(checkIn: true), icon: const Icon(Icons.how_to_reg), label: const Text('Check-in')),
+          FilledButton.tonalIcon(onPressed: _busy ? null : () => _lookup(checkIn: true), icon: const Icon(Icons.how_to_reg), label: const Text('Check-in mã đã nhập')),
           OutlinedButton.icon(
             icon: const Icon(Icons.playlist_add_check),
             label: const Text('Check-in hàng loạt'),

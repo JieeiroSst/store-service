@@ -73,9 +73,9 @@ class WalletCubit extends Cubit<WalletState> {
         return;
       }
       final results = await Future.wait([
-        _repository.balance(wallet.id),
-        _repository.transactions(wallet.id, pageSize: 10),
-        _repository.bankAccounts(),
+        _repository.balance(wallet.id).then<WalletBalance?>((b) => b).catchError((_) => null),
+        _repository.transactions(wallet.id, pageSize: 10).catchError((_) => <WalletTransaction>[]),
+        _repository.bankAccounts().catchError((_) => <BankAccount>[]),
         _repository.paymentRequests(role: 'incoming', status: 'PENDING').catchError((_) => <PaymentRequest>[]),
         _repository.points().catchError((_) => null),
       ]);

@@ -145,6 +145,7 @@ class MovieDetailPage extends StatelessWidget {
     final id = video.id ?? '';
     return DetailPage(
       title: video.title ?? 'Phim',
+      actions: [if (id.isNotEmpty) ShareLinkButton(path: '/movie/$id', title: video.title ?? 'Phim', description: video.description)],
       header: HeroHeader(
         title: video.title ?? 'Phim',
         icon: Icons.movie_rounded,
@@ -204,4 +205,17 @@ class MovieDetailPage extends StatelessWidget {
       ],
     );
   }
+}
+
+class MovieLinkPage extends StatelessWidget {
+  const MovieLinkPage({super.key, required this.id});
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context) => AsyncBuilder<MovieVideo?>(
+        load: () => context.api.movie.movieVideo(id: id),
+        loading: const Scaffold(body: SkeletonList()),
+        builder: (context, v, _) => v == null ? const DetailPage(title: 'Phim', children: [EmptyView(message: 'Phim không tồn tại hoặc chưa sẵn sàng')]) : MovieDetailPage(video: v),
+      );
 }

@@ -43,6 +43,10 @@ func (r *queryResolver) MovieNewReleases(ctx context.Context, page *int, pageSiz
 	return restCall[*model.MoviePage](ctx, r.Proxy, "movie-recommendation-service", rest.Request{Method: "GET", Path: "/api/recommendations/new", Query: restQuery("page", page, "page_size", pageSize, "snapshot", snapshot)}, "")
 }
 
+func (r *queryResolver) MovieVideo(ctx context.Context, id string) (*model.MovieVideo, error) {
+	return restCall[*model.MovieVideo](ctx, r.Proxy, "movie-recommendation-service", rest.Request{Method: "GET", Path: rest.P("/api/recommendations/videos/%v", id)}, "")
+}
+
 func (r *queryResolver) MovieSimilar(ctx context.Context, id string, page *int, pageSize *int, snapshot *string) (*model.MoviePage, error) {
 	return restCall[*model.MoviePage](ctx, r.Proxy, "movie-recommendation-service", rest.Request{Method: "GET", Path: rest.P("/api/recommendations/videos/%v/similar", id), Query: restQuery("page", page, "page_size", pageSize, "snapshot", snapshot)}, "")
 }

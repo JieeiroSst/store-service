@@ -259,9 +259,12 @@ class ShoppingRepository {
     }
   }
 
-  Future<BasketBasket> checkout({required int basketId, required String walletId, required String pin, int? addressId}) async {
-    return (await _api.basket.basketCheckout(id: basketId, walletId: walletId, pin: pin, shippingAddressId: addressId))!;
+  Future<BasketBasket> checkout({required int basketId, required String walletId, required String pin, int? addressId, double? shippingFee}) async {
+    return (await _api.basket.basketCheckout(id: basketId, walletId: walletId, pin: pin, shippingAddressId: addressId, shippingFee: shippingFee))!;
   }
+
+  Future<BasketShippingQuote?> shippingQuote({required int basketId, required int addressId}) =>
+      _api.basket.basketShippingQuote(id: basketId, shippingAddressId: addressId);
 
   Future<List<Category>> categories() async {
     final data = await _client.public('query { catalogueCategories { id name parent_id image is_public } }');

@@ -3996,6 +3996,7 @@ class BasketBasket {
     this.userId,
     this.currency,
     this.totalInclTax,
+    this.shippingInclTax,
     this.paymentReference,
     this.fulfillmentId,
   });
@@ -4011,6 +4012,7 @@ class BasketBasket {
   final int? userId;
   final String? currency;
   final double? totalInclTax;
+  final double? shippingInclTax;
   final String? paymentReference;
   final String? fulfillmentId;
 
@@ -4026,6 +4028,7 @@ class BasketBasket {
         userId: gqlInt(json['user_id']),
         currency: json['currency']?.toString(),
         totalInclTax: (json['total_incl_tax'] as num?)?.toDouble(),
+        shippingInclTax: (json['shipping_incl_tax'] as num?)?.toDouble(),
         paymentReference: json['payment_reference']?.toString(),
         fulfillmentId: json['fulfillment_id']?.toString(),
       );
@@ -4042,6 +4045,7 @@ class BasketBasket {
         'user_id': ?userId,
         'currency': ?currency,
         'total_incl_tax': ?totalInclTax,
+        'shipping_incl_tax': ?shippingInclTax,
         'payment_reference': ?paymentReference,
         'fulfillment_id': ?fulfillmentId,
       };
@@ -4304,6 +4308,46 @@ class BasketOrder {
         'site_id': ?siteId,
         'user_id': ?userId,
         'owner_id': ?ownerId,
+      };
+}
+
+class BasketShippingQuote {
+  const BasketShippingQuote({
+    this.currency,
+    this.subtotal,
+    this.shippingFee,
+    this.total,
+    this.shippingCharged,
+    this.serviceName,
+    this.expectedDeliveryAt,
+  });
+
+  final String? currency;
+  final double? subtotal;
+  final double? shippingFee;
+  final double? total;
+  final bool? shippingCharged;
+  final String? serviceName;
+  final String? expectedDeliveryAt;
+
+  factory BasketShippingQuote.fromJson(Map<String, dynamic> json) => BasketShippingQuote(
+        currency: json['currency']?.toString(),
+        subtotal: (json['subtotal'] as num?)?.toDouble(),
+        shippingFee: (json['shipping_fee'] as num?)?.toDouble(),
+        total: (json['total'] as num?)?.toDouble(),
+        shippingCharged: json['shipping_charged'] as bool?,
+        serviceName: json['service_name']?.toString(),
+        expectedDeliveryAt: json['expected_delivery_at']?.toString(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'currency': ?currency,
+        'subtotal': ?subtotal,
+        'shipping_fee': ?shippingFee,
+        'total': ?total,
+        'shipping_charged': ?shippingCharged,
+        'service_name': ?serviceName,
+        'expected_delivery_at': ?expectedDeliveryAt,
       };
 }
 
@@ -32041,33 +32085,69 @@ class ShipParcel {
 
 class ShipParcelInput {
   const ShipParcelInput({
-    this.weight,
-    this.length,
-    this.width,
-    this.height,
-    this.items,
+    required this.weightGram,
+    required this.lengthCm,
+    required this.widthCm,
+    required this.heightCm,
+    this.content,
+    required this.items,
   });
 
-  final int? weight;
-  final int? length;
-  final int? width;
-  final int? height;
-  final List<Map<String, dynamic>>? items;
+  final int weightGram;
+  final int lengthCm;
+  final int widthCm;
+  final int heightCm;
+  final String? content;
+  final List<ShipParcelItemInput> items;
 
   factory ShipParcelInput.fromJson(Map<String, dynamic> json) => ShipParcelInput(
-        weight: gqlInt(json['weight']),
-        length: gqlInt(json['length']),
-        width: gqlInt(json['width']),
-        height: gqlInt(json['height']),
-        items: (json['items'] as List?)?.map((e) => ((e as Map?)?.cast<String, dynamic>())!).toList(),
+        weightGram: (gqlInt(json['weight_gram']))!,
+        lengthCm: (gqlInt(json['length_cm']))!,
+        widthCm: (gqlInt(json['width_cm']))!,
+        heightCm: (gqlInt(json['height_cm']))!,
+        content: json['content']?.toString(),
+        items: ((json['items'] as List?)?.map((e) => (e == null ? null : ShipParcelItemInput.fromJson((e as Map).cast<String, dynamic>()))!).toList())!,
       );
 
   Map<String, dynamic> toJson() => {
-        'weight': ?weight,
-        'length': ?length,
-        'width': ?width,
-        'height': ?height,
-        'items': ?items,
+        'weight_gram': weightGram,
+        'length_cm': lengthCm,
+        'width_cm': widthCm,
+        'height_cm': heightCm,
+        'content': ?content,
+        'items': items.map((e) => e.toJson()).toList(),
+      };
+}
+
+class ShipParcelItemInput {
+  const ShipParcelItemInput({
+    required this.name_,
+    this.code,
+    required this.quantity,
+    this.weightGram,
+    this.price,
+  });
+
+  final String name_;
+  final String? code;
+  final int quantity;
+  final int? weightGram;
+  final int? price;
+
+  factory ShipParcelItemInput.fromJson(Map<String, dynamic> json) => ShipParcelItemInput(
+        name_: (json['name']?.toString())!,
+        code: json['code']?.toString(),
+        quantity: (gqlInt(json['quantity']))!,
+        weightGram: gqlInt(json['weight_gram']),
+        price: gqlInt(json['price']),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'name': name_,
+        'code': ?code,
+        'quantity': quantity,
+        'weight_gram': ?weightGram,
+        'price': ?price,
       };
 }
 

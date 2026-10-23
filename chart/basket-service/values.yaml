@@ -60,6 +60,7 @@ basketService:
       MYSQL_PASSWORD=password
       MYSQL_DBNAME=basket_service
       CACHE_HOST=redis-svc:80
+      SHIPPING_SERVICE_API_KEY=
   # No health endpoint known for this service: TCP checks on the http port.
   # Swap for httpGet once the service exposes /health.
   probes:

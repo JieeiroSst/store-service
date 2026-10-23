@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/mini_app.dart';
 import '../../../app/mini_apps.dart';
 import '../../../app/theme.dart';
+import '../../../core/scan/scan.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/load_status.dart';
 import '../../../core/widgets/ui.dart';
@@ -180,6 +181,15 @@ class _HeaderState extends State<_Header> {
                         ),
                       ),
                       const Spacer(),
+                      Semantics(
+                        button: true,
+                        label: 'Quét mã',
+                        child: _GlassButton(
+                          onTap: () => scanAndOpen(context),
+                          child: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
                       _GlassButton(
                         onTap: () => context.push('/notifications'),
                         child: const Icon(Icons.notifications_none_rounded, color: Colors.white),
@@ -236,7 +246,7 @@ class _HeaderState extends State<_Header> {
                     ),
                     Expanded(
                       child: QuickAction(
-                        icon: Icons.qr_code_scanner_rounded,
+                        icon: Icons.qr_code_2_rounded,
                         label: 'Nhận tiền',
                         color: KeikiColors.accent,
                         onTap: () => context.push('/wallet/receive'),

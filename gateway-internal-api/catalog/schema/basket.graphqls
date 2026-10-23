@@ -10,8 +10,19 @@ type BasketBasket {
   user_id: Int!
   currency: String
   total_incl_tax: Float
+  shipping_incl_tax: Float
   payment_reference: String
   fulfillment_id: String
+}
+
+type BasketShippingQuote {
+  currency: String
+  subtotal: Float
+  shipping_fee: Float
+  total: Float
+  shipping_charged: Boolean
+  service_name: String
+  expected_delivery_at: String
 }
 
 type BasketLine {
@@ -98,6 +109,7 @@ extend type Query {
   basketOrder(id: Int!): BasketOrder @rest(service: "basket-service", path: "/api/v1/orders/{id}")
   basketUser(id: Int!): BasketUser @rest(service: "basket-service", path: "/api/v1/users/{id}")
   basketBasketLines(id: Int!): [BasketLine!]! @rest(service: "basket-service", path: "/api/v1/baskets/{id}/lines")
+  basketShippingQuote(id: Int!, shipping_address_id: Int!): BasketShippingQuote @rest(service: "basket-service", method: "POST", path: "/api/v1/baskets/{id}/shipping-quote")
 }
 
 extend type Mutation {
@@ -110,5 +122,5 @@ extend type Mutation {
   basketCreateLineAttribute(input: BasketLineAttributeInput!): BasketLineAttribute @rest(service: "basket-service", method: "POST", path: "/api/v1/basket-line-attributes")
   basketUpdateLineAttribute(id: Int!, input: BasketLineAttributeInput!): BasketLineAttribute @rest(service: "basket-service", method: "PUT", path: "/api/v1/basket-line-attributes/{id}")
   basketDeleteLineAttribute(id: Int!): Boolean! @rest(service: "basket-service", method: "DELETE", path: "/api/v1/basket-line-attributes/{id}")
-  basketCheckout(id: Int!, wallet_id: String!, pin: String!, shipping_address_id: Int): BasketBasket @rest(service: "basket-service", method: "POST", path: "/api/v1/baskets/{id}/checkout")
+  basketCheckout(id: Int!, wallet_id: String!, pin: String!, shipping_address_id: Int, shipping_fee: Float): BasketBasket @rest(service: "basket-service", method: "POST", path: "/api/v1/baskets/{id}/checkout")
 }
