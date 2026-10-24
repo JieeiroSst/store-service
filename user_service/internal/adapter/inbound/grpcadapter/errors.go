@@ -27,6 +27,7 @@ var grpcCodes = map[domain.ErrorCode]codes.Code{
 	domain.CodeTokenInvalid:        codes.Unauthenticated,    // 401
 	domain.CodeRefreshTokenInvalid: codes.Unauthenticated,    // 401
 	domain.CodeAccountLocked:       codes.PermissionDenied,   // 403
+	domain.CodeTooManyAttempts:     codes.ResourceExhausted,  // 429
 	domain.CodeSSOFailed:           codes.Unauthenticated,    // 401
 	domain.CodeUsernameRequired:    codes.InvalidArgument,    // 400
 	domain.CodeUsernameTaken:       codes.AlreadyExists,      // 409

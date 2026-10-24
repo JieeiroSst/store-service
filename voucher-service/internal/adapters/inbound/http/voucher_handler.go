@@ -6,6 +6,7 @@ import (
 	voucherapp "github.com/JIeeiroSst/voucher-service/internal/application/voucher"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/voucher"
+	"github.com/JIeeiroSst/voucher-service/internal/adapters/inbound/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -67,6 +68,13 @@ func (h *VoucherHandler) Redeem(c *gin.Context) {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": "invalid voucher id"}})
 		return
 	}
+	if owned, err := h.svc.GetVoucher(c.Request.Context(), voucherID); err != nil {
+		mapError(c, err)
+		return
+	} else if !canAccessVoucher(c, owned) {
+		forbid(c)
+		return
+	}
 	var req redeemVoucherRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": err.Error()}})
@@ -117,6 +125,13 @@ func (h *VoucherHandler) Validate(c *gin.Context) {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": "invalid voucher id"}})
 		return
 	}
+	if owned, err := h.svc.GetVoucher(c.Request.Context(), voucherID); err != nil {
+		mapError(c, err)
+		return
+	} else if !canAccessVoucher(c, owned) {
+		forbid(c)
+		return
+	}
 	pin := c.Query("pin")
 
 	result, err := h.svc.ValidateVoucher(c.Request.Context(), voucherapp.ValidateVoucherInput{VoucherID: voucherID, PIN: pin})
@@ -156,11 +171,22 @@ func (h *VoucherHandler) Get(c *gin.Context) {
 		mapError(c, err)
 		return
 	}
+	if !canAccessVoucher(c, v) {
+		forbid(c)
+		return
+	}
 	c.JSON(stdhttp.StatusOK, toVoucherView(v))
 }
 
 func (h *VoucherHandler) ListMine(c *gin.Context) {
-	ownerID := c.Query("owner_id")
+	ownerID := middleware.CallerID(c)
+	if requested := c.Query("owner_id"); requested != "" && requested != ownerID {
+		if !middleware.IsAdmin(c) {
+			forbid(c)
+			return
+		}
+		ownerID = requested
+	}
 	vouchers, err := h.svc.ListVouchers(c.Request.Context(), voucher.OwnerTypeUser, ownerID)
 	if err != nil {
 		mapError(c, err)

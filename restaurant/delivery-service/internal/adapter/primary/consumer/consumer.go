@@ -6,7 +6,6 @@ import (
 
 	"github.com/JIeeiroSst/delivery-service/internal/domain/model"
 	"github.com/JIeeiroSst/delivery-service/internal/domain/port"
-	"github.com/JieeiroSst/logger"
 	"github.com/nats-io/nats.go"
 )
 
@@ -47,7 +46,7 @@ func (s *Subscriber) onDeliveryShip(msg *nats.Msg) {
 
 	active, err := s.usecase.FindByActive(ctx)
 	if err != nil {
-		logger.ConfigZap().Error(err)
+		log.Error(err)
 		return
 	}
 	if active == nil {
@@ -56,7 +55,7 @@ func (s *Subscriber) onDeliveryShip(msg *nats.Msg) {
 
 	var req shipRequest
 	if err := json.Unmarshal(msg.Data, &req); err != nil {
-		logger.ConfigZap().Error(err)
+		log.Error(err)
 		return
 	}
 
@@ -69,6 +68,6 @@ func (s *Subscriber) onDeliveryShip(msg *nats.Msg) {
 	}
 
 	if err := s.usecase.Update(ctx, delivery.ShipID, delivery); err != nil {
-		logger.ConfigZap().Error(err)
+		log.Error(err)
 	}
 }

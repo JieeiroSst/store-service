@@ -15,8 +15,7 @@ env_logger = "0.10.0"
 log = "0.4.18"
 serde = { version = "1.0.152", features = ["derive"] }
 serde_qs = { version = "0.12.0", features = ["actix4"] }
-utoipa = { version = "3", features = ["actix_extras", "chrono", "uuid"] }
-utoipa-swagger-ui = { version = "3", features = ["actix-web"] }
+utoipa = { version = "5", features = ["actix_extras", "chrono", "uuid"] }
 redis = { version = "0.23", features = ["tokio-comp"] }
 tokio-postgres = { version = "0.7.8", features = [
     "with-chrono-0_4",
@@ -26,8 +25,8 @@ deadpool-postgres = "0.10.5"
 refinery = { version = "0.8", features = ["tokio-postgres"] }
 tokio = { version = "1", features = ["rt"] }
 async-trait = "0.1.68"
-tokio-postgres-rustls = "0.10.0"
-rustls = "0.21.1"
+tokio-postgres-rustls = "0.14.0"
+rustls = "0.23"
 thiserror = "1.0.40"
 validator = { version = "0.16", features = ["derive"] }
 lazy_static = "1.4.0"

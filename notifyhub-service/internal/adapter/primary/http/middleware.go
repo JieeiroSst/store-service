@@ -84,10 +84,17 @@ func Recovery(log *zap.Logger) gin.HandlerFunc {
 	}
 }
 
-func APIKeyAuth(secret string) gin.HandlerFunc {
+func APIKeyAuth(secret string, allowUnauthenticated bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if secret == "" {
-			c.Next()
+			if allowUnauthenticated {
+				c.Next()
+				return
+			}
+			c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{
+				"error": "API key is not configured on the server",
+				"ts":    time.Now().Unix(),
+			})
 			return
 		}
 		key := c.GetHeader("X-API-Key")

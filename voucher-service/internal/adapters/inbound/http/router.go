@@ -1,10 +1,10 @@
 package http
 
 import (
-	authapp "github.com/JIeeiroSst/voucher-service/internal/application/auth"
-	partnerapp "github.com/JIeeiroSst/voucher-service/internal/application/partner"
 	"github.com/JIeeiroSst/voucher-service/internal/adapters/inbound/http/middleware"
 	redisadapter "github.com/JIeeiroSst/voucher-service/internal/adapters/outbound/redis"
+	authapp "github.com/JIeeiroSst/voucher-service/internal/application/auth"
+	partnerapp "github.com/JIeeiroSst/voucher-service/internal/application/partner"
 	"github.com/JIeeiroSst/voucher-service/internal/platform/idempotency"
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel/trace"
@@ -50,20 +50,25 @@ func NewRouter(deps RouterDeps) *gin.Engine {
 			mutate := authorized.Group("")
 			mutate.Use(middleware.Idempotency(deps.IdempStore))
 			{
-				mutate.POST("/vouchers/issue", deps.Handlers.Voucher.Issue)
-				mutate.POST("/vouchers/:id/activate", deps.Handlers.Voucher.Activate)
 				mutate.POST("/vouchers/:id/redeem", deps.Handlers.Voucher.Redeem)
-				mutate.POST("/vouchers/:id/revoke", deps.Handlers.Voucher.Revoke)
 				mutate.POST("/orders", deps.Handlers.Order.Create)
 				mutate.POST("/orders/:id/checkout", deps.Handlers.Order.Checkout)
 				mutate.POST("/orders/:id/cancel", deps.Handlers.Order.Cancel)
-				mutate.POST("/merchants", deps.Handlers.Merchant.Register)
-				mutate.POST("/corporates", deps.Handlers.Corporate.Register)
-				mutate.POST("/corporates/:id/budget", deps.Handlers.Corporate.SetBudget)
-				mutate.POST("/distribution-jobs", deps.Handlers.Distribution.CreateJob)
 				mutate.POST("/payments/init", deps.Handlers.Payment.Initiate)
-				mutate.POST("/merchants/:id/stock/import", deps.Handlers.File.ImportStock)
-				mutate.POST("/wallets/:ownerType/:ownerId/credit", deps.Handlers.Wallet.Credit)
+			}
+
+			adminMutate := authorized.Group("")
+			adminMutate.Use(middleware.RequireAdmin(), middleware.Idempotency(deps.IdempStore))
+			{
+				adminMutate.POST("/vouchers/issue", deps.Handlers.Voucher.Issue)
+				adminMutate.POST("/vouchers/:id/activate", deps.Handlers.Voucher.Activate)
+				adminMutate.POST("/vouchers/:id/revoke", deps.Handlers.Voucher.Revoke)
+				adminMutate.POST("/merchants", deps.Handlers.Merchant.Register)
+				adminMutate.POST("/corporates", deps.Handlers.Corporate.Register)
+				adminMutate.POST("/corporates/:id/budget", deps.Handlers.Corporate.SetBudget)
+				adminMutate.POST("/distribution-jobs", deps.Handlers.Distribution.CreateJob)
+				adminMutate.POST("/merchants/:id/stock/import", deps.Handlers.File.ImportStock)
+				adminMutate.POST("/wallets/:ownerType/:ownerId/credit", deps.Handlers.Wallet.Credit)
 			}
 
 			authorized.GET("/vouchers/:id", deps.Handlers.Voucher.Get)
@@ -73,8 +78,8 @@ func NewRouter(deps RouterDeps) *gin.Engine {
 			authorized.GET("/merchants/:id", deps.Handlers.Merchant.Get)
 			authorized.GET("/merchants", deps.Handlers.Merchant.List)
 			authorized.GET("/wallets/:ownerType/:ownerId/balance", deps.Handlers.Wallet.GetBalance)
-			authorized.GET("/reports/redemptions", deps.Handlers.Reporting.RedemptionRate)
-			authorized.GET("/reports/corporates/:id/spend", deps.Handlers.Reporting.CorporateSpend)
+			authorized.GET("/reports/redemptions", middleware.RequireAdmin(), deps.Handlers.Reporting.RedemptionRate)
+			authorized.GET("/reports/corporates/:id/spend", middleware.RequireAdmin(), deps.Handlers.Reporting.CorporateSpend)
 		}
 
 		v1.POST("/claims/:token/claim", deps.Handlers.Distribution.Claim)

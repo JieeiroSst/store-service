@@ -43,9 +43,11 @@ func graphqlHandler(p *proxy.Proxy) gin.HandlerFunc {
 	srv.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 
 	srv.Use(extension.Introspection{})
+	srv.Use(extension.FixedComplexityLimit(1000))
 	srv.Use(extension.AutomaticPersistedQuery{
 		Cache: lru.New[string](100),
 	})
+	srv.AroundOperations(graph.LimitRootFields)
 	srv.AroundRootFields(graph.RequireAuthentication)
 
 	return func(c *gin.Context) {
@@ -94,8 +96,10 @@ func main() {
 	router.GET("/rtc/ws", middlware.Authenticate(p.User), gin.WrapH(media.Signaling("webrtc-service", func(service string) string { return p.REST(service).BaseURL() })))
 
 	httpSrv := &http.Server{
-		Addr:    fmt.Sprintf(":%v", config.Server.PortServer),
-		Handler: router,
+		Addr:              fmt.Sprintf(":%v", config.Server.PortServer),
+		Handler:           router,
+		ReadHeaderTimeout: 10 * time.Second,
+		IdleTimeout:       120 * time.Second,
 	}
 
 	go func() {

@@ -17,7 +17,8 @@ func (h *Handler) FindByID(c *gin.Context) {
 
 	order, err := h.order.FindByID(c, id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": order})
@@ -32,7 +33,8 @@ func (h *Handler) FindAll(c *gin.Context) {
 
 	orders, err := h.order.FindAll(c, pagination)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": orders})

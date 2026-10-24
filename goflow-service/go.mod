@@ -1,17 +1,12 @@
 module githib.com/JIeeiroSst/goflow-service
 
-go 1.22.2
+go 1.26.0
 
-require (
-	github.com/fieldryand/goflow/v2 v2.2.1
-	github.com/philippgille/gokv/redis v0.7.0
-)
+require github.com/fieldryand/goflow/v2 v2.2.1
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
-	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
-	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/ef-ds/deque v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -32,15 +27,14 @@ require (
 	github.com/philippgille/gokv/encoding v0.7.0 // indirect
 	github.com/philippgille/gokv/gomap v0.7.0 // indirect
 	github.com/philippgille/gokv/util v0.7.0 // indirect
-	github.com/redis/go-redis/v9 v9.4.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.17.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

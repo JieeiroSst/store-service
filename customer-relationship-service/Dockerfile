@@ -20,4 +20,5 @@ COPY --from=builder /app/customer-relationship-service .
 
 EXPOSE 8080
 
+USER 65532:65532
 ENTRYPOINT ["./customer-relationship-service"]

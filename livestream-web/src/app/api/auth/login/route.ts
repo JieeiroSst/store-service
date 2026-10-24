@@ -14,8 +14,9 @@ export async function POST(req: NextRequest) {
   }
 
   const res = NextResponse.json({ ok: true });
-  // httpOnly: the JWT never touches client-side JS, only this server and
-  // livestream_service (which verifies its signature) ever see it.
+  // httpOnly: the cookie itself is never readable from client-side JS. The
+  // room page hands the token to the chat socket only for signed-in users,
+  // because browsers cannot attach an Authorization header to a WebSocket.
   res.cookies.set(SESSION_COOKIE, result.sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

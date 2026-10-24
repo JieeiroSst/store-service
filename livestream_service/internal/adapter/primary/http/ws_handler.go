@@ -4,8 +4,11 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/JIeeiroSst/livestream-service/internal/adapter/primary/http/middleware"
+	"github.com/JIeeiroSst/livestream-service/internal/adapter/secondary/userservice"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/model"
 	"github.com/JIeeiroSst/livestream-service/internal/domain/port"
 	"github.com/JIeeiroSst/livestream-service/internal/infrastructure/metrics"
@@ -27,11 +30,19 @@ var upgrader = websocket.Upgrader{
 }
 
 type WSHandler struct {
-	chat port.ChatUsecase
+	chat  port.ChatUsecase
+	authn middleware.Authenticator
 }
 
-func NewWSHandler(chat port.ChatUsecase) *WSHandler {
-	return &WSHandler{chat: chat}
+func NewWSHandler(chat port.ChatUsecase, users *userservice.Client) *WSHandler {
+	return &WSHandler{chat: chat, authn: users}
+}
+
+func chatToken(c *gin.Context) string {
+	if t, ok := strings.CutPrefix(c.GetHeader("Authorization"), "Bearer "); ok {
+		return strings.TrimSpace(t)
+	}
+	return strings.TrimSpace(c.Query("access_token"))
 }
 
 type inboundChatMessage struct {
@@ -40,10 +51,18 @@ type inboundChatMessage struct {
 
 func (h *WSHandler) ChatRoom(c *gin.Context) {
 	roomID := c.Param("id")
-	userID := c.Query("userId")
-	username := c.Query("username")
-	if username == "" {
-		username = "anonymous"
+
+	var userID, username string
+	if token := chatToken(c); token != "" {
+		id, err := h.authn.Authenticate(c.Request.Context(), token)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			return
+		}
+		userID, username = id.UserID, id.Username
+		if username == "" {
+			username = id.UserID
+		}
 	}
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -106,6 +125,13 @@ func (h *WSHandler) ChatRoom(c *gin.Context) {
 		var in inboundChatMessage
 		if err := conn.ReadJSON(&in); err != nil {
 			return
+		}
+		if userID == "" {
+			select {
+			case localErrors <- "sign in to chat":
+			default:
+			}
+			continue
 		}
 		msg := model.ChatMessage{
 			RoomID:   roomID,

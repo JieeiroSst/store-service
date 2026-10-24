@@ -42,7 +42,8 @@ func (h *CircleHandler) CreateWalletSet(c *gin.Context) {
 
 	walletSet, err := h.walletService.CreateWalletSet(c.Request.Context(), req.Name, req.CustodyType)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -64,7 +65,8 @@ func (h *CircleHandler) GetWalletSet(c *gin.Context) {
 func (h *CircleHandler) ListWalletSets(c *gin.Context) {
 	walletSets, err := h.walletService.ListWalletSets(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -98,7 +100,8 @@ func (h *CircleHandler) CreateWallet(c *gin.Context) {
 	}
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -123,7 +126,8 @@ func (h *CircleHandler) ListWallets(c *gin.Context) {
 
 	wallets, err := h.walletService.ListWallets(c.Request.Context(), walletSetID, blockchain)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -159,7 +163,8 @@ func (h *CircleHandler) FreezeWallet(c *gin.Context) {
 
 	wallet, err := h.walletService.FreezeWallet(c.Request.Context(), walletID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -171,7 +176,8 @@ func (h *CircleHandler) UnfreezeWallet(c *gin.Context) {
 
 	wallet, err := h.walletService.UnfreezeWallet(c.Request.Context(), walletID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -188,7 +194,8 @@ func (h *CircleHandler) CreateTransfer(c *gin.Context) {
 
 	tx, err := h.transactionService.CreateTransfer(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -204,7 +211,8 @@ func (h *CircleHandler) CreateNFTTransfer(c *gin.Context) {
 
 	tx, err := h.transactionService.CreateNFTTransfer(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -220,7 +228,8 @@ func (h *CircleHandler) ExecuteContract(c *gin.Context) {
 
 	tx, err := h.transactionService.ExecuteContract(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -247,7 +256,8 @@ func (h *CircleHandler) EstimateFee(c *gin.Context) {
 
 	feeEstimate, err := h.transactionService.EstimateFee(c.Request.Context(), walletID, destinationAddress, tokenID, amount)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -283,7 +293,8 @@ func (h *CircleHandler) BridgeSolanaToCircle(c *gin.Context) {
 		privateKey,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -310,7 +321,8 @@ func (h *CircleHandler) BridgeCircleToSolana(c *gin.Context) {
 		req.Amount,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -347,7 +359,8 @@ func (h *CircleHandler) ListTokens(c *gin.Context) {
 
 	tokens, err := h.tokenService.ListTokens(c.Request.Context(), blockchain)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -363,7 +376,8 @@ func (h *CircleHandler) ImportToken(c *gin.Context) {
 
 	token, err := h.tokenService.ImportToken(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

@@ -25,9 +25,9 @@ use crate::{
         dto::RequestFindReward
     ),
     responses(
-         (status = 200, description = "reward",  body = ApiResponseReward),
+         (status = 200, description = "reward",  body = crate::api::utils::response::ApiResponse<crate::api::resources::reward::dto::ResponseReward>),
          (status = 204, description = "no content reward"),
-         (status = 400, description = "Invalid query parameters",  body = ErrorResponse),
+         (status = 400, description = "Invalid query parameters",  body = crate::api::error::ErrorResponse),
     ),
  )]
 #[get("/reward")]

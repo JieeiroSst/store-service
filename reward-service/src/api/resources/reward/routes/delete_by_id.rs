@@ -20,9 +20,9 @@ use crate::{
     ),
     responses(
          (status = 204, description = "reward deleted"),
-         (status = 400, description = "Invalid reward id",  body = ErrorResponse),
-         (status = 404, description = "reward not found",  body = ErrorResponse),
-         (status = 409, description = "reward is in use",  body = ErrorResponse),
+         (status = 400, description = "Invalid reward id",  body = crate::api::error::ErrorResponse),
+         (status = 404, description = "reward not found",  body = crate::api::error::ErrorResponse),
+         (status = 409, description = "reward is in use",  body = crate::api::error::ErrorResponse),
     ),
  )]
 #[delete("/reward/{reward_id}")]

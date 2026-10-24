@@ -21,7 +21,7 @@ use crate::{
         ("reward_id" = Uuid, Path, description = "reward uuid"),
     ),
     responses(
-         (status = 200, description = "reward finded",  body = ApiResponseReward),
+         (status = 200, description = "reward finded",  body = crate::api::utils::response::ApiResponse<crate::api::resources::reward::dto::ResponseReward>),
          (status = 204, description = "reward no content"),
     ),
  )]

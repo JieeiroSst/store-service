@@ -26,7 +26,7 @@ async def create_client(
     request: CreateClientDTO, service: ClientService = Depends(lambda: di[ClientService])
 ) -> JSONResponse:
     result = service.create(request)
-    return JSONResponse(content=result.dict(), status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=result.model_dump(), status_code=status.HTTP_201_CREATED)
 
 
 @router.put(
@@ -40,7 +40,7 @@ async def change_personal_data(
 ) -> JSONResponse:
     request.client_id = client_id
     result = service.change_personal_data(request)
-    return JSONResponse(content=result.dict(), status_code=status.HTTP_200_OK)
+    return JSONResponse(content=result.model_dump(), status_code=status.HTTP_200_OK)
 
 
 @router.delete(

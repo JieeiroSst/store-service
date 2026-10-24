@@ -6,6 +6,7 @@ import (
 	orderapp "github.com/JIeeiroSst/voucher-service/internal/application/order"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/order"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
+	"github.com/JIeeiroSst/voucher-service/internal/adapters/inbound/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,6 +37,11 @@ func (h *OrderHandler) Create(c *gin.Context) {
 	var req createOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": err.Error()}})
+		return
+	}
+
+	if !middleware.IsAdmin(c) && !(order.BuyerType(req.BuyerType) == order.BuyerTypeRetail && callerIsUser(c, req.BuyerID)) {
+		forbid(c)
 		return
 	}
 
@@ -79,6 +85,13 @@ func (h *OrderHandler) Checkout(c *gin.Context) {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": "invalid order id"}})
 		return
 	}
+	if o, err := h.svc.GetOrder(c.Request.Context(), orderID); err != nil {
+		mapError(c, err)
+		return
+	} else if !canAccessOrder(c, o) {
+		forbid(c)
+		return
+	}
 	var req checkoutRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": err.Error()}})
@@ -108,6 +121,10 @@ func (h *OrderHandler) Get(c *gin.Context) {
 		mapError(c, err)
 		return
 	}
+	if !canAccessOrder(c, o) {
+		forbid(c)
+		return
+	}
 	c.JSON(stdhttp.StatusOK, toOrderView(o))
 }
 
@@ -115,6 +132,13 @@ func (h *OrderHandler) Cancel(c *gin.Context) {
 	orderID, err := shared.ParseOrderID(c.Param("id"))
 	if err != nil {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": "invalid order id"}})
+		return
+	}
+	if o, err := h.svc.GetOrder(c.Request.Context(), orderID); err != nil {
+		mapError(c, err)
+		return
+	} else if !canAccessOrder(c, o) {
+		forbid(c)
 		return
 	}
 	var body struct {

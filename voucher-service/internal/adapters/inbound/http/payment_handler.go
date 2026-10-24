@@ -4,23 +4,25 @@ import (
 	"io"
 	stdhttp "net/http"
 
+	orderapp "github.com/JIeeiroSst/voucher-service/internal/application/order"
 	paymentapp "github.com/JIeeiroSst/voucher-service/internal/application/payment"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
 	"github.com/gin-gonic/gin"
 )
 
 type PaymentHandler struct {
-	svc paymentapp.PaymentService
+	svc    paymentapp.PaymentService
+	orders orderapp.OrderService
 }
 
-func NewPaymentHandler(svc paymentapp.PaymentService) *PaymentHandler {
-	return &PaymentHandler{svc: svc}
+func NewPaymentHandler(svc paymentapp.PaymentService, orders orderapp.OrderService) *PaymentHandler {
+	return &PaymentHandler{svc: svc, orders: orders}
 }
 
 type initiatePaymentRequest struct {
 	OrderID        string `json:"order_id" binding:"required"`
-	Amount         int64  `json:"amount" binding:"required"`
-	Currency       string `json:"currency" binding:"required"`
+	Amount         int64  `json:"amount"`
+	Currency       string `json:"currency"`
 	Provider       string `json:"provider" binding:"required"`
 	ReturnURL      string `json:"return_url"`
 	IdempotencyKey string `json:"idempotency_key" binding:"required"`
@@ -37,8 +39,22 @@ func (h *PaymentHandler) Initiate(c *gin.Context) {
 		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": "invalid order_id"}})
 		return
 	}
+	o, err := h.orders.GetOrder(c.Request.Context(), orderID)
+	if err != nil {
+		mapError(c, err)
+		return
+	}
+	if !canAccessOrder(c, o) {
+		forbid(c)
+		return
+	}
+	if (req.Amount != 0 && req.Amount != o.TotalAmount.Amount) || (req.Currency != "" && req.Currency != o.TotalAmount.Currency) {
+		c.JSON(stdhttp.StatusBadRequest, gin.H{"error": gin.H{"code": "validation_error", "message": "amount must match the order total"}})
+		return
+	}
+
 	out, err := h.svc.InitiatePayment(c.Request.Context(), paymentapp.InitiatePaymentInput{
-		OrderID: orderID, Amount: shared.NewMoney(req.Amount, req.Currency), Provider: req.Provider,
+		OrderID: orderID, Amount: o.TotalAmount, Provider: req.Provider,
 		ReturnURL: req.ReturnURL, IdempotencyKey: req.IdempotencyKey,
 	})
 	if err != nil {

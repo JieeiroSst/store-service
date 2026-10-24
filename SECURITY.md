@@ -127,13 +127,77 @@ These rules apply to every contributor and every service in this repository.
 3. Remove the value from git history (for example with `git filter-repo`) if needed, and tell the maintainers.
 4. Report the incident through the private channels above so that its impact can be assessed.
 
-## Security Best Practices for Contributors
+## Secure Coding Requirements
 
-- Keep dependencies up to date (`go.mod`, `package.json`, `requirements.txt`, `Cargo.toml`, `build.sbt`) and fix known-vulnerable versions promptly.
-- Validate and sanitize all input at service boundaries. Use parameterized queries only.
-- Enforce authentication and authorization at `gateway-api` **and** inside each service. Do not rely on the gateway alone.
-- Use TLS for external traffic, and do not expose internal services (databases, Kafka, Consul, admin UIs) outside the cluster.
-- Run containers as non-root with minimal base images, and keep RBAC and network policies least-privilege.
+Every change to this repository must follow these rules. Reviewers should reject a pull request that breaks one of them.
+
+### 1. Input validation
+
+- Treat every request body, query string, header, file, webhook and message from Kafka/RabbitMQ as untrusted.
+- Validate type, length, format and range, and use allowlists rather than blocklists. For example, accept list filters only for columns the handler names (see `customer-relationship-service` `crudHandler.filters`).
+- Use parameterized queries or the ORM. Never build SQL from request values with `fmt.Sprintf` or `+`, including column names and `ORDER BY`.
+- Never pass request values to a shell. Call `exec.Command` with a fixed binary and separate arguments.
+- Never build a file path or object-storage key from a client-supplied name. Generate the key on the server (see `post_service` `safeExt`).
+- Fetch user-supplied URLs only through a client that refuses private, loopback and link-local addresses after DNS resolution and does not follow redirects (see `shortlink-service/internal/adapters/webhook/safe_client.go`).
+- Cap request and upload sizes (`http.MaxBytesReader`, `io.LimitReader`).
+
+### 2. Output encoding
+
+- Render HTML only through auto-escaping templates (`html/template`, React, EJS `<%=`). Do not use `dangerouslySetInnerHTML`, `template.HTML` or `<%-` with user data.
+- Serve user uploads with a safe `Content-Type`. HTML, SVG and scripts must be served as `application/octet-stream` (see `post_service` `servableContentType`).
+
+### 3. Authentication
+
+- Hash passwords and PINs with bcrypt, Argon2 or scrypt. Never use MD5, SHA-1 or unsalted SHA-256, and never store or log plain text.
+- Limit failed logins per account and return the same error and timing for an unknown user and a wrong password (see `user_service/internal/application/auth`).
+- Verify JWTs with an explicit algorithm and expiry, and check the session store so a logged-out token stops working.
+- Compare secrets with `subtle.ConstantTimeCompare` or `hmac.Equal`, and treat an empty configured secret as "deny", never as "allow".
+- Support MFA for privileged accounts through Keycloak (`manage_service`).
+
+### 4. Authorization
+
+- Check authorization on the server for every request, both in `gateway-api` (`@hasPermission`, or derive the caller with `{$userId}` / `userField`) **and** inside the service. Do not rely on the gateway alone.
+- Never trust a user, owner, buyer or wallet ID taken from the request. Load the resource and compare its owner with the authenticated caller, or require an admin role (see `voucher-service/internal/adapters/inbound/http/authz.go`).
+- Derive money amounts from server-side state (the order total), never from the client.
+- Verify every payment, shipping or partner webhook signature, check that the amount and merchant match, and only move a payment out of `pending` once.
+- Give services, database users, Kubernetes RBAC and network policies the least privilege they need.
+
+### 5. Secrets management
+
+See [Secret Management](#secret-management). `gitleaks` runs in CI on every push.
+
+### 6. Cryptography
+
+- Use TLS for all external traffic and keep certificate verification on. `InsecureSkipVerify` is allowed only behind an explicit, default-off option.
+- Use the standard libraries (`crypto/*`, `golang.org/x/crypto`) and `crypto/rand` for tokens, OTPs and IDs. Never write your own cipher or use `math/rand` for anything secret.
+- Encrypt sensitive data at rest with keys from `kms-service`.
+
+### 7. Error handling and logging
+
+- Return a generic message for 5xx responses and record the real error server-side (`_ = c.Error(err)` in Gin). Never return stack traces, SQL errors or internal hostnames.
+- Log security events: failed logins, lockouts, permission denials, rejected webhooks and role changes.
+- Never log passwords, tokens, OTPs, PINs, full card numbers or API keys. Mask them (see the `sard-service` OTP log backend).
+
+### 8. Web security
+
+- Cookies that carry a session must be `HttpOnly`, `Secure` and `SameSite=Lax` or stricter. Authenticated state-changing requests must not rely on cookies alone without CSRF protection.
+- Front ends must send `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Strict-Transport-Security` and a `Content-Security-Policy` (see the `nginx.conf` files and `livestream-web/next.config.js`).
+- Restrict CORS to known origins. Never combine a wildcard or reflected origin with credentials.
+- Configure HTTP servers with `ReadHeaderTimeout`, and limit GraphQL complexity and root fields (see `gateway-api/graph/limits.go`).
+
+### 9. Dependencies
+
+- Keep dependencies up to date (`go.mod`, `package.json`, `requirements.txt`, `Cargo.toml`, `build.sbt`) and build Go images on a supported Go release.
+- Dependabot opens security-update pull requests for every ecosystem (`.github/dependabot.yml`). Merge them promptly.
+- The `Security` workflow runs `govulncheck` and `npm audit`. Fix reachable vulnerabilities before release.
+- Pin container base images and tool versions. Do not use `:latest`.
+
+### 10. Process and tooling
+
+- Code review must include a security pass against this list.
+- SAST runs in CI (`gosec`, `govulncheck`, `gitleaks`, `npm audit` in `.github/workflows/security.yml`). Run DAST (OWASP ZAP or Burp Suite) against staging before major releases.
+- Threat-model new services and any change to authentication, payments or money movement at design time, and schedule periodic penetration tests.
+- Run containers as non-root with minimal base images, and do not expose internal services (databases, Kafka, Consul, admin UIs) outside the cluster.
 
 ---
 

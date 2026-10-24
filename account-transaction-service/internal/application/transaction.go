@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"math"
 	"time"
 
 	"github.com/JIeeiroSst/utils/logger"
@@ -25,7 +26,7 @@ func NewTransactionService(repo port.TransactionRepository, accountRepo port.Acc
 func (s *transactionService) create(ctx context.Context, tx *model.Transaction) (*model.Transaction, error) {
 	lg := logger.WithContext(ctx)
 
-	if tx.Amount <= 0 {
+	if !(tx.Amount > 0) || math.IsInf(tx.Amount, 0) {
 		return nil, common.ErrInvalidAmount
 	}
 

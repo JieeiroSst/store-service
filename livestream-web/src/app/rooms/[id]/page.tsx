@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPlaybackInfo, getRoom, getViewerCount } from "@/lib/livestreamClient";
-import { getSession } from "@/lib/session";
+import { getRawSessionToken, getSession } from "@/lib/session";
 import { initialsFor } from "@/lib/color";
 import Player from "@/components/Player";
 import Chat from "@/components/Chat";
@@ -8,14 +8,15 @@ import ViewerCount from "@/components/ViewerCount";
 
 export const dynamic = "force-dynamic";
 
-export default async function RoomPage({ params }: { params: { id: string } }) {
+export default async function RoomPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const room = await getRoom(params.id);
   if (!room) notFound();
 
   const [playback, viewerCount, session] = await Promise.all([
     getPlaybackInfo(params.id),
     getViewerCount(params.id),
-    Promise.resolve(getSession()),
+    getSession(),
   ]);
 
   return (
@@ -55,7 +56,7 @@ export default async function RoomPage({ params }: { params: { id: string } }) {
       </div>
 
       <div className="lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)]">
-        <Chat roomId={room.id} session={session} />
+        <Chat roomId={room.id} session={session} chatToken={session ? (await getRawSessionToken()) ?? null : null} />
       </div>
     </div>
   );

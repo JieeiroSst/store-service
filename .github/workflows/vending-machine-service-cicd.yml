@@ -34,7 +34,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.25"
+          go-version: "1.26"
 
       - name: Check chart consul.json is in sync
         run: diff vending-machine-service/consul.json chart/vending-machine-service/files/consul.json

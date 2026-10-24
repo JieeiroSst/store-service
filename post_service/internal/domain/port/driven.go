@@ -35,6 +35,7 @@ type MediaRepository interface {
 // HTTP adapter extracts this from a multipart.FileHeader so the
 // application/domain layers never import net/http or mime/multipart.
 type UploadFileInput struct {
+	ObjectKey   string
 	FileName    string
 	ContentType string
 	Size        int64

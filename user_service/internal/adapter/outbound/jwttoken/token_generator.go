@@ -46,6 +46,9 @@ func (g *Generator) GenerateRefreshToken(ctx context.Context) (string, error) {
 
 func (g *Generator) ParseAccessToken(ctx context.Context, tokenStr string) (domain.AccessClaims, error) {
 	parsed, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		if token.Method != jwt.SigningMethodHS256 {
+			return nil, domain.ErrFailedToken
+		}
 		return []byte(g.secretKey), nil
 	})
 	if err != nil {

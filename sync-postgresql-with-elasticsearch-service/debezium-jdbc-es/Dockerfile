@@ -22,3 +22,4 @@ RUN mkdir $KAFKA_CONNECT_JDBC_DIR && cd $KAFKA_CONNECT_JDBC_DIR &&\
 # Deploy Confluent Elasticsearch sink connector
 RUN mkdir $KAFKA_CONNECT_ES_DIR
 COPY --from=es-connector-deps /out/ $KAFKA_CONNECT_ES_DIR/
+USER 1001

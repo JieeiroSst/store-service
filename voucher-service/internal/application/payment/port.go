@@ -38,6 +38,12 @@ type InitiatePaymentOutput struct {
 	RedirectURL string `json:"redirect_url"`
 }
 
+type WebhookResult struct {
+	PaymentID string
+	Success   bool
+	Amount    int64
+}
+
 type WebhookInput struct {
 	Provider  string
 	RawBody   []byte
@@ -65,7 +71,7 @@ type PaymentRepository interface {
 type PaymentGateway interface {
 	Provider() string
 	InitPayment(ctx context.Context, refID string, amount shared.Money, returnURL string) (redirectURL string, err error)
-	VerifyWebhookSignature(rawBody []byte, signature string) (providerTxnRef string, success bool, err error)
+	VerifyWebhookSignature(rawBody []byte, signature string) (WebhookResult, error)
 	Refund(ctx context.Context, providerTxnRef string, amount shared.Money) error
 }
 

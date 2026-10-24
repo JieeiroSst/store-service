@@ -3,6 +3,8 @@ package application
 import (
 	"context"
 	"fmt"
+	"path"
+	"strings"
 
 	"github.com/JIeeiroSst/post-service/internal/domain/port"
 	"github.com/JIeeiroSst/post-service/model"
@@ -29,13 +31,16 @@ func (s *postService) CreatePost(ctx context.Context, input model.CreatePostInpu
 	}
 
 	if file != nil {
-		uploaded, err := s.storage.UploadFile(ctx, *file)
+		mediaID := s.ids.NewID()
+		upload := *file
+		upload.ObjectKey = mediaID + safeExt(file.FileName)
+		uploaded, err := s.storage.UploadFile(ctx, upload)
 		if err != nil {
 			return nil, fmt.Errorf("upload file: %w", err)
 		}
 
 		media := &model.Media{
-			ID:          s.ids.NewID(),
+			ID:          mediaID,
 			URL:         uploaded.URL,
 			Description: file.FileName,
 		}
@@ -76,4 +81,17 @@ func (s *postService) UpdatePost(ctx context.Context, id, callerAuthorID string,
 	existing.Content = input.Content
 	existing.Description = input.Description
 	return s.posts.Update(ctx, id, existing)
+}
+
+func safeExt(name string) string {
+	ext := strings.ToLower(path.Ext(name))
+	if len(ext) < 2 || len(ext) > 10 {
+		return ""
+	}
+	for _, r := range ext[1:] {
+		if (r < 'a' || r > 'z') && (r < '0' || r > '9') {
+			return ""
+		}
+	}
+	return ext
 }

@@ -10,16 +10,25 @@ interface IncomingFrame extends Partial<ChatMessage> {
   error?: string;
 }
 
-export default function Chat({ roomId, session }: { roomId: string; session: Session | null }) {
+export default function Chat({
+  roomId,
+  session,
+  chatToken,
+}: {
+  roomId: string;
+  session: Session | null;
+  chatToken: string | null;
+}) {
   const [messages, setMessages] = useState<IncomingFrame[]>([]);
   const [draft, setDraft] = useState("");
   const wsRef = useRef<WebSocket | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const userId = session?.userId ?? `anon-${Math.random().toString(36).slice(2, 10)}`;
-    const username = session?.username || "anonymous";
-    const url = `${WS_BASE_URL}/ws/rooms/${roomId}/chat?userId=${encodeURIComponent(userId)}&username=${encodeURIComponent(username)}`;
+    // livestream_service takes the sender's identity from this token only;
+    // without one the socket is read-only.
+    const query = chatToken ? `?access_token=${encodeURIComponent(chatToken)}` : "";
+    const url = `${WS_BASE_URL}/ws/rooms/${encodeURIComponent(roomId)}/chat${query}`;
     const ws = new WebSocket(url);
     wsRef.current = ws;
 
@@ -33,7 +42,7 @@ export default function Chat({ roomId, session }: { roomId: string; session: Ses
     };
 
     return () => ws.close();
-  }, [roomId, session]);
+  }, [roomId, session, chatToken]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });

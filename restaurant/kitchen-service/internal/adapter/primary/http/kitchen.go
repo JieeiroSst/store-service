@@ -19,7 +19,8 @@ func (h *Handler) FindKitchen(c *gin.Context) {
 
 	kitchens, err := h.kitchen.Find(c, pagination)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": kitchens})
@@ -49,7 +50,8 @@ func (h *Handler) UpdateKitchenStatus(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

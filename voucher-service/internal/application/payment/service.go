@@ -3,6 +3,7 @@ package payment
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
@@ -60,26 +61,34 @@ func (s *Service) HandleWebhook(ctx context.Context, in WebhookInput) error {
 	if err != nil {
 		return err
 	}
-	paymentID, success, err := gateway.VerifyWebhookSignature(in.RawBody, in.Signature)
+	res, err := gateway.VerifyWebhookSignature(in.RawBody, in.Signature)
 	if err != nil {
-		return err
-	}
-	if !success {
-		p, err := s.repo.FindByID(ctx, paymentID)
-		if err != nil {
-			return err
-		}
-		p.Status = StatusFailed
-		return s.repo.Save(ctx, p)
+		s.log.Warn("rejected payment webhook", zap.String("provider", in.Provider), zap.Error(err))
+		return fmt.Errorf("%w: %v", shared.ErrValidation, err)
 	}
 
 	return s.txManager.WithinTx(ctx, func(ctx context.Context) error {
-		p, err := s.repo.FindByID(ctx, paymentID)
+		p, err := s.repo.FindByID(ctx, res.PaymentID)
 		if err != nil {
 			return err
 		}
+		if p.Provider != gateway.Provider() {
+			return fmt.Errorf("%w: payment was not created with %s", shared.ErrValidation, gateway.Provider())
+		}
+		if p.Status != StatusPending {
+			return nil
+		}
+		if !res.Success {
+			p.Status = StatusFailed
+			return s.repo.Save(ctx, p)
+		}
+		if res.Amount != p.Amount.Amount {
+			s.log.Warn("payment webhook amount mismatch", zap.String("payment_id", p.ID), zap.Int64("expected", p.Amount.Amount), zap.Int64("got", res.Amount))
+			return fmt.Errorf("%w: paid amount does not match the payment", shared.ErrValidation)
+		}
+
 		p.Status = StatusSucceeded
-		p.ProviderTxnRef = paymentID
+		p.ProviderTxnRef = res.PaymentID
 		if err := s.repo.Save(ctx, p); err != nil {
 			return err
 		}

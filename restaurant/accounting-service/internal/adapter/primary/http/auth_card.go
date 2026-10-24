@@ -15,7 +15,8 @@ func (h *Handler) AuthCart(c *gin.Context) {
 	}
 
 	if err := h.authCart.PlaceOrder(c, cart); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

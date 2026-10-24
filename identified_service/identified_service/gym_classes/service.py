@@ -38,7 +38,7 @@ class GymClassService:
         return sorted(gym_classes, key=lambda x: (days_order.get(x.day), x.time))
 
     def create(self, gym_class_request: CreateOrUpdateClass) -> GymClass:
-        document = gym_class_request.dict()
+        document = gym_class_request.model_dump()
         result = self._collection.insert_one(document)
 
         return self.get(result.inserted_id)
@@ -51,7 +51,7 @@ class GymClassService:
         gym_class.coach = gym_class_request.coach
         gym_class.description = gym_class_request.description
 
-        new_values = gym_class.dict()
+        new_values = gym_class.model_dump()
         del new_values["id"]
 
         self._collection.update_one({"_id": ObjectId(gym_class_id)}, {"$set": new_values})

@@ -81,6 +81,7 @@ func respondErr(c *gin.Context, err error) {
 	case errors.Is(err, common.ErrMarketUnavailable):
 		c.JSON(http.StatusServiceUnavailable, gin.H{"message": err.Error()})
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
 	}
 }

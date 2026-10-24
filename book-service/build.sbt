@@ -9,9 +9,9 @@ lazy val root = (project in file("."))
       jdbc,
       evolutions,
       "org.playframework.anorm" %% "anorm" % "2.6.10",
-      "org.postgresql" % "postgresql" % "42.7.4",
+      "org.postgresql" % "postgresql" % "42.7.14",
       // In-memory database for tests and `sbt run` (PostgreSQL mode).
-      "com.h2database" % "h2" % "1.4.199",
+      "com.h2database" % "h2" % "2.3.232",
       // Book content lives in MinIO; the AWS SDK speaks S3 to it. The JDK
       // HTTP client replaces the default Netty/Apache ones.
       ("software.amazon.awssdk" % "s3" % "2.25.70")

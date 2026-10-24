@@ -81,7 +81,8 @@ func (h *ApplicationHandler) List(c *gin.Context) {
 	}
 	result, err := h.svc.List(c.Request.Context(), filter)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, result)

@@ -65,6 +65,7 @@ func (f *fakeMediaRepository) Create(ctx context.Context, media *model.Media) er
 
 type fakeObjectStorage struct {
 	uploadCalls int
+	lastKey     string
 	err         error
 }
 
@@ -73,7 +74,8 @@ func (f *fakeObjectStorage) UploadFile(ctx context.Context, input port.UploadFil
 	if f.err != nil {
 		return nil, f.err
 	}
-	return &port.UploadFileResult{URL: "https://cdn.example.com/" + input.FileName}, nil
+	f.lastKey = input.ObjectKey
+	return &port.UploadFileResult{URL: "https://cdn.example.com/" + input.ObjectKey}, nil
 }
 
 func (f *fakeObjectStorage) RemoveObject(ctx context.Context, fileName string) error {

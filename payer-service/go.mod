@@ -1,6 +1,6 @@
 module github.com/JIeeiroSst/payer-service
 
-go 1.22.2
+go 1.26.0
 
 require (
 	github.com/JIeeiroSst/utils v0.0.0-20241206150130-ca9ab47fca91
@@ -11,7 +11,7 @@ require (
 	github.com/nats-io/nats.go v1.37.0
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.23.0
 )
 
 require (
@@ -71,12 +71,12 @@ require (
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
-	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
 	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63 // indirect
-	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
-	golang.org/x/tools v0.12.1-0.20230815132531-74c255bcf846 // indirect
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

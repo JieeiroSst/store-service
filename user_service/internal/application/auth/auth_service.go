@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/JIeeiroSst/user-service/dto"
 	"github.com/JIeeiroSst/user-service/internal/domain"
@@ -24,16 +25,37 @@ type Service struct {
 	tokenGen   output.TokenGenerator
 	tokenStore output.TokenStore
 	sessions   Sessions
+	throttle   output.LoginThrottle
+
+	dummyOnce sync.Once
+	dummyHash string
 }
 
-func New(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, sessions Sessions) *Service {
+func New(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, sessions Sessions, throttle output.LoginThrottle) *Service {
 	return &Service{
 		userRepo:   userRepo,
 		hasher:     hasher,
 		tokenGen:   tokenGen,
 		tokenStore: tokenStore,
 		sessions:   sessions,
+		throttle:   throttle,
 	}
+}
+
+func (s *Service) burnPasswordCheck(password string) {
+	s.dummyOnce.Do(func() {
+		s.dummyHash, _ = s.hasher.HashPassword("user-service-timing-equalizer")
+	})
+	if s.dummyHash != "" {
+		_ = s.hasher.CheckPassword(password, s.dummyHash)
+	}
+}
+
+func (s *Service) rejectCredentials(ctx context.Context, username string) error {
+	if err := s.throttle.RecordFailure(ctx, username); err != nil {
+		return err
+	}
+	return domain.ErrInvalidCredentials
 }
 
 func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginResponse, error) {
@@ -42,16 +64,26 @@ func (s *Service) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginRes
 		return dto.LoginResponse{}, err
 	}
 
+	blocked, err := s.throttle.Blocked(ctx, user.Username)
+	if err != nil {
+		return dto.LoginResponse{}, err
+	}
+	if blocked {
+		return dto.LoginResponse{}, domain.ErrTooManyAttempts
+	}
+
 	userID, hashedPassword, _, err := s.userRepo.CheckAccount(ctx, user)
 	if errors.Is(err, domain.ErrUserNotExist) {
-		return dto.LoginResponse{}, domain.ErrInvalidCredentials
+		s.burnPasswordCheck(user.Password)
+		return dto.LoginResponse{}, s.rejectCredentials(ctx, user.Username)
 	}
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
 	if err := s.hasher.CheckPassword(user.Password, hashedPassword); err != nil {
-		return dto.LoginResponse{}, domain.ErrInvalidCredentials
+		return dto.LoginResponse{}, s.rejectCredentials(ctx, user.Username)
 	}
+	_ = s.throttle.Reset(ctx, user.Username)
 	account, err := s.userRepo.FindUser(ctx, userID)
 	if err != nil {
 		return dto.LoginResponse{}, err

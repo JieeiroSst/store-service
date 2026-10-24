@@ -86,6 +86,9 @@ sardAuthService:
       value: '{{ .Values.sardAuthService.consul.key }}'
     - name: PORT_HTTP_SERVER
       value: '{{ .Values.sardAuthService.image.port }}'
+    - name: OTP_LOG_PLAINTEXT
+      value: 'true'
+      when: '{{ if has .Values.global.environment (list "local" "dev") }}true{{ end }}'
     - name: ACCESS_TOKENS
       valueFrom:
         secretKeyRef:

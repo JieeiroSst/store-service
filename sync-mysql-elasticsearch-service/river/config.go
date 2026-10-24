@@ -23,6 +23,7 @@ type Config struct {
 	MyCharset  string `toml:"my_charset"`
 
 	ESHttps    bool   `toml:"es_https"`
+	ESInsecure bool   `toml:"es_insecure_skip_verify"`
 	ESAddr     string `toml:"es_addr"`
 	ESUser     string `toml:"es_user"`
 	ESPassword string `toml:"es_pass"`

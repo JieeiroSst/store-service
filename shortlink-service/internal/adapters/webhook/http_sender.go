@@ -13,9 +13,11 @@ import (
 	"github.com/JIeeiroSst/shortlink-service/internal/domain"
 )
 
-type HTTPSender struct{}
+type HTTPSender struct {
+	client *http.Client
+}
 
-func NewHTTPSender() *HTTPSender { return &HTTPSender{} }
+func NewHTTPSender() *HTTPSender { return &HTTPSender{client: newPublicOnlyClient()} }
 
 const maxResponseBodyBytes = 1000
 
@@ -50,7 +52,7 @@ func (s *HTTPSender) Send(ctx context.Context, wh *domain.Webhook, payload domai
 		req.Header.Set(k, v)
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := s.client.Do(req)
 	if err != nil {
 		msg := err.Error()
 		if reqCtx.Err() == context.DeadlineExceeded {

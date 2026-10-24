@@ -22,14 +22,14 @@ async def domain_error_handler(request: Request, exc: DomainError) -> JSONRespon
     error_msg = APIErrorMessage(type=exc.__class__.__name__, message=f"Oops! {exc}")
     return JSONResponse(
         status_code=400,
-        content=error_msg.dict(),
+        content=error_msg.model_dump(),
     )
 
 
 @app.exception_handler(ResourceNotFound)
 async def resource_not_found_handler(request: Request, exc: ResourceNotFound) -> JSONResponse:
     error_msg = APIErrorMessage(type=exc.__class__.__name__, message=str(exc))
-    return JSONResponse(status_code=404, content=error_msg.dict())
+    return JSONResponse(status_code=404, content=error_msg.model_dump())
 
 
 @app.exception_handler(RepositoryError)
@@ -39,7 +39,7 @@ async def repository_error_handler(request: Request, exc: RepositoryError) -> JS
     )
     return JSONResponse(
         status_code=500,
-        content=error_msg.dict(),
+        content=error_msg.model_dump(),
     )
 
 

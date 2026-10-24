@@ -12,3 +12,5 @@ ENV KAFKA_CONNECT_ES_DIR=$KAFKA_CONNECT_PLUGINS_DIR/kafka-connect-elasticsearch
 # Deploy Confluent Elasticsearch sink connector
 RUN mkdir $KAFKA_CONNECT_ES_DIR
 COPY --from=es-connector-deps /out/ $KAFKA_CONNECT_ES_DIR/
+
+USER 1001

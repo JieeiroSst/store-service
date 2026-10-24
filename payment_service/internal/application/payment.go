@@ -210,6 +210,11 @@ func (s *paymentService) HandleWebhook(ctx context.Context, provider model.Provi
 		return err
 	}
 
+	if !webhookMayMove(payment.Status, event.Status) {
+		log.Printf("payment-service: ignored webhook moving payment %d from %s to %s", payment.ID, payment.Status, event.Status)
+		return nil
+	}
+
 	if err := s.repo.UpdateStatus(ctx, payment.ID, event.Status, event.ExternalID, ""); err != nil {
 		return fmt.Errorf("record webhook update: %w", err)
 	}
@@ -230,5 +235,21 @@ func (s *paymentService) recordTransaction(ctx context.Context, paymentID int64,
 	})
 	if err != nil {
 		log.Printf("payment-service: record %s transaction for payment %d: %v", txType, paymentID, err)
+	}
+}
+
+func webhookMayMove(from, to model.PaymentStatus) bool {
+	if from == to {
+		return false
+	}
+	switch from {
+	case model.PaymentStatusCaptured:
+		return to == model.PaymentStatusRefunded || to == model.PaymentStatusPartiallyRefunded
+	case model.PaymentStatusPartiallyRefunded:
+		return to == model.PaymentStatusRefunded
+	case model.PaymentStatusRefunded:
+		return false
+	default:
+		return true
 	}
 }

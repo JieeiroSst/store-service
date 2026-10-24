@@ -79,10 +79,13 @@ func (g *VNPayGateway) sign(params map[string]string) (query, secureHash string)
 	return queryBuilder.String(), secureHash
 }
 
-func (g *VNPayGateway) VerifyWebhookSignature(rawBody []byte, signature string) (string, bool, error) {
+func (g *VNPayGateway) VerifyWebhookSignature(rawBody []byte, _ string) (paymentapp.WebhookResult, error) {
+	if g.hashSecret == "" {
+		return paymentapp.WebhookResult{}, fmt.Errorf("vnpay: hash secret is not configured")
+	}
 	values, err := url.ParseQuery(string(rawBody))
 	if err != nil {
-		return "", false, err
+		return paymentapp.WebhookResult{}, err
 	}
 	params := make(map[string]string, len(values))
 	for k := range values {
@@ -93,10 +96,18 @@ func (g *VNPayGateway) VerifyWebhookSignature(rawBody []byte, signature string) 
 	}
 	_, expectedHash := g.sign(params)
 	if !hmac.Equal([]byte(expectedHash), []byte(values.Get("vnp_SecureHash"))) {
-		return "", false, fmt.Errorf("vnpay: signature mismatch")
+		return paymentapp.WebhookResult{}, fmt.Errorf("vnpay: signature mismatch")
 	}
-	success := values.Get("vnp_ResponseCode") == "00"
-	return values.Get("vnp_TxnRef"), success, nil
+	if values.Get("vnp_TmnCode") != g.tmnCode {
+		return paymentapp.WebhookResult{}, fmt.Errorf("vnpay: unexpected terminal code")
+	}
+	scaled, err := strconv.ParseInt(values.Get("vnp_Amount"), 10, 64)
+	if err != nil || scaled%100 != 0 {
+		return paymentapp.WebhookResult{}, fmt.Errorf("vnpay: invalid amount")
+	}
+	status := values.Get("vnp_TransactionStatus")
+	success := values.Get("vnp_ResponseCode") == "00" && (status == "" || status == "00")
+	return paymentapp.WebhookResult{PaymentID: values.Get("vnp_TxnRef"), Success: success, Amount: scaled / 100}, nil
 }
 
 func (g *VNPayGateway) Refund(ctx context.Context, providerTxnRef string, amount shared.Money) error {

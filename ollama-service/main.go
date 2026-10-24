@@ -911,7 +911,8 @@ func LeaveGroupHandler(c *gin.Context) {
 		return
 	} else if isCreator {
 		if err := handleCreatorLeavingGroup(groupID, userID); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			_ = c.Error(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "Group deleted successfully"})

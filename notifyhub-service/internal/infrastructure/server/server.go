@@ -33,11 +33,16 @@ func New(p Params) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	if p.Config.Server.APIKey == "" {
-		p.Log.Warn("API_KEY is empty: /api/v1 is NOT authenticated")
+		if p.Config.Server.Mode == "development" {
+			p.Log.Warn("API_KEY is empty: /api/v1 is NOT authenticated (development mode)")
+		} else {
+			p.Log.Error("API_KEY is empty: /api/v1 refuses every request until it is set")
+		}
 	}
 
 	engine := httpadapter.NewRouter(p.Handler, httpadapter.RouterConfig{
 		APIKey:      p.Config.Server.APIKey,
+		DevMode:     p.Config.Server.Mode == "development",
 		RateLimiter: p.RateLimiter,
 		Log:         p.Log,
 	})

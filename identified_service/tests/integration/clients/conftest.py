@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import boto3
 import pytest
-from moto import mock_s3
+from moto import mock_aws
 
 from identified_service.building_blocks.clock import Clock
 from identified_service.building_blocks.custom_types import S3SdkClient
@@ -17,7 +17,7 @@ from identified_service.gym_passes.facade import GymPassFacade
 
 @pytest.fixture()
 def s3_mock() -> Iterator[S3SdkClient]:
-    with mock_s3():
+    with mock_aws():
         s3_sdk_client = boto3.client("s3")
         s3_sdk_resource = boto3.resource("s3")
         bucket_name = "client_reports"

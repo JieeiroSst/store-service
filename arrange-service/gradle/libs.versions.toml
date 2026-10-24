@@ -3,8 +3,8 @@
 h2-version = "2.3.232"
 kotlin-version = "2.1.0"
 ktor-version = "3.0.3"
-logback-version = "1.4.14"
-postgres-version = "42.7.4"
+logback-version = "1.5.38"
+postgres-version = "42.7.14"
 
 [libraries]
 ktor-server-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version = "2.1.1" }

@@ -187,7 +187,8 @@ func (h *Handler) mobileAndroid(c *gin.Context) {
 			}
 			tmp, err := os.CreateTemp("", "qa-*.apk")
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				_ = c.Error(err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 				return
 			}
 			tmp.Write(data)
@@ -268,7 +269,8 @@ func (h *Handler) mobileIOS(c *gin.Context) {
 		}
 		workDir, err = os.MkdirTemp("", "qa-ios-")
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			_ = c.Error(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 			return
 		}
 		appDir, err := unzipApp(data, workDir)

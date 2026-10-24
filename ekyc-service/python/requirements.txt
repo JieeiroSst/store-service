@@ -7,16 +7,18 @@
 #
 # Install in this exact order instead (see the Dockerfile, which does
 # exactly this):
-#   pip install dlib-bin==20.0.1 face-recognition-models==0.3.0
+#   pip install setuptools==80.10.2 dlib-bin==20.0.1 face-recognition-models==0.3.0
 #   pip install --no-deps face_recognition==1.3.0
-#   pip install click==8.1.7 numpy==1.26.4 pillow==10.4.0 easyocr==1.7.2
+#   pip install click==8.1.7 numpy==1.26.4 pillow==13.0.0 torch==2.14.1 easyocr==1.7.2
 #
 # This file exists as a single source of truth for the pinned versions
 # above, not as a directly-installable manifest.
+setuptools==80.10.2
 dlib-bin==20.0.1
 face-recognition-models==0.3.0
 face_recognition==1.3.0
 click==8.1.7
 numpy==1.26.4
-pillow==10.4.0
+pillow==13.0.0
+torch==2.14.1
 easyocr==1.7.2

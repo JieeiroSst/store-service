@@ -12,4 +12,6 @@ COPY app ./app
 
 EXPOSE 8000
 
+RUN useradd -u 10001 -M app
+USER 10001
 CMD ["uvicorn", "app.adapters.inbound.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

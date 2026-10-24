@@ -1,8 +1,12 @@
 package http
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestRateLimiterWindowResetsUnderSteadyTraffic(t *testing.T) {
@@ -22,5 +26,21 @@ func TestRateLimiterWindowResetsUnderSteadyTraffic(t *testing.T) {
 	}
 	if !rl.Allow("other", start) {
 		t.Fatal("limits are per client")
+	}
+}
+
+func TestAPIKeyAuthEmptySecret(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	for _, tc := range []struct {
+		dev  bool
+		want int
+	}{{dev: false, want: http.StatusServiceUnavailable}, {dev: true, want: http.StatusOK}} {
+		r := gin.New()
+		r.GET("/x", APIKeyAuth("", tc.dev), func(c *gin.Context) { c.Status(http.StatusOK) })
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, httptest.NewRequest(http.MethodGet, "/x", nil))
+		if w.Code != tc.want {
+			t.Errorf("dev=%v: status = %d, want %d", tc.dev, w.Code, tc.want)
+		}
 	}
 }

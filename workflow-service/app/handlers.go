@@ -26,7 +26,8 @@ func (h *OrderHandler) ProcessOrder(c *gin.Context) {
 
 	err := h.orderService.ProcessOrder(orderID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

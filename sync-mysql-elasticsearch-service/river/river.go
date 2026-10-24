@@ -67,6 +67,7 @@ func NewRiver(c *Config) (*River, error) {
 	cfg.User = r.c.ESUser
 	cfg.Password = r.c.ESPassword
 	cfg.HTTPS = r.c.ESHttps
+	cfg.Insecure = r.c.ESInsecure
 	r.es = elastic.NewClient(cfg)
 
 	go InitStatus(r.c.StatAddr, r.c.StatPath)

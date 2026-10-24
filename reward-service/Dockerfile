@@ -1,11 +1,11 @@
 ARG CARGO_BUILD_TARGET="x86_64-unknown-linux-musl"
 
-FROM rust:1.66.1-alpine3.17 AS config
+FROM rust:1.97-alpine AS config
 WORKDIR /app
 RUN addgroup -S rust && adduser -S rust -G rust
 RUN apk update
 RUN apk add pkgconfig
-RUN apk add musl-dev
+RUN apk add musl-dev cmake clang perl make
 RUN apk add libressl-dev
 RUN apk add --no-cache ca-certificates
 

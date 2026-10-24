@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -21,4 +21,5 @@ COPY --from=builder /app/bot-service .
 # Health-check HTTP server only; the Telegram transport is outbound long-polling.
 EXPOSE 8080
 
+USER 65532:65532
 ENTRYPOINT ["./bot-service"]

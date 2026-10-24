@@ -32,7 +32,8 @@ func writeError(c *gin.Context, err error) {
 	case errors.Is(err, port.ErrShopifyRequestFailed):
 		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 	}
 }
 

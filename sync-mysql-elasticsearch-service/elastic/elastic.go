@@ -27,6 +27,7 @@ type Client struct {
 // ClientConfig is the configuration for the client.
 type ClientConfig struct {
 	HTTPS    bool
+	Insecure bool
 	Addr     string
 	User     string
 	Password string
@@ -43,7 +44,7 @@ func NewClient(conf *ClientConfig) *Client {
 	if conf.HTTPS {
 		c.Protocol = "https"
 		tr := &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: conf.Insecure},
 		}
 		c.c = &http.Client{Transport: tr}
 	} else {

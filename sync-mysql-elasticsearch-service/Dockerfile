@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /build
 COPY go.mod go.sum ./
@@ -13,4 +13,6 @@ RUN apt-get update && \
 
 COPY --from=builder /out/sync-mysql-elasticsearch /usr/local/bin/sync-mysql-elasticsearch
 
+RUN useradd -u 10001 -M app && mkdir -p /var/lib/river && chown app /var/lib/river
+USER 10001
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/sync-mysql-elasticsearch"]

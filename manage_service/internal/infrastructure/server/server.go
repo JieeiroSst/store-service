@@ -26,7 +26,7 @@ type Params struct {
 
 func New(p Params) {
 	if p.Config.Secret.AuthorizeKey == "" {
-		p.Log.Warn("AUTHORIZE_KEY is empty: API is not protected by X-Api-Key")
+		p.Log.Warn("AUTHORIZE_KEY is empty: every API request will be refused")
 	}
 
 	srv := &http.Server{

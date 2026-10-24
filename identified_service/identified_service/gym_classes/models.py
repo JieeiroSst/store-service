@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class GymClass(BaseModel):
@@ -7,10 +7,10 @@ class GymClass(BaseModel):
     day: str
     time: str
     coach: str
-    description: str | None
+    description: str | None = None
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "id": "63500520c1f28686b7d7da2c",
                 "name": "Pilates",
@@ -20,6 +20,7 @@ class GymClass(BaseModel):
                 "description": "A system of physical exercises invented at the beginning of the 20th century by the German Josef Humbertus Pilates",
             }
         }
+    )
 
 
 class CreateOrUpdateClass(BaseModel):
@@ -27,10 +28,10 @@ class CreateOrUpdateClass(BaseModel):
     day: str
     time: str
     coach: str
-    description: str | None
+    description: str | None = None
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "Pilates",
                 "day": "Monday",
@@ -39,3 +40,4 @@ class CreateOrUpdateClass(BaseModel):
                 "description": "A system of physical exercises invented at the beginning of the 20th century by the German Josef Humbertus Pilates",
             }
         }
+    )

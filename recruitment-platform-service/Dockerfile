@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.26-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
@@ -10,4 +10,5 @@ RUN apk add --no-cache ca-certificates tzdata
 COPY --from=builder /recruitment-platform /app/recruitment-platform
 COPY --from=builder /app/migrations /app/migrations
 EXPOSE 8080
+USER 65532:65532
 ENTRYPOINT ["/app/recruitment-platform"]

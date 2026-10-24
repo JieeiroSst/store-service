@@ -16,7 +16,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd authorize_service && go build -v ./...
@@ -33,7 +33,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd user_service && go build -v ./...
@@ -50,7 +50,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd post_service && go build -v ./...
@@ -67,7 +67,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd payment_service && go build -v ./...
@@ -84,7 +84,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.24"
+        go-version: "1.26"
 
     - name: Build
       run: cd notification_service && go build -v ./...
@@ -135,7 +135,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.23
+        go-version: "1.26"
 
     - name: Build
       run: cd account-transaction-service && go build -v ./...
@@ -152,7 +152,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.22
+        go-version: "1.26"
 
     - name: Build
       run: cd address-country-service && go build -v ./...
@@ -169,7 +169,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.23
+        go-version: "1.26"
 
     - name: Build
       run: cd admanagement-service && go build -v ./...
@@ -186,7 +186,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.22
+        go-version: "1.26"
 
     - name: Build
       run: cd airflow-service && go build -v ./...
@@ -203,7 +203,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd automatic-payment-service && go build -v ./...
@@ -220,7 +220,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd banking-service && go build -v ./...
@@ -237,7 +237,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd basket-service && go build -v ./...
@@ -254,7 +254,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd billing-service && go build -v ./...
@@ -271,7 +271,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd calculate-service && go build -v ./...
@@ -288,7 +288,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd book-store-service && go build -v ./...
@@ -305,7 +305,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd cdn-service && go build -v ./...
@@ -322,7 +322,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd bot-service && go build -v ./...
@@ -359,7 +359,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd livestream_service && go build -v ./...
@@ -376,7 +376,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.24"
+        go-version: "1.26"
 
     - name: Build
       run: cd toggle-service && go build -v ./...
@@ -393,7 +393,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd restaurant/gateway-service && go build -v ./...
@@ -410,7 +410,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd restaurant/consumer-service && go build -v ./...
@@ -427,7 +427,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd restaurant/accounting-service && go build -v ./...
@@ -444,7 +444,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd restaurant/order-service && go build -v ./...
@@ -461,7 +461,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd restaurant/kitchen-service && go build -v ./...
@@ -478,7 +478,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd restaurant/delivery-service && go build -v ./...
@@ -495,7 +495,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd threads-service && go build -v ./...
@@ -512,7 +512,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd parking-lot-service && go build -v ./...
@@ -529,7 +529,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd coupon-service && go build -v ./...
@@ -546,7 +546,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd doordash-service && go build -v ./...
@@ -563,7 +563,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd ekyc-service && go build -v ./...
@@ -580,7 +580,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd partner-service && go build -v ./...
@@ -597,7 +597,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.22"
+        go-version: "1.26"
 
     - name: Build
       run: cd payment-wallet-service && go build -v ./...
@@ -614,7 +614,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.24"
+        go-version: "1.26"
 
     - name: Build
       run: cd polymarket-service && go build -v ./...
@@ -631,7 +631,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd bonuslink-service && go build -v ./...
@@ -648,7 +648,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd referral-service && go build -v ./...
@@ -666,7 +666,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd video-service/BE && go build -v ./...
@@ -683,7 +683,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd room-service/BE && go build -v ./...
@@ -718,7 +718,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd car-rental-service && go build -v ./...
@@ -758,7 +758,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd movie-recommendation-service && go build -v ./...
@@ -917,7 +917,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd shopify-service && go build -v ./...
@@ -937,7 +937,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd medical-service && go build -v ./...
@@ -957,7 +957,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd shipping-service && go build -v ./...
@@ -977,7 +977,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd manage_service && go build -v ./...
@@ -997,7 +997,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.23"
+        go-version: "1.26"
 
     - name: Build
       run: cd draw-image-service && go build -v ./...
@@ -1032,7 +1032,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Check chart consul.json is in sync
       run: diff vending-machine-service/consul.json chart/vending-machine-service/files/consul.json
@@ -1055,7 +1055,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.24"
+        go-version: "1.26"
 
     - name: Build
       run: cd webrtc-service && go build -v ./...
@@ -1356,7 +1356,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd wishlists-service && make build
@@ -1382,7 +1382,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Catalog is in sync with gateway-api
       run: cd gateway-internal-api && make sync-check
@@ -1419,7 +1419,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: "1.25"
+        go-version: "1.26"
 
     - name: Build
       run: cd lucky-service && make build

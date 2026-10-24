@@ -101,7 +101,8 @@ func (h *JobHandler) List(c *gin.Context) {
 	}
 	result, err := h.svc.List(c.Request.Context(), filter)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, result)
@@ -190,7 +191,8 @@ func (h *JobHandler) RecommendedCandidates(c *gin.Context) {
 	limit := 10
 	candidates, err := h.svc.GetRecommendedCandidates(c.Request.Context(), id, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"candidates": candidates})

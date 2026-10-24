@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -20,4 +20,5 @@ COPY --from=builder /app/automatic-payment-service .
 
 EXPOSE 8080
 
+USER 65532:65532
 ENTRYPOINT ["./automatic-payment-service"]

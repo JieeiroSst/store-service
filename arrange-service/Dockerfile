@@ -17,4 +17,5 @@ COPY --from=builder /app/build/libs/arrange-service-all.jar app.jar
 
 EXPOSE 8080
 
+USER 65532:65532
 ENTRYPOINT ["java", "-jar", "app.jar"]

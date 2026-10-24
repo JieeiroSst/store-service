@@ -3,9 +3,10 @@ package service
 import (
 	"bytes"
 	"context"
+	"crypto/rand"
 	"encoding/base64"
 	"fmt"
-	"math/rand"
+	"math/big"
 	"time"
 
 	"github.com/JIeeiroSst/qr-service/internal/domain/entity"
@@ -282,8 +283,13 @@ func generateQRImage(content string, size int) (string, error) {
 
 func generateShortCode(n int) string {
 	b := make([]byte, n)
+	max := big.NewInt(int64(len(shortCodeChars)))
 	for i := range b {
-		b[i] = shortCodeChars[rand.Intn(len(shortCodeChars))]
+		idx, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			panic(err)
+		}
+		b[i] = shortCodeChars[idx.Int64()]
 	}
 	return string(b)
 }

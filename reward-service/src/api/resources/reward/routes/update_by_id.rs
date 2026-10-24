@@ -23,11 +23,11 @@ use crate::{
     params(
         ("reward_id" = Uuid, Path, description = "reward uuid"),
     ),
-    request_body = RequestUpdateReward,
+    request_body = crate::api::resources::reward::dto::RequestUpdateReward,
     responses(
-         (status = 200, description = "reward updated",  body = ApiResponseReward),
-         (status = 400, description = "Invalid payload",  body = ErrorResponse),
-         (status = 404, description = "reward not found",  body = ErrorResponse),
+         (status = 200, description = "reward updated",  body = crate::api::utils::response::ApiResponse<crate::api::resources::reward::dto::ResponseReward>),
+         (status = 400, description = "Invalid payload",  body = crate::api::error::ErrorResponse),
+         (status = 404, description = "reward not found",  body = crate::api::error::ErrorResponse),
     ),
  )]
 #[put("/reward/{reward_id}")]

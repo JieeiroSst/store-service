@@ -77,6 +77,10 @@ func (g *gateway) ParseWebhook(_ context.Context, payload []byte, headers map[st
 		return nil, fmt.Errorf("missing X-Payoneer-Signature header")
 	}
 
+	if g.webhookSecret == "" {
+		return nil, fmt.Errorf("webhook secret is not configured")
+	}
+
 	mac := hmac.New(sha256.New, []byte(g.webhookSecret))
 	mac.Write(payload)
 	expected := hex.EncodeToString(mac.Sum(nil))

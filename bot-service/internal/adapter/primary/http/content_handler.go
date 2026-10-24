@@ -157,7 +157,8 @@ func (h *ContentHandler) ListPosts(c *gin.Context) {
 
 	posts, err := h.usecase.ListPosts(c.Request.Context(), limit, offset, status, campaign)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"posts": posts})

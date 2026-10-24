@@ -1,17 +1,17 @@
 module github.com/JIeeiroSst/manage-service
 
-go 1.22
+go 1.23
 
 require (
 	github.com/Nerzal/gocloak/v13 v13.5.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-chi/chi/v5 v5.0.8
+	github.com/go-chi/chi/v5 v5.3.0
 	github.com/goccy/go-json v0.10.0
 	github.com/hashicorp/consul/api v1.20.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.11.2
-	github.com/redis/go-redis/v9 v9.0.5
+	github.com/redis/go-redis/v9 v9.6.3
 	go.uber.org/fx v1.24.0
 	go.uber.org/zap v1.26.0
 	gorm.io/driver/mysql v1.5.1
@@ -25,7 +25,7 @@ require (
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-hclog v0.12.0 // indirect
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect

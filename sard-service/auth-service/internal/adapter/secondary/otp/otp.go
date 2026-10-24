@@ -22,19 +22,29 @@ var Module = fx.Options(
 func NewSender(cfg *config.Config) (port.OTPSender, error) {
 	switch cfg.OTPDelivery.Backend {
 	case "log":
-		log.Printf("otp delivery: log (development only, codes are written to the log)")
-		return LogSender{}, nil
+		if cfg.OTPDelivery.LogPlaintext {
+			log.Printf("otp delivery: log with OTP_LOG_PLAINTEXT=true (development only, codes are written to the log)")
+		} else {
+			log.Printf("otp delivery: log (codes are masked; set OTP_LOG_PLAINTEXT=true only in development, use the webhook backend in production)")
+		}
+		return LogSender{Plaintext: cfg.OTPDelivery.LogPlaintext}, nil
 	case "webhook":
 		return NewWebhook(cfg.OTPDelivery.WebhookURL, cfg.OTPDelivery.WebhookToken, cfg.OTPDelivery.Timeout), nil
 	}
 	return nil, fmt.Errorf("unknown OTP_DELIVERY %q (log or webhook)", cfg.OTPDelivery.Backend)
 }
 
-type LogSender struct{}
+type LogSender struct {
+	Plaintext bool
+}
 
-func (LogSender) Send(_ context.Context, m port.OTPMessage) error {
+func (s LogSender) Send(_ context.Context, m port.OTPMessage) error {
+	code := "******"
+	if s.Plaintext {
+		code = m.OTP
+	}
 	log.Printf("[otp] user=%d challenge=%s code=%s amount=%d %s merchant=%q card=%s expires=%s",
-		m.UserID, m.ChallengeID, m.OTP, m.Amount, m.Currency, m.Merchant, m.MaskedPAN, m.ExpiresAt.Format(time.RFC3339))
+		m.UserID, m.ChallengeID, code, m.Amount, m.Currency, m.Merchant, m.MaskedPAN, m.ExpiresAt.Format(time.RFC3339))
 	return nil
 }
 

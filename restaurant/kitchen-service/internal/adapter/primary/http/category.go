@@ -10,7 +10,8 @@ import (
 func (h *Handler) FindCategory(c *gin.Context) {
 	categories, err := h.category.Find(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": categories})
@@ -24,7 +25,8 @@ func (h *Handler) CreateCategory(c *gin.Context) {
 	}
 
 	if err := h.category.Create(c, &category); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true})

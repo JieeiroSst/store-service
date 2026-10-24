@@ -1,9 +1,9 @@
 package utils
 
 import (
+	"crypto/subtle"
 	"encoding/base64"
 	"regexp"
-	"strings"
 
 	"github.com/JIeeiroSst/user-service/internal/domain"
 )
@@ -13,7 +13,7 @@ func DecodeBase(msg, decode string) bool {
 	if err != nil {
 		return false
 	}
-	if !strings.EqualFold(string(msgDecode), decode) {
+	if decode == "" || subtle.ConstantTimeCompare(msgDecode, []byte(decode)) != 1 {
 		return false
 	}
 	return true

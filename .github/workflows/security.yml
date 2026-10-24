@@ -1,0 +1,133 @@
+name: Security
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  schedule:
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "1.26"
+
+    - name: Install gitleaks
+      run: go install github.com/zricethezav/gitleaks/v8@v8.21.2
+
+    - name: Scan history
+      run: $(go env GOPATH)/bin/gitleaks git . --no-banner --redact --log-opts="--all"
+
+  go-vulns:
+    name: Go dependency vulnerabilities (govulncheck)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "1.26"
+
+    - name: Install govulncheck
+      run: go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
+
+    - name: Scan every module
+      run: |
+        failed=""
+        for mod in $(git ls-files '*go.mod' | xargs -n1 dirname); do
+          echo "::group::$mod"
+          (cd "$mod" && $(go env GOPATH)/bin/govulncheck ./...) || failed="$failed $mod"
+          echo "::endgroup::"
+        done
+        if [ -n "$failed" ]; then
+          echo "Reachable vulnerabilities in:$failed"
+          exit 1
+        fi
+
+  go-sast:
+    name: Go static analysis (gosec)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "1.26"
+
+    - name: Install gosec
+      run: go install github.com/securego/gosec/v2/cmd/gosec@v2.30.0
+
+    - name: Scan every module
+      run: |
+        failed=""
+        for mod in $(git ls-files '*go.mod' | xargs -n1 dirname); do
+          echo "::group::$mod"
+          (cd "$mod" && $(go env GOPATH)/bin/gosec -quiet -exclude-generated -severity high -confidence high ./...) || failed="$failed $mod"
+          echo "::endgroup::"
+        done
+        if [ -n "$failed" ]; then
+          echo "High-severity findings in:$failed"
+          exit 1
+        fi
+
+  other-deps:
+    name: Rust, Python, Maven and Dart dependencies (osv-scanner)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "1.26"
+
+    - name: Install osv-scanner
+      run: go install github.com/google/osv-scanner/v2/cmd/osv-scanner@v2.7.0
+
+    - name: Scan lockfiles
+      run: |
+        args=""
+        for f in $(git ls-files | grep -E '(^|/)(Cargo\.lock|poetry\.lock|requirements\.txt|pubspec\.lock|pom\.xml)$'); do
+          args="$args -L $f"
+        done
+        $(go env GOPATH)/bin/osv-scanner scan source $args
+
+  npm-audit:
+    name: npm audit
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+
+    - name: Audit production dependencies
+      run: |
+        failed=""
+        for lock in $(git ls-files '*package-lock.json' | grep -v node_modules); do
+          dir=$(dirname "$lock")
+          echo "::group::$dir"
+          (cd "$dir" && npm audit --omit=dev --audit-level=critical) || failed="$failed $dir"
+          echo "::endgroup::"
+        done
+        if [ -n "$failed" ]; then
+          echo "Critical npm advisories in:$failed"
+          exit 1
+        fi

@@ -33,6 +33,7 @@ func writeError(c *gin.Context, err error) {
 		errors.Is(err, port.ErrAssignmentNotPending):
 		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 	}
 }

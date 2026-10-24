@@ -22,6 +22,22 @@ func TestCreatePostWithoutFileLeavesMediaIDNil(t *testing.T) {
 	}
 }
 
+func TestSafeExt(t *testing.T) {
+	cases := map[string]string{
+		"cover.PNG":        ".png",
+		"../../etc/passwd": "",
+		"a.html\x00.png":   ".png",
+		"noext":            "",
+		"x.tar.gz":         ".gz",
+		"evil.p/h":         "",
+	}
+	for in, want := range cases {
+		if got := safeExt(in); got != want {
+			t.Errorf("safeExt(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
 func TestCreatePostWithFileLinksTheUploadedMedia(t *testing.T) {
 	posts := newFakePostRepository()
 	media := newFakeMediaRepository()
@@ -43,8 +59,14 @@ func TestCreatePostWithFileLinksTheUploadedMedia(t *testing.T) {
 	if !ok {
 		t.Fatalf("no media row saved under post.MediaID = %q", *post.MediaID)
 	}
-	if !strings.HasSuffix(stored.URL, "cover.png") {
-		t.Errorf("stored media URL = %q, want it to reference cover.png", stored.URL)
+	if want := *post.MediaID + ".png"; storage.lastKey != want {
+		t.Errorf("object key = %q, want server-generated %q", storage.lastKey, want)
+	}
+	if !strings.HasSuffix(stored.URL, storage.lastKey) {
+		t.Errorf("stored media URL = %q, want it to reference %q", stored.URL, storage.lastKey)
+	}
+	if stored.Description != "cover.png" {
+		t.Errorf("media description = %q, want original file name", stored.Description)
 	}
 }
 

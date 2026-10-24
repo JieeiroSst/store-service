@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -20,4 +20,5 @@ COPY --from=builder /app/notification-service .
 
 EXPOSE 1235
 
+USER 65532:65532
 ENTRYPOINT ["./notification-service"]

@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/JIeeiroSst/payment-service/config"
 	"github.com/JIeeiroSst/payment-service/internal/domain/model"
@@ -102,6 +103,8 @@ func (g *gateway) RefundPayment(ctx context.Context, in port.RefundGatewayPaymen
 // (https://stripe.com/docs/webhooks/signatures: "t=<timestamp>,v1=<hex hmac>")
 // by recomputing the HMAC-SHA256 of "<timestamp>.<payload>" with webhookSecret,
 // then parses the event for the payment intent id and status.
+const webhookTolerance = 5 * time.Minute
+
 func (g *gateway) ParseWebhook(_ context.Context, payload []byte, headers map[string][]string) (*port.WebhookEvent, error) {
 	sigHeader := http.Header(headers).Get("Stripe-Signature")
 	if sigHeader == "" {
@@ -123,6 +126,17 @@ func (g *gateway) ParseWebhook(_ context.Context, payload []byte, headers map[st
 	}
 	if timestamp == "" || signature == "" {
 		return nil, fmt.Errorf("malformed Stripe-Signature header")
+	}
+
+	if g.webhookSecret == "" {
+		return nil, fmt.Errorf("webhook secret is not configured")
+	}
+	ts, err := strconv.ParseInt(timestamp, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("malformed Stripe-Signature timestamp")
+	}
+	if age := time.Since(time.Unix(ts, 0)); age > webhookTolerance || age < -webhookTolerance {
+		return nil, fmt.Errorf("webhook timestamp outside tolerance")
 	}
 
 	mac := hmac.New(sha256.New, []byte(g.webhookSecret))

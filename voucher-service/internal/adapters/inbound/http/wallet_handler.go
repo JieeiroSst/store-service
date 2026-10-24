@@ -6,6 +6,7 @@ import (
 	walletapp "github.com/JIeeiroSst/voucher-service/internal/application/wallet"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/wallet"
+	"github.com/JIeeiroSst/voucher-service/internal/adapters/inbound/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +21,10 @@ func NewWalletHandler(svc walletapp.WalletService) *WalletHandler {
 func (h *WalletHandler) GetBalance(c *gin.Context) {
 	ownerType := c.Param("ownerType")
 	ownerID := c.Param("ownerId")
+	if !middleware.IsAdmin(c) && !(wallet.OwnerType(ownerType) == wallet.OwnerTypeUser && callerIsUser(c, ownerID)) {
+		forbid(c)
+		return
+	}
 
 	balance, err := h.svc.GetBalance(c.Request.Context(), wallet.OwnerType(ownerType), ownerID)
 	if err != nil {

@@ -1,4 +1,4 @@
-FROM golang:1.25-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o ekyc-service ./cmd
 
-# The final stage is python:3.10-slim (glibc), not alpine like every other
+# The final stage is python:3.12-slim (glibc), not alpine like every other
 # service in this repo: the CARD_READER_PROVIDER=python/
 # FACE_ANALYZER_PROVIDER=python adapters (internal/adapter/secondary/
 # pyextract) shell out to python/extract_id.py, which needs dlib
@@ -22,7 +22,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o ekyc-service ./cmd
 # accuracy those providers give when enabled; the default providers
 # ("native", see config.ProvidersConfig) don't use Python at all and work
 # fine even if it's misconfigured or missing.
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -35,9 +35,9 @@ COPY python/requirements.txt ./python/requirements.txt
 # does not compile anything from source; face_recognition is installed
 # with --no-deps against it so pip's resolver doesn't also pull the real
 # (source-only) `dlib` package as a transitive dependency.
-RUN pip install --no-cache-dir dlib-bin==20.0.1 face-recognition-models==0.3.0 \
+RUN pip install --no-cache-dir setuptools==80.10.2 dlib-bin==20.0.1 face-recognition-models==0.3.0 \
     && pip install --no-cache-dir --no-deps face_recognition==1.3.0 \
-    && pip install --no-cache-dir click==8.1.7 numpy==1.26.4 pillow==10.4.0 easyocr==1.7.2
+    && pip install --no-cache-dir click==8.1.7 numpy==1.26.4 pillow==13.0.0 torch==2.14.1 easyocr==1.7.2
 
 COPY python/extract_id.py ./python/extract_id.py
 
@@ -46,4 +46,6 @@ COPY --from=builder /app/database.sql .
 
 EXPOSE 8087
 
+RUN useradd -u 10001 -m app
+USER 10001
 ENTRYPOINT ["./ekyc-service"]

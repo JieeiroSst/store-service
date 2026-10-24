@@ -20,10 +20,10 @@ use crate::{
     operation_id = "create_reward",
     path = "/reward",
     tag = "reward",
-    request_body = RequestCreateReward,
+    request_body = crate::api::resources::reward::dto::RequestCreateReward,
     responses(
-         (status = 201, description = "reward created",  body = ApiResponseReward),
-         (status = 400, description = "Invalid payload",  body = ErrorResponse),
+         (status = 201, description = "reward created",  body = crate::api::utils::response::ApiResponse<crate::api::resources::reward::dto::ResponseReward>),
+         (status = 400, description = "Invalid payload",  body = crate::api::error::ErrorResponse),
     ),
  )]
 #[post("/reward")]

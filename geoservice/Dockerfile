@@ -1,4 +1,4 @@
-FROM golang:1.22-alpine AS build
+FROM golang:1.26-alpine AS build
 WORKDIR /src
 COPY go.mod go.sum* ./
 RUN go mod download
@@ -12,4 +12,5 @@ WORKDIR /app
 COPY --from=build /out/server /usr/local/bin/server
 COPY --from=build /out/importgeo /usr/local/bin/importgeo
 EXPOSE 8081
+USER 65532:65532
 ENTRYPOINT ["server"]

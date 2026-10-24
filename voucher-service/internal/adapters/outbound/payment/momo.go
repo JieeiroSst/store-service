@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	paymentapp "github.com/JIeeiroSst/voucher-service/internal/application/payment"
 	"github.com/JIeeiroSst/voucher-service/internal/domain/shared"
@@ -75,17 +76,43 @@ func (g *MomoGateway) InitPayment(ctx context.Context, refID string, amount shar
 	return g.endpoint + "?orderId=" + refID, nil
 }
 
-func (g *MomoGateway) VerifyWebhookSignature(rawBody []byte, signature string) (string, bool, error) {
-	var callback struct {
-		OrderID    string `json:"orderId"`
-		ResultCode int    `json:"resultCode"`
-		Signature  string `json:"signature"`
+type momoIPN struct {
+	PartnerCode  string      `json:"partnerCode"`
+	OrderID      string      `json:"orderId"`
+	RequestID    string      `json:"requestId"`
+	Amount       json.Number `json:"amount"`
+	OrderInfo    string      `json:"orderInfo"`
+	OrderType    string      `json:"orderType"`
+	TransID      json.Number `json:"transId"`
+	ResultCode   json.Number `json:"resultCode"`
+	Message      string      `json:"message"`
+	PayType      string      `json:"payType"`
+	ResponseTime json.Number `json:"responseTime"`
+	ExtraData    string      `json:"extraData"`
+	Signature    string      `json:"signature"`
+}
+
+func (g *MomoGateway) VerifyWebhookSignature(rawBody []byte, _ string) (paymentapp.WebhookResult, error) {
+	if g.secretKey == "" || g.accessKey == "" {
+		return paymentapp.WebhookResult{}, fmt.Errorf("momo: merchant credentials are not configured")
 	}
-	if err := json.Unmarshal(rawBody, &callback); err != nil {
-		return "", false, err
+	var cb momoIPN
+	if err := json.Unmarshal(rawBody, &cb); err != nil {
+		return paymentapp.WebhookResult{}, fmt.Errorf("momo: malformed callback: %w", err)
 	}
-	success := callback.ResultCode == 0
-	return callback.OrderID, success, nil
+	raw := fmt.Sprintf("accessKey=%s&amount=%s&extraData=%s&message=%s&orderId=%s&orderInfo=%s&orderType=%s&partnerCode=%s&payType=%s&requestId=%s&responseTime=%s&resultCode=%s&transId=%s",
+		g.accessKey, cb.Amount, cb.ExtraData, cb.Message, cb.OrderID, cb.OrderInfo, cb.OrderType, cb.PartnerCode, cb.PayType, cb.RequestID, cb.ResponseTime, cb.ResultCode, cb.TransID)
+	if !hmac.Equal([]byte(g.sign(raw)), []byte(strings.ToLower(cb.Signature))) {
+		return paymentapp.WebhookResult{}, fmt.Errorf("momo: signature mismatch")
+	}
+	if cb.PartnerCode != g.partnerCode {
+		return paymentapp.WebhookResult{}, fmt.Errorf("momo: unexpected partner code")
+	}
+	amount, err := cb.Amount.Int64()
+	if err != nil {
+		return paymentapp.WebhookResult{}, fmt.Errorf("momo: invalid amount: %w", err)
+	}
+	return paymentapp.WebhookResult{PaymentID: cb.OrderID, Success: cb.ResultCode.String() == "0", Amount: amount}, nil
 }
 
 func (g *MomoGateway) Refund(ctx context.Context, providerTxnRef string, amount shared.Money) error {

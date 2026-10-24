@@ -78,7 +78,8 @@ func (h *Handler) EstimateFee(c *gin.Context) {
 
 	feeInfo, err := h.transactionService.EstimateFee(c.Request.Context(), from, to, req.Amount)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -113,7 +114,8 @@ func (h *Handler) FindPDA(c *gin.Context) {
 		req.Identifier,
 	)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

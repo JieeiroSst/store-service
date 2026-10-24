@@ -25,7 +25,7 @@ async def create_gym_pass(
     if not principal.is_admin():
         request.owner = principal.user_id
     result = service.create(request)
-    return JSONResponse(content=result.dict(), status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=result.model_dump(), status_code=status.HTTP_201_CREATED)
 
 
 @router.post(
@@ -40,7 +40,7 @@ async def pause(
 ) -> JSONResponse:
     request.gym_pass_id = gym_pass_id
     result = service.pause(request)
-    return JSONResponse(content=result.dict(), status_code=status.HTTP_201_CREATED)
+    return JSONResponse(content=result.model_dump(), status_code=status.HTTP_201_CREATED)
 
 
 @router.put(
@@ -52,7 +52,7 @@ async def pause(
 )
 async def renew(gym_pass_id: str, service: GymPassService = Depends(lambda: di[GymPassService])) -> JSONResponse:
     result = service.renew(gym_pass_id)
-    return JSONResponse(content=result.dict(), status_code=status.HTTP_200_OK)
+    return JSONResponse(content=result.model_dump(), status_code=status.HTTP_200_OK)
 
 
 @router.get(
@@ -64,4 +64,4 @@ async def renew(gym_pass_id: str, service: GymPassService = Depends(lambda: di[G
 )
 async def check(gym_pass_id: str, service: GymPassService = Depends(lambda: di[GymPassService])) -> JSONResponse:
     result = service.check(gym_pass_id)
-    return JSONResponse(content=result.dict(), status_code=status.HTTP_200_OK)
+    return JSONResponse(content=result.model_dump(), status_code=status.HTTP_200_OK)

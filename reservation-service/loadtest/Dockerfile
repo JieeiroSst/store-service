@@ -10,4 +10,5 @@ FROM alpine:3.19
 COPY --from=build /flash /flash
 COPY --from=build /fakeus /fakeus
 EXPOSE 18999
+USER 65532:65532
 ENTRYPOINT ["/flash"]

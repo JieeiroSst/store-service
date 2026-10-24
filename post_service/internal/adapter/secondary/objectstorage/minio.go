@@ -3,6 +3,7 @@ package objectstorage
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/JIeeiroSst/post-service/config"
 	"github.com/JIeeiroSst/post-service/internal/domain/port"
@@ -28,8 +29,8 @@ func NewObjectStorage(cfg *config.Config) (port.ObjectStorage, error) {
 }
 
 func (s *minioStorage) UploadFile(ctx context.Context, input port.UploadFileInput) (*port.UploadFileResult, error) {
-	_, err := s.client.PutObject(ctx, s.bucketName, input.FileName, input.Reader, input.Size, minio.PutObjectOptions{
-		ContentType: input.ContentType,
+	_, err := s.client.PutObject(ctx, s.bucketName, input.ObjectKey, input.Reader, input.Size, minio.PutObjectOptions{
+		ContentType: servableContentType(input.ContentType),
 		UserMetadata: map[string]string{
 			"x-amz-acl": "public-read",
 		},
@@ -37,7 +38,19 @@ func (s *minioStorage) UploadFile(ctx context.Context, input port.UploadFileInpu
 	if err != nil {
 		return nil, fmt.Errorf("upload to minio: %w", err)
 	}
-	return &port.UploadFileResult{URL: s.makeFileURL(input.FileName)}, nil
+	return &port.UploadFileResult{URL: s.makeFileURL(input.ObjectKey)}, nil
+}
+
+func servableContentType(ct string) string {
+	mt := strings.ToLower(strings.TrimSpace(strings.Split(ct, ";")[0]))
+	switch {
+	case mt == "image/svg+xml":
+		return "application/octet-stream"
+	case strings.HasPrefix(mt, "image/"), strings.HasPrefix(mt, "video/"), strings.HasPrefix(mt, "audio/"), mt == "application/pdf":
+		return mt
+	default:
+		return "application/octet-stream"
+	}
 }
 
 func (s *minioStorage) RemoveObject(ctx context.Context, fileName string) error {

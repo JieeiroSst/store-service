@@ -13,6 +13,7 @@ const (
 	CodeTokenInvalid        ErrorCode = "AUTH_TOKEN_INVALID"
 	CodeRefreshTokenInvalid ErrorCode = "AUTH_REFRESH_TOKEN_INVALID"
 	CodeAccountLocked       ErrorCode = "AUTH_ACCOUNT_LOCKED"
+	CodeTooManyAttempts     ErrorCode = "AUTH_TOO_MANY_ATTEMPTS"
 	CodeSSOFailed           ErrorCode = "AUTH_SSO_FAILED"
 
 	CodeUsernameRequired ErrorCode = "USER_USERNAME_REQUIRED"
@@ -48,6 +49,7 @@ var (
 	ErrFailedTokenUsername = newError(CodeTokenInvalid, "access token does not belong to this username")
 	ErrRefreshTokenInvalid = newError(CodeRefreshTokenInvalid, "refresh token is invalid or expired, please login again")
 	ErrAccountLocked       = newError(CodeAccountLocked, "account is locked")
+	ErrTooManyAttempts     = newError(CodeTooManyAttempts, "too many failed login attempts, please try again later")
 	ErrSSOStateMismatch    = newError(CodeSSOFailed, "sso state is missing or does not match, please login again")
 	ErrSSOExchangeFailed   = newError(CodeSSOFailed, "sso authorization code could not be verified")
 	ErrSSODenied           = newError(CodeSSOFailed, "sso login was denied by the identity provider")

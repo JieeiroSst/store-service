@@ -1,6 +1,6 @@
 // Empty in dev (CRA proxies /api to the backend, see package.json "proxy") and
 // in the container (nginx proxies it, and the ingress routes /api to the API).
-const API = process.env.REACT_APP_API_URL || "";
+const API = import.meta.env.REACT_APP_API_URL || "";
 
 async function json(res) {
   if (!res.ok) {

@@ -6,7 +6,7 @@ import AdminRoomTable from "@/components/AdminRoomTable";
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const session = getSession();
+  const session = await getSession();
   if (!session || session.role !== "admin") redirect("/dashboard");
 
   const rooms = await listRooms();

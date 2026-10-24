@@ -1,4 +1,4 @@
-FROM golang:latest as builder
+FROM golang:1.26 as builder
 
 WORKDIR /app
 
@@ -13,4 +13,5 @@ WORKDIR /app
 
 COPY --from=builder /app/server .
 
+USER 65532:65532
 CMD ["./server"]

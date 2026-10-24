@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -20,4 +20,5 @@ COPY --from=builder /app/partner-service .
 
 EXPOSE 8088
 
+USER 65532:65532
 ENTRYPOINT ["./partner-service"]

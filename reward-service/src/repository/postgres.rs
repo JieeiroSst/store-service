@@ -4,7 +4,8 @@ use std::io::Read;
 
 use deadpool_postgres::Pool;
 use deadpool_postgres::{Manager, ManagerConfig, RecyclingMethod};
-use rustls::{Certificate, RootCertStore};
+use rustls::{pki_types::CertificateDer, RootCertStore};
+use std::sync::Arc;
 use tokio_postgres_rustls::MakeRustlsConnect;
 
 #[cfg(test)]
@@ -98,13 +99,14 @@ pub fn get_tls_connector() -> Result<MakeRustlsConnect, Box<dyn Error>> {
     let mut root_cert_store = RootCertStore::empty();
 
     for pem in pems {
-        let certificate = Certificate(pem.contents().to_vec());
-        root_cert_store.add(&certificate)?;
+        root_cert_store.add(CertificateDer::from(pem.contents().to_vec()))?;
     }
 
-    let tls_config = rustls::ClientConfig::builder()
-        .with_safe_defaults()
-        .with_root_certificates(root_cert_store)
+    let tls_config = rustls::ClientConfig::builder_with_provider(Arc::new(
+        rustls::crypto::aws_lc_rs::default_provider(),
+    ))
+    .with_safe_default_protocol_versions()?
+    .with_root_certificates(root_cert_store)
         .with_no_client_auth();
 
     Ok(MakeRustlsConnect::new(tls_config))
@@ -151,4 +153,13 @@ pub async fn init_to_tests() -> Result<(), DomainError> {
         .expect("Error to run migration to tests");
 
     Ok(())
+}
+#[cfg(test)]
+mod tls_tests {
+    use super::get_tls_connector;
+
+    #[test]
+    fn builds_tls_connector_from_bundled_ca() {
+        assert!(get_tls_connector().is_ok());
+    }
 }

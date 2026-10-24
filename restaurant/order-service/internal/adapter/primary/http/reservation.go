@@ -23,7 +23,8 @@ func (h *Handler) CreateReservation(c *gin.Context) {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -38,7 +39,8 @@ func (h *Handler) CancelReservation(c *gin.Context) {
 	}
 
 	if err := h.reservation.Cancel(c, id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -54,7 +56,8 @@ func (h *Handler) GetReservation(c *gin.Context) {
 
 	reservation, err := h.reservation.FindByID(c, id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": reservation})
@@ -65,7 +68,8 @@ func (h *Handler) ListReservations(c *gin.Context) {
 		limit, _ := strconv.Atoi(c.Query("limit"))
 		reservations, err := h.reservation.FindByUser(c, userID, limit)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			_ = c.Error(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"data": reservations})
@@ -79,7 +83,8 @@ func (h *Handler) ListReservations(c *gin.Context) {
 
 	reservations, err := h.reservation.FindAll(c, pagination)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": reservations})

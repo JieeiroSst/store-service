@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -26,5 +26,6 @@ COPY --from=builder /app/account-transaction-service .
 # conventional gRPC / HTTP-gateway defaults used across services in this repo.
 EXPOSE 50051 8080
 
+USER 65532:65532
 ENTRYPOINT ["./account-transaction-service"]
 CMD ["api"]

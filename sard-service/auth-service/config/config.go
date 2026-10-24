@@ -90,6 +90,7 @@ type OTPDeliveryConfig struct {
 	WebhookURL   string
 	WebhookToken string
 	Timeout      time.Duration
+	LogPlaintext bool
 }
 
 func Defaults() *Config {
@@ -210,6 +211,7 @@ func (c *Config) ApplyEnv() {
 	setString(&c.OTPDelivery.Backend, "OTP_DELIVERY")
 	setString(&c.OTPDelivery.WebhookURL, "OTP_WEBHOOK_URL")
 	setString(&c.OTPDelivery.WebhookToken, "OTP_WEBHOOK_TOKEN")
+	c.OTPDelivery.LogPlaintext = os.Getenv("OTP_LOG_PLAINTEXT") == "true"
 	setDuration(&c.OTPDelivery.Timeout, "OTP_WEBHOOK_TIMEOUT")
 }
 

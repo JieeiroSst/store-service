@@ -16,7 +16,8 @@ func (h *Handler) GetPayment(c *gin.Context) {
 
 	payment, err := h.payment.Get(c, orderID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": payment})
@@ -32,7 +33,8 @@ func (h *Handler) MarkPaid(c *gin.Context) {
 	}
 
 	if err := h.payment.MarkPaid(c, orderID); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true})

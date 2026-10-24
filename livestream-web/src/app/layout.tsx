@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "Frontend for livestream_service",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = getSession();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getSession();
   return (
     <html lang="en" className={inter.variable}>
       <body className="font-sans">

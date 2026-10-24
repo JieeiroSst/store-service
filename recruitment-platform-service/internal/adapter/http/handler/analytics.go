@@ -50,7 +50,8 @@ func (h *AnalyticsHandler) RecruitmentFunnel(c *gin.Context) {
 	if err := h.db.SelectContext(c.Request.Context(), &rows,
 		`SELECT * FROM v_recruitment_funnel ORDER BY total_applications DESC`,
 	); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"funnel": rows, "total": len(rows)})
@@ -100,7 +101,8 @@ func (h *AnalyticsHandler) RecruiterPerformance(c *gin.Context) {
 	if err := h.db.SelectContext(c.Request.Context(), &rows,
 		`SELECT * FROM v_recruiter_performance ORDER BY hired DESC`,
 	); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"recruiters": rows})
@@ -127,7 +129,8 @@ func (h *AnalyticsHandler) SLABreaches(c *gin.Context) {
 
 	var rows []SLARow
 	if err := h.db.SelectContext(c.Request.Context(), &rows, query); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -161,7 +164,8 @@ func (h *AnalyticsHandler) AIScoreDistribution(c *gin.Context) {
 	if err := h.db.SelectContext(c.Request.Context(), &rows,
 		`SELECT * FROM v_ai_score_distribution ORDER BY avg_score DESC`,
 	); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"score_distribution": rows})
@@ -180,7 +184,8 @@ func (h *AnalyticsHandler) ReferralNetworkStats(c *gin.Context) {
 	if err := h.db.SelectContext(c.Request.Context(), &rows,
 		`SELECT * FROM v_referral_network_stats ORDER BY hired_referrals DESC LIMIT 100`,
 	); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"network": rows})

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { decodeJwtPayload, isExpired } from "@/lib/jwt";
 import { SESSION_COOKIE } from "@/lib/session";
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   const payload = token ? decodeJwtPayload(token) : null;
   const authenticated = Boolean(payload?.sub) && !isExpired(payload ?? {});

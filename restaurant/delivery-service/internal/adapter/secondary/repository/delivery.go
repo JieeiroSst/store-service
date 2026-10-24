@@ -5,7 +5,6 @@ import (
 
 	"github.com/JIeeiroSst/delivery-service/internal/domain/model"
 	"github.com/JIeeiroSst/delivery-service/internal/domain/port"
-	"github.com/JieeiroSst/logger"
 	"gorm.io/gorm"
 )
 
@@ -33,10 +32,10 @@ func (r *deliveryRepository) FindByActive(ctx context.Context) (*model.Delivery,
 	return &delivery, nil
 }
 
-func (r *deliveryRepository) FindAll(ctx context.Context, pagination logger.Pagination) (logger.Pagination, error) {
+func (r *deliveryRepository) FindAll(ctx context.Context, pagination model.Pagination) (model.Pagination, error) {
 	var deliveries []*model.Delivery
 
-	r.db.WithContext(ctx).Scopes(logger.Paginate(deliveries, &pagination, r.db)).Find(&deliveries)
+	r.db.WithContext(ctx).Scopes(paginate(deliveries, &pagination, r.db)).Find(&deliveries)
 	pagination.Rows = deliveries
 
 	return pagination, nil

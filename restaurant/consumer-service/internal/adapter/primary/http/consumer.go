@@ -17,7 +17,8 @@ func (h *Handler) FindConsumer(c *gin.Context) {
 
 	consumers, err := h.consumer.Find(c, pagination)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": consumers})
@@ -31,7 +32,8 @@ func (h *Handler) ConsumerOrder(c *gin.Context) {
 	}
 
 	if err := h.consumer.PlaceOrder(c, order); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

@@ -28,6 +28,7 @@ func writeError(c *gin.Context, err error) {
 		errors.Is(err, port.ErrInvalidPaymentMethod):
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 	}
 }

@@ -2,11 +2,13 @@ package di
 
 import (
 	"context"
+	"time"
 
 	"github.com/JIeeiroSst/user-service/config"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/authorizeclient"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/jwttoken"
+	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/loginthrottle"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/oauthprovider"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/oidcprovider"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/pg"
@@ -23,6 +25,7 @@ import (
 	"github.com/JIeeiroSst/user-service/internal/port/output"
 	"github.com/JIeeiroSst/utils/cache/expire"
 	pgconn "github.com/JIeeiroSst/utils/postgres"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/fx"
 	"gorm.io/gorm"
 )
@@ -50,6 +53,10 @@ func newDB(cfg *config.Config) (*gorm.DB, error) {
 
 func newCache(cfg *config.Config) expire.CacheHelper {
 	return expire.NewCacheHelper(cfg.Redis.Dns)
+}
+
+func newLoginThrottle(cfg *config.Config) output.LoginThrottle {
+	return loginthrottle.New(redis.NewClient(&redis.Options{Addr: cfg.Redis.Dns}), 5, 15*time.Minute)
 }
 
 func newUserRepository(db *gorm.DB) output.UserRepository { return pg.NewUserRepository(db) }
@@ -91,8 +98,8 @@ func newSessionService(cfg *config.Config, repo output.SessionRepository, store 
 
 func asSessionService(s *session.Service) input.SessionService { return s }
 
-func newAuthService(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, sessions *session.Service) *auth.Service {
-	return auth.New(userRepo, hasher, tokenGen, tokenStore, sessions)
+func newAuthService(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, sessions *session.Service, throttle output.LoginThrottle) *auth.Service {
+	return auth.New(userRepo, hasher, tokenGen, tokenStore, sessions, throttle)
 }
 
 func asAuthService(s *auth.Service) input.AuthService { return s }
@@ -189,6 +196,7 @@ var Module = fx.Options(
 		loadConfig,
 		newDB,
 		newCache,
+		newLoginThrottle,
 		newUserRepository,
 		newRoleRepository,
 		newSessionRepository,

@@ -1,4 +1,4 @@
-FROM golang:1.23-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -26,5 +26,6 @@ COPY --from=builder /app/config/conf ./config/conf
 # back to environment variables (see config/config.go).
 EXPOSE 8080 9090
 
+USER 65532:65532
 ENTRYPOINT ["./authorize-service"]
 CMD ["api"]

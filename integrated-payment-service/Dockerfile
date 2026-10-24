@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
@@ -30,4 +30,5 @@ COPY --from=builder /app/configs ./configs
 EXPOSE 8080
 
 # Run the application
+USER 65532:65532
 CMD ["./main"]

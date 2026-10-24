@@ -1,6 +1,6 @@
 module github.com/JieeiroSst/banking-service
 
-go 1.25
+go 1.26.0
 
 require (
 	github.com/Shopify/sarama v1.38.1
@@ -9,6 +9,7 @@ require (
 	github.com/hashicorp/consul/api v1.26.1
 	github.com/joho/godotenv v1.5.1
 	github.com/redis/go-redis/v9 v9.21.0
+	github.com/sirupsen/logrus v1.9.4
 	go.uber.org/fx v1.24.0
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gorm v1.31.2
@@ -62,7 +63,6 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rogpeppe/go-internal v1.15.0 // indirect
-	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
@@ -70,11 +70,11 @@ require (
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
 	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.20.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -57,7 +57,8 @@ func (h *Handler) exportXLSX(c *gin.Context) {
 	}
 	buf, err := x.WriteToBuffer()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.Header("Content-Disposition", "attachment; filename=data.xlsx")

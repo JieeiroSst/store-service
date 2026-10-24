@@ -6,7 +6,6 @@ import (
 
 	"github.com/JIeeiroSst/delivery-service/internal/domain/model"
 	"github.com/JIeeiroSst/delivery-service/internal/domain/port"
-	"github.com/JieeiroSst/logger"
 )
 
 // Fee/ETA estimation constants: a flat base fee plus a per-km rate, and an
@@ -37,7 +36,7 @@ func NewDeliveryService(repo port.DeliveryRepository) port.DeliveryUsecase {
 }
 
 func (s *deliveryService) Create(ctx context.Context, delivery *model.Delivery) error {
-	delivery.ShipID = logger.GearedIntID()
+	delivery.ShipID = newShipID()
 	delivery.Status = model.StatusFree
 	delivery.Fee, delivery.ETAMinutes = estimateFeeAndETA(delivery.DistanceKm)
 
@@ -57,7 +56,7 @@ func (s *deliveryService) FindByActive(ctx context.Context) (*model.Delivery, er
 	return s.repo.FindByActive(ctx)
 }
 
-func (s *deliveryService) FindAll(ctx context.Context, pagination logger.Pagination) (logger.Pagination, error) {
+func (s *deliveryService) FindAll(ctx context.Context, pagination model.Pagination) (model.Pagination, error) {
 	return s.repo.FindAll(ctx, pagination)
 }
 

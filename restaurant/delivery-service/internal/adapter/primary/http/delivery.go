@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/JIeeiroSst/delivery-service/internal/domain/model"
-	"github.com/JieeiroSst/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +15,8 @@ func (h *Handler) RegisterDelivery(c *gin.Context) {
 	}
 
 	if err := h.delivery.Create(c, &delivery); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 
@@ -24,7 +24,7 @@ func (h *Handler) RegisterDelivery(c *gin.Context) {
 }
 
 func (h *Handler) All(c *gin.Context) {
-	var pagination logger.Pagination
+	var pagination model.Pagination
 	if err := c.ShouldBindQuery(&pagination); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -32,7 +32,8 @@ func (h *Handler) All(c *gin.Context) {
 
 	deliveries, err := h.delivery.FindAll(c, pagination)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 

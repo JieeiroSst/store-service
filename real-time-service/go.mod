@@ -4,7 +4,7 @@ go 1.21.4
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/gorilla/websocket v1.5.1
+	github.com/gorilla/websocket v1.5.3
 	github.com/hashicorp/consul/api v1.27.0
 	github.com/joho/godotenv v1.5.1
 	go.uber.org/zap v1.26.0
@@ -27,6 +27,5 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63 // indirect
-	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 )

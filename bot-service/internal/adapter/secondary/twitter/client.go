@@ -15,15 +15,17 @@ import (
 const (
 	apiBase        = "https://api.twitter.com/2"
 	mediaUploadURL = "https://upload.twitter.com/1.1/media/upload.json"
+	maxMediaBytes  = 15 << 20
 )
 
 type Client struct {
-	cfg config.TwitterConfig
-	hc  *http.Client
+	cfg   config.TwitterConfig
+	hc    *http.Client
+	media *http.Client
 }
 
 func NewClient(cfg *config.Config) *Client {
-	return &Client{cfg: cfg.Twitter, hc: http.DefaultClient}
+	return &Client{cfg: cfg.Twitter, hc: http.DefaultClient, media: newPublicOnlyClient()}
 }
 
 func (c *Client) ReplyToTweet(ctx context.Context, inReplyToTweetID, text string) error {
@@ -105,7 +107,7 @@ func (c *Client) UploadMedia(ctx context.Context, imageURL string) (string, erro
 	if err != nil {
 		return "", err
 	}
-	imgResp, err := c.hc.Do(getReq)
+	imgResp, err := c.media.Do(getReq)
 	if err != nil {
 		return "", fmt.Errorf("twitter: download media: %w", err)
 	}
@@ -113,9 +115,12 @@ func (c *Client) UploadMedia(ctx context.Context, imageURL string) (string, erro
 	if imgResp.StatusCode >= 300 {
 		return "", fmt.Errorf("twitter: download media failed with status %d", imgResp.StatusCode)
 	}
-	imgBytes, err := io.ReadAll(imgResp.Body)
+	imgBytes, err := io.ReadAll(io.LimitReader(imgResp.Body, maxMediaBytes+1))
 	if err != nil {
 		return "", err
+	}
+	if len(imgBytes) > maxMediaBytes {
+		return "", fmt.Errorf("twitter: media larger than %d bytes", maxMediaBytes)
 	}
 
 	var buf bytes.Buffer

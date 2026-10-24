@@ -140,7 +140,8 @@ func (h *ReferralHandler) GenerateLink(c *gin.Context) {
 func (h *ReferralHandler) Leaderboard(c *gin.Context) {
 	stats, err := h.svc.GetLeaderboard(c.Request.Context(), 20)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"leaderboard": stats})

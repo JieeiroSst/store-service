@@ -24,7 +24,8 @@ func NewInternalHandler(publish port.PublishUsecase) *InternalHandler {
 // instead of the streamer disconnecting.
 func (h *InternalHandler) ForceUnpublish(c *gin.Context) {
 	if err := h.publish.HandleOnUnpublish(c.Request.Context(), c.Param("streamKey")); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.Status(http.StatusNoContent)

@@ -1,6 +1,6 @@
 // REACT_APP_API_URL is empty when the API is served from the same origin (the
 // ingress routes /api to the backend, and CRA's dev proxy does the same).
-const BASE = process.env.REACT_APP_API_URL || '';
+const BASE = import.meta.env.REACT_APP_API_URL || '';
 const STORAGE_KEY = 'room-chat.session';
 // Refresh a little early so a request never goes out with a token that
 // expires in flight.

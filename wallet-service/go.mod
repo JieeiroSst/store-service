@@ -1,6 +1,6 @@
 module github.com/JIeeiroSst/wallet-service
 
-go 1.21
+go 1.26.0
 
 require (
 	github.com/gin-gonic/gin v1.9.1
@@ -9,12 +9,12 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
-	github.com/redis/go-redis/v9 v9.3.0
+	github.com/redis/go-redis/v9 v9.6.3
 	github.com/shopspring/decimal v1.3.1
 	github.com/spf13/viper v1.18.2
 	go.uber.org/fx v1.20.1
 	go.uber.org/zap v1.26.0
-	golang.org/x/crypto v0.22.0
+	golang.org/x/crypto v0.57.0
 )
 
 require (
@@ -64,9 +64,9 @@ require (
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
-	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

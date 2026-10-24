@@ -89,7 +89,7 @@ func (h *FacebookHandler) ReceiveWebhook(c *gin.Context) {
 
 func validSignature(appSecret, header string, body []byte) bool {
 	const prefix = "sha256="
-	if !strings.HasPrefix(header, prefix) {
+	if appSecret == "" || !strings.HasPrefix(header, prefix) {
 		return false
 	}
 	mac := hmac.New(sha256.New, []byte(appSecret))

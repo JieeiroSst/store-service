@@ -70,6 +70,35 @@ func call(t *testing.T, srv *httptest.Server, method, path, body string, headers
 	return res.StatusCode, strings.TrimSpace(string(b))
 }
 
+func callKey(t *testing.T, srv *httptest.Server, method, path, body string, headers map[string]string) (int, string) {
+	t.Helper()
+	h := map[string]string{apiKeyHeader: base64.StdEncoding.EncodeToString([]byte("secret"))}
+	for k, v := range headers {
+		h[k] = v
+	}
+	return call(t, srv, method, path, body, h)
+}
+
+func TestEmptyAPIKeyRefusesEverything(t *testing.T) {
+	srv := newTestServer(t, &fakeKeycloak{}, "")
+	path := "/api/v1/admin/realms/demo/users/u1"
+	if code, _ := call(t, srv, "GET", path, "", nil); code != http.StatusForbidden {
+		t.Fatalf("want 403 when no key is configured, got %d", code)
+	}
+	empty := base64.StdEncoding.EncodeToString([]byte(""))
+	if code, _ := call(t, srv, "GET", path, "", map[string]string{apiKeyHeader: empty}); code != http.StatusForbidden {
+		t.Fatalf("want 403 for empty key header, got %d", code)
+	}
+}
+
+func TestAPIKeyIsCaseSensitive(t *testing.T) {
+	srv := newTestServer(t, &fakeKeycloak{}, "secret")
+	upper := base64.StdEncoding.EncodeToString([]byte("SECRET"))
+	if code, _ := call(t, srv, "GET", "/api/v1/admin/realms/demo/users/u1", "", map[string]string{apiKeyHeader: upper}); code != http.StatusForbidden {
+		t.Fatalf("want 403 for wrong-case key, got %d", code)
+	}
+}
+
 func TestHealthBypassesAPIKey(t *testing.T) {
 	srv := newTestServer(t, &fakeKeycloak{}, "secret")
 	if code, _ := call(t, srv, "GET", "/health", "", nil); code != http.StatusOK {
@@ -91,14 +120,14 @@ func TestAPIKey(t *testing.T) {
 
 func TestAdminTokenResolution(t *testing.T) {
 	kc := &fakeKeycloak{}
-	srv := newTestServer(t, kc, "")
+	srv := newTestServer(t, kc, "secret")
 
-	call(t, srv, "GET", "/api/v1/admin/realms/demo/users/u1", "", nil)
+	callKey(t, srv, "GET", "/api/v1/admin/realms/demo/users/u1", "", nil)
 	if kc.lastToken != "admin-token" || kc.lastRealm != "demo" {
 		t.Fatalf("want admin fallback token, got token=%s realm=%s", kc.lastToken, kc.lastRealm)
 	}
 
-	call(t, srv, "GET", "/api/v1/admin/realms/demo/users/u1", "", map[string]string{"Authorization": "Bearer caller"})
+	callKey(t, srv, "GET", "/api/v1/admin/realms/demo/users/u1", "", map[string]string{"Authorization": "Bearer caller"})
 	if kc.lastToken != "caller" {
 		t.Fatalf("want caller token, got %s", kc.lastToken)
 	}
@@ -106,26 +135,26 @@ func TestAdminTokenResolution(t *testing.T) {
 
 func TestErrorMapping(t *testing.T) {
 	kc := &fakeKeycloak{}
-	srv := newTestServer(t, kc, "")
+	srv := newTestServer(t, kc, "secret")
 
-	if code, _ := call(t, srv, "GET", "/api/v1/admin/realms/demo/users/missing", "", nil); code != http.StatusNotFound {
+	if code, _ := callKey(t, srv, "GET", "/api/v1/admin/realms/demo/users/missing", "", nil); code != http.StatusNotFound {
 		t.Fatalf("want 404 from keycloak error, got %d", code)
 	}
-	if code, _ := call(t, srv, "POST", "/api/v1/admin/realms/demo/users", "not json", nil); code != http.StatusBadRequest {
+	if code, _ := callKey(t, srv, "POST", "/api/v1/admin/realms/demo/users", "not json", nil); code != http.StatusBadRequest {
 		t.Fatalf("want 400 for bad body, got %d", code)
 	}
 
 	kc.adminErr = port.ErrAdminNotConfigured
-	if code, _ := call(t, srv, "GET", "/api/v1/admin/realms/demo/users/u1", "", nil); code != http.StatusUnauthorized {
+	if code, _ := callKey(t, srv, "GET", "/api/v1/admin/realms/demo/users/u1", "", nil); code != http.StatusUnauthorized {
 		t.Fatalf("want 401 without credentials, got %d", code)
 	}
 }
 
 func TestCreateUserAndQueryParams(t *testing.T) {
 	kc := &fakeKeycloak{}
-	srv := newTestServer(t, kc, "")
+	srv := newTestServer(t, kc, "secret")
 
-	code, body := call(t, srv, "POST", "/api/v1/admin/realms/demo/users", `{"username":"bob","attributes":{"team":["a"]}}`, nil)
+	code, body := callKey(t, srv, "POST", "/api/v1/admin/realms/demo/users", `{"username":"bob","attributes":{"team":["a"]}}`, nil)
 	if code != http.StatusCreated || body != `{"id":"new-id"}` {
 		t.Fatalf("unexpected create response %d %s", code, body)
 	}
@@ -133,7 +162,7 @@ func TestCreateUserAndQueryParams(t *testing.T) {
 		t.Fatalf("user not decoded: %+v", kc.lastUser)
 	}
 
-	if code, body := call(t, srv, "GET", "/api/v1/admin/realms/demo/users?max=5&enabled=true", "", nil); code != http.StatusOK {
+	if code, body := callKey(t, srv, "GET", "/api/v1/admin/realms/demo/users?max=5&enabled=true", "", nil); code != http.StatusOK {
 		t.Fatalf("query params not parsed: %d %s", code, body)
 	}
 }

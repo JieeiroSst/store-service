@@ -8,6 +8,7 @@ import (
 
 type RouterConfig struct {
 	APIKey      string
+	DevMode     bool
 	RateLimiter *RateLimiter
 	Log         *zap.Logger
 }
@@ -25,7 +26,7 @@ func NewRouter(h *Handler, cfg RouterConfig) *gin.Engine {
 	r.GET("/health", h.Health)
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
-	v1 := r.Group("/api/v1", cfg.RateLimiter.Middleware(), APIKeyAuth(cfg.APIKey))
+	v1 := r.Group("/api/v1", cfg.RateLimiter.Middleware(), APIKeyAuth(cfg.APIKey, cfg.DevMode))
 	{
 		ch := v1.Group("/channels")
 		{

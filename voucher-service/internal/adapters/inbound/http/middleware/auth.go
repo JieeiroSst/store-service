@@ -43,3 +43,25 @@ func ClaimsFromGin(c *gin.Context) (*authapp.Claims, bool) {
 	claims, ok := v.(*authapp.Claims)
 	return claims, ok
 }
+
+func IsAdmin(c *gin.Context) bool {
+	claims, ok := ClaimsFromGin(c)
+	return ok && (claims.Role == "admin" || claims.Role == "super_admin")
+}
+
+func CallerID(c *gin.Context) string {
+	if claims, ok := ClaimsFromGin(c); ok {
+		return claims.UserID
+	}
+	return ""
+}
+
+func RequireAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !IsAdmin(c) {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": gin.H{"code": "forbidden", "message": "admin role required"}})
+			return
+		}
+		c.Next()
+	}
+}

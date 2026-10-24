@@ -5,7 +5,7 @@ const BASE_URL = process.env.LIVESTREAM_SERVICE_URL ?? "http://localhost:8080";
 
 async function proxy(req: NextRequest, path: string[]): Promise<NextResponse> {
   const target = `${BASE_URL}/api/${path.join("/")}${req.nextUrl.search}`;
-  const token = getRawSessionToken();
+  const token = await getRawSessionToken();
 
   const headers: Record<string, string> = {};
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -27,12 +27,12 @@ async function proxy(req: NextRequest, path: string[]): Promise<NextResponse> {
   });
 }
 
-export async function GET(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return proxy(req, params.path);
+export async function GET(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  return proxy(req, (await params).path);
 }
-export async function POST(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return proxy(req, params.path);
+export async function POST(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  return proxy(req, (await params).path);
 }
-export async function DELETE(req: NextRequest, { params }: { params: { path: string[] } }) {
-  return proxy(req, params.path);
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  return proxy(req, (await params).path);
 }

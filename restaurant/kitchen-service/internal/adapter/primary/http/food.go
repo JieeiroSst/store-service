@@ -19,7 +19,8 @@ func (h *Handler) FindFood(c *gin.Context) {
 
 	foods, err := h.food.Find(c, pagination)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": foods})
@@ -33,7 +34,8 @@ func (h *Handler) CreateFood(c *gin.Context) {
 	}
 
 	if err := h.food.Create(c, &food); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"success": true})
@@ -59,7 +61,8 @@ func (h *Handler) FindFoodByIDs(c *gin.Context) {
 
 	foods, err := h.food.FindByIDs(c, ids)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		_ = c.Error(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": foods})
