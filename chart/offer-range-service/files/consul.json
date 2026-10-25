@@ -25,7 +25,7 @@
         "postgresql_user": "testUser",
         "postgresql_password": "testPassword",
         "postgresql_dbname": "offer_range_service",
-        "postgresql_ssl_mode": false,
+        "postgresql_ssl_mode": true,
         "pg_driver": "pgx"
     }
 }

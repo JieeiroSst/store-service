@@ -44,6 +44,16 @@ walletService:
     addr: http://consul-service
     key: wallet-service
   credentialsSecret: wallet-service-db-credentials
+  # security.card_hash_key keys the HMAC of generated card numbers (PCI DSS
+  # 3.5.1.1); card issuing is refused while it is shorter than 32 characters.
+  # Rendered from values outside prod only; prod syncs it into
+  # credentialsSecret through externalSecret (values-prod.yaml).
+  secret:
+    create: true
+    name: wallet-service-secret
+    stringData:
+      CARD_HASH_KEY: local-dev-only-wallet-card-hash-key-change-me
+  cardHashKeySecret: wallet-service-secret
   # Inserts demo banks and merchants (migrations/seed) on startup.
   seedDevData: false
 
@@ -69,6 +79,12 @@ walletService:
         secretKeyRef:
           name: "{{ .Values.walletService.credentialsSecret }}"
           key: POSTGRES_PASSWORD
+    - name: SECURITY_CARD_HASH_KEY
+      valueFrom:
+        secretKeyRef:
+          name: "{{ .Values.walletService.cardHashKeySecret }}"
+          key: CARD_HASH_KEY
+          optional: true
     - name: DATABASE_SEED_DEV_DATA
       value: "true"
       when: "{{ if .Values.walletService.seedDevData }}true{{ end }}"

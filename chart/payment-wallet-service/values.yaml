@@ -3,6 +3,8 @@
 global:
   environment: local
 paymentWalletService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: payment-wallet-service
   selectorApp: payment-wallet-service-deployment
   containerName: payment-wallet-service-deployment
@@ -40,8 +42,7 @@ paymentWalletService:
     postgresUser: testUser
     postgresPassword: testPassword
     postgresDbname: payment_wallet
-    postgresSSLMode: "disable"
-
+    postgresSSLMode: require
   resources:
     requests:
       cpu: 50m

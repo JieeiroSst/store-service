@@ -43,12 +43,12 @@ luckyService:
     host: postgresdb
     port: 80
     database: lucky_service
-    sslMode: disable
+    sslMode: require
     credentialsSecret: lucky-service-db-credentials
   userServiceUrl: http://user-api-svc
   userServiceTimeout: 2s
   internalTokensSecret:
-    enabled: false
+    enabled: true
     name: internal-api-tokens
     key: INTERNAL_API_TOKENS
   defaultTimezone: Asia/Ho_Chi_Minh

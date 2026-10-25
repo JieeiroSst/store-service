@@ -3,6 +3,8 @@
 global:
   environment: local
 movieRecommendationService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: movie-recommendation-service
   selectorApp: movie-recommendation-service-deployment
   containerName: movie-recommendation-service-deployment
@@ -43,8 +45,7 @@ movieRecommendationService:
     postgresDatabase: movie_recommendation_service
     postgresUser: testUser
     postgresPassword: testPassword
-    postgresSSLMode: disable
-
+    postgresSSLMode: require
     # Catalog source: the videos to recommend are mirrored from video-service.
     # Empty disables the sync (register videos with PUT /api/recommendations/videos/:id).
     videoServiceBaseURL: http://video-service-svc

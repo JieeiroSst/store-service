@@ -8,7 +8,7 @@
         "postgresql_user": "geo",
         "postgresql_password": "geo",
         "postgresql_dbname": "geo",
-        "postgresql_ssl_mode": false
+        "postgresql_ssl_mode": true
     },
     "log_level": "info"
 }

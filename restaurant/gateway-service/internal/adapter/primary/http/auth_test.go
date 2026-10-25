@@ -82,8 +82,8 @@ func TestGatewayRequiresUserServiceAccessToken(t *testing.T) {
 	if code := call(enforcing, "X-Internal-Token", "svc"); code != 200 {
 		t.Fatalf("service token: %d", code)
 	}
-	if code := call(newRouter(nil), "X-User-Id", "1"); code != 200 || seen.Get("X-User-Id") != "" {
-		t.Fatalf("rollout mode lets anonymous through but never a spoofed user id: %d %v", code, seen)
+	if code := call(newRouter(nil), "X-User-Id", "1"); code != nethttp.StatusUnauthorized || seen != nil {
+		t.Fatalf("without internal tokens anonymous requests must still be rejected: %d %v", code, seen)
 	}
 	if code := get(enforcing, "/health"); code != 200 {
 		t.Fatalf("health must stay open: %d", code)

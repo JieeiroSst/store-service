@@ -3,6 +3,8 @@
 global:
   environment: local
 automaticPayment:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: automatic-payment-service
   selectorApp: automatic-payment-service-deployment
   containerName: automatic-payment-service-deployment

@@ -4,6 +4,7 @@ interface Postgres {
     User: string;
     Password: string;
     Database: string;
+    SSLMode: string;
 }
 
 interface Config {
@@ -19,6 +20,7 @@ const postgres: Postgres = {
     User: process.env.UserPostgres ?? "postgres",
     Password: process.env.PasswordPostgres ?? "",
     Database: process.env.DatabasePostgres ?? "recompense_service",
+    SSLMode: process.env.SSLModePostgres ?? "disable",
 }
 
 const config: Config = {

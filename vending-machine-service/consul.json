@@ -8,7 +8,7 @@
         "user": "vending_machine_svc",
         "password": "",
         "dbname": "vending_machine",
-        "sslmode": "disable",
+        "sslmode": "require",
         "maxConns": 10
     },
     "vending": {

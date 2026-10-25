@@ -8,6 +8,6 @@
         "postgresqlUser": "testUser",
         "postgresqlPassword": "testPassword",
         "postgresqlDbname": "parking_lot",
-        "postgresqlSSLMode": false
+        "postgresqlSSLMode": true
     }
 }

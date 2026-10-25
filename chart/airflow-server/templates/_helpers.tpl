@@ -1,5 +1,5 @@
 {{- define "airflow-server.sqlAlchemyConn" -}}
-postgresql+psycopg2://{{ .Values.airflowServer.postgres.user }}:{{ .Values.airflowServer.postgres.password }}@{{ .Values.airflowServer.postgres.service.name }}:{{ .Values.airflowServer.postgres.service.port }}/{{ .Values.airflowServer.postgres.db }}
+postgresql+psycopg2://{{ .Values.airflowServer.postgres.user }}:{{ .Values.airflowServer.postgres.password }}@{{ .Values.airflowServer.postgres.service.name }}:{{ .Values.airflowServer.postgres.service.port }}/{{ .Values.airflowServer.postgres.db }}?sslmode=require
 {{- end -}}
 
 {{- define "airflow-server.secretName" -}}

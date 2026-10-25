@@ -11,6 +11,7 @@ var (
 	ErrCurrencyMismatch         = errors.New("currency mismatch")
 	ErrSameWallet               = errors.New("cannot transfer to the same wallet")
 	ErrInvalidPaymentMethodType = errors.New("invalid payment method type")
+	ErrInvalidCardNumber        = errors.New("card account_number must be a valid 13-19 digit card number")
 
 	ErrTransactionNotReversible = errors.New("transaction cannot be reversed")
 	ErrTransferNotReversible    = errors.New("transfer cannot be reversed")

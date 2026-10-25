@@ -45,6 +45,7 @@ func writeError(c *gin.Context, err error) {
 		errors.Is(err, port.ErrCurrencyMismatch),
 		errors.Is(err, port.ErrSameWallet),
 		errors.Is(err, port.ErrInvalidPaymentMethodType),
+		errors.Is(err, port.ErrInvalidCardNumber),
 		errors.Is(err, port.ErrTransactionNotReversible),
 		errors.Is(err, port.ErrTransferNotReversible),
 		errors.Is(err, port.ErrInvalidWalletStatusTransition),

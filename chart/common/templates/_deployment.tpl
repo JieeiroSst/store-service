@@ -183,7 +183,15 @@ spec:
               protocol: TCP
             {{- end }}
           {{- end }}
-          {{- with $svc.containerEnv }}
+          {{- $env := $svc.containerEnv | default list }}
+          {{- if $svc.internalApiTokens }}
+          {{- /* INTERNAL_API_TOKENS is checked on X-Internal-Token, INTERNAL_API_TOKEN is sent
+                 to other services; both come from the platform chart's internal-api-tokens. */}}
+          {{- range list "INTERNAL_API_TOKENS" "INTERNAL_API_TOKEN" }}
+          {{- $env = append $env (dict "name" . "valueFrom" (dict "secretKeyRef" (dict "name" "internal-api-tokens" "key" . "optional" true))) }}
+          {{- end }}
+          {{- end }}
+          {{- with $env }}
           env:
             {{- include "common.env" (dict "root" $root "env" .) | nindent 12 }}
           {{- end }}

@@ -9,9 +9,13 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
+	"net/url"
+	"os"
 	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -19,14 +23,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq"
-)
-
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "postgres"
-	dbname   = "chatapp"
 )
 
 var db *sql.DB
@@ -113,12 +109,20 @@ func NewChatServer() *ChatServer {
 	}
 }
 
-func InitDB() (*sql.DB, error) {
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+func databaseURL() string {
+	u := url.URL{
+		Scheme:   "postgres",
+		User:     url.UserPassword(getEnv("POSTGRES_USER", "postgres"), os.Getenv("POSTGRES_PASSWORD")),
+		Host:     net.JoinHostPort(getEnv("POSTGRES_HOST", "localhost"), getEnv("POSTGRES_PORT", "5432")),
+		Path:     "/" + getEnv("POSTGRES_DB", "chatapp"),
+		RawQuery: url.Values{"sslmode": {getEnv("POSTGRES_SSLMODE", "require")}}.Encode(),
+	}
+	return u.String()
+}
 
+func InitDB() (*sql.DB, error) {
 	var err error
-	db, err = sql.Open("postgres", connStr)
+	db, err = sql.Open("postgres", databaseURL())
 	if err != nil {
 		return nil, err
 	}
@@ -470,7 +474,7 @@ func fetchOllamaResponse(message string) (string, error) {
 		return "", err
 	}
 
-	httpReq, err := http.NewRequest("POST", "http://localhost:11434/api/chat", bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequest("POST", strings.TrimRight(getEnv("OLLAMA_URL", "http://localhost:11434"), "/")+"/api/chat", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", err
 	}

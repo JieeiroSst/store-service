@@ -51,7 +51,7 @@ bookService:
   # provisioner creates the credentials Secret below in `default`; other
   # namespaces mirror it with an ExternalSecret (values-dev.yaml).
   database:
-    url: jdbc:postgresql://postgresdb:80/book_service
+    url: jdbc:postgresql://postgresdb:80/book_service?sslmode=require
     credentialsSecret: book-service-db-credentials
 
   # Upload the text of the seeded sample books to MinIO on startup.

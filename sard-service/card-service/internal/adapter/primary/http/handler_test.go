@@ -196,3 +196,21 @@ func TestErrors(t *testing.T) {
 		t.Fatalf("health: %d", s)
 	}
 }
+
+func TestEmptyTokenSetDenies(t *testing.T) {
+	h := newTokenSet(nil).require(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	for _, tok := range []string{"", "anything"} {
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/programs", nil)
+		req.Header.Set("X-Api-Token", tok)
+		rec := httptest.NewRecorder()
+		h.ServeHTTP(rec, req)
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("token %q: status = %d, want 401", tok, rec.Code)
+		}
+		if rec.Header().Get("Cache-Control") != "no-store" {
+			t.Fatal("missing Cache-Control: no-store")
+		}
+	}
+}

@@ -18,6 +18,7 @@ data:
       "database.user" (printf "${dir:%s:POSTGRES_USER}" $secretDir)
       "database.password" (printf "${dir:%s:POSTGRES_PASSWORD}" $secretDir)
       "database.dbname" .database
+      "database.sslmode" "require"
       "topic.prefix" .name
       "table.include.list" (join "," .tables)
       "slot.name" (printf "dbz_%s" $slot)

@@ -11,7 +11,7 @@
         "user": "",
         "password": "",
         "database": "card",
-        "sslMode": "disable",
+        "sslMode": "require",
         "maxConns": 10
     },
     "limits": {

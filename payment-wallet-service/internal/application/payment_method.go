@@ -21,6 +21,13 @@ func (s *paymentMethodService) AddPaymentMethod(ctx context.Context, userID stri
 	if !methodType.Valid() {
 		return nil, port.ErrInvalidPaymentMethodType
 	}
+	if methodType == model.Card {
+		pan, ok := model.NormalizeCardNumber(accountNumber)
+		if !ok {
+			return nil, port.ErrInvalidCardNumber
+		}
+		accountNumber = model.MaskCardNumber(pan)
+	}
 
 	existing, err := s.methods.ListByUser(ctx, userID)
 	if err != nil {

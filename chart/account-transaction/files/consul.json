@@ -9,7 +9,7 @@
         "postgresql_user": "testUser",
         "postgresql_password": "testPassword",
         "postgresql_dbname": "account_transaction",
-        "postgresql_ssl_mode": false,
+        "postgresql_ssl_mode": true,
         "pg_driver": "pgx"
     },
     "secret": {

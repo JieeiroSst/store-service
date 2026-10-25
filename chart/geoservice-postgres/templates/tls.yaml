@@ -1,0 +1,5 @@
+{{- define "geoservice-postgres.tlsInit" -}}
+{{ include "common.postgresTLS.initContainer" (dict "name" .Values.geoservicePostgres.service.name) }}
+{{- end -}}
+---
+{{ include "common.postgresTLS.hba" (dict "name" .Values.geoservicePostgres.name) }}

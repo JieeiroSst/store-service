@@ -3,6 +3,8 @@
 global:
   environment: local
 identifiedService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: identified-service
   selectorApp: identified-service
   containerName: identified-service

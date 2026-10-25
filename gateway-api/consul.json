@@ -337,14 +337,17 @@
         },
         "sard-auth-service": {
             "http_address": "http://sard-auth-service-svc:8080",
-            "timeout_seconds": 10
+            "timeout_seconds": 10,
+            "headers": {
+                "X-Api-Token": "local-dev-sard-auth-access"
+            }
         },
         "sard-card-service": {
             "http_address": "http://sard-card-service-svc:8080",
             "timeout_seconds": 10,
             "forward_user_token": false,
             "headers": {
-                "X-Api-Token": ""
+                "X-Api-Token": "local-dev-sard-card-access"
             }
         },
         "sard-customer-info-service": {

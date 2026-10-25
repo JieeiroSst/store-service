@@ -119,3 +119,6 @@ CREATE INDEX IF NOT EXISTS idx_pockets_wallet ON pockets(wallet_id);
 CREATE INDEX IF NOT EXISTS idx_payment_requests_requester ON payment_requests(requester_wallet_id);
 CREATE INDEX IF NOT EXISTS idx_payment_requests_payer ON payment_requests(payer_wallet_id);
 CREATE INDEX IF NOT EXISTS idx_payment_requests_status ON payment_requests(status);
+-- Card payment methods keep only the masked number (PCI DSS 3.3/3.4); this masks rows written before
+-- the service stopped storing the full PAN.
+UPDATE payment_methods SET account_number = '**** **** **** ' || right(regexp_replace(account_number, '[^0-9]', '', 'g'), 4) WHERE type = 'CARD' AND account_number !~ '^\*';

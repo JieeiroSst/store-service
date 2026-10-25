@@ -1,0 +1,43 @@
+{{- /* Shared service-to-service credential. Services that check X-Internal-Token
+       read INTERNAL_API_TOKENS (comma-separated, so a new token can be added
+       before the old one is retired); callers send INTERNAL_API_TOKEN. Charts
+       opt in with internalApiTokens: true (chart/common). */}}
+{{- $t := .Values.internalApiTokens }}
+{{- if $t.enabled }}
+{{- if $t.externalSecret.enabled }}
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: {{ $t.name }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+spec:
+  refreshInterval: {{ $t.externalSecret.refreshInterval | default "15m" }}
+  secretStoreRef:
+    kind: SecretStore
+    name: {{ .Values.secretStore.name }}
+  target:
+    name: {{ $t.name }}
+    creationPolicy: Owner
+  data:
+    - secretKey: INTERNAL_API_TOKENS
+      remoteRef:
+        key: {{ $t.externalSecret.remoteKey }}
+        property: {{ $t.externalSecret.tokensProperty }}
+    - secretKey: INTERNAL_API_TOKEN
+      remoteRef:
+        key: {{ $t.externalSecret.remoteKey }}
+        property: {{ $t.externalSecret.tokenProperty }}
+{{- else }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $t.name }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-4"
+type: Opaque
+stringData:
+  INTERNAL_API_TOKENS: {{ required "internalApiTokens.token is required" $t.token | quote }}
+  INTERNAL_API_TOKEN: {{ $t.token | quote }}
+{{- end }}
+{{- end }}

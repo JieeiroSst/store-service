@@ -1,16 +1,20 @@
 package database
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/JieeiroSst/authorize-service/config"
-	gormadapter "github.com/casbin/gorm-adapter/v3"
 	casbinpersist "github.com/casbin/casbin/v2/persist"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"go.uber.org/fx"
+	gormpostgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func NewDatabase(cfg *config.Config) *gorm.DB {
-	return postgres.NewPostgresConn(postgres.PostgresConfig{
+	return openPostgres(postgres.PostgresConfig{
 		PostgresqlHost:     cfg.Postgres.PostgresqlHost,
 		PostgresqlPort:     cfg.Postgres.PostgresqlPort,
 		PostgresqlUser:     cfg.Postgres.PostgresqlUser,
@@ -28,3 +32,25 @@ var Module = fx.Options(
 	fx.Provide(NewDatabase),
 	fx.Provide(NewCasbinAdapter),
 )
+
+func openPostgres(c postgres.PostgresConfig) *gorm.DB {
+	sslMode := "disable"
+	if c.PostgresqlSSLMode {
+		sslMode = "require"
+	}
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Shanghai",
+		c.PostgresqlHost, c.PostgresqlUser, c.PostgresqlPassword, c.PostgresqlDbname, c.PostgresqlPort, sslMode)
+	db, err := gorm.Open(gormpostgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDB.SetConnMaxIdleTime(30 * time.Minute)
+	return db
+}

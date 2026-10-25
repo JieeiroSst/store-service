@@ -9,7 +9,7 @@
         "user": "testUser",
         "password": "testPassword",
         "dbName": "toggle_service",
-        "sslMode": "disable"
+        "sslMode": "require"
     },
     "jwt": {
         "secret": "testJwtSecret",

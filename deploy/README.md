@@ -62,6 +62,7 @@ Laptop chạy **store-dev** do Argo CD quản lý. Hạ tầng dùng chung (Cons
 deploy/bootstrap-local.sh install              # Argo CD + ingress-nginx + External Secrets + metrics-server + store-root-local
 deploy/bootstrap-local.sh remove-default-apps  # xóa bản sao app cũ trong `default` (giữ Secret/ConfigMap/PVC)
 deploy/bootstrap-local.sh status
+deploy/bootstrap-local.sh consul-postgres-tls [--apply]  # chuyển các key Consul đã seed sang sslmode=require
 
 # Hạ tầng trong `default`, không kèm app:
 helm template chart-1785009827 ./chart -n default -f chart/values-infra-only.yaml | kubectl apply -n default -f -

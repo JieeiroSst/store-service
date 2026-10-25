@@ -60,13 +60,39 @@ geoservicePostgres:
     accessModes:
       - ReadWriteMany
 
+  # TCP clients must use TLS (sslmode=require), see common.postgresTLS.
+  initContainersTemplate: geoservice-postgres.tlsInit
+  args:
+    - -c
+    - ssl=on
+    - -c
+    - ssl_cert_file=/var/lib/postgresql/tls/server.crt
+    - -c
+    - ssl_key_file=/var/lib/postgresql/tls/server.key
+    - -c
+    - ssl_min_protocol_version=TLSv1.2
+    - -c
+    - hba_file=/etc/postgresql/hba/pg_hba.conf
   volumes:
     - name: db-data
       persistentVolumeClaim:
         claimName: geoservice-postgres-pvc
+    - name: postgres-tls
+      emptyDir:
+        medium: Memory
+        sizeLimit: 1Mi
+    - name: postgres-hba
+      configMap:
+        name: geoservice-postgres-hba
   volumeMounts:
     - name: db-data
       mountPath: /var/lib/postgresql/data
+    - name: postgres-tls
+      mountPath: /var/lib/postgresql/tls
+      readOnly: true
+    - name: postgres-hba
+      mountPath: /etc/postgresql/hba
+      readOnly: true
 
   probes:
     startup:

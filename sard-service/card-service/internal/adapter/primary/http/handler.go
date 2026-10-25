@@ -439,9 +439,6 @@ func newTokenSet(tokens []string) tokenSet {
 }
 
 func (ts tokenSet) require(next http.Handler) http.Handler {
-	if len(ts) == 0 {
-		return next
-	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !ts.valid(token(r)) {
 			fail(w, domain.ErrUnauthorized)
@@ -501,6 +498,7 @@ func errorStatus(err error) (int, string) {
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(v)
 }

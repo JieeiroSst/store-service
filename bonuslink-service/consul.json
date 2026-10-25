@@ -12,7 +12,7 @@
     "user": "testUser",
     "password": "testPassword",
     "dbname": "bonuslink_service",
-    "sslmode": "disable"
+    "sslmode": "require"
   },
   "rabbitmq": {
     "enabled": true,

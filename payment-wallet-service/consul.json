@@ -8,6 +8,6 @@
         "postgresqlUser": "testUser",
         "postgresqlPassword": "testPassword",
         "postgresqlDbname": "payment_wallet",
-        "postgresqlSSLMode": false
+        "postgresqlSSLMode": true
     }
 }

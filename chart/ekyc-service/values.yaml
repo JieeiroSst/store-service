@@ -45,7 +45,7 @@ ekycService:
     postgresUser: testUser
     postgresPassword: testPassword
     postgresDbname: ekyc
-    postgresSSLMode: "disable"
+    postgresSSLMode: require
     userServiceBaseURL: http://user-api-svc
     userServiceTimeout: 5s
     # MinIO/S3 static-file storage (card photos, chip portraits, face-scan
@@ -151,7 +151,7 @@ ekycService:
       POSTGRES_USER=testUser
       POSTGRES_PASSWORD=testPassword
       POSTGRES_DBNAME=ekyc
-      POSTGRES_SSLMODE=disable
+      POSTGRES_SSLMODE=require
       S3_ENDPOINT=minio-svc:9000
       S3_BUCKET=ekyc-service
       S3_ACCESS_KEY=minioadmin

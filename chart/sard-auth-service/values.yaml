@@ -43,7 +43,7 @@ sardAuthService:
     create: true
     name: sard-auth-service-secret
     stringData:
-      accessTokens: ''
+      accessTokens: local-dev-sard-auth-access
       internalTokens: local-dev-sard-auth-internal
       cardServiceToken: local-dev-sard-card-internal
       userServiceToken: ''

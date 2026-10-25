@@ -1,6 +1,7 @@
 package model
 
 import (
+	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -61,7 +62,12 @@ type Card struct {
 	UpdatedAt      time.Time   `json:"updated_at"     db:"updated_at"`
 }
 
-func NewCard(walletID, issuerBankID uuid.UUID, network CardNetwork, holderName string, now time.Time) (*Card, error) {
+const MinCardHashKeyLen = 32
+
+func NewCard(walletID, issuerBankID uuid.UUID, network CardNetwork, holderName string, hashKey []byte, now time.Time) (*Card, error) {
+	if len(hashKey) < MinCardHashKeyLen {
+		return nil, ErrCardIssuing
+	}
 	if !network.Valid() {
 		return nil, ErrCardNetwork
 	}
@@ -78,7 +84,7 @@ func NewCard(walletID, issuerBankID uuid.UUID, network CardNetwork, holderName s
 		WalletID:       walletID,
 		IssuerBankID:   issuerBankID,
 		CardNumber:     MaskCardNumber(number),
-		CardNumberHash: HashSecret(number),
+		CardNumberHash: HashPAN(hashKey, number),
 		HolderName:     strings.ToUpper(holderName),
 		Network:        network,
 		ExpiryMonth:    int(now.Month()),
@@ -170,6 +176,12 @@ func MaskCardNumber(number string) string {
 		return "****"
 	}
 	return "**** **** **** " + number[len(number)-4:]
+}
+
+func HashPAN(key []byte, pan string) string {
+	m := hmac.New(sha256.New, key)
+	m.Write([]byte(pan))
+	return hex.EncodeToString(m.Sum(nil))
 }
 
 func HashSecret(value string) string {

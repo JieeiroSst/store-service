@@ -23,6 +23,8 @@ spec:
           env:
             - name: PGHOST
               value: postgresdb-nodeport
+            - name: PGSSLMODE
+              value: require
             - name: PGPORT
               value: "5432"
             - name: PGUSER

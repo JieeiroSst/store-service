@@ -3,6 +3,8 @@
 global:
   environment: local
 gatewayService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: gateway-service
   selectorApp: gateway-service-deployment
   containerName: gateway-service-deployment

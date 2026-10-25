@@ -8,6 +8,19 @@ postgres:
 
   walLevel: logical
 
+  # Server TLS (PCI DSS 4.2). With existingSecret empty, an init container
+  # issues a fresh self-signed EC P-256 certificate on every pod start, so
+  # clients use sslmode=require (encrypted, not verified). Point existingSecret
+  # at a kubernetes.io/tls Secret (e.g. from cert-manager) to serve a CA-signed
+  # certificate that clients can verify with sslmode=verify-full.
+  # enforce rejects every non-TLS TCP connection (hostnossl ... reject).
+  tls:
+    enabled: true
+    enforce: true
+    existingSecret: ""
+    certDays: 825
+    image: alpine/openssl:3.5.6
+
   credentials:
     database: testDB
     user: testUser
@@ -180,5 +193,15 @@ postgres:
       database: wishlists_service
       role: wishlists_service_svc
       consulKey: wishlists_service
+      userField: .postgres.user
+      passwordField: .postgres.password
+    # ollama-service reads POSTGRES_HOST / POSTGRES_USER / POSTGRES_PASSWORD /
+    # POSTGRES_DB (chatapp) from env; the deployment takes the credentials from
+    # ollama-service-db-credentials. It has no Consul key, so the KV patch
+    # step is skipped.
+    - name: ollama-service
+      database: chatapp
+      role: ollama_service_svc
+      consulKey: ollama_service
       userField: .postgres.user
       passwordField: .postgres.password

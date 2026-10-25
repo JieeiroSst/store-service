@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type PaymentMethodType string
 
@@ -30,3 +33,31 @@ type PaymentMethod struct {
 }
 
 func (PaymentMethod) TableName() string { return "payment_methods" }
+
+func NormalizeCardNumber(number string) (string, bool) {
+	pan := strings.NewReplacer(" ", "", "-", "").Replace(strings.TrimSpace(number))
+	if len(pan) < 13 || len(pan) > 19 {
+		return "", false
+	}
+	sum := 0
+	double := false
+	for i := len(pan) - 1; i >= 0; i-- {
+		d := int(pan[i] - '0')
+		if d < 0 || d > 9 {
+			return "", false
+		}
+		if double {
+			d *= 2
+			if d > 9 {
+				d -= 9
+			}
+		}
+		sum += d
+		double = !double
+	}
+	return pan, sum%10 == 0
+}
+
+func MaskCardNumber(pan string) string {
+	return "**** **** **** " + pan[len(pan)-4:]
+}

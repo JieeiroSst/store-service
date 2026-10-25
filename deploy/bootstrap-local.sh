@@ -5,6 +5,7 @@
 #   deploy/bootstrap-local.sh remove-default-apps  # drop app workloads from `default`
 #   deploy/bootstrap-local.sh ci-run [all|svc,...] # build services now (default: what changed)
 #   deploy/bootstrap-local.sh status
+#   deploy/bootstrap-local.sh consul-postgres-tls [--apply]  # sslmode=require in seeded Consul keys
 #
 # After `install`, the loop is fully automatic and never touches GitHub Actions:
 #   git push master -> the in-cluster pipeline (deploy/ci, Argo Workflows)
@@ -138,10 +139,63 @@ status() {
   kc -n ci get workflows --sort-by=.metadata.creationTimestamp 2>/dev/null | tail -5 || true
 }
 
+# chart/postgres only accepts TLS clients, but Consul keys are seeded once from
+# files/consul.json and never overwritten. Rewrites the Postgres blocks (host
+# postgresdb or geoservice-postgres) of every JSON key already in Consul:
+# false -> true and "disable" -> "require" for *ssl*mode fields, adds
+# postgresql_ssl_mode=true next to postgresql_host when missing, and renames
+# admanagement's ssl_mode / db_name to the sslMode / dbName fields its config
+# reads. Prints the diff only, unless --apply.
+consul_postgres_tls() {
+  require_context
+  local apply="${1:-}" port=18500 pf tmp
+  tmp="$(mktemp -d)"
+  kc -n default port-forward svc/consul-service "$port:80" >/dev/null 2>&1 &
+  pf=$!
+  trap 'kill "$pf" 2>/dev/null; rm -rf "$tmp"' RETURN
+  until curl -sf "http://127.0.0.1:$port/v1/status/leader" >/dev/null; do sleep 1; done
+  local filter='
+    def pghost: type == "string" and (. == "postgresdb" or . == "geoservice-postgres");
+    def fix:
+      if type == "object" then
+        map_values(fix)
+        | if [to_entries[] | select((.key | test("host"; "i")) and (.value | pghost))] | length > 0 then
+            (keys | map(select(test("ssl_?mode"; "i")))) as $ssl
+            | (if ($ssl | length) == 0 and has("postgresql_host") then . + {postgresql_ssl_mode: true}
+               else reduce $ssl[] as $k (.; .[$k] |= (if . == false then true elif . == "disable" then "require" else . end))
+               end)
+            | (if has("ssl_mode") and (has("sslMode") | not) then .sslMode = .ssl_mode | del(.ssl_mode) else . end)
+            | (if has("db_name") and (has("dbName") | not) then .dbName = .db_name | del(.db_name) else . end)
+          else . end
+      elif type == "array" then map(fix)
+      else . end;
+    fix'
+  local key changed=0
+  for key in $(curl -sf "http://127.0.0.1:$port/v1/kv/?keys" | jq -r '.[]'); do
+    curl -sf "http://127.0.0.1:$port/v1/kv/$key?raw" > "$tmp/old" || continue
+    jq -e . "$tmp/old" >/dev/null 2>&1 || continue
+    jq --indent 4 "$filter" "$tmp/old" > "$tmp/new"
+    if ! diff -q <(jq -S . "$tmp/old") <(jq -S . "$tmp/new") >/dev/null; then
+      changed=$((changed + 1))
+      echo "== $key"
+      diff <(jq -S . "$tmp/old") <(jq -S . "$tmp/new") || true
+      if [ "$apply" = "--apply" ]; then
+        curl -sf -X PUT --data-binary @"$tmp/new" "http://127.0.0.1:$port/v1/kv/$key" >/dev/null
+      fi
+    fi
+  done
+  if [ "$apply" = "--apply" ]; then
+    echo "$changed key(s) updated; restart the affected Deployments to reconnect with TLS."
+  else
+    echo "$changed key(s) would change; rerun with --apply to write them."
+  fi
+}
+
 case "${1:-}" in
   install) install ;;
   remove-default-apps) remove_default_apps ;;
   ci-run) ci_run "${2:-}" ;;
   status) status ;;
-  *) echo "usage: $0 {install|remove-default-apps|ci-run [all|svc,...]|status}" >&2; exit 2 ;;
+  consul-postgres-tls) consul_postgres_tls "${2:-}" ;;
+  *) echo "usage: $0 {install|remove-default-apps|ci-run [all|svc,...]|status|consul-postgres-tls [--apply]}" >&2; exit 2 ;;
 esac

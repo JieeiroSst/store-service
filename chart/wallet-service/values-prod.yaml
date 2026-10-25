@@ -4,6 +4,9 @@ global:
   environment: prod
 
 walletService:
+  secret:
+    create: false
+  cardHashKeySecret: wallet-service-db-credentials
   image:
     # Immutable tag promoted from staging; never `latest` in prod.
     tag: latest
@@ -75,3 +78,6 @@ walletService:
       - secretKey: POSTGRES_PASSWORD
         remoteKey: store/prod/wallet-service/postgres
         property: password
+      - secretKey: CARD_HASH_KEY
+        remoteKey: store/prod/wallet-service/card
+        property: cardHashKey

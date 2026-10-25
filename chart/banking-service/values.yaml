@@ -3,6 +3,8 @@
 global:
   environment: local
 bankingService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: banking-service
   selectorApp: banking-service-deployment
   containerName: banking-service-deployment

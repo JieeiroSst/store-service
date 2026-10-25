@@ -58,7 +58,9 @@ func newTestRouter() *gin.Engine {
 func get(t *testing.T, r http.Handler, path string, out any) {
 	t.Helper()
 	rec := httptest.NewRecorder()
-	r.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, path, nil))
+	req := httptest.NewRequest(http.MethodGet, path, nil)
+	req.Header.Set("X-Internal-Token", testInternalToken)
+	r.ServeHTTP(rec, req)
 	if rec.Code != http.StatusOK {
 		t.Fatalf("GET %s = %d %s", path, rec.Code, rec.Body)
 	}
@@ -68,6 +70,7 @@ func get(t *testing.T, r http.Handler, path string, out any) {
 }
 
 func TestGetByIDReadsThePathParameter(t *testing.T) {
+	t.Setenv("INTERNAL_API_TOKENS", testInternalToken)
 	r := newTestRouter()
 	for _, path := range []string{
 		"/v1/partner/abc",
@@ -86,6 +89,7 @@ func TestGetByIDReadsThePathParameter(t *testing.T) {
 }
 
 func TestProjectListIsAtTheCollectionRoot(t *testing.T) {
+	t.Setenv("INTERNAL_API_TOKENS", testInternalToken)
 	var page struct {
 		TotalRows int64            `json:"total_rows"`
 		Rows      []map[string]any `json:"rows"`

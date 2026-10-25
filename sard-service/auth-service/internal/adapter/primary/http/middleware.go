@@ -24,11 +24,8 @@ func newTokenSet(tokens []string) tokenSet {
 }
 
 func (ts tokenSet) require(next http.HandlerFunc) http.HandlerFunc {
-	if len(ts) == 0 {
-		return next
-	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		if !ts.valid(bearer(r)) {
+		if !ts.valid(serviceToken(r)) {
 			fail(w, domain.ErrUnauthorized)
 			return
 		}
@@ -47,17 +44,21 @@ func (ts tokenSet) valid(t string) bool {
 	return ok == 1
 }
 
-func bearer(r *http.Request) string {
+func serviceToken(r *http.Request) string {
+	if t := r.Header.Get("X-Api-Token"); t != "" {
+		return t
+	}
 	if t, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer "); ok {
 		return strings.TrimSpace(t)
 	}
-	return r.Header.Get("X-Api-Token")
+	return ""
 }
 
 func securityHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h := w.Header()
 		h.Set("X-Content-Type-Options", "nosniff")
+		h.Set("Cache-Control", "no-store")
 		h.Set("X-Frame-Options", "DENY")
 		h.Set("Referrer-Policy", "no-referrer")
 		h.Set("Content-Security-Policy", "default-src 'none'")

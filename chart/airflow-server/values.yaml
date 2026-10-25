@@ -267,15 +267,41 @@ airflowServer:
       - name: PGDATA
         value: /var/lib/postgresql/data/pgdata
         when: "{{ if .Values.airflowServer.postgres.persistence.enabled }}true{{ end }}"
+    # TCP clients must use TLS (sslmode=require), see common.postgresTLS.
+    initContainersTemplate: airflow-server.postgresTLSInit
+    args:
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/var/lib/postgresql/tls/server.crt
+      - -c
+      - ssl_key_file=/var/lib/postgresql/tls/server.key
+      - -c
+      - ssl_min_protocol_version=TLSv1.2
+      - -c
+      - hba_file=/etc/postgresql/hba/pg_hba.conf
     volumes:
       - name: data
         persistentVolumeClaim:
           claimName: "{{ .Values.airflowServer.postgres.name }}-data"
         when: "{{ if .Values.airflowServer.postgres.persistence.enabled }}true{{ end }}"
+      - name: postgres-tls
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Mi
+      - name: postgres-hba
+        configMap:
+          name: "{{ .Values.airflowServer.postgres.name }}-hba"
     volumeMounts:
       - name: data
         mountPath: /var/lib/postgresql/data
         when: "{{ if .Values.airflowServer.postgres.persistence.enabled }}true{{ end }}"
+      - name: postgres-tls
+        mountPath: /var/lib/postgresql/tls
+        readOnly: true
+      - name: postgres-hba
+        mountPath: /etc/postgresql/hba
+        readOnly: true
 
     probes:
       startup:

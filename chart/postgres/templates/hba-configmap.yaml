@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.postgres.name }}-hba
+  labels:
+    app: {{ .Values.postgres.name }}
+data:
+  pg_hba.conf: |
+    local     all  all                  trust
+    host      all  all  127.0.0.1/32    trust
+    host      all  all  ::1/128         trust
+    {{- if .Values.postgres.tls.enabled }}
+    hostssl   all  all  all             scram-sha-256
+    {{- if .Values.postgres.tls.enforce }}
+    hostnossl all  all  all             reject
+    {{- else }}
+    hostnossl all  all  all             scram-sha-256
+    {{- end }}
+    {{- else }}
+    host      all  all  all             scram-sha-256
+    {{- end }}

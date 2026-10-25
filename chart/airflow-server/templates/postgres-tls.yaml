@@ -1,0 +1,5 @@
+{{- define "airflow-server.postgresTLSInit" -}}
+{{ include "common.postgresTLS.initContainer" (dict "name" .Values.airflowServer.postgres.service.name) }}
+{{- end -}}
+---
+{{ include "common.postgresTLS.hba" (dict "name" .Values.airflowServer.postgres.name) }}

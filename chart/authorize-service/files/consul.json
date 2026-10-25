@@ -9,7 +9,7 @@
         "postgresql_user": "testUser",
         "postgresql_password": "testPassword",
         "postgresql_dbname": "authorize",
-        "postgresql_ssl_mode": false
+        "postgresql_ssl_mode": true
     },
     "cache": {
         "host": "redis-svc:80"

@@ -152,6 +152,7 @@ Every change to this repository must follow these rules. Reviewers should reject
 - Limit failed logins per account and return the same error and timing for an unknown user and a wrong password (see `user_service/internal/application/auth`).
 - Verify JWTs with an explicit algorithm and expiry, and check the session store so a logged-out token stops working.
 - Compare secrets with `subtle.ConstantTimeCompare` or `hmac.Equal`, and treat an empty configured secret as "deny", never as "allow".
+- Service-to-service calls send `X-Internal-Token` from the platform `internal-api-tokens` Secret (`internalApiTokens: true` in the chart). A service without `INTERNAL_API_TOKENS` rejects every request that carries no valid credential.
 - Support MFA for privileged accounts through Keycloak (`manage_service`).
 
 ### 4. Authorization
@@ -169,6 +170,7 @@ See [Secret Management](#secret-management). `gitleaks` runs in CI on every push
 ### 6. Cryptography
 
 - Use TLS for all external traffic and keep certificate verification on. `InsecureSkipVerify` is allowed only behind an explicit, default-off option.
+- Connect to PostgreSQL with `sslmode=require` or stricter. The in-cluster instances (`chart/postgres`, `geoservice-postgres`, `airflow-postgres`) reject non-TLS TCP connections.
 - Use the standard libraries (`crypto/*`, `golang.org/x/crypto`) and `crypto/rand` for tokens, OTPs and IDs. Never write your own cipher or use `math/rand` for anything secret.
 - Encrypt sensitive data at rest with keys from `kms-service`.
 

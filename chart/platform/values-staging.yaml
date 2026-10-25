@@ -50,3 +50,8 @@ infraAliases:
     keycloak-service: keycloak-service
     qdrant-service: qdrant-service
     temporal-service: temporal-service
+
+internalApiTokens:
+  token: local-staging-internal-api-token
+  externalSecret:
+    enabled: false

@@ -3,6 +3,8 @@
 global:
   environment: local
 medicalService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: medical-service
   selectorApp: medical-service-deployment
   containerName: medical-service-deployment

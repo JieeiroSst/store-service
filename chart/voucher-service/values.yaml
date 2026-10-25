@@ -135,7 +135,7 @@ voucherService:
       POSTGRES_HOST=postgresdb
       POSTGRES_PORT=80
       POSTGRES_DBNAME=voucher
-      POSTGRES_SSL_MODE=disable
+      POSTGRES_SSL_MODE=require
       REDIS_HOST=redis-svc
       REDIS_PORT=80
       REDIS_DB=0

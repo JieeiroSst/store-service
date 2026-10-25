@@ -21,6 +21,8 @@ import (
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/JIeeiroSst/utils/postgres"
 	"github.com/gin-gonic/gin"
+	gormpostgres "gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -37,7 +39,7 @@ func main() {
 		logger.Error(context.Background(), "error %v", err)
 	}
 
-	db := postgres.NewPostgresConn(postgres.PostgresConfig{
+	db := openPostgres(postgres.PostgresConfig{
 		PostgresqlHost:     config.Postgres.PostgresqlHost,
 		PostgresqlUser:     config.Postgres.PostgresqlUser,
 		PostgresqlPassword: config.Postgres.PostgresqlPassword,
@@ -93,4 +95,26 @@ func main() {
 		logger.Info(context.Background(), "timeout of 5 seconds.")
 	}
 	logger.Info(context.Background(), "Server exiting")
+}
+
+func openPostgres(c postgres.PostgresConfig) *gorm.DB {
+	sslMode := "disable"
+	if c.PostgresqlSSLMode {
+		sslMode = "require"
+	}
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Shanghai",
+		c.PostgresqlHost, c.PostgresqlUser, c.PostgresqlPassword, c.PostgresqlDbname, c.PostgresqlPort, sslMode)
+	db, err := gorm.Open(gormpostgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDB.SetConnMaxIdleTime(30 * time.Minute)
+	return db
 }

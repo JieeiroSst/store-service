@@ -3,6 +3,8 @@
 global:
   environment: local
 addressCountry:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: address-country
   selectorApp: address-country-deployment
   containerName: address-country-deployment

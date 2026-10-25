@@ -3,6 +3,8 @@
 global:
   environment: local
 ticketService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: ticket-service
   selectorApp: ticket-service-deployment
   containerName: ticket-service-deployment
@@ -37,6 +39,7 @@ ticketService:
   env:
     # Points at the umbrella chart's postgres.
     postgresHost: postgresdb
+    postgresSSLMode: require
     postgresPort: "80"
     postgresDatabase: ticket_service
     postgresUser: testUser
@@ -139,6 +142,8 @@ ticketService:
   containerEnv:
     - name: PORT
       value: '{{ .Values.ticketService.image.port }}'
+    - name: SSLModePostgres
+      value: '{{ .Values.ticketService.env.postgresSSLMode }}'
     - name: HostPostgres
       value: '{{ .Values.ticketService.env.postgresHost }}'
     - name: PortPostgres

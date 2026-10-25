@@ -18,6 +18,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	gormpostgres "gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	serverHttp "github.com/JIeeiroSst/car-rental-service/internal/delivery/http"
 	pb "github.com/JIeeiroSst/lib-gateway/car-rental-servcie/gateway/car-rental-servcie"
@@ -41,7 +43,7 @@ func runAPI() {
 		logger.WithContext(ctx).Error("failed to listen", zap.Error(err))
 	}
 
-	db := postgres.NewPostgresConn(postgres.PostgresConfig{
+	db := openPostgres(postgres.PostgresConfig{
 		PostgresqlHost:     config.Postgres.PostgresqlHost,
 		PostgresqlPort:     config.Postgres.PostgresqlPort,
 		PostgresqlUser:     config.Postgres.PostgresqlUser,
@@ -89,4 +91,26 @@ func runAPI() {
 	if err := http.ListenAndServe(fmt.Sprintf(":%v", config.Server.PortHttpServer), mux); err != nil {
 		logger.WithContext(ctx).Debug("ListenAndServe", zap.Error(err))
 	}
+}
+
+func openPostgres(c postgres.PostgresConfig) *gorm.DB {
+	sslMode := "disable"
+	if c.PostgresqlSSLMode {
+		sslMode = "require"
+	}
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Shanghai",
+		c.PostgresqlHost, c.PostgresqlUser, c.PostgresqlPassword, c.PostgresqlDbname, c.PostgresqlPort, sslMode)
+	db, err := gorm.Open(gormpostgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDB.SetConnMaxIdleTime(30 * time.Minute)
+	return db
 }

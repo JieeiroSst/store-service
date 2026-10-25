@@ -12,8 +12,12 @@ import (
 )
 
 func newGormDB(cfg *config.Config) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Mysql.MysqlHost, cfg.Mysql.MysqlPort, cfg.Mysql.MysqlUser, cfg.Mysql.MysqlPassword, cfg.Mysql.MysqlDbname)
+	sslMode := "disable"
+	if cfg.Mysql.MysqlSSLMode {
+		sslMode = "require"
+	}
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Mysql.MysqlHost, cfg.Mysql.MysqlPort, cfg.Mysql.MysqlUser, cfg.Mysql.MysqlPassword, cfg.Mysql.MysqlDbname, sslMode)
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
 

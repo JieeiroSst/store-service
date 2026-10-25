@@ -3,6 +3,8 @@
 global:
   environment: local
 orderProcessingService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: order-processing-service
   selectorApp: order-processing-service
   containerName: order-processing-service

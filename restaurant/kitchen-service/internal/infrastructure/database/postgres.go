@@ -12,9 +12,9 @@ import (
 )
 
 func NewDatabase(cfg *config.Config) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Shanghai",
 		cfg.Postgres.PostgresqlHost, cfg.Postgres.PostgresqlUser, cfg.Postgres.PostgresqlPassword,
-		cfg.Postgres.PostgresqlDbname, cfg.Postgres.PostgresqlPort)
+		cfg.Postgres.PostgresqlDbname, cfg.Postgres.PostgresqlPort, sslMode(cfg.Postgres.PostgresqlSSLMode))
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -44,3 +44,10 @@ var Module = fx.Options(
 	fx.Provide(NewDatabase),
 	fx.Invoke(registerLifecycle),
 )
+
+func sslMode(enabled bool) string {
+	if enabled {
+		return "require"
+	}
+	return "disable"
+}

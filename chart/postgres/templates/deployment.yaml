@@ -1,3 +1,4 @@
+{{- $tls := .Values.postgres.tls }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11,13 +12,58 @@ spec:
     metadata:
       labels:
         app: {{ .Values.postgres.name }}
+      annotations:
+        checksum/hba: {{ include (print $.Template.BasePath "/hba-configmap.yaml") . | sha256sum }}
     spec:
+      {{- if $tls.enabled }}
+      initContainers:
+        - name: tls-cert
+          image: {{ $tls.image }}
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              if [ -f /tls-src/tls.crt ] && [ -f /tls-src/tls.key ]; then
+                cp /tls-src/tls.crt /tls/server.crt
+                cp /tls-src/tls.key /tls/server.key
+              else
+                openssl req -x509 -nodes -days {{ $tls.certDays }} \
+                  -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 \
+                  -subj "/CN={{ .Values.postgres.name }}" \
+                  -addext "subjectAltName=DNS:{{ .Values.postgres.name }},DNS:{{ .Values.postgres.name }}-nodeport,DNS:{{ .Values.postgres.name }}.{{ .Release.Namespace }}.svc.cluster.local,DNS:localhost" \
+                  -keyout /tls/server.key -out /tls/server.crt 2>/dev/null
+              fi
+              chown 999:999 /tls/server.crt /tls/server.key 2>/dev/null || true
+              chmod 0644 /tls/server.crt
+              chmod 0600 /tls/server.key
+          volumeMounts:
+            - mountPath: /tls
+              name: tls
+            {{- if $tls.existingSecret }}
+            - mountPath: /tls-src
+              name: tls-src
+              readOnly: true
+            {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Values.postgres.name }}
           image: {{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}
           args:
             - -c
             - wal_level={{ .Values.postgres.walLevel }}
+            - -c
+            - hba_file=/etc/postgresql/hba/pg_hba.conf
+            {{- if $tls.enabled }}
+            - -c
+            - ssl=on
+            - -c
+            - ssl_cert_file=/var/lib/postgresql/tls/server.crt
+            - -c
+            - ssl_key_file=/var/lib/postgresql/tls/server.key
+            - -c
+            - ssl_min_protocol_version=TLSv1.2
+            {{- end }}
           ports:
             - containerPort: {{ .Values.postgres.service.targetPort }}
           envFrom:
@@ -26,6 +72,14 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: db-data
+            - mountPath: /etc/postgresql/hba
+              name: hba
+              readOnly: true
+            {{- if $tls.enabled }}
+            - mountPath: /var/lib/postgresql/tls
+              name: tls
+              readOnly: true
+            {{- end }}
           env:
             - name: NODE_ENV
               value: production
@@ -33,3 +87,17 @@ spec:
         - name: db-data
           persistentVolumeClaim:
             claimName: db-persistent-volume-claim
+        - name: hba
+          configMap:
+            name: {{ .Values.postgres.name }}-hba
+        {{- if $tls.enabled }}
+        - name: tls
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Mi
+        {{- if $tls.existingSecret }}
+        - name: tls-src
+          secret:
+            secretName: {{ $tls.existingSecret }}
+        {{- end }}
+        {{- end }}

@@ -48,7 +48,7 @@ kmsService:
     enabled: true
     mountPath: /app/.env
     content: |
-      POSTGRES_DSN=postgres://testUser:testPassword@postgresdb:80/kms_service?sslmode=disable
+      POSTGRES_DSN=postgres://testUser:testPassword@postgresdb:80/kms_service?sslmode=require
       REDIS_ADDR=redis-svc:80
       USER_SERVICE_URL=http://user-api-svc:80
   # Master key that wraps every data key. Losing it makes stored keys unreadable,

@@ -42,8 +42,7 @@ bonuslinkService:
     postgresDatabase: bonuslink_service
     postgresUser: testUser
     postgresPassword: testPassword
-    postgresSSLMode: disable
-
+    postgresSSLMode: require
     # referral-service publishes reward events to this exchange; the queue is
     # bound with the routing key below.
     rabbitmqHost: rabbitmq-service

@@ -3,6 +3,8 @@
 global:
   environment: local
 couponService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: coupon-service
   selectorApp: coupon-service-deployment
   containerName: coupon-service-deployment
@@ -40,8 +42,7 @@ couponService:
     postgresUser: testUser
     postgresPassword: testPassword
     postgresDbname: coupon
-    postgresSSLMode: "disable"
-
+    postgresSSLMode: require
   resources:
     requests:
       cpu: 50m

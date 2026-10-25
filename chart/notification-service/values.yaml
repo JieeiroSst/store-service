@@ -3,6 +3,8 @@
 global:
   environment: local
 notificationService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: notification-service
   selectorApp: notification-service-deployment
   containerName: notification-service-deployment

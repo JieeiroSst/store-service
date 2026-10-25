@@ -51,6 +51,7 @@ upload_service:
 
 default_db: sql
 sql_type: pgsql
+sql_ssl: true
 {{- end }}
 {{- if $us.enabled }}
 

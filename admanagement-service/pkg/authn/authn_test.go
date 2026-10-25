@@ -66,11 +66,14 @@ func TestAuthenticate(t *testing.T) {
 	if _, err := strict.Request(httptest.NewRequest(http.MethodGet, "/", nil)); !errors.Is(err, ErrUnauthenticated) {
 		t.Fatalf("anonymous strict err = %v", err)
 	}
-	if p, err := open.Authenticate(ctx, "", ""); err != nil || !p.Service {
-		t.Fatalf("anonymous rollout principal = %+v, %v", p, err)
+	if _, err := open.Request(httptest.NewRequest(http.MethodGet, "/", nil)); !errors.Is(err, ErrUnauthenticated) {
+		t.Fatalf("anonymous without internal tokens err = %v", err)
+	}
+	if _, err := open.Authenticate(ctx, "", "anything"); !errors.Is(err, ErrUnauthenticated) {
+		t.Fatalf("internal token without internal tokens err = %v", err)
 	}
 	if _, err := open.Authenticate(ctx, "Bearer bogus", ""); !errors.Is(err, ErrUnauthenticated) {
-		t.Fatalf("bogus token in rollout mode err = %v", err)
+		t.Fatalf("bogus token without internal tokens err = %v", err)
 	}
 }
 

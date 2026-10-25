@@ -3,6 +3,8 @@
 global:
   environment: local
 customerRelationshipService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: customer-relationship-service
   selectorApp: customer-relationship-service-deployment
   containerName: customer-relationship-service-deployment

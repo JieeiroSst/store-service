@@ -13,7 +13,7 @@
     "user": "testUser",
     "password": "testPassword",
     "dbname": "photo_service",
-    "sslmode": false,
+    "sslmode": true,
     "max_conns": 10,
     "migrations_path": "migrations",
     "connect_timeout": "5s"

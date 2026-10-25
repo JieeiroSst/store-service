@@ -51,6 +51,7 @@ func graphqlHandler(p *proxy.Proxy) gin.HandlerFunc {
 	srv.AroundRootFields(graph.RequireAuthentication)
 
 	return func(c *gin.Context) {
+		c.Header("Cache-Control", "no-store")
 		srv.ServeHTTP(c.Writer, c.Request)
 	}
 }

@@ -3,6 +3,8 @@
 global:
   environment: local
 shippingService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: shipping-service
   selectorApp: shipping-service-deployment
   containerName: shipping-service-deployment

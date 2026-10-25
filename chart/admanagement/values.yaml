@@ -3,6 +3,8 @@
 global:
   environment: local
 admanagement:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: admanagement
   selectorApp: admanagement-deployment
   containerName: admanagement-deployment
@@ -57,7 +59,7 @@ admanagement:
       POSTGRES_USER=testUser
       POSTGRES_PASSWORD=testPassword
       POSTGRES_DBNAME=admanagement
-      POSTGRES_SSLMODE=disable
+      POSTGRES_SSLMODE=require
   # No health endpoint known for this service: TCP checks on the http port.
   # Swap for httpGet once the service exposes /health.
   probes:

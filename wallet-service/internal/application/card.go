@@ -36,7 +36,7 @@ func (s *cardService) Issue(ctx context.Context, cmd port.IssueCardCommand) (*mo
 	}
 	network := model.CardNetwork(strings.ToUpper(string(cmd.Network)))
 	for attempt := 0; ; attempt++ {
-		card, err := model.NewCard(w.ID, bank.ID, network, cmd.HolderName, s.now())
+		card, err := model.NewCard(w.ID, bank.ID, network, cmd.HolderName, s.CardHashKey, s.now())
 		if err != nil {
 			return nil, err
 		}

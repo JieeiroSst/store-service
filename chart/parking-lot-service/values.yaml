@@ -3,6 +3,8 @@
 global:
   environment: local
 parkingLotService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: parking-lot-service
   selectorApp: parking-lot-service-deployment
   containerName: parking-lot-service-deployment
@@ -40,8 +42,7 @@ parkingLotService:
     postgresUser: testUser
     postgresPassword: testPassword
     postgresDbname: parking_lot
-    postgresSSLMode: "disable"
-
+    postgresSSLMode: require
   resources:
     requests:
       cpu: 50m

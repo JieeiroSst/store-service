@@ -34,6 +34,14 @@ spec:
               key: POSTGRES_PWD
         - name: POSTGRES_SEEDS
           value: postgresdb-nodeport
+        - name: SQL_TLS
+          value: "true"
+        - name: SQL_TLS_ENABLED
+          value: "true"
+        - name: SQL_TLS_DISABLE_HOST_VERIFICATION
+          value: "true"
+        - name: SQL_HOST_VERIFICATION
+          value: "false"
         - name: DYNAMIC_CONFIG_FILE_PATH
           value: config/dynamicconfig/development.yaml
         ports:

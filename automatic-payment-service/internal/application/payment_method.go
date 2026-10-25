@@ -25,6 +25,9 @@ func (s *paymentMethodService) AddPaymentMethod(ctx context.Context, req port.Ad
 	if req.UserID == uuid.Nil || req.Provider == "" {
 		return nil, common.ErrInvalidRequest
 	}
+	if model.LooksLikePAN(req.TokenID) || !model.ValidLastFour(req.LastFourDigits) || !model.ValidExpiryDate(req.ExpiryDate) {
+		return nil, common.ErrInvalidRequest
+	}
 
 	pm := &model.PaymentMethod{
 		PaymentMethodID: uuid.New(),
@@ -70,7 +73,8 @@ func (s *paymentMethodService) DeletePaymentMethod(ctx context.Context, id uuid.
 func (s *paymentMethodService) SetDefaultPaymentMethod(ctx context.Context, userID, id uuid.UUID) error {
 	lg := logger.WithContext(ctx)
 
-	if _, err := s.pms.GetByID(ctx, id); err != nil {
+	pm, err := s.pms.GetByID(ctx, id)
+	if err != nil || pm.UserID != userID {
 		return common.ErrNotFound
 	}
 	if err := s.pms.ClearDefaultByUser(ctx, userID); err != nil {

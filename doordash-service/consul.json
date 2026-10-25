@@ -8,7 +8,7 @@
         "postgresqlUser": "testUser",
         "postgresqlPassword": "testPassword",
         "postgresqlDbname": "doordash",
-        "postgresqlSSLMode": false
+        "postgresqlSSLMode": true
     },
     "userService": {
         "baseURL": "http://user-api-svc",

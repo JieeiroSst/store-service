@@ -38,6 +38,7 @@ type Deps struct {
 	Clearing        port.ClearingRepository
 	Cache           port.Cache
 	Pins            port.PinHasher
+	CardHashKey     []byte
 	BankGateway     port.BankGateway
 	Fees            model.FeeSchedule
 	PaymentRequest  PaymentRequestPolicy

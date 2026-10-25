@@ -69,6 +69,7 @@ var (
 	ErrCardNotActive   = newError(KindUnprocessable, "CARD_NOT_BLOCKED", "only blocked cards can be unblocked")
 	ErrCardNetwork     = newError(KindInvalid, "NETWORK_NOT_SUPPORTED", "card network not supported")
 	ErrCardNumberTaken = newError(KindConflict, "CARD_NUMBER_TAKEN", "generated card number already exists")
+	ErrCardIssuing     = newError(KindUnprocessable, "CARD_ISSUING_DISABLED", "card issuing is not configured")
 
 	ErrBankNotFound      = newError(KindNotFound, "BANK_NOT_FOUND", "bank not found")
 	ErrMerchantNotFound  = newError(KindNotFound, "MERCHANT_NOT_FOUND", "merchant not found")

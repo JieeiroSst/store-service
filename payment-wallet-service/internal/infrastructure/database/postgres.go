@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/JIeeiroSst/payment-wallet-service/config"
 	"github.com/JIeeiroSst/utils/postgres"
 	"go.uber.org/fx"
+	gormpostgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func NewDatabase(cfg *config.Config) (*gorm.DB, error) {
-	db := postgres.NewPostgresConn(postgres.PostgresConfig{
+	db := openPostgres(postgres.PostgresConfig{
 		PostgresqlHost:     cfg.Postgres.PostgresqlHost,
 		PostgresqlPort:     cfg.Postgres.PostgresqlPort,
 		PostgresqlUser:     cfg.Postgres.PostgresqlUser,
@@ -62,3 +64,25 @@ func splitStatements(script string) []string {
 var Module = fx.Options(
 	fx.Provide(NewDatabase),
 )
+
+func openPostgres(c postgres.PostgresConfig) *gorm.DB {
+	sslMode := "disable"
+	if c.PostgresqlSSLMode {
+		sslMode = "require"
+	}
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Shanghai",
+		c.PostgresqlHost, c.PostgresqlUser, c.PostgresqlPassword, c.PostgresqlDbname, c.PostgresqlPort, sslMode)
+	db, err := gorm.Open(gormpostgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+	sqlDB.SetConnMaxIdleTime(30 * time.Minute)
+	return db
+}

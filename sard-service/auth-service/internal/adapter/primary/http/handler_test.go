@@ -170,3 +170,29 @@ func TestLimiterWindow(t *testing.T) {
 		t.Fatal("window resets")
 	}
 }
+
+func TestServiceTokenSet(t *testing.T) {
+	ok := func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) }
+	cases := []struct {
+		tokens  []string
+		headers map[string]string
+		want    int
+	}{
+		{nil, nil, http.StatusUnauthorized},
+		{nil, map[string]string{"X-Api-Token": "anything"}, http.StatusUnauthorized},
+		{[]string{"svc"}, map[string]string{"Authorization": "Bearer user-session", "X-Api-Token": "svc"}, http.StatusOK},
+		{[]string{"svc"}, map[string]string{"Authorization": "Bearer svc"}, http.StatusOK},
+		{[]string{"svc"}, map[string]string{"Authorization": "Bearer user-session"}, http.StatusUnauthorized},
+	}
+	for i, c := range cases {
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/payment-authentications/x", nil)
+		for k, v := range c.headers {
+			req.Header.Set(k, v)
+		}
+		rec := httptest.NewRecorder()
+		newTokenSet(c.tokens).require(ok)(rec, req)
+		if rec.Code != c.want {
+			t.Fatalf("case %d: status = %d, want %d", i, rec.Code, c.want)
+		}
+	}
+}

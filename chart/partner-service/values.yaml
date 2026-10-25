@@ -3,6 +3,8 @@
 global:
   environment: local
 partnerService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: partner-service
   selectorApp: partner-service-deployment
   containerName: partner-service-deployment

@@ -3,6 +3,8 @@
 global:
   environment: local
 doordashService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: doordash-service
   selectorApp: doordash-service-deployment
   containerName: doordash-service-deployment
@@ -40,7 +42,7 @@ doordashService:
     postgresUser: testUser
     postgresPassword: testPassword
     postgresDbname: doordash
-    postgresSSLMode: "disable"
+    postgresSSLMode: require
     # Base URLs of the sibling services this service calls over HTTP to
     # enrich orders (see Readme.md section 5) - override with the real
     # in-cluster Service names for each once they're deployed.

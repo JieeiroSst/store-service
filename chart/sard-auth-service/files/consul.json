@@ -12,7 +12,7 @@
         "user": "",
         "password": "",
         "database": "payment_auth",
-        "sslMode": "disable",
+        "sslMode": "require",
         "maxConns": 10
     },
     "userService": {

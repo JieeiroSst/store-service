@@ -3,6 +3,8 @@
 global:
   environment: local
 hospitalPatientManagementService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: hospital-patient-management-service
   selectorApp: hospital-patient-management-service-deployment
   containerName: hospital-patient-management-service-deployment
@@ -50,8 +52,7 @@ hospitalPatientManagementService:
     postgresDatabase: hospital_patient_management_service
     postgresUser: testUser
     postgresPassword: testPassword
-    postgresSSLMode: disable
-
+    postgresSSLMode: require
     # user-service validates the bearer token of every request. With authMode
     # "token" the service refuses to start without userServiceBaseURL; use
     # "off" only when a trusted gateway in front authenticates callers.

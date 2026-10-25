@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const DefaultSensitivePattern = `(?i)(.*(password|passwd|secret|token|apikey|api_key|private_key|card_number|cvv).*|(.*_)?(otp|salt|pin|pwd)(_.*)?)`
+const DefaultSensitivePattern = `(?i)(.*(password|passwd|secret|token|apikey|api_key|private_key|card_?number|cardholder|cvv|cvc|track_?data|security_?code|pan_?cipher|pan_?hash).*|(.*_)?(otp|salt|pin|pwd|pan)(_.*)?)`
 
 type SensitivePolicy struct {
 	pattern string

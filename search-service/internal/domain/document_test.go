@@ -63,12 +63,12 @@ func TestSensitivePolicy(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, f := range []string{"password", "password_hash", "refresh_token", "apiKey", "user.secret", "otp", "pin_code", "salt"} {
+	for _, f := range []string{"password", "password_hash", "refresh_token", "apiKey", "user.secret", "otp", "pin_code", "salt", "pan", "pan_cipher", "cardNumber", "cvc", "track_data", "security_code"} {
 		if !p.IsSensitive(f) {
 			t.Errorf("%s should be sensitive", f)
 		}
 	}
-	for _, f := range []string{"name", "hotpot", "spin", "description", "shipping_note"} {
+	for _, f := range []string{"name", "hotpot", "spin", "description", "shipping_note", "company", "panel", "japan_region"} {
 		if p.IsSensitive(f) {
 			t.Errorf("%s should not be sensitive", f)
 		}

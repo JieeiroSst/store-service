@@ -70,9 +70,12 @@ func do(t *testing.T, uc *fakeUsecase, method, path, body string) *httptest.Resp
 	t.Helper()
 	cfg := &config.Config{}
 	cfg.Server.AllowedOrigins = []string{"*"}
+	t.Setenv("INTERNAL_API_TOKENS", testInternalToken)
 	r := NewRouter(NewHandler(uc), cfg)
 	w := httptest.NewRecorder()
-	r.ServeHTTP(w, httptest.NewRequest(method, path, strings.NewReader(body)))
+	req := httptest.NewRequest(method, path, strings.NewReader(body))
+	req.Header.Set("X-Internal-Token", testInternalToken)
+	r.ServeHTTP(w, req)
 	return w
 }
 

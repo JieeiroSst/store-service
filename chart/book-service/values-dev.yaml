@@ -13,7 +13,7 @@ bookService:
     endpoint: http://minio-svc.default.svc.cluster.local:9000
 
   database:
-    url: jdbc:postgresql://postgresdb.default.svc.cluster.local:80/book_service
+    url: jdbc:postgresql://postgresdb.default.svc.cluster.local:80/book_service?sslmode=require
 
   ingress:
     enabled: true

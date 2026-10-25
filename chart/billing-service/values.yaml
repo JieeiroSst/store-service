@@ -3,6 +3,8 @@
 global:
   environment: local
 billing:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: billing-service
   selectorApp: billing-service-deployment
   containerName: billing-service-deployment
@@ -54,7 +56,7 @@ billing:
       POSTGRES_USER=testUser
       POSTGRES_PASSWORD=testPassword
       POSTGRES_DBNAME=billing
-      POSTGRES_SSL_MODE=false
+      POSTGRES_SSL_MODE=true
   # No health endpoint known for this service: TCP checks on the http port.
   # Swap for httpGet once the service exposes /health.
   probes:

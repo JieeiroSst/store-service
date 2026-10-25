@@ -18,6 +18,7 @@
     },
     "postgres": {
         "postgresql_host": "postgresdb",
+        "postgresql_ssl_mode": true,
         "postgresql_port": "80",
         "postgresql_user": "testUser",
         "postgresql_password": "testPassword",

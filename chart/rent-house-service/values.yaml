@@ -3,6 +3,8 @@
 global:
   environment: local
 rentHouseService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: rent-house-service
   selectorApp: rent-house-service-deployment
   containerName: rent-house-service-deployment
@@ -36,6 +38,7 @@ rentHouseService:
   env:
     # Points at the umbrella chart's postgres.
     postgresHost: postgresdb
+    postgresSSLMode: require
     postgresPort: "80"
     postgresDatabase: rent_house_service
     postgresUser: testUser
@@ -81,6 +84,8 @@ rentHouseService:
   containerEnv:
     - name: PORT
       value: '{{ .Values.rentHouseService.image.port }}'
+    - name: SSLModePostgres
+      value: '{{ .Values.rentHouseService.env.postgresSSLMode }}'
     - name: HostPostgres
       value: '{{ .Values.rentHouseService.env.postgresHost }}'
     - name: PortPostgres

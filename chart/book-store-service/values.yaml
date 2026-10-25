@@ -59,7 +59,7 @@ bookStoreService:
       POSTGRES_USER=testUser
       POSTGRES_PASSWORD=testPassword
       POSTGRES_DBNAME=book_store
-      POSTGRES_SSLMODE=disable
+      POSTGRES_SSLMODE=require
   # No health endpoint known for this service: TCP checks on the http port.
   # Swap for httpGet once the service exposes /health.
   probes:

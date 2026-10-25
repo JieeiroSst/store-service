@@ -44,7 +44,7 @@ arrange:
     targetCPUUtilizationPercentage: 60
   userServiceUrl: http://user-api-svc
   internalTokensSecret:
-    enabled: false
+    enabled: true
     name: internal-api-tokens
     key: INTERNAL_API_TOKENS
   containerEnv:

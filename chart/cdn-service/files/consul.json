@@ -8,7 +8,7 @@
         "postgresql_user": "testUser",
         "postgresql_password": "testPassword",
         "postgresql_dbname": "cdn_service",
-        "postgresql_ssl_mode": false
+        "postgresql_ssl_mode": true
     },
     "minio": {
         "endpoint": "minio:9000",

@@ -103,3 +103,16 @@ secretStore:
         kubernetes:
           mountPath: kubernetes
           role: store-prod
+
+# Shared X-Internal-Token credential (templates/internal-api-tokens.yaml).
+# Prod syncs it from the secret manager; non-prod overlays render a dev token.
+internalApiTokens:
+  enabled: true
+  name: internal-api-tokens
+  token: ""
+  externalSecret:
+    enabled: true
+    refreshInterval: 15m
+    remoteKey: store/prod/internal-api-tokens
+    tokensProperty: tokens
+    tokenProperty: token

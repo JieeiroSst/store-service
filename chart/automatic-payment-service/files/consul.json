@@ -8,7 +8,7 @@
         "postgresql_user": "testUser",
         "postgresql_password": "testPassword",
         "postgresql_dbname": "automatic_payment",
-        "postgresql_ssl_mode": false
+        "postgresql_ssl_mode": true
     },
     "billing": {
         "renewal_check_interval": 86400000000000

@@ -32,6 +32,19 @@ CREATE TABLE IF NOT EXISTS points_ledger (
 );
 `;
 
+function sslOptions(mode: string): false | { rejectUnauthorized: boolean } {
+    switch (mode) {
+        case 'disable':
+        case '':
+            return false;
+        case 'verify-ca':
+        case 'verify-full':
+            return { rejectUnauthorized: true };
+        default:
+            return { rejectUnauthorized: false };
+    }
+}
+
 export function newPool(cfg: Postgres, database: string = cfg.Database): Pool {
     return new Pool({
         host: cfg.Host,
@@ -39,6 +52,7 @@ export function newPool(cfg: Postgres, database: string = cfg.Database): Pool {
         user: cfg.User,
         password: cfg.Password,
         database,
+        ssl: sslOptions(cfg.SSLMode),
         max: 10,
     });
 }

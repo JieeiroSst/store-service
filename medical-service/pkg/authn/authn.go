@@ -70,7 +70,6 @@ type Authenticator struct {
 	baseURL  string
 	http     *http.Client
 	internal [][]byte
-	warnOnce sync.Once
 	mu       sync.Mutex
 	cache    map[string]cacheEntry
 }
@@ -100,8 +99,6 @@ func FromEnv() *Authenticator {
 	return New(url, strings.Split(os.Getenv("INTERNAL_API_TOKENS"), ","), 3*time.Second)
 }
 
-func (a *Authenticator) Enforcing() bool { return len(a.internal) > 0 }
-
 func (a *Authenticator) Authenticate(ctx context.Context, authorization, internalToken string) (Principal, error) {
 	if internalToken = strings.TrimSpace(internalToken); internalToken != "" {
 		if a.validInternal(internalToken) {
@@ -111,12 +108,6 @@ func (a *Authenticator) Authenticate(ctx context.Context, authorization, interna
 	}
 	if token, ok := strings.CutPrefix(strings.TrimSpace(authorization), "Bearer "); ok && strings.TrimSpace(token) != "" {
 		return a.user(ctx, strings.TrimSpace(token))
-	}
-	if !a.Enforcing() {
-		a.warnOnce.Do(func() {
-			log.Printf("authn: INTERNAL_API_TOKENS is not set, requests without credentials are accepted as internal calls")
-		})
-		return Principal{Service: true}, nil
 	}
 	return Principal{}, errAnonymous
 }

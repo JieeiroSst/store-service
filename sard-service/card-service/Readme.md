@@ -118,8 +118,8 @@ internal/
 
 ## API
 
-`/api/*` routes need `Authorization: Bearer <token>` when `ACCESS_TOKENS` is
-set, and `/internal/*` routes need one of `INTERNAL_TOKENS`.
+`/api/*` routes need `Authorization: Bearer <token>` matching one of `ACCESS_TOKENS`,
+and `/internal/*` routes need one of `INTERNAL_TOKENS`; an empty list rejects every request.
 
 | Method | Path | Body |
 |---|---|---|

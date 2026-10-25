@@ -13,7 +13,7 @@
         "user": "wallet_service_svc",
         "password": "",
         "name": "wallet_service",
-        "sslmode": "disable",
+        "sslmode": "require",
         "max_open_conns": 25,
         "max_idle_conns": 10,
         "conn_max_lifetime": 300,

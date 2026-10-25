@@ -107,9 +107,16 @@ func TestGeneratedCardNumbersPassLuhn(t *testing.T) {
 
 func TestCardExpiryAndUnblock(t *testing.T) {
 	now := time.Date(2026, 10, 21, 0, 0, 0, 0, time.UTC)
-	c, err := NewCard(uuid.New(), uuid.New(), CardNetworkVisa, "alice", now)
+	key := []byte("test-card-hash-key-0123456789abcdef")
+	if _, err := NewCard(uuid.New(), uuid.New(), CardNetworkVisa, "alice", key[:16], now); !errors.Is(err, ErrCardIssuing) {
+		t.Fatalf("short hash key must disable issuing, got %v", err)
+	}
+	c, err := NewCard(uuid.New(), uuid.New(), CardNetworkVisa, "alice", key, now)
 	if err != nil {
 		t.Fatal(err)
+	}
+	if c.CardNumberHash == HashSecret(c.CardNumber) || len(c.CardNumberHash) != 64 {
+		t.Fatalf("card number hash must be a keyed HMAC")
 	}
 	if c.EnsureUsable(now) != nil {
 		t.Fatalf("new card must be usable")

@@ -11,7 +11,7 @@
         "user": "",
         "password": "",
         "database": "customer_info",
-        "sslMode": "disable",
+        "sslMode": "require",
         "maxConns": 10
     },
     "userService": {

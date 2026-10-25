@@ -41,7 +41,7 @@ threadsService:
     postgresUser: testUser
     postgresPassword: testPassword
     postgresDbname: threads
-    postgresSSLMode: "disable"
+    postgresSSLMode: require
     # The umbrella chart's shared Redis (chart/redis, service redis-svc,
     # port 6379 - see values.yaml there) has no AUTH configured, so
     # redisPassword is intentionally blank. Post/author caching (see

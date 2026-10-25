@@ -6,6 +6,8 @@ global:
   environment: local
 
 vendingMachineService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: vending-machine-service
   replicas: 1
 

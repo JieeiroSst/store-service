@@ -40,6 +40,7 @@ recompenseService:
     postgresDatabase: recompense_service
     postgresUser: testUser
     postgresPassword: testPassword
+    postgresSSLMode: require
     # Empty disables the read cache.
     redisHost: redis://redis-svc:80
     cacheTTLSeconds: "60"
@@ -68,6 +69,8 @@ recompenseService:
       value: '{{ .Values.recompenseService.env.postgresDatabase }}'
     - name: UserPostgres
       value: '{{ .Values.recompenseService.env.postgresUser }}'
+    - name: SSLModePostgres
+      value: '{{ .Values.recompenseService.env.postgresSSLMode }}'
     - name: PasswordPostgres
       valueFrom:
         secretKeyRef:

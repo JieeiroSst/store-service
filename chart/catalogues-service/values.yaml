@@ -42,8 +42,7 @@ cataloguesService:
     postgresDatabase: catalogues_service
     postgresUser: testUser
     postgresPassword: testPassword
-    postgresSSLMode: disable
-
+    postgresSSLMode: require
   resources:
     requests:
       cpu: 50m

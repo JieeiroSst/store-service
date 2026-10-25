@@ -62,7 +62,6 @@ class Authenticator:
         self.timeout = timeout
         self._cache: Dict[str, Tuple[Principal, float]] = {}
         self._lock = threading.Lock()
-        self._warned = False
 
     @classmethod
     def from_env(cls) -> "Authenticator":
@@ -70,10 +69,6 @@ class Authenticator:
             os.getenv("USER_SERVICE_URL", "http://user-api-svc"),
             os.getenv("INTERNAL_API_TOKENS", "").split(","),
         )
-
-    @property
-    def enforcing(self) -> bool:
-        return bool(self.internal)
 
     def authenticate(self, authorization: Optional[str], internal_token: Optional[str]) -> Optional[Principal]:
         internal_token = (internal_token or "").strip()
@@ -84,11 +79,6 @@ class Authenticator:
         authorization = (authorization or "").strip()
         if authorization.startswith("Bearer ") and authorization[7:].strip():
             return self._user(authorization[7:].strip())
-        if not self.enforcing:
-            if not self._warned:
-                self._warned = True
-                log.warning("INTERNAL_API_TOKENS is not set, requests without credentials are accepted as internal calls")
-            return Principal(service=True)
         return None
 
     def _user(self, token: str) -> Principal:

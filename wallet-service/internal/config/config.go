@@ -84,7 +84,8 @@ type FeesConfig struct {
 }
 
 type SecurityConfig struct {
-	PinBcryptCost int `mapstructure:"pin_bcrypt_cost"`
+	PinBcryptCost int    `mapstructure:"pin_bcrypt_cost"`
+	CardHashKey   string `mapstructure:"card_hash_key"`
 }
 
 type PaymentRequestsConfig struct {
@@ -130,6 +131,7 @@ func Load() (*Config, error) {
 	v.SetDefault("fees.withdrawal_min_usd", "0.5")
 	v.SetDefault("fees.transfer_rate", "0")
 	v.SetDefault("security.pin_bcrypt_cost", 10)
+	v.SetDefault("security.card_hash_key", "")
 	v.SetDefault("payment_requests.ttl_hours", 168)
 	v.SetDefault("bank_gateway.decline_above", "0")
 

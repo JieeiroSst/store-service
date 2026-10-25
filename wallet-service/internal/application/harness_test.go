@@ -73,6 +73,7 @@ func newHarness(t *testing.T) *harness {
 		BankGateway:     h.bank,
 		Fees:            model.DefaultFeeSchedule(),
 		PaymentRequest:  PaymentRequestPolicy{TTL: 24 * time.Hour},
+		CardHashKey:     []byte("test-card-hash-key-0123456789abcdef"),
 		Clock:           func() time.Time { return h.now },
 	}
 	h.wallets = NewWalletService(d)

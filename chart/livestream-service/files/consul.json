@@ -8,7 +8,7 @@
         "postgresqlUser": "testUser",
         "postgresqlPassword": "testPassword",
         "postgresqlDbname": "livestream",
-        "postgresqlSSLMode": false
+        "postgresqlSSLMode": true
     },
     "redis": {
         "addr": "redis:6379",

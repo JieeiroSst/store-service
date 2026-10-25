@@ -43,7 +43,7 @@ sardCardService:
     name: sard-card-service-secret
     stringData:
       cardMasterKey: local-dev-only-card-master-key-change-me-0001
-      accessTokens: ''
+      accessTokens: local-dev-sard-card-access
       internalTokens: local-dev-sard-card-internal
       customerInfoToken: local-dev-sard-customer-info
       authServiceToken: local-dev-sard-auth-internal

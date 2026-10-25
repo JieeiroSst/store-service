@@ -8,7 +8,7 @@
         "postgresqlUser": "testUser",
         "postgresqlPassword": "testPassword",
         "postgresqlDbname": "ekyc",
-        "postgresqlSSLMode": false
+        "postgresqlSSLMode": true
     },
     "userService": {
         "baseURL": "http://user-api-svc",

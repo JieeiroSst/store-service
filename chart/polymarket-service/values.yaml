@@ -3,6 +3,8 @@
 global:
   environment: local
 polymarketService:
+  # Sends and checks X-Internal-Token from the platform internal-api-tokens Secret.
+  internalApiTokens: true
   name: polymarket-service
   selectorApp: polymarket-service-deployment
   containerName: polymarket-service-deployment

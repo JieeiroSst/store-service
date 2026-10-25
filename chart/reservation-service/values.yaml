@@ -37,6 +37,7 @@ reservationService:
   env:
     # Points at the umbrella chart's postgres.
     postgresHost: postgresdb
+    postgresSSLMode: require
     postgresPort: "80"
     postgresDatabase: reservation_service
     postgresUser: testUser
@@ -104,6 +105,8 @@ reservationService:
   containerEnv:
     - name: PORT
       value: '{{ .Values.reservationService.image.port }}'
+    - name: SSLModePostgres
+      value: '{{ .Values.reservationService.env.postgresSSLMode }}'
     - name: HostPostgres
       value: '{{ .Values.reservationService.env.postgresHost }}'
     - name: PortPostgres

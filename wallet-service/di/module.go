@@ -106,6 +106,7 @@ func provideDeps(in depsIn) (application.Deps, error) {
 		Clearing:        in.Clearing,
 		Cache:           in.Cache,
 		Pins:            in.Pins,
+		CardHashKey:     []byte(in.Config.Security.CardHashKey),
 		BankGateway:     in.BankGateway,
 		Fees:            fees,
 		PaymentRequest:  application.PaymentRequestPolicy{TTL: in.Config.PaymentRequests.TTL()},
