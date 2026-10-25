@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/status_view.dart';
 import '../../../core/widgets/ui.dart';
 import '../bloc/auth_bloc.dart';
+import 'mfa_code_form.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -123,58 +124,63 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 420),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text('Đăng nhập', style: theme.textTheme.headlineSmall),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Chào mừng bạn quay lại 👋',
-                            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                          ),
-                          const SizedBox(height: 24),
-                          TextFormField(
-                            controller: _username,
-                            textInputAction: TextInputAction.next,
-                            autofillHints: const [AutofillHints.username],
-                            decoration: const InputDecoration(labelText: 'Tên đăng nhập', prefixIcon: Icon(Icons.person_outline)),
-                            validator: (v) => (v == null || v.trim().isEmpty) ? 'Vui lòng nhập tên đăng nhập' : null,
-                          ),
-                          const SizedBox(height: 16),
-                          TextFormField(
-                            controller: _password,
-                            obscureText: _obscure,
-                            autofillHints: const [AutofillHints.password],
-                            onFieldSubmitted: (_) => _submit(),
-                            decoration: InputDecoration(
-                              labelText: 'Mật khẩu',
-                              prefixIcon: const Icon(Icons.lock_outline),
-                              suffixIcon: IconButton(
-                                icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
-                                onPressed: () => setState(() => _obscure = !_obscure),
-                              ),
-                            ),
-                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập mật khẩu' : null,
-                          ),
-                          const SizedBox(height: 28),
-                          BlocBuilder<AuthBloc, AuthState>(
-                            buildWhen: (p, c) => p.submitting != c.submitting,
-                            builder: (context, state) => LoadingButton(label: 'Đăng nhập', loading: state.submitting, onPressed: _submit),
-                          ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            alignment: WrapAlignment.center,
-                            crossAxisAlignment: WrapCrossAlignment.center,
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      buildWhen: (p, c) => p.awaitingMfa != c.awaitingMfa,
+                      builder: (context, state) => state.awaitingMfa
+                          ? const MfaCodeForm()
+                          : Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              const Text('Chưa có tài khoản?'),
-                              TextButton(onPressed: () => context.push('/signup'), child: const Text('Đăng ký ngay')),
+                              Text('Đăng nhập', style: theme.textTheme.headlineSmall),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Chào mừng bạn quay lại 👋',
+                                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                              ),
+                              const SizedBox(height: 24),
+                              TextFormField(
+                                controller: _username,
+                                textInputAction: TextInputAction.next,
+                                autofillHints: const [AutofillHints.username],
+                                decoration: const InputDecoration(labelText: 'Tên đăng nhập', prefixIcon: Icon(Icons.person_outline)),
+                                validator: (v) => (v == null || v.trim().isEmpty) ? 'Vui lòng nhập tên đăng nhập' : null,
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _password,
+                                obscureText: _obscure,
+                                autofillHints: const [AutofillHints.password],
+                                onFieldSubmitted: (_) => _submit(),
+                                decoration: InputDecoration(
+                                  labelText: 'Mật khẩu',
+                                  prefixIcon: const Icon(Icons.lock_outline),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
+                                    onPressed: () => setState(() => _obscure = !_obscure),
+                                  ),
+                                ),
+                                validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập mật khẩu' : null,
+                              ),
+                              const SizedBox(height: 28),
+                              BlocBuilder<AuthBloc, AuthState>(
+                                buildWhen: (p, c) => p.submitting != c.submitting,
+                                builder: (context, state) => LoadingButton(label: 'Đăng nhập', loading: state.submitting, onPressed: _submit),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                alignment: WrapAlignment.center,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  const Text('Chưa có tài khoản?'),
+                                  TextButton(onPressed: () => context.push('/signup'), child: const Text('Đăng ký ngay')),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
                     ),
                   ),
                 ),

@@ -26,6 +26,9 @@ func From(ctx context.Context, service string, err error) error {
 	for _, d := range st.Details() {
 		if info, ok := d.(*errdetails.ErrorInfo); ok && info.Reason != "" {
 			ext["reason"] = info.Reason
+			if len(info.Metadata) > 0 {
+				ext["details"] = info.Metadata
+			}
 		}
 	}
 	return &gqlerror.Error{Path: graphql.GetPath(ctx), Message: message, Extensions: ext}

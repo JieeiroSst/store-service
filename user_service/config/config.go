@@ -24,6 +24,18 @@ type Config struct {
 	Internal         InternalConfig         `json:"internal"`
 	SSO              SSOConfig              `json:"sso"`
 	Social           SocialConfig           `json:"social_login"`
+	MFA              MFAConfig              `json:"mfa"`
+}
+
+type MFAConfig struct {
+	ChallengeTTLSeconds int `json:"challenge_ttl_seconds"`
+}
+
+func (m MFAConfig) ChallengeTTL() time.Duration {
+	if m.ChallengeTTLSeconds <= 0 {
+		return 5 * time.Minute
+	}
+	return time.Duration(m.ChallengeTTLSeconds) * time.Second
 }
 
 type SocialConfig struct {

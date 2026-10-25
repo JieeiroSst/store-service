@@ -118,3 +118,37 @@ extend type Mutation {
   addUserRole(input: AssignUserRoleInput!): UserRoleMessage! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
   removeUserRoles(userId: Int!): String! @hasPermission(object: "/graphql/user-roles", action: "MUTATION")
 }
+
+type MfaStatus {
+  enabled: Boolean!
+  method: String
+  enabledAt: String @goTag(key: "json", value: "enabled_at")
+  recoveryCodesRemaining: Int! @goTag(key: "json", value: "recovery_codes_remaining")
+}
+
+type TotpSetup {
+  secret: String!
+  otpauthUri: String! @goTag(key: "json", value: "otpauth_uri")
+  qrCode: String! @goTag(key: "json", value: "qr_code")
+  issuer: String!
+  account: String!
+  digits: Int!
+  period: Int!
+  algorithm: String!
+}
+
+type MfaRecoveryCodes {
+  recoveryCodes: [String!]! @goTag(key: "json", value: "recovery_codes")
+}
+
+extend type Query {
+  mfaStatus: MfaStatus! @rest(service: "user-service", path: "/api/v1/mfa/totp")
+}
+
+extend type Mutation {
+  setupTotp: TotpSetup! @rest(service: "user-service", method: "POST", path: "/api/v1/mfa/totp/setup")
+  enableTotp(code: String!): MfaRecoveryCodes! @rest(service: "user-service", method: "POST", path: "/api/v1/mfa/totp/enable")
+  disableTotp(code: String!): Boolean! @rest(service: "user-service", method: "POST", path: "/api/v1/mfa/totp/disable")
+  regenerateMfaRecoveryCodes(code: String!): MfaRecoveryCodes! @rest(service: "user-service", method: "POST", path: "/api/v1/mfa/totp/recovery-codes")
+  verifyTotpLogin(mfaToken: String!, code: String!): AuthToken! @public
+}

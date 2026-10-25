@@ -9,6 +9,7 @@ import (
 	"github.com/JIeeiroSst/gateway-api/proxy"
 	"github.com/JIeeiroSst/gateway-api/proxy/grpcerr"
 	"github.com/JIeeiroSst/gateway-api/proxy/pb/userpb"
+	"github.com/JIeeiroSst/gateway-api/proxy/rest"
 )
 
 func (r *mutationResolver) Login(ctx context.Context, input model.LoginInput) (*model.AuthToken, error) {
@@ -147,6 +148,35 @@ func (r *mutationResolver) RemoveUserRoles(ctx context.Context, userID int) (str
 	return res.GetMessage(), nil
 }
 
+func (r *mutationResolver) SetupTotp(ctx context.Context) (*model.TotpSetup, error) {
+	return restCall[*model.TotpSetup](ctx, r.Proxy, "user-service", rest.Request{Method: "POST", Path: "/api/v1/mfa/totp/setup", Body: map[string]any{}}, "")
+}
+
+func (r *mutationResolver) EnableTotp(ctx context.Context, code string) (*model.MfaRecoveryCodes, error) {
+	return restCall[*model.MfaRecoveryCodes](ctx, r.Proxy, "user-service", rest.Request{Method: "POST", Path: "/api/v1/mfa/totp/enable", Body: map[string]any{"code": code}}, "")
+}
+
+func (r *mutationResolver) DisableTotp(ctx context.Context, code string) (bool, error) {
+	return restCall[bool](ctx, r.Proxy, "user-service", rest.Request{Method: "POST", Path: "/api/v1/mfa/totp/disable", Body: map[string]any{"code": code}}, "")
+}
+
+func (r *mutationResolver) RegenerateMfaRecoveryCodes(ctx context.Context, code string) (*model.MfaRecoveryCodes, error) {
+	return restCall[*model.MfaRecoveryCodes](ctx, r.Proxy, "user-service", rest.Request{Method: "POST", Path: "/api/v1/mfa/totp/recovery-codes", Body: map[string]any{"code": code}}, "")
+}
+
+func (r *mutationResolver) VerifyTotpLogin(ctx context.Context, mfaToken string, code string) (*model.AuthToken, error) {
+	var res struct {
+		SessionToken string `json:"session_token"`
+		RefreshToken string `json:"refresh_token"`
+		ExpiryTime   int64  `json:"expiry_time"`
+	}
+	body := map[string]string{"mfa_token": mfaToken, "code": code}
+	if err := r.Proxy.REST(proxy.UserService).Post(ctx, "/api/v1/mfa/totp/verify", body, &res); err != nil {
+		return nil, err
+	}
+	return &model.AuthToken{AccessToken: res.SessionToken, RefreshToken: res.RefreshToken, ExpiresIn: int(res.ExpiryTime)}, nil
+}
+
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	user, _ := auth.UserFromContext(ctx)
 	if user.Username == "" {
@@ -213,4 +243,8 @@ func (r *queryResolver) UserRoles(ctx context.Context, page *int, limit *int) (*
 		out.Roles = append(out.Roles, toUserRole(role))
 	}
 	return out, nil
+}
+
+func (r *queryResolver) MfaStatus(ctx context.Context) (*model.MfaStatus, error) {
+	return restCall[*model.MfaStatus](ctx, r.Proxy, "user-service", rest.Request{Method: "GET", Path: "/api/v1/mfa/totp"}, "")
 }

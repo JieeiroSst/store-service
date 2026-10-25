@@ -237,3 +237,25 @@ type ListSessionsResponse struct {
 type RevokeSessionsResponse struct {
 	Revoked int `json:"revoked"`
 }
+
+type MFAStatusResponse struct {
+	Enabled                bool       `json:"enabled"`
+	Method                 string     `json:"method,omitempty"`
+	EnabledAt              *time.Time `json:"enabled_at,omitempty"`
+	RecoveryCodesRemaining int        `json:"recovery_codes_remaining"`
+}
+
+type TOTPSetupResponse struct {
+	Secret     string `json:"secret"`
+	OtpauthURI string `json:"otpauth_uri"`
+	QRCode     string `json:"qr_code"`
+	Issuer     string `json:"issuer"`
+	Account    string `json:"account"`
+	Digits     int    `json:"digits"`
+	Period     int    `json:"period"`
+	Algorithm  string `json:"algorithm"`
+}
+
+type RecoveryCodesResponse struct {
+	RecoveryCodes []string `json:"recovery_codes"`
+}

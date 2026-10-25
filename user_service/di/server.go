@@ -11,6 +11,7 @@ import (
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/clientinfo"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/internalhttp"
+	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/mfahttp"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/sessionhttp"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/ssohttp"
 	"github.com/JIeeiroSst/user-service/internal/port/input"
@@ -34,6 +35,7 @@ type ServerParams struct {
 	Users     input.UserService
 	Auth      input.AuthService
 	Sessions  input.SessionService
+	MFA       input.MFAService
 	SSO       input.SSOService
 	Social    []SocialLogin
 }
@@ -54,6 +56,9 @@ func RegisterServer(p ServerParams) error {
 	}
 	if err := sessionhttp.New(p.Sessions).Register(mux); err != nil {
 		return fmt.Errorf("failed to register session routes: %w", err)
+	}
+	if err := mfahttp.New(p.MFA).Register(mux); err != nil {
+		return fmt.Errorf("failed to register mfa routes: %w", err)
 	}
 	if p.SSO != nil {
 		if err := ssohttp.New(p.SSO, ssohttp.SSOBasePath).Register(mux); err != nil {

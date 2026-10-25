@@ -562,3 +562,45 @@ curl -X POST $BASE/api/v1/refresh -H 'Content-Type: application/json' \
 curl -X POST $BASE/api/v1/logout -H 'Content-Type: application/json' \
   -d '{"session_token":"<sessionToken>"}'
 ```
+
+## Two-factor authentication (TOTP / Google Authenticator)
+
+authorize-service owns the second factor (`authorize.mfa.v1.MfaService`, see
+`authorize_service/api/mfa/mfa.proto`): the AES-256-GCM encrypted secret in its
+`user_totps` table, QR code, recovery codes, replay protection (each 30s step is
+accepted once) and the per-user failure throttle (5 / 15 min). The encryption key
+is authorize-service's `MFA_ENCRYPTION_KEY` (its `.env`; Consul `mfa.encryption_key`
+as fallback). user-service never stores or sees the secret after setup; it only:
+
+- authenticates the caller (Bearer access token) and forwards its user id,
+- gates every login (password, SSO, social) on `GetTOTPStatus`, and keeps the
+  short-lived login challenge (`mfa_token`, Redis) until the code is verified.
+
+If authorize-service is unreachable, logins fail with `SERVICE_UNAVAILABLE` rather
+than skipping the second factor. `internal/adapter/outbound/authorizeclient/proto/mfa.proto`
+is a copy of the authorize proto; regenerate with `make gen-authorize-client`.
+
+Enrollment (Bearer access token required):
+
+| Method | Path | Body | Result |
+|---|---|---|---|
+| GET  | `/api/v1/mfa/totp` | - | `{enabled, method, enabled_at, recovery_codes_remaining}` |
+| POST | `/api/v1/mfa/totp/setup` | - | `{secret, otpauth_uri, qr_code (PNG data URI), ...}` |
+| POST | `/api/v1/mfa/totp/enable` | `{code}` | `{recovery_codes: [10]}` - shown once |
+| POST | `/api/v1/mfa/totp/recovery-codes` | `{code}` (TOTP only) | new `recovery_codes` |
+| POST | `/api/v1/mfa/totp/disable` | `{code}` (TOTP or recovery) | 204 |
+
+Login with 2FA enabled: the login call fails with `401 AUTH_MFA_REQUIRED` and
+`details: {mfa_token, mfa_method: "totp", expires_in}` (over gRPC the same values are
+in the `ErrorInfo` metadata). Finish with:
+
+```
+POST /api/v1/mfa/totp/verify   {"mfa_token": "...", "code": "123456"}   -> LoginResponse
+```
+
+`code` may also be a recovery code (`xxxxx-xxxxx`), which is consumed. The `mfa_token`
+lives 5 minutes and is single-use:
+
+```json
+"mfa": { "challenge_ttl_seconds": 300 }
+```

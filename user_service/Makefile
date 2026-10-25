@@ -3,7 +3,7 @@ api:
 gen-client:
 	protoc --go_out=. --go-grpc_out=. ./proto/api.proto
 gen-authorize-client:
-	protoc --go_out=. --go_opt=module=github.com/JIeeiroSst/user-service --go-grpc_out=. --go-grpc_opt=module=github.com/JIeeiroSst/user-service ./internal/adapter/outbound/authorizeclient/proto/permission.proto
+	protoc --go_out=. --go_opt=module=github.com/JIeeiroSst/user-service --go-grpc_out=. --go-grpc_opt=module=github.com/JIeeiroSst/user-service ./internal/adapter/outbound/authorizeclient/proto/permission.proto ./internal/adapter/outbound/authorizeclient/proto/mfa.proto
 gen-server:
 	protoc --go_out=. --go-grpc_out=. ./internal/proto/api.proto
 swag:

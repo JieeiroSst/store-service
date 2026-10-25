@@ -5093,6 +5093,17 @@ type MedicalWarning struct {
 	Description *string  `json:"description,omitempty"`
 }
 
+type MfaRecoveryCodes struct {
+	RecoveryCodes []string `json:"recovery_codes"`
+}
+
+type MfaStatus struct {
+	Enabled                bool    `json:"enabled"`
+	Method                 *string `json:"method,omitempty"`
+	EnabledAt              *string `json:"enabled_at"`
+	RecoveryCodesRemaining int     `json:"recovery_codes_remaining"`
+}
+
 type MovieHome struct {
 	Sections []*MovieSection `json:"sections,omitempty"`
 }
@@ -9463,6 +9474,17 @@ type ToolTestCase struct {
 	ExpectJSON         map[string]any `json:"expect_json,omitempty"`
 	MaxLatencyMs       *int           `json:"max_latency_ms,omitempty"`
 	SpecQuote          *string        `json:"spec_quote,omitempty"`
+}
+
+type TotpSetup struct {
+	Secret     string `json:"secret"`
+	OtpauthURI string `json:"otpauth_uri"`
+	QRCode     string `json:"qr_code"`
+	Issuer     string `json:"issuer"`
+	Account    string `json:"account"`
+	Digits     int    `json:"digits"`
+	Period     int    `json:"period"`
+	Algorithm  string `json:"algorithm"`
 }
 
 type UpdateProfileInput struct {

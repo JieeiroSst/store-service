@@ -12,7 +12,24 @@ import 'package:keikiapp/core/network/graphql_client.dart';
 
 import '../../test/helpers.dart';
 
+const _qrPng = 'iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAABlBMVEX///8AAABVwtN+AAACrElEQVR42uyZwY2sMBBEy+Lgo0NwJjix0QAiMZMJIfjoA6K+qtmZHfYHgJHGt0HvsIbq6upefM/33PB4kswhY+AWuXasqKk6PS03AlbA57AHcosjEEnufilA1xJA+qUk/dFxi4hI6OHKwLk1gDlM3ABsYIbj0iJQAMcRw9rpzS/V3Q7Qk+KKK5BggMT8n6KuBlRkS+nDVB5xXrfoc+398qc2LwbsuCIhwzwCSbX4x+ouBqQHZiBMnFeArIk0ExvbAqpqTToluzdklXgfAIk7ktQRZ24gTdnT7zVbAHyuidYv0FFWXF2VhobSDIDIzD3kMBVZmEquutrDvUuvAcCvnjUVvVvdgquFg08DuQNg6qC+RXkAoNrHX3+5HPD0tMDgygMdu9UTqQIvuTQBHAiX8kQnwfzcIoxhbAdQU0MfzMRW2Rhw6OFdmw0AMlbrvY5cD59F70999waA9AHHPUwWejU+eJ4VdT0AMPsdfdgxrEKknorwbmqNALS2NtBa2lrhFy56UNoBos/qvBLFimjyONfmHQAl89qjlxVrlJTLAQi/xdsAYEOuxkn7GitMMMwfqm4BgJXeYp130OtGdYqL1uNaAWJNr9KzbO7J4ycaAiA9hGwzDqJMQWGRU7kVED3NMZQnj3hZzZlfg3kLgLdaCznswQSjiHM0ta4lAMlWXiMe6hg4klg4DUHXA17vVobwiGM8boE+TB/XvANwuFwBOo7YUBOz6jN8DMVXA68dSKDtQDraoibjeTLji4H3MtlxizP1oCYF9c9kfjlgeznLNI/4Y8Vqas/z4u5qwPa0LAhbnPWDPtvV5vsBO56Wc20w1zh5Wtw1AvCYeZUe0o+KxpYA+w9IDiM6zlSPg0pveIWcJgCbFY8kFmn7UL/U/nNSuwHwPd/T1PkXAAD//+/V7b/huS2CAAAAAElFTkSuQmCC';
+
 Object _data(String q) {
+  if (q.contains('mfaStatus')) return {'mfaStatus': {'enabled': false, 'recoveryCodesRemaining': 0}};
+  if (q.contains('setupTotp')) {
+    return {
+      'setupTotp': {
+        'secret': 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP',
+        'otpauthUri': 'otpauth://totp/Keiki:quan?secret=JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP&issuer=Keiki',
+        'qrCode': 'data:image/png;base64,$_qrPng',
+        'issuer': 'Keiki',
+        'account': 'quan',
+        'digits': 6,
+        'period': 30,
+        'algorithm': 'SHA1',
+      },
+    };
+  }
   if (q.contains('me {')) {
     return {
       'me': {'id': 7, 'username': 'quan', 'email': 'quan@keiki.vn', 'name': 'Lưu Mạnh Quân', 'phone': '0901234567', 'address': 'Quận 1, TP.HCM', 'roles': []},
@@ -84,6 +101,24 @@ GraphQLClient _client({bool loggedIn = true}) => GraphQLClient(
       storage: MemoryTokenStorage(loggedIn ? validTokens() : null),
       httpClient: MockClient((req) async {
         final q = (jsonDecode(req.body) as Map<String, dynamic>)['query'] as String;
+        if (q.contains('login(')) {
+          return http.Response(
+            jsonEncode({
+              'errors': [
+                {
+                  'message': 'two-factor authentication code required',
+                  'extensions': {
+                    'code': 'UNAUTHENTICATED',
+                    'reason': 'AUTH_MFA_REQUIRED',
+                    'details': {'mfa_token': 'mfa-1', 'mfa_method': 'totp', 'expires_in': '300'},
+                  },
+                },
+              ],
+            }),
+            200,
+            headers: {'content-type': 'application/json; charset=utf-8'},
+          );
+        }
         return http.Response(jsonEncode({'data': _data(q)}), 200, headers: {'content-type': 'application/json; charset=utf-8'});
       }),
     );
@@ -103,7 +138,7 @@ Future<void> _loadFonts() async {
 void main() {
   setUpAll(_loadFonts);
 
-  Future<void> shoot(WidgetTester tester, String name, {bool loggedIn = true, String? route}) async {
+  Future<void> shoot(WidgetTester tester, String name, {bool loggedIn = true, String? route, Future<void> Function(WidgetTester)? act}) async {
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -111,6 +146,10 @@ void main() {
     await tester.pumpAndSettle();
     if (route != null) {
       GoRouter.of(tester.element(find.byType(Navigator).first)).push(route);
+      await tester.pumpAndSettle();
+    }
+    if (act != null) {
+      await act(tester);
       await tester.pumpAndSettle();
     }
     await expectLater(find.byType(MaterialApp), matchesGoldenFile('screens/$name.png'));
@@ -123,4 +162,15 @@ void main() {
   testWidgets('food', (t) => shoot(t, 'food', route: '/food'));
   testWidgets('shop', (t) => shoot(t, 'shop', route: '/shop'));
   testWidgets('profile', (t) => shoot(t, 'profile', route: '/profile'));
+  testWidgets('login-2fa', (t) => shoot(t, 'login-2fa', loggedIn: false, act: (t) async {
+        await t.enterText(find.byType(TextFormField).at(0), 'quan');
+        await t.enterText(find.byType(TextFormField).at(1), 'secret');
+        await t.tap(find.text('Đăng nhập').last);
+      }));
+  testWidgets('2fa-intro', (t) => shoot(t, '2fa-intro', route: '/profile/2fa'));
+  testWidgets('2fa-setup', (t) => shoot(t, '2fa-setup', route: '/profile/2fa', act: (t) async {
+        await t.tap(find.text('Bật xác thực 2 lớp'));
+        await t.pumpAndSettle();
+        await t.runAsync(() => precacheImage((t.widget<Image>(find.byType(Image).last)).image, t.element(find.byType(Image).last)));
+      }));
 }

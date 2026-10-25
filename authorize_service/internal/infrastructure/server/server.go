@@ -10,6 +10,7 @@ import (
 
 	authorizeGrpc "github.com/JIeeiroSst/lib-gateway/authorize-service/gateway/authorize-service"
 	"github.com/JIeeiroSst/utils/logger"
+	mfapb "github.com/JieeiroSst/authorize-service/api/mfa/pb"
 	permissionpb "github.com/JieeiroSst/authorize-service/api/permission/pb"
 	"github.com/JieeiroSst/authorize-service/config"
 	grpchandler "github.com/JieeiroSst/authorize-service/internal/adapter/primary/grpc"
@@ -30,6 +31,7 @@ type Params struct {
 	Cfg               *config.Config
 	Handler           *grpchandler.Handler
 	PermissionHandler *grpchandler.PermissionHandler
+	MfaHandler        *grpchandler.MfaHandler
 }
 
 // New registers gRPC and HTTP-gateway servers with the fx lifecycle.
@@ -43,6 +45,7 @@ func New(p Params) {
 	)
 	authorizeGrpc.RegisterAuthorizeServiceServer(grpcServer, p.Handler)
 	permissionpb.RegisterPermissionServiceServer(grpcServer, p.PermissionHandler)
+	mfapb.RegisterMfaServiceServer(grpcServer, p.MfaHandler)
 	reflection.Register(grpcServer)
 
 	p.LC.Append(fx.Hook{

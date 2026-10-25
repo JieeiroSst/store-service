@@ -41,6 +41,7 @@ const deepLinkCatalog = <DeepLinkSpec>[
   DeepLinkSpec('/services/:service?all=1', 'Tất cả chức năng của dịch vụ', '/services/movie?all=1', group: 'Màn chính'),
   DeepLinkSpec('/profile', 'Tài khoản', '/profile', group: 'Màn chính'),
   DeepLinkSpec('/profile/edit', 'Sửa hồ sơ', '/profile/edit', group: 'Màn chính'),
+  DeepLinkSpec('/profile/2fa', 'Xác thực 2 lớp', '/profile/2fa', group: 'Màn chính'),
   DeepLinkSpec('/notifications', 'Thông báo', '/notifications', group: 'Màn chính'),
   DeepLinkSpec('/scan', 'Quét mã QR', '/scan', group: 'Màn chính'),
   DeepLinkSpec('/wallet', 'Ví Keiki', '/wallet', group: 'Ví'),

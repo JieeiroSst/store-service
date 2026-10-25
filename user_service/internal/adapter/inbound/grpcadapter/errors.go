@@ -29,6 +29,12 @@ var grpcCodes = map[domain.ErrorCode]codes.Code{
 	domain.CodeAccountLocked:       codes.PermissionDenied,   // 403
 	domain.CodeTooManyAttempts:     codes.ResourceExhausted,  // 429
 	domain.CodeSSOFailed:           codes.Unauthenticated,    // 401
+	domain.CodeMFARequired:         codes.Unauthenticated,    // 401
+	domain.CodeMFAInvalidCode:      codes.Unauthenticated,    // 401
+	domain.CodeMFAChallengeInvalid: codes.Unauthenticated,    // 401
+	domain.CodeMFANotEnabled:       codes.FailedPrecondition, // 400
+	domain.CodeMFAAlreadyEnabled:   codes.FailedPrecondition, // 400
+	domain.CodeMFANotSetUp:         codes.FailedPrecondition, // 400
 	domain.CodeUsernameRequired:    codes.InvalidArgument,    // 400
 	domain.CodeUsernameTaken:       codes.AlreadyExists,      // 409
 	domain.CodeInvalidEmail:        codes.InvalidArgument,    // 400
@@ -61,8 +67,9 @@ func toStatus(method string, err error) error {
 		code = codes.Internal
 	}
 	st, detErr := status.New(code, de.Message).WithDetails(&errdetails.ErrorInfo{
-		Reason: string(de.Code),
-		Domain: errorDomain,
+		Reason:   string(de.Code),
+		Domain:   errorDomain,
+		Metadata: de.Metadata,
 	})
 	if detErr != nil {
 		return status.Error(code, de.Message)
@@ -88,9 +95,10 @@ func classify(err error) *domain.Error {
 }
 
 type HTTPError struct {
-	Code    domain.ErrorCode `json:"code"`
-	Message string           `json:"message"`
-	Status  int              `json:"status"`
+	Code    domain.ErrorCode  `json:"code"`
+	Message string            `json:"message"`
+	Status  int               `json:"status"`
+	Details map[string]string `json:"details,omitempty"`
 }
 
 func HTTPErrorHandler(ctx context.Context, mux *runtime.ServeMux, m runtime.Marshaler, w http.ResponseWriter, r *http.Request, err error) {
@@ -101,6 +109,9 @@ func HTTPErrorHandler(ctx context.Context, mux *runtime.ServeMux, m runtime.Mars
 	for _, d := range st.Details() {
 		if info, ok := d.(*errdetails.ErrorInfo); ok && info.GetDomain() == errorDomain {
 			body.Code = domain.ErrorCode(info.GetReason())
+			if len(info.GetMetadata()) > 0 {
+				body.Details = info.GetMetadata()
+			}
 			break
 		}
 	}

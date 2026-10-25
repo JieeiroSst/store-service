@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/gateway-api/auth"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func TestForwardsUserAccessToken(t *testing.T) {
@@ -62,5 +63,26 @@ func TestForwardsClientSignals(t *testing.T) {
 	}
 	if got.Get("X-Device-Id") != "" {
 		t.Fatalf("no device id without a client: %v", got)
+	}
+}
+
+func TestUpstreamErrorReasonAndDetails(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(`{"code":"AUTH_MFA_INVALID_CODE","message":"authentication code is invalid or already used","status":401,"details":{"k":"v"}}`))
+	}))
+	defer srv.Close()
+
+	var out any
+	err := New("user-service", srv.URL, time.Second).Post(context.Background(), "/api/v1/mfa/totp/verify", map[string]string{}, &out)
+	ge, ok := err.(*gqlerror.Error)
+	if !ok {
+		t.Fatalf("err = %T %v", err, err)
+	}
+	if ge.Message != "authentication code is invalid or already used" || ge.Extensions["code"] != auth.CodeUnauthenticated || ge.Extensions["reason"] != "AUTH_MFA_INVALID_CODE" {
+		t.Fatalf("extensions = %v message = %q", ge.Extensions, ge.Message)
+	}
+	if d, _ := ge.Extensions["details"].(map[string]string); d["k"] != "v" {
+		t.Fatalf("details = %v", ge.Extensions["details"])
 	}
 }

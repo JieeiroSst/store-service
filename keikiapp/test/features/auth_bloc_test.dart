@@ -79,4 +79,65 @@ void main() {
     act: (_) => expired.add(null),
     expect: () => [const AuthState(status: AuthStatus.unauthenticated)],
   );
+
+  blocTest<AuthBloc, AuthState>(
+    'asks for the authenticator code when 2FA is enabled',
+    build: () {
+      when(() => repo.login('quan', 'secret')).thenThrow(const MfaRequiredException('mfa-1'));
+      return AuthBloc(repo);
+    },
+    act: (bloc) => bloc.add(const AuthLoginRequested('quan', 'secret')),
+    expect: () => [
+      const AuthState(submitting: true),
+      const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1'),
+    ],
+  );
+
+  blocTest<AuthBloc, AuthState>(
+    'completes login with a valid authenticator code',
+    build: () {
+      when(() => repo.verifyTotpLogin('mfa-1', '123456')).thenAnswer((_) async {});
+      when(() => repo.me()).thenAnswer((_) async => _user);
+      return AuthBloc(repo);
+    },
+    seed: () => const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1'),
+    act: (bloc) => bloc.add(const AuthMfaSubmitted('123456')),
+    expect: () => [
+      const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1', submitting: true),
+      const AuthState(status: AuthStatus.authenticated, user: _user),
+    ],
+  );
+
+  blocTest<AuthBloc, AuthState>(
+    'keeps the challenge on a wrong code and drops it when expired',
+    build: () {
+      when(() => repo.verifyTotpLogin('mfa-1', '000000')).thenThrow(
+        const GraphQLException('authentication code is invalid or already used', code: 'UNAUTHENTICATED', reason: 'AUTH_MFA_INVALID_CODE'),
+      );
+      when(() => repo.verifyTotpLogin('mfa-1', '111111')).thenThrow(
+        const GraphQLException('expired', code: 'UNAUTHENTICATED', reason: 'AUTH_MFA_CHALLENGE_INVALID'),
+      );
+      return AuthBloc(repo);
+    },
+    seed: () => const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1'),
+    act: (bloc) async {
+      bloc.add(const AuthMfaSubmitted('000000'));
+      await Future<void>.delayed(Duration.zero);
+      bloc.add(const AuthMfaSubmitted('111111'));
+    },
+    expect: () => [
+      const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1', submitting: true),
+      const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1', error: 'authentication code is invalid or already used'),
+      const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1', submitting: true),
+      const AuthState(status: AuthStatus.unauthenticated, error: 'Phiên xác thực đã hết hạn, vui lòng đăng nhập lại'),
+    ],
+  );
+
+  blocTest<AuthBloc, AuthState>(
+    'cancelling the 2FA step returns to the password form',
+    build: () => AuthBloc(repo),
+    seed: () => const AuthState(status: AuthStatus.unauthenticated, mfaToken: 'mfa-1'),
+    act: (bloc) => bloc.add(const AuthMfaCancelled()),
+    expect: () => [const AuthState(status: AuthStatus.unauthenticated)],
+  );
 }

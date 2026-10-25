@@ -16,6 +16,19 @@ type Config struct {
 	Cache     CacheConfig     `json:"cache"`
 	Secret    SecretConfig    `json:"secret"`
 	Bootstrap BootstrapConfig `json:"bootstrap"`
+	MFA       MFAConfig       `json:"mfa"`
+}
+
+type MFAConfig struct {
+	Issuer        string `json:"issuer"`
+	EncryptionKey string `json:"encryption_key"`
+}
+
+func (m MFAConfig) IssuerName() string {
+	if m.Issuer == "" {
+		return "Keiki"
+	}
+	return m.Issuer
 }
 
 type BootstrapConfig struct {
@@ -44,10 +57,10 @@ type SecretConfig struct {
 	JwtSecretKey string `json:"jwt_secret_key"`
 }
 
-// InitializeConfiguration loads configuration exclusively from Consul KV.
+// InitializeConfiguration loads configuration from Consul KV.
 // HostConsul/KeyConsul/ServiceConsul bootstrap coordinates come from the
-// .env file; there is no fallback to reading individual config values from
-// the environment.
+// .env file; the only value read from the environment is MFA_ENCRYPTION_KEY,
+// so the TOTP encryption key can live in the secret-managed .env instead of Consul.
 func InitializeConfiguration(ecosystem string) (*Config, error) {
 	_ = godotenv.Load(ecosystem)
 
@@ -66,6 +79,9 @@ func InitializeConfiguration(ecosystem string) (*Config, error) {
 	var cfg Config
 	if err := json.Unmarshal(data, &cfg); err != nil {
 		return nil, fmt.Errorf("failed to parse consul config: %w", err)
+	}
+	if v, ok := os.LookupEnv("MFA_ENCRYPTION_KEY"); ok && v != "" {
+		cfg.MFA.EncryptionKey = v
 	}
 	return &cfg, nil
 }

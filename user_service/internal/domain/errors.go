@@ -1,5 +1,7 @@
 package domain
 
+import "strconv"
+
 type ErrorCode string
 
 const (
@@ -15,6 +17,12 @@ const (
 	CodeAccountLocked       ErrorCode = "AUTH_ACCOUNT_LOCKED"
 	CodeTooManyAttempts     ErrorCode = "AUTH_TOO_MANY_ATTEMPTS"
 	CodeSSOFailed           ErrorCode = "AUTH_SSO_FAILED"
+	CodeMFARequired         ErrorCode = "AUTH_MFA_REQUIRED"
+	CodeMFAInvalidCode      ErrorCode = "AUTH_MFA_INVALID_CODE"
+	CodeMFAChallengeInvalid ErrorCode = "AUTH_MFA_CHALLENGE_INVALID"
+	CodeMFANotEnabled       ErrorCode = "MFA_NOT_ENABLED"
+	CodeMFAAlreadyEnabled   ErrorCode = "MFA_ALREADY_ENABLED"
+	CodeMFANotSetUp         ErrorCode = "MFA_NOT_SET_UP"
 
 	CodeUsernameRequired ErrorCode = "USER_USERNAME_REQUIRED"
 	CodeUsernameTaken    ErrorCode = "USER_USERNAME_TAKEN"
@@ -29,8 +37,9 @@ const (
 )
 
 type Error struct {
-	Code    ErrorCode
-	Message string
+	Code     ErrorCode
+	Message  string
+	Metadata map[string]string
 }
 
 func (e *Error) Error() string { return e.Message }
@@ -57,6 +66,11 @@ var (
 	ErrSSOIDTokenInvalid   = newError(CodeSSOFailed, "id_token is invalid or expired")
 	ErrSSOTokenUnsupported = newError(CodeNotImplemented, "token login is not supported by this provider, use the redirect flow")
 	ErrSSONoIdentity       = newError(CodeSSOFailed, "identity provider did not return a user id")
+	ErrMFAInvalidCode      = newError(CodeMFAInvalidCode, "authentication code is invalid or already used")
+	ErrMFAChallenge        = newError(CodeMFAChallengeInvalid, "two-factor challenge is invalid or expired, please login again")
+	ErrMFANotEnabled       = newError(CodeMFANotEnabled, "two-factor authentication is not enabled")
+	ErrMFAAlreadyEnabled   = newError(CodeMFAAlreadyEnabled, "two-factor authentication is already enabled")
+	ErrMFANotSetUp         = newError(CodeMFANotSetUp, "two-factor authentication has not been set up, call setup first")
 
 	ErrUsernameRequired = newError(CodeUsernameRequired, "username is required")
 	ErrUserExist        = newError(CodeUsernameTaken, "username already exists")
@@ -74,5 +88,17 @@ var (
 	ErrLockAccountFailed  = newError(CodeInternal, "lock account failed")
 	ErrAssignRoleFailed   = newError(CodeServiceUnavailable, "assign role in authorize service failed")
 )
+
+func NewMFARequired(token string, expiresIn int64) *Error {
+	return &Error{
+		Code:    CodeMFARequired,
+		Message: "two-factor authentication code required",
+		Metadata: map[string]string{
+			"mfa_token":  token,
+			"mfa_method": MFAMethodTOTP,
+			"expires_in": strconv.FormatInt(expiresIn, 10),
+		},
+	}
+}
 
 const UserCacheKey = "user_id_%d"

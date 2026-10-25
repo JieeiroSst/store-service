@@ -78,6 +78,7 @@ authorize:
       PG_PORT=80
       PG_USER=testUser
       PG_PASSWORD=testPassword
+      MFA_ENCRYPTION_KEY=dev-only-mfa-key-9f3c1e7a52b84d06
       PG_DB=authorize
       REDIS_HOST=redis-svc:80
   # No health endpoint known for this service: TCP checks on the http port.

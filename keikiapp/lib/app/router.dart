@@ -16,6 +16,7 @@ import '../features/notifications/bloc/notification_settings_cubit.dart';
 import '../features/notifications/data/notification_repository.dart';
 import '../features/notifications/view/notification_settings_page.dart';
 import '../features/profile/view/profile_page.dart';
+import '../features/profile/view/two_factor_page.dart';
 import '../features/services/view/services_home_page.dart';
 import '../features/admin/admin_home_page.dart';
 import 'mini_apps.dart';
@@ -68,6 +69,7 @@ GoRouter buildRouter(AuthBloc auth, RoleCubit role, {void Function(Uri uri)? onL
         ],
       ),
       GoRoute(path: '/profile/edit', builder: (_, _) => const EditProfilePage()),
+      GoRoute(path: '/profile/2fa', builder: (_, _) => const TwoFactorPage()),
       GoRoute(
         path: '/notifications',
         builder: (context, _) => BlocProvider(

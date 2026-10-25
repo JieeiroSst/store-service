@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"github.com/JieeiroSst/authorize-service/internal/adapter/primary/grpc"
 	"github.com/JieeiroSst/authorize-service/internal/adapter/secondary/cache"
+	"github.com/JieeiroSst/authorize-service/internal/adapter/secondary/mfa"
 	"github.com/JieeiroSst/authorize-service/internal/adapter/secondary/otp"
 	"github.com/JieeiroSst/authorize-service/internal/adapter/secondary/repository"
 	"github.com/JieeiroSst/authorize-service/internal/application"
@@ -18,11 +19,12 @@ var Module = fx.Options(
 
 	cache.Module,      // port.CachePort
 	otp.Module,        // port.OTPPort
+	mfa.Module,        // port.TOTPRepository, port.SecretBox, port.QRCodeEncoder, port.FailureThrottle
 	repository.Module, // port.CasbinRepository
 
-	application.Module, // port.CasbinUsecase, port.PermissionUsecase, port.OTPUsecase; seeds roles
+	application.Module, // port.CasbinUsecase, port.PermissionUsecase, port.OTPUsecase, port.MFAUsecase; seeds roles
 
-	grpc.Module, // *grpc.Handler, *grpc.PermissionHandler
+	grpc.Module, // *grpc.Handler, *grpc.PermissionHandler, *grpc.MfaHandler
 
 	fx.Invoke(server.New),
 )

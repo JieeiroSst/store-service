@@ -103,6 +103,7 @@ class ProfilePage extends StatelessWidget {
             tile(Icons.location_on_outlined, Colors.teal, 'Sổ địa chỉ', 'Địa chỉ giao hàng', () => context.push('/services/address/myUserAddresses')),
             tile(Icons.badge_outlined, Colors.indigo, 'Xác thực danh tính', 'eKYC bằng CCCD và khuôn mặt', () => context.push('/services/ekyc')),
             tile(Icons.admin_panel_settings_outlined, Colors.blueGrey, 'Quyền của tôi', 'Vai trò và quyền truy cập', () => context.push('/services/authorize/myPermissions')),
+            tile(Icons.phonelink_lock_outlined, Colors.green, 'Xác thực 2 lớp', 'Google Authenticator', () => context.push('/profile/2fa')),
             tile(Icons.shield_outlined, Colors.deepPurple, 'Bảo mật & địa chỉ', 'Mã OTP, kiểm tra quyền, sửa địa chỉ', () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SecurityPage()))),
             tile(Icons.qr_code_2, Colors.teal, 'Mã QR của tôi', 'Sửa, đổi nội dung, thống kê quét', () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const QrCodesPage()))),
             if (context.isAdmin)

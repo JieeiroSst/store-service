@@ -74,7 +74,7 @@ class GraphQLClient implements GatewayExecutor {
     try {
       return await _send(document, variables, tokens?.accessToken);
     } on GraphQLException catch (e) {
-      if (!e.isUnauthenticated || tokens == null) rethrow;
+      if (!e.isSessionInvalid || tokens == null) rethrow;
       final refreshed = await _refresh(tokens);
       if (refreshed == null) rethrow;
       return _send(document, variables, refreshed.accessToken);

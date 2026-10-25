@@ -20559,6 +20559,50 @@ class MedicalWarning {
       };
 }
 
+class MfaRecoveryCodes {
+  const MfaRecoveryCodes({
+    this.recoveryCodes,
+  });
+
+  final List<String>? recoveryCodes;
+
+  factory MfaRecoveryCodes.fromJson(Map<String, dynamic> json) => MfaRecoveryCodes(
+        recoveryCodes: (json['recoveryCodes'] as List?)?.map((e) => (e?.toString())!).toList(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'recoveryCodes': ?recoveryCodes,
+      };
+}
+
+class MfaStatus {
+  const MfaStatus({
+    this.enabled,
+    this.method,
+    this.enabledAt,
+    this.recoveryCodesRemaining,
+  });
+
+  final bool? enabled;
+  final String? method;
+  final String? enabledAt;
+  final int? recoveryCodesRemaining;
+
+  factory MfaStatus.fromJson(Map<String, dynamic> json) => MfaStatus(
+        enabled: json['enabled'] as bool?,
+        method: json['method']?.toString(),
+        enabledAt: json['enabledAt']?.toString(),
+        recoveryCodesRemaining: gqlInt(json['recoveryCodesRemaining']),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'enabled': ?enabled,
+        'method': ?method,
+        'enabledAt': ?enabledAt,
+        'recoveryCodesRemaining': ?recoveryCodesRemaining,
+      };
+}
+
 class MovieHome {
   const MovieHome({
     this.sections,
@@ -38016,6 +38060,50 @@ class ToolTestCase {
         'expect_json': ?expectJson,
         'max_latency_ms': ?maxLatencyMs,
         'spec_quote': ?specQuote,
+      };
+}
+
+class TotpSetup {
+  const TotpSetup({
+    this.secret,
+    this.otpauthUri,
+    this.qrCode,
+    this.issuer,
+    this.account,
+    this.digits,
+    this.period,
+    this.algorithm,
+  });
+
+  final String? secret;
+  final String? otpauthUri;
+  final String? qrCode;
+  final String? issuer;
+  final String? account;
+  final int? digits;
+  final int? period;
+  final String? algorithm;
+
+  factory TotpSetup.fromJson(Map<String, dynamic> json) => TotpSetup(
+        secret: json['secret']?.toString(),
+        otpauthUri: json['otpauthUri']?.toString(),
+        qrCode: json['qrCode']?.toString(),
+        issuer: json['issuer']?.toString(),
+        account: json['account']?.toString(),
+        digits: gqlInt(json['digits']),
+        period: gqlInt(json['period']),
+        algorithm: json['algorithm']?.toString(),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'secret': ?secret,
+        'otpauthUri': ?otpauthUri,
+        'qrCode': ?qrCode,
+        'issuer': ?issuer,
+        'account': ?account,
+        'digits': ?digits,
+        'period': ?period,
+        'algorithm': ?algorithm,
       };
 }
 

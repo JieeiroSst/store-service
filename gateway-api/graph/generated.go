@@ -3621,6 +3621,17 @@ type ComplexityRoot struct {
 		Type        func(childComplexity int) int
 	}
 
+	MfaRecoveryCodes struct {
+		RecoveryCodes func(childComplexity int) int
+	}
+
+	MfaStatus struct {
+		Enabled                func(childComplexity int) int
+		EnabledAt              func(childComplexity int) int
+		Method                 func(childComplexity int) int
+		RecoveryCodesRemaining func(childComplexity int) int
+	}
+
 	MovieHome struct {
 		Sections func(childComplexity int) int
 	}
@@ -3940,6 +3951,7 @@ type ComplexityRoot struct {
 		DeleteMyQRCode                                          func(childComplexity int, id string) int
 		DeleteMyUserAddress                                     func(childComplexity int, id int) int
 		DeleteUserRole                                          func(childComplexity int, id int) int
+		DisableTotp                                             func(childComplexity int, code string) int
 		DoordashAcceptAssignment                                func(childComplexity int, id int) int
 		DoordashAddTrackingEvent                                func(childComplexity int, id int, input model.DoordashTrackingInput) int
 		DoordashAssignDriver                                    func(childComplexity int, id int, driverID string) int
@@ -3954,6 +3966,7 @@ type ComplexityRoot struct {
 		EkycSubmitFaceScan                                      func(childComplexity int, frames []*graphql.Upload) int
 		EkycSubmitNfcChip                                       func(childComplexity int, efCom *graphql.Upload, dg1 *graphql.Upload, dg2 *graphql.Upload, efSod *graphql.Upload) int
 		EkycVerify                                              func(childComplexity int) int
+		EnableTotp                                              func(childComplexity int, code string) int
 		FaceReportPositions                                     func(childComplexity int, input model.FacePositionsInput) int
 		FaceUploadFile                                          func(childComplexity int, avatar graphql.Upload) int
 		FaceUploadFiles                                         func(childComplexity int, avatar *graphql.Upload, boop []*graphql.Upload) int
@@ -4326,6 +4339,7 @@ type ComplexityRoot struct {
 		ReferralSetRewardProgramStatus                          func(childComplexity int, programID string, active bool) int
 		ReferralTrackEvent                                      func(childComplexity int, refCode string, eventType string, platform *string, channel *string, deviceID *string, firebaseInstanceID *string, utmSource *string, utmMedium *string, utmCampaign *string, utmTerm *string, utmContent *string) int
 		RefreshToken                                            func(childComplexity int, refreshToken string) int
+		RegenerateMfaRecoveryCodes                              func(childComplexity int, code string) int
 		RegenerateMyQRCode                                      func(childComplexity int, id string) int
 		RegisterMyDevice                                        func(childComplexity int, input model.NotifDeviceInput) int
 		RemoveUserRoles                                         func(childComplexity int, userID int) int
@@ -4413,6 +4427,7 @@ type ComplexityRoot struct {
 		SearchApplySchema                                       func(childComplexity int) int
 		SearchReindex                                           func(childComplexity int, index []string, unmanaged *bool) int
 		SerpUploadImage                                         func(childComplexity int, image graphql.Upload) int
+		SetupTotp                                               func(childComplexity int) int
 		ShareAsk                                                func(childComplexity int, content string) int
 		ShipCancelShipment                                      func(childComplexity int, id int, reason *string) int
 		ShipCreateShipment                                      func(childComplexity int, input model.ShipCreateShipmentInput) int
@@ -4577,6 +4592,7 @@ type ComplexityRoot struct {
 		VendUpdateMachine                                       func(childComplexity int, id string, location *string, machineModel *string) int
 		VendUpdateProduct                                       func(childComplexity int, id string, input model.VendProductPatchInput) int
 		VerifyOtp                                               func(childComplexity int, otp string) int
+		VerifyTotpLogin                                         func(childComplexity int, mfaToken string, code string) int
 		VideoDelete                                             func(childComplexity int, id string) int
 		VideoUpload                                             func(childComplexity int, file graphql.Upload, title *string, description *string) int
 		VideoView                                               func(childComplexity int, id string) int
@@ -6081,6 +6097,7 @@ type ComplexityRoot struct {
 		MedicalMovements                            func(childComplexity int, id int, limit *int, offset *int) int
 		MedicalStock                                func(childComplexity int, id int) int
 		MedicalTerminology                          func(childComplexity int) int
+		MfaStatus                                   func(childComplexity int) int
 		MovieContinueWatching                       func(childComplexity int, userID string, page *int, pageSize *int, snapshot *string) int
 		MovieForUser                                func(childComplexity int, userID string, page *int, pageSize *int, snapshot *string) int
 		MovieHistory                                func(childComplexity int, userID string, page *int, pageSize *int, snapshot *string) int
@@ -9095,6 +9112,17 @@ type ComplexityRoot struct {
 		SpecQuote          func(childComplexity int) int
 	}
 
+	TotpSetup struct {
+		Account    func(childComplexity int) int
+		Algorithm  func(childComplexity int) int
+		Digits     func(childComplexity int) int
+		Issuer     func(childComplexity int) int
+		OtpauthURI func(childComplexity int) int
+		Period     func(childComplexity int) int
+		QRCode     func(childComplexity int) int
+		Secret     func(childComplexity int) int
+	}
+
 	UploadFile struct {
 		ContentType func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
@@ -10624,6 +10652,11 @@ type MutationResolver interface {
 	AssignUserRole(ctx context.Context, input model.AssignUserRoleInput) (*model.UserRoleMessage, error)
 	AddUserRole(ctx context.Context, input model.AssignUserRoleInput) (*model.UserRoleMessage, error)
 	RemoveUserRoles(ctx context.Context, userID int) (string, error)
+	SetupTotp(ctx context.Context) (*model.TotpSetup, error)
+	EnableTotp(ctx context.Context, code string) (*model.MfaRecoveryCodes, error)
+	DisableTotp(ctx context.Context, code string) (bool, error)
+	RegenerateMfaRecoveryCodes(ctx context.Context, code string) (*model.MfaRecoveryCodes, error)
+	VerifyTotpLogin(ctx context.Context, mfaToken string, code string) (*model.AuthToken, error)
 	VendRegisterMachine(ctx context.Context, location string, machineModel string, status *string) (*model.VendMachine, error)
 	VendUpdateMachine(ctx context.Context, id string, location *string, machineModel *string) (*model.VendMachine, error)
 	VendChangeMachineStatus(ctx context.Context, id string, status string) (*model.VendMachine, error)
@@ -11505,6 +11538,7 @@ type QueryResolver interface {
 	Users(ctx context.Context, input *model.FindUsersInput) (*model.UserList, error)
 	UserRole(ctx context.Context, id int) (*model.UserRole, error)
 	UserRoles(ctx context.Context, page *int, limit *int) (*model.UserRoleList, error)
+	MfaStatus(ctx context.Context) (*model.MfaStatus, error)
 	VendMachines(ctx context.Context, status *string, cursor *string, limit *int) (*model.VendMachinePage, error)
 	VendMachine(ctx context.Context, id string) (*model.VendMachine, error)
 	VendMaintenance(ctx context.Context, id string) ([]*model.VendMaintenance, error)
@@ -29107,6 +29141,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MedicalWarning.Type(childComplexity), true
 
+	case "MfaRecoveryCodes.recoveryCodes":
+		if e.complexity.MfaRecoveryCodes.RecoveryCodes == nil {
+			break
+		}
+
+		return e.complexity.MfaRecoveryCodes.RecoveryCodes(childComplexity), true
+
+	case "MfaStatus.enabled":
+		if e.complexity.MfaStatus.Enabled == nil {
+			break
+		}
+
+		return e.complexity.MfaStatus.Enabled(childComplexity), true
+
+	case "MfaStatus.enabledAt":
+		if e.complexity.MfaStatus.EnabledAt == nil {
+			break
+		}
+
+		return e.complexity.MfaStatus.EnabledAt(childComplexity), true
+
+	case "MfaStatus.method":
+		if e.complexity.MfaStatus.Method == nil {
+			break
+		}
+
+		return e.complexity.MfaStatus.Method(childComplexity), true
+
+	case "MfaStatus.recoveryCodesRemaining":
+		if e.complexity.MfaStatus.RecoveryCodesRemaining == nil {
+			break
+		}
+
+		return e.complexity.MfaStatus.RecoveryCodesRemaining(childComplexity), true
+
 	case "MovieHome.sections":
 		if e.complexity.MovieHome.Sections == nil {
 			break
@@ -32618,6 +32687,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteUserRole(childComplexity, args["id"].(int)), true
 
+	case "Mutation.disableTotp":
+		if e.complexity.Mutation.DisableTotp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_disableTotp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DisableTotp(childComplexity, args["code"].(string)), true
+
 	case "Mutation.doordashAcceptAssignment":
 		if e.complexity.Mutation.DoordashAcceptAssignment == nil {
 			break
@@ -32780,6 +32861,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EkycVerify(childComplexity), true
+
+	case "Mutation.enableTotp":
+		if e.complexity.Mutation.EnableTotp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_enableTotp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EnableTotp(childComplexity, args["code"].(string)), true
 
 	case "Mutation.faceReportPositions":
 		if e.complexity.Mutation.FaceReportPositions == nil {
@@ -37215,6 +37308,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.RefreshToken(childComplexity, args["refreshToken"].(string)), true
 
+	case "Mutation.regenerateMfaRecoveryCodes":
+		if e.complexity.Mutation.RegenerateMfaRecoveryCodes == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_regenerateMfaRecoveryCodes_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RegenerateMfaRecoveryCodes(childComplexity, args["code"].(string)), true
+
 	case "Mutation.regenerateMyQrCode":
 		if e.complexity.Mutation.RegenerateMyQRCode == nil {
 			break
@@ -38248,6 +38353,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.SerpUploadImage(childComplexity, args["image"].(graphql.Upload)), true
+
+	case "Mutation.setupTotp":
+		if e.complexity.Mutation.SetupTotp == nil {
+			break
+		}
+
+		return e.complexity.Mutation.SetupTotp(childComplexity), true
 
 	case "Mutation.shareAsk":
 		if e.complexity.Mutation.ShareAsk == nil {
@@ -40201,6 +40313,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.VerifyOtp(childComplexity, args["otp"].(string)), true
+
+	case "Mutation.verifyTotpLogin":
+		if e.complexity.Mutation.VerifyTotpLogin == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_verifyTotpLogin_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.VerifyTotpLogin(childComplexity, args["mfaToken"].(string), args["code"].(string)), true
 
 	case "Mutation.videoDelete":
 		if e.complexity.Mutation.VideoDelete == nil {
@@ -50614,6 +50738,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.MedicalTerminology(childComplexity), true
+
+	case "Query.mfaStatus":
+		if e.complexity.Query.MfaStatus == nil {
+			break
+		}
+
+		return e.complexity.Query.MfaStatus(childComplexity), true
 
 	case "Query.movieContinueWatching":
 		if e.complexity.Query.MovieContinueWatching == nil {
@@ -68273,6 +68404,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ToolTestCase.SpecQuote(childComplexity), true
 
+	case "TotpSetup.account":
+		if e.complexity.TotpSetup.Account == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.Account(childComplexity), true
+
+	case "TotpSetup.algorithm":
+		if e.complexity.TotpSetup.Algorithm == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.Algorithm(childComplexity), true
+
+	case "TotpSetup.digits":
+		if e.complexity.TotpSetup.Digits == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.Digits(childComplexity), true
+
+	case "TotpSetup.issuer":
+		if e.complexity.TotpSetup.Issuer == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.Issuer(childComplexity), true
+
+	case "TotpSetup.otpauthUri":
+		if e.complexity.TotpSetup.OtpauthURI == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.OtpauthURI(childComplexity), true
+
+	case "TotpSetup.period":
+		if e.complexity.TotpSetup.Period == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.Period(childComplexity), true
+
+	case "TotpSetup.qrCode":
+		if e.complexity.TotpSetup.QRCode == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.QRCode(childComplexity), true
+
+	case "TotpSetup.secret":
+		if e.complexity.TotpSetup.Secret == nil {
+			break
+		}
+
+		return e.complexity.TotpSetup.Secret(childComplexity), true
+
 	case "UploadFile.content_type":
 		if e.complexity.UploadFile.ContentType == nil {
 			break
@@ -79990,6 +80177,29 @@ func (ec *executionContext) field_Mutation_deleteUserRole_argsID(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_disableTotp_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_disableTotp_argsCode(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["code"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_disableTotp_argsCode(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+	if tmp, ok := rawArgs["code"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_doordashAcceptAssignment_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -80520,6 +80730,29 @@ func (ec *executionContext) field_Mutation_ekycSubmitNfcChip_argsEfSod(
 	}
 
 	var zeroVal *graphql.Upload
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_enableTotp_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_enableTotp_argsCode(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["code"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_enableTotp_argsCode(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+	if tmp, ok := rawArgs["code"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
 	return zeroVal, nil
 }
 
@@ -95295,6 +95528,29 @@ func (ec *executionContext) field_Mutation_refreshToken_argsRefreshToken(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_regenerateMfaRecoveryCodes_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_regenerateMfaRecoveryCodes_argsCode(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["code"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_regenerateMfaRecoveryCodes_argsCode(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+	if tmp, ok := rawArgs["code"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_regenerateMyQrCode_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -104654,6 +104910,47 @@ func (ec *executionContext) field_Mutation_verifyOtp_argsOtp(
 ) (string, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("otp"))
 	if tmp, ok := rawArgs["otp"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_verifyTotpLogin_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_verifyTotpLogin_argsMfaToken(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["mfaToken"] = arg0
+	arg1, err := ec.field_Mutation_verifyTotpLogin_argsCode(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["code"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_verifyTotpLogin_argsMfaToken(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("mfaToken"))
+	if tmp, ok := rawArgs["mfaToken"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_verifyTotpLogin_argsCode(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
+	if tmp, ok := rawArgs["code"]; ok {
 		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
@@ -248850,6 +249147,220 @@ func (ec *executionContext) fieldContext_MedicalWarning_description(_ context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _MfaRecoveryCodes_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *model.MfaRecoveryCodes) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MfaRecoveryCodes_recoveryCodes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecoveryCodes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MfaRecoveryCodes_recoveryCodes(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MfaRecoveryCodes",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MfaStatus_enabled(ctx context.Context, field graphql.CollectedField, obj *model.MfaStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MfaStatus_enabled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MfaStatus_enabled(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MfaStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MfaStatus_method(ctx context.Context, field graphql.CollectedField, obj *model.MfaStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MfaStatus_method(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Method, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MfaStatus_method(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MfaStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MfaStatus_enabledAt(ctx context.Context, field graphql.CollectedField, obj *model.MfaStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MfaStatus_enabledAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnabledAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MfaStatus_enabledAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MfaStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MfaStatus_recoveryCodesRemaining(ctx context.Context, field graphql.CollectedField, obj *model.MfaStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MfaStatus_recoveryCodesRemaining(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecoveryCodesRemaining, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MfaStatus_recoveryCodesRemaining(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MfaStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _MovieHome_sections(ctx context.Context, field graphql.CollectedField, obj *model.MovieHome) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_MovieHome_sections(ctx, field)
 	if err != nil {
@@ -329535,6 +330046,326 @@ func (ec *executionContext) fieldContext_Mutation_removeUserRoles(ctx context.Co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_removeUserRoles_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_setupTotp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_setupTotp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().SetupTotp(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.TotpSetup)
+	fc.Result = res
+	return ec.marshalNTotpSetup2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐTotpSetup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_setupTotp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "secret":
+				return ec.fieldContext_TotpSetup_secret(ctx, field)
+			case "otpauthUri":
+				return ec.fieldContext_TotpSetup_otpauthUri(ctx, field)
+			case "qrCode":
+				return ec.fieldContext_TotpSetup_qrCode(ctx, field)
+			case "issuer":
+				return ec.fieldContext_TotpSetup_issuer(ctx, field)
+			case "account":
+				return ec.fieldContext_TotpSetup_account(ctx, field)
+			case "digits":
+				return ec.fieldContext_TotpSetup_digits(ctx, field)
+			case "period":
+				return ec.fieldContext_TotpSetup_period(ctx, field)
+			case "algorithm":
+				return ec.fieldContext_TotpSetup_algorithm(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TotpSetup", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_enableTotp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_enableTotp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EnableTotp(rctx, fc.Args["code"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MfaRecoveryCodes)
+	fc.Result = res
+	return ec.marshalNMfaRecoveryCodes2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMfaRecoveryCodes(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_enableTotp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "recoveryCodes":
+				return ec.fieldContext_MfaRecoveryCodes_recoveryCodes(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MfaRecoveryCodes", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_enableTotp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_disableTotp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_disableTotp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DisableTotp(rctx, fc.Args["code"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_disableTotp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_disableTotp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_regenerateMfaRecoveryCodes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_regenerateMfaRecoveryCodes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RegenerateMfaRecoveryCodes(rctx, fc.Args["code"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MfaRecoveryCodes)
+	fc.Result = res
+	return ec.marshalNMfaRecoveryCodes2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMfaRecoveryCodes(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_regenerateMfaRecoveryCodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "recoveryCodes":
+				return ec.fieldContext_MfaRecoveryCodes_recoveryCodes(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MfaRecoveryCodes", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_regenerateMfaRecoveryCodes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_verifyTotpLogin(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_verifyTotpLogin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().VerifyTotpLogin(rctx, fc.Args["mfaToken"].(string), fc.Args["code"].(string))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.Public == nil {
+				var zeroVal *model.AuthToken
+				return zeroVal, errors.New("directive public is not implemented")
+			}
+			return ec.directives.Public(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.AuthToken); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/JIeeiroSst/gateway-api/graph/model.AuthToken`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AuthToken)
+	fc.Result = res
+	return ec.marshalNAuthToken2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐAuthToken(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_verifyTotpLogin(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accessToken":
+				return ec.fieldContext_AuthToken_accessToken(ctx, field)
+			case "refreshToken":
+				return ec.fieldContext_AuthToken_refreshToken(ctx, field)
+			case "expiresIn":
+				return ec.fieldContext_AuthToken_expiresIn(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AuthToken", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_verifyTotpLogin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -437641,6 +438472,60 @@ func (ec *executionContext) fieldContext_Query_userRoles(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_mfaStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_mfaStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().MfaStatus(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.MfaStatus)
+	fc.Result = res
+	return ec.marshalNMfaStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMfaStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_mfaStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "enabled":
+				return ec.fieldContext_MfaStatus_enabled(ctx, field)
+			case "method":
+				return ec.fieldContext_MfaStatus_method(ctx, field)
+			case "enabledAt":
+				return ec.fieldContext_MfaStatus_enabledAt(ctx, field)
+			case "recoveryCodesRemaining":
+				return ec.fieldContext_MfaStatus_recoveryCodesRemaining(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MfaStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_vendMachines(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_vendMachines(ctx, field)
 	if err != nil {
@@ -519239,6 +520124,358 @@ func (ec *executionContext) fieldContext_ToolTestCase_spec_quote(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _TotpSetup_secret(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_secret(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Secret, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_secret(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TotpSetup_otpauthUri(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_otpauthUri(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OtpauthURI, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_otpauthUri(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TotpSetup_qrCode(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_qrCode(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.QRCode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_qrCode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TotpSetup_issuer(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_issuer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Issuer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_issuer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TotpSetup_account(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_account(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Account, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_account(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TotpSetup_digits(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_digits(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Digits, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_digits(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TotpSetup_period(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_period(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Period, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_period(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TotpSetup_algorithm(ctx context.Context, field graphql.CollectedField, obj *model.TotpSetup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TotpSetup_algorithm(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Algorithm, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TotpSetup_algorithm(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TotpSetup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UploadFile_id(ctx context.Context, field graphql.CollectedField, obj *model.UploadFile) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UploadFile_id(ctx, field)
 	if err != nil {
@@ -574686,6 +575923,93 @@ func (ec *executionContext) _MedicalWarning(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var mfaRecoveryCodesImplementors = []string{"MfaRecoveryCodes"}
+
+func (ec *executionContext) _MfaRecoveryCodes(ctx context.Context, sel ast.SelectionSet, obj *model.MfaRecoveryCodes) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, mfaRecoveryCodesImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MfaRecoveryCodes")
+		case "recoveryCodes":
+			out.Values[i] = ec._MfaRecoveryCodes_recoveryCodes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var mfaStatusImplementors = []string{"MfaStatus"}
+
+func (ec *executionContext) _MfaStatus(ctx context.Context, sel ast.SelectionSet, obj *model.MfaStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, mfaStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MfaStatus")
+		case "enabled":
+			out.Values[i] = ec._MfaStatus_enabled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "method":
+			out.Values[i] = ec._MfaStatus_method(ctx, field, obj)
+		case "enabledAt":
+			out.Values[i] = ec._MfaStatus_enabledAt(ctx, field, obj)
+		case "recoveryCodesRemaining":
+			out.Values[i] = ec._MfaStatus_recoveryCodesRemaining(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var movieHomeImplementors = []string{"MovieHome"}
 
 func (ec *executionContext) _MovieHome(ctx context.Context, sel ast.SelectionSet, obj *model.MovieHome) graphql.Marshaler {
@@ -579102,6 +580426,41 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "removeUserRoles":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_removeUserRoles(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "setupTotp":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_setupTotp(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "enableTotp":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_enableTotp(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "disableTotp":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_disableTotp(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "regenerateMfaRecoveryCodes":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_regenerateMfaRecoveryCodes(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "verifyTotpLogin":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_verifyTotpLogin(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -600082,6 +601441,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "mfaStatus":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_mfaStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "vendMachines":
 			field := field
 
@@ -613645,6 +615026,80 @@ func (ec *executionContext) _ToolTestCase(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var totpSetupImplementors = []string{"TotpSetup"}
+
+func (ec *executionContext) _TotpSetup(ctx context.Context, sel ast.SelectionSet, obj *model.TotpSetup) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, totpSetupImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TotpSetup")
+		case "secret":
+			out.Values[i] = ec._TotpSetup_secret(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "otpauthUri":
+			out.Values[i] = ec._TotpSetup_otpauthUri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "qrCode":
+			out.Values[i] = ec._TotpSetup_qrCode(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "issuer":
+			out.Values[i] = ec._TotpSetup_issuer(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "account":
+			out.Values[i] = ec._TotpSetup_account(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "digits":
+			out.Values[i] = ec._TotpSetup_digits(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "period":
+			out.Values[i] = ec._TotpSetup_period(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "algorithm":
+			out.Values[i] = ec._TotpSetup_algorithm(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var uploadFileImplementors = []string{"UploadFile"}
 
 func (ec *executionContext) _UploadFile(ctx context.Context, sel ast.SelectionSet, obj *model.UploadFile) graphql.Marshaler {
@@ -625919,6 +627374,34 @@ func (ec *executionContext) marshalNMedicalWarning2ᚖgithubᚗcomᚋJIeeiroSst�
 	return ec._MedicalWarning(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNMfaRecoveryCodes2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMfaRecoveryCodes(ctx context.Context, sel ast.SelectionSet, v model.MfaRecoveryCodes) graphql.Marshaler {
+	return ec._MfaRecoveryCodes(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMfaRecoveryCodes2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMfaRecoveryCodes(ctx context.Context, sel ast.SelectionSet, v *model.MfaRecoveryCodes) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MfaRecoveryCodes(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNMfaStatus2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMfaStatus(ctx context.Context, sel ast.SelectionSet, v model.MfaStatus) graphql.Marshaler {
+	return ec._MfaStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNMfaStatus2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMfaStatus(ctx context.Context, sel ast.SelectionSet, v *model.MfaStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._MfaStatus(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNMovieRecommendation2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐMovieRecommendation(ctx context.Context, sel ast.SelectionSet, v *model.MovieRecommendation) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -628446,6 +629929,20 @@ func (ec *executionContext) marshalNToolSnapshot2ᚖgithubᚗcomᚋJIeeiroSstᚋ
 		return graphql.Null
 	}
 	return ec._ToolSnapshot(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTotpSetup2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐTotpSetup(ctx context.Context, sel ast.SelectionSet, v model.TotpSetup) graphql.Marshaler {
+	return ec._TotpSetup(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTotpSetup2ᚖgithubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐTotpSetup(ctx context.Context, sel ast.SelectionSet, v *model.TotpSetup) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TotpSetup(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUpdateProfileInput2githubᚗcomᚋJIeeiroSstᚋgatewayᚑapiᚋgraphᚋmodelᚐUpdateProfileInput(ctx context.Context, v any) (model.UpdateProfileInput, error) {

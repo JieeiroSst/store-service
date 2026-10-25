@@ -6,6 +6,7 @@ import 'package:http/testing.dart';
 import 'package:keikiapp/core/network/graphql_client.dart';
 import 'package:keikiapp/core/network/graphql_exception.dart';
 import 'package:keikiapp/core/storage/token_storage.dart';
+import 'package:keikiapp/features/auth/data/auth_repository.dart';
 
 import '../helpers.dart';
 
@@ -168,5 +169,56 @@ void main() {
           })),
     );
     expect(await client.accessToken(), 'fresh');
+  });
+
+  test('does not refresh the session on a wrong 2FA code', () async {
+    final queries = <String>[];
+    final client = GraphQLClient(
+      endpoint: 'http://gw/query',
+      storage: MemoryTokenStorage(validTokens()),
+      httpClient: MockClient((req) async {
+        queries.add((jsonDecode(req.body) as Map<String, dynamic>)['query'] as String);
+        return _json({
+          'errors': [
+            {
+              'message': 'authentication code is invalid or already used',
+              'extensions': {'code': 'UNAUTHENTICATED', 'reason': 'AUTH_MFA_INVALID_CODE'},
+            },
+          ],
+        });
+      }),
+    );
+
+    await expectLater(
+      client.mutation(r'mutation($code: String!) { enableTotp(code: $code) { recoveryCodes } }', variables: {'code': '000000'}),
+      throwsA(isA<GraphQLException>().having((e) => e.reason, 'reason', 'AUTH_MFA_INVALID_CODE')),
+    );
+    expect(queries, hasLength(1));
+  });
+
+  test('login surfaces the 2FA challenge token', () async {
+    final storage = MemoryTokenStorage(null);
+    final client = GraphQLClient(
+      endpoint: 'http://gw/query',
+      storage: storage,
+      httpClient: MockClient((req) async => _json({
+            'errors': [
+              {
+                'message': 'two-factor authentication code required',
+                'extensions': {
+                  'code': 'UNAUTHENTICATED',
+                  'reason': 'AUTH_MFA_REQUIRED',
+                  'details': {'mfa_token': 'mfa-1', 'mfa_method': 'totp', 'expires_in': '300'},
+                },
+              },
+            ],
+          })),
+    );
+
+    await expectLater(
+      AuthRepository(client).login('quan', 'secret'),
+      throwsA(isA<MfaRequiredException>().having((e) => e.mfaToken, 'token', 'mfa-1')),
+    );
+    expect(await storage.read(), isNull);
   });
 }

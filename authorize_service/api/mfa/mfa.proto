@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package authorize.mfa.v1;
+
+option go_package = "github.com/JieeiroSst/authorize-service/api/mfa/pb;mfapb";
+
+// MfaService owns every user's TOTP second factor (Google Authenticator):
+// the encrypted secret, recovery codes, replay protection and the per-user
+// failure throttle. user-service only calls it; it never sees the secret
+// after enrollment.
+//
+// Failures carry a google.rpc.ErrorInfo (domain "authorize-service") whose
+// reason is one of MFA_INVALID_CODE, MFA_NOT_ENABLED, MFA_ALREADY_ENABLED,
+// MFA_NOT_SET_UP, MFA_TOO_MANY_ATTEMPTS or INVALID_USER_ID.
+service MfaService {
+    rpc GetTOTPStatus(GetTOTPStatusRequest) returns (TOTPStatus);
+    // SetupTOTP creates (or replaces) a pending secret; it is not active
+    // until EnableTOTP confirms a code from the authenticator app.
+    rpc SetupTOTP(SetupTOTPRequest) returns (SetupTOTPResponse);
+    // EnableTOTP activates the pending secret and returns fresh recovery codes.
+    rpc EnableTOTP(TOTPCodeRequest) returns (RecoveryCodesResponse);
+    // DisableTOTP accepts a TOTP code or a recovery code.
+    rpc DisableTOTP(TOTPCodeRequest) returns (DisableTOTPResponse);
+    // RegenerateRecoveryCodes requires a TOTP code (not a recovery code).
+    rpc RegenerateRecoveryCodes(TOTPCodeRequest) returns (RecoveryCodesResponse);
+    // VerifyTOTP checks a login second factor; a recovery code is consumed.
+    rpc VerifyTOTP(VerifyTOTPRequest) returns (VerifyTOTPResponse);
+}
+
+message GetTOTPStatusRequest {
+    string user_id = 1;
+}
+
+message TOTPStatus {
+    bool enabled = 1;
+    // Unix seconds; 0 when not enabled.
+    int64 enabled_at = 2;
+    int32 recovery_codes_remaining = 3;
+}
+
+message SetupTOTPRequest {
+    string user_id = 1;
+    // Label shown in the authenticator app, usually the username.
+    string account_name = 2;
+}
+
+message SetupTOTPResponse {
+    string secret = 1;
+    string otpauth_uri = 2;
+    bytes qr_code_png = 3;
+    string issuer = 4;
+    string account = 5;
+    int32 digits = 6;
+    int32 period = 7;
+    string algorithm = 8;
+}
+
+message TOTPCodeRequest {
+    string user_id = 1;
+    string code = 2;
+}
+
+message RecoveryCodesResponse {
+    repeated string recovery_codes = 1;
+}
+
+message DisableTOTPResponse {
+    bool success = 1;
+}
+
+message VerifyTOTPRequest {
+    string user_id = 1;
+    string code = 2;
+    bool allow_recovery_code = 3;
+}
+
+message VerifyTOTPResponse {
+    bool valid = 1;
+    bool used_recovery_code = 2;
+}

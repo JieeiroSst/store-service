@@ -17,6 +17,10 @@
     "secret": {
         "jwt_secret_key": "secretkey"
     },
+    "mfa": {
+        "issuer": "Keiki",
+        "encryption_key": ""
+    },
     "bootstrap": {
         "super_admin_user_ids": []
     }

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/JIeeiroSst/user-service/internal/domain"
@@ -52,9 +53,27 @@ func TestErrorResponse(t *testing.T) {
 				t.Fatalf("decode body %q: %v", rec.Body.String(), err)
 			}
 			want := HTTPError{Code: c.wantCode, Message: c.wantMsg, Status: c.wantStatus}
-			if got != want {
+			if !reflect.DeepEqual(got, want) {
 				t.Errorf("body = %+v, want %+v", got, want)
 			}
 		})
+	}
+}
+
+func TestErrorResponseCarriesMetadata(t *testing.T) {
+	err := toStatus("/user.UserService/Login", domain.NewMFARequired("tok", 300))
+
+	rec := httptest.NewRecorder()
+	HTTPErrorHandler(context.Background(), nil, &runtime.JSONPb{}, rec, httptest.NewRequest(http.MethodPost, "/", nil), err)
+
+	var got HTTPError
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode body %q: %v", rec.Body.String(), err)
+	}
+	if rec.Code != http.StatusUnauthorized || got.Code != domain.CodeMFARequired {
+		t.Fatalf("got status %d code %s", rec.Code, got.Code)
+	}
+	if got.Details["mfa_token"] != "tok" || got.Details["expires_in"] != "300" || got.Details["mfa_method"] != domain.MFAMethodTOTP {
+		t.Errorf("details = %v", got.Details)
 	}
 }

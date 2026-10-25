@@ -24,6 +24,30 @@ type CachePort interface {
 	SetInt(ctx context.Context, key string, value int) error
 }
 
+type TOTPRepository interface {
+	Get(ctx context.Context, userID string) (model.UserTOTP, error)
+	SavePending(ctx context.Context, userID, sealedSecret string) error
+	Enable(ctx context.Context, userID string, step int64, recoveryCodes string, at time.Time) error
+	MarkUsed(ctx context.Context, userID string, step int64) (bool, error)
+	SwapRecoveryCodes(ctx context.Context, userID, old, new string) (bool, error)
+	Delete(ctx context.Context, userID string) error
+}
+
+type SecretBox interface {
+	Seal(plaintext []byte) (string, error)
+	Open(sealed string) ([]byte, error)
+}
+
+type QRCodeEncoder interface {
+	PNG(content string, size int) ([]byte, error)
+}
+
+type FailureThrottle interface {
+	Blocked(ctx context.Context, key string) (bool, error)
+	RecordFailure(ctx context.Context, key string) error
+	Reset(ctx context.Context, key string) error
+}
+
 type OTPPort interface {
 	GenerateOTP(username string) (string, time.Time, error)
 	ValidateOTP(otpCode, username string) error

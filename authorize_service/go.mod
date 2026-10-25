@@ -13,9 +13,11 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/redis/go-redis/v9 v9.6.3
 	github.com/sirupsen/logrus v1.8.1
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/spf13/cobra v1.9.1
 	go.uber.org/fx v1.23.0
 	go.uber.org/zap v1.27.0
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250212204824-5a70512c5d8b
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.5
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2
@@ -65,7 +67,6 @@ require (
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.24.2 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230126093431-47fa9a501578 // indirect
-	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	go.uber.org/dig v1.18.0 // indirect
@@ -77,7 +78,6 @@ require (
 	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.42.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250219182151-9fdb1cabc7b2 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250212204824-5a70512c5d8b // indirect
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
 	gorm.io/driver/sqlserver v1.5.3 // indirect

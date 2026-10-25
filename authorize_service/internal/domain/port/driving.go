@@ -34,6 +34,15 @@ type PermissionUsecase interface {
 	SeedDefaults(ctx context.Context, superAdminUserIDs []string) error
 }
 
+type MFAUsecase interface {
+	Status(ctx context.Context, userID string) (model.TOTPStatus, error)
+	SetupTOTP(ctx context.Context, userID, account string) (model.TOTPSetup, error)
+	EnableTOTP(ctx context.Context, userID, code string) ([]string, error)
+	DisableTOTP(ctx context.Context, userID, code string) error
+	RegenerateRecoveryCodes(ctx context.Context, userID, code string) ([]string, error)
+	VerifyTOTP(ctx context.Context, userID, code string, allowRecovery bool) (model.TOTPVerification, error)
+}
+
 type OTPUsecase interface {
 	CreateOtpByUser(ctx context.Context, username string) (string, time.Time, error)
 	Authorize(ctx context.Context, otpCode string, username string) error

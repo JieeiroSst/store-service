@@ -135,4 +135,49 @@ class UserApi {
     return data['removeUserRoles']?.toString();
   }
 
+  Future<MfaStatus?> mfaStatus({String? selectionSet}) async {
+    final data = await _executor.query('query mfaStatus { mfaStatus ${selectionSet ?? '{ enabled method enabledAt recoveryCodesRemaining }'} }'
+    );
+    return data['mfaStatus'] == null ? null : MfaStatus.fromJson((data['mfaStatus'] as Map).cast<String, dynamic>());
+  }
+
+  Future<TotpSetup?> setupTotp({String? selectionSet}) async {
+    final data = await _executor.mutation('mutation setupTotp { setupTotp ${selectionSet ?? '{ secret otpauthUri qrCode issuer account digits period algorithm }'} }'
+    );
+    return data['setupTotp'] == null ? null : TotpSetup.fromJson((data['setupTotp'] as Map).cast<String, dynamic>());
+  }
+
+  Future<MfaRecoveryCodes?> enableTotp({required String code, String? selectionSet}) async {
+    final data = await _executor.mutation('mutation enableTotp(\$code: String!) { enableTotp(code: \$code) ${selectionSet ?? '{ recoveryCodes }'} }', variables: {
+      'code': code,
+    }
+    );
+    return data['enableTotp'] == null ? null : MfaRecoveryCodes.fromJson((data['enableTotp'] as Map).cast<String, dynamic>());
+  }
+
+  Future<bool?> disableTotp({required String code}) async {
+    final data = await _executor.mutation('mutation disableTotp(\$code: String!) { disableTotp(code: \$code) }', variables: {
+      'code': code,
+    }
+    );
+    return data['disableTotp'] as bool?;
+  }
+
+  Future<MfaRecoveryCodes?> regenerateMfaRecoveryCodes({required String code, String? selectionSet}) async {
+    final data = await _executor.mutation('mutation regenerateMfaRecoveryCodes(\$code: String!) { regenerateMfaRecoveryCodes(code: \$code) ${selectionSet ?? '{ recoveryCodes }'} }', variables: {
+      'code': code,
+    }
+    );
+    return data['regenerateMfaRecoveryCodes'] == null ? null : MfaRecoveryCodes.fromJson((data['regenerateMfaRecoveryCodes'] as Map).cast<String, dynamic>());
+  }
+
+  Future<AuthToken?> verifyTotpLogin({required String mfaToken, required String code, String? selectionSet}) async {
+    final data = await _executor.public('mutation verifyTotpLogin(\$mfaToken: String!, \$code: String!) { verifyTotpLogin(mfaToken: \$mfaToken, code: \$code) ${selectionSet ?? '{ accessToken refreshToken expiresIn }'} }', variables: {
+      'mfaToken': mfaToken,
+      'code': code,
+    }
+    );
+    return data['verifyTotpLogin'] == null ? null : AuthToken.fromJson((data['verifyTotpLogin'] as Map).cast<String, dynamic>());
+  }
+
 }

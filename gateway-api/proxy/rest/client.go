@@ -208,7 +208,11 @@ func (c *Client) send(ctx context.Context, req Request, body io.Reader, contentT
 		if resp.StatusCode >= 500 {
 			logger.Error(ctx, "%s %s %s: status %d: %s", c.name, method, req.Path, resp.StatusCode, string(raw))
 		}
-		return c.fail(ctx, codeForStatus(resp.StatusCode), resp.StatusCode, upstreamMessage(resp.StatusCode, raw))
+		err := c.fail(ctx, codeForStatus(resp.StatusCode), resp.StatusCode, upstreamMessage(resp.StatusCode, raw))
+		if resp.StatusCode < 500 {
+			upstreamReason(err, raw)
+		}
+		return err
 	}
 
 	if resp.StatusCode >= 300 && resp.StatusCode < 400 {
@@ -258,6 +262,23 @@ func (c *Client) fail(ctx context.Context, code string, status int, message stri
 		ext["status"] = status
 	}
 	return &gqlerror.Error{Path: graphql.GetPath(ctx), Message: message, Extensions: ext}
+}
+
+func upstreamReason(err error, raw []byte) {
+	var body struct {
+		Code    any               `json:"code"`
+		Details map[string]string `json:"details"`
+	}
+	ge, ok := err.(*gqlerror.Error)
+	if !ok || json.Unmarshal(raw, &body) != nil {
+		return
+	}
+	if code, ok := body.Code.(string); ok && code != "" {
+		ge.Extensions["reason"] = code
+	}
+	if len(body.Details) > 0 {
+		ge.Extensions["details"] = body.Details
+	}
 }
 
 func codeForStatus(status int) string {

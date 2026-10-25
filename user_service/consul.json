@@ -33,6 +33,9 @@
         "grpc_address": "authorize-service:9090",
         "timeout_seconds": 3
     },
+    "mfa": {
+        "challenge_ttl_seconds": 300
+    },
     "sso": {
         "enabled": false,
         "issuer": "http://keycloak/realms/store",

@@ -5,16 +5,19 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/user-service/config"
+	"github.com/JIeeiroSst/user-service/dto"
 	"github.com/JIeeiroSst/user-service/internal/adapter/inbound/grpcadapter"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/authorizeclient"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/jwttoken"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/loginthrottle"
+	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/mfastore"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/oauthprovider"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/oidcprovider"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/pg"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/pwhash"
 	"github.com/JIeeiroSst/user-service/internal/adapter/outbound/sessionstore"
 	"github.com/JIeeiroSst/user-service/internal/application/auth"
+	"github.com/JIeeiroSst/user-service/internal/application/mfa"
 	"github.com/JIeeiroSst/user-service/internal/application/role"
 	"github.com/JIeeiroSst/user-service/internal/application/roleitem"
 	"github.com/JIeeiroSst/user-service/internal/application/session"
@@ -55,8 +58,14 @@ func newCache(cfg *config.Config) expire.CacheHelper {
 	return expire.NewCacheHelper(cfg.Redis.Dns)
 }
 
-func newLoginThrottle(cfg *config.Config) output.LoginThrottle {
-	return loginthrottle.New(redis.NewClient(&redis.Options{Addr: cfg.Redis.Dns}), 5, 15*time.Minute)
+func newRedisClient(lc fx.Lifecycle, cfg *config.Config) redis.UniversalClient {
+	rdb := redis.NewClient(&redis.Options{Addr: cfg.Redis.Dns})
+	lc.Append(fx.Hook{OnStop: func(context.Context) error { return rdb.Close() }})
+	return rdb
+}
+
+func newLoginThrottle(rdb redis.UniversalClient) output.LoginThrottle {
+	return loginthrottle.New(rdb, 5, 15*time.Minute)
 }
 
 func newUserRepository(db *gorm.DB) output.UserRepository { return pg.NewUserRepository(db) }
@@ -69,7 +78,7 @@ func newSocialLoginRepository(db *gorm.DB) output.SocialLoginRepository {
 	return pg.NewSocialLoginRepository(db)
 }
 
-func newAuthorizer(lc fx.Lifecycle, cfg *config.Config) (output.Authorizer, error) {
+func newAuthorizeClient(lc fx.Lifecycle, cfg *config.Config) (*authorizeclient.Client, error) {
 	client, err := authorizeclient.New(cfg.AuthorizeService.GrpcAddress, cfg.AuthorizeService.Timeout())
 	if err != nil {
 		return nil, err
@@ -77,6 +86,10 @@ func newAuthorizer(lc fx.Lifecycle, cfg *config.Config) (output.Authorizer, erro
 	lc.Append(fx.Hook{OnStop: func(context.Context) error { return client.Close() }})
 	return client, nil
 }
+
+func asAuthorizer(c *authorizeclient.Client) output.Authorizer { return c }
+
+func newMFAProvider(c *authorizeclient.Client) output.MFAProvider { return c.MFA() }
 
 func newHasher() output.Hasher { return pwhash.New() }
 
@@ -98,8 +111,40 @@ func newSessionService(cfg *config.Config, repo output.SessionRepository, store 
 
 func asSessionService(s *session.Service) input.SessionService { return s }
 
-func newAuthService(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, sessions *session.Service, throttle output.LoginThrottle) *auth.Service {
-	return auth.New(userRepo, hasher, tokenGen, tokenStore, sessions, throttle)
+type mfaParams struct {
+	fx.In
+	Config     *config.Config
+	Redis      redis.UniversalClient
+	Provider   output.MFAProvider
+	Sessions   *session.Service
+	TokenGen   output.TokenGenerator
+	TokenStore output.TokenStore
+}
+
+func newMFAService(p mfaParams) *mfa.Service {
+	return mfa.New(
+		p.Provider,
+		mfastore.New(p.Redis),
+		p.Sessions,
+		p.TokenGen,
+		p.TokenStore,
+		mfa.Config{ChallengeTTL: p.Config.MFA.ChallengeTTL()},
+	)
+}
+
+func asMFAService(s *mfa.Service) input.MFAService { return s }
+
+type mfaGatedSessions struct {
+	*session.Service
+	gate *mfa.Service
+}
+
+func (g mfaGatedSessions) Start(ctx context.Context, userID int, username, provider string) (dto.LoginResponse, error) {
+	return g.gate.Start(ctx, userID, username, provider)
+}
+
+func newAuthService(userRepo output.UserRepository, hasher output.Hasher, tokenGen output.TokenGenerator, tokenStore output.TokenStore, sessions *session.Service, gate *mfa.Service, throttle output.LoginThrottle) *auth.Service {
+	return auth.New(userRepo, hasher, tokenGen, tokenStore, mfaGatedSessions{Service: sessions, gate: gate}, throttle)
 }
 
 func asAuthService(s *auth.Service) input.AuthService { return s }
@@ -110,11 +155,11 @@ type ssoDeps struct {
 	SocialLogins output.SocialLoginRepository
 	Hasher       output.Hasher
 	Authorizer   output.Authorizer
-	Sessions     *session.Service
+	Gate         *mfa.Service
 }
 
 func (d ssoDeps) service(provider string, idp output.IdentityProvider) input.SSOService {
-	return sso.New(provider, idp, d.UserRepo, d.SocialLogins, d.Hasher, d.Authorizer, d.Sessions)
+	return sso.New(provider, idp, d.UserRepo, d.SocialLogins, d.Hasher, d.Authorizer, d.Gate)
 }
 
 func newSSOService(cfg *config.Config, deps ssoDeps) input.SSOService {
@@ -196,17 +241,22 @@ var Module = fx.Options(
 		loadConfig,
 		newDB,
 		newCache,
+		newRedisClient,
 		newLoginThrottle,
 		newUserRepository,
 		newRoleRepository,
 		newSessionRepository,
 		newSocialLoginRepository,
-		newAuthorizer,
+		newAuthorizeClient,
+		asAuthorizer,
+		newMFAProvider,
 		newHasher,
 		newTokenGenerator,
 		newTokenStore,
 		newSessionService,
 		asSessionService,
+		newMFAService,
+		asMFAService,
 		newAuthService,
 		asAuthService,
 		newSSOService,
