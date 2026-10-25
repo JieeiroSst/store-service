@@ -1,9 +1,13 @@
 import { Fragment, createContext, useContext, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
-import { ArrowRight, ArrowUp, BadgeCheck, Download, Menu, Moon, ReceiptText, Search, SearchX, Sparkles, Sun, X, Zap } from 'lucide-react'
-import { consoles, features, gallery, groups, roles, security, services, stats, ui, type L, type Lang, type MiniApp } from './content'
+import { ArrowRight, ArrowUp, BadgeCheck, ChevronDown, CornerDownLeft, Download, Hash, Menu, Moon, ReceiptText, Search, SearchX, Sparkles, Sun, X, Zap } from 'lucide-react'
+import { consoles, faq, features, gallery, groups, roles, security, services, stats, steps, ui, type L, type Lang, type MiniApp } from './content'
 
 const apkUrl = import.meta.env.VITE_APK_URL as string | undefined
+const adClient = import.meta.env.VITE_ADSENSE_CLIENT
+const adSlot = import.meta.env.VITE_ADSENSE_SLOT
 const total = groups.reduce((n, g) => n + g.apps.length, 0)
+const mac = /Mac|iP(hone|ad|od)/.test(navigator.platform || navigator.userAgent)
+const openPalette = () => window.dispatchEvent(new Event('keiki:palette'))
 
 const LangContext = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: 'vi', setLang: () => {} })
 
@@ -122,6 +126,10 @@ function Nav() {
           </a>
         </nav>
         <div className="nav__end">
+          <button type="button" className="nav__search" onClick={openPalette} aria-label={t.quickSearch} title={t.quickSearch} aria-keyshortcuts={mac ? 'Meta+K' : 'Control+K'}>
+            <Search size={17} />
+            <kbd>{mac ? '⌘K' : 'Ctrl K'}</kbd>
+          </button>
           <ThemeSwitch />
           <LangSwitch />
           <button className="nav__toggle" aria-label={open ? t.closeMenu : t.openMenu} aria-expanded={open} onClick={() => setOpen(!open)}>
@@ -249,6 +257,7 @@ function Hero() {
           </dl>
         </div>
         <div className="hero__visual hero__in" style={idx(3)}>
+          <Phone src="/screens/wallet.webp" alt="" className="phone--back" />
           <Phone src="/screens/home.webp" alt={t.heroPhone} className="phone--main" />
           <div className="float-card float-card--pay">
             <span className="float-card__icon">
@@ -288,15 +297,28 @@ function Services() {
           {services.map(({ icon: Icon, name, note, tone, href }, i) => {
             const body = (
               <>
+                {i === 0 && (
+                  <span className="service__card" aria-hidden="true">
+                    <span className="service__card-top">
+                      <span className="service__chip" />
+                      <Zap size={18} />
+                    </span>
+                    <span className="service__card-num">•••• •••• 2026</span>
+                    <span className="service__card-name">Keiki Card</span>
+                  </span>
+                )}
                 <span className="service__icon">
-                  <Icon size={26} strokeWidth={2.1} />
+                  <Icon size={i === 0 ? 30 : 26} strokeWidth={2.1} />
                 </span>
-                <strong>{tr(name)}</strong>
-                <small>{tr(note)}</small>
+                <span className="service__text">
+                  <strong>{tr(name)}</strong>
+                  <small>{tr(note)}</small>
+                </span>
+                {href && <ArrowRight className="service__arrow" size={22} />}
               </>
             )
             return (
-              <li key={name.vi} className={`service service--${tone} spot`} style={idx(i)}>
+              <li key={name.vi} className={`service service--${tone} spot ${i === 0 ? 'service--feature' : ''} ${href ? 'service--all' : ''}`} style={idx(i)}>
                 {href ? (
                   <a href={href} className="service__link">
                     {body}
@@ -528,14 +550,19 @@ function Marquee() {
   )
 }
 
+const featureTones = ['indigo', 'orange', 'pink', 'violet', 'green', 'teal']
+
 function Features() {
   const { t, tr } = useI18n()
   return (
     <>
       {features.map((f, i) => (
-        <section key={f.id} id={f.id} className={`section feature ${i % 2 ? 'feature--reverse' : ''}`}>
+        <section key={f.id} id={f.id} className={`section feature service--${featureTones[i % featureTones.length]} ${i % 2 ? 'feature--reverse' : ''}`}>
           <div className="container feature__inner reveal">
             <div className="feature__copy">
+              <span className="feature__num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
               <span className="kicker">{tr(f.kicker)}</span>
               <h2>{tr(f.title)}</h2>
               <p>{tr(f.text)}</p>
@@ -550,6 +577,12 @@ function Features() {
             <div className="feature__visual">
               <div className="feature__halo" />
               <Phone src={f.image} alt={`${t.screen} ${tr(f.kicker)}`} className="phone--drift" />
+              <span className="feature__chip" aria-hidden="true">
+                <span>
+                  <BadgeCheck size={18} />
+                </span>
+                {tr(f.points[0])}
+              </span>
             </div>
           </div>
         </section>
@@ -662,23 +695,285 @@ function Download_() {
   )
 }
 
-function Footer() {
+function Ad() {
   const { t } = useI18n()
+  const ref = useRef<HTMLModElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || el.dataset.adsbygoogleStatus) return
+    try {
+      ;(window.adsbygoogle = window.adsbygoogle || []).push({})
+    } catch {}
+  }, [])
+  if (!adClient || !adSlot) return null
+  return (
+    <aside className="ad container" aria-label={t.ad}>
+      <span className="ad__label">{t.ad}</span>
+      <ins ref={ref} className="adsbygoogle" style={{ display: 'block' }} data-ad-client={adClient} data-ad-slot={adSlot} data-ad-format="auto" data-full-width-responsive="true" />
+    </aside>
+  )
+}
+
+function Steps() {
+  const { t, tr } = useI18n()
+  return (
+    <section className="section" id="bat-dau">
+      <div className="container">
+        <div className="section__head reveal">
+          <span className="kicker">{t.links.start}</span>
+          <h2>{t.stepsTitle}</h2>
+          <p>{t.stepsLead}</p>
+        </div>
+        <ol className="steps reveal stagger">
+          {steps.map(({ icon: Icon, title, text }, i) => (
+            <li key={title.vi} className="step spot" style={idx(i)}>
+              <span className="step__num">
+                {t.step} {i + 1}
+              </span>
+              <span className="step__icon">
+                <Icon size={26} />
+              </span>
+              <h3>{tr(title)}</h3>
+              <p>{tr(text)}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+function Faq() {
+  const { t, tr } = useI18n()
+  const [open, setOpen] = useState<number | null>(0)
+  return (
+    <section className="section section--tinted" id="hoi-dap">
+      <div className="container faq">
+        <div className="faq__head reveal">
+          <span className="kicker">{t.links.faq}</span>
+          <h2>{t.faqTitle}</h2>
+          <p>{t.faqLead}</p>
+          <div className="faq__more">
+            <Sparkles size={20} />
+            <p>{t.faqMore}</p>
+            <a className="btn btn--brand" href="#tai-app">
+              <Download size={18} /> {t.getApp}
+            </a>
+          </div>
+        </div>
+        <div className="faq__list reveal">
+          {faq.map(({ q, a }, i) => {
+            const shown = open === i
+            return (
+              <div key={q.vi} className={`faq__item ${shown ? 'is-open' : ''}`}>
+                <h3>
+                  <button type="button" id={`faq-q-${i}`} aria-expanded={shown} aria-controls={`faq-a-${i}`} onClick={() => setOpen(shown ? null : i)}>
+                    {tr(q)}
+                    <ChevronDown size={20} />
+                  </button>
+                </h3>
+                <div className="faq__a" id={`faq-a-${i}`} role="region" aria-labelledby={`faq-q-${i}`} aria-hidden={!shown}>
+                  <div>
+                    <p>{tr(a)}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+type Hit = { kind: 'section'; id: string; label: string } | { kind: 'app'; app: MiniApp; tone: string; label: string }
+
+function Palette() {
+  const { t, tr } = useI18n()
+  const ref = useRef<HTMLDialogElement>(null)
+  const list = useRef<HTMLUListElement>(null)
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [sel, setSel] = useState(0)
+  const [shot, setShot] = useState<MiniApp | null>(null)
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setOpen((o) => !o)
+      }
+    }
+    const onOpen = () => setOpen(true)
+    window.addEventListener('keydown', onKey)
+    window.addEventListener('keiki:palette', onOpen)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('keiki:palette', onOpen)
+    }
+  }, [])
+  useEffect(() => {
+    const d = ref.current
+    if (!d) return
+    if (open && !d.open) {
+      setQuery('')
+      setSel(0)
+      d.showModal()
+    }
+    if (!open && d.open) d.close()
+  }, [open])
+  const sections: [string, string][] = [
+    ['dich-vu', t.links.services],
+    ['mini-app', t.links.miniApps],
+    ['vi', t.links.wallet],
+    ['vai-tro', t.links.roles],
+    ['bao-mat', t.links.security],
+    ['bat-dau', t.links.start],
+    ['hoi-dap', t.links.faq],
+    ['tai-app', t.links.download],
+  ]
+  const q = fold(query.trim())
+  const hits: Hit[] = [
+    ...sections.filter(([, label]) => !q || fold(label).includes(q)).map(([id, label]): Hit => ({ kind: 'section', id, label })),
+    ...groups
+      .flatMap((g) => g.apps.map((app): Hit => ({ kind: 'app', app, tone: g.tone, label: tr(app.name) })))
+      .filter((h) => h.kind === 'app' && (!q || [h.app.name, h.app.note].some((x) => fold(x.vi).includes(q) || fold(x.en).includes(q)))),
+  ]
+  const cur = Math.min(sel, Math.max(0, hits.length - 1))
+  const pick = (h: Hit | undefined) => {
+    if (!h) return
+    setOpen(false)
+    if (h.kind === 'section') document.getElementById(h.id)?.scrollIntoView({ behavior: still() ? 'auto' : 'smooth' })
+    else setShot(h.app)
+  }
+  const move = (n: number) => {
+    if (!hits.length) return
+    const next = (cur + n + hits.length) % hits.length
+    setSel(next)
+    list.current?.querySelector(`[data-i="${next}"]`)?.scrollIntoView({ block: 'nearest' })
+  }
+  const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown') move(1)
+    else if (e.key === 'ArrowUp') move(-1)
+    else if (e.key === 'Enter') pick(hits[cur])
+    else return
+    e.preventDefault()
+  }
+  const firstApp = hits.findIndex((h) => h.kind === 'app')
+  return (
+    <>
+      <dialog ref={ref} className="palette" aria-label={t.paletteLabel} onClose={() => setOpen(false)} onClick={(e) => e.target === e.currentTarget && setOpen(false)}>
+        {open && (
+          <div className="palette__inner">
+            <label className="palette__search">
+              <Search size={20} />
+              <input
+                autoFocus
+                type="text"
+                role="combobox"
+                aria-expanded="true"
+                aria-controls="palette-list"
+                aria-activedescendant={hits.length ? `palette-${cur}` : undefined}
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value)
+                  setSel(0)
+                  list.current?.scrollTo({ top: 0 })
+                }}
+                onKeyDown={onKey}
+                placeholder={t.palettePlaceholder}
+                aria-label={t.palettePlaceholder}
+              />
+              <button type="button" className="palette__esc" onClick={() => setOpen(false)} aria-label={t.close}>
+                <kbd>Esc</kbd>
+              </button>
+            </label>
+            <ul ref={list} id="palette-list" role="listbox" className="palette__list">
+              {hits.map((h, i) => (
+                <Fragment key={h.kind === 'section' ? h.id : h.app.name.vi}>
+                  {(i === 0 && h.kind === 'section') || i === firstApp ? (
+                    <li role="presentation" className="palette__group">
+                      {h.kind === 'section' ? t.paletteSections : t.paletteApps}
+                    </li>
+                  ) : null}
+                  <li
+                    id={`palette-${i}`}
+                    data-i={i}
+                    role="option"
+                    aria-selected={i === cur}
+                    className={`palette__item ${h.kind === 'app' ? `service--${h.tone}` : ''}`}
+                    onPointerMove={() => i !== cur && setSel(i)}
+                    onClick={() => pick(h)}
+                  >
+                    <span className="palette__icon">{h.kind === 'section' ? <Hash size={18} /> : <h.app.icon size={18} strokeWidth={2.2} />}</span>
+                    <span className="palette__text">
+                      <strong>{h.label}</strong>
+                      {h.kind === 'app' && <small>{tr(h.app.note)}</small>}
+                    </span>
+                    {i === cur && <CornerDownLeft size={16} className="palette__enter" />}
+                  </li>
+                </Fragment>
+              ))}
+              {hits.length === 0 && <li className="palette__empty">{t.paletteEmpty}</li>}
+            </ul>
+            <div className="palette__foot">
+              <span>
+                <kbd>↑</kbd>
+                <kbd>↓</kbd> {t.paletteNav}
+              </span>
+              <span>
+                <kbd>↵</kbd> {t.paletteHint}
+              </span>
+            </div>
+          </div>
+        )}
+      </dialog>
+      <ShotDialog app={shot} onClose={() => setShot(null)} />
+    </>
+  )
+}
+
+function Footer() {
+  const { t, tr } = useI18n()
   return (
     <footer className="footer">
-      <div className="container footer__inner">
-        <Logo size={30} />
-        <p>{t.tagline}</p>
-        <nav aria-label={t.footerNav}>
+      <div className="container footer__grid">
+        <div className="footer__brand">
+          <Logo size={30} />
+          <p>{t.tagline}</p>
+          <a className="btn btn--brand" href="#tai-app">
+            <Download size={18} /> {t.getApp}
+          </a>
+        </div>
+        <nav className="footer__col" aria-label={t.footerExplore}>
+          <strong>{t.footerExplore}</strong>
           <a href="#dich-vu">{t.links.services}</a>
           <a href="#mini-app">{t.links.miniApps}</a>
+          <a href="#vi">{t.links.wallet}</a>
           <a href="#vai-tro">{t.links.roles}</a>
+        </nav>
+        <nav className="footer__col" aria-label={t.footerHelp}>
+          <strong>{t.footerHelp}</strong>
           <a href="#bao-mat">{t.links.security}</a>
+          <a href="#bat-dau">{t.links.start}</a>
+          <a href="#hoi-dap">{t.links.faq}</a>
           <a href="#tai-app">
             <ReceiptText size={16} /> {t.links.download}
           </a>
         </nav>
+        <nav className="footer__col" aria-label={t.footerGroups}>
+          <strong>{t.footerGroups}</strong>
+          {groups.map((g) => (
+            <a key={g.id} href="#mini-app" className={`footer__group service--${g.tone}`}>
+              {tr(g.label)}
+            </a>
+          ))}
+        </nav>
+      </div>
+      <div className="container footer__bottom">
         <small>© {new Date().getFullYear()} Keikibook</small>
+        <button type="button" className="footer__tip" onClick={openPalette}>
+          <Search size={14} /> {t.paletteTip}
+        </button>
       </div>
     </footer>
   )
@@ -778,14 +1073,20 @@ export default function App() {
         <Hero />
         <Services />
         <Marquee />
+        <Ad />
         <MiniApps />
         <Features />
+        <Ad />
         <Roles />
         <Security />
+        <Steps />
+        <Faq />
+        <Ad />
         <Download_ />
       </main>
       <Footer />
       <BackToTop />
+      <Palette />
     </LangContext.Provider>
   )
 }

@@ -46,6 +46,7 @@ import {
   ShieldCheck,
   ShieldHalf,
   ShoppingBag,
+  Smartphone,
   Sparkles,
   SquareParking,
   Store,
@@ -55,6 +56,7 @@ import {
   Trophy,
   Truck,
   Upload,
+  UserPlus,
   UserRound,
   UsersRound,
   Utensils,
@@ -87,7 +89,7 @@ export const ui = {
     clearSearch: 'Xoá tìm kiếm',
     showMore: (n: number) => `Xem thêm ${n} app`,
     close: 'Đóng',
-    links: { services: 'Dịch vụ', miniApps: 'Mini-app', wallet: 'Ví Keiki', roles: 'Vai trò', security: 'Bảo mật', download: 'Tải app' },
+    links: { services: 'Dịch vụ', miniApps: 'Mini-app', wallet: 'Ví Keiki', roles: 'Vai trò', security: 'Bảo mật', start: 'Bắt đầu', faq: 'Hỏi đáp', download: 'Tải app' },
     getApp: 'Tải Keikibook',
     heroPill: 'Super app cho người Việt',
     heroTitle: ['Mọi dịch vụ,', 'một ứng dụng.'],
@@ -120,6 +122,25 @@ export const ui = {
     iosSoon: 'iOS — sắp ra mắt',
     ctaPhone: 'Màn hình tất cả dịch vụ',
     tagline: 'Mọi dịch vụ, một ứng dụng.',
+    ad: 'Quảng cáo',
+    quickSearch: 'Tìm nhanh',
+    paletteLabel: 'Tìm nhanh mini-app và mục trên trang',
+    palettePlaceholder: 'Tìm mini-app hoặc mục trên trang…',
+    paletteSections: 'Mục trên trang',
+    paletteApps: 'Mini-app',
+    paletteEmpty: 'Không có kết quả',
+    paletteHint: 'để chọn',
+    paletteNav: 'để di chuyển',
+    paletteTip: 'Mẹo: nhấn ⌘K hoặc Ctrl K ở bất cứ đâu để tìm nhanh.',
+    stepsTitle: 'Bắt đầu trong 3 bước',
+    stepsLead: 'Từ lúc cài app tới lần thanh toán đầu tiên chỉ mất vài phút.',
+    step: 'Bước',
+    faqTitle: 'Câu hỏi thường gặp',
+    faqLead: 'Những điều mọi người hay hỏi trước khi dùng Keikibook.',
+    faqMore: 'Chưa thấy câu trả lời? Tải app và thử ngay — mọi mini-app đều mở được mà không cần cài thêm.',
+    footerExplore: 'Khám phá',
+    footerHelp: 'Tìm hiểu',
+    footerGroups: 'Nhóm mini-app',
   },
   en: {
     title: 'Keikibook — Every service, one app',
@@ -140,7 +161,7 @@ export const ui = {
     clearSearch: 'Clear search',
     showMore: (n: number) => `Show ${n} more`,
     close: 'Close',
-    links: { services: 'Services', miniApps: 'Mini-apps', wallet: 'Keiki Wallet', roles: 'Roles', security: 'Security', download: 'Get the app' },
+    links: { services: 'Services', miniApps: 'Mini-apps', wallet: 'Keiki Wallet', roles: 'Roles', security: 'Security', start: 'Get started', faq: 'FAQ', download: 'Get the app' },
     getApp: 'Get Keikibook',
     heroPill: 'The super app for Vietnam',
     heroTitle: ['Every service,', 'one app.'],
@@ -173,6 +194,25 @@ export const ui = {
     iosSoon: 'iOS — coming soon',
     ctaPhone: 'All services screen',
     tagline: 'Every service, one app.',
+    ad: 'Advertisement',
+    quickSearch: 'Quick search',
+    paletteLabel: 'Quick search for mini-apps and page sections',
+    palettePlaceholder: 'Search mini-apps or page sections…',
+    paletteSections: 'On this page',
+    paletteApps: 'Mini-apps',
+    paletteEmpty: 'No results',
+    paletteHint: 'to select',
+    paletteNav: 'to move',
+    paletteTip: 'Tip: press ⌘K or Ctrl K anywhere to search.',
+    stepsTitle: 'Get started in 3 steps',
+    stepsLead: 'From installing the app to your first payment takes just a few minutes.',
+    step: 'Step',
+    faqTitle: 'Frequently asked questions',
+    faqLead: 'What people usually ask before trying Keikibook.',
+    faqMore: 'Didn’t find your answer? Get the app and try it — every mini-app opens without installing anything else.',
+    footerExplore: 'Explore',
+    footerHelp: 'Learn more',
+    footerGroups: 'Mini-app groups',
   },
 }
 
@@ -968,6 +1008,72 @@ export const security: { icon: LucideIcon; title: L; text: L }[] = [
     text: {
       vi: 'Đặt phòng, giao dịch, ảnh ghép lưu trên máy chủ; đổi điện thoại vẫn còn nguyên.',
       en: 'Bookings, transactions and collages are stored on the server; switch phones and everything is still there.',
+    },
+  },
+]
+
+export const steps: { icon: LucideIcon; title: L; text: L }[] = [
+  {
+    icon: Smartphone,
+    title: { vi: 'Tải Keikibook', en: 'Get Keikibook' },
+    text: { vi: 'Cài bản Android ngay từ trang này. Bản iOS đang được hoàn thiện.', en: 'Install the Android build right from this page. The iOS version is on its way.' },
+  },
+  {
+    icon: UserPlus,
+    title: { vi: 'Tạo tài khoản', en: 'Create an account' },
+    text: {
+      vi: 'Đăng ký một lần, dùng cho cả 54 mini-app. Xác minh eKYC khi bạn cần hạn mức cao hơn.',
+      en: 'Sign up once for all 54 mini-apps. Verify with eKYC when you need higher limits.',
+    },
+  },
+  {
+    icon: Wallet,
+    title: { vi: 'Nạp ví và dùng', en: 'Top up and go' },
+    text: {
+      vi: 'Nạp từ ngân hàng vào Ví Keiki, rồi đặt món, mua sắm, đặt vé chỉ với mã PIN của bạn.',
+      en: 'Top up Keiki Wallet from your bank, then order food, shop and book tickets with just your PIN.',
+    },
+  },
+]
+
+export const faq: { q: L; a: L }[] = [
+  {
+    q: { vi: 'Có cần cài riêng từng mini-app không?', en: 'Do I need to install each mini-app?' },
+    a: {
+      vi: 'Không. Cả 54 mini-app mở ngay trong Keikibook và dùng chung một tài khoản, một ví, một kho điểm thưởng.',
+      en: 'No. All 54 mini-apps open right inside Keikibook and share one account, one wallet and one pool of reward points.',
+    },
+  },
+  {
+    q: { vi: 'Keikibook có bản iOS chưa?', en: 'Is there an iOS version?' },
+    a: { vi: 'Hiện có bản Android. Bản iOS đang được hoàn thiện và sẽ ra mắt sớm.', en: 'Android is available now. The iOS version is being finished and is coming soon.' },
+  },
+  {
+    q: { vi: 'Nạp tiền vào Ví Keiki thế nào?', en: 'How do I top up Keiki Wallet?' },
+    a: {
+      vi: 'Nạp từ tài khoản ngân hàng ngay trong app. Bạn cũng có thể nhận tiền từ bạn bè qua mã ví hoặc mã QR.',
+      en: 'Top up from your bank account inside the app. You can also receive money from friends by wallet ID or QR code.',
+    },
+  },
+  {
+    q: { vi: 'Thanh toán có an toàn không?', en: 'Are payments safe?' },
+    a: {
+      vi: 'Mọi giao dịch cần mã PIN của riêng bạn và có khoá chống trừ tiền hai lần. Yêu cầu đi qua một cổng duy nhất, được xác thực và kiểm tra quyền trước khi tới từng dịch vụ.',
+      en: 'Every transaction needs your own PIN and is guarded against double charges. Requests pass through a single gateway and are authenticated and authorised before reaching any service.',
+    },
+  },
+  {
+    q: { vi: 'Đặt đồ ăn rồi huỷ thì sao?', en: 'What if I cancel a food order?' },
+    a: {
+      vi: 'Tiền chỉ bị trừ khi đơn được giao. Huỷ đơn trước đó là được hoàn ngay vào ví.',
+      en: 'You are only charged when the order is delivered. Cancel before that and the money goes straight back to your wallet.',
+    },
+  },
+  {
+    q: { vi: 'Đổi điện thoại có mất dữ liệu không?', en: 'Will I lose my data if I switch phones?' },
+    a: {
+      vi: 'Không. Đặt phòng, giao dịch, vé và đơn hàng đều lưu trên máy chủ theo tài khoản; đăng nhập trên máy mới là có lại đủ.',
+      en: 'No. Bookings, transactions, tickets and orders are stored on the server with your account; sign in on the new phone and it is all there.',
     },
   },
 ]
