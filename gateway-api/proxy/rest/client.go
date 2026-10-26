@@ -15,6 +15,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/JIeeiroSst/gateway-api/auth"
+	"github.com/JIeeiroSst/gateway-api/proxy/breaker"
 	"github.com/JIeeiroSst/utils/logger"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -33,6 +34,7 @@ type Options struct {
 	BasicAuthUser     string
 	BasicAuthPassword string
 	Headers           map[string]string
+	Breaker           *breaker.Breaker
 }
 
 type Request struct {
@@ -193,7 +195,12 @@ func (c *Client) send(ctx context.Context, req Request, body io.Reader, contentT
 		httpReq.SetBasicAuth(c.opts.BasicAuthUser, c.opts.BasicAuthPassword)
 	}
 
+	done, err := c.opts.Breaker.Allow()
+	if err != nil {
+		return c.fail(ctx, auth.CodeServiceUnavailable, http.StatusServiceUnavailable, "service is temporarily unavailable")
+	}
 	resp, err := c.http.Do(httpReq)
+	done((err != nil && !errors.Is(err, context.Canceled)) || (resp != nil && resp.StatusCode >= 500))
 	if err != nil {
 		logger.Error(ctx, "%s %s %s: %v", c.name, method, req.Path, err)
 		if errors.Is(err, context.DeadlineExceeded) {

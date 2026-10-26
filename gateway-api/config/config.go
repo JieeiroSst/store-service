@@ -18,6 +18,14 @@ type ServiceConfig struct {
 	BasicAuthPassword string            `json:"basic_auth_password,omitempty"`
 	Headers           map[string]string `json:"headers,omitempty"`
 	ForwardUserToken  *bool             `json:"forward_user_token,omitempty"`
+	CircuitBreaker    CircuitBreaker    `json:"circuit_breaker,omitempty"`
+}
+
+type CircuitBreaker struct {
+	Disabled         bool `json:"disabled,omitempty"`
+	FailureThreshold int  `json:"failure_threshold,omitempty"`
+	OpenSeconds      int  `json:"open_seconds,omitempty"`
+	HalfOpenRequests int  `json:"half_open_requests,omitempty"`
 }
 
 type Config struct {

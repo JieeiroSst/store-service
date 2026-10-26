@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/JIeeiroSst/gateway-api/auth"
+	"github.com/JIeeiroSst/gateway-api/proxy/breaker"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -84,5 +85,45 @@ func TestUpstreamErrorReasonAndDetails(t *testing.T) {
 	}
 	if d, _ := ge.Extensions["details"].(map[string]string); d["k"] != "v" {
 		t.Fatalf("details = %v", ge.Extensions["details"])
+	}
+}
+
+func TestCircuitBreakerShortCircuitsFailingService(t *testing.T) {
+	hits := 0
+	status := http.StatusInternalServerError
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		w.WriteHeader(status)
+	}))
+	defer srv.Close()
+	c := New("flaky-service", srv.URL, time.Second, Options{Breaker: breaker.New("flaky-service", breaker.Settings{FailureThreshold: 2, OpenTimeout: time.Hour})})
+
+	for i := 0; i < 2; i++ {
+		_ = c.Get(context.Background(), "/", nil, nil)
+	}
+	status = http.StatusNotFound
+	err := c.Get(context.Background(), "/", nil, nil)
+	if hits != 2 {
+		t.Fatalf("open breaker must not reach the service, hits=%d", hits)
+	}
+	ge, ok := err.(*gqlerror.Error)
+	if !ok || ge.Extensions["code"] != auth.CodeServiceUnavailable || ge.Extensions["status"] != http.StatusServiceUnavailable {
+		t.Fatalf("want SERVICE_UNAVAILABLE 503, got %v", err)
+	}
+}
+
+func TestCircuitBreakerIgnoresClientErrors(t *testing.T) {
+	hits := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		w.WriteHeader(http.StatusBadRequest)
+	}))
+	defer srv.Close()
+	c := New("strict-service", srv.URL, time.Second, Options{Breaker: breaker.New("strict-service", breaker.Settings{FailureThreshold: 1})})
+	for i := 0; i < 3; i++ {
+		_ = c.Get(context.Background(), "/", nil, nil)
+	}
+	if hits != 3 {
+		t.Fatalf("4xx must not trip the breaker, hits=%d", hits)
 	}
 }

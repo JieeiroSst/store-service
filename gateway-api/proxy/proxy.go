@@ -6,6 +6,7 @@ import (
 
 	"github.com/JIeeiroSst/gateway-api/config"
 	"github.com/JIeeiroSst/gateway-api/proxy/authorize_proxy"
+	"github.com/JIeeiroSst/gateway-api/proxy/breaker"
 	"github.com/JIeeiroSst/gateway-api/proxy/rest"
 	"github.com/JIeeiroSst/gateway-api/proxy/user_proxy"
 	"google.golang.org/grpc"
@@ -29,13 +30,17 @@ type Proxy struct {
 }
 
 func NewProxy(cfg config.Config) (*Proxy, error) {
+	breakers := map[string]*breaker.Breaker{}
+	for name, svc := range cfg.Services {
+		breakers[name] = newBreaker(name, svc.CircuitBreaker)
+	}
 	userCfg := cfg.Services[UserService]
-	user, err := user_proxy.NewUserProxy(userCfg.GrpcAddress, timeout(userCfg.TimeoutSeconds))
+	user, err := user_proxy.NewUserProxy(userCfg.GrpcAddress, timeout(userCfg.TimeoutSeconds), breaker.DialOptions(breakers[UserService])...)
 	if err != nil {
 		return nil, err
 	}
 	authorizeCfg := cfg.Services[AuthorizeService]
-	authorize, err := authorize_proxy.NewAuthorizeProxy(authorizeCfg.GrpcAddress, timeout(authorizeCfg.TimeoutSeconds))
+	authorize, err := authorize_proxy.NewAuthorizeProxy(authorizeCfg.GrpcAddress, timeout(authorizeCfg.TimeoutSeconds), breaker.DialOptions(breakers[AuthorizeService])...)
 	if err != nil {
 		_ = user.Close()
 		return nil, err
@@ -55,10 +60,12 @@ func NewProxy(cfg config.Config) (*Proxy, error) {
 				BasicAuthUser:     svc.BasicAuthUser,
 				BasicAuthPassword: svc.BasicAuthPassword,
 				Headers:           svc.Headers,
+				Breaker:           breakers[name],
 			})
 		}
 		if svc.GrpcAddress != "" {
-			conn, err := grpc.NewClient(svc.GrpcAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+			opts := append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, breaker.DialOptions(breakers[name])...)
+			conn, err := grpc.NewClient(svc.GrpcAddress, opts...)
 			if err != nil {
 				p.Close()
 				return nil, err
@@ -99,6 +106,15 @@ func (p *Proxy) Close() {
 	for _, c := range p.grpc {
 		_ = c.Close()
 	}
+}
+
+func newBreaker(name string, c config.CircuitBreaker) *breaker.Breaker {
+	return breaker.New(name, breaker.Settings{
+		Disabled:         c.Disabled,
+		FailureThreshold: c.FailureThreshold,
+		OpenTimeout:      time.Duration(c.OpenSeconds) * time.Second,
+		HalfOpenRequests: c.HalfOpenRequests,
+	})
 }
 
 func timeout(seconds int) time.Duration {

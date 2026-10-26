@@ -20,8 +20,8 @@ type authorizeProxy struct {
 	timeout time.Duration
 }
 
-func NewAuthorizeProxy(address string, timeout time.Duration) (AuthorizeProxy, error) {
-	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewAuthorizeProxy(address string, timeout time.Duration, opts ...grpc.DialOption) (AuthorizeProxy, error) {
+	conn, err := grpc.NewClient(address, append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, opts...)...)
 	if err != nil {
 		return nil, err
 	}

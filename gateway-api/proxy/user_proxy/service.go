@@ -22,8 +22,8 @@ type userProxy struct {
 	timeout time.Duration
 }
 
-func NewUserProxy(address string, timeout time.Duration) (UserProxy, error) {
-	conn, err := grpc.NewClient(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewUserProxy(address string, timeout time.Duration, opts ...grpc.DialOption) (UserProxy, error) {
+	conn, err := grpc.NewClient(address, append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, opts...)...)
 	if err != nil {
 		return nil, err
 	}
