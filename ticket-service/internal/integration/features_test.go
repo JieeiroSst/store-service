@@ -168,7 +168,7 @@ func TestEventSeries(t *testing.T) {
 	catalog := service.NewCatalogService(p.erepo, 0)
 
 	e, seated := seatedEvent(t, p, 2, 2)
-	open := time.Now().Add(-time.Hour)
+	open := time.Now().Add(-time.Hour).Truncate(time.Microsecond)
 	if _, err := p.events.CreateTicketType(ctx, organizer, e.ID, inbound.TicketTypeInput{Name: "GA", Price: 300_000, Total: 40, Active: true, MaxPerUser: 4, SaleStartsAt: &open, SaleEndsAt: ptrTime(e.StartsAt.Add(-time.Hour))}); err != nil {
 		t.Fatal(err)
 	}

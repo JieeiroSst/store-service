@@ -202,7 +202,17 @@ func (s *Service) Home(ctx context.Context, userID string) (*model.Home, error) 
 		}
 	}
 
-	add("new_releases", "New releases", s.hydrate(m, m.NewReleases(homeAnchorPool, seen)))
-	add("trending", "Trending now", s.hydrate(m, m.Trending(homeAnchorPool, seen)))
+	hidden := func() map[string]bool {
+		out := make(map[string]bool, len(seen)+len(shown))
+		for id := range seen {
+			out[id] = true
+		}
+		for id := range shown {
+			out[id] = true
+		}
+		return out
+	}
+	add("new_releases", "New releases", s.hydrate(m, m.NewReleases(homeAnchorPool, hidden())))
+	add("trending", "Trending now", s.hydrate(m, m.Trending(homeAnchorPool, hidden())))
 	return home, nil
 }

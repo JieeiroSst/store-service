@@ -3,7 +3,7 @@ starlette==1.10.0
 uvicorn[standard]==0.34.3
 sqlalchemy==2.0.23
 pymysql==1.1.2
-python-dotenv==1.0.0
+python-dotenv==1.2.2
 pydantic==2.11.10
 pydantic-settings==2.7.1
 twilio==8.10.0

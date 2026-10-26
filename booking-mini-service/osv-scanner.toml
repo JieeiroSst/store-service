@@ -1,0 +1,3 @@
+[[IgnoredVulns]]
+id = "RUSTSEC-2023-0071"
+reason = "rsa is only in Cargo.lock through sqlx's unused mysql driver; the binary is built with the postgres feature alone, so rsa is never compiled, and no fixed rsa release exists"

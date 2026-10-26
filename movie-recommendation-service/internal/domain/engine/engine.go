@@ -343,8 +343,14 @@ func (m *Model) ForUser(history []model.Interaction, limit int) []Scored {
 	for i := range bestSrc {
 		bestSrc[i] = -1
 	}
+	order := make([]int, 0, len(weights))
+	for i := range weights {
+		order = append(order, i)
+	}
+	sort.Ints(order)
 	profile := vector{}
-	for i, w := range weights {
+	for _, i := range order {
+		w := weights[i]
 		for _, n := range m.nbrs[i] {
 			c := w * n.sim
 			cf[n.idx] += c

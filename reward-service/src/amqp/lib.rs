@@ -23,16 +23,21 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
     let connection =
         Arc::new(Connection::connect(&config.amqp_addr, ConnectionProperties::default()).await?);
 
-    connection.on_error(|err| {
-        log::error!("{}", err);
-        std::process::exit(1);
+    let mut events = connection.events_listener();
+    tokio::spawn(async move {
+        while let Some(event) = events.next().await {
+            if let lapin::Event::Error(err) = event {
+                log::error!("{}", err);
+                std::process::exit(1);
+            }
+        }
     });
 
     let declare_channel = connection.create_channel().await?;
 
     declare_channel
         .exchange_declare(
-            "reward-dead-letter.exchange",
+            "reward-dead-letter.exchange".into(),
             lapin::ExchangeKind::Direct,
             ExchangeDeclareOptions::default(),
             FieldTable::default(),
@@ -40,7 +45,7 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
         .await?;
     declare_channel
         .queue_declare(
-            "reward-dead-letter.queue",
+            "reward-dead-letter.queue".into(),
             QueueDeclareOptions {
                 durable: true,
                 ..Default::default()
@@ -50,9 +55,9 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
         .await?;
     declare_channel
         .queue_bind(
-            "reward-dead-letter.queue",
-            "reward-dead-letter.exchange",
-            "",
+            "reward-dead-letter.queue".into(),
+            "reward-dead-letter.exchange".into(),
+            "".into(),
             QueueBindOptions::default(),
             FieldTable::default(),
         )
@@ -60,7 +65,7 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
 
     declare_channel
         .exchange_declare(
-            "reward.exchange",
+            "reward.exchange".into(),
             lapin::ExchangeKind::Direct,
             ExchangeDeclareOptions {
                 durable: true,
@@ -77,7 +82,7 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
     );
     declare_channel
         .queue_declare(
-            "reward.queue",
+            "reward.queue".into(),
             QueueDeclareOptions {
                 durable: true,
                 ..Default::default()
@@ -87,14 +92,14 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
         .await?;
     declare_channel
         .queue_bind(
-            "reward.queue",
-            "reward.exchange",
-            "",
+            "reward.queue".into(),
+            "reward.exchange".into(),
+            "".into(),
             QueueBindOptions::default(),
             FieldTable::default(),
         )
         .await?;
-    declare_channel.close(0, "declare channel fineshed").await?;
+    declare_channel.close(0, "declare channel fineshed".into()).await?;
 
     let reward_repository: Arc<dyn RewardRepository> =
         Arc::new(PgRewardRepository::new(pg_pool.clone()));
@@ -102,8 +107,8 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
     let consumer_channel = connection.create_channel().await?;
     let mut consumer = consumer_channel
         .basic_consume(
-            "reward.queue",
-            "consumer",
+            "reward.queue".into(),
+            "consumer".into(),
             BasicConsumeOptions::default(),
             FieldTable::default(),
         )
@@ -120,7 +125,9 @@ pub async fn run(pg_pool: Arc<Pool>) -> Result<(), Box<dyn Error>> {
                     )
                     .await
                     {
-                        Ok(_) => delivery.ack(BasicAckOptions::default()).await?,
+                        Ok(_) => {
+                            delivery.ack(BasicAckOptions::default()).await?;
+                        }
                         Err(err) => {
                             log::error!("Nack {}", err);
                             delivery.nack(BasicNackOptions::default()).await?;

@@ -23,7 +23,7 @@ type show struct {
 func newShow(t testing.TB, p *pod, tickets int, refundHours int, starts ...time.Duration) show {
 	t.Helper()
 	ctx := context.Background()
-	now := time.Now()
+	now := time.Now().Truncate(time.Microsecond)
 	e, err := p.events.Create(ctx, organizer, inbound.EventInput{Title: "Anh Trai Say Hi", Category: "music", City: "Hue", Venue: "Stadium", WalletID: "w",
 		StartsAt: now.Add(starts[0]), EndsAt: now.Add(starts[0] + 3*time.Hour), Transferable: true, ResaleCapPercent: 100, RefundCutoffHours: refundHours})
 	if err != nil {
@@ -323,7 +323,7 @@ func TestEditingSessions(t *testing.T) {
 	p := newPod(t, d, newFakeWallets(), podOptions{ratePerSec: 1000})
 	sh := newShow(t, p, 10, 0, 72*time.Hour, 96*time.Hour)
 	buyer := orderFor(t, p, 5, sh, 1, 1, true)
-	now := time.Now()
+	now := time.Now().Truncate(time.Microsecond)
 
 	// moving a showtime tells its buyers and keeps the event's dates in step
 	newStart := now.Add(150 * time.Hour)
@@ -473,13 +473,13 @@ func TestDuplicatingAnEventWithSessions(t *testing.T) {
 	if _, err := p.events.CancelSession(ctx, organizer, sh.event.ID, sh.sessions[1].ID, "no"); err != nil {
 		t.Fatal(err)
 	}
-	third, err := p.events.CreateSession(ctx, organizer, sh.event.ID, inbound.SessionInput{StartsAt: time.Now().Add(120 * time.Hour), EndsAt: time.Now().Add(123 * time.Hour), Label: "Encore", CopyFrom: sh.sessions[0].ID})
+	third, err := p.events.CreateSession(ctx, organizer, sh.event.ID, inbound.SessionInput{StartsAt: time.Now().Add(120 * time.Hour).Truncate(time.Microsecond), EndsAt: time.Now().Add(123 * time.Hour).Truncate(time.Microsecond), Label: "Encore", CopyFrom: sh.sessions[0].ID})
 	if err != nil {
 		t.Fatal(err)
 	}
 	_ = third
 
-	start := time.Now().Add(1000 * time.Hour)
+	start := time.Now().Add(1000 * time.Hour).Truncate(time.Microsecond)
 	dup, err := p.events.Duplicate(ctx, organizer, sh.event.ID, inbound.DuplicateInput{StartsAt: start, EndsAt: start.Add(3 * time.Hour)})
 	if err != nil {
 		t.Fatal(err)

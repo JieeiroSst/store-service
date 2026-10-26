@@ -38,7 +38,7 @@ API requests need `Authorization: Bearer <authorize_key>`; the older `Authorizat
 ## Development
 
 ```
-make up        # Elasticsearch 7.17.5 + Kibana via docker-compose
+make up        # Elasticsearch 7.17.29 + Kibana via docker-compose
 AUTHORIZE_KEY=dev ELASTICSEARCH_URL=http://localhost:9200 make run
 make test      # unit tests; set SEARCH_TEST_ES_URL=http://localhost:9200 to also run the ES integration test
 make docker

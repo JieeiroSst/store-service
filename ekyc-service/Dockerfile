@@ -37,7 +37,7 @@ COPY python/requirements.txt ./python/requirements.txt
 # (source-only) `dlib` package as a transitive dependency.
 RUN pip install --no-cache-dir setuptools==80.10.2 dlib-bin==20.0.1 face-recognition-models==0.3.0 \
     && pip install --no-cache-dir --no-deps face_recognition==1.3.0 \
-    && pip install --no-cache-dir click==8.1.7 numpy==1.26.4 pillow==13.0.0 torch==2.14.1 easyocr==1.7.2
+    && pip install --no-cache-dir click==8.1.7 numpy==1.26.4 pillow==13.0.0 torch==2.14.1 scipy==1.14.1 easyocr==1.7.2
 
 COPY python/extract_id.py ./python/extract_id.py
 

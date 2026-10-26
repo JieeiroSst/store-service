@@ -54,7 +54,13 @@ jobs:
       - name: Vet
         run: cd tool-service && go vet ./...
 
+      - name: Set up Chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v2
+
       - name: Test
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: cd tool-service && go test -v ./...
 
       - name: Lint Helm chart

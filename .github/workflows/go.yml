@@ -904,8 +904,13 @@ jobs:
     - name: Vet
       run: cd tool-service && go vet ./...
 
-    # browser tests use the Chrome preinstalled on ubuntu-latest and skip themselves without one
+    - name: Set up Chrome
+      id: chrome
+      uses: browser-actions/setup-chrome@v2
+
     - name: Test
+      env:
+        CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
       run: cd tool-service && go test -v ./...
 
   shopify_service:
@@ -1259,7 +1264,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.29
         env:
           discovery.type: single-node
           xpack.security.enabled: "false"

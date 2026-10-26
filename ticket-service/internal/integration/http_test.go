@@ -127,8 +127,10 @@ func startApp(t *testing.T, extraEnv map[string]string) *api {
 	if err != nil {
 		t.Fatal(err)
 	}
+	password, _ := u.User.Password()
 	env := map[string]string{
-		"PORT": port, "HostPostgres": u.Hostname(), "PortPostgres": u.Port(), "DatabasePostgres": d.name, "UserPostgres": "postgres",
+		"PORT": port, "HostPostgres": u.Hostname(), "PortPostgres": u.Port(), "DatabasePostgres": d.name,
+		"UserPostgres": u.User.Username(), "PasswordPostgres": password, "SSLModePostgres": u.Query().Get("sslmode"),
 		"UserServiceURL": users.URL, "WalletServiceURL": wallets.URL, "AdminRole": "admin", "UserRatePerSecond": "1000", "UserBurst": "1000",
 		"MaxPendingPerUser": "3", "AuthCacheTTLSeconds": "30",
 	}

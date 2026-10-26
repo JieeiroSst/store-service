@@ -12,7 +12,7 @@ use std::io;
 async fn main() -> io::Result<()> {
     // Initialize logger
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-    if dotenv::dotenv().is_err() {
+    if dotenvy::dotenv().is_err() {
         eprintln!("Note: .env file not found or couldn't be loaded");
     }
     info!("Starting hotel booking service");

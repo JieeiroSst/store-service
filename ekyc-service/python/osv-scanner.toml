@@ -1,0 +1,7 @@
+[[IgnoredVulns]]
+id = "PYSEC-2026-3447"
+reason = "setuptools stays at 80.10.2 because face-recognition-models imports pkg_resources at runtime, which newer setuptools no longer ships; setuptools is never used to build or install untrusted packages in this image"
+
+[[IgnoredVulns]]
+id = "GHSA-xmj3-9gf7-h52w"
+reason = "setuptools stays at 80.10.2 because face-recognition-models imports pkg_resources at runtime, which newer setuptools no longer ships; setuptools is never used to build or install untrusted packages in this image"

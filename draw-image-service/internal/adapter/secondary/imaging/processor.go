@@ -130,8 +130,8 @@ func layoutCenter(width, height int, center image.Point, decos []image.Point) (i
 		}
 		dw, dh := fitSize(d.X, d.Y, boxW, boxH)
 		anchor := mainRect.Min.Add(image.Pt(
-			int(slots[i][0]*float64(mw)),
-			int(slots[i][1]*float64(mh)),
+			int(math.Round(slots[i][0]*float64(mw))),
+			int(math.Round(slots[i][1]*float64(mh))),
 		))
 		pt := image.Pt(
 			clamp(anchor.X-dw/2, 0, width-dw),

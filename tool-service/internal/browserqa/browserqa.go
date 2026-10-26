@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/url"
 	"os"
 	"os/exec"
@@ -19,6 +20,7 @@ import (
 	"github.com/chromedp/cdproto/emulation"
 	"github.com/chromedp/cdproto/fetch"
 	"github.com/chromedp/cdproto/network"
+	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	"github.com/chromedp/chromedp/kb"
@@ -359,7 +361,7 @@ func auditOne(browserCtx context.Context, pageURL string, vp Viewport, locale st
 	}
 
 	var shot []byte
-	if err := chromedp.Run(tabCtx, chromedp.FullScreenshot(&shot, 100)); err != nil {
+	if err := chromedp.Run(tabCtx, fullPageScreenshot(&shot, vp)); err != nil {
 		add(Warn, "screenshot", firstLine(err.Error()))
 	} else {
 		visual(&res, shot, opt, add)
@@ -592,6 +594,30 @@ func firstLine(s string) string {
 		s = s[:200] + "…"
 	}
 	return s
+}
+
+func fullPageScreenshot(res *[]byte, vp Viewport) chromedp.ActionFunc {
+	return func(ctx context.Context) error {
+		if err := page.BringToFront().Do(ctx); err != nil {
+			return err
+		}
+		_, _, _, _, _, size, err := page.GetLayoutMetrics().Do(ctx)
+		if err != nil {
+			return err
+		}
+		h := vp.H
+		if size != nil {
+			h = max(h, int64(math.Ceil(size.Height)))
+		}
+		if err := emulation.SetDeviceMetricsOverride(vp.W, h, orOne(vp.Scale), vp.Mobile).Do(ctx); err != nil {
+			return err
+		}
+		*res, err = page.CaptureScreenshot().WithFormat(page.CaptureScreenshotFormatPng).Do(ctx)
+		if rerr := emulation.SetDeviceMetricsOverride(vp.W, vp.H, orOne(vp.Scale), vp.Mobile).Do(ctx); err == nil {
+			err = rerr
+		}
+		return err
+	}
 }
 
 func orOne(f float64) float64 {

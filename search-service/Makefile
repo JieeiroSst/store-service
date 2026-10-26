@@ -1,5 +1,5 @@
 PKGS = ./...
-ES_TAG = 7.17.5
+ES_TAG = 7.17.29
 
 run:
 	go run ./cmd

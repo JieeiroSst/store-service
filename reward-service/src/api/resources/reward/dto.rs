@@ -44,7 +44,7 @@ pub struct RequestFindReward {
     #[validate(length(max = 64))]
     pub name: Option<String>,
     pub page: Option<u32>,
-    #[validate(custom = "validate_page_size_max")]
+    #[validate(custom(function = "validate_page_size_max"))]
     pub page_size: Option<u32>,
 }
 

@@ -28,7 +28,7 @@ static INIT_DB: OnceCell<()> = OnceCell::const_new();
 async fn setup() {
     INIT_DB
         .get_or_init(|| async {
-            dotenv::from_filename(".env.test").ok();
+            dotenvy::from_filename(".env.test").ok();
 
             init_to_tests()
                 .await

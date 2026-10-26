@@ -2,6 +2,7 @@ package engine
 
 import (
 	"math"
+	"sort"
 	"strings"
 	"unicode"
 )
@@ -34,8 +35,8 @@ func tokenize(s string) []string {
 
 func (v vector) normalize() {
 	var sum float64
-	for _, x := range v {
-		sum += x * x
+	for _, k := range v.keys() {
+		sum += v[k] * v[k]
 	}
 	if sum == 0 {
 		return
@@ -51,8 +52,17 @@ func dot(a, b vector) float64 {
 		a, b = b, a
 	}
 	var s float64
-	for k, x := range a {
-		s += x * b[k]
+	for _, k := range a.keys() {
+		s += a[k] * b[k]
 	}
 	return s
+}
+
+func (v vector) keys() []string {
+	ks := make([]string, 0, len(v))
+	for k := range v {
+		ks = append(ks, k)
+	}
+	sort.Strings(ks)
+	return ks
 }

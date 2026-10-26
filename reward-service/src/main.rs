@@ -1,5 +1,5 @@
 use api::lib;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use std::{io, sync::Arc};
 
 use repository::{postgres, redis};
