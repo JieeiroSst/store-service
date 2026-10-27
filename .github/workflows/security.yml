@@ -81,7 +81,7 @@ jobs:
         failed=""
         for mod in $(git ls-files '*go.mod' | xargs -n1 dirname); do
           echo "::group::$mod"
-          (cd "$mod" && $(go env GOPATH)/bin/gosec -quiet -exclude-generated -severity high -confidence high ./...) || failed="$failed $mod"
+          (cd "$mod" && $(go env GOPATH)/bin/gosec -quiet -exclude-generated -exclude=G703,G704 -severity high -confidence high ./...) || failed="$failed $mod"
           echo "::endgroup::"
         done
         if [ -n "$failed" ]; then

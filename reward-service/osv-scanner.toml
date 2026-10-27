@@ -1,0 +1,3 @@
+[[IgnoredVulns]]
+id = "GHSA-qwgh-2vcv-g2f7"
+reason = "block-buffer 0.10 is pinned by digest 0.10 (sha1/sha2/hmac used through actix-web and sqlx), so the 0.12.1 fix cannot be taken until RustCrypto moves on; the flaw needs the hash compress callback to panic, which sha1/sha2 never do"
